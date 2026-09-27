@@ -575,18 +575,18 @@ test "negated flags do not trigger relationships or exclusive groups" {
     ]),
     FlagArg("plain", long="plain"),
   ])
-  // BUG: should parse with color=false; `--no-color` turns the flag off.
+  // `--no-color` turns the flag off, so it conflicts with nothing.
   inspect(
     parse_outcome(conflicts, ["--no-color", "--plain"]),
     content=(
-      #|error: conflicting arguments: color and plain
+      #|ok ({ "color": false, "plain": true }, {})
     ),
   )
-  // BUG: should parse with color=false; COLOR=0 turns the flag off.
+  // So does COLOR=0.
   inspect(
     parse_outcome(conflicts, ["--plain"], env={ "COLOR": "0" }),
     content=(
-      #|error: conflicting arguments: color and plain
+      #|ok ({ "color": false, "plain": true }, {})
     ),
   )
   // The flag turned on: a real conflict.
@@ -601,11 +601,11 @@ test "negated flags do not trigger relationships or exclusive groups" {
     FlagArg("color", long="color", negatable=true),
     FlagArg("plain", long="plain", conflicts_with=["color"]),
   ])
-  // BUG: should parse; the conflict target `color` is turned off.
+  // The conflict target `color` is turned off.
   inspect(
     parse_outcome(conflicts_target, ["--plain", "--no-color"]),
     content=(
-      #|error: conflicting arguments: plain and color
+      #|ok ({ "color": false, "plain": true }, {})
     ),
   )
 
@@ -615,18 +615,17 @@ test "negated flags do not trigger relationships or exclusive groups" {
     ]),
     FlagArg("x", long="x"),
   ])
-  // BUG: should parse with verbose=false; nothing requires `x`.
+  // A turned-off flag requires nothing, whether from argv or env.
   inspect(
     parse_outcome(requires, ["--no-verbose"]),
     content=(
-      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+      #|ok ({ "verbose": false }, {})
     ),
   )
-  // BUG: should parse with verbose=false; nothing requires `x`.
   inspect(
     parse_outcome(requires, [], env={ "VERBOSE": "false" }),
     content=(
-      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+      #|ok ({ "verbose": false }, {})
     ),
   )
   // The flag turned on: `x` really is required.
@@ -644,11 +643,10 @@ test "negated flags do not trigger relationships or exclusive groups" {
     ]),
     FlagArg("plain", long="plain"),
   ])
-  // BUG: should parse with failfast=true.
   inspect(
     parse_outcome(set_false, ["--no-failfast", "--plain"]),
     content=(
-      #|error: conflicting arguments: failfast and plain
+      #|ok ({ "failfast": true, "plain": true }, {})
     ),
   )
   // `--failfast` stores `false`, the set state: a real conflict.
@@ -663,18 +661,17 @@ test "negated flags do not trigger relationships or exclusive groups" {
     FlagArg("v", long="v", action=Count, env="V", negatable=true, requires=["x"]),
     FlagArg("x", long="x"),
   ])
-  // BUG: should parse with v=false; the count is 0.
+  // A count reset to 0 requires nothing, whether from argv or env.
   inspect(
     parse_outcome(count, ["--v", "--no-v"]),
     content=(
-      #|error: the following required argument was not provided: 'x' (required by 'v')
+      #|ok ({ "v": false }, {})
     ),
   )
-  // BUG: should parse with v=false; the count is 0.
   inspect(
     parse_outcome(count, [], env={ "V": "0" }),
     content=(
-      #|error: the following required argument was not provided: 'x' (required by 'v')
+      #|ok ({ "v": false }, {})
     ),
   )
 
@@ -686,11 +683,53 @@ test "negated flags do not trigger relationships or exclusive groups" {
       FlagArg("plain", long="plain"),
     ],
   )
-  // BUG: should parse; only `plain` is turned on.
+  // Only `plain` is turned on.
   inspect(
     parse_outcome(exclusive, ["--no-color", "--plain"]),
     content=(
-      #|error: group conflict style
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+}
+
+///|
+test "negated global flags do not trigger relationships after a subcommand" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("color", long="color", negatable=true, global=true, conflicts_with=[
+        "plain",
+      ]),
+      FlagArg("plain", long="plain", global=true),
+      FlagArg("v", long="v", action=Count, negatable=true, global=true, requires=[
+        "x",
+      ]),
+      FlagArg("x", long="x", global=true),
+    ],
+    subcommands=[Command("run")],
+  )
+  inspect(
+    parse_outcome(cmd, ["--color", "run", "--no-color", "--plain"]),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--color", "run", "--plain"]),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--v", "run", "--no-v"]),
+    content=(
+      #|ok ({ "v": false }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--v", "run"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'v')
     ),
   )
 }

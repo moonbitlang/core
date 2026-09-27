@@ -237,17 +237,35 @@ fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
 }
 
 ///|
-/// Whether `name` was given explicitly: on the command line or through its env
+/// Whether `arg` was given explicitly: on the command line or through its env
 /// variable. Unlike `matches_has_value_or_flag`, a value filled in by
-/// `apply_defaults` does not count. `requires` / `conflicts_with` and group
+/// `apply_defaults` does not count, and a flag counts only while it is set
+/// (`true`, or `false` for a `SetFalse` flag), so `--no-<flag>` or an env
+/// value such as `0` leaves it out. `requires` / `conflicts_with` and group
 /// exclusivity use this to decide whether an arg takes part, while `required`
 /// args and groups and `requires` targets are still satisfied by defaults.
-fn matches_explicitly_present(matches : Matches, name : String) -> Bool {
-  let source = match matches.flag_sources.get(name) {
-    Some(source) => Some(source)
-    None => matches.value_sources.get(name)
+fn matches_explicitly_present(matches : Matches, arg : Arg) -> Bool {
+  let name = arg.name
+  match arg.info {
+    FlagInfo(action~, ..) =>
+      matches.flag_sources.get(name) is Some(Argv | Env) &&
+      (match matches.flags.get(name) {
+        Some(value) => if action is SetFalse { !value } else { value }
+        None => false
+      })
+    OptionInfo(_) | PositionalInfo(_) =>
+      matches.value_sources.get(name) is Some(Argv | Env)
   }
-  source is Some(Argv | Env)
+}
+
+///|
+fn matches_explicitly_present_by_name(
+  matches : Matches,
+  args : Array[Arg],
+  name : String,
+) -> Bool {
+  args.iter().find_first(arg => arg.name == name) is Some(arg) &&
+  matches_explicitly_present(matches, arg)
 }
 
 ///|
