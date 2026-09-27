@@ -13,6 +13,22 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Error with @debug.Debug::{to_repr}
+fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
+
+///|
+pub impl Debug for Error with fn to_repr(self) {
+  error_to_repr(self)
+}
+
+///|
+test "Debug for Error" {
+  fn fail_with_error() -> Unit raise {
+    raise InspectError::InspectError("test error")
+  }
+
+  try fail_with_error() catch {
+    e => debug_inspect(e, content="InspectError(\"test error\")")
+  } noraise {
+    _ => fail("expected error")
+  }
+}
