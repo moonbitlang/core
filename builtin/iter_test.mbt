@@ -618,11 +618,11 @@ test "until" {
       #|  0.30000000000000004,
       #|  0.4,
       #|  0.5,
-      #|  0.6,
-      #|  0.7,
-      #|  0.7999999999999999,
-      #|  0.8999999999999999,
-      #|  0.9999999999999999,
+      #|  0.6000000000000001,
+      #|  0.7000000000000001,
+      #|  0.8,
+      #|  0.9,
+      #|  1,
       #|]
     ),
   )
@@ -636,11 +636,10 @@ test "until" {
       #|  0.30000000000000004,
       #|  0.4,
       #|  0.5,
-      #|  0.6,
-      #|  0.7,
-      #|  0.7999999999999999,
-      #|  0.8999999999999999,
-      #|  0.9999999999999999,
+      #|  0.6000000000000001,
+      #|  0.7000000000000001,
+      #|  0.8,
+      #|  0.9,
       #|]
     ),
   )
@@ -1098,37 +1097,68 @@ test "Double::until with NaN step" {
 
 ///|
 test "Double::until computes elements without accumulating error" {
-  // BUG: should be 10 (0.0 + 10 * 0.1 == 1.0 is not below the end)
-  inspect(0.0.until(1.0, step=0.1).count(), content="11")
-  // BUG: should be 10 (1.0 - 10 * 0.1 == 0.0 is not above the end)
-  inspect(1.0.until(0.0, step=-0.1).count(), content="11")
-  // BUG: the 7th element should be 0.6000000000000001 (0.0 + 6 * 0.1)
-  debug_inspect(0.0.until(1.0, step=0.1).nth(6), content="Some(0.6)")
-  // BUG: should end with 1 (0.0 + 10 * 0.1 == 1.0 hits the end exactly)
+  // Element k is 0.0 + k * 0.1; k = 10 gives exactly 1.0, the end.
+  inspect(0.0.until(1.0, step=0.1).count(), content="10")
+  inspect(1.0.until(0.0, step=-0.1).count(), content="10")
+  debug_inspect(
+    0.0.until(1.0, step=0.1).nth(6),
+    content="Some(0.6000000000000001)",
+  )
   debug_inspect(
     0.0.until(1.0, step=0.1, inclusive=true).last(),
-    content="Some(0.9999999999999999)",
+    content="Some(1)",
   )
-  // BUG: `i + step == i` here, so these never terminate; they should be
-  // [9007199254740992, 9007199254740992] (element 1 rounds back to the start)
-  // and [1e+308, Infinity] (the end is yielded once, then iteration stops).
+  debug_inspect(
+    1.0.until(0.0, step=-0.1, inclusive=true).last(),
+    content="Some(0)",
+  )
+  // `end` is only included when an element rounds to exactly `end`:
+  // 0.0 + 3 * 0.1 is 0.30000000000000004, so 0.3 is not reached.
+  debug_inspect(
+    0.0.until(0.3, step=0.1, inclusive=true).to_array(),
+    content="[0, 0.1, 0.2]",
+  )
+  debug_inspect(
+    (0).until(3, inclusive=true).map(k => k.to_double() / 10.0).to_array(),
+    content="[0, 0.1, 0.2, 0.3]",
+  )
+  // The first element is `self` itself, even for -0.0 or an infinite step.
+  debug_inspect(
+    (-0.0).until(1.0).map(x => 1.0 / x).to_array(),
+    content="[-Infinity]",
+  )
+  debug_inspect(
+    0.0.until(@double.infinity, step=@double.infinity).to_array(),
+    content="[0]",
+  )
+}
+
+///|
+test "Double::until terminates when step is below the precision" {
+  // 9007199254740993 is not a Double and rounds to 9007199254740992, so the
+  // start repeats; the element count still matches (end - start) / step.
   debug_inspect(
     9007199254740992.0.until(9007199254740994.0).take(4).to_array(),
-    content=(
-      #|[
-      #|  9007199254740992,
-      #|  9007199254740992,
-      #|  9007199254740992,
-      #|  9007199254740992,
-      #|]
-    ),
+    content="[9007199254740992, 9007199254740992]",
   )
+  debug_inspect(
+    9007199254740992.0
+    .until(9007199254740994.0, inclusive=true)
+    .take(4)
+    .to_array(),
+    content="[9007199254740992, 9007199254740992, 9007199254740994]",
+  )
+  // An inclusive end is yielded once, then iteration stops.
   debug_inspect(
     1.0e308
     .until(@double.infinity, step=1.0e308, inclusive=true)
     .take(4)
     .to_array(),
-    content="[1e+308, Infinity, Infinity, Infinity]",
+    content="[1e+308, Infinity]",
+  )
+  debug_inspect(
+    @double.infinity.until(@double.infinity, inclusive=true).take(4).to_array(),
+    content="[Infinity]",
   )
 }
 

@@ -219,20 +219,36 @@ test "Float::until with NaN step" {
 
 ///|
 test "Float::until computes elements without accumulating error" {
-  // BUG: should be 100 (0.0 + 100 * 0.01 rounds to 1.0, which is not below
-  // the end); the accumulated sum reaches 0.9999993443489075 instead
-  inspect((0.0 : Float).until(1.0, step=0.01).count(), content="101")
-  // BUG: should end with 1 (0.0 + 10 * 0.1 rounds to 1.0 and hits the end)
+  // Element k is 0.0 + k * 0.01 rounded to Float; k = 100 gives 1.0, the end.
+  inspect((0.0 : Float).until(1.0, step=0.01).count(), content="100")
+  inspect((0.0 : Float).until(1.0, step=0.1).count(), content="10")
   debug_inspect(
     (0.0 : Float).until(1.0, step=0.1, inclusive=true).last(),
-    content="Some(0.9000000953674316)",
+    content="Some(1)",
   )
-  // BUG: `i + step == i` here, so this never terminates; it should be
-  // [16777216, 16777216, 16777218] (16777217 and 16777219 are not Floats and
-  // round to even, so the fourth element 16777220 reaches the end).
+  // The Float nearest 0.1 is slightly above it, so 1.0 - 10 * step is
+  // -1.4901161e-8, below the end: the last element is 1.0 - 9 * step.
+  debug_inspect(
+    (1.0 : Float).until(0.0, step=-0.1, inclusive=true).last(),
+    content="Some(0.09999998658895493)",
+  )
+}
+
+///|
+test "Float::until terminates when step is below the precision" {
+  // 16777217 and 16777219 are not Floats and round to even, so the start
+  // repeats and 16777219 rounds up to the end 16777220.
   debug_inspect(
     (16777216.0 : Float).until(16777220.0).take(4).to_array(),
-    content="[16777216, 16777216, 16777216, 16777216]",
+    content="[16777216, 16777216, 16777218]",
+  )
+  debug_inspect(
+    (16777216.0 : Float).until(16777220.0, inclusive=true).take(8).to_array(),
+    content="[16777216, 16777216, 16777218, 16777220]",
+  )
+  debug_inspect(
+    @float.infinity.until(@float.infinity, inclusive=true).take(4).to_array(),
+    content="[Infinity]",
   )
 }
 

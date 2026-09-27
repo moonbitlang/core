@@ -403,8 +403,14 @@ pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {
 /// # Returns
 ///
 /// Returns an iterator yielding `self`, `self + step`, `self + 2 * step`, ...,
-/// stopping before `end` (or at `end` when `inclusive` is set). Returns an
-/// empty iterator when `step` is `0.0`.
+/// stopping before the first element that is not below `end` (above `end`
+/// for a negative `step`). Each element after `self` is computed directly as
+/// `self + k * step` in Double precision and then rounded to Float, rather
+/// than by repeated addition, so rounding errors do not accumulate (from
+/// element 2^53 on, where `k + 1.0` no longer advances, it falls back to
+/// repeated addition). With `inclusive`, `end` is yielded only when some
+/// element rounds to exactly `end`. Returns an empty iterator when `step` is
+/// `0.0`.
 pub fn Float::until(
   self : Float,
   end : Float,
@@ -414,22 +420,33 @@ pub fn Float::until(
   if step == 0.0 {
     return [||]
   }
-  let mut curr_value = Some(self)
+  let start = self.to_double()
+  let step_d = step.to_double()
+  // `k` counts elements; a Double counter is exact up to 2^53, far beyond
+  // where a Float counter would stop advancing (2^24). From element 2^53 on,
+  // `k + 1.0` no longer advances, so fall back to repeated addition there.
+  let mut k = 0.0
+  let mut value = self
+  let mut done = false
   Iter::new(() => {
-    guard curr_value is Some(i) else { None }
-    guard (step > 0.0 && i < end) ||
-      (step < 0.0 && i > end) ||
-      (inclusive && i == end) else {
-      None
-    }
-    let next = i + step
-    if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-      curr_value = Some(next)
+    guard !done else { None }
+    let curr = value
+    if (step > 0.0 && curr < end) || (step < 0.0 && curr > end) {
+      k = k + 1.0
+      value = if k < 9007199254740992.0 {
+        Float::from_double(start + k * step_d)
+      } else {
+        curr + step
+      }
+      Some(curr)
     } else {
-      // overflow
-      curr_value = None
+      done = true
+      if inclusive && curr == end {
+        Some(curr)
+      } else {
+        None
+      }
     }
-    Some(i)
   })
 }
 
