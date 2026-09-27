@@ -206,8 +206,22 @@ fn[K, V] join(
   r : SortedMap[K, V],
 ) -> SortedMap[K, V] {
   match (l, r) {
-    (Empty, _) => balance(k, v, Empty, r)
-    (_, Empty) => balance(k, v, l, Empty)
+    // One side is empty. If the other has at most one entry, no rotation is
+    // needed. Otherwise it can be arbitrarily large, which one `balance` step
+    // cannot repair, so add the pair as its new minimum / maximum instead,
+    // rebalancing every node on the way.
+    (Empty, _) =>
+      if r.length() < 2 {
+        make_tree(k, v, l, r)
+      } else {
+        r.add_min_entry(k, v)
+      }
+    (_, Empty) =>
+      if l.length() < 2 {
+        make_tree(k, v, l, r)
+      } else {
+        l.add_max_entry(k, v)
+      }
     (Tree(lk, value=lv, ll, lr, size=ls), Tree(rk, value=rv, rl, rr, size=rs)) =>
       if ls * ratio < rs {
         balance(rk, rv, join(l, k, v, rl), rr)
@@ -216,6 +230,32 @@ fn[K, V] join(
       } else {
         make_tree(k, v, l, r)
       }
+  }
+}
+
+///|
+/// Adds an entry whose key is smaller than every key in the map.
+fn[K, V] SortedMap::add_min_entry(
+  self : SortedMap[K, V],
+  k : K,
+  v : V,
+) -> SortedMap[K, V] {
+  match self {
+    Empty => singleton(k, v)
+    Tree(k1, value=v1, l, r, ..) => balance(k1, v1, l.add_min_entry(k, v), r)
+  }
+}
+
+///|
+/// Adds an entry whose key is greater than every key in the map.
+fn[K, V] SortedMap::add_max_entry(
+  self : SortedMap[K, V],
+  k : K,
+  v : V,
+) -> SortedMap[K, V] {
+  match self {
+    Empty => singleton(k, v)
+    Tree(k1, value=v1, l, r, ..) => balance(k1, v1, l, r.add_max_entry(k, v))
   }
 }
 

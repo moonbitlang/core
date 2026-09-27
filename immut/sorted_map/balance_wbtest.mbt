@@ -62,12 +62,8 @@ test "merge of ascending singletons" {
     m = m.merge(singleton(i, i))
   }
   inspect(m.length(), content="2000")
-  // BUG: `join` handles an empty side with a single `balance` step, which
-  // cannot repair a large size difference, so the tree degenerates. The
-  // height should be logarithmic (inserting the same keys with `add` gives
-  // 23) and `is_valid` should be true.
-  inspect(height(m), content="376")
-  inspect(is_valid(m), content="false")
+  inspect(height(m), content="23")
+  inspect(is_valid(m), content="true")
 }
 
 ///|
@@ -77,8 +73,71 @@ test "merge of descending singletons" {
     m = m.merge(singleton(i, i))
   }
   inspect(m.length(), content="2000")
-  // BUG: same degeneration as the ascending case, mirrored; the height
-  // should be logarithmic and `is_valid` should be true.
-  inspect(height(m), content="376")
-  inspect(is_valid(m), content="false")
+  inspect(height(m), content="23")
+  inspect(is_valid(m), content="true")
+}
+
+///|
+/// Merge `m` with `other` and check the result is valid and holds the same
+/// entries as `m` updated with `other`'s entries one `add` at a time.
+fn check_merge(
+  m : SortedMap[Int, Int],
+  other : SortedMap[Int, Int],
+) -> SortedMap[Int, Int] raise {
+  let merged = m.merge(other)
+  assert_true(is_valid(merged))
+  let mut expected = m
+  for k, v in other {
+    expected = expected.add(k, v)
+  }
+  @test.assert_eq(merged.to_array(), expected.to_array())
+  merged
+}
+
+///|
+test "merge keeps the tree balanced" {
+  // singletons merged in on either side, ascending and descending
+  let mut a : SortedMap[Int, Int] = new()
+  let mut b : SortedMap[Int, Int] = new()
+  let mut c : SortedMap[Int, Int] = new()
+  for i in 0..<500 {
+    a = check_merge(a, singleton(i, i))
+    b = check_merge(singleton(i, i), b)
+    c = check_merge(c, singleton(-i, i))
+  }
+  // pseudo-random keys, with duplicates
+  let mut seed = 12345U
+  let mut d : SortedMap[Int, Int] = new()
+  for i in 0..<500 {
+    seed = seed * 1103515245U + 12345U
+    let k = (seed >> 16).reinterpret_as_int() % 300
+    d = check_merge(d, singleton(k, i))
+  }
+  // ascending batches, interleaved maps, and very uneven sizes
+  let mut e : SortedMap[Int, Int] = new()
+  for j in 0..<20 {
+    e = check_merge(e, SortedMap(Array::makei(25, i => (j * 25 + i, i))))
+  }
+  let evens = SortedMap(Array::makei(500, i => (2 * i, i)))
+  let odds = SortedMap(Array::makei(500, i => (2 * i + 1, i)))
+  check_merge(evens, odds) |> ignore
+  check_merge(odds, evens) |> ignore
+  let big = SortedMap(Array::makei(2000, i => (i, i)))
+  let small = SortedMap([(-1, 0), (500, 0), (2000, 0)])
+  check_merge(big, small) |> ignore
+  check_merge(small, big) |> ignore
+  // `split` shares `join` with `merge`
+  for i in -1..<=2000 {
+    let (l, found, r) = big.split(i)
+    assert_true(is_valid(l) && is_valid(r))
+    @test.assert_eq(found, if i >= 0 && i < 2000 { Some(i) } else { None })
+    @test.assert_eq(
+      l.length() + r.length(),
+      if found is Some(_) {
+        1999
+      } else {
+        2000
+      },
+    )
+  }
 }
