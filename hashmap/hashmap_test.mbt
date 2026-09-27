@@ -869,3 +869,182 @@ test "retain visits every entry exactly once" {
   inspect(m.length(), content="334")
   inspect(m.iter().all(kv => kv.0 % 3 == 0), content="true")
 }
+
+///|
+/// A key whose hash is the integer itself, so the table layouts in the
+/// reentrancy tests below do not depend on the per-process hash seed.
+priv struct Id(Int) derive(Eq)
+
+///|
+impl Hash for Id with fn hash_combine(self, hasher) {
+  hasher.combine_int(self.0)
+}
+
+///|
+impl Hash for Id with fn hash(self) {
+  self.0
+}
+
+///|
+/// `(length, keys in table order, keys that `get` can find)`.
+fn id_map_state(m : @hashmap.HashMap[Id, Int]) -> (Int, Array[Int], Array[Int]) {
+  let keys = m.keys().map(k => k.0).to_array()
+  (m.length(), keys, [ for k in keys if m.get(Id(k)) is Some(_) => k ])
+}
+
+///|
+fn id_map_fib(memo : @hashmap.HashMap[Id, Int], n : Int) -> Int {
+  if n < 2 {
+    return n
+  }
+  memo.get_or_init(Id(n), () => {
+    id_map_fib(memo, n - 1) + id_map_fib(memo, n - 2)
+  })
+}
+
+///|
+test "get_or_init: init may write to the same map (memoization)" {
+  let memo : @hashmap.HashMap[Id, Int] = HashMap([])
+  inspect(id_map_fib(memo, 30), content="832040")
+  let missing = [ for k in 2..<=30 if memo.get(Id(k)) is None => k ]
+  // BUG: should be (29, []); `init` inserts into `memo`, so the slot picked
+  // before calling it is stale.
+  debug_inspect(
+    (memo.length(), missing),
+    content=(
+      #|(44, [2, 3, 4, 5, 6, 7, 29, 30])
+    ),
+  )
+}
+
+///|
+test "get_or_init: init grows the map" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let v = m.get_or_init(Id(8), () => {
+    for i in 0..<7 {
+      m.set(Id(i), i)
+    }
+    -1
+  })
+  inspect(v, content="-1")
+  // BUG: should be (8, [0, 1, 2, 3, 4, 5, 6, 8], [0, 1, 2, 3, 4, 5, 6, 8])
+  // and (Some(0), Some(-1)).
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(8, [8, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6])
+    ),
+  )
+  debug_inspect(
+    (m.get(Id(0)), m.get(Id(8))),
+    content=(
+      #|(None, None)
+    ),
+  )
+}
+
+///|
+test "get_or_init: init inserts the same key" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let v = m.get_or_init(Id(3), () => {
+    m.set(Id(3), 1)
+    2
+  })
+  inspect(v, content="2")
+  // BUG: should be (1, [3], [3]); `length()` counts the key twice, so
+  // `to_array()` would read an array slot it never filled.
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(2, [3], [3])
+    ),
+  )
+  debug_inspect(
+    m.get(Id(3)),
+    content=(
+      #|Some(2)
+    ),
+  )
+}
+
+///|
+test "update: f grows the map when the key is absent" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  m.update(Id(8), _ => {
+    for i in 0..<7 {
+      m.set(Id(i), i)
+    }
+    Some(-1)
+  })
+  // BUG: should be (8, [0, 1, 2, 3, 4, 5, 6, 8], [0, 1, 2, 3, 4, 5, 6, 8])
+  // and (Some(0), Some(-1)).
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(8, [8, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6])
+    ),
+  )
+  debug_inspect(
+    (m.get(Id(0)), m.get(Id(8))),
+    content=(
+      #|(None, None)
+    ),
+  )
+}
+
+///|
+test "update: f grows the map, then the present key is removed" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(8), 8)])
+  m.update(Id(8), _ => {
+    for i in 0..<7 {
+      m.set(Id(i), i)
+    }
+    None
+  })
+  // BUG: should be (7, [0, 1, 2, 3, 4, 5, 6], [0, 1, 2, 3, 4, 5, 6])
+  // and (Some(0), None).
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(7, [1, 2, 3, 4, 5, 6, 8], [1, 2, 3, 4, 5, 6, 8])
+    ),
+  )
+  debug_inspect(
+    (m.get(Id(0)), m.get(Id(8))),
+    content=(
+      #|(None, Some(8))
+    ),
+  )
+}
+
+///|
+test "update: f removes the present key and returns a value" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  m.update(Id(1), v => {
+    m.remove(Id(1))
+    v.map(x => x + 10)
+  })
+  // BUG: should be [(1, 11), (2, 2)]; the value `f` returned is lost.
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(2, 2)]
+    ),
+  )
+}
+
+///|
+test "update_or_default: f removes the present key" {
+  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  m.update_or_default(Id(1), 0, v => {
+    m.remove(Id(1))
+    v + 10
+  })
+  // BUG: should be [(1, 11), (2, 2)]; the value `f` returned is lost.
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(2, 2)]
+    ),
+  )
+}
