@@ -147,3 +147,53 @@ test "round" {
   assert_eq((-8388608.0 : Float).round(), -8388608.0)
   assert_eq((-16777216.0 : Float).round(), -16777216.0)
 }
+
+///|
+/// Rounds `x` and renders the result so that `-0` is distinguishable from `0`.
+#cfg(not(target="js"))
+fn round_repr(x : Float) -> String {
+  let r = x.round()
+  if r == 0.0 && r.reinterpret_as_uint() != 0 {
+    "-0"
+  } else {
+    r.to_string()
+  }
+}
+
+///|
+// BUG: native/wasm/wasm-gc compute `floor(x + 0.5)`, which disagrees with
+// js (`Math.round`). Correct: odd integers in [2^23, 2^24) are returned
+// unchanged, nextDown(0.5) rounds to 0, and inputs in [-0.5, 0) round to -0.
+// Skipped on js until then, since js already produces the correct values.
+#cfg(not(target="js"))
+test "round: large integers, half boundary and signed zero" {
+  // odd integers in [2^23, 2^24): `x + 0.5` is a tie that rounds to even
+  let large : Array[Float] = [
+    8388609.0, 8388611.0, 16777215.0, -8388609.0, -8388611.0, -16777215.0,
+  ]
+  debug_inspect(
+    large.map(round_repr),
+    content=(
+      #|[
+      #|  "8388610",
+      #|  "8388612",
+      #|  "16777216",
+      #|  "-8388608",
+      #|  "-8388610",
+      #|  "-16777214",
+      #|]
+    ),
+  )
+  // nextDown(0.5): `x + 0.5` rounds up to 1.0
+  let next_down_half = Float::reinterpret_from_uint(0x3EFFFFFF)
+  inspect(round_repr(next_down_half), content="1")
+  inspect(round_repr(-next_down_half), content="0")
+  // the sign of zero must survive
+  let zeros : Array[Float] = [0.0, -0.0, 0.3, -0.3, -0.5]
+  debug_inspect(
+    zeros.map(round_repr),
+    content=(
+      #|["0", "0", "0", "0", "0"]
+    ),
+  )
+}
