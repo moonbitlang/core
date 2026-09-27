@@ -783,3 +783,100 @@ test "global options merge across one and two subcommand levels" {
     ),
   )
 }
+
+///|
+test "global flag negation followed by occurrences across subcommand levels" {
+  let rows = [
+    ["-v", "--no-v", "-v", "mid"],
+    ["-v", "mid", "--no-v"],
+    ["--no-v", "mid", "-v"],
+    ["-v", "mid", "--no-v", "-v"],
+    ["-v", "mid", "--no-v", "leaf"],
+    ["-v", "mid", "leaf", "--no-v"],
+    ["--no-v", "mid", "leaf", "-v"],
+    ["-v", "mid", "--no-v", "-v", "leaf"],
+    ["-v", "mid", "leaf", "--no-v", "-v"],
+    ["-v", "-v", "mid", "--no-v", "leaf", "-v"],
+    ["-v", "mid", "-v", "leaf", "--no-v", "-v"],
+  ]
+  // BUG: occurrences after a `--no-v` inside a subcommand are added to the
+  // count from before the reset. Every row whose last `--no-v` is followed by
+  // exactly one `-v` should report `true x1` at every level, as
+  // `-v --no-v -v mid` does; rows 4, 8, 9, 10 and 11 report x2, x2, x2, x3
+  // and x3 instead.
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg(
+        "v",
+        short='v',
+        long="v",
+        action=Count,
+        negatable=true,
+        global=true,
+      ),
+    ]),
+    content=(
+      #|-v --no-v -v mid => true x1 | true x1
+      #|-v mid --no-v => false | false
+      #|--no-v mid -v => true x1 | true x1
+      #|-v mid --no-v -v => true x2 | true x2
+      #|-v mid --no-v leaf => false | false | false
+      #|-v mid leaf --no-v => false | false | false
+      #|--no-v mid leaf -v => true x1 | true x1 | true x1
+      #|-v mid --no-v -v leaf => true x2 | true x2 | true x2
+      #|-v mid leaf --no-v -v => true x2 | true x2 | true x2
+      #|-v -v mid --no-v leaf -v => true x3 | true x3 | true x3
+      #|-v mid -v leaf --no-v -v => true x3 | true x3 | true x3
+    ),
+  )
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg(
+        "v",
+        short='v',
+        long="v",
+        action=SetTrue,
+        negatable=true,
+        global=true,
+      ),
+    ]),
+    content=(
+      #|-v --no-v -v mid => true | true
+      #|-v mid --no-v => false | false
+      #|--no-v mid -v => true | true
+      #|-v mid --no-v -v => true | true
+      #|-v mid --no-v leaf => false | false | false
+      #|-v mid leaf --no-v => false | false | false
+      #|--no-v mid leaf -v => true | true | true
+      #|-v mid --no-v -v leaf => true | true | true
+      #|-v mid leaf --no-v -v => true | true | true
+      #|-v -v mid --no-v leaf -v => true | true | true
+      #|-v mid -v leaf --no-v -v => true | true | true
+    ),
+  )
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg(
+        "v",
+        short='v',
+        long="v",
+        action=SetFalse,
+        negatable=true,
+        global=true,
+      ),
+    ]),
+    content=(
+      #|-v --no-v -v mid => false | false
+      #|-v mid --no-v => true | true
+      #|--no-v mid -v => false | false
+      #|-v mid --no-v -v => false | false
+      #|-v mid --no-v leaf => true | true | true
+      #|-v mid leaf --no-v => true | true | true
+      #|--no-v mid leaf -v => false | false | false
+      #|-v mid --no-v -v leaf => false | false | false
+      #|-v mid leaf --no-v -v => false | false | false
+      #|-v -v mid --no-v leaf -v => false | false | false
+      #|-v mid -v leaf --no-v -v => false | false | false
+    ),
+  )
+}
