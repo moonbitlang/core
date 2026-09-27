@@ -1171,6 +1171,8 @@ pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 pub fn Bytes::to_string(Bytes) -> String
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 
+pub fn Error::to_string(Self) -> String
+
 #alias("_[_]")
 pub fn BytesView::at(Self, Int) -> Byte
 #alias("_[_:_]")
@@ -1566,6 +1568,7 @@ pub impl[X : Show] Show for FixedArray[X]
 #deprecated
 pub impl[T : Show] Show for ReadOnlyArray[T]
 pub impl Show for Bytes
+pub impl Show for Error
 #deprecated
 pub impl[A : Show, B : Show] Show for (A, B)
 #deprecated
@@ -1640,6 +1643,7 @@ pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
 pub impl[X : ToJson] ToJson for FixedArray[X]
 pub impl[T : ToJson] ToJson for ReadOnlyArray[T]
 pub impl ToJson for Bytes
+pub impl ToJson for Error
 pub impl[A : ToJson, B : ToJson] ToJson for (A, B)
 pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
