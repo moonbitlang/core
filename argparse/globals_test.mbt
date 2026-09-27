@@ -669,9 +669,6 @@ test "global flags merge across one and two subcommand levels" {
     ["-v", "mid", "-v", "leaf", "-v"],
     ["mid", "leaf"],
   ]
-  // BUG: a root-only argv count is lost once it passes two levels; the
-  // correct rows are `-v mid leaf => true x1 | true x1 | true x1` and
-  // `-v -v mid leaf => true x2 | true x2 | true x2`.
   inspect(
     nested_global_table("v", rows, flags=[
       FlagArg("v", short='v', long="", action=Count, global=true),
@@ -681,8 +678,8 @@ test "global flags merge across one and two subcommand levels" {
       #|-v -v mid => true x2 | true x2
       #|mid -v => true x1 | true x1
       #|-v mid -v => true x2 | true x2
-      #|-v mid leaf => false | false | false
-      #|-v -v mid leaf => false | false | false
+      #|-v mid leaf => true x1 | true x1 | true x1
+      #|-v -v mid leaf => true x2 | true x2 | true x2
       #|mid -v leaf => true x1 | true x1 | true x1
       #|mid leaf -v => true x1 | true x1 | true x1
       #|-v mid -v leaf => true x2 | true x2 | true x2
