@@ -566,3 +566,131 @@ test "defaults satisfy requirements while env and argv values trigger relations"
     ),
   )
 }
+
+///|
+test "negated flags do not trigger relationships or exclusive groups" {
+  let conflicts = @argparse.Command("demo", flags=[
+    FlagArg("color", long="color", env="COLOR", negatable=true, conflicts_with=[
+      "plain",
+    ]),
+    FlagArg("plain", long="plain"),
+  ])
+  // BUG: should parse with color=false; `--no-color` turns the flag off.
+  inspect(
+    parse_outcome(conflicts, ["--no-color", "--plain"]),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+  // BUG: should parse with color=false; COLOR=0 turns the flag off.
+  inspect(
+    parse_outcome(conflicts, ["--plain"], env={ "COLOR": "0" }),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+  // The flag turned on: a real conflict.
+  inspect(
+    parse_outcome(conflicts, ["--color", "--plain"]),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+
+  let conflicts_target = @argparse.Command("demo", flags=[
+    FlagArg("color", long="color", negatable=true),
+    FlagArg("plain", long="plain", conflicts_with=["color"]),
+  ])
+  // BUG: should parse; the conflict target `color` is turned off.
+  inspect(
+    parse_outcome(conflicts_target, ["--plain", "--no-color"]),
+    content=(
+      #|error: conflicting arguments: plain and color
+    ),
+  )
+
+  let requires = @argparse.Command("demo", flags=[
+    FlagArg("verbose", long="verbose", env="VERBOSE", negatable=true, requires=[
+      "x",
+    ]),
+    FlagArg("x", long="x"),
+  ])
+  // BUG: should parse with verbose=false; nothing requires `x`.
+  inspect(
+    parse_outcome(requires, ["--no-verbose"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+    ),
+  )
+  // BUG: should parse with verbose=false; nothing requires `x`.
+  inspect(
+    parse_outcome(requires, [], env={ "VERBOSE": "false" }),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+    ),
+  )
+  // The flag turned on: `x` really is required.
+  inspect(
+    parse_outcome(requires, ["--verbose"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+    ),
+  )
+
+  // For a `SetFalse` flag, `--no-<flag>` stores `true`: the unset state.
+  let set_false = @argparse.Command("demo", flags=[
+    FlagArg("failfast", long="failfast", action=SetFalse, negatable=true, conflicts_with=[
+      "plain",
+    ]),
+    FlagArg("plain", long="plain"),
+  ])
+  // BUG: should parse with failfast=true.
+  inspect(
+    parse_outcome(set_false, ["--no-failfast", "--plain"]),
+    content=(
+      #|error: conflicting arguments: failfast and plain
+    ),
+  )
+  // `--failfast` stores `false`, the set state: a real conflict.
+  inspect(
+    parse_outcome(set_false, ["--failfast", "--plain"]),
+    content=(
+      #|error: conflicting arguments: failfast and plain
+    ),
+  )
+
+  let count = @argparse.Command("demo", flags=[
+    FlagArg("v", long="v", action=Count, env="V", negatable=true, requires=["x"]),
+    FlagArg("x", long="x"),
+  ])
+  // BUG: should parse with v=false; the count is 0.
+  inspect(
+    parse_outcome(count, ["--v", "--no-v"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'v')
+    ),
+  )
+  // BUG: should parse with v=false; the count is 0.
+  inspect(
+    parse_outcome(count, [], env={ "V": "0" }),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'v')
+    ),
+  )
+
+  let exclusive = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("style", args=["color", "plain"], multiple=false)],
+    flags=[
+      FlagArg("color", long="color", negatable=true),
+      FlagArg("plain", long="plain"),
+    ],
+  )
+  // BUG: should parse; only `plain` is turned on.
+  inspect(
+    parse_outcome(exclusive, ["--no-color", "--plain"]),
+    content=(
+      #|error: group conflict style
+    ),
+  )
+}
