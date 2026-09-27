@@ -105,5 +105,21 @@ pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) 
 /// ```
 #as_free_fn
 pub fn Float::round(self : Float) -> Float {
-  floor(self + 0.5)
+  // `(self + 0.5).floor()` alone drops the sign of zero, crosses the half
+  // boundary for `nextDown(0.5)`, and perturbs odd integers of magnitude in
+  // `[2^23, 2^24)`.
+  if self == 0.0 || self != self || self.abs() >= 8388608.0 {
+    return self
+  }
+  if self > 0.0 {
+    if self < 0.5 {
+      0.0
+    } else {
+      (self + 0.5).floor()
+    }
+  } else if self >= -0.5 {
+    -0.0
+  } else {
+    (self + 0.5).floor()
+  }
 }
