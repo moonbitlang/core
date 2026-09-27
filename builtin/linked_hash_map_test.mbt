@@ -875,12 +875,10 @@ test "get_or_init: default may write to the same map (memoization)" {
   let memo : Map[Id, Int] = Map([])
   inspect(id_map_fib(memo, 30), content="832040")
   let missing = [ for k in 2..<=30 if memo.get(Id(k)) is None => k ]
-  // BUG: should be (29, []); `default` inserts into `memo`, so the slot
-  // picked before calling it is stale.
   debug_inspect(
     (memo.length(), missing),
     content=(
-      #|(45, [2, 3, 4, 5, 6, 7, 29, 30])
+      #|(29, [])
     ),
   )
 }
@@ -895,18 +893,16 @@ test "get_or_init: default grows the map" {
     -1
   })
   inspect(v, content="-1")
-  // BUG: should be (9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8])
-  // and (Some(0), Some(-1)).
   debug_inspect(
     id_map_state(m),
     content=(
-      #|(9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7])
+      #|(9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8])
     ),
   )
   debug_inspect(
     (m.get(Id(0)), m.get(Id(8))),
     content=(
-      #|(None, None)
+      #|(Some(0), Some(-1))
     ),
   )
 }
@@ -919,11 +915,10 @@ test "get_or_init: default inserts the same key" {
     2
   })
   inspect(v, content="2")
-  // BUG: should be [(3, 2)], a single entry holding the returned value.
   debug_inspect(
     m.to_array().map(kv => (kv.0.0, kv.1)),
     content=(
-      #|[(3, 1), (3, 2)]
+      #|[(3, 2)]
     ),
   )
 }
@@ -937,18 +932,16 @@ test "update: f grows the map when the key is absent" {
     }
     Some(-1)
   })
-  // BUG: should be (9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8])
-  // and (Some(0), Some(-1)).
   debug_inspect(
     id_map_state(m),
     content=(
-      #|(9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7])
+      #|(9, [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8])
     ),
   )
   debug_inspect(
     (m.get(Id(0)), m.get(Id(8))),
     content=(
-      #|(None, None)
+      #|(Some(0), Some(-1))
     ),
   )
 }
@@ -962,18 +955,16 @@ test "update: f grows the map, then the present key is removed" {
     }
     None
   })
-  // BUG: should be (8, [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7])
-  // and (Some(0), None).
   debug_inspect(
     id_map_state(m),
     content=(
-      #|(8, [0, 1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 5, 6, 7])
+      #|(8, [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7])
     ),
   )
   debug_inspect(
     (m.get(Id(0)), m.get(Id(8))),
     content=(
-      #|(None, Some(8))
+      #|(Some(0), None)
     ),
   )
 }
@@ -985,11 +976,10 @@ test "update: f removes the present key and returns a value" {
     m.remove(Id(1))
     v.map(x => x + 10)
   })
-  // BUG: should be [(2, 2), (1, 11)]; the value `f` returned is lost.
   debug_inspect(
     m.to_array().map(kv => (kv.0.0, kv.1)),
     content=(
-      #|[(2, 2)]
+      #|[(2, 2), (1, 11)]
     ),
   )
 }
@@ -1001,11 +991,164 @@ test "update_or_default: f removes the present key" {
     m.remove(Id(1))
     v + 10
   })
-  // BUG: should be [(2, 2), (1, 11)]; the value `f` returned is lost.
   debug_inspect(
     m.to_array().map(kv => (kv.0.0, kv.1)),
     content=(
-      #|[(2, 2)]
+      #|[(2, 2), (1, 11)]
+    ),
+  )
+}
+
+///|
+test "get_or_init: default removes a key on the probe path and inserts another" {
+  // Id(16) probes slot 0 (Id(0)) and then slot 1. `default` empties slot 0
+  // and adds a key elsewhere, so the length is unchanged when it returns.
+  let m : Map[Id, Int] = Map([(Id(0), 0)], capacity=16)
+  let v = m.get_or_init(Id(16), () => {
+    m.remove(Id(0))
+    m.set(Id(5), 5)
+    16
+  })
+  inspect(v, content="16")
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(2, [5, 16], [5, 16])
+    ),
+  )
+}
+
+///|
+test "update: f grows the map and updates the present key" {
+  let m : Map[Id, Int] = Map([(Id(8), 8)])
+  m.update(Id(8), v => {
+    for i in 0..<8 {
+      m.set(Id(i), i)
+    }
+    v.map(x => x + 1)
+  })
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(9, [8, 0, 1, 2, 3, 4, 5, 6, 7], [8, 0, 1, 2, 3, 4, 5, 6, 7])
+    ),
+  )
+  debug_inspect(
+    m.get(Id(8)),
+    content=(
+      #|Some(9)
+    ),
+  )
+}
+
+///|
+test "update: f removes a key before the present key in its probe chain" {
+  // Id(16) sits in slot 1 behind Id(0); removing Id(0) shifts it to slot 0.
+  let m : Map[Id, Int] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  m.update(Id(16), _ => {
+    m.remove(Id(0))
+    None
+  })
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(0, [], [])
+    ),
+  )
+  debug_inspect(
+    m.get(Id(16)),
+    content=(
+      #|None
+    ),
+  )
+  let m : Map[Id, Int] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  m.update(Id(16), v => {
+    m.remove(Id(0))
+    v.map(x => x + 1)
+  })
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(16, 17)]
+    ),
+  )
+}
+
+///|
+test "update: f replaces the present key and returns None" {
+  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  m.update(Id(1), _ => {
+    m.remove(Id(1))
+    m.set(Id(1), 5)
+    None
+  })
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(1, [2], [2])
+    ),
+  )
+  m.set(Id(3), 3)
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(2, 2), (3, 3)]
+    ),
+  )
+}
+
+///|
+test "update: f inserts the absent key and returns None" {
+  // `None` for a key that was absent when `f` was called is a no-op, so the
+  // entry `f` stored stays.
+  let m : Map[Id, Int] = Map([])
+  m.update(Id(3), _ => {
+    m.set(Id(3), 1)
+    None
+  })
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(3, 1)]
+    ),
+  )
+}
+
+///|
+test "update_or_default: f grows the map" {
+  let m : Map[Id, Int] = Map([(Id(8), 8)])
+  m.update_or_default(Id(8), 0, v => {
+    for i in 0..<8 {
+      m.set(Id(i), i)
+    }
+    v + 1
+  })
+  debug_inspect(
+    id_map_state(m),
+    content=(
+      #|(9, [8, 0, 1, 2, 3, 4, 5, 6, 7], [8, 0, 1, 2, 3, 4, 5, 6, 7])
+    ),
+  )
+  debug_inspect(
+    m.get(Id(8)),
+    content=(
+      #|Some(9)
+    ),
+  )
+}
+
+///|
+test "update_or_default: f replaces the present key" {
+  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  m.update_or_default(Id(1), 0, v => {
+    m.remove(Id(1))
+    m.set(Id(1), 5)
+    v + 10
+  })
+  debug_inspect(
+    m.to_array().map(kv => (kv.0.0, kv.1)),
+    content=(
+      #|[(2, 2), (1, 11)]
     ),
   )
 }

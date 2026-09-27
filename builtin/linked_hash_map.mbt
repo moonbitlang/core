@@ -345,6 +345,10 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
 
 ///|
 /// Returns the value for the given key, or sets and returns a default value if the key does not exist.
+///
+/// `default` may read or write `self` (as a recursive memoized function
+/// does). Its result is stored under `key` once it returns, replacing any
+/// value that `default` itself stored under `key`.
 pub fn[K : Hash + Eq, V] Map::get_or_init(
   self : Map[K, V],
   key : K,
@@ -352,43 +356,20 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 ) -> V {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
-                                               self.capacity_mask {
-    match self.entries.unsafe_get(idx) {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          return entry.value
-        }
-        if psl > entry.psl {
-          let new_value = default()
-          break (idx, psl, new_value, Some(entry))
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
-      }
-      None => {
-        let new_value = default()
-        break (idx, psl, new_value, None)
-      }
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
+    if entry.hash == hash && entry.key == key {
+      return entry.value
     }
+    if i > entry.psl {
+      break
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
-  if self.size >= self.grow_at {
-    // Slow path, we need to resize
-    self.grow()
-    self.set_with_hash(key, new_value, hash)
-  } else {
-    if push_away is Some(entry) {
-      self.push_away(idx, entry)
-    }
-    let entry = {
-      prev: self.tail,
-      next: None,
-      psl,
-      hash,
-      key,
-      value: new_value,
-    }
-    self.add_entry_to_tail(idx, entry)
-  }
+  // `default` may write to this map, which invalidates any slot found by the
+  // probe above, so insert with a fresh probe.
+  let new_value = default()
+  self.set_with_hash(key, new_value, hash)
   new_value
 }
 
@@ -411,6 +392,9 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 /// Note: `f` is *not* applied to `default` on first insertion — `default` is
 /// the value stored when the key is absent. This mirrors Java's `Map.merge`
 /// and Rust's `Entry::and_modify(f).or_insert(default)`.
+///
+/// `f` may read or write `self`. Its result is stored under `key` once it
+/// returns, even if `f` removed `key`.
 pub fn[K : Hash + Eq, V] Map::update_or_default(
   self : Map[K, V],
   key : K,
@@ -423,7 +407,17 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
     match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
-          entry.value = f(entry.value)
+          let new_value = f(entry.value)
+          // `f` may have written to this map. `entry` is still live if it
+          // still sits in slot `idx` (re-masked, as capacity may have grown);
+          // otherwise store the result with a fresh probe.
+          // `Entry` has mutable fields, so `physical_equal` is object identity.
+          if self.entries.unsafe_get(idx & self.capacity_mask) is Some(current) &&
+            physical_equal(current, entry) {
+            entry.value = new_value
+          } else {
+            self.set_with_hash(key, new_value, hash)
+          }
           return
         }
         if psl > entry.psl {
@@ -1213,6 +1207,11 @@ fn[K, V] Map::add_unique_with_hash(
 /// * If the key doesn't exist and `f` returns `Some(new_value)`, a new pair is inserted.
 /// * If the key doesn't exist and `f` returns `None`, no operation is performed.
 ///
+/// `f` may read or write `self`. Its result is applied to the map as it stands
+/// once `f` returns: `Some(new_value)` stores `new_value` under `key`,
+/// replacing any value `f` itself stored there, and `None` removes `key` if it
+/// existed when `f` was called.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1264,52 +1263,41 @@ pub fn[K : Hash + Eq, V] Map::update(
 ) -> Unit {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
-                                               self.capacity_mask {
-    match self.entries.unsafe_get(idx) {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          // Found the entry, update its value
-          if f(Some(entry.value)) is Some(new_value) {
-            entry.value = new_value
-          } else {
-            // Remove the entry since the new value is None
-            self.remove_entry(entry)
-            self.shift_back(idx)
-            self.size -= 1
-          }
-          return
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
+    if entry.hash == hash && entry.key == key {
+      let result = f(Some(entry.value))
+      // `f` may have written to this map. If `entry` still sits in slot `idx`
+      // (re-masked, as capacity may have grown), it is live and `idx` is its
+      // current slot; otherwise apply the result with a fresh probe.
+      // `Entry` has mutable fields, so `physical_equal` is object identity.
+      let idx = idx & self.capacity_mask
+      if self.entries.unsafe_get(idx) is Some(current) &&
+        physical_equal(current, entry) {
+        if result is Some(new_value) {
+          entry.value = new_value
+        } else {
+          // Remove the entry since the new value is None
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
         }
-        if psl > entry.psl {
-          guard f(None) is Some(new_value) else { return }
-          break (idx, psl, new_value, Some(entry))
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
+      } else if result is Some(new_value) {
+        self.set_with_hash(key, new_value, hash)
+      } else {
+        self.remove_with_hash(key, hash)
       }
-      None => {
-        guard f(None) is Some(new_value) else { return }
-        break (idx, psl, new_value, None)
-      }
+      return
     }
+    if i > entry.psl {
+      break
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
-  if self.size >= self.grow_at {
-    // Slow path, we need to resize
-    self.grow()
-    self.set(key, new_value)
-  } else {
-    if push_away is Some(entry) {
-      self.push_away(idx, entry)
-    }
-    let entry = {
-      prev: self.tail,
-      next: None,
-      psl,
-      hash,
-      key,
-      value: new_value,
-    }
-    self.add_entry_to_tail(idx, entry)
-  }
+  // `f` may write to this map, which invalidates any slot found by the probe
+  // above, so insert with a fresh probe.
+  guard f(None) is Some(new_value) else { return }
+  self.set_with_hash(key, new_value, hash)
 }
 
 // Special handling for Views as accessors
