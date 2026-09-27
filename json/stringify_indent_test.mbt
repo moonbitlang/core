@@ -101,3 +101,27 @@ test "stringify of a scalar ignores a huge indent" {
   inspect(Json::number(1.0).stringify(indent=1000000000), content="1")
   inspect((Json::array([]) : Json).stringify(indent=1000000000), content="[]")
 }
+
+///|
+/// An object whose members are all dropped by the replacer is empty in the
+/// output.
+test "stringify with indent of an object emptied by the replacer" {
+  let r = @json.Replacer::exclude(["password"])
+  let nested : Json = { "user": { "password": "x" }, "n": 1 }
+  // BUG: should be "{\n  \"user\": {},\n  \"n\": 1\n}", like
+  // `nested.transform(r).stringify(indent=2)`.
+  debug_inspect(
+    nested.stringify(indent=2, replacer=r),
+    content=(
+      #|"{\n  \"user\": {\n    \n  },\n  \"n\": 1\n}"
+    ),
+  )
+  let top : Json = { "password": "x" }
+  // BUG: should be "{}".
+  debug_inspect(
+    top.stringify(indent=2, replacer=r),
+    content=(
+      #|"{\n  \n}"
+    ),
+  )
+}
