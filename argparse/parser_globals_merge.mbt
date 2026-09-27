@@ -134,6 +134,11 @@ fn merge_global_flag_from_child(
         // `--no-<flag>` after a subcommand should reset an earlier argv count.
         parent.counts[name] = 0
         parent.flags[name] = false
+      } else if child_count == 0 {
+        // The child only holds the presence marker seeded from this parent
+        // and saw no occurrence of its own: keep the parent's state, which
+        // may itself be a marker waiting for an ancestor's count.
+        ()
       } else {
         let total = parent_count + child_count
         parent.counts[name] = total
