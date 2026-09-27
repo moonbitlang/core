@@ -210,9 +210,11 @@ fn StringView::escape_to(
 // unescaped runs are found with `find_escape_code_unit`, eight UTF-16 code
 // units at a time for longer runs.
 //
-// Every run boundary is either an end of the view or next to an escaped
-// ASCII code unit, so the scalar loop's `self[seg:i]` never snaps a boundary
-// and the raw `make_view` below yields the same run.
+// This relies on `String`/`StringView` being well-formed UTF-16 (see
+// `StringView::make_view`). Every run boundary is either an end of the view or
+// next to an escaped code unit, which is ASCII, so no boundary splits a
+// surrogate pair: the scalar loop's `self[seg:i]` never snaps a boundary, and
+// the unchecked `make_view` below yields the same well-formed run.
 #cfg(any(target="native", target="wasm"))
 fn StringView::escape_to(
   self : StringView,

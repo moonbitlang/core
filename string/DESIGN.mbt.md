@@ -6,6 +6,17 @@
   characters outside the Basic Multilingual Plane (such as emojis) are
   represented using surrogate pairs - two 16-bit code units.
 
+* **Well-formedness**: every `String` and `StringView` must be well-formed
+  UTF-16: each surrogate is part of a pair, and no view starts or ends between
+  the two halves of a pair. Library code may rely on this contract without
+  re-checking it; for example, `escape` copies unescaped runs without
+  re-validating their boundaries. The checked APIs (`exact_view`, `get_view`,
+  the clamping `s[i:j]`) enforce it. Unchecked APIs leave it to the caller:
+  `view` takes raw code-unit offsets and does not check surrogate boundaries,
+  and `unsafe_to_char` must not be given a surrogate code point, so a
+  supplementary character has to be written as one `Char`, never as two
+  halves. An ill-formed string or view is outside the contract.
+
 * **Char vs Charcode**: MoonBit distinguishes between:
   - `Charcode`: A UTF-16 code unit (type `UInt16`)
   - `Char`: A Unicode character (type `Char`)
@@ -59,14 +70,16 @@ test "unsafe vs safe" {
 ```
 
 * **Validity**: Strings store UTF-16 code units. `exact_view` validates bounds and
-  surrogate boundaries, while `clamped_view` trims split pairs inward. Creating
-  invalid strings is possible (e.g., `"🍎".unsafe_substring(start=1, end=2)`
-  starts at the second half of a surrogate pair).
-  When displaying invalid characters, a replacement character � will be shown.
+  surrogate boundaries, while `clamped_view` trims split pairs inward. Unsafe
+  APIs can still build an ill-formed string (e.g.,
+  `"🍎".unsafe_substring(start=1, end=2)` starts at the second half of a
+  surrogate pair); that breaks the well-formedness contract above, and the
+  library's behavior on such strings is unspecified.
 
 * **View**: A `StringView` represents a window into a string. Slice syntax and
-  `exact_view` preserve character boundaries, while the deprecated `view` method
-  permits raw UTF-16 boundaries. Views are
+  `exact_view` preserve character boundaries, while the `view` method takes raw
+  UTF-16 offsets without checking them, so its caller must not split a
+  surrogate pair. Views are
   designed to be more performant than creating new String instances when working
   with substrings.
 

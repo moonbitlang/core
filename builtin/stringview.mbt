@@ -25,6 +25,14 @@ fn StringView::start(self : StringView) -> Int = "%stringview.start"
 fn StringView::end(self : StringView) -> Int = "%stringview.end"
 
 ///|
+/// Builds the view `str[start:end]` without any checks.
+///
+/// Every `String` and `StringView` must be well-formed UTF-16: each surrogate
+/// is part of a pair, and no view starts or ends inside one. The caller must
+/// ensure `0 <= start <= end <= str.length()` and that neither `start` nor
+/// `end` falls between the two halves of a surrogate pair. For a well-formed
+/// `str`, a boundary at an end of a well-formed view, or next to a
+/// non-surrogate code unit, always qualifies.
 fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "%stringview.make"
 
 ///|
@@ -677,8 +685,7 @@ pub fn StringView::get_view(
 ///
 /// Intended for truncation where the exact cut point does not matter, such
 /// as short summaries: the result is at most one character shorter than the
-/// requested range on each side. Unpaired surrogates already present in the
-/// input are treated as boundaries and pass through unchanged.
+/// requested range on each side.
 ///
 /// Also available as `s[start:end]`, with UTF-16 code-unit offsets. Negative
 /// offsets clamp to zero. See `String::exact_view` for the aborting variant and
@@ -788,8 +795,7 @@ pub fn StringView::clamped_view(
 ///
 /// Total, O(1), and lossless: `prefix + suffix == self` always holds —
 /// unlike composing two `clamped_view` calls, which would drop a character
-/// straddling the cut from both halves. Unpaired surrogates are treated as
-/// boundaries and pass through unchanged.
+/// straddling the cut from both halves.
 ///
 /// # Example
 ///
@@ -1039,8 +1045,10 @@ pub impl Add for StringView with fn add(self, other) {
 /// Creates a view using raw UTF-16 code-unit offsets relative to this view.
 ///
 /// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
-/// Omitted bounds default to the start and end of this view. Surrogate pairs
-/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+/// Omitted bounds default to the start and end of this view. Surrogate
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries.
 // The compiler generates calls to `view` for lexmatch/lexscan. Keep this
 // method without deprecation until compiler lowering changes.
 pub fn StringView::view(
@@ -1065,8 +1073,10 @@ pub fn StringView::view(
 /// Creates a view using raw UTF-16 code-unit offsets.
 ///
 /// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
-/// Omitted bounds default to the start and end of this string. Surrogate pairs
-/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+/// Omitted bounds default to the start and end of this string. Surrogate
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries.
 // The compiler generates calls to `view` for lexmatch/lexscan. Keep this
 // method without deprecation until compiler lowering changes.
 pub fn String::view(
