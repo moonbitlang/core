@@ -28,9 +28,9 @@
 ///
 /// ```mbt check
 /// test {
-///   inspect((2.3 : Float).round(), content="2")
-///   inspect((2.5 : Float).round(), content="3")
-///   inspect((-2.5 : Float).round(), content="-2")
+///   inspect(Float(2.3).round(), content="2")
+///   inspect(Float(2.5).round(), content="3")
+///   inspect(Float(-2.5).round(), content="-2")
 /// }
 /// ```
 #as_free_fn

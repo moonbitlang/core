@@ -182,7 +182,7 @@ pub fn expm1f(x : Float) -> Float {
       return -1.0
     }
     if hx > 0x42b17217 {
-      x *= (0x1.0p127 : Float)
+      x *= Float(0x1.0p127)
       return x
     }
   }
@@ -222,11 +222,11 @@ pub fn expm1f(x : Float) -> Float {
   }
 
   // x is now in primary range
-  let hfx = (0.5 : Float) * x
+  let hfx = Float(0.5) * x
   let hxs = x * hfx
-  let r1 = (1.0 : Float) + hxs * (q1 + hxs * q2)
-  let t = (3.0 : Float) - r1 * hfx
-  let mut e = hxs * ((r1 - t) / ((6.0 : Float) - x * t))
+  let r1 = Float(1.0) + hxs * (q1 + hxs * q2)
+  let t = Float(3.0) - r1 * hfx
+  let mut e = hxs * ((r1 - t) / (Float(6.0) - x * t))
   if k == 0 {
     // c is 0
     return x - (x * e - hxs)
@@ -235,20 +235,20 @@ pub fn expm1f(x : Float) -> Float {
   e -= hxs
   // exp(x) ~ 2^k (x_reduced - e + 1)
   if k == -1 {
-    return (0.5 : Float) * (x - e) - 0.5
+    return Float(0.5) * (x - e) - 0.5
   }
   if k == 1 {
     if x < -0.25 {
-      return -(2.0 : Float) * (e - (x + 0.5))
+      return -Float(2.0) * (e - (x + 0.5))
     }
-    return (1.0 : Float) + (2.0 : Float) * (x - e)
+    return Float(1.0) + Float(2.0) * (x - e)
   }
   let twopk = Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
   if !(k is (0..=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
     if k == 128 {
-      y = y * 2.0 * (0x1.0p127 : Float)
+      y = y * 2.0 * Float(0x1.0p127)
     } else {
       y *= twopk
     }
@@ -256,7 +256,7 @@ pub fn expm1f(x : Float) -> Float {
   }
   let uf = Float::reinterpret_from_int((0x7f - k) << 23) // 2^-k
   if k < 23 {
-    (x - e + ((1.0 : Float) - uf)) * twopk
+    (x - e + (Float(1.0) - uf)) * twopk
   } else {
     (x - (e + uf) + 1.0) * twopk
   }

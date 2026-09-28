@@ -137,8 +137,8 @@ test "conversions" {
   inspect(Float::from_int64(100L), content="100")
   inspect(Float::from_uint(42U), content="42")
   inspect(Float::from_byte(b'\x41'), content="65")
-  inspect((3.14 : Float).to_double(), content="3.140000104904175")
-  inspect((3.14 : Float).to_int(), content="3")
+  inspect(Float(3.14).to_double(), content="3.140000104904175")
+  inspect(Float(3.14).to_int(), content="3")
 }
 ```
 

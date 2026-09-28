@@ -176,7 +176,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   }
   if iy == 0x3f800000 {
     // y is +-1
-    return if hy >= 0 { x } else { (1.0 : Float) / x }
+    return if hy >= 0 { x } else { Float(1.0) / x }
   }
   if hy == 0x40000000 {
     // y is 2
@@ -195,7 +195,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     z = ax
     if hy < 0 {
       // z = (1/|x|)
-      z = (1.0 : Float) / z
+      z = Float(1.0) / z
     }
     if hx < 0 {
       if ((ix - 0x3f800000) | yisint) == 0 {
@@ -232,7 +232,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // now |1-x| is tiny <= 2**-20, suffice to compute
     // log(x) by x-x^2/2+x^3/3-x^4/4
     t = ax - 1.0 // t has 20 trailing zeros
-    w = t * t * ((0.5 : Float) - t * ((0.333333333333 : Float) - t * 0.25))
+    w = t * t * (Float(0.5) - t * (Float(0.333333333333) - t * 0.25))
     u = ivln2_h * t // IVLN2_H has 16 sig. bits
     v = t * ivln2_l - w * ivln2
     t1 = u + v
@@ -271,7 +271,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
 
     // compute s = s_h+s_l = (x-1)/(x+1) or (x-1.5)/(x+1.5)
     u = ax - bp[k]
-    v = (1.0 : Float) / (ax + bp[k])
+    v = Float(1.0) / (ax + bp[k])
     s = u * v
     s_h = s
     i_s = s_h.reinterpret_as_int()
@@ -288,7 +288,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     r = s2 * s2 * (l1 + s2 * (l2 + s2 * (l3 + s2 * (l4 + s2 * (l5 + s2 * l6)))))
     r += s_l * (s_h + s)
     s2 = s_h * s_h
-    t_h = (3.0 : Float) + s2 + r
+    t_h = Float(3.0) + s2 + r
     i_s = t_h.reinterpret_as_int()
     t_h = Float::reinterpret_from_int(i_s & 0xfffff000)
     t_l = r - (t_h - 3.0 - s2)
@@ -363,7 +363,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   t = z * z
   t1 = z - t * (p1 + t * (p2 + t * (p3 + t * (p4 + t * p5))))
   r = z * t1 / (t1 - 2.0) - (w + z * w)
-  z = (1.0 : Float) - (r - z)
+  z = Float(1.0) - (r - z)
   j = z.reinterpret_as_int()
   j += n << 23
   if j >> 23 <= 0 {

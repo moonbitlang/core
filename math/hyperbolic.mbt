@@ -69,7 +69,7 @@ pub fn sinhf(x : Float) -> Float {
       if w < 0x3f800000U - (12U << 23) {
         return x
       }
-      return h * ((2.0 : Float) * t - t * t / (t + 1.0))
+      return h * (Float(2.0) * t - t * t / (t + 1.0))
     }
     return h * (t + t / (t + 1.0))
   }
@@ -120,13 +120,13 @@ pub fn coshf(x : Float) -> Float {
       return 1.0
     }
     let t = expm1f(x)
-    return (1.0 : Float) + t * t / ((2.0 : Float) * (t + 1.0))
+    return Float(1.0) + t * t / (Float(2.0) * (t + 1.0))
   }
 
   // |x| < log(FLT_MAX)
   if w < 0x42b17217 {
     let t = expf(x)
-    return (t + (1.0 : Float) / t) * 0.5
+    return (t + Float(1.0) / t) * 0.5
   }
 
   // |x| > log(FLT_MAX) or nan
@@ -173,10 +173,10 @@ pub fn tanhf(x : Float) -> Float {
     // |x| > log(3)/2 ~= 0.5493 or nan
     if w > 0x41200000 {
       // |x| > 10
-      (1.0 : Float) + (0.0 : Float) / x
+      Float(1.0) + Float(0.0) / x
     } else {
       let t = expm1f(x * 2.0)
-      (1.0 : Float) - (2.0 : Float) / (t + 2.0)
+      Float(1.0) - Float(2.0) / (t + 2.0)
     }
   } else if w > 0x3e82c578 {
     // |x| > log(5/3)/2 ~= 0.2554
@@ -236,7 +236,7 @@ pub fn asinhf(x : Float) -> Float {
     lnf(x) + ln2
   } else if i >= 0x3f800000U + (1U << 23) {
     // |x| >= 2
-    lnf(x * 2.0 + (1.0 : Float) / ((x * x + 1.0).sqrt() + x))
+    lnf(x * 2.0 + Float(1.0) / ((x * x + 1.0).sqrt() + x))
   } else if i >= 0x3f800000U - (12U << 23) {
     // |x| >= 0x1p-12, up to 1.6ulp error in [0.125,0.5]
     ln_1pf(x + x * x / ((x * x + 1.0).sqrt() + 1.0))
@@ -290,12 +290,12 @@ pub fn acoshf(x : Float) -> Float {
     // |x| < 2, invalid if x < 1 or nan
     // up to 2ulp error in [1,1.125]
     return ln_1pf(
-      x - 1.0 + ((x - 1.0) * (x - 1.0) + (2.0 : Float) * (x - 1.0)).sqrt(),
+      x - 1.0 + ((x - 1.0) * (x - 1.0) + Float(2.0) * (x - 1.0)).sqrt(),
     )
   }
   if a < 0x3f800000U + (12U << 23) {
     // |x| < 0x1p12
-    return lnf(x * 2.0 - (1.0 : Float) / (x + (x * x - 1.0).sqrt()))
+    return lnf(x * 2.0 - Float(1.0) / (x + (x * x - 1.0).sqrt()))
   }
   // x >= 0x1p12
   return lnf(x) + ln2
@@ -342,11 +342,11 @@ pub fn atanhf(x : Float) -> Float {
       x
     } else {
       // |x| < 0.5, up to 1.7ulp error
-      ln_1pf(x * 2.0 + x * 2.0 * x / ((1.0 : Float) - x)) * 0.5
+      ln_1pf(x * 2.0 + x * 2.0 * x / (Float(1.0) - x)) * 0.5
     }
   } else {
     // avoid overflow
-    ln_1pf(x / ((1.0 : Float) - x) * 2.0) * 0.5
+    ln_1pf(x / (Float(1.0) - x) * 2.0) * 0.5
   }
   if sign {
     -x

@@ -165,9 +165,9 @@ pub impl Step for UInt64 with fn step_one() {
 
 ///|
 pub impl Step for Float with fn direction(self) {
-  if self > (0.0 : Float) {
+  if self > Float(0.0) {
     1
-  } else if self < (0.0 : Float) {
+  } else if self < Float(0.0) {
     -1
   } else {
     0
@@ -176,7 +176,7 @@ pub impl Step for Float with fn direction(self) {
 
 ///|
 pub impl Step for Float with fn step_one() {
-  (1.0 : Float)
+  Float(1.0)
 }
 
 ///|

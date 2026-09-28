@@ -57,7 +57,7 @@ pub let infinity : Float = Float::reinterpret_from_int(0x7F800000)
 /// ```mbt check
 /// test {
 ///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect(@float.neg_infinity < (-1.0 : Float), content="true")
+///   inspect(@float.neg_infinity < Float(-1.0), content="true")
 /// }
 /// ```
 pub let neg_infinity : Float = Float::reinterpret_from_int(0xFF800000)
@@ -118,10 +118,10 @@ pub let min_positive : Float = Float::reinterpret_from_int(0x00800000)
 ///
 /// ```mbt check
 /// test {
-///   inspect((1.5 : Float).abs(), content="1.5")
-///   inspect((-1.5 : Float).abs(), content="1.5")
-///   inspect((0.0 : Float).abs(), content="0")
-///   inspect((-0.0 : Float).abs(), content="0")
+///   inspect(Float(1.5).abs(), content="1.5")
+///   inspect(Float(-1.5).abs(), content="1.5")
+///   inspect(Float(0.0).abs(), content="0")
+///   inspect(Float(-0.0).abs(), content="0")
 ///   inspect(@float.not_a_number.abs().is_nan(), content="true")
 /// }
 /// ```

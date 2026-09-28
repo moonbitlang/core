@@ -135,7 +135,7 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
       leaf(x.to_string(), needs_parens~)
     }
     FloatLit(x) => {
-      let needs_parens : Bool = (1.0 : Float) / x < (0.0 : Float)
+      let needs_parens : Bool = Float(1.0) / x < Float(0.0)
       leaf(x.to_string(), needs_parens~)
     }
     BoolLit(x) => leaf(x.to_string())

@@ -419,7 +419,7 @@ test "shrink double: small value" {
 
 ///|
 test "shrink float: basic" {
-  let s = @shrink.Shrink::shrink((3.14 : Float)).collect()
+  let s = @shrink.Shrink::shrink(Float(3.14)).collect()
   assert_true(s.contains(3.0))
   assert_true(s.contains(0.0))
 }

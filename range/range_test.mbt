@@ -232,7 +232,7 @@ test "iter Double Inf step yields one and stops" {
 ///|
 test "iter Float" {
   debug_inspect(
-    @range.iter(from=(0.0 : Float), to=1.0, step=0.25).to_array(),
+    @range.iter(from=Float(0.0), to=1.0, step=0.25).to_array(),
     content=(
       #|[0, 0.25, 0.5, 0.75]
     ),
