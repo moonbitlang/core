@@ -71,7 +71,7 @@ test "UInt16::from_int64" {
   inspect(Int::to_uint16(32768), content="32768") // Half of max value
   inspect(Int::to_uint16(49152), content="49152") // 3/4 of max value
   inspect(Int::to_uint16(16384), content="16384") // 1/4 of max value
-  inspect((65535 : UInt16) + 1, content="0") // Max value + 1 wraps to 0
+  inspect(UInt16(65535) + 1, content="0") // Max value + 1 wraps to 0
 }
 
 ///|
@@ -174,14 +174,14 @@ test "UInt16::compare" {
 
 ///|
 test "UInt16 relational operators" {
-  inspect((0 : UInt16) < 65535, content="true")
-  inspect((65535 : UInt16) < 0, content="false")
-  inspect((65535 : UInt16) <= 65535, content="true")
-  inspect((65535 : UInt16) <= 32768, content="false")
-  inspect((65535 : UInt16) > 32768, content="true")
-  inspect((0 : UInt16) > 65535, content="false")
-  inspect((32768 : UInt16) >= 32767, content="true")
-  inspect((32767 : UInt16) >= 32768, content="false")
+  inspect(UInt16(0) < 65535, content="true")
+  inspect(UInt16(65535) < 0, content="false")
+  inspect(UInt16(65535) <= 65535, content="true")
+  inspect(UInt16(65535) <= 32768, content="false")
+  inspect(UInt16(65535) > 32768, content="true")
+  inspect(UInt16(0) > 65535, content="false")
+  inspect(UInt16(32768) >= 32767, content="true")
+  inspect(UInt16(32767) >= 32768, content="false")
 }
 
 ///|
@@ -199,12 +199,12 @@ test "UInt16::hash" {
 
 ///|
 test "UInt16::equal" {
-  inspect((1 : UInt16) == 2, content="false")
-  inspect((2 : UInt16) == 1, content="false")
-  inspect((1 : UInt16) == 1, content="true")
-  inspect((0 : UInt16) == 1, content="false")
-  inspect((1 : UInt16) == 0, content="false")
-  inspect((0 : UInt16) == 0, content="true")
+  inspect(UInt16(1) == 2, content="false")
+  inspect(UInt16(2) == 1, content="false")
+  inspect(UInt16(1) == 1, content="true")
+  inspect(UInt16(0) == 1, content="false")
+  inspect(UInt16(1) == 0, content="false")
+  inspect(UInt16(0) == 0, content="true")
 }
 
 ///|
@@ -353,10 +353,10 @@ test "UInt16::mod" {
 
 ///|
 test "UInt16::to_json" {
-  @debug.debug_inspect(Json((0 : UInt16)), content="Number(0)")
-  @debug.debug_inspect(Json((1 : UInt16)), content="Number(1)")
-  @debug.debug_inspect(Json((66 : UInt16)), content="Number(66)")
-  @debug.debug_inspect(Json((65535 : UInt16)), content="Number(65535)")
+  @debug.debug_inspect(Json(UInt16(0)), content="Number(0)")
+  @debug.debug_inspect(Json(UInt16(1)), content="Number(1)")
+  @debug.debug_inspect(Json(UInt16(66)), content="Number(66)")
+  @debug.debug_inspect(Json(UInt16(65535)), content="Number(65535)")
 }
 
 ///|
@@ -403,10 +403,10 @@ test "Int16::reinterpret_from_uint16" {
 
 ///|
 test "UInt16 char literal overloading" {
-  inspect(('A' : UInt16).to_int(), content="65")
-  inspect(('a' : UInt16).to_int(), content="97")
-  inspect(('0' : UInt16).to_int(), content="48")
-  inspect((' ' : UInt16).to_int(), content="32")
+  inspect(UInt16('A').to_int(), content="65")
+  inspect(UInt16('a').to_int(), content="97")
+  inspect(UInt16('0').to_int(), content="48")
+  inspect(UInt16(' ').to_int(), content="32")
 }
 
 ///|

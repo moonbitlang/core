@@ -91,7 +91,7 @@ test "shrink minimum int64 without overflowing" {
 ///|
 test "shrink int16" {
   debug_inspect(
-    @shrink.Shrink::shrink((100 : Int16)).collect(),
+    @shrink.Shrink::shrink(Int16(100)).collect(),
     content=(
       #|[50, 75, 88, 94, 97, 99, 0]
     ),
@@ -101,7 +101,7 @@ test "shrink int16" {
 ///|
 test "shrink uint16" {
   debug_inspect(
-    @shrink.Shrink::shrink((100 : UInt16)).collect(),
+    @shrink.Shrink::shrink(UInt16(100)).collect(),
     content=(
       #|[50, 75, 88, 94, 97, 99, 0]
     ),
@@ -209,7 +209,7 @@ test "shrink uint" {
 ///|
 test "shrink uint64" {
   debug_inspect(
-    @shrink.Shrink::shrink((42000 : UInt64)).collect(),
+    @shrink.Shrink::shrink(UInt64(42000)).collect(),
     content=(
       #|[
       #|  21000,

@@ -85,7 +85,7 @@ fn decimal_boundary_bits(
     .next_uint(limit=decimal_power_count(bits, signed))
     .reinterpret_as_int()
   let magnitude = boundary_delta(
-    (0 : Int).until(exponent).fold(init=1UL, (power, _) => power * 10UL),
+    Int(0).until(exponent).fold(init=1UL, (power, _) => power * 10UL),
     rs,
   )
   apply_random_sign(magnitude, signed, rs)

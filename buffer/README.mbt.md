@@ -96,8 +96,8 @@ test {
 test {
   // 16-bit signed
   let buf = @buffer.Buffer()
-  buf.write_int16_be((0x0102 : Int16))
-  buf.write_int16_le((0x0102 : Int16))
+  buf.write_int16_be(Int16(0x0102))
+  buf.write_int16_le(Int16(0x0102))
   inspect(
     buf.to_bytes(),
     content=(

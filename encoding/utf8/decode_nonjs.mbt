@@ -272,7 +272,7 @@ pub fn decode(
   let src_length = bytes.length()
   let dst = FixedArray::make(
     utf16_len_from_utf8(input, src_offset, src_length),
-    (0 : UInt16),
+    UInt16(0),
   )
   match utf8_decode_into_utf16(input, src_offset, src_length, dst, 0) {
     written if written >= 0 => unsafe_fixedarray_uint16_to_string(dst)
@@ -292,7 +292,7 @@ pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
   let src_length = bytes.length()
   // Valid UTF-8 produces at most one UTF-16 code unit per input byte. Each
   // malformed maximal subpart consumes at least one byte and emits one U+FFFD.
-  let dst = FixedArray::make(src_length, (0 : UInt16))
+  let dst = FixedArray::make(src_length, UInt16(0))
   let written = match
     utf8_decode_into_utf16(input, src_offset, src_length, dst, 0) {
     ok if ok >= 0 => ok
@@ -301,7 +301,7 @@ pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
   if written == src_length {
     return unsafe_fixedarray_uint16_to_string(dst)
   }
-  let result = FixedArray::make(written, (0 : UInt16))
+  let result = FixedArray::make(written, UInt16(0))
   result.unsafe_blit(0, dst, 0, written)
   unsafe_fixedarray_uint16_to_string(result)
 }

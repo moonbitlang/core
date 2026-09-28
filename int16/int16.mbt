@@ -136,8 +136,8 @@ pub impl BitXOr for Int16 with fn lxor(self : Int16, that : Int16) -> Int16 {
 ///
 /// ```mbt check
 /// test {
-///   inspect((0 : Int16).lnot(), content="-1")
-///   inspect((-1 : Int16).lnot(), content="0")
+///   inspect(Int16(0).lnot(), content="-1")
+///   inspect(Int16(-1).lnot(), content="0")
 /// }
 /// ```
 pub fn Int16::lnot(self : Int16) -> Int16 {
@@ -299,9 +299,9 @@ pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 ///
 /// ```mbt check
 /// test {
-///   let n = (42 : Int16)
+///   let n = Int16(42)
 ///   inspect(n.to_int(), content="42")
-///   let neg = (-42 : Int16)
+///   let neg = Int16(-42)
 ///   inspect(neg.to_int(), content="-42")
 /// }
 /// ```

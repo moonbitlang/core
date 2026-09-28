@@ -282,9 +282,9 @@ pub fn[T : Eq + Debug] assert_eq(
 
 ///|
 test "core builtin Debug implementations" {
-  debug_inspect((1 : Int16), content="1")
-  debug_inspect((1 : UInt16), content="1")
-  debug_inspect((1 : UInt64), content="1")
+  debug_inspect(Int16(1), content="1")
+  debug_inspect(UInt16(1), content="1")
+  debug_inspect(UInt64(1), content="1")
   debug_inspect(Float(1.0), content="1")
   let b : Bytes = b"ab"
   debug_inspect(b, content="<Bytes: [0x61, 0x62]>")

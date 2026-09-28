@@ -242,19 +242,19 @@ test "iter Float" {
 ///|
 test "iter Int16" {
   debug_inspect(
-    @range.iter(from=(0 : Int16), to=(5 : Int16)).to_array(),
+    @range.iter(from=Int16(0), to=Int16(5)).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=(0 : Int16), to=(10 : Int16), step=(3 : Int16)).to_array(),
+    @range.iter(from=Int16(0), to=Int16(10), step=Int16(3)).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=(10 : Int16), to=(0 : Int16), step=(-1 : Int16)).to_array(),
+    @range.iter(from=Int16(10), to=Int16(0), step=Int16(-1)).to_array(),
     content=(
       #|[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     ),
@@ -264,13 +264,13 @@ test "iter Int16" {
 ///|
 test "iter UInt16" {
   debug_inspect(
-    @range.iter(from=(0 : UInt16), to=(5 : UInt16)).to_array(),
+    @range.iter(from=UInt16(0), to=UInt16(5)).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=(0 : UInt16), to=(10 : UInt16), step=(3 : UInt16)).to_array(),
+    @range.iter(from=UInt16(0), to=UInt16(10), step=UInt16(3)).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
@@ -280,13 +280,13 @@ test "iter UInt16" {
 ///|
 test "iter Byte" {
   debug_inspect(
-    @range.iter(from=(0 : Byte), to=(5 : Byte)).to_array(),
+    @range.iter(from=Byte(0), to=Byte(5)).to_array(),
     content=(
       #|[0x00, 0x01, 0x02, 0x03, 0x04]
     ),
   )
   debug_inspect(
-    @range.iter(from=(250 : Byte), to=(255 : Byte), inclusive=true).to_array(),
+    @range.iter(from=Byte(250), to=Byte(255), inclusive=true).to_array(),
     content=(
       #|[0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff]
     ),
@@ -442,7 +442,7 @@ test "iter via for-comprehension into array" {
   )
   debug_inspect(
     [
-      for c in @range.iter(from=(0 : Byte), to=(4 : Byte)) => c
+      for c in @range.iter(from=Byte(0), to=Byte(4)) => c
     ],
     content="[0x00, 0x01, 0x02, 0x03]",
   )

@@ -30,9 +30,9 @@ test "int64 bit ops and counts" {
 test "int64 conversions and defaults" {
   let value : Int64 = 123L
   @test.assert_eq(value.to_int(), 123)
-  @test.assert_eq(value.to_byte(), (123 : Byte))
-  @test.assert_eq(value.to_uint16(), (123 : UInt16))
-  @test.assert_eq((65535 : UInt16).to_int64(), 65535L)
+  @test.assert_eq(value.to_byte(), Byte(123))
+  @test.assert_eq(value.to_uint16(), UInt16(123))
+  @test.assert_eq(UInt16(65535).to_int64(), 65535L)
   @test.assert_eq(0L, 0L)
   let u_hi : UInt64 = 0x1_0000_0000UL
   @test.assert_eq(u_hi.clz(), 31)

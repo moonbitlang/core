@@ -174,14 +174,14 @@ test "Int16::compare" {
 
 ///|
 test "Int16 relational operators" {
-  inspect((-32768 : Int16) < 32767, content="true")
-  inspect((32767 : Int16) < -32768, content="false")
-  inspect((-1 : Int16) <= -1, content="true")
-  inspect((0 : Int16) <= -1, content="false")
-  inspect((32767 : Int16) > -32768, content="true")
-  inspect((-32768 : Int16) > 32767, content="false")
-  inspect((0 : Int16) >= -1, content="true")
-  inspect((-1 : Int16) >= 0, content="false")
+  inspect(Int16(-32768) < 32767, content="true")
+  inspect(Int16(32767) < -32768, content="false")
+  inspect(Int16(-1) <= -1, content="true")
+  inspect(Int16(0) <= -1, content="false")
+  inspect(Int16(32767) > -32768, content="true")
+  inspect(Int16(-32768) > 32767, content="false")
+  inspect(Int16(0) >= -1, content="true")
+  inspect(Int16(-1) >= 0, content="false")
 }
 
 ///|
@@ -469,77 +469,77 @@ test "Int16::to_json" {
 
 ///|
 test "Int16::reinterpret_as_uint16" {
-  inspect((-1 : Int16).reinterpret_as_uint16(), content="65535")
-  inspect((0 : Int16).reinterpret_as_uint16(), content="0")
-  inspect((1 : Int16).reinterpret_as_uint16(), content="1")
+  inspect(Int16(-1).reinterpret_as_uint16(), content="65535")
+  inspect(Int16(0).reinterpret_as_uint16(), content="0")
+  inspect(Int16(1).reinterpret_as_uint16(), content="1")
 }
 
 ///|
 test "Show for Int16" {
-  inspect((0 : Int16).to_string(), content="0")
-  inspect((32767 : Int16).to_string(), content="32767")
-  inspect((-32768 : Int16).to_string(), content="-32768")
-  inspect((-32766 : Int16), content="-32766")
+  inspect(Int16(0).to_string(), content="0")
+  inspect(Int16(32767).to_string(), content="32767")
+  inspect(Int16(-32768).to_string(), content="-32768")
+  inspect(Int16(-32766), content="-32766")
 }
 
 ///|
 test "Show for Int16 - hexadecimal (radix=16)" {
-  inspect((0 : Int16).to_string(radix=16), content="0")
-  inspect((15 : Int16).to_string(radix=16), content="f")
-  inspect((16 : Int16).to_string(radix=16), content="10")
-  inspect((255 : Int16).to_string(radix=16), content="ff")
-  inspect((256 : Int16).to_string(radix=16), content="100")
-  inspect((4095 : Int16).to_string(radix=16), content="fff")
-  inspect((32767 : Int16).to_string(radix=16), content="7fff")
-  inspect((-1 : Int16).to_string(radix=16), content="-1")
-  inspect((-255 : Int16).to_string(radix=16), content="-ff")
-  inspect((-32768 : Int16).to_string(radix=16), content="-8000")
+  inspect(Int16(0).to_string(radix=16), content="0")
+  inspect(Int16(15).to_string(radix=16), content="f")
+  inspect(Int16(16).to_string(radix=16), content="10")
+  inspect(Int16(255).to_string(radix=16), content="ff")
+  inspect(Int16(256).to_string(radix=16), content="100")
+  inspect(Int16(4095).to_string(radix=16), content="fff")
+  inspect(Int16(32767).to_string(radix=16), content="7fff")
+  inspect(Int16(-1).to_string(radix=16), content="-1")
+  inspect(Int16(-255).to_string(radix=16), content="-ff")
+  inspect(Int16(-32768).to_string(radix=16), content="-8000")
 }
 
 ///|
 test "Show for Int16 - binary (radix=2)" {
-  inspect((0 : Int16).to_string(radix=2), content="0")
-  inspect((1 : Int16).to_string(radix=2), content="1")
-  inspect((7 : Int16).to_string(radix=2), content="111")
-  inspect((255 : Int16).to_string(radix=2), content="11111111")
-  inspect((32767 : Int16).to_string(radix=2), content="111111111111111")
-  inspect((-1 : Int16).to_string(radix=2), content="-1")
-  inspect((-32768 : Int16).to_string(radix=2), content="-1000000000000000")
+  inspect(Int16(0).to_string(radix=2), content="0")
+  inspect(Int16(1).to_string(radix=2), content="1")
+  inspect(Int16(7).to_string(radix=2), content="111")
+  inspect(Int16(255).to_string(radix=2), content="11111111")
+  inspect(Int16(32767).to_string(radix=2), content="111111111111111")
+  inspect(Int16(-1).to_string(radix=2), content="-1")
+  inspect(Int16(-32768).to_string(radix=2), content="-1000000000000000")
 }
 
 ///|
 test "Show for Int16 - octal (radix=8)" {
-  inspect((0 : Int16).to_string(radix=8), content="0")
-  inspect((7 : Int16).to_string(radix=8), content="7")
-  inspect((8 : Int16).to_string(radix=8), content="10")
-  inspect((511 : Int16).to_string(radix=8), content="777")
-  inspect((32767 : Int16).to_string(radix=8), content="77777")
-  inspect((-8 : Int16).to_string(radix=8), content="-10")
-  inspect((-32768 : Int16).to_string(radix=8), content="-100000")
+  inspect(Int16(0).to_string(radix=8), content="0")
+  inspect(Int16(7).to_string(radix=8), content="7")
+  inspect(Int16(8).to_string(radix=8), content="10")
+  inspect(Int16(511).to_string(radix=8), content="777")
+  inspect(Int16(32767).to_string(radix=8), content="77777")
+  inspect(Int16(-8).to_string(radix=8), content="-10")
+  inspect(Int16(-32768).to_string(radix=8), content="-100000")
 }
 
 ///|
 test "Show for Int16 - base 36 (radix=36)" {
-  inspect((0 : Int16).to_string(radix=36), content="0")
-  inspect((35 : Int16).to_string(radix=36), content="z")
-  inspect((36 : Int16).to_string(radix=36), content="10")
-  inspect((1295 : Int16).to_string(radix=36), content="zz")
-  inspect((32767 : Int16).to_string(radix=36), content="pa7")
-  inspect((-36 : Int16).to_string(radix=36), content="-10")
-  inspect((-32768 : Int16).to_string(radix=36), content="-pa8")
+  inspect(Int16(0).to_string(radix=36), content="0")
+  inspect(Int16(35).to_string(radix=36), content="z")
+  inspect(Int16(36).to_string(radix=36), content="10")
+  inspect(Int16(1295).to_string(radix=36), content="zz")
+  inspect(Int16(32767).to_string(radix=36), content="pa7")
+  inspect(Int16(-36).to_string(radix=36), content="-10")
+  inspect(Int16(-32768).to_string(radix=36), content="-pa8")
 }
 
 ///|
 test "Int16 not_equal and hash" {
-  inspect(Eq::not_equal((1 : Int16), (2 : Int16)), content="true")
+  inspect(Eq::not_equal(Int16(1), Int16(2)), content="true")
   let hasher = Hasher(seed=0)
-  hasher.combine((42 : Int16))
+  hasher.combine(Int16(42))
   inspect(hasher.finalize() != 0, content="true")
 }
 
 ///|
 test "Int16 int64 conversions" {
-  let val : Int16 = (123 : Int16)
+  let val : Int16 = Int16(123)
   let as64 = val.to_int64()
   let back = Int16::from_int64(as64)
   inspect(back.to_int(), content="123")
