@@ -57,26 +57,3 @@ pub fn Int64::until(
 ) -> Iter[Int64] {
   until_impl(self, end, step, inclusive)
 }
-
-///|
-/// Creates an iterator that iterates over a range of Double with default step 1.0 .
-/// To grow the range downward, set the `step` parameter to a negative value.
-///
-/// # Arguments
-///
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1.0).
-/// * `inclusive` - Whether the ending value is inclusive (default false).
-///
-/// # Returns
-///
-/// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-pub fn Double::until(
-  self : Double,
-  end : Double,
-  step? : Double = 1.0,
-  inclusive? : Bool = false,
-) -> Iter[Double] {
-  until_impl(self, end, step, inclusive)
-}

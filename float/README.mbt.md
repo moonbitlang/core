@@ -164,12 +164,23 @@ test "reinterpret" {
 
 ## Range Iteration
 
+Use `@range.iter` from `moonbitlang/core/range` (`Float::until` is
+deprecated). It computes each element as `from + k * step`, so rounding error
+does not accumulate. `inclusive` includes `to` only when some element equals it
+exactly, so for decimal end points iterate over integers and scale.
+
 ```mbt check
 ///|
 test "range" {
-  let values = Float::until(0.0, 1.0, step=0.5).to_array()
-  debug_inspect(values, content="[0, 0.5]")
-  let inclusive = Float::until(0.0, 1.0, step=0.5, inclusive=true).to_array()
-  debug_inspect(inclusive, content="[0, 0.5, 1]")
+  let values = @range.iter(from=Float(0), to=1.0, step=0.5).to_array()
+  debug_inspect(values.map(Float::to_double), content="[0, 0.5]")
+  let inclusive = @range.iter(from=Float(0), to=1.0, step=0.5, inclusive=true)
+  debug_inspect(
+    inclusive.map(Float::to_double).to_array(),
+    content="[0, 0.5, 1]",
+  )
+  // each element is the Float nearest to k / 10, exactly like the literals
+  let tenths = (0).until(3, inclusive=true).map(k => Float::from_int(k) / 10.0)
+  inspect(tenths.to_array() == [0.0, 0.1, 0.2, 0.3], content="true")
 }
 ```
