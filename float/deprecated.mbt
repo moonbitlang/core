@@ -30,10 +30,10 @@
 /// an empty iterator when `step` is `0.0`.
 ///
 /// Deprecated: each element is the previous one plus `step`, so rounding
-/// error accumulates (`(0.0 : Float).until(1.0, step=0.01)` yields 101
+/// error accumulates (`Float(0.0).until(1.0, step=0.01)` yields 101
 /// elements, the last `0.9999993`). And once adding `step` no longer changes
 /// the element, it is yielded forever: a `step` below the element's precision
-/// (`(1.0e8 : Float).until(1.0e8 + 100.0)`), an infinite start, or an element
+/// (`Float(1.0e8).until(1.0e8 + 100.0)`), an infinite start, or an element
 /// that reached infinity with `inclusive` set and an infinite `end`.
 ///
 /// Use `@range.iter` (package `moonbitlang/core/range`) instead, typing the
