@@ -459,3 +459,66 @@ test "iter is lazy" {
   }
   inspect(count, content="5")
 }
+
+///|
+test "iter Double computes each element as from + k * step" {
+  // Pins current behaviour: each element is the previous one plus `step`,
+  // so rounding error accumulates. It shows up as an extra element
+  // (0.9999999999999999) and as `inclusive` never reaching `to`.
+  debug_inspect(
+    @range.iter(from=0.0, to=1.0, step=0.1).to_array(),
+    content=(
+      #|[
+      #|  0,
+      #|  0.1,
+      #|  0.2,
+      #|  0.30000000000000004,
+      #|  0.4,
+      #|  0.5,
+      #|  0.6,
+      #|  0.7,
+      #|  0.7999999999999999,
+      #|  0.8999999999999999,
+      #|  0.9999999999999999,
+      #|]
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=0.0, to=1.0, step=0.1, inclusive=true).to_array().last(),
+    content=(
+      #|Some(0.9999999999999999)
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=1.0, to=0.0, step=-0.1, inclusive=true).to_array().last(),
+    content=(
+      #|Some(1.3877787807814457e-16)
+    ),
+  )
+  // from + 3 * 0.1 is 0.30000000000000004, so an inclusive 0.3 is not hit
+  debug_inspect(
+    @range.iter(from=0.0, to=0.3, step=0.1, inclusive=true).to_array(),
+    content=(
+      #|[0, 0.1, 0.2]
+    ),
+  )
+}
+
+///|
+test "iter Float computes each element as from + k * step" {
+  debug_inspect(
+    @range.iter(from=Float(0), to=1.0, step=0.01).count(),
+    content=(
+      #|101
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=Float(0), to=1.0, step=0.01, inclusive=true)
+    .to_array()
+    .last()
+    .map(Float::to_double),
+    content=(
+      #|Some(0.9999993443489075)
+    ),
+  )
+}
