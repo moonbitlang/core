@@ -43,9 +43,9 @@ let frac_bits = 23
 ///
 /// ```mbt check
 /// test {
-///   inspect((3.7 : Float).trunc(), content="3")
-///   inspect((-3.7 : Float).trunc(), content="-3")
-///   inspect((0.2 : Float).trunc(), content="0")
+///   inspect(Float(3.7).trunc(), content="3")
+///   inspect(Float(-3.7).trunc(), content="-3")
+///   inspect(Float(0.2).trunc(), content="0")
 /// }
 /// ```
 #as_free_fn
@@ -76,9 +76,9 @@ pub fn Float::trunc(self : Float) -> Float {
 ///
 /// ```mbt check
 /// test {
-///   inspect((1.5 : Float).ceil(), content="2")
-///   inspect((1.0 : Float).ceil(), content="1")
-///   inspect((-1.5 : Float).ceil(), content="-1")
+///   inspect(Float(1.5).ceil(), content="2")
+///   inspect(Float(1.0).ceil(), content="1")
+///   inspect(Float(-1.5).ceil(), content="-1")
 /// }
 /// ```
 #as_free_fn
@@ -106,9 +106,9 @@ pub fn Float::ceil(self : Float) -> Float {
 ///
 /// ```mbt check
 /// test {
-///   inspect((1.7 : Float).floor(), content="1")
-///   inspect((-1.7 : Float).floor(), content="-2")
-///   inspect((2.0 : Float).floor(), content="2")
+///   inspect(Float(1.7).floor(), content="1")
+///   inspect(Float(-1.7).floor(), content="-2")
+///   inspect(Float(2.0).floor(), content="2")
 /// }
 /// ```
 #as_free_fn

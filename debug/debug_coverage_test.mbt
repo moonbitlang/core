@@ -54,7 +54,7 @@ test "assert_eq diff over primitives with mixed equal and differing fields" {
   // unit beside a differing field
   assert_true(reports_diff(((), 1), ((), 2)))
   // float beside a differing field
-  assert_true(reports_diff(((1.0 : Float), 1), ((1.0 : Float), 2)))
+  assert_true(reports_diff((Float(1.0), 1), (Float(1.0), 2)))
   // char beside a differing field
   assert_true(reports_diff(('a', 1), ('a', 2)))
   // equal values report no difference

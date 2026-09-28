@@ -46,7 +46,7 @@ test "to_string with radix" {
   inspect((0x15ef).to_string(radix=16), content="15ef")
   inspect((-0xabcd).to_string(radix=16), content="-abcd")
   inspect(
-    (1.0 : Float).reinterpret_as_int().to_string(radix=16),
+    Float(1.0).reinterpret_as_int().to_string(radix=16),
     content="3f800000",
   )
 
@@ -55,7 +55,7 @@ test "to_string with radix" {
   inspect(0x1AU.to_string(radix=16), content="1a")
   inspect(0xabcdU.to_string(radix=16), content="abcd")
   inspect(
-    (-2.0 : Float).reinterpret_as_uint().to_string(radix=16),
+    Float(-2.0).reinterpret_as_uint().to_string(radix=16),
     content="c0000000",
   )
   inspect((-1).reinterpret_as_uint().to_string(radix=16), content="ffffffff")

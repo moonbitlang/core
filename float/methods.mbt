@@ -136,7 +136,7 @@ pub fn Float::to_le_bytes(self : Float) -> Bytes {
 /// test {
 ///   inspect(@float.infinity.is_inf(), content="true")
 ///   inspect(@float.neg_infinity.is_inf(), content="true")
-///   inspect((1.0 : Float).is_inf(), content="false")
+///   inspect(Float(1.0).is_inf(), content="false")
 /// }
 /// ```
 pub fn Float::is_inf(self : Float) -> Bool {
@@ -157,7 +157,7 @@ pub fn Float::is_inf(self : Float) -> Bool {
 /// ```mbt check
 /// test {
 ///   inspect(@float.infinity.is_pos_inf(), content="true")
-///   inspect((1.0 : Float).is_pos_inf(), content="false")
+///   inspect(Float(1.0).is_pos_inf(), content="false")
 ///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
 /// }
 /// ```
@@ -179,7 +179,7 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 /// ```mbt check
 /// test {
 ///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect((1.0 : Float).is_neg_inf(), content="false")
+///   inspect(Float(1.0).is_neg_inf(), content="false")
 ///   inspect(@float.infinity.is_neg_inf(), content="false")
 /// }
 /// ```
@@ -201,7 +201,7 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 /// ```mbt check
 /// test {
 ///   inspect(@float.not_a_number.is_nan(), content="true")
-///   inspect((1.0 : Float).is_nan(), content="false")
+///   inspect(Float(1.0).is_nan(), content="false")
 ///   inspect(@float.infinity.is_nan(), content="false")
 /// }
 /// ```
@@ -256,9 +256,9 @@ pub fn Float::max(self : Float, other : Float) -> Float {
 ///
 /// ```mbt check
 /// test {
-///   inspect((0.5 : Float).clamp(min=0.0, max=1.0), content="0.5")
-///   inspect((-1.0 : Float).clamp(min=0.0, max=1.0), content="0")
-///   inspect((2.0 : Float).clamp(min=0.0, max=1.0), content="1")
+///   inspect(Float(0.5).clamp(min=0.0, max=1.0), content="0.5")
+///   inspect(Float(-1.0).clamp(min=0.0, max=1.0), content="0")
+///   inspect(Float(2.0).clamp(min=0.0, max=1.0), content="1")
 /// }
 /// ```
 pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
@@ -289,9 +289,9 @@ pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
 ///
 /// ```mbt check
 /// test {
-///   inspect((0.0 : Float).lerp(target=10.0, t=0.25), content="2.5")
-///   inspect((5.0 : Float).lerp(target=15.0, t=0.0), content="5")
-///   inspect((5.0 : Float).lerp(target=15.0, t=1.0), content="15")
+///   inspect(Float(0.0).lerp(target=10.0, t=0.25), content="2.5")
+///   inspect(Float(5.0).lerp(target=15.0, t=0.0), content="5")
+///   inspect(Float(5.0).lerp(target=15.0, t=1.0), content="15")
 /// }
 /// ```
 pub fn Float::lerp(self : Float, target~ : Float, t~ : Float) -> Float {
@@ -381,8 +381,8 @@ pub fn Float::is_close(
 ///
 /// ```mbt check
 /// test {
-///   inspect((5.7 : Float).mod(2.0), content="1.6999998092651367")
-///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
+///   inspect(Float(5.7).mod(2.0), content="1.6999998092651367")
+///   inspect(Float(-5.7).mod(2.0), content="-1.6999998092651367")
 /// }
 /// ```
 pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {

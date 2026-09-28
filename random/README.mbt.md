@@ -63,7 +63,7 @@ test {
   let d = r.double()
   inspect(d >= 0.0 && d < 1.0, content="true")
   let f = r.float()
-  inspect(f >= (0.0 : Float) && f < (1.0 : Float), content="true")
+  inspect(f >= Float(0.0) && f < Float(1.0), content="true")
 }
 ```
 

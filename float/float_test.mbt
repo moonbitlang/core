@@ -40,29 +40,29 @@ test "abs" {
 
 ///|
 test "Float::to_int" {
-  inspect((0.0 : Float).to_int(), content="0")
-  inspect((1.0 : Float).to_int(), content="1")
-  inspect((1.5 : Float).to_int(), content="1")
-  inspect((1.9 : Float).to_int(), content="1")
-  inspect((2.0 : Float).to_int(), content="2")
-  inspect((2.5 : Float).to_int(), content="2")
-  inspect((2.9 : Float).to_int(), content="2")
-  inspect((-1.0 : Float).to_int(), content="-1")
-  inspect((-1.5 : Float).to_int(), content="-1")
-  inspect((-1.9 : Float).to_int(), content="-1")
-  inspect((-2.0 : Float).to_int(), content="-2")
-  inspect((-2.5 : Float).to_int(), content="-2")
-  inspect((-2.9 : Float).to_int(), content="-2")
-  inspect(((0.0 : Float) / 0.0).to_int(), content="0")
+  inspect(Float(0.0).to_int(), content="0")
+  inspect(Float(1.0).to_int(), content="1")
+  inspect(Float(1.5).to_int(), content="1")
+  inspect(Float(1.9).to_int(), content="1")
+  inspect(Float(2.0).to_int(), content="2")
+  inspect(Float(2.5).to_int(), content="2")
+  inspect(Float(2.9).to_int(), content="2")
+  inspect(Float(-1.0).to_int(), content="-1")
+  inspect(Float(-1.5).to_int(), content="-1")
+  inspect(Float(-1.9).to_int(), content="-1")
+  inspect(Float(-2.0).to_int(), content="-2")
+  inspect(Float(-2.5).to_int(), content="-2")
+  inspect(Float(-2.9).to_int(), content="-2")
+  inspect((Float(0.0) / 0.0).to_int(), content="0")
   inspect(@float.not_a_number.to_int(), content="0")
-  inspect(((1.0 : Float) / 0.0).to_int(), content="2147483647")
+  inspect((Float(1.0) / 0.0).to_int(), content="2147483647")
   inspect(@float.infinity.to_int(), content="2147483647")
-  inspect(((-1.0 : Float) / 0.0).to_int(), content="-2147483648")
+  inspect((Float(-1.0) / 0.0).to_int(), content="-2147483648")
   inspect(@float.neg_infinity.to_int(), content="-2147483648")
-  inspect((2147483647.0 : Float).to_int(), content="2147483647")
-  inspect((-2147483648.0 : Float).to_int(), content="-2147483648")
-  inspect((2147483648.0 : Float).to_int(), content="2147483647")
-  inspect((-2147483649.0 : Float).to_int(), content="-2147483648")
+  inspect(Float(2147483647.0).to_int(), content="2147483647")
+  inspect(Float(-2147483648.0).to_int(), content="-2147483648")
+  inspect(Float(2147483648.0).to_int(), content="2147483647")
+  inspect(Float(-2147483649.0).to_int(), content="-2147483648")
 }
 
 ///|
@@ -80,7 +80,7 @@ test "Hash" {
   h2.combine(a.a)
   inspect(h2.finalize(), content="1986884538")
   let h3 = Hasher(seed=0)
-  h3.combine((2.0 : Float))
+  h3.combine(Float(2.0))
   inspect(h3.finalize(), content="250978825")
 }
 
@@ -89,7 +89,7 @@ test "Float::is_inf/special_values" {
   inspect(@float.infinity.is_inf(), content="true")
   inspect(@float.neg_infinity.is_inf(), content="true")
   inspect(@float.not_a_number.is_inf(), content="false")
-  inspect((0.0 : Float).is_inf(), content="false")
+  inspect(Float(0.0).is_inf(), content="false")
   inspect(@float.max_value.is_inf(), content="false")
   inspect(@float.min_value.is_inf(), content="false")
   inspect(@float.min_positive.is_inf(), content="false")
@@ -103,16 +103,16 @@ test "@float.Float::is_pos_inf/special_values" {
   inspect(@float.max_value.is_pos_inf(), content="false")
   inspect((-@float.max_value).is_pos_inf(), content="false")
   inspect(@float.min_positive.is_pos_inf(), content="false")
-  inspect((0.0 : Float).is_pos_inf(), content="false")
-  inspect((1.0 : Float).is_pos_inf(), content="false")
-  inspect((-1.0 : Float).is_pos_inf(), content="false")
+  inspect(Float(0.0).is_pos_inf(), content="false")
+  inspect(Float(1.0).is_pos_inf(), content="false")
+  inspect(Float(-1.0).is_pos_inf(), content="false")
 }
 
 ///|
 test "@float.Float::is_neg_inf" {
-  inspect((-1.0 : Float).is_neg_inf(), content="false")
-  inspect((0.0 : Float).is_neg_inf(), content="false")
-  inspect((1.0 : Float).is_neg_inf(), content="false")
+  inspect(Float(-1.0).is_neg_inf(), content="false")
+  inspect(Float(0.0).is_neg_inf(), content="false")
+  inspect(Float(1.0).is_neg_inf(), content="false")
   inspect(@float.neg_infinity.is_neg_inf(), content="true")
   inspect(@float.infinity.is_neg_inf(), content="false")
   inspect(@float.not_a_number.is_neg_inf(), content="false")
@@ -122,9 +122,9 @@ test "@float.Float::is_neg_inf" {
 
 ///|
 test "@float.Float::is_nan" {
-  inspect((0.0 : Float).is_nan(), content="false")
-  inspect((1.0 : Float).is_nan(), content="false")
-  inspect((-1.0 : Float).is_nan(), content="false")
+  inspect(Float(0.0).is_nan(), content="false")
+  inspect(Float(1.0).is_nan(), content="false")
+  inspect(Float(-1.0).is_nan(), content="false")
   inspect(@float.not_a_number.is_nan(), content="true")
   inspect(@float.infinity.is_nan(), content="false")
   inspect(@float.neg_infinity.is_nan(), content="false")
@@ -153,13 +153,13 @@ test "Float::to_be_bytes with various values" {
 ///|
 test "to_le_bytes for zero" {
   inspect(
-    (0.0 : Float).to_le_bytes(),
+    Float(0.0).to_le_bytes(),
     content=(
       #|b"\x00\x00\x00\x00"
     ),
   )
   inspect(
-    (-0.0 : Float).to_le_bytes(),
+    Float(-0.0).to_le_bytes(),
     content=(
       #|b"\x00\x00\x00\x80"
     ),
@@ -168,21 +168,21 @@ test "to_le_bytes for zero" {
 
 ///|
 test "Float::clamp" {
-  inspect((0.5 : Float).clamp(min=0.0, max=1.0), content="0.5")
-  inspect((-1.0 : Float).clamp(min=0.0, max=1.0), content="0")
-  inspect((2.0 : Float).clamp(min=0.0, max=1.0), content="1")
+  inspect(Float(0.5).clamp(min=0.0, max=1.0), content="0.5")
+  inspect(Float(-1.0).clamp(min=0.0, max=1.0), content="0")
+  inspect(Float(2.0).clamp(min=0.0, max=1.0), content="1")
 }
 
 ///|
 test "panic Float::clamp with invalid range" {
-  ignore((0.5 : Float).clamp(min=1.0, max=0.0))
+  ignore(Float(0.5).clamp(min=1.0, max=0.0))
 }
 
 ///|
 test "Float::lerp" {
-  inspect((0.0 : Float).lerp(target=10.0, t=0.25), content="2.5")
-  inspect((5.0 : Float).lerp(target=15.0, t=0.0), content="5")
-  inspect((5.0 : Float).lerp(target=15.0, t=1.0), content="15")
+  inspect(Float(0.0).lerp(target=10.0, t=0.25), content="2.5")
+  inspect(Float(5.0).lerp(target=15.0, t=0.0), content="5")
+  inspect(Float(5.0).lerp(target=15.0, t=1.0), content="15")
 }
 
 ///|
@@ -192,18 +192,15 @@ test "Float::is_close - infinity should return false" {
 
 ///|
 test "panic Float::is_close negative tolerance" {
-  ignore((1.0 : Float).is_close(1.0, relative_tolerance=-1.0))
+  ignore(Float(1.0).is_close(1.0, relative_tolerance=-1.0))
 }
 
 ///|
 test "Float::until basics" {
+  debug_inspect(Float(0.0).until(1.0, step=0.5).collect(), content="[0, 0.5]")
+  debug_inspect(Float(0.0).until(1.0, step=0.0).collect(), content="[]")
   debug_inspect(
-    (0.0 : Float).until(1.0, step=0.5).collect(),
-    content="[0, 0.5]",
-  )
-  debug_inspect((0.0 : Float).until(1.0, step=0.0).collect(), content="[]")
-  debug_inspect(
-    (1.0 : Float).until(-1.0, step=-0.5).take(2).collect(),
+    Float(1.0).until(-1.0, step=-0.5).take(2).collect(),
     content="[1, 0.5]",
   )
 }
@@ -211,7 +208,7 @@ test "Float::until basics" {
 ///|
 test "Float::until with NaN step" {
   let values = []
-  for x in (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true) {
+  for x in Float(1.0).until(1.0, step=@float.not_a_number, inclusive=true) {
     values.push(x)
   }
   debug_inspect(values, content="[1]")
@@ -219,27 +216,27 @@ test "Float::until with NaN step" {
 
 ///|
 test "Float::min and Float::max" {
-  assert_eq((1.0 : Float).min(2.0), 1.0)
-  assert_eq((2.0 : Float).min(1.0), 1.0)
-  assert_eq((1.0 : Float).max(2.0), 2.0)
-  assert_eq((2.0 : Float).max(1.0), 2.0)
+  assert_eq(Float(1.0).min(2.0), 1.0)
+  assert_eq(Float(2.0).min(1.0), 1.0)
+  assert_eq(Float(1.0).max(2.0), 2.0)
+  assert_eq(Float(2.0).max(1.0), 2.0)
 }
 
 ///|
 test "Float::min and Float::max with NaN" {
   assert_eq(@float.not_a_number.min(1.0), 1.0)
-  assert_eq((1.0 : Float).min(@float.not_a_number), 1.0)
+  assert_eq(Float(1.0).min(@float.not_a_number), 1.0)
   assert_eq(@float.not_a_number.max(1.0), 1.0)
-  assert_eq((1.0 : Float).max(@float.not_a_number), 1.0)
+  assert_eq(Float(1.0).max(@float.not_a_number), 1.0)
   assert_true(@float.not_a_number.min(@float.not_a_number).is_nan())
   assert_true(@float.not_a_number.max(@float.not_a_number).is_nan())
 }
 
 ///|
 test "Float::signum" {
-  assert_eq((-2.0 : Float).signum(), -1.0)
-  assert_eq((1.0 : Float).signum(), 1.0)
-  assert_eq((0.0 : Float).signum(), 0.0)
+  assert_eq(Float(-2.0).signum(), -1.0)
+  assert_eq(Float(1.0).signum(), 1.0)
+  assert_eq(Float(0.0).signum(), 0.0)
   assert_true(@float.not_a_number.signum().is_nan())
 }
 

@@ -316,7 +316,7 @@ pub fn asinf(x : Float) -> Float {
     }
     return x + x * r(x * x)
   }
-  let z = ((1.0 : Float) - x.abs()) * 0.5
+  let z = (Float(1.0) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
   let x = Float::from_double(pio2 - 2.0 * (s + s * r(z).to_double()))
   if hx >> 31 != 0 {

@@ -579,7 +579,7 @@ test "a sub-precision step terminates instead of spinning" {
     ),
   )
   inspect(
-    @range.iter(from=(1.0e30 : Float), to=(1.0e31 : Float), step=1.0)
+    @range.iter(from=Float(1.0e30), to=Float(1.0e31), step=1.0)
     .to_array()
     .length(),
     content=(

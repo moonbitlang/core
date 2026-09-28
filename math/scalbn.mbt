@@ -88,20 +88,20 @@ pub fn scalbnf(y : Float, exp : Int) -> Float {
   let mut y = y
   let mut n = exp
   if n > 127 {
-    y *= (0x1.0p127 : Float)
+    y *= Float(0x1.0p127)
     n -= 127
     if n > 127 {
-      y *= (0x1.0p127 : Float)
+      y *= Float(0x1.0p127)
       n -= 127
       if n > 127 {
         n = 127
       }
     }
   } else if n < -126 {
-    y *= (0x1.0p-126 : Float) * 0x1.0p24
+    y *= Float(0x1.0p-126) * 0x1.0p24
     n += 126 - 24
     if n < -126 {
-      y *= (0x1.0p-126 : Float) * 0x1.0p24
+      y *= Float(0x1.0p-126) * 0x1.0p24
       n += 126 - 24
       if n < -126 {
         n = -126
