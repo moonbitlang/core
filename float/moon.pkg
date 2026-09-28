@@ -11,6 +11,7 @@ options(
   targets: {
     "round.mbt": [ "not", "js", "wasm", "wasm-gc" ],
     "round_js.mbt": [ "js" ],
+    "round_nonjs.mbt": [ "not", "js" ],
     "round_wasm.mbt": [ "wasm", "wasm-gc" ],
     "to_int.mbt": [ "not", "wasm", "wasm-gc" ],
     "to_int_wasm.mbt": [ "wasm", "wasm-gc" ],
