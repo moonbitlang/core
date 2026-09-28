@@ -462,8 +462,8 @@ test "iter is lazy" {
 
 ///|
 test "iter Double computes each element as from + k * step" {
-  // Pins current behaviour: each element is the previous one plus `step`,
-  // so rounding error accumulates. It shows up as an extra element
+  // Each element is `from + k * step`, not the previous element plus
+  // `step`. Repeated addition drifts, which showed up as an 11th element
   // (0.9999999999999999) and as `inclusive` never reaching `to`.
   debug_inspect(
     @range.iter(from=0.0, to=1.0, step=0.1).to_array(),
@@ -475,24 +475,23 @@ test "iter Double computes each element as from + k * step" {
       #|  0.30000000000000004,
       #|  0.4,
       #|  0.5,
-      #|  0.6,
-      #|  0.7,
-      #|  0.7999999999999999,
-      #|  0.8999999999999999,
-      #|  0.9999999999999999,
+      #|  0.6000000000000001,
+      #|  0.7000000000000001,
+      #|  0.8,
+      #|  0.9,
       #|]
     ),
   )
   debug_inspect(
     @range.iter(from=0.0, to=1.0, step=0.1, inclusive=true).to_array().last(),
     content=(
-      #|Some(0.9999999999999999)
+      #|Some(1)
     ),
   )
   debug_inspect(
     @range.iter(from=1.0, to=0.0, step=-0.1, inclusive=true).to_array().last(),
     content=(
-      #|Some(1.3877787807814457e-16)
+      #|Some(0)
     ),
   )
   // from + 3 * 0.1 is 0.30000000000000004, so an inclusive 0.3 is not hit
@@ -502,6 +501,15 @@ test "iter Double computes each element as from + k * step" {
       #|[0, 0.1, 0.2]
     ),
   )
+  // the documented workaround: iterate over integers and scale
+  debug_inspect(
+    @range.iter(from=0, to=3, inclusive=true)
+    .map(k => k.to_double() / 10.0)
+    .to_array(),
+    content=(
+      #|[0, 0.1, 0.2, 0.3]
+    ),
+  )
 }
 
 ///|
@@ -509,7 +517,7 @@ test "iter Float computes each element as from + k * step" {
   debug_inspect(
     @range.iter(from=Float(0), to=1.0, step=0.01).count(),
     content=(
-      #|101
+      #|100
     ),
   )
   debug_inspect(
@@ -518,7 +526,79 @@ test "iter Float computes each element as from + k * step" {
     .last()
     .map(Float::to_double),
     content=(
-      #|Some(0.9999993443489075)
+      #|Some(1)
+    ),
+  )
+}
+
+///|
+test "iter Double direct stepping edge cases" {
+  let inf = 1.0 / 0.0
+  // element 0 is `from` itself, so a negative zero survives
+  let first = @range.iter(from=-0.0, to=1.0, step=0.5).to_array()[0]
+  inspect(1.0 / first == -inf, content="true")
+  // `from + k * step` overflowing to infinity is a real (last) element
+  debug_inspect(
+    @range.iter(from=1.0e308, to=inf, step=1.0e308, inclusive=true).to_array(),
+    content=(
+      #|[1e+308, Infinity]
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=-inf, to=0.0).to_array(),
+    content=(
+      #|[-Infinity]
+    ),
+  )
+  // A step close to the spacing of the elements: 2^53 + 3 * 1.5 rounds to
+  // the same Double as 2^53 + 2 * 1.5, so the iterator stops there rather
+  // than yield a duplicate. The elements stay strictly increasing.
+  let big = 9007199254740992.0
+  debug_inspect(
+    @range.iter(from=big, to=big + 12.0, step=1.5).map(x => x - big).to_array(),
+    content=(
+      #|[0, 2, 4]
+    ),
+  )
+}
+
+///|
+test "iter Double survives k * step overflowing while from + k * step is finite" {
+  // At k = 2, 2 * 1e308 overflows to infinity, but -1e308 + 2 * 1e308 is
+  // 1e308, a representable (inclusive) end point, so it must not become
+  // from + inf.
+  debug_inspect(
+    @range.iter(from=-1.0e308, to=1.0e308, step=1.0e308, inclusive=true).to_array(),
+    content=(
+      #|[-1e+308, 0, 1e+308]
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=1.0e308, to=-1.0e308, step=-1.0e308, inclusive=true).to_array(),
+    content=(
+      #|[1e+308, 0, -1e+308]
+    ),
+  )
+  // The overflowing element must still be computed as from + k * step, not
+  // as prev + step: element 5 here is 3.000000000000001e307, and adding step
+  // to it would carry that error forward and overshoot `to` (6e307). Like
+  // every element, element 6 rounds k * step and then the sum, so it lands
+  // just below `to` rather than on it, exactly as the same range scaled down
+  // by a power of two does (see the quickcheck on scale invariance).
+  debug_inspect(
+    @range.iter(from=-1.2e308, to=6.0e307, step=3.0e307, inclusive=true)
+    .to_array()
+    .last(),
+    content=(
+      #|Some(5.999999999999998e+307)
+    ),
+  )
+  debug_inspect(
+    @range.iter(from=1.2e308, to=-6.0e307, step=-3.0e307, inclusive=true)
+    .to_array()
+    .last(),
+    content=(
+      #|Some(-5.999999999999998e+307)
     ),
   )
 }

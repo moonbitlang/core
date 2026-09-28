@@ -626,3 +626,112 @@ test "a NaN endpoint yields nothing rather than looping" {
     ),
   )
 }
+
+///|
+/// Reference enumeration for `Double`: element `k` is `from + k * step`
+/// (element 0 is `from` itself), kept while it is strictly on the near side
+/// of `to`, plus `to` itself once if `inclusive` and an element equals it.
+fn double_reference(
+  from : Double,
+  to : Double,
+  step : Double,
+  inclusive : Bool,
+) -> Array[Double] {
+  let out = []
+  for k = 0; ; k = k + 1 {
+    let v = if k == 0 { from } else { from + k.to_double() * step }
+    if (step > 0.0 && v < to) || (step < 0.0 && v > to) {
+      out.push(v)
+    } else {
+      if inclusive && v == to {
+        out.push(v)
+      }
+      break
+    }
+  }
+  out
+}
+
+///|
+test "quickcheck: Double element k is exactly from + k * step" {
+  // Tenths are not exactly representable, so repeated addition would
+  // drift away from this reference; the direct formula must not.
+  @quickcheck.check(
+    (input : (Int, Int, Int, Bool)) => {
+      let (a, b, c, inclusive) = input
+      let from = (wrap_index(a, 2001) - 1000).to_double() / 10.0
+      let to = (wrap_index(b, 2001) - 1000).to_double() / 10.0
+      let step = (wrap_index(c, 40) - 20).to_double() / 10.0
+      guard step != 0.0 else { return true }
+      @range.iter(from~, to~, step~, inclusive~).to_array() ==
+      double_reference(from, to, step, inclusive)
+    },
+    count=1000,
+  )
+}
+
+///|
+test "quickcheck: Float element k is from + k * step rounded from Double" {
+  @quickcheck.check(
+    (input : (Int, Int, Int, Bool)) => {
+      let (a, b, c, inclusive) = input
+      let from = Float::from_double(
+        (wrap_index(a, 2001) - 1000).to_double() / 10.0,
+      )
+      let to = Float::from_double(
+        (wrap_index(b, 2001) - 1000).to_double() / 10.0,
+      )
+      let step = Float::from_double((wrap_index(c, 40) - 20).to_double() / 10.0)
+      guard step != 0.0 else { return true }
+      let expected = []
+      for k = 0; ; k = k + 1 {
+        let v = if k == 0 {
+          from
+        } else {
+          Float::from_double(
+            from.to_double() + k.to_double() * step.to_double(),
+          )
+        }
+        if (step > 0.0 && v < to) || (step < 0.0 && v > to) {
+          expected.push(v)
+        } else {
+          if inclusive && v == to {
+            expected.push(v)
+          }
+          break
+        }
+      }
+      @range.iter(from~, to~, step~, inclusive~).to_array() == expected
+    },
+    count=1000,
+  )
+}
+
+///|
+test "quickcheck: Double near overflow agrees with the range scaled down by 2^64" {
+  // Scaling by a power of two is exact away from the subnormals, so a range
+  // whose `k * step` overflows must yield exactly the elements of the same
+  // range scaled down (where nothing overflows), scaled back up.
+  let scale = 5.421010862427522e-20 // 2^-64
+  @quickcheck.check(
+    (input : (Int, Int, Int, Bool)) => {
+      let (a, b, c, inclusive) = input
+      let from = (wrap_index(a, 3401) - 1700).to_double() * 1.0e305
+      let to = (wrap_index(b, 3401) - 1700).to_double() * 1.0e305
+      let magnitude = (wrap_index(c, 1700) + 1).to_double() * 1.0e305
+      let step = if c % 2 == 0 { magnitude } else { -magnitude }
+      let big = @range.iter(from~, to~, step~, inclusive~).take(CAP).to_array()
+      let small = @range.iter(
+          from=from * scale,
+          to=to * scale,
+          step=step * scale,
+          inclusive~,
+        )
+        .take(CAP)
+        .map(x => x / scale)
+        .to_array()
+      big == small
+    },
+    count=2000,
+  )
+}
