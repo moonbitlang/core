@@ -36,6 +36,7 @@ options(
     "double_pow_nonjs.mbt": [ "not", "js" ],
     "double_round.mbt": [ "not", "js", "wasm", "wasm-gc" ],
     "double_round_js.mbt": [ "js" ],
+    "double_round_nonjs.mbt": [ "not", "js" ],
     "double_round_wasm.mbt": [ "wasm", "wasm-gc" ],
     "double_ryu_js.mbt": [ "js" ],
     "double_ryu_nonjs.mbt": [ "not", "js" ],
