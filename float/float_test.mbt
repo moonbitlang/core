@@ -196,6 +196,7 @@ test "panic Float::is_close negative tolerance" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until basics" {
   debug_inspect(
     (0.0 : Float).until(1.0, step=0.5).collect(),
@@ -209,6 +210,7 @@ test "Float::until basics" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with NaN step" {
   let values = []
   for x in (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true) {

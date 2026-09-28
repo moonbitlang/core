@@ -119,3 +119,47 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   Array(capacity~)
 }
+
+///|
+/// Creates an iterator that iterates over a range of Double with default step 1.0 .
+/// To grow the range downward, set the `step` parameter to a negative value.
+///
+/// # Arguments
+///
+/// * `self` - The starting value of the range (inclusive).
+/// * `end` - The ending value of the range (exclusive by default).
+/// * `step` - The step size of the range (default 1.0).
+/// * `inclusive` - Whether the ending value is inclusive (default false).
+///
+/// # Returns
+///
+/// Returns an iterator yielding `self`, `self + step`, `(self + step) + step`,
+/// ..., stopping before `end` (or at `end` when `inclusive` is set). Returns
+/// an empty iterator when `step` is `0.0`.
+///
+/// Deprecated: each element is the previous one plus `step`, so rounding
+/// error accumulates (`0.0.until(1.0, step=0.1)` yields 11 elements, the last
+/// `0.9999999999999999`). And once adding `step` no longer changes the
+/// element, it is yielded forever: a `step` below the element's precision
+/// (`1.0e16.until(1.0e16 + 100.0)`), an infinite start (`(-inf).until(0.0)`),
+/// or an element that reached infinity with `inclusive` set and an infinite
+/// `end`.
+///
+/// Use `@range.iter` (package `moonbitlang/core/range`) instead. It computes
+/// element `k` as `start + k * step` and stops as soon as the next element
+/// would not advance, so all of the cases above terminate. Its results differ
+/// from this function's wherever rounding error has accumulated, wherever this
+/// function would repeat an element, and for a zero `step`:
+/// `@range.iter(from=x, to=x, step=0.0, inclusive=true)` yields `[x]`, while
+/// this function yields nothing. For exact decimal end points, iterate over
+/// integers and scale, e.g. `(0).until(10).map(k => k.to_double() / 10.0)`.
+#deprecated("Use `@range.iter(from=start, to=end, step=..., inclusive=...)` instead; `Double::until` accumulates rounding error")
+#coverage.skip
+pub fn Double::until(
+  self : Double,
+  end : Double,
+  step? : Double = 1.0,
+  inclusive? : Bool = false,
+) -> Iter[Double] {
+  until_impl(self, end, step, inclusive)
+}

@@ -5,6 +5,7 @@ import {
 import {
   "moonbitlang/core/double",
   "moonbitlang/core/math",
+  "moonbitlang/core/range",
 } for "test"
 
 options(

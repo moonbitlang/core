@@ -838,6 +838,7 @@ pub fn Double::to_string(Double) -> String
 pub fn Double::to_uint(Double) -> UInt
 pub fn Double::to_uint64(Double) -> UInt64
 pub fn Double::trunc(Double) -> Double
+#deprecated
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
 pub fn String::add(String, String) -> String

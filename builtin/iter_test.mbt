@@ -516,6 +516,7 @@ test "collect" {
 }
 
 ///|
+#warnings("-deprecated")
 test "until" {
   // edge cases
   debug_inspect(
@@ -1064,30 +1065,35 @@ test "Iter::add operator" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with step=0" {
   let result = 1.0.until(2.0, step=0.0).collect()
   debug_inspect(result, content="[]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until basic test" {
   let result = 0.0.until(3.0, step=1.0).collect()
   debug_inspect(result, content="[0, 1, 2]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with early termination" {
   let result = 0.0.until(10.0).take(3).collect()
   debug_inspect(result, content="[0, 1, 2]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Double::until with large numbers" {
   let result = 1000000.0.until(2000000.0, step=500000.0).collect()
   debug_inspect(result, content="[1000000, 1500000]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Double::until with NaN step" {
   let values = []
   for x in 1.0.until(1.0, step=@double.not_a_number, inclusive=true) {
@@ -1097,6 +1103,7 @@ test "Double::until with NaN step" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with early break" {
   for i in 0.0.until(10.0) {
     if i > 2.0 {
@@ -1107,6 +1114,7 @@ test "Float::until with early break" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until negative step" {
   let result = 10.0.until(0.0, step=-2.0).collect()
   debug_inspect(result, content="[10, 8, 6, 4, 2]")

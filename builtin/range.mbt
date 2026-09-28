@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Shared body for `Int::until`, `Int64::until`, and `Double::until`.
+/// Shared body for `Int::until`, `Int64::until`, and the deprecated
+/// `Double::until`.
 /// `Default::default()` is taken to be the additive identity (zero) of
 /// `T`, which is true for the built-in numeric types this is used with.
 fn[T : Add + Compare + Default] until_impl(

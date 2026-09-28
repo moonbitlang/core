@@ -390,50 +390,6 @@ pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {
 }
 
 ///|
-/// Creates an iterator that iterates over a range of Float with default step 1.0 .
-/// To grow the range downward, set the `step` parameter to a negative value.
-///
-/// # Arguments
-///
-/// * `self` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1.0).
-/// * `inclusive` - Whether the ending value is inclusive (default false).
-///
-/// # Returns
-///
-/// Returns an iterator yielding `self`, `self + step`, `self + 2 * step`, ...,
-/// stopping before `end` (or at `end` when `inclusive` is set). Returns an
-/// empty iterator when `step` is `0.0`.
-pub fn Float::until(
-  self : Float,
-  end : Float,
-  step? : Float = 1.0,
-  inclusive? : Bool = false,
-) -> Iter[Float] {
-  if step == 0.0 {
-    return [||]
-  }
-  let mut curr_value = Some(self)
-  Iter::new(() => {
-    guard curr_value is Some(i) else { None }
-    guard (step > 0.0 && i < end) ||
-      (step < 0.0 && i > end) ||
-      (inclusive && i == end) else {
-      None
-    }
-    let next = i + step
-    if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-      curr_value = Some(next)
-    } else {
-      // overflow
-      curr_value = None
-    }
-    Some(i)
-  })
-}
-
-///|
 /// Converts a 32-bit floating-point number to a double-precision (64-bit)
 /// floating-point number.
 ///
