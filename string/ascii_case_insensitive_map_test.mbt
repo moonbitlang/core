@@ -47,8 +47,8 @@ impl Hash for AsciiCaseInsensitiveString with fn hash_combine(self, hasher) {
   for code_unit in s.code_units() {
     let mut c = code_unit
     // Fold ASCII 'A'..'Z' (0x41..0x5A) to 'a'..'z' (0x61..0x7A).
-    if c >= ('A' : UInt16) && c <= ('Z' : UInt16) {
-      c += (32 : UInt16)
+    if c >= UInt16('A') && c <= UInt16('Z') {
+      c += UInt16(32)
     }
     hasher.combine_uint(c.to_int().reinterpret_as_uint())
   }

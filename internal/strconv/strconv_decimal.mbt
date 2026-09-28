@@ -733,7 +733,7 @@ test "rounded_integer overflow when decimal_point > 20" {
   decimal.negative = false
   decimal.decimal_point = 25 // This is > 20 but < 310
   decimal.digits_num = 1
-  decimal.digits[0] = (1 : Int).to_byte()
+  decimal.digits[0] = Int(1).to_byte()
   decimal.truncated = false
 
   // Call rounded_integer directly to trigger the uncovered line

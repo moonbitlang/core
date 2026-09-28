@@ -31,7 +31,7 @@ fn bytes_unsafe_bench_data() -> Bytes {
 test "bench Bytes::unsafe_read_uint16_le n=4096" (it : @bench.T) {
   let data = bytes_unsafe_bench_data()
   it.bench(fn() {
-    let mut acc = (0 : UInt16)
+    let mut acc = UInt16(0)
     for i in 0..<(bytes_unsafe_bench_len - 1) {
       acc = acc + data.unsafe_read_uint16_le(i)
     }

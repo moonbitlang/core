@@ -186,20 +186,20 @@ test "byte_sub" {
 
 ///|
 test "byte_mul" {
-  inspect((8 : Byte) * 16, content="b'\\x80'")
-  inspect((3 : Byte) * 200, content="b'\\x58'")
+  inspect(Byte(8) * 16, content="b'\\x80'")
+  inspect(Byte(3) * 200, content="b'\\x58'")
 }
 
 ///|
 test "byte_div" {
-  inspect((80 : Byte) / 8, content="b'\\x0A'")
-  inspect((10 : Byte) / 3, content="b'\\x03'")
+  inspect(Byte(80) / 8, content="b'\\x0A'")
+  inspect(Byte(10) / 3, content="b'\\x03'")
 }
 
 ///|
 test "byte_mod" {
-  inspect((80 : Byte) % 8, content="b'\\x00'")
-  inspect((42 : Byte) % 17, content="b'\\x08'")
+  inspect(Byte(80) % 8, content="b'\\x00'")
+  inspect(Byte(42) % 17, content="b'\\x08'")
 }
 
 ///|

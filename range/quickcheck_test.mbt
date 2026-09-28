@@ -590,7 +590,7 @@ test "a sub-precision step terminates instead of spinning" {
 
 ///|
 test "a NaN endpoint yields nothing rather than looping" {
-  let nan = (0.0 : Double) / 0.0
+  let nan = Double(0.0) / 0.0
   // `Compare` on Double reports 0 against NaN, so the range check fails
   // immediately; the inclusive check uses `==`, which NaN also fails.
   inspect(

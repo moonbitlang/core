@@ -72,7 +72,7 @@ pub fn i8x16_sub_sat_u(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_neg(value : V128) -> V128 {
-  pack_u8x16_by(i => (0 : Byte) - u8_lane(value, i))
+  pack_u8x16_by(i => Byte(0) - u8_lane(value, i))
 }
 
 ///|
@@ -219,7 +219,7 @@ pub fn i16x8_mul(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i16x8_neg(value : V128) -> V128 {
-  pack_u16x8_by(i => (0 : UInt16) - u16_lane(value, i))
+  pack_u16x8_by(i => UInt16(0) - u16_lane(value, i))
 }
 
 ///|
@@ -321,7 +321,7 @@ pub fn i32x4_mul(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i32x4_neg(value : V128) -> V128 {
-  pack_u32x4_by(i => (0U : UInt) - u32_lane(value, i))
+  pack_u32x4_by(i => 0U - u32_lane(value, i))
 }
 
 ///|

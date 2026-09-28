@@ -20,7 +20,7 @@ fn load_u16_le(bytes : FixedArray[Byte], offset : Int) -> UInt16 {
 
 ///|
 fn load_u16x4_le(str : String, offset : Int) -> UInt64 {
-  for i in 0..<4; word = (0 : UInt64) {
+  for i in 0..<4; word = UInt64(0) {
     continue word | (str.unsafe_get(offset + i).to_uint64() << (16 * i))
   } nobreak {
     word

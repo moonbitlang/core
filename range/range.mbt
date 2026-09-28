@@ -274,9 +274,9 @@ pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
 
 ///|
 pub impl Step for Int16 with fn direction(self) {
-  if self > (0 : Int16) {
+  if self > Int16(0) {
     1
-  } else if self < (0 : Int16) {
+  } else if self < Int16(0) {
     -1
   } else {
     0
@@ -285,12 +285,12 @@ pub impl Step for Int16 with fn direction(self) {
 
 ///|
 pub impl Step for Int16 with fn step_one() {
-  (1 : Int16)
+  Int16(1)
 }
 
 ///|
 pub impl Step for UInt16 with fn direction(self) {
-  if self > (0 : UInt16) {
+  if self > UInt16(0) {
     1
   } else {
     0
@@ -299,12 +299,12 @@ pub impl Step for UInt16 with fn direction(self) {
 
 ///|
 pub impl Step for UInt16 with fn step_one() {
-  (1 : UInt16)
+  UInt16(1)
 }
 
 ///|
 pub impl Step for Byte with fn direction(self) {
-  if self > (0 : Byte) {
+  if self > Byte(0) {
     1
   } else {
     0
@@ -313,7 +313,7 @@ pub impl Step for Byte with fn direction(self) {
 
 ///|
 pub impl Step for Byte with fn step_one() {
-  (1 : Byte)
+  Byte(1)
 }
 
 ///|

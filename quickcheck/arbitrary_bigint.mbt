@@ -70,7 +70,7 @@ pub impl Arbitrary for @bigint.BigInt with fn arbitrary(size, rs) {
     _ => {
       let exponent = rs.pick([1, 2, 3, 6, 9, 18, 19, 38, 76, 100])
       around(
-        (0 : Int).until(exponent).fold(init=1N, (power, _) => power * 10N),
+        Int(0).until(exponent).fold(init=1N, (power, _) => power * 10N),
         rs,
       )
     }

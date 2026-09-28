@@ -14,14 +14,14 @@
 
 ///|
 test "UInt::min, UInt::max and UInt::clamp" {
-  @test.assert_eq((1 : UInt).min(2), 1)
-  @test.assert_eq((2 : UInt).max(1), 2)
-  @test.assert_eq((1 : UInt).clamp(min=0, max=2), 1)
-  @test.assert_eq((0 : UInt).clamp(min=1, max=2), 1)
-  @test.assert_eq((3 : UInt).clamp(min=1, max=2), 2)
+  @test.assert_eq(UInt(1).min(2), 1)
+  @test.assert_eq(UInt(2).max(1), 2)
+  @test.assert_eq(UInt(1).clamp(min=0, max=2), 1)
+  @test.assert_eq(UInt(0).clamp(min=1, max=2), 1)
+  @test.assert_eq(UInt(3).clamp(min=1, max=2), 2)
 }
 
 ///|
 test "panic UInt::clamp with invalid range" {
-  ignore((1 : UInt).clamp(min=2, max=1))
+  ignore(UInt(1).clamp(min=2, max=1))
 }
