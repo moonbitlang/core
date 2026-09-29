@@ -349,10 +349,13 @@ fn[K, V] rev_nodes(map : SortedMap[K, V]) -> Iter[Node[K, V]] {
 }
 
 ///|
+/// Bounds are checked with `Compare::compare`, the same ordering the map uses
+/// for insertion and lookup. For keys such as `Double`, the relational
+/// operators disagree with `compare` on NaN, so they must not be used here.
 fn[K : Compare] satisfies_lower(key : K, lower : @cmp.Bound[K]) -> Bool {
   match lower {
-    Included(bound) => key >= bound
-    Excluded(bound) => key > bound
+    Included(bound) => key.compare(bound) >= 0
+    Excluded(bound) => key.compare(bound) > 0
     Unbounded => true
   }
 }
@@ -360,8 +363,8 @@ fn[K : Compare] satisfies_lower(key : K, lower : @cmp.Bound[K]) -> Bool {
 ///|
 fn[K : Compare] satisfies_upper(key : K, upper : @cmp.Bound[K]) -> Bool {
   match upper {
-    Included(bound) => key <= bound
-    Excluded(bound) => key < bound
+    Included(bound) => key.compare(bound) <= 0
+    Excluded(bound) => key.compare(bound) < 0
     Unbounded => true
   }
 }

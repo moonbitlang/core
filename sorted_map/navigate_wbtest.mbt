@@ -154,3 +154,29 @@ test "range iterators stop early and leave the tree intact" {
   check_invariants(map)
   @test.assert_eq(map.length(), 1000)
 }
+
+///|
+fn double_keys(it : Iter2[Double, Int]) -> Array[String] {
+  it.iter().map(p => p.0.to_string()).to_array()
+}
+
+///|
+test "range bounds follow Compare ordering for NaN keys" {
+  // Double's relational operators are false for NaN, while `compare` (which
+  // `range`, `get` and the nearest-key queries use) treats NaN as equal to
+  // every value. Bounded ranges must follow `compare`, like `range` does.
+  let nan = 0.0 / 0.0
+  let map : SortedMap[Double, Int] = new_sorted_map()
+  map.set(1.0, 1)
+  map.set(nan, 2)
+  map.set(-1.0, 3)
+  for bounds in [(nan, nan), (-1.0, nan), (nan, 1.0), (-1.0, 1.0)] {
+    let (low, high) = bounds
+    let expected = double_keys(map.range(low, high))
+    @test.assert_eq(
+      double_keys(map.range_bounds(Included(low), Included(high))),
+      expected,
+    )
+    @test.assert_eq(double_keys(map.rev_range(low, high)), expected.rev())
+  }
+}
