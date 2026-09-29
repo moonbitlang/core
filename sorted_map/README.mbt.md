@@ -223,6 +223,116 @@ test {
 }
 ```
 
+### Bounded Ranges
+
+`range_bounds(lower, upper)` takes a `@cmp.Bound` for each end: `Included(k)`,
+`Excluded(k)` or `Unbounded`. Bounds are values, so the kind of each end can be
+chosen at runtime. `rev_range_bounds` returns the same entries in descending
+order. Both iterators are lazy, so taking the first few entries is cheap.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+  // 1 < key <= 3
+  let mid = map.range_bounds(Excluded(1), Included(3)).iter().map(p => p.0)
+  @debug.assert_eq(mid.to_array(), [2, 3])
+  // key < 4, largest first
+  let below = map.rev_range_bounds(Unbounded, Excluded(4)).iter().map(p => p.0)
+  @debug.assert_eq(below.to_array(), [3, 2, 1])
+  // choose the bound kind at runtime, e.g. for `x > 2` versus `x >= 2`
+  let strict = true
+  let lower : @cmp.Bound[Int] = if strict { Excluded(2) } else { Included(2) }
+  let tail = map.range_bounds(lower, Unbounded).iter().map(p => p.0)
+  @debug.assert_eq(tail.to_array(), [3, 4])
+}
+```
+
+### Smallest, Largest and Nearest Keys
+
+`first` and `last` return the entries with the smallest and largest keys;
+`pop_first` and `pop_last` also remove them. `first_ge`, `first_gt`, `last_le`
+and `last_lt` find the nearest entry on either side of a key. All of these run
+in O(log n).
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+  @debug.assert_eq(map.first(), Some((10, "a")))
+  @debug.assert_eq(map.last(), Some((30, "c")))
+  @debug.assert_eq(map.first_ge(15), Some((20, "b")))
+  @debug.assert_eq(map.first_gt(20), Some((30, "c")))
+  @debug.assert_eq(map.last_le(25), Some((20, "b")))
+  @debug.assert_eq(map.last_lt(10), None)
+  @debug.assert_eq(map.pop_first(), Some((10, "a")))
+  @debug.assert_eq(map.pop_last(), Some((30, "c")))
+  @debug.assert_eq(map.to_array(), [(20, "b")])
+}
+```
+
+### Reverse Iteration
+
+`rev_iter`, `rev_keys`, `rev_values` and `rev_range` mirror `iter`, `keys`,
+`values` and `range` in descending key order.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  @debug.assert_eq(map.rev_keys().to_array(), [3, 2, 1])
+  @debug.assert_eq(map.rev_iter().take(1).to_array(), [(3, "c")])
+  @debug.assert_eq(map.rev_range(1, 2).iter().map(p => p.0).to_array(), [2, 1])
+}
+```
+
+### Custom Ordering
+
+A `SortedMap` orders keys by their `Compare` implementation. To use a different
+order, wrap the key in a type whose `Compare` implements it. `@cmp.Reverse`
+gives descending order. When the order is only known at runtime, such as a
+per-column ascending or descending flag, let each key carry a reference to that
+configuration; all keys of one map share the same configuration array, so the
+extra cost is one field per key.
+
+```mbt check
+///|
+struct IndexKey {
+  cols : Array[Int]
+  descending : Array[Bool] // shared by every key in the map
+}
+
+///|
+impl Eq for IndexKey with fn equal(a, b) {
+  a.cols == b.cols
+}
+
+///|
+impl Compare for IndexKey with fn compare(a, b) {
+  for i in 0..<a.cols.length() {
+    let c = a.cols[i].compare(b.cols[i])
+    if c != 0 {
+      return if a.descending[i] { -c } else { c }
+    }
+  }
+  0
+}
+
+///|
+test {
+  // Descending order with @cmp.Reverse
+  let desc = @sorted_map.from_array([(@cmp.Reverse(1), "a"), (Reverse(3), "c")])
+  @debug.assert_eq(desc.keys().map(k => k.0).to_array(), [3, 1])
+  // Order chosen at runtime: first column ascending, second descending
+  let descending = [false, true]
+  let index : @sorted_map.SortedMap[IndexKey, String] = @sorted_map.from_array([])
+  index.set({ cols: [1, 5], descending, }, "x")
+  index.set({ cols: [1, 9], descending, }, "y")
+  index.set({ cols: [0, 7], descending, }, "z")
+  @debug.assert_eq(index.values().to_array(), ["z", "y", "x"])
+}
+```
+
 ### Iterators
 
 The SortedMap supports several iterator patterns. Create a map from an iterator:
