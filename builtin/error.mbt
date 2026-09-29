@@ -13,22 +13,14 @@
 // limitations under the License.
 
 ///|
-
-// --- deprecated: compatibility methods ---
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-// Bootstrap: json depends on this package, so use the builtin trait here.
-#warnings("-deprecated")
-pub extend Error with @builtin.ToJson::{to_json}
+/// Returns the textual representation of this error.
+pub fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Error with @debug.Debug::{to_repr}
+pub impl Show for Error with fn to_string(self) {
+  Error::to_string(self)
+}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Error with Show::{output}
+/// Returns the JSON representation of this error.
+pub impl ToJson for Error with fn to_json(self) = "%error.to_json"

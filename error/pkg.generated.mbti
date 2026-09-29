@@ -1,19 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/error"
 
-import {
-  "moonbitlang/core/debug",
-}
-
 // Values
 
 // Errors
 
 // Types and methods
-pub fn Error::to_string(Self) -> String
-pub impl Show for Error
-pub impl ToJson for Error
-pub impl @debug.Debug for Error
 
 // Type aliases
 

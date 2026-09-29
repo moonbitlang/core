@@ -13,10 +13,10 @@
 // limitations under the License.
 
 ///|
-fn error_to_repr(e : Error) -> @debug.Repr = "%error.to_repr"
+fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
 
 ///|
-pub impl @debug.Debug for Error with fn to_repr(self) {
+pub impl Debug for Error with fn to_repr(self) {
   error_to_repr(self)
 }
 
@@ -27,7 +27,7 @@ test "Debug for Error" {
   }
 
   try fail_with_error() catch {
-    e => @debug.debug_inspect(e, content="InspectError(\"test error\")")
+    e => debug_inspect(e, content="InspectError(\"test error\")")
   } noraise {
     _ => fail("expected error")
   }
