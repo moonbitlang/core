@@ -481,3 +481,166 @@ test "copy independence" {
   debug_inspect(map2.get(2), content="Some(\"x\")")
   debug_inspect(map2.get(4), content="Some(\"d\")")
 }
+
+///|
+/// Returns `(length, keys in order, keys that get can find)`.
+fn map_state(
+  m : @sorted_map.SortedMap[Int, Int],
+) -> (Int, Array[Int], Array[Int]) {
+  let keys = m.keys().to_array()
+  (m.length(), keys, [ for k in keys if m.get(k) is Some(_) => k ])
+}
+
+///|
+test "update_or_default: f inserts keys into the same map" {
+  let m = @sorted_map.from_array([(150, 0)])
+  m.update_or_default(150, 0, v => {
+    for i in 0..<10 {
+      m.set(i, i)
+    }
+    v + 1
+  })
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(
+      #|  11,
+      #|  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150],
+      #|  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150],
+      #|)
+    ),
+  )
+  debug_inspect(m.get(150), content="Some(1)")
+}
+
+///|
+test "update_or_default: f inserts keys on both sides of the present key" {
+  let m = @sorted_map.from_array([(10, 0)])
+  m.update_or_default(10, 0, v => {
+    for k in [5, 3, 15, 20, 1] {
+      m.set(k, k)
+    }
+    v + 1
+  })
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(6, [1, 3, 5, 10, 15, 20], [1, 3, 5, 10, 15, 20])
+    ),
+  )
+}
+
+///|
+test "update_or_default: f removes other keys from the same map" {
+  let m = @sorted_map.from_array([ for i in 0..<8 => (i, i) ])
+  m.update_or_default(7, 0, v => {
+    for i in 0..<6 {
+      m.remove(i)
+    }
+    v + 10
+  })
+  debug_inspect(map_state(m), content="(2, [6, 7], [6, 7])")
+  debug_inspect(m.get(7), content="Some(17)")
+}
+
+///|
+test "update_or_default: f removes the present key" {
+  let m = @sorted_map.from_array([(1, 1), (2, 2), (3, 3)])
+  m.update_or_default(2, 0, v => {
+    m.remove(2)
+    v + 10
+  })
+  debug_inspect(m.to_array(), content="[(1, 1), (2, 12), (3, 3)]")
+  inspect(m.length(), content="3")
+}
+
+///|
+test "update_or_default: f sets the present key" {
+  let m = @sorted_map.from_array([(1, 1), (2, 2)])
+  m.update_or_default(1, 0, v => {
+    m.set(1, 100)
+    v + 10
+  })
+  debug_inspect(m.to_array(), content="[(1, 11), (2, 2)]")
+}
+
+///|
+test "update_or_default: f removes the key whose successor is the present key" {
+  // Built from 0..<5, the tree is 1(0, 3(2, 4)). Removing 1 moves key 2 into
+  // the root node and unlinks the node that held 2 when `f` was called.
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(2, 0, v => {
+    m.remove(1)
+    v + 10
+  })
+  debug_inspect(
+    m.to_array(),
+    content=(
+      #|[(0, 0), (2, 12), (3, 3), (4, 4)]
+    ),
+  )
+  inspect(m.length(), content="4")
+}
+
+///|
+test "update_or_default: f removes and re-inserts the present key" {
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(3, 0, v => {
+    m.remove(3)
+    m.set(3, 100)
+    v + 10
+  })
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(5, [0, 1, 2, 3, 4], [0, 1, 2, 3, 4])
+    ),
+  )
+  debug_inspect(m.get(3), content="Some(13)")
+}
+
+///|
+test "update_or_default: f clears the map" {
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(2, 0, v => {
+    m.clear()
+    v + 10
+  })
+  debug_inspect(m.to_array(), content="[(2, 12)]")
+  inspect(m.length(), content="1")
+}
+
+///|
+fn sorted_map_fib(memo : @sorted_map.SortedMap[Int, Int], n : Int) -> Int {
+  if n < 2 {
+    return n
+  }
+  memo.get_or_init(n, () => {
+    sorted_map_fib(memo, n - 1) + sorted_map_fib(memo, n - 2)
+  })
+}
+
+///|
+test "get_or_init: init may write to the same map (memoization)" {
+  let memo : @sorted_map.SortedMap[Int, Int] = SortedMap([])
+  inspect(sorted_map_fib(memo, 30), content="832040")
+  let missing = [ for k in 2..<=30 if memo.get(k) is None => k ]
+  debug_inspect(
+    (memo.length(), memo.to_array().length(), missing),
+    content=(
+      #|(29, 29, [])
+    ),
+  )
+}
+
+///|
+test "get_or_init: init inserts the same key" {
+  let m = @sorted_map.from_array([(1, 1)])
+  let v = m.get_or_init(3, () => {
+    m.set(3, 30)
+    m.set(2, 20)
+    300
+  })
+  inspect(v, content="300")
+  debug_inspect(m.to_array(), content="[(1, 1), (2, 20), (3, 300)]")
+}

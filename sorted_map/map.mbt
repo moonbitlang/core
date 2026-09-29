@@ -26,7 +26,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) {
 
 ///|
 fn[K, V] new_sorted_map() -> SortedMap[K, V] {
-  { root: None, size: 0, }
+  { root: None, size: 0, removals: 0, }
 }
 
 ///|
@@ -95,6 +95,7 @@ pub fn[K : Compare, V] SortedMap::remove(
     }
     if deleted {
       self.size -= 1
+      self.record_removal()
     }
   }
 }
@@ -143,6 +144,10 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 ///|
 /// Returns the value for the key if present, otherwise inserts the value
 /// produced by `init` and returns it.
+///
+/// `init` may read or write `self` (as a recursive memoized function does).
+/// Its result is stored under `key` once it returns, replacing any value that
+/// `init` itself stored under `key`.
 pub fn[K : Compare, V] SortedMap::get_or_init(
   self : SortedMap[K, V],
   key : K,
@@ -178,18 +183,43 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// Note: `f` is *not* applied to `default` on first insertion — `default` is
 /// the value stored when the key is absent. This mirrors Java's `Map.merge`
 /// and Rust's `Entry::and_modify(f).or_insert(default)`.
+///
+/// `f` may read or write `self`. Its result is stored under `key` once it
+/// returns, even if `f` removed `key`.
 pub fn[K : Compare, V] SortedMap::update_or_default(
   self : SortedMap[K, V],
   key : K,
   default : V,
   f : (V) -> V,
 ) -> Unit {
-  let (new_root, inserted) = update_or_default_node(self.root, key, default, f)
-  if self.root != new_root {
+  let (new_root, found) = insert_or_find(self.root, key, default)
+  guard found is Some(node) else {
     self.root = new_root
-  }
-  if inserted {
     self.size += 1
+  }
+  let removals = self.removals
+  let new_value = f(node.value)
+  // `f` may have written to this map. Insertions keep every node in the tree
+  // under its key, but a removal can unlink `node` or move another key into
+  // it, so after one, or once the counter has saturated and can no longer
+  // tell, store the result with a fresh lookup.
+  if self.removals == removals && removals != MAX_REMOVALS {
+    node.value = new_value
+  } else {
+    self.set(key, new_value)
+  }
+}
+
+///|
+/// The value at which `SortedMap::removals` stops counting.
+const MAX_REMOVALS : Int = 2147483647
+
+///|
+/// Bumps `removals`, saturating at `MAX_REMOVALS` so that it never returns to
+/// a value it had earlier.
+fn[K, V] SortedMap::record_removal(self : SortedMap[K, V]) -> Unit {
+  if self.removals != MAX_REMOVALS {
+    self.removals += 1
   }
 }
 
@@ -232,6 +262,7 @@ pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
 pub fn[K, V] SortedMap::clear(self : SortedMap[K, V]) -> Unit {
   self.root = None
   self.size = 0
+  self.record_removal()
 }
 
 ///|
@@ -460,7 +491,7 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
     }
   }
 
-  { root: copy_node(self.root), size: self.size, }
+  { root: copy_node(self.root), size: self.size, removals: 0, }
 }
 
 ///|
@@ -667,30 +698,32 @@ fn[K : Compare, V] add_node(
 }
 
 ///|
-fn[K : Compare, V] update_or_default_node(
+/// Inserts `key` with `value` into the subtree at `root` unless `key` is
+/// already there. Returns the new subtree root, and the node holding `key` if
+/// it was already there, in which case the subtree is left unchanged.
+fn[K : Compare, V] insert_or_find(
   root : Node[K, V]?,
   key : K,
-  default : V,
-  f : (V) -> V,
-) -> (Node[K, V]?, Bool) {
+  value : V,
+) -> (Node[K, V]?, Node[K, V]?) {
   match root {
-    None => (Some(new_node(key, default)), true)
-    Some(n) =>
-      if key == n.key {
-        n.value = f(n.value)
-        (Some(n), false)
+    None => (Some(new_node(key, value)), None)
+    Some(n) => {
+      let cmp = key.compare(n.key)
+      if cmp == 0 {
+        (root, root)
+      } else if cmp < 0 {
+        let (nl, found) = insert_or_find(n.left, key, value)
+        guard found is None else { return (root, found) }
+        n.left = nl
+        (Some(balance(n)), None)
       } else {
-        let (l, r) = (n.left, n.right)
-        if key < n.key {
-          let (nl, inserted) = update_or_default_node(l, key, default, f)
-          n.left = nl
-          (Some(balance(n)), inserted)
-        } else {
-          let (nr, inserted) = update_or_default_node(r, key, default, f)
-          n.right = nr
-          (Some(balance(n)), inserted)
-        }
+        let (nr, found) = insert_or_find(n.right, key, value)
+        guard found is None else { return (root, found) }
+        n.right = nr
+        (Some(balance(n)), None)
       }
+    }
   }
 }
 

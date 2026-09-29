@@ -26,4 +26,9 @@ priv struct Node[K, V] {
 struct SortedMap[K, V] {
   mut root : Node[K, V]?
   mut size : Int
+  // Bumped by `remove` and `clear`, the only operations that can unlink a
+  // node or give a node another key; it saturates instead of wrapping.
+  // `update_or_default` compares it across its callback to tell whether the
+  // node it found still holds its key.
+  mut removals : Int
 }
