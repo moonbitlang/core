@@ -25,3 +25,55 @@ test "quickcheck: iteration is ordered and round-trips map contents" {
     @sorted_map.from_array(actual) == map
   })
 }
+
+///|
+fn bound_of(kind : Int, key : Int) -> @cmp.Bound[Int] {
+  match kind.abs() % 3 {
+    0 => Included(key)
+    1 => Excluded(key)
+    _ => Unbounded
+  }
+}
+
+///|
+test "quickcheck: range_bounds matches filtering the sorted entries" {
+  @quickcheck.check((input : (Array[(Int, Int)], (Int, Int), (Int, Int))) => {
+    let (entries, (lk, lo), (hk, hi)) = input
+    let map = @sorted_map.from_array(entries)
+    let lower = bound_of(lk, lo)
+    let upper = bound_of(hk, hi)
+    let expected = map
+      .to_array()
+      .filter(p => {
+        let above = match lower {
+          Included(b) => p.0 >= b
+          Excluded(b) => p.0 > b
+          Unbounded => true
+        }
+        let below = match upper {
+          Included(b) => p.0 <= b
+          Excluded(b) => p.0 < b
+          Unbounded => true
+        }
+        above && below
+      })
+    map.range_bounds(lower, upper).iter().to_array() == expected &&
+    map.rev_range_bounds(lower, upper).iter().to_array() == expected.rev()
+  })
+}
+
+///|
+test "quickcheck: nearest-key queries match a linear scan" {
+  @quickcheck.check((input : (Array[(Int, Int)], Int)) => {
+    let (entries, key) = input
+    let map = @sorted_map.from_array(entries)
+    let sorted = map.to_array()
+    let rev = sorted.rev()
+    map.first_ge(key) == sorted.iter().find_first(p => p.0 >= key) &&
+    map.first_gt(key) == sorted.iter().find_first(p => p.0 > key) &&
+    map.last_le(key) == rev.iter().find_first(p => p.0 <= key) &&
+    map.last_lt(key) == rev.iter().find_first(p => p.0 < key) &&
+    map.first() == sorted.get(0) &&
+    map.last() == sorted.last()
+  })
+}

@@ -2,6 +2,7 @@
 package "moonbitlang/core/sorted_map"
 
 import {
+  "moonbitlang/core/cmp",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -26,6 +27,9 @@ pub fn[K, V] SortedMap::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
+pub fn[K, V] SortedMap::first(Self[K, V]) -> (K, V)?
+pub fn[K : Compare, V] SortedMap::first_ge(Self[K, V], K) -> (K, V)?
+pub fn[K : Compare, V] SortedMap::first_gt(Self[K, V], K) -> (K, V)?
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
@@ -40,6 +44,9 @@ pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
 #alias(keys_as_iter, deprecated)
 pub fn[K, V] SortedMap::keys(Self[K, V]) -> Iter[K]
+pub fn[K, V] SortedMap::last(Self[K, V]) -> (K, V)?
+pub fn[K : Compare, V] SortedMap::last_le(Self[K, V], K) -> (K, V)?
+pub fn[K : Compare, V] SortedMap::last_lt(Self[K, V], K) -> (K, V)?
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
@@ -47,8 +54,16 @@ pub fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #as_free_fn(deprecated)
 #deprecated
 pub fn[K, V] SortedMap::new() -> Self[K, V]
+pub fn[K, V] SortedMap::pop_first(Self[K, V]) -> (K, V)?
+pub fn[K, V] SortedMap::pop_last(Self[K, V]) -> (K, V)?
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
+pub fn[K : Compare, V] SortedMap::range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
+pub fn[K, V] SortedMap::rev_iter(Self[K, V]) -> Iter[(K, V)]
+pub fn[K, V] SortedMap::rev_keys(Self[K, V]) -> Iter[K]
+pub fn[K : Compare, V] SortedMap::rev_range(Self[K, V], K, K) -> Iter2[K, V]
+pub fn[K : Compare, V] SortedMap::rev_range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
+pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iter[V]
 #alias("_[_]=_")
 #alias(add, deprecated)
 pub fn[K : Compare, V] SortedMap::set(Self[K, V], K, V) -> Unit
