@@ -85,7 +85,8 @@ fn should_parse_as_positional(
   }
   if arg.has_prefix("--") {
     let (name, _) = split_long(arg)
-    return long_index.get_from_string(name) is None
+    return long_index.get_from_string(name) is None &&
+      lookup_negated_flag(long_index, name) is None
   }
   match arg {
     ['-', second, ..] => short_index.get(second) is None
