@@ -58,7 +58,7 @@ fn ParseContext::lex_value(
           )
           return Number(n, repr.map(repr => repr.to_owned()))
         }
-        Some(_) => ctx.invalid_char(shift=-1)
+        Some(c) => ctx.invalid_char(shift=-c.utf16_len())
         None => raise InvalidEof
       }
     Some('0') => {
