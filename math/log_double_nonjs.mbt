@@ -185,24 +185,67 @@ pub fn log2(x : Double) -> Double {
 /// }
 /// ```
 pub fn log10(x : Double) -> Double {
-  if x < 0.0 {
-    return @double.not_a_number
-  } else if x.is_nan() || x.is_inf() {
-    return x
-  } else if x == 0.0 {
-    return @double.neg_infinity
+  // origin: FreeBSD /usr/src/lib/msun/src/e_log10.c
+  //
+  // Reduce x to 2^k * (1+f) and evaluate log(1+f) as in `ln`, then combine
+  // and scale in extra precision:
+  //    log10(x) = log(1+f)/log(10) + k*log10(2)
+  let ivln10hi = 4.34294481878168880939e-01 // 3fdbcb7b 15200000
+  let ivln10lo = 2.50829467116452752298e-11 // 3dbb9438 ca9aadd5
+  let log10_2hi = 3.01029995663611771306e-01 // 3FD34413 509F6000
+  let log10_2lo = 3.69423907715893078616e-13 // 3D59FEF3 11F12B36
+  let lg1 = 6.666666666666735130e-01 // 3FE55555 55555593
+  let lg2 = 3.999999999940941908e-01 // 3FD99999 9997FA04
+  let lg3 = 2.857142874366239149e-01 // 3FD24924 94229359
+  let lg4 = 2.222219843214978396e-01 // 3FCC71C5 1D8E78AF
+  let lg5 = 1.818357216161805012e-01 // 3FC74664 96CB03DE
+  let lg6 = 1.531383769920937332e-01 // 3FC39A09 D078C69F
+  let lg7 = 1.479819860511658591e-01 // 3FC2F112 DF3E5244
+  let mut x = x
+  let mut hx = get_high_word(x)
+  let mut k = 0
+  if hx < 0x00100000U || hx >> 31 != 0 {
+    if x == 0.0 {
+      return @double.neg_infinity // log(+-0) = -inf
+    }
+    if hx >> 31 != 0 {
+      return @double.not_a_number // log(-#) = NaN
+    }
+    // subnormal number, scale x up
+    k -= 54
+    x = x * 0x1.0p54
+    hx = get_high_word(x)
+  } else if hx >= 0x7ff00000U {
+    return x // log(+inf) = +inf, log(NaN) = NaN
   }
-  let ivln10 = 4.34294481903251816668e-01
-  let log10_2hi = 3.01029995663611771306e-01
-  let log10_2lo = 3.69423907715893078616e-13
-  let (f, e) = frexp(x)
-  let (f, e) = if e >= 1 {
-    (f * 2.0, (e - 1).to_double())
-  } else {
-    (f, e.to_double())
-  }
-  let z = e * log10_2lo + ivln10 * ln(f)
-  z + e * log10_2hi
+  // reduce x into [sqrt(2)/2, sqrt(2)); only the high word is compared, so
+  // the split actually falls at 0x3fe6a09e_00000000, just below sqrt(2)/2
+  hx += 0x3ff00000U - 0x3fe6a09eU
+  k += (hx >> 20).reinterpret_as_int() - 0x3ff
+  hx = (hx & 0x000fffffU) + 0x3fe6a09eU
+  x = set_high_word(x, hx)
+  let f = x - 1.0
+  let hfsq = 0.5 * f * f
+  let s = f / (2.0 + f)
+  let z = s * s
+  let w = z * z
+  let t1 = w * (lg2 + w * (lg4 + w * lg6))
+  let t2 = z * (lg1 + w * (lg3 + w * (lg5 + w * lg7)))
+  let r = t2 + t1
+  // hi + lo = f - hfsq + s*(hfsq+r) ~ log(1+f). hi is f - hfsq with its low
+  // word cleared (at most 21 significant bits) and ivln10hi has 32, so
+  // hi * ivln10hi is exact; lo and ivln10lo carry the bits cut from each factor.
+  let hi = set_low_word(f - hfsq, 0U)
+  let lo = f - hi - hfsq + s * (hfsq + r)
+  // val_hi + val_lo ~ log10(1+f) + k*log10(2)
+  let val_hi = hi * ivln10hi
+  let dk = k.to_double()
+  let y = dk * log10_2hi
+  let val_lo = dk * log10_2lo + (lo + hi) * ivln10lo + lo * ivln10hi
+  // Add y to val_hi, folding the rounding error of that sum into val_lo.
+  let w = y + val_hi
+  let val_lo = val_lo + (y - w + val_hi)
+  val_lo + w
 }
 
 ///|
