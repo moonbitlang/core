@@ -159,3 +159,38 @@ test "log2 stays accurate just above a power of two" {
   let ulp = if bits > want { bits - want } else { want - bits }
   assert_true(ulp <= 1UL)
 }
+
+///|
+test "log2 rounding of inexact results" {
+  // issue #4336
+  inspect(@math.log2(1.5625), content="0.6438561897747247")
+  inspect(@math.log2(0.9), content="-0.15200309344504995")
+  inspect(@math.log2(1.1875), content="0.2479275134435855")
+  // the doubles nearest to sqrt(2) and sqrt(2)/2 both sit slightly above them
+  inspect(@math.log2(1.4142135623730951), content="0.5000000000000001")
+  inspect(@math.log2(0.7071067811865476), content="-0.4999999999999999")
+  // just below sqrt(2)/2 and sqrt(2), but with the same high word, which is
+  // all the range reduction compares: both are reduced like the bound itself
+  inspect(@math.log2(0.70710678118634), content="-0.5000000000004234")
+  inspect(@math.log2(1.41421356237272), content="0.4999999999996173")
+  // the low-order bits of log(1+f) reach the result through the lo parts
+  inspect(@math.log2(187.0625), content="7.5473765634981005")
+  inspect(@math.log2(0.625), content="-0.6780719051126377")
+}
+
+///|
+test "log2 special values and subnormals" {
+  // +0, not -0: `to_string` prints both as "0"
+  inspect(@math.log2(1.0).reinterpret_as_uint64(), content="0")
+  inspect(@math.log2(-0.0), content="-Infinity")
+  inspect(@math.log2(-1.0), content="NaN")
+  inspect(@math.log2(@double.not_a_number), content="NaN")
+  inspect(@math.log2(@double.infinity), content="Infinity")
+  inspect(@math.log2(@double.neg_infinity), content="NaN")
+  inspect(@math.log2(@double.max_value), content="1024")
+  // subnormal inputs
+  inspect(@math.log2(5.0e-324), content="-1074")
+  inspect(@math.log2(1.5e-323), content="-1072.415037499279")
+  inspect(@math.log2(2.2250738585072014e-308), content="-1022")
+  inspect(@math.log2(2.225073858507201e-308), content="-1022")
+}
