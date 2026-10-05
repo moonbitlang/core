@@ -75,11 +75,26 @@ test "@math.log2 @math.log10" {
   assert_eq(@math.log10(100.0), 2.0)
   assert_eq(@math.log10(1000.0), 3.0)
   assert_eq(@math.log10(3.0), 0.47712125471966244)
-  assert_eq(@math.log10(11.0), 1.041392685158225)
   assert_eq(@math.log10(15.0), 1.1760912590556813)
   assert_true(@math.log10(-1.0).is_nan())
   assert_true(@math.log10(0.0).is_neg_inf())
   assert_true(@math.log10(@double.infinity).is_pos_inf())
+}
+
+///|
+test "log10 special values" {
+  // +0, not -0: `to_string` prints both as "0"
+  inspect(@math.log10(1.0).reinterpret_as_uint64(), content="0")
+  inspect(@math.log10(-0.0), content="-Infinity")
+  inspect(@math.log10(-1.0), content="NaN")
+  inspect(@math.log10(@double.not_a_number), content="NaN")
+  // a NaN with the sign bit set
+  inspect(
+    @math.log10(0xfff8000000000000UL.reinterpret_as_double()),
+    content="NaN",
+  )
+  inspect(@math.log10(@double.infinity), content="Infinity")
+  inspect(@math.log10(@double.neg_infinity), content="NaN")
 }
 
 ///|

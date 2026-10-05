@@ -20,6 +20,7 @@ options(
     "hyperbolic_double_nonjs.mbt": [ "not", "js" ],
     "log_double_js.mbt": [ "js" ],
     "log_double_nonjs.mbt": [ "not", "js" ],
+    "log_double_nonjs_test.mbt": [ "not", "js" ],
     "pow_double_js.mbt": [ "js" ],
     "pow_double_nonjs.mbt": [ "not", "js" ],
     "trig_double_js.mbt": [ "js" ],
