@@ -18,11 +18,15 @@
 ///
 /// Each end is a `@cmp.Bound`: `Included(k)`, `Excluded(k)` or `Unbounded`.
 /// Because bounds are values, the kind of each end can be chosen at runtime.
+/// Inclusion and exclusion follow `Compare::compare`, as do `range` and the
+/// nearest-key queries. Lower and upper refer to that ordering, including
+/// when keys use `@cmp.Reverse`.
 /// The iterator is lazy: it visits O(log n) nodes to find the first entry,
 /// then O(1) amortized per entry, so stopping early is cheap.
 ///
 /// An empty iterator is returned when the bounds select no keys, including
 /// when `lower` is above `upper`.
+/// When the endpoints compare equal, excluding either endpoint selects no keys.
 ///
 /// ```mbt check
 /// test {
@@ -31,6 +35,8 @@
 ///   @debug.debug_inspect(keys.to_array(), content="[2, 3]")
 ///   let tail = map.range_bounds(Included(3), Unbounded).iter().map(p => p.0)
 ///   @debug.debug_inspect(tail.to_array(), content="[3, 4]")
+///   let empty = map.range_bounds(Included(2), Excluded(2))
+///   @debug.debug_inspect(empty.iter().to_array(), content="[]")
 /// }
 /// ```
 pub fn[K : Compare, V] SortedMap::range_bounds(
@@ -73,6 +79,7 @@ pub fn[K : Compare, V] SortedMap::range_bounds(
 ///|
 /// Returns an iterator over the entries whose keys lie between `lower` and
 /// `upper`, in descending key order. See `range_bounds` for how bounds work.
+/// The arguments remain in lower–upper order; only traversal is reversed.
 ///
 /// ```mbt check
 /// test {
