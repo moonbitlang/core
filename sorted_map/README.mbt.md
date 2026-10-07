@@ -166,6 +166,10 @@ test {
 and `last_lt` find the nearest entry on either side of a key. All of these run
 in O(log n).
 
+“First”, “last”, and the nearest-key comparisons follow the keys' `Compare`
+ordering. For keys wrapped in `@cmp.Reverse`, the first entry has the largest
+underlying key and the last entry has the smallest.
+
 ```mbt check
 ///|
 test {
@@ -184,8 +188,9 @@ test {
 
 ### Reverse Iteration
 
-`rev_iter`, `rev_keys` and `rev_values` mirror `iter`, `keys` and `values`
-in descending key order.
+`rev_iter`, `rev_iter2`, `rev_keys` and `rev_values` mirror `iter`, `iter2`,
+`keys` and `values` in descending key order, according to the keys' `Compare`
+ordering. `rev_iter2` supports `for key, value in map.rev_iter2()`.
 
 ```mbt check
 ///|
@@ -204,6 +209,12 @@ gives descending order. When the order is only known at runtime, such as a
 per-column ascending or descending flag, let each key carry a reference to that
 configuration; all keys of one map share the same configuration array, so the
 extra cost is one field per key.
+
+In this example, every key must have the same number of columns, matching the
+configuration length. Stored keys and lookup keys must use the same ordering
+configuration. Do not mutate a stored key's columns or the shared ordering
+configuration while keys remain in the map; doing so invalidates the tree's
+ordering. To change the ordering, rebuild the map with new keys.
 
 ```mbt check
 ///|

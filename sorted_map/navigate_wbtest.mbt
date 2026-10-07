@@ -20,6 +20,7 @@ fn check_navigation(map : SortedMap[Int, Int], key_space : Int) -> Unit raise {
   @test.assert_eq(map.first(), sorted.get(0))
   @test.assert_eq(map.last(), sorted.last())
   @test.assert_eq(map.rev_iter().to_array(), sorted.rev())
+  @test.assert_eq(map.rev_iter2().iter().to_array(), sorted.rev())
   @test.assert_eq(map.rev_keys().to_array(), sorted.rev().map(p => p.0))
   @test.assert_eq(map.rev_values().to_array(), sorted.rev().map(p => p.1))
   for k in -1..<=key_space {

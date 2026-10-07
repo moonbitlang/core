@@ -8,7 +8,7 @@
 
 - Added `eprintln` for writing a line to standard error (#4222).
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
-- Added ordered navigation to `@sorted_map.SortedMap`: `first`, `last`, `pop_first`, `pop_last`, the nearest-key queries `first_ge`, `first_gt`, `last_le` and `last_lt`, and reverse iteration with `rev_iter`, `rev_keys` and `rev_values`.
+- Added ordered navigation to `@sorted_map.SortedMap`: `first`, `last`, `pop_first`, `pop_last`, the nearest-key queries `first_ge`, `first_gt`, `last_le` and `last_lt`, and reverse iteration with `rev_iter`, `rev_iter2`, `rev_keys` and `rev_values`.
 
 #### Fixed
 

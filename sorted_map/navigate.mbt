@@ -182,6 +182,24 @@ pub fn[K, V] SortedMap::rev_iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Returns a two-value iterator over entries in descending key order,
+/// according to the keys' `Compare` ordering.
+///
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.from_array([(1, "a"), (3, "c"), (2, "b")])
+///   let entries = []
+///   for key, value in map.rev_iter2() {
+///     entries.push((key, value))
+///   }
+///   @debug.debug_inspect(entries, content="[(3, \"c\"), (2, \"b\"), (1, \"a\")]")
+/// }
+/// ```
+pub fn[K, V] SortedMap::rev_iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
+  self.rev_iter()
+}
+
+///|
 /// Returns an iterator over the keys in descending order.
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   rev_nodes(self).map(node => node.key)
