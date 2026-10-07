@@ -197,3 +197,19 @@ test {
 test "from_octets assumes 32-bit limbs" {
   @test.assert_eq(RADIX_BIT_LEN, 32)
 }
+
+///|
+/// Operands with different limb counts: `compare` currently leaks the limb
+/// count difference instead of -1/1 (#4335).
+test "compare operands with different limb counts" {
+  let big = BigInt::from_int(1) << 70
+  let huge = BigInt::from_int(1) << 200
+  inspect(big.compare(0N), content="2")
+  inspect(0N.compare(big), content="-2")
+  inspect(huge.compare(1N), content="6")
+  inspect(1N.compare(huge), content="-6")
+  inspect((-big).compare(-1N), content="-2")
+  inspect((-1N).compare(-big), content="2")
+  inspect((-huge).compare(-big), content="-4")
+  inspect((-big).compare(-huge), content="4")
+}
