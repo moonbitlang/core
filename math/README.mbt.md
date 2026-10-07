@@ -130,9 +130,19 @@ All trigonometric, exponential, and power functions have `Float` variants with a
 ```mbt check
 ///|
 test "float variants" {
-  inspect(@math.sinf(1.0), content="0.8414709568023682")
+  inspect(
+    @math.sinf(1.0),
+    content=(
+      #|0.84147096
+    ),
+  )
   inspect(@math.cosf(0.0), content="1")
-  inspect(@math.expf(1.0), content="2.7182817459106445")
+  inspect(
+    @math.expf(1.0),
+    content=(
+      #|2.7182817
+    ),
+  )
   inspect(@math.lnf(1.0), content="0")
   inspect(@math.powf(2.0, 3.0), content="8")
 }

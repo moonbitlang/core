@@ -17,9 +17,24 @@ test "special float values" {
   inspect(@float.not_a_number, content="NaN")
 
   // Bounds
-  inspect(@float.max_value, content="3.4028234663852886e+38")
-  inspect(@float.min_value, content="-3.4028234663852886e+38")
-  inspect(@float.min_positive, content="1.1754943508222875e-38")
+  inspect(
+    @float.max_value,
+    content=(
+      #|3.4028235e+38
+    ),
+  )
+  inspect(
+    @float.min_value,
+    content=(
+      #|-3.4028235e+38
+    ),
+  )
+  inspect(
+    @float.min_positive,
+    content=(
+      #|1.1754944e-38
+    ),
+  )
 }
 
 ///|
@@ -65,7 +80,12 @@ Other useful operations on floats:
 ///|
 test "utility functions" {
   // Absolute value
-  inspect(Float::abs(-3.14), content="3.140000104904175")
+  inspect(
+    Float::abs(-3.14),
+    content=(
+      #|3.14
+    ),
+  )
 
   // Conversion to integer
   inspect(3.14.to_int(), content="3")
@@ -133,7 +153,12 @@ Convert from other numeric types:
 ///|
 test "conversions" {
   inspect(Float::from_int(42), content="42")
-  inspect(Float::from_double(3.14), content="3.140000104904175")
+  inspect(
+    Float::from_double(3.14),
+    content=(
+      #|3.14
+    ),
+  )
   inspect(Float::from_int64(100L), content="100")
   inspect(Float::from_uint(42U), content="42")
   inspect(Float::from_byte(b'\x41'), content="65")

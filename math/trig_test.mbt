@@ -67,7 +67,12 @@ test "cosf function comprehensive" {
   assert_true(@math.cosf(pi_2 * 4.0).is_close(1))
 
   // Testing extreme values
-  inspect(@math.cosf(100.0), content="0.8623188734054565")
+  inspect(
+    @math.cosf(100.0),
+    content=(
+      #|0.8623189
+    ),
+  )
 
   // Testing special values
   inspect(@math.cosf(@float.not_a_number), content="NaN")
@@ -108,8 +113,18 @@ test "tanf function comprehensive" {
 test "asinf function comprehensive" {
   // Basic test cases
   inspect(@math.asinf(0.0), content="0")
-  inspect(@math.asinf(1.0), content="1.5707963705062866")
-  inspect(@math.asinf(-1.0), content="-1.5707963705062866")
+  inspect(
+    @math.asinf(1.0),
+    content=(
+      #|1.5707964
+    ),
+  )
+  inspect(
+    @math.asinf(-1.0),
+    content=(
+      #|-1.5707964
+    ),
+  )
 
   // Testing various values in range [-1,1]
   assert_true(@math.asinf(0.5).is_close(0.5235987901687622))
@@ -130,8 +145,18 @@ test "asinf function comprehensive" {
 test "acosf function comprehensive" {
   // Basic test cases
   inspect(@math.acosf(1.0), content="0")
-  inspect(@math.acosf(0.0), content="1.570796251296997")
-  inspect(@math.acosf(-1.0), content="3.141592502593994")
+  inspect(
+    @math.acosf(0.0),
+    content=(
+      #|1.5707963
+    ),
+  )
+  inspect(
+    @math.acosf(-1.0),
+    content=(
+      #|3.1415925
+    ),
+  )
 
   // Testing various values in range [-1,1]
   assert_true(@math.acosf(0.5).is_close(1.0471975803375244))

@@ -938,7 +938,12 @@ test "Bytes from_json" {
 test "float roundtrip" {
   let u = Json(Float(3.14))
   let v : Float = @json.from_json(u)
-  inspect(v, content="3.140000104904175")
+  inspect(
+    v,
+    content=(
+      #|3.14
+    ),
+  )
   let u = Json(Float(0.0))
   let v : Float = @json.from_json(u)
   inspect(v, content="0")
