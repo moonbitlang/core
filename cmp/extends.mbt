@@ -49,3 +49,24 @@ pub extend Reverse with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)
 #doc(hidden)
 pub extend Reverse with Show::{output, to_string}
+
+///|
+pub extend Bound with Eq::{equal}
+
+///|
+pub extend Bound with Hash::{hash}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Bound with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Bound with Eq::{not_equal}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Bound with Hash::{hash_combine}

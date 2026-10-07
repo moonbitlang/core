@@ -318,6 +318,33 @@ test {
 }
 ```
 
+### Bounded Ranges
+
+`range_bounds(lower, upper)` takes a `@cmp.Bound` for each end: `Included(k)`,
+`Excluded(k)` or `Unbounded`. Bounds are values, so the kind of each end can be
+chosen at runtime. `rev_range_bounds` returns the same entries in descending
+order. Both iterators are lazy, so taking the first few entries is cheap.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+  // 1 < key <= 3
+  let mid = map.range_bounds(Excluded(1), Included(3)).iter().map(p => p.0)
+  @debug.assert_eq(mid.to_array(), [2, 3])
+  // key < 4, largest first
+  let below = map.rev_range_bounds(Unbounded, Excluded(4)).iter().map(p => p.0)
+  @debug.assert_eq(below.to_array(), [3, 2, 1])
+  // choose the bound kind at runtime, e.g. for `x > 2` versus `x >= 2`
+  let strict = true
+  let lower : @cmp.Bound[Int] = if strict { Excluded(2) } else { Included(2) }
+  let tail = map.range_bounds(lower, Unbounded).iter().map(p => p.0)
+  @debug.assert_eq(tail.to_array(), [3, 4])
+}
+```
+
+`rev_range(low, high)` is the inclusive reverse of `range(low, high)`.
+
 ### Iterators
 
 The SortedMap supports several iterator patterns. Create a map from an iterator:
