@@ -301,9 +301,9 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('{')
-              if indent > 0 {
-                write_indent(buf, indent_cache, depth, indent)
-              }
+              // The line break before the first member is written with that
+              // member: the replacer may drop every member, and then the
+              // object must close as `{}`.
               // After child value printed, we resume from this frame
               stack.push(Object(members.iter(), first=true))
             }
@@ -371,9 +371,9 @@ pub fn Json::stringify(
                 }
                 if !first {
                   buf.write_char(',')
-                  if indent > 0 {
-                    write_indent(buf, indent_cache, depth, indent)
-                  }
+                }
+                if indent > 0 {
+                  write_indent(buf, indent_cache, depth, indent)
                 }
                 buf.write_char('\"')
                 write_escaped(buf, k, escape_slash~)
@@ -388,7 +388,7 @@ pub fn Json::stringify(
               None => {
                 depth -= 1
                 ignore(stack.pop())
-                if indent > 0 {
+                if indent > 0 && !first {
                   write_indent(buf, indent_cache, depth, indent)
                 }
                 buf.write_char('}')

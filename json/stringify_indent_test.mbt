@@ -101,3 +101,69 @@ test "stringify of a scalar ignores a huge indent" {
   inspect(Json::number(1.0).stringify(indent=1000000000), content="1")
   inspect((Json::array([]) : Json).stringify(indent=1000000000), content="[]")
 }
+
+///|
+/// An object whose members are all dropped by the replacer is empty in the
+/// output.
+test "stringify with indent of an object emptied by the replacer" {
+  let r = @json.Replacer::exclude(["password"])
+  let nested : Json = { "user": { "password": "x" }, "n": 1 }
+  debug_inspect(
+    nested.stringify(indent=2, replacer=r),
+    content=(
+      #|"{\n  \"user\": {},\n  \"n\": 1\n}"
+    ),
+  )
+  let top : Json = { "password": "x" }
+  debug_inspect(top.stringify(indent=2, replacer=r), content="\"{}\"")
+  // Nothing is indented, so a huge `indent` must not build an indentation unit.
+  debug_inspect(top.stringify(indent=1000000000, replacer=r), content="\"{}\"")
+}
+
+///|
+/// For a pure replacer `r`, `stringify(replacer=r)` must print exactly what
+/// stringifying `transform(r)` prints: both apply the replacer to every object
+/// member, recursively, including inside arrays.
+test "stringify with replacer agrees with transform then stringify" {
+  let values : Array[Json] = [
+    { "password": "x" },
+    { "user": { "password": "x" }, "n": 1 },
+    { "password": "x", "a": 1 },
+    { "a": 1, "password": "x" },
+    { "a": 1, "password": "x", "b": 2 },
+    { "a": { "b": { "password": "x" } }, "password": { "c": 1 } },
+    [{ "password": "x" }, { "password": "y", "a": [] }, {}],
+    { "a": [{ "password": 1 }, [{ "password": 2 }]], "b": {} },
+    { "a": "s", "b": 1 },
+    [],
+    {},
+    "password",
+  ]
+  let replacers = [
+    @json.Replacer::exclude(["password"]),
+    @json.Replacer::keep(["a", "b"]),
+    Replacer((_, _) => None),
+    // Drops every number, so objects holding only numbers become empty.
+    Replacer((_, v) => if v is Number(_) { None } else { Some(v) }),
+    // Maps a string member to an object whose only member is then dropped.
+    Replacer((k, v) => {
+      if k == "password" {
+        None
+      } else if v is String(_) {
+        Some({ "password": v })
+      } else {
+        Some(v)
+      }
+    }),
+  ]
+  for value in values {
+    for replacer in replacers {
+      for indent in 0..<=3 {
+        assert_eq(
+          value.stringify(indent~, replacer~),
+          value.transform(replacer).stringify(indent~),
+        )
+      }
+    }
+  }
+}
