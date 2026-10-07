@@ -37,12 +37,42 @@ test "@math.lnf Test" {
 ///|
 test "@math.ln_1p" {
   inspect(@math.ln_1pf(0), content="0")
-  inspect(@math.ln_1pf(1), content="0.6931471824645996")
-  inspect(@math.ln_1pf(2), content="1.0986123085021973")
-  inspect(@math.ln_1pf(3), content="1.3862943649291992")
-  inspect(@math.ln_1pf(4), content="1.6094379425048828")
-  inspect(@math.ln_1pf(5), content="1.7917594909667969")
-  inspect(@math.ln_1pf(-0.5), content="-0.6931471824645996")
+  inspect(
+    @math.ln_1pf(1),
+    content=(
+      #|0.6931472
+    ),
+  )
+  inspect(
+    @math.ln_1pf(2),
+    content=(
+      #|1.0986123
+    ),
+  )
+  inspect(
+    @math.ln_1pf(3),
+    content=(
+      #|1.3862944
+    ),
+  )
+  inspect(
+    @math.ln_1pf(4),
+    content=(
+      #|1.609438
+    ),
+  )
+  inspect(
+    @math.ln_1pf(5),
+    content=(
+      #|1.7917595
+    ),
+  )
+  inspect(
+    @math.ln_1pf(-0.5),
+    content=(
+      #|-0.6931472
+    ),
+  )
   inspect(@math.ln_1pf(-1), content="-Infinity")
   inspect(@math.ln_1pf(-2), content="NaN")
   inspect(@math.ln_1pf(@float.not_a_number), content="NaN")

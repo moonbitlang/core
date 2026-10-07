@@ -96,7 +96,12 @@ let exp2f_data : Exp2fData = {
 /// ```mbt check
 /// test {
 ///   inspect(@math.expf(0), content="1")
-///   inspect(@math.expf(1), content="2.7182817459106445")
+///   inspect(
+///     @math.expf(1),
+///     content=(
+///       #|2.7182817
+///     ),
+///   )
 ///   inspect(@math.expf(@float.neg_infinity), content="0")
 /// }
 /// ```
@@ -153,8 +158,18 @@ pub fn expf(x : Float) -> Float {
 /// ```mbt check
 /// test {
 ///   inspect(@math.expm1f(0), content="0")
-///   inspect(@math.expm1f(1), content="1.7182817459106445")
-///   inspect(@math.expm1f(-1), content="-0.6321205496788025")
+///   inspect(
+///     @math.expm1f(1),
+///     content=(
+///       #|1.7182817
+///     ),
+///   )
+///   inspect(
+///     @math.expm1f(-1),
+///     content=(
+///       #|-0.63212055
+///     ),
+///   )
 ///   inspect(@math.expm1f(@float.not_a_number), content="NaN")
 ///   inspect(@math.expm1f(@float.infinity), content="Infinity")
 ///   inspect(@math.expm1f(@float.neg_infinity), content="-1")

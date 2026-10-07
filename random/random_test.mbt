@@ -32,7 +32,12 @@ test "Rand::double and Rand::float accept interval bounds" {
   let float_source : ArithmeticSource = { value: 0, step: 0, }
   let float_rand = @random.Rand(generator=float_source as &@random.Source)
   inspect(double_rand.double(min=1.0, max=2.0), content="1.9999999999999998")
-  inspect(float_rand.float(min=1.0F, max=2.0F), content="1.9999998807907104")
+  inspect(
+    float_rand.float(min=1.0F, max=2.0F),
+    content=(
+      #|1.9999999
+    ),
+  )
 }
 
 ///|
@@ -361,11 +366,36 @@ test "Rand::uint64 applies Lemire rejection at the maximum limit" {
 ///|
 test {
   let random = @random.Rand::chacha8(seed=fixed_test_seed)
-  inspect(random.float(), content="0.27378302812576294")
-  inspect(random.float(), content="0.4169347286224365")
-  inspect(random.float(), content="0.5513989925384521")
-  inspect(random.float(), content="0.8607915639877319")
-  inspect(random.float(), content="0.10972100496292114")
+  inspect(
+    random.float(),
+    content=(
+      #|0.27378303
+    ),
+  )
+  inspect(
+    random.float(),
+    content=(
+      #|0.41693473
+    ),
+  )
+  inspect(
+    random.float(),
+    content=(
+      #|0.551399
+    ),
+  )
+  inspect(
+    random.float(),
+    content=(
+      #|0.86079156
+    ),
+  )
+  inspect(
+    random.float(),
+    content=(
+      #|0.109721005
+    ),
+  )
 }
 
 ///|

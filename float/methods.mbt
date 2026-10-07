@@ -13,8 +13,65 @@
 // limitations under the License.
 
 ///|
+/// The shortest decimal that reads back as the same `Float`, laid out like
+/// `Double`'s (the rules of ECMAScript's `Number::toString`): `0.1`,
+/// `16777216`, `1e+21`, `1.5e-7`. Where several shortest decimals read back,
+/// it is the one closest to the value, so a large integral value may print
+/// with zeros where its exact digits would be (2^31 is `2147483600`, as 2^60
+/// is `1152921504606847000` for a `Double`).
 pub impl Show for Float with fn to_string(self) {
-  self.to_double().to_string()
+  let bits = self.reinterpret_as_uint()
+  let ieee_mantissa = bits & 0x7FFFFFU
+  let ieee_exponent = (bits >> 23) & 0xFFU
+  if ieee_exponent == 0xFFU || (ieee_exponent == 0U && ieee_mantissa == 0U) {
+    // NaN, the infinities and the zeros print like the doubles they are.
+    return self.to_double().to_string()
+  }
+  let decimal = f2d(ieee_mantissa, ieee_exponent)
+  let mut mantissa = decimal.mantissa
+  let mut exponent = decimal.exponent
+  while mantissa % 10U == 0U {
+    mantissa = mantissa / 10U
+    exponent += 1
+  }
+  let digits = mantissa.to_string()
+  let length = digits.length()
+  // The exponent of the first digit.
+  let exp = exponent + length - 1
+  let builder = StringBuilder(size_hint=16)
+  if bits >> 31 != 0U {
+    builder.write_char('-')
+  }
+  if !(exp >= -6 && exp < 21) {
+    // Scientific notation: `d.ddde+x`, without `.` for a single digit.
+    builder.write_view(digits[:1])
+    if length > 1 {
+      builder.write_char('.')
+      builder.write_view(digits[1:])
+    }
+    builder.write_char('e')
+    builder.write_char(if exp < 0 { '-' } else { '+' })
+    builder.write_string((if exp < 0 { -exp } else { exp }).to_string())
+  } else if exp < 0 {
+    // The decimal dot is before any of the digits.
+    builder.write_string("0.")
+    for _ in 0..<(-exp - 1) {
+      builder.write_char('0')
+    }
+    builder.write_string(digits)
+  } else if exp + 1 >= length {
+    // The decimal dot is after any of the digits.
+    builder.write_string(digits)
+    for _ in 0..<(exp + 1 - length) {
+      builder.write_char('0')
+    }
+  } else {
+    // The decimal dot is somewhere between the digits.
+    builder.write_view(digits[:exp + 1])
+    builder.write_char('.')
+    builder.write_view(digits[exp + 1:])
+  }
+  builder.to_string()
 }
 
 ///|
@@ -381,8 +438,18 @@ pub fn Float::is_close(
 ///
 /// ```mbt check
 /// test {
-///   inspect(Float(5.7).mod(2.0), content="1.6999998092651367")
-///   inspect(Float(-5.7).mod(2.0), content="-1.6999998092651367")
+///   inspect(
+///     Float(5.7).mod(2.0),
+///     content=(
+///       #|1.6999998
+///     ),
+///   )
+///   inspect(
+///     Float(-5.7).mod(2.0),
+///     content=(
+///       #|-1.6999998
+///     ),
+///   )
 /// }
 /// ```
 pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {
