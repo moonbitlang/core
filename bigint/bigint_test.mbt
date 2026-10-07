@@ -502,6 +502,24 @@ test "compare" {
 }
 
 ///|
+/// `compare` returns exactly -1, 0 or 1 on every backend, including when the
+/// operands have different limb counts (#4335).
+test "compare operands with different limb counts" {
+  let big = @bigint.BigInt::from_int(1) << 70
+  let huge = @bigint.BigInt::from_int(1) << 200
+  inspect(big.compare(0N), content="1")
+  inspect(0N.compare(big), content="-1")
+  inspect(huge.compare(1N), content="1")
+  inspect(1N.compare(huge), content="-1")
+  inspect((-big).compare(-1N), content="-1")
+  inspect((-1N).compare(-big), content="1")
+  inspect((-huge).compare(-big), content="-1")
+  inspect((-big).compare(-huge), content="1")
+  inspect(huge.compare(huge), content="0")
+  inspect((-huge).compare(-huge), content="0")
+}
+
+///|
 test "from_string radix 16" {
   // Check zero
   let a = @bigint.BigInt::from_string("0", radix=16)

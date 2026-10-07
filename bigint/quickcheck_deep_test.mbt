@@ -512,10 +512,8 @@ test "comparison sign agrees with subtraction" {
       for signs in 0..<4 {
         let a = if (signs & 1) == 0 { a0 } else { -a0 }
         let b = if (signs & 2) == 0 { b0 } else { -b0 }
-        // compare's contract is sign-only (the exact magnitude differs
-        // between targets), so normalize before comparing
-        let c0 = a.compare(b)
-        let c = if c0 < 0 { -1 } else if c0 == 0 { 0 } else { 1 }
+        // every backend returns exactly -1, 0 or 1, so no normalization
+        let c = a.compare(b)
         let diff = a - b
         let d = if diff < 0N { -1 } else if diff.is_zero() { 0 } else { 1 }
         assert_eq(c, d)

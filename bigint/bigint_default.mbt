@@ -930,10 +930,12 @@ pub impl Compare for BigInt with fn compare(self, other) {
   let self_len = self.len
   let other_len = other.len
   if self_len != other_len {
-    return if self.sign == Positive {
-      self_len - other_len
+    // More limbs means a larger magnitude, which orders the other way round
+    // for negative values.
+    return if (self_len > other_len) == (self.sign == Positive) {
+      1
     } else {
-      other_len - self_len
+      -1
     }
   }
   for i in self_len>..0 {
