@@ -21,6 +21,14 @@ pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 // Errors
 
 // Types and methods
+pub(all) enum Bound[T] {
+  Included(T)
+  Excluded(T)
+  Unbounded
+} derive(Eq, Hash, @debug.Debug)
+pub fn[T : Eq] Bound::equal(Self[T], Self[T]) -> Bool
+pub fn[T : Hash] Bound::hash(Self[T]) -> Int
+
 pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
 pub fn[T : Compare] Reverse::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] Reverse::equal(Self[T], Self[T]) -> Bool
