@@ -13,25 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Every bound kind over keys in `-1..=key_space`, so bounds fall below,
-/// inside, between and above the stored keys.
-fn all_bounds(key_space : Int) -> Array[@cmp.Bound[Int]] {
-  let bounds : Array[@cmp.Bound[Int]] = [Unbounded]
-  for k in -1..<=key_space {
-    bounds.push(Included(k))
-    bounds.push(Excluded(k))
-  }
-  bounds
-}
-
-///|
-fn in_bounds(k : Int, lower : @cmp.Bound[Int], upper : @cmp.Bound[Int]) -> Bool {
-  satisfies_lower(k, lower) && satisfies_upper(k, upper)
-}
-
-///|
 /// Checks every navigation query against a sorted array of the map's
-/// entries, over all keys and all bound combinations.
+/// entries, over all keys.
 fn check_navigation(map : SortedMap[Int, Int], key_space : Int) -> Unit raise {
   let sorted = map.to_array()
   @test.assert_eq(map.first(), sorted.get(0))
@@ -50,20 +33,6 @@ fn check_navigation(map : SortedMap[Int, Int], key_space : Int) -> Unit raise {
       map.last_lt(k),
       sorted.rev().iter().find_first(p => p.0 < k),
     )
-  }
-  let bounds = all_bounds(key_space)
-  for lower in bounds {
-    for upper in bounds {
-      let expected = sorted.filter(p => in_bounds(p.0, lower, upper))
-      @test.assert_eq(
-        map.range_bounds(lower, upper).iter().to_array(),
-        expected,
-      )
-      @test.assert_eq(
-        map.rev_range_bounds(lower, upper).iter().to_array(),
-        expected.rev(),
-      )
-    }
   }
 }
 
@@ -138,45 +107,5 @@ test "pop_first and pop_last keep invariants and agree with the model" {
     }
     @test.assert_eq(map.length(), 0)
     @test.assert_eq(map.pop_last(), None)
-  }
-}
-
-///|
-test "range iterators stop early and leave the tree intact" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
-  for k in 0..<1000 {
-    map.set(k, k)
-  }
-  let it = map.range_bounds(Excluded(10), Unbounded)
-  @test.assert_eq(it.iter().take(3).to_array(), [(11, 11), (12, 12), (13, 13)])
-  let rev = map.rev_range_bounds(Unbounded, Excluded(990))
-  @test.assert_eq(rev.iter().take(2).to_array(), [(989, 989), (988, 988)])
-  check_invariants(map)
-  @test.assert_eq(map.length(), 1000)
-}
-
-///|
-fn double_keys(it : Iter2[Double, Int]) -> Array[String] {
-  it.iter().map(p => p.0.to_string()).to_array()
-}
-
-///|
-test "range bounds follow Compare ordering for NaN keys" {
-  // Double's relational operators are false for NaN, while `compare` (which
-  // `range`, `get` and the nearest-key queries use) treats NaN as equal to
-  // every value. Bounded ranges must follow `compare`, like `range` does.
-  let nan = 0.0 / 0.0
-  let map : SortedMap[Double, Int] = new_sorted_map()
-  map.set(1.0, 1)
-  map.set(nan, 2)
-  map.set(-1.0, 3)
-  for bounds in [(nan, nan), (-1.0, nan), (nan, 1.0), (-1.0, 1.0)] {
-    let (low, high) = bounds
-    let expected = double_keys(map.range(low, high))
-    @test.assert_eq(
-      double_keys(map.range_bounds(Included(low), Included(high))),
-      expected,
-    )
-    @test.assert_eq(double_keys(map.rev_range(low, high)), expected.rev())
   }
 }

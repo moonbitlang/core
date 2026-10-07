@@ -223,31 +223,6 @@ test {
 }
 ```
 
-### Bounded Ranges
-
-`range_bounds(lower, upper)` takes a `@cmp.Bound` for each end: `Included(k)`,
-`Excluded(k)` or `Unbounded`. Bounds are values, so the kind of each end can be
-chosen at runtime. `rev_range_bounds` returns the same entries in descending
-order. Both iterators are lazy, so taking the first few entries is cheap.
-
-```mbt check
-///|
-test {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
-  // 1 < key <= 3
-  let mid = map.range_bounds(Excluded(1), Included(3)).iter().map(p => p.0)
-  @debug.assert_eq(mid.to_array(), [2, 3])
-  // key < 4, largest first
-  let below = map.rev_range_bounds(Unbounded, Excluded(4)).iter().map(p => p.0)
-  @debug.assert_eq(below.to_array(), [3, 2, 1])
-  // choose the bound kind at runtime, e.g. for `x > 2` versus `x >= 2`
-  let strict = true
-  let lower : @cmp.Bound[Int] = if strict { Excluded(2) } else { Included(2) }
-  let tail = map.range_bounds(lower, Unbounded).iter().map(p => p.0)
-  @debug.assert_eq(tail.to_array(), [3, 4])
-}
-```
-
 ### Smallest, Largest and Nearest Keys
 
 `first` and `last` return the entries with the smallest and largest keys;
@@ -273,8 +248,8 @@ test {
 
 ### Reverse Iteration
 
-`rev_iter`, `rev_keys`, `rev_values` and `rev_range` mirror `iter`, `keys`,
-`values` and `range` in descending key order.
+`rev_iter`, `rev_keys` and `rev_values` mirror `iter`, `keys` and `values`
+in descending key order.
 
 ```mbt check
 ///|
@@ -282,7 +257,6 @@ test {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
   @debug.assert_eq(map.rev_keys().to_array(), [3, 2, 1])
   @debug.assert_eq(map.rev_iter().take(1).to_array(), [(3, "c")])
-  @debug.assert_eq(map.rev_range(1, 2).iter().map(p => p.0).to_array(), [2, 1])
 }
 ```
 
@@ -297,7 +271,7 @@ extra cost is one field per key.
 
 ```mbt check
 ///|
-struct IndexKey {
+priv struct IndexKey {
   cols : Array[Int]
   descending : Array[Bool] // shared by every key in the map
 }

@@ -2,7 +2,6 @@
 package "moonbitlang/core/sorted_map"
 
 import {
-  "moonbitlang/core/cmp",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -57,12 +56,9 @@ pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K, V] SortedMap::pop_first(Self[K, V]) -> (K, V)?
 pub fn[K, V] SortedMap::pop_last(Self[K, V]) -> (K, V)?
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
-pub fn[K : Compare, V] SortedMap::range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
 pub fn[K, V] SortedMap::rev_iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] SortedMap::rev_keys(Self[K, V]) -> Iter[K]
-pub fn[K : Compare, V] SortedMap::rev_range(Self[K, V], K, K) -> Iter2[K, V]
-pub fn[K : Compare, V] SortedMap::rev_range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
 pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iter[V]
 #alias("_[_]=_")
 #alias(add, deprecated)
