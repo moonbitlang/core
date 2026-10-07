@@ -159,70 +159,6 @@ test {
 }
 ```
 
-### Data Extraction
-
-Get all keys or values from the map.
-
-```mbt check
-///|
-test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  @debug.assert_eq(map.keys().collect(), [1, 2, 3])
-  @debug.assert_eq(map.values().collect(), ["one", "two", "three"])
-}
-```
-
-Convert the map to an array of key-value pairs.
-
-```mbt check
-///|
-test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  @debug.assert_eq(map.to_array(), [(1, "one"), (2, "two"), (3, "three")])
-}
-```
-
-### Range Operations
-
-Get a subset of the map within a specified range of keys. The range is inclusive for both bounds `[low, high]`.
-
-```mbt check
-///|
-test {
-  let map = @sorted_map.from_array([
-    (1, "one"),
-    (2, "two"),
-    (3, "three"),
-    (4, "four"),
-    (5, "five"),
-  ])
-  let range_items = []
-  map.range(2, 4).each((k, v) => range_items.push((k, v)))
-  @debug.assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
-}
-```
-
-Edge cases for range operations:
-- If `low > high`, returns an empty result
-- If `low` or `high` are outside the map bounds, returns only pairs within valid bounds
-- The returned iterator preserves the sorted order of keys
-
-```mbt check
-///|
-///  Example with out-of-bounds range
-test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let range_items = []
-  map.range(0, 10).each((k, v) => range_items.push((k, v)))
-  @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
-
-  // Example with invalid range
-  let empty_range : Array[(Int, String)] = []
-  map.range(10, 5).each((k, v) => empty_range.push((k, v)))
-  @debug.assert_eq(empty_range, [])
-}
-```
-
 ### Smallest, Largest and Nearest Keys
 
 `first` and `last` return the entries with the smallest and largest keys;
@@ -304,6 +240,70 @@ test {
   index.set({ cols: [1, 9], descending, }, "y")
   index.set({ cols: [0, 7], descending, }, "z")
   @debug.assert_eq(index.values().to_array(), ["z", "y", "x"])
+}
+```
+
+### Data Extraction
+
+Get all keys or values from the map.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  @debug.assert_eq(map.keys().collect(), [1, 2, 3])
+  @debug.assert_eq(map.values().collect(), ["one", "two", "three"])
+}
+```
+
+Convert the map to an array of key-value pairs.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  @debug.assert_eq(map.to_array(), [(1, "one"), (2, "two"), (3, "three")])
+}
+```
+
+### Range Operations
+
+Get a subset of the map within a specified range of keys. The range is inclusive for both bounds `[low, high]`.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([
+    (1, "one"),
+    (2, "two"),
+    (3, "three"),
+    (4, "four"),
+    (5, "five"),
+  ])
+  let range_items = []
+  map.range(2, 4).each((k, v) => range_items.push((k, v)))
+  @debug.assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
+}
+```
+
+Edge cases for range operations:
+- If `low > high`, returns an empty result
+- If `low` or `high` are outside the map bounds, returns only pairs within valid bounds
+- The returned iterator preserves the sorted order of keys
+
+```mbt check
+///|
+///  Example with out-of-bounds range
+test {
+  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let range_items = []
+  map.range(0, 10).each((k, v) => range_items.push((k, v)))
+  @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
+
+  // Example with invalid range
+  let empty_range : Array[(Int, String)] = []
+  map.range(10, 5).each((k, v) => empty_range.push((k, v)))
+  @debug.assert_eq(empty_range, [])
 }
 ```
 
