@@ -16,12 +16,13 @@
 fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   let string_start = ctx.offset
   // Fast path for ordinary strings: scan raw UTF-16 code units and materialize
-  // the slice directly when there are no escapes or control characters. This
-  // loop checks the first `LEX_STRING_SCALAR_UNITS` code units, so a key or
-  // value shorter than that is lexed without leaving it; the rest of a longer
-  // string is scanned by `lex_string_long`.
+  // the slice directly when there are no escapes or control characters. On
+  // SIMD targets, this loop checks `LEX_STRING_SCALAR_UNITS` code units, so a
+  // shorter key or value is lexed without leaving it; the rest of a longer
+  // string is scanned by `lex_string_long`. Scalar targets keep the full loop.
   let end = ctx.end_offset
-  let scalar_end = if end - string_start > LEX_STRING_SCALAR_UNITS {
+  let scalar_end = if LEX_STRING_USE_SIMD &&
+    end - string_start > LEX_STRING_SCALAR_UNITS {
     string_start + LEX_STRING_SCALAR_UNITS
   } else {
     end
@@ -46,7 +47,11 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
       ctx.invalid_char(shift=-1)
     }
   }
-  ctx.lex_string_long(string_start, scalar_end)
+  if LEX_STRING_USE_SIMD {
+    ctx.lex_string_long(string_start, scalar_end)
+  } else {
+    raise InvalidEof
+  }
 }
 
 ///|
@@ -55,14 +60,17 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
 /// one more literal unit than this before switching to
 /// `find_string_special_long`. Only which scan runs depends on it, never the
 /// result.
-#cfg(any(target="native", target="wasm"))
 const LEX_STRING_SCALAR_UNITS = 16
 
 ///|
-/// Without SIMD, `find_string_special_long` is the same one-unit-at-a-time
-/// scan, so runs of any practical length stay in the lexer's own loops.
+/// Compile out the SIMD dispatch and run-limit bookkeeping on scalar targets.
+/// A large scalar threshold would still leave a comparison in the hot loop.
+#cfg(any(target="native", target="wasm"))
+const LEX_STRING_USE_SIMD = true
+
+///|
 #cfg(not(any(target="native", target="wasm")))
-const LEX_STRING_SCALAR_UNITS = 0x3FFFFFFF
+const LEX_STRING_USE_SIMD = false
 
 ///|
 /// Continues `lex_string` from `from`, where `string_start..from` is known to
@@ -112,12 +120,13 @@ fn ParseContext::lex_string_slow(
   let end = ctx.end_offset
   // Everything before the next `"`, `\` or control character is literal
   // content, and none of those code units is a surrogate, so scanning code
-  // units stops at the same place as decoding one character at a time. After
-  // an escape, this loop checks literal units up to offset `scalar_limit`,
+  // units stops at the same place as decoding one character at a time. On SIMD
+  // targets, after an escape this loop checks units up to `scalar_limit`,
   // and `find_string_special_long` scans the rest of the run. (The first unit
   // is the backslash, which sets `scalar_limit`. If the addition wraps, the
   // switch just happens sooner; either scan finds the same unit.)
-  for i = ctx.offset, scalar_limit = ctx.offset {
+  let mut scalar_limit = 0
+  for i = ctx.offset {
     guard i < end else { raise InvalidEof }
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
@@ -178,13 +187,16 @@ fn ParseContext::lex_string_slow(
         None => raise InvalidEof
       }
       start = ctx.offset
-      continue ctx.offset, ctx.offset + LEX_STRING_SCALAR_UNITS
+      if LEX_STRING_USE_SIMD {
+        scalar_limit = ctx.offset + LEX_STRING_SCALAR_UNITS
+      }
+      continue ctx.offset
     } else if c < ' ' {
       // An unescaped control character.
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
-    } else if i < scalar_limit {
-      continue i + 1, scalar_limit
+    } else if !LEX_STRING_USE_SIMD || i < scalar_limit {
+      continue i + 1
     } else {
       // Lands on the next `"`, `\` or control character, or on `end`.
       let base = ctx.input.start_offset()
@@ -193,8 +205,7 @@ fn ParseContext::lex_string_slow(
           base + i + 1,
           base + end,
         ) -
-        base,
-        scalar_limit
+        base
     }
   }
   buf.to_string()
