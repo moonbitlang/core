@@ -60,15 +60,15 @@ test "internal repr" {
     [0N, 1, 2, 3, 4, -1, -2, -3, -4].map(convert),
     content=(
       #|[
-      #|  { limbs: <FixedArray: [0, 0]>, sign: Positive, len: 1 },
-      #|  { limbs: <FixedArray: [1, 0]>, sign: Positive, len: 1 },
-      #|  { limbs: <FixedArray: [2, 0]>, sign: Positive, len: 1 },
-      #|  { limbs: <FixedArray: [3, 0]>, sign: Positive, len: 1 },
-      #|  { limbs: <FixedArray: [4, 0]>, sign: Positive, len: 1 },
-      #|  { limbs: <FixedArray: [1, 0]>, sign: Negative, len: 1 },
-      #|  { limbs: <FixedArray: [2, 0]>, sign: Negative, len: 1 },
-      #|  { limbs: <FixedArray: [3, 0]>, sign: Negative, len: 1 },
-      #|  { limbs: <FixedArray: [4, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [2]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [3]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [4]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [2]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [3]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [4]>, sign: Negative, len: 1 },
       #|]
     ),
   )
@@ -94,7 +94,20 @@ const RADIX_MASK : UInt64 = RADIX - 1
 
 ///|
 /// The ratio of the number of decimal digits to the number of bits.
-const DECIMAL_RATIO : Double = 0.302 // log10(2)
+///
+/// This is an upper bound of log10(2) ≈ 0.30103, so `to_string` never
+/// underestimates the number of decimal slots it needs. Do not use it to size
+/// a buffer that holds bits converted from decimal digits; that needs the
+/// opposite bound, `BITS_PER_DECIMAL_DIGIT`.
+const DECIMAL_RATIO : Double = 0.302
+
+///|
+/// An upper bound of log2(10) ≈ 3.32193, the number of bits per decimal digit.
+///
+/// `from_string_dec` sizes its limb array with it. A lower bound here (such as
+/// `1 / DECIMAL_RATIO` ≈ 3.31126) leaves too few limbs for long inputs, and the
+/// final carry is lost.
+const BITS_PER_DECIMAL_DIGIT : Double = 3.322
 
 ///|
 /// When to switch to Karatsuba multiplication
@@ -1292,44 +1305,84 @@ pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
 }
 
 ///|
+/// The number of decimal digits `from_string_dec` consumes per step:
+/// 10^9 is the largest power of ten below `RADIX`.
+const DECIMAL_LIMB_CHUNK_DIGITS = 9
+
+///|
+/// Returns the number of limbs needed to hold any value of `digits` decimal
+/// digits.
+///
+/// Such a value is less than 10^digits, which needs at most
+/// ceil(digits * log2(10)) <= floor(digits * BITS_PER_DECIMAL_DIGIT) + 1 bits.
+fn decimal_limb_capacity(digits : Int) -> Int {
+  (
+    unchecked_double_to_int(digits.to_double() * BITS_PER_DECIMAL_DIGIT) +
+    1 +
+    RADIX_BIT_LEN -
+    1
+  ) /
+  RADIX_BIT_LEN
+}
+
+///|
+/// Parses a decimal string.
+///
+/// The digits are consumed in chunks of up to `DECIMAL_LIMB_CHUNK_DIGITS`.
+/// Each chunk multiplies the limbs in use by 10^chunk_length and adds the
+/// chunk, so the work per chunk is proportional to the current magnitude,
+/// not to the final one.
 fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   let len = input.length()
   if len == 0 {
     syntax_err()
   }
   let sign : Sign = if input.unsafe_get(0) == '-' { Negative } else { Positive }
-  if sign == Negative && len == 1 {
+  let start = if sign == Negative { 1 } else { 0 }
+  if start == len {
     syntax_err()
   }
-  let mut b_len = (
-      unchecked_double_to_int(len.to_double() / DECIMAL_RATIO) +
-      1 +
-      RADIX_BIT_LEN
-    ) /
-    RADIX_BIT_LEN +
-    1
-  let b = FixedArray::make(b_len, 0U)
-  for
-    i in (match sign {
-      Negative => 1
-      Positive => 0
-    })..<input.length() {
-    let x = input.unsafe_get(i).to_int() - '0'
-    if x < 0 || x > 9 {
-      syntax_err()
+  let digits = len - start
+  let b = FixedArray::make(decimal_limb_capacity(digits), 0U)
+  // The first chunk takes the leftover digits so that the rest are full.
+  let first_take = match digits % DECIMAL_LIMB_CHUNK_DIGITS {
+    0 => DECIMAL_LIMB_CHUNK_DIGITS
+    r => r
+  }
+  let used = for i = start, take = first_take, used = 0 {
+    if i >= len {
+      break used
     }
-    let mut carry = x.reinterpret_as_uint().to_uint64()
-    for j in 0..<b_len {
-      carry += b[j].to_uint64() * 10
+    let (chunk, scale) = for k in 0..<take; chunk = 0UL, scale = 1UL {
+      let x = input.unsafe_get(i + k).to_int() - '0'
+      if x < 0 || x > 9 {
+        syntax_err()
+      }
+      continue chunk * 10UL + x.reinterpret_as_uint().to_uint64(), scale * 10UL
+    } nobreak {
+      (chunk, scale)
+    }
+    // limb * scale + carry <= (2^32 - 1) * 10^9 + 10^9 < 2^64, and the carry
+    // out of the top limb is below 10^9 + 1 < 2^32.
+    let mut carry = chunk
+    for j in 0..<used {
+      carry += b[j].to_uint64() * scale
       b[j] = (carry & RADIX_MASK).to_uint()
       carry = carry >> RADIX_BIT_LEN
     }
+    if carry != 0UL {
+      // `decimal_limb_capacity` leaves room for every limb this can create.
+      b[used] = carry.to_uint()
+      continue i + take, DECIMAL_LIMB_CHUNK_DIGITS, used + 1
+    }
+    continue i + take, DECIMAL_LIMB_CHUNK_DIGITS, used
   }
-  while b[b_len - 1] == 0 && b_len > 1 {
-    b_len -= 1
+  // `zero` itself is initialized through this function, so build the zero
+  // value here instead of returning it.
+  if used == 0 {
+    return { limbs: b, sign: Positive, len: 1, }
   }
-  let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
-  { limbs: b, sign, len: b_len, }
+  { limbs: b, sign, len: used, }
 }
 
 ///|

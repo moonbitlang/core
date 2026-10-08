@@ -36,15 +36,15 @@ test "debug_string" {
   inspect(
     buf,
     content=(
-      #|{limbs : <FixedArray: [0, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [1, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [2, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [3, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [4, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [0, 0]>, sign : Positive, len : 1 }
-      #|{limbs : <FixedArray: [1, 0]>, sign : Negative, len : 1 }
-      #|{limbs : <FixedArray: [2, 0]>, sign : Negative, len : 1 }
-      #|{limbs : <FixedArray: [3, 0]>, sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [1]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [2]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [3]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [4]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [1]>, sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [2]>, sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [3]>, sign : Negative, len : 1 }
     ),
   )
 }
@@ -177,11 +177,11 @@ test "BigInt::ctz" {
 test {
   inspect(
     MyBigInt(-9223372036854775809N),
-    content="{limbs : <FixedArray: [1, 2147483648, 0]>, sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [1, 2147483648]>, sign : Negative, len : 2 }",
   ) // Int64.min_value - 1
   inspect(
     MyBigInt(-9223372036854775810N),
-    content="{limbs : <FixedArray: [2, 2147483648, 0]>, sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [2, 2147483648]>, sign : Negative, len : 2 }",
   ) // Int64.min_value - 2
 }
 
@@ -196,4 +196,24 @@ test {
 /// the moment it is supposed to fire.
 test "from_octets assumes 32-bit limbs" {
   @test.assert_eq(RADIX_BIT_LEN, 32)
+}
+
+///|
+test "decimal_limb_capacity holds every decimal input" {
+  // An input of `len` digits is less than 10^len, which needs at most
+  // ceil(len * log2(10)) bits. 3.321928095 > log2(10) = 3.32192809488...,
+  // so the integer bound below is an upper bound of that bit count.
+  for len in 1..<=200000 {
+    let needed = (len.to_int64() * 3321928095L + 999999999L) / 1000000000L
+    let capacity = decimal_limb_capacity(len).to_int64() *
+      RADIX_BIT_LEN.to_int64()
+    assert_true(capacity >= needed, msg="len = \{len}")
+    // 10^len - 1 needs ceil(len * log2(10)) >= floor(len * 3.3219280948) + 1
+    // bits, so the capacity has at most one spare limb in this range.
+    let minimum = len.to_int64() * 33219280948L / 10000000000L + 1L
+    assert_true(
+      capacity - minimum < 2L * RADIX_BIT_LEN.to_int64(),
+      msg="len = \{len}",
+    )
+  }
 }
