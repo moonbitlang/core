@@ -57,8 +57,7 @@ test "bench json parse object with short keys n=1000" (it : @bench.T) {
 
 ///|
 test "bench json parse strings len=20 n=1000" (it : @bench.T) {
-  // Short values just above the planned SIMD prefix threshold, to keep
-  // the scalar baseline and the SIMD follow-up directly comparable.
+  // Short values that should stay in the scalar prefix.
   let input = lex_string_bench_array(1000, i => lex_string_bench_text(20, i))
   it.bench(fn() { it.keep(try! @json.parse(input)) })
 }
@@ -108,5 +107,24 @@ test "bench json parse strings dense escapes n=1000" (it : @bench.T) {
     }
     buf.to_string()
   })
+  it.bench(fn() { it.keep(try! @json.parse(input)) })
+}
+
+///|
+test "bench json parse strings len=36 n=1000" (it : @bench.T) {
+  // UUID-sized values beyond the wasm scalar prefix.
+  let input = lex_string_bench_array(1000, i => lex_string_bench_text(36, i))
+  it.bench(fn() { it.keep(try! @json.parse(input)) })
+}
+
+///|
+test "bench json parse strings len=128 n=1000" (it : @bench.T) {
+  let input = lex_string_bench_array(1000, i => lex_string_bench_text(128, i))
+  it.bench(fn() { it.keep(try! @json.parse(input)) })
+}
+
+///|
+test "bench json parse strings len=136 n=1000" (it : @bench.T) {
+  let input = lex_string_bench_array(1000, i => lex_string_bench_text(136, i))
   it.bench(fn() { it.keep(try! @json.parse(input)) })
 }

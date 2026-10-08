@@ -55,12 +55,16 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
 }
 
 ///|
-/// How many code units `lex_string` checks one at a time before
-/// `lex_string_long` takes over; after each escape, `lex_string_slow` checks
-/// one more literal unit than this before switching to
-/// `find_string_special_long`. Only which scan runs depends on it, never the
-/// result.
-const LEX_STRING_SCALAR_UNITS = 16
+/// Native keeps short and medium strings in the scalar loop: switching after
+/// 32 units regresses UUID-sized strings. Long strings still benefit from SIMD.
+#cfg(target="native")
+const LEX_STRING_SCALAR_UNITS = 128
+
+///|
+/// Wasm switches after a shorter prefix. Scalar-only targets compile out the
+/// dispatch, so this constant has no effect on their scan.
+#cfg(not(target="native"))
+const LEX_STRING_SCALAR_UNITS = 32
 
 ///|
 /// Compile out the SIMD dispatch and run-limit bookkeeping on scalar targets.
@@ -71,6 +75,17 @@ const LEX_STRING_USE_SIMD = true
 ///|
 #cfg(not(any(target="native", target="wasm")))
 const LEX_STRING_USE_SIMD = false
+
+///|
+/// Wasm benefits from scanning long runs after escapes with SIMD as well.
+#cfg(target="wasm")
+const LEX_STRING_ESCAPE_SIMD = true
+
+///|
+/// Native retains the scalar escape loop: tracking the next SIMD threshold
+/// on every literal unit penalizes densely escaped strings.
+#cfg(not(target="wasm"))
+const LEX_STRING_ESCAPE_SIMD = false
 
 ///|
 /// Continues `lex_string` from `from`, where `string_start..from` is known to
@@ -110,18 +125,15 @@ fn ParseContext::lex_string_slow(
   run_start : Int,
 ) -> String raise ParseError {
   let buf = StringBuilder()
+  // Keep the run cursor local. A closure capturing it would allocate a
+  // mutable box and a closure environment on the native backend.
   let mut start = run_start
-  fn flush(end : Int) {
-    if start > 0 && end > start {
-      buf.write_view(ctx.input[start:end])
-    }
-  }
 
   let end = ctx.end_offset
   // Everything before the next `"`, `\` or control character is literal
   // content, and none of those code units is a surrogate, so scanning code
-  // units stops at the same place as decoding one character at a time. On SIMD
-  // targets, after an escape this loop checks units up to `scalar_limit`,
+  // units stops at the same place as decoding one character at a time. On
+  // wasm, after an escape this loop checks units up to `scalar_limit`,
   // and `find_string_special_long` scans the rest of the run. (The first unit
   // is the backslash, which sets `scalar_limit`. If the addition wraps, the
   // switch just happens sooner; either scan finds the same unit.)
@@ -131,11 +143,15 @@ fn ParseContext::lex_string_slow(
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
       ctx.offset = i + 1
-      flush(i)
+      if start > 0 && i > start {
+        buf.write_view(ctx.input[start:i])
+      }
       break
     } else if c == '\\' {
       ctx.offset = i + 1
-      flush(i)
+      if start > 0 && i > start {
+        buf.write_view(ctx.input[start:i])
+      }
       match ctx.read_char() {
         Some('b') => buf.write_char('\b')
         Some('f') => buf.write_char('\u{0C}')
@@ -187,7 +203,7 @@ fn ParseContext::lex_string_slow(
         None => raise InvalidEof
       }
       start = ctx.offset
-      if LEX_STRING_USE_SIMD {
+      if LEX_STRING_ESCAPE_SIMD {
         scalar_limit = ctx.offset + LEX_STRING_SCALAR_UNITS
       }
       continue ctx.offset
@@ -195,7 +211,7 @@ fn ParseContext::lex_string_slow(
       // An unescaped control character.
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
-    } else if !LEX_STRING_USE_SIMD || i < scalar_limit {
+    } else if !LEX_STRING_ESCAPE_SIMD || i < scalar_limit {
       continue i + 1
     } else {
       // Lands on the next `"`, `\` or control character, or on `end`.

@@ -12,9 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The shared lexer differential tests also cover the 16-unit prefix, the
-// 17-unit literal run after an escape, and the 8-unit SIMD block boundaries.
+// The shared lexer differential tests also cover short prefixes and the
+// literal runs following escapes.
 // These tests exercise the scan helper directly, including bounded views.
+
+///|
+test "lex_string SIMD prefix boundaries and escape continuation" {
+  for
+    len in [
+      31, 32, 33, 39, 40, 41, 47, 48, 49, 63, 64, 65, 127, 128, 129, 135, 136, 137,
+      143, 144, 145,
+    ] {
+    let prefix = "a".repeat(len)
+    for tail in ["", "\"", "\n\"", "\\", "\\n\"", "\\uD83D\\uDE00\""] {
+      check_lex_string(prefix + tail)
+    }
+    // After SIMD finds an escape, scanning resumes on later runs and must
+    // keep finding subsequent escapes, terminators and control units.
+    let escaped = prefix + "\\t" + "\u{1F600}abc".repeat(20)
+    check_lex_string(escaped)
+    check_lex_string(escaped + "\"")
+    check_lex_string(escaped + "\\n\"")
+    check_lex_string(escaped + "\n\"")
+  }
+}
 
 ///|
 test "find_string_special_long agrees with the scalar reference" {
