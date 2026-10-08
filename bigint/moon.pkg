@@ -1,7 +1,6 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
-  "moonbitlang/core/error",
   "moonbitlang/core/uint",
   "moonbitlang/core/json",
   "moonbitlang/core/int16",

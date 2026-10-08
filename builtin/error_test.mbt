@@ -13,16 +13,34 @@
 // limitations under the License.
 
 ///|
-/// Returns the textual representation of this error.
-pub fn Error::to_string(self : Error) -> String = "%error.to_string"
-
-///|
-pub impl Show for Error with fn to_string(self) {
-  Error::to_string(self)
+test "Error display without importing error" {
+  let error : Error = Failure("test error")
+  let to_string = Error::to_string
+  inspect(
+    to_string(error),
+    content=(
+      #|Failure(test error)
+    ),
+  )
+  inspect(
+    error.to_string(),
+    content=(
+      #|Failure(test error)
+    ),
+  )
+  inspect(
+    error,
+    content=(
+      #|Failure(test error)
+    ),
+  )
 }
 
 ///|
-/// Returns the JSON representation of this error.
-// Bootstrap: json depends on this package, so use the builtin trait here.
-#warnings("-deprecated")
-pub impl @builtin.ToJson for Error with fn to_json(self) = "%error.to_json"
+test "Error JSON without importing error" {
+  let error : Error = Failure("test error")
+  debug_inspect(
+    Json(error),
+    content="Array([String(\"Failure\"), String(\"test error\")])",
+  )
+}
