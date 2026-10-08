@@ -62,3 +62,31 @@ test "parse_bigint agrees with from_string on long inputs" {
   let digits = "9".repeat(6000)
   assert_eq(@bigint.parse_bigint(digits), nines(6000))
 }
+
+///|
+test "from_string handles every chunk length, leading zeros and signs" {
+  // the parser consumes 9-digit chunks with a shorter first chunk, so cover
+  // every remainder modulo 9 and several chunk counts
+  for n in 1..<=200 {
+    let buf = StringBuilder()
+    buf.write_char('1')
+    for i in 1..<n {
+      buf.write_char(Int32::unsafe_to_char('0' + (i * 3 + 1) % 10))
+    }
+    let digits = buf.to_string()
+    let parsed = @bigint.BigInt::from_string(digits)
+    assert_eq(parsed.to_string(), digits)
+    assert_eq(@bigint.BigInt::from_string("-" + digits), -parsed)
+    assert_eq(@bigint.BigInt::from_string("000" + digits), parsed)
+    assert_eq(nines(n), @bigint.BigInt::from_string("9".repeat(n)))
+  }
+  inspect(@bigint.BigInt::from_string("0"), content="0")
+  inspect(@bigint.BigInt::from_string("-0"), content="0")
+  inspect(@bigint.BigInt::from_string("0".repeat(30)), content="0")
+  inspect(@bigint.BigInt::from_string("-" + "0".repeat(30)), content="0")
+  inspect(
+    @bigint.BigInt::from_string("1000000000000000000"),
+    content="1000000000000000000",
+  )
+  inspect(@bigint.BigInt::from_string("4294967296"), content="4294967296")
+}
