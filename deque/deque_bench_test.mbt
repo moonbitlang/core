@@ -78,3 +78,50 @@ test "bench Deque::get x100000 len=1000" (it : @bench.T) {
     it.keep(acc)
   })
 }
+
+///|
+/// Advance the cursor without remainder arithmetic so the measured work is
+/// the deque's checked logical access and physical-index calculation.
+test "bench Deque::at wrapped x100000 len=1000" (it : @bench.T) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  for _ in 0..<333 {
+    dq.push_back(dq.pop_front().unwrap())
+  }
+  it.bench(fn() {
+    let mut acc = 0
+    for _ in 0..<100000; index = 0 {
+      acc += dq.at(index)
+      continue if index == 999 { 0 } else { index + 1 }
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench Deque::set wrapped x100000 len=1000" (it : @bench.T) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  for _ in 0..<333 {
+    dq.push_back(dq.pop_front().unwrap())
+  }
+  it.bench(fn() {
+    for i in 0..<100000; index = 0 {
+      dq.set(index, i)
+      continue if index == 999 { 0 } else { index + 1 }
+    }
+    it.keep(dq)
+  })
+}
+
+///|
+/// Control for the callback-mutation guard: the predicate keeps every element,
+/// so each iteration checks the same layout without resetting the input.
+test "bench Deque::extract_if keep all len=1000" (it : @bench.T) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  it.bench(fn() { it.keep(dq.extract_if(x => x < 0)) })
+}
+
+///|
+test "bench Deque::map len=1000" (it : @bench.T) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  it.bench(fn() { it.keep(dq.map(x => x + 1)) })
+}

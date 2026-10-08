@@ -16,7 +16,7 @@
 /// A double-ended queue (deque) backed by a growable circular buffer.
 ///
 /// This implementation follows the Rust `VecDeque` design: only `head` and `len`
-/// are stored, with `tail` computed on demand as `(head + len - 1) % cap`.
+/// are stored, with `tail` computed on demand by wrapping `head + len - 1`.
 ///
 /// Layout:
 /// ```text
@@ -24,14 +24,14 @@
 ///   buf: [4, 5, _, _, _, 1, 2, 3]
 ///              ^        ^
 ///        (tail)       head
-///   head = 5, len = 5, tail = (5 + 5 - 1) % 8 = 1
+///   head = 5, len = 5, tail = wrap_index(5, 5 - 1, 8) = 1
 ///   Logical order: [1, 2, 3, 4, 5]
 ///
 /// Contiguous case (head + len <= cap):
 ///   buf: [_, 1, 2, 3, 4, 5, _, _]
 ///           ^           ^
 ///         head       (tail)
-///   head = 1, len = 5, tail = (1 + 5 - 1) % 8 = 5
+///   head = 1, len = 5, tail = wrap_index(1, 5 - 1, 8) = 5
 ///   Logical order: [1, 2, 3, 4, 5]
 ///
 /// Empty case (len == 0):
@@ -44,8 +44,8 @@
 /// - `0 <= len <= buf.length()`
 /// - If the buffer is non-empty: `0 <= head < buf.length()`
 /// - If the buffer is empty: `head == 0` and `len == 0`
-/// - Element at index `i` is at `buf[(head + i) % buf.length()]`
-/// - When `len > 0`: front is `buf[head]`, back is `buf[(head + len - 1) % cap]`
+/// - Element at index `i` is at `buf[wrap_index(head, i, buf.length())]`
+/// - When `len > 0`: front is `buf[head]`, back is `buf[wrap_index(head, len - 1, cap)]`
 /// - When `len == 0`: no valid element; `head` is zero or a valid buffer index
 struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.

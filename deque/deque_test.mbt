@@ -3154,3 +3154,127 @@ test "Default is the empty deque" {
   dq.push_back(1)
   inspect(dq.length(), content="1")
 }
+
+///|
+test "deque operations match array model across wrap boundaries" {
+  for initial_capacity in [0, 1, 3, 5, 15] {
+    let deque = @deque.Deque([], capacity=initial_capacity)
+    let model : Array[Int] = []
+    for step in 0..<1300 {
+      let cycle = step / 13
+      match step % 13 {
+        0 | 1 | 4 => {
+          deque.push_back(step)
+          model.push(step)
+        }
+        2 | 5 => {
+          deque.push_front(step)
+          model.insert(0, step)
+        }
+        3 => {
+          let index = (cycle + initial_capacity) % (model.length() + 1)
+          deque.insert(index, step)
+          model.insert(index, step)
+        }
+        6 | 10 => @test.assert_eq(deque.pop_front(), Some(model.remove(0)))
+        7 | 12 => @test.assert_eq(deque.pop_back(), model.pop())
+        8 | 11 => {
+          let index = (cycle + initial_capacity) % model.length()
+          @test.assert_eq(deque.remove(index), model.remove(index))
+        }
+        _ => {
+          deque.rev_in_place()
+          model.rev_in_place()
+        }
+      }
+      @test.assert_eq(deque.to_array(), model)
+    }
+  }
+}
+
+///|
+test "deque access and mutation across every small ring layout" {
+  for capacity in [1, 2, 3, 5, 8, 15] {
+    for head in 0..<capacity {
+      let dq = @deque.Deque(Array::makei(capacity, i => "value\{i}"))
+      let model = Array::makei(capacity, i => "value\{i}")
+      for _ in 0..<head {
+        dq.push_back(dq.pop_front().unwrap())
+        model.push(model.remove(0))
+      }
+      let (front, back) = dq.as_views()
+      let original_front = front.to_owned()
+      let original_back = back.to_owned()
+      for remaining = capacity; remaining >= 0; remaining = remaining - 1 {
+        @test.assert_eq(dq.front(), model.get(0))
+        @test.assert_eq(dq.back(), model.get(model.length() - 1))
+        @test.assert_eq(dq.get(-1), None)
+        @test.assert_eq(dq.get(remaining), None)
+        for i in 0..<remaining {
+          @test.assert_eq(dq.at(i), model[i])
+          @test.assert_eq(dq.get(i), Some(model[i]))
+        }
+        if remaining > 0 {
+          if remaining % 2 == 0 {
+            @test.assert_eq(dq.pop_front(), Some(model.remove(0)))
+          } else {
+            @test.assert_eq(dq.pop_back(), model.pop())
+          }
+        }
+      }
+      // Popping reference values must leave previously returned views initialized.
+      @test.assert_eq(front.to_owned(), original_front)
+      @test.assert_eq(back.to_owned(), original_back)
+      for i in 0..<=capacity {
+        if i % 2 == 0 {
+          dq.push_front("front\{i}")
+          model.insert(0, "front\{i}")
+        } else {
+          dq.push_back("back\{i}")
+          model.push("back\{i}")
+        }
+      }
+      for i in 0..<model.length() {
+        dq.set(i, "set\{i}")
+        model[i] = "set\{i}"
+        @test.assert_eq(dq.at(i), model[i])
+        @test.assert_eq(dq.get(i), Some(model[i]))
+      }
+      @test.assert_eq(dq.to_array(), model)
+    }
+  }
+}
+
+///|
+test "map keeps its original layout when callbacks grow the source" {
+  let src = @deque.Deque([1])
+  let mapped = src.map(x => {
+    src.push_back(2)
+    src.push_back(3)
+    x
+  })
+  inspect(mapped.length(), content="1")
+  inspect(mapped.capacity(), content="1")
+  debug_inspect(mapped.to_array(), content="[1]")
+  debug_inspect(mapped.get(2), content="None")
+  mapped[0] = 9
+  mapped.push_back(10)
+  debug_inspect(mapped.to_array(), content="[9, 10]")
+  debug_inspect(src.to_array(), content="[1, 2, 3]")
+}
+
+///|
+test "mapi keeps wrapped reference slots after callbacks clear and shrink" {
+  let src = @deque.Deque(["a", "b", "c"])
+  src.push_back(src.pop_front().unwrap())
+  let mapped = src.mapi((i, x) => {
+    src.clear()
+    src.shrink_to_fit()
+    "\{i}:\{x}"
+  })
+  inspect(mapped.length(), content="3")
+  inspect(mapped.capacity(), content="3")
+  debug_inspect(mapped.to_array(), content="[\"0:b\", \"1:c\", \"2:a\"]")
+  inspect(src.length(), content="0")
+  inspect(src.capacity(), content="0")
+}

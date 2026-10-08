@@ -73,3 +73,48 @@ test "panic blit_to with overflowing source range" {
 test "panic drain with overflowing range" {
   @deque.from_array([1, 2, 3]).drain(start=1, len=0x7fffffff) |> ignore
 }
+
+///|
+test "panic extract_if predicate clears the deque" {
+  let dq = @deque.Deque([1])
+  ignore(
+    dq.extract_if(_ => {
+      dq.clear()
+      true
+    }),
+  )
+}
+
+///|
+test "panic extract_if predicate replaces the buffer" {
+  let dq = @deque.Deque([1])
+  ignore(
+    dq.extract_if(_ => {
+      dq.reserve_capacity(10)
+      false
+    }),
+  )
+}
+
+///|
+test "panic extract_if predicate rotates the head" {
+  let dq = @deque.Deque([1, 2, 3])
+  let mut first = true
+  ignore(
+    dq.extract_if(_ => {
+      if first {
+        first = false
+        dq.push_back(dq.pop_front().unwrap())
+      }
+      true
+    }),
+  )
+}
+
+///|
+test "panic flatten total length overflow with shared deques" {
+  // Only two small buffers are needed to describe 2^32 output elements.
+  let inner = @deque.Deque(Array::make(65536, 0))
+  let outer = @deque.Deque(Array::make(65536, inner))
+  ignore(outer.flatten())
+}

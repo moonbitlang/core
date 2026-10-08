@@ -38,20 +38,7 @@ fn[A] new_deque(capacity : Int) -> Deque[A] {
 /// Computes the tail index (index of last element) on demand.
 /// Only valid when len > 0.
 fn[A] Deque::tail_index(self : Deque[A]) -> Int {
-  wrap_index(self.head + self.len - 1, self.buf.length())
-}
-
-///|
-/// `i % cap` for `0 <= i < 2 * cap`, without the division: `head < cap`
-/// whenever the buffer is non-empty, and every offset added to it is below
-/// `cap`, so a single subtraction brings the sum back into range.
-#inline
-fn wrap_index(i : Int, cap : Int) -> Int {
-  if i >= cap {
-    i - cap
-  } else {
-    i
-  }
+  deque_tail_index(self.head, self.len, self.buf.length())
 }
 
 ///|
@@ -145,7 +132,7 @@ pub impl[A : Hash] Hash for Deque[A] with fn hash_combine(self, hasher) {
 /// }
 /// ```
 pub impl[A] Add for Deque[A] with fn add(self, other) {
-  let len = self.len + other.len
+  let len = deque_combined_length(self.len, other.len)
   let buf = self.unsafe_make_and_blit_to(len, 0)
   other.unsafe_blit_to(buf, self.len)
   { buf, len, head: 0, }
@@ -372,12 +359,13 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   let other_buf = other.buf
   let other_buf_len = other_buf.length()
   guard other_len != 0 else { return }
-  let space = self.buf.length() - self.len
-  if space < other_len {
-    let new_cap = if self.len + other_len > self.buf.length() * 2 {
-      self.len + other_len
+  let new_len = deque_combined_length(self.len, other_len)
+  let old_cap = self.buf.length()
+  if new_len > old_cap {
+    let new_cap = if old_cap > 0x3fff_ffff || new_len > old_cap * 2 {
+      new_len
     } else {
-      self.buf.length() * 2
+      old_cap * 2
     }
     let new_buf = UninitializedArray::make(new_cap)
     for i, x in self {
@@ -599,7 +587,9 @@ pub fn[A] Deque::capacity(self : Deque[A]) -> Int {
 /// Reallocate the deque with a new capacity.
 fn[A] Deque::realloc(self : Deque[A]) -> Unit {
   let old_cap = self.buf.length()
-  let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
+  // Doubling a larger capacity would overflow `Int`.
+  guard old_cap <= 0x3fff_ffff else { abort("Deque capacity overflow") }
+  let new_cap = deque_realloc_capacity(old_cap, self.len)
   let new_buf = self.unsafe_make_and_blit_to(new_cap, 0)
   self.head = 0
   self.buf = new_buf
@@ -619,7 +609,8 @@ pub fn[A] Deque::front(self : Deque[A]) -> A? {
   if self.len == 0 {
     None
   } else {
-    Some(self.buf[self.head])
+    let index = deque_element_index(self.head, self.len, self.buf.length(), 0)
+    Some(self.buf.unsafe_get(index))
   }
 }
 
@@ -637,7 +628,13 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
   if self.len == 0 {
     None
   } else {
-    Some(self.buf[self.tail_index()])
+    let index = deque_element_index(
+      self.head,
+      self.len,
+      self.buf.length(),
+      self.len - 1,
+    )
+    Some(self.buf.unsafe_get(index))
   }
 }
 
@@ -659,9 +656,9 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  let cap = self.buf.length()
-  self.head = if self.head == 0 { cap - 1 } else { self.head - 1 }
-  self.buf[self.head] = value
+  let new_head = deque_push_front_core(self.head, self.len, self.buf.length())
+  self.buf.unsafe_set(new_head, value)
+  self.head = new_head
   self.len += 1
 }
 
@@ -683,9 +680,8 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  let cap = self.buf.length()
-  let write_idx = wrap_index(self.head + self.len, cap)
-  self.buf[write_idx] = value
+  let write_idx = deque_push_back_core(self.head, self.len, self.buf.length())
+  self.buf.unsafe_set(write_idx, value)
   self.len += 1
 }
 
@@ -709,7 +705,8 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 #alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   guard self.len > 0 else { abort("The deque is empty!") }
-  self.head = wrap_index(self.head + 1, self.buf.length())
+  let new_head = deque_pop_front_core(self.head, self.len, self.buf.length())
+  self.head = new_head
   self.len -= 1
 }
 
@@ -766,8 +763,9 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 /// ```
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
-  let value = self.buf[self.head]
-  self.head = wrap_index(self.head + 1, self.buf.length())
+  let new_head = deque_pop_front_core(self.head, self.len, self.buf.length())
+  let value = self.buf.unsafe_get(self.head)
+  self.head = new_head
   self.len -= 1
   Some(value)
 }
@@ -790,8 +788,8 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 /// ```
 pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
-  let tail_idx = self.tail_index()
-  let value = self.buf[tail_idx]
+  let tail_idx = deque_pop_back_core(self.head, self.len, self.buf.length())
+  let value = self.buf.unsafe_get(tail_idx)
   self.len -= 1
   Some(value)
 }
@@ -813,11 +811,13 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     index_out_of_bounds(self.len, index)
   }
-  if self.head + index < self.buf.length() {
-    self.buf[self.head + index]
-  } else {
-    self.buf[self.head + index - self.buf.length()]
-  }
+  let physical_index = deque_element_index(
+    self.head,
+    self.len,
+    self.buf.length(),
+    index,
+  )
+  self.buf.unsafe_get(physical_index)
 }
 
 ///|
@@ -839,11 +839,13 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     index_out_of_bounds(self.len, index)
   }
-  if self.head + index < self.buf.length() {
-    self.buf[self.head + index] = value
-  } else {
-    self.buf[self.head + index - self.buf.length()] = value
-  }
+  let physical_index = deque_element_index(
+    self.head,
+    self.len,
+    self.buf.length(),
+    index,
+  )
+  self.buf.unsafe_set(physical_index, value)
 }
 
 ///|
@@ -1088,16 +1090,21 @@ pub fn[A, U] Deque::map(
   self : Deque[A],
   f : (A) -> U raise?,
 ) -> Deque[U] raise? {
-  let cap = self.buf.length()
-  if self.len == 0 {
+  // Keep the original occupied layout: callbacks may mutate or grow self.
+  // Removed slots remain initialized, including in a detached old buffer.
+  let source = self.buf
+  let head = self.head
+  let len = self.len
+  let cap = source.length()
+  if len == 0 {
     new_deque(0)
   } else {
-    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i in 0..<self.len {
-      let idx = (self.head + i) % cap
-      buf[i] = f(self.buf[idx])
+    let buf : UninitializedArray[U] = UninitializedArray::make(len)
+    for i in 0..<len {
+      let idx = (head + i) % cap
+      buf[i] = f(source[idx])
     }
-    { buf, len: self.len, head: 0, }
+    { buf, len, head: 0, }
   }
 }
 
@@ -1117,16 +1124,21 @@ pub fn[A, U] Deque::mapi(
   self : Deque[A],
   f : (Int, A) -> U raise?,
 ) -> Deque[U] raise? {
-  let cap = self.buf.length()
-  if self.len == 0 {
+  // Keep the original occupied layout: callbacks may mutate or grow self.
+  // Removed slots remain initialized, including in a detached old buffer.
+  let source = self.buf
+  let head = self.head
+  let len = self.len
+  let cap = source.length()
+  if len == 0 {
     new_deque(0)
   } else {
-    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i in 0..<self.len {
-      let idx = (self.head + i) % cap
-      buf[i] = f(i, self.buf[idx])
+    let buf : UninitializedArray[U] = UninitializedArray::make(len)
+    for i in 0..<len {
+      let idx = (head + i) % cap
+      buf[i] = f(i, source[idx])
     }
-    { buf, len: self.len, head: 0, }
+    { buf, len, head: 0, }
   }
 }
 
@@ -1205,6 +1217,9 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// Extracts elements from a deque that satisfy a given predicate function. The
 /// extracted elements are removed from the original deque and returned as a new
 /// deque. The relative order of the extracted elements is preserved.
+///
+/// Panics if the deque's length, head, or backing buffer differs after the
+/// predicates finish. Mutating the deque from the predicate is unsupported.
 /// 
 /// Parameters:
 /// 
@@ -1228,8 +1243,11 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 #locals(f)
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   guard !self.is_empty() else { from_array([]) }
+  let original_buf = self.buf
+  let original_head = self.head
+  let original_len = self.len
   let removed = from_array([])
-  for read in 0..<self.length(); write = 0 {
+  for read in 0..<original_len; write = 0 {
     let elem = self[read]
     if f(elem) {
       removed.push_back(elem)
@@ -1240,6 +1258,13 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
       }
       continue write + 1
     }
+  }
+  // Element accesses above validate against the current logical length. Before
+  // changing that length, reject a layout changed by a reentrant callback.
+  guard self.len == original_len &&
+    self.head == original_head &&
+    physical_equal(self.buf, original_buf) else {
+    abort("Deque::extract_if: deque structurally modified by predicate")
   }
   let removed_len = removed.length()
   self.len -= removed_len
@@ -2016,7 +2041,7 @@ pub fn[A] Deque::chunk_by(
 /// ```
 pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   let len = for deque in self; len = 0 {
-    continue len + deque.length()
+    continue deque_combined_length(len, deque.length())
   } nobreak {
     len
   }
@@ -2331,8 +2356,13 @@ pub fn[A] Deque::binary_search_by(
 /// Safe element access with bounds checking
 pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
   if index >= 0 && index < self.len {
-    let physical_index = wrap_index(self.head + index, self.buf.length())
-    Some(self.buf[physical_index])
+    let physical_index = deque_element_index(
+      self.head,
+      self.len,
+      self.buf.length(),
+      index,
+    )
+    Some(self.buf.unsafe_get(physical_index))
   } else {
     None
   }
