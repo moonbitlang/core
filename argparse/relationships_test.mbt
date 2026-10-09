@@ -340,3 +340,396 @@ test "required group with only hidden members reports a plain message" {
     ),
   )
 }
+
+///|
+/// Parse `argv` and summarise the outcome on one line: the parsed flags and
+/// values on success, or the first line of the error message on failure.
+fn parse_outcome(
+  cmd : @argparse.Command,
+  argv : Array[String],
+  env? : Map[String, String] = Map([]),
+) -> String {
+  try cmd.parse(argv~, env~) catch {
+    err => err.to_string().split("\n").next().unwrap_or("").to_owned()
+  } noraise {
+    m => "ok \{@debug.to_string((m.flags, m.values))}"
+  }
+}
+
+///|
+test "default values do not trigger relationships or exclusive groups" {
+  let exclusive = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("fmt", args=["format", "json"], multiple=false)],
+    options=[OptionArg("format", long="format", default_values=["text"])],
+    flags=[FlagArg("json", long="json")],
+  )
+  // The default value of `format` does not make it a second group member.
+  inspect(
+    parse_outcome(exclusive, ["--json"]),
+    content=(
+      #|ok ({ "json": true }, { "format": ["text"] })
+    ),
+  )
+  // Two members passed explicitly: a real conflict.
+  inspect(
+    parse_outcome(exclusive, ["--format", "csv", "--json"]),
+    content=(
+      #|error: group conflict fmt
+    ),
+  )
+
+  let conflicts = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"], conflicts_with=[
+      "other",
+    ]),
+    OptionArg("other", long="other"),
+  ])
+  // `mode` only holds its default value, so it does not conflict.
+  inspect(
+    parse_outcome(conflicts, ["--other", "x"]),
+    content=(
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
+    ),
+  )
+  // Both passed explicitly: a real conflict.
+  inspect(
+    parse_outcome(conflicts, ["--mode", "slow", "--other", "x"]),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+
+  let conflicts_target = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"]),
+    OptionArg("other", long="other", conflicts_with=["mode"]),
+  ])
+  // The conflict target `mode` only holds its default value.
+  inspect(
+    parse_outcome(conflicts_target, ["--other", "x"]),
+    content=(
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
+    ),
+  )
+
+  let requires = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"], requires=["config"]),
+    OptionArg("config", long="config"),
+  ])
+  // `mode` only holds its default value, so it requires nothing.
+  inspect(
+    parse_outcome(requires, []),
+    content=(
+      #|ok ({}, { "mode": ["fast"] })
+    ),
+  )
+  // `mode` passed explicitly: `config` really is required.
+  inspect(
+    parse_outcome(requires, ["--mode", "slow"]),
+    content=(
+      #|error: the following required argument was not provided: 'config' (required by 'mode')
+    ),
+  )
+
+  let group_requires = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", args=["mode"], requires=["config"])],
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"]),
+      OptionArg("config", long="config"),
+    ],
+  )
+  // The only member of `g` holds its default value, so `g` requires nothing.
+  inspect(
+    parse_outcome(group_requires, []),
+    content=(
+      #|ok ({}, { "mode": ["fast"] })
+    ),
+  )
+
+  let group_conflicts = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", args=["mode"], conflicts_with=["other"])],
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"]),
+      OptionArg("other", long="other"),
+    ],
+  )
+  // The only member of `g` holds its default value, so `g` conflicts with
+  // nothing.
+  inspect(
+    parse_outcome(group_conflicts, ["--other", "x"]),
+    content=(
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
+    ),
+  )
+
+  // A value from the environment counts as passed, like an argv value.
+  let env_conflicts = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", env="MODE", default_values=["fast"], conflicts_with=[
+      "other",
+    ]),
+    OptionArg("other", long="other"),
+  ])
+  inspect(
+    parse_outcome(env_conflicts, ["--other", "x"], env={ "MODE": "slow" }),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+}
+
+///|
+test "defaults satisfy requirements while env and argv values trigger relations" {
+  let required_group = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", required=true, args=["mode"])],
+    options=[OptionArg("mode", long="mode", default_values=["fast"])],
+  )
+  inspect(
+    parse_outcome(required_group, []),
+    content=(
+      #|ok ({}, { "mode": ["fast"] })
+    ),
+  )
+
+  let requires_default = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", requires=["config"]),
+    OptionArg("config", long="config", default_values=["cfg.toml"]),
+  ])
+  inspect(
+    parse_outcome(requires_default, ["--mode", "slow"]),
+    content=(
+      #|ok ({}, { "mode": ["slow"], "config": ["cfg.toml"] })
+    ),
+  )
+
+  let group_to_group = @argparse.Command(
+    "demo",
+    groups=[
+      ArgGroup("a", args=["x"], conflicts_with=["b"]),
+      ArgGroup("b", args=["mode"]),
+    ],
+    flags=[FlagArg("x", long="x")],
+    options=[OptionArg("mode", long="mode", default_values=["fast"])],
+  )
+  inspect(
+    parse_outcome(group_to_group, ["--x"]),
+    content=(
+      #|ok ({ "x": true }, { "mode": ["fast"] })
+    ),
+  )
+  inspect(
+    parse_outcome(group_to_group, ["--x", "--mode", "slow"]),
+    content=(
+      #|error: group conflict a conflicts with b
+    ),
+  )
+
+  // An env value makes a group member explicit.
+  let env_group = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("fmt", args=["format", "json"], multiple=false)],
+    options=[
+      OptionArg("format", long="format", env="FORMAT", default_values=["text"]),
+    ],
+    flags=[FlagArg("json", long="json")],
+  )
+  inspect(
+    parse_outcome(env_group, ["--json"], env={ "FORMAT": "csv" }),
+    content=(
+      #|error: group conflict fmt
+    ),
+  )
+
+  // Global defaults propagated into a subcommand stay implicit.
+  let global_cmd = @argparse.Command(
+    "demo",
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"], global=true, conflicts_with=[
+        "other",
+      ]),
+      OptionArg("other", long="other", global=true),
+    ],
+    subcommands=[Command("run")],
+  )
+  inspect(
+    parse_outcome(global_cmd, ["run", "--other", "x"]),
+    content=(
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
+    ),
+  )
+  inspect(
+    parse_outcome(global_cmd, ["--mode", "slow", "run", "--other", "x"]),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+}
+
+///|
+test "negated flags do not trigger relationships or exclusive groups" {
+  let conflicts = @argparse.Command("demo", flags=[
+    FlagArg("color", long="color", env="COLOR", negatable=true, conflicts_with=[
+      "plain",
+    ]),
+    FlagArg("plain", long="plain"),
+  ])
+  // `--no-color` turns the flag off, so it conflicts with nothing.
+  inspect(
+    parse_outcome(conflicts, ["--no-color", "--plain"]),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+  // So does COLOR=0.
+  inspect(
+    parse_outcome(conflicts, ["--plain"], env={ "COLOR": "0" }),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+  // The flag turned on: a real conflict.
+  inspect(
+    parse_outcome(conflicts, ["--color", "--plain"]),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+
+  let conflicts_target = @argparse.Command("demo", flags=[
+    FlagArg("color", long="color", negatable=true),
+    FlagArg("plain", long="plain", conflicts_with=["color"]),
+  ])
+  // The conflict target `color` is turned off.
+  inspect(
+    parse_outcome(conflicts_target, ["--plain", "--no-color"]),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+
+  let requires = @argparse.Command("demo", flags=[
+    FlagArg("verbose", long="verbose", env="VERBOSE", negatable=true, requires=[
+      "x",
+    ]),
+    FlagArg("x", long="x"),
+  ])
+  // A turned-off flag requires nothing, whether from argv or env.
+  inspect(
+    parse_outcome(requires, ["--no-verbose"]),
+    content=(
+      #|ok ({ "verbose": false }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(requires, [], env={ "VERBOSE": "false" }),
+    content=(
+      #|ok ({ "verbose": false }, {})
+    ),
+  )
+  // The flag turned on: `x` really is required.
+  inspect(
+    parse_outcome(requires, ["--verbose"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'verbose')
+    ),
+  )
+
+  // For a `SetFalse` flag, `--no-<flag>` stores `true`: the unset state.
+  let set_false = @argparse.Command("demo", flags=[
+    FlagArg("failfast", long="failfast", action=SetFalse, negatable=true, conflicts_with=[
+      "plain",
+    ]),
+    FlagArg("plain", long="plain"),
+  ])
+  inspect(
+    parse_outcome(set_false, ["--no-failfast", "--plain"]),
+    content=(
+      #|ok ({ "failfast": true, "plain": true }, {})
+    ),
+  )
+  // `--failfast` stores `false`, the set state: a real conflict.
+  inspect(
+    parse_outcome(set_false, ["--failfast", "--plain"]),
+    content=(
+      #|error: conflicting arguments: failfast and plain
+    ),
+  )
+
+  let count = @argparse.Command("demo", flags=[
+    FlagArg("v", long="v", action=Count, env="V", negatable=true, requires=["x"]),
+    FlagArg("x", long="x"),
+  ])
+  // A count reset to 0 requires nothing, whether from argv or env.
+  inspect(
+    parse_outcome(count, ["--v", "--no-v"]),
+    content=(
+      #|ok ({ "v": false }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(count, [], env={ "V": "0" }),
+    content=(
+      #|ok ({ "v": false }, {})
+    ),
+  )
+
+  let exclusive = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("style", args=["color", "plain"], multiple=false)],
+    flags=[
+      FlagArg("color", long="color", negatable=true),
+      FlagArg("plain", long="plain"),
+    ],
+  )
+  // Only `plain` is turned on.
+  inspect(
+    parse_outcome(exclusive, ["--no-color", "--plain"]),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+}
+
+///|
+test "negated global flags do not trigger relationships after a subcommand" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("color", long="color", negatable=true, global=true, conflicts_with=[
+        "plain",
+      ]),
+      FlagArg("plain", long="plain", global=true),
+      FlagArg("v", long="v", action=Count, negatable=true, global=true, requires=[
+        "x",
+      ]),
+      FlagArg("x", long="x", global=true),
+    ],
+    subcommands=[Command("run")],
+  )
+  inspect(
+    parse_outcome(cmd, ["--color", "run", "--no-color", "--plain"]),
+    content=(
+      #|ok ({ "color": false, "plain": true }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--color", "run", "--plain"]),
+    content=(
+      #|error: conflicting arguments: color and plain
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--v", "run", "--no-v"]),
+    content=(
+      #|ok ({ "v": false }, {})
+    ),
+  )
+  inspect(
+    parse_outcome(cmd, ["--v", "run"]),
+    content=(
+      #|error: the following required argument was not provided: 'x' (required by 'v')
+    ),
+  )
+}
