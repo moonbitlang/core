@@ -377,3 +377,105 @@ test "hyphen token is rejected while a later positional still needs values" {
     ),
   )
 }
+
+///|
+/// Parse `argv` and summarise the outcome on one line: the parsed flags and
+/// values on success, or the first line of the error message on failure.
+fn hyphen_positional_outcome(
+  cmd : @argparse.Command,
+  argv : Array[String],
+) -> String {
+  try cmd.parse(argv~, env=empty_env()) catch {
+    err => err.to_string().split("\n").next().unwrap_or("").to_owned()
+  } noraise {
+    m => "ok \{@debug.to_string((m.flags, m.values))}"
+  }
+}
+
+///|
+test "allow_hyphen positional yields to a negated flag" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("verbose", long="verbose", negatable=true),
+      FlagArg("quiet", long="quiet"),
+    ],
+    positionals=[
+      PositionArg(
+        "rest",
+        num_args=ValueRange(lower=0),
+        allow_hyphen_values=true,
+      ),
+    ],
+  )
+  inspect(
+    hyphen_positional_outcome(cmd, ["--verbose"]),
+    content=(
+      #|ok ({ "verbose": true }, {})
+    ),
+  )
+  // `--no-verbose` is the negated flag, not a value for `rest`.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-verbose"]),
+    content=(
+      #|ok ({ "verbose": false }, {})
+    ),
+  )
+  // Also once `rest` has started collecting values.
+  inspect(
+    hyphen_positional_outcome(cmd, ["a", "--no-verbose", "b"]),
+    content=(
+      #|ok ({ "verbose": false }, { "rest": ["a", "b"] })
+    ),
+  )
+  // An inline value is rejected, as for `--verbose=1`.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-verbose=1"]),
+    content=(
+      #|error: unexpected argument '--no-verbose=1' found
+    ),
+  )
+  inspect(
+    hyphen_positional_outcome(cmd, ["--verbose=1"]),
+    content=(
+      #|error: unexpected argument '--verbose=1' found
+    ),
+  )
+  // `quiet` is not negatable and `mystery` is unknown: both stay values.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-quiet", "--no-mystery"]),
+    content=(
+      #|ok ({}, { "rest": ["--no-quiet", "--no-mystery"] })
+    ),
+  )
+}
+
+///|
+test "allow_hyphen positional in a subcommand yields to a negated global flag" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[FlagArg("verbose", long="verbose", negatable=true, global=true)],
+    subcommands=[
+      Command("run", positionals=[
+        PositionArg(
+          "rest",
+          num_args=ValueRange(lower=0),
+          allow_hyphen_values=true,
+        ),
+      ]),
+    ],
+  )
+  let parsed = cmd.parse(
+    argv=["--verbose", "run", "--no-verbose"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  guard parsed.subcommand is Some((_, sub)) else { panic() }
+  @debug.debug_inspect(
+    (parsed.flags, sub.flags, sub.values),
+    content=(
+      #|({ "verbose": false }, { "verbose": false }, {})
+    ),
+  )
+}
