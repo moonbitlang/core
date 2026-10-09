@@ -37,12 +37,6 @@ pub fn trunc(Double) -> Double
 // Errors
 
 // Types and methods
-#deprecated
-pub fn Double::inf(Int) -> Double
-#deprecated
-pub fn Double::min_normal() -> Double
-#deprecated
-pub fn Double::nan() -> Double
 
 // Type aliases
 
