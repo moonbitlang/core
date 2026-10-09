@@ -11,12 +11,6 @@ pub fn[T, E] ok(T) -> Result[T, E]
 // Errors
 
 // Types and methods
-#deprecated
-pub fn[T, E, V] Result::fold(Self[T, E], (T) -> V, (E) -> V) -> V
-#deprecated
-pub fn[T, E] Result::is_err(Self[T, E]) -> Bool
-#deprecated
-pub fn[T, E] Result::is_ok(Self[T, E]) -> Bool
 
 // Type aliases
 
