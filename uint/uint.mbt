@@ -31,17 +31,6 @@ pub const MAX_VALUE : UInt = 4294967295U
 pub let max_value : UInt = 4294967295U
 
 ///|
-/// Convert to `int64`.
-pub fn UInt::to_int64(self : UInt) -> Int64 {
-  self.to_uint64().reinterpret_as_int64()
-}
-
-///|
-pub impl Default for UInt with fn default() {
-  0
-}
-
-///|
 /// same as `UInt::default`
 #deprecated("Use `0U` or `Default::default()` instead")
 pub fn default() -> UInt {

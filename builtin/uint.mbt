@@ -26,6 +26,17 @@
 pub fn UInt::UInt(self : UInt) -> UInt = "%identity"
 
 ///|
+pub impl Default for UInt with fn default() {
+  0
+}
+
+///|
+/// Convert to `int64`.
+pub fn UInt::to_int64(self : UInt) -> Int64 {
+  self.to_uint64().reinterpret_as_int64()
+}
+
+///|
 /// Returns the smaller of two unsigned integers.
 ///
 /// Parameters:
