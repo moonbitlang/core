@@ -57,6 +57,42 @@ priv struct DeltaContext {
 /// Every `delta_*` producer appends the threads it derives to `rem`, in
 /// priority order, instead of returning a set; concatenation is then free
 /// and nested sets are only allocated where a `Seq` thread needs one.
+fn delta_rep_iteration(
+  repeat : Expr,
+  mode : @shared_types.QuantifierMode,
+  inner : Expr,
+  c : DeltaContext,
+  marks : MarkSlotMap,
+  rem : Array[Thread],
+  required~ : Bool,
+) -> Unit {
+  let pref = @shared_types.Preference::First
+  let inner_delta = []
+  delta_expr(inner, c, marks, inner_delta)
+  if mode is NonGreedy && !required {
+    rem.push(End(marks))
+    remove_matches(inner_delta)
+    ts_seq(pref, inner_delta, repeat, rem)
+  } else {
+    match first_match(inner_delta) {
+      None => {
+        ts_seq(pref, inner_delta, repeat, rem)
+        if !required {
+          rem.push(End(marks))
+        }
+      }
+      Some(marks_after) => {
+        // An empty iteration exits at its original priority position.
+        let after = split_at_first_match(inner_delta)
+        ts_seq(pref, inner_delta, repeat, rem)
+        rem.push(End(marks_after))
+        ts_seq(pref, after, repeat, rem)
+      }
+    }
+  }
+}
+
+///|
 fn delta_rep(
   outer : Expr,
   mode : @shared_types.QuantifierMode,
@@ -66,6 +102,10 @@ fn delta_rep(
   marks : MarkSlotMap,
   rem : Array[Thread],
 ) -> Unit {
+  if pref is First {
+    delta_rep_iteration(outer, mode, inner, c, marks, rem, required=false)
+    return
+  }
   let inner_delta = []
   delta_expr(inner, c, marks, inner_delta)
   let marks_after = match first_match(inner_delta) {
@@ -106,6 +146,8 @@ fn delta_expr(
       delta_seq(pref, first_delta, next, c, rem)
     }
     Rep(mode, pref, body) => delta_rep(expr, mode, pref, body, c, marks, rem)
+    RepStart(mode, body, repeat, required) =>
+      delta_rep_iteration(repeat, mode, body, c, marks, rem, required~)
     Eps => rem.push(End(marks))
     Mark(mark) => rem.push(End(marks.add_mark(mark)))
     Before(cat) =>
