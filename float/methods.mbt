@@ -905,7 +905,26 @@ pub fn Float::from_uint64(self : UInt64) -> Float = "%u64.to_f32"
 /// Convert `UInt64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_uint64(self : UInt64) -> Float {
-  Float::from_double(self.to_double())
+  Float::from_double(uint64_to_double_round_to_odd(self))
+}
+
+///|
+/// Converts `x` to `Double`, rounding to odd when it needs more than 53 bits.
+///
+/// Converting to `Double` with round-to-nearest and then to `Float` rounds
+/// twice and can be off by one ulp. Rounding to odd keeps a sticky bit
+/// instead, and since 53 >= 2 * 24 + 2, the later rounding to `Float` gives
+/// the correctly rounded result.
+#cfg(target="js")
+fn uint64_to_double_round_to_odd(x : UInt64) -> Double {
+  let n = 64 - x.clz()
+  if n <= 53 {
+    return x.to_double()
+  }
+  let k = n - 53
+  let sticky = if (x & ((1UL << k) - 1UL)) != 0UL { 1UL } else { 0UL }
+  // Both factors are exact in Double, and so is their product
+  ((x >> k) | sticky).to_double() * (1UL << k).to_double()
 }
 
 ///|
@@ -949,7 +968,12 @@ pub fn Float::from_int64(self : Int64) -> Float = "%i64.to_f32"
 /// Convert `Int64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_int64(self : Int64) -> Float {
-  Float::from_double(self.to_double())
+  if self < 0L {
+    // -Int64::min_value wraps to itself, whose UInt64 value is 2^63
+    -Float::from_uint64((-self).reinterpret_as_uint64())
+  } else {
+    Float::from_uint64(self.reinterpret_as_uint64())
+  }
 }
 
 ///|
