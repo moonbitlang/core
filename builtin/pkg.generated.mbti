@@ -722,6 +722,7 @@ pub fn UInt::to_double(UInt) -> Double
 pub fn UInt::to_float(UInt) -> Float
 #deprecated
 pub fn UInt::to_int(UInt) -> Int
+pub fn UInt::to_int64(UInt) -> Int64
 pub fn UInt::to_string(UInt, radix? : Int) -> String
 pub fn UInt::to_uint16(UInt) -> UInt16
 pub fn UInt::to_uint64(UInt) -> UInt64
@@ -1407,6 +1408,7 @@ pub impl Default for Byte
 pub impl Default for Char
 pub impl Default for Int
 pub impl Default for Int64
+pub impl Default for UInt
 pub impl Default for UInt16
 pub impl Default for UInt64
 pub impl Default for Double
