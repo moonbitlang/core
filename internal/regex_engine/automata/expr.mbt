@@ -48,6 +48,7 @@
 /// - `Alt(Array[Expr])`: Alternation - matches any of the alternatives
 /// - `Seq(Preference, Expr, Expr)`: Sequence - matches first then second
 /// - `Rep(QuantifierMode, Preference, Expr)`: Repetition (*, +, {n,m})
+/// - `RepStart(QuantifierMode, Expr, Expr, Bool)`: Initial nullable iteration
 /// - `Eps`: Epsilon - matches empty string
 /// - `Mark(Mark)`: Like Eps but adds the mark to MarkSlotMap (for capture group boundaries)
 /// - `Before(Category)`: Lookahead assertion (matches if next char is in category)
@@ -75,6 +76,7 @@ priv enum ExprDef {
   Alt(Array[Expr])
   Seq(@shared_types.Preference, Expr, Expr)
   Rep(@shared_types.QuantifierMode, @shared_types.Preference, Expr)
+  RepStart(@shared_types.QuantifierMode, Expr, Expr, Bool)
   Eps
   Mark(Mark)
   Before(@shared_types.Category)
@@ -121,6 +123,8 @@ pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
       }
     }
     Rep(mode, pref, x) => e_rep(ctx~, mode, pref, e_copy(ctx~, x))
+    RepStart(mode, x, _, required) =>
+      e_rep_nullable(ctx~, mode, e_copy(ctx~, x), required~)
     Eps => e_eps
     Mark(m) => e_mark(ctx~, m)
     Before(cat) => e_before(ctx~, cat)
@@ -208,6 +212,19 @@ pub fn e_rep(
   x : Expr,
 ) -> Expr {
   { id: ctx.new_expr_id(), def: Rep(mode, pref, x), }
+}
+
+///|
+/// Create an unbounded nullable repetition under first-match preference.
+/// `required` makes its initial iteration the last mandatory occurrence.
+pub fn e_rep_nullable(
+  ctx~ : Context,
+  mode : @shared_types.QuantifierMode,
+  x : Expr,
+  required~ : Bool,
+) -> Expr {
+  let repeat = e_rep(ctx~, mode, First, x)
+  { id: ctx.new_expr_id(), def: RepStart(mode, x, repeat, required), }
 }
 
 ///|

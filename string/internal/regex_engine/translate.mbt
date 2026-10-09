@@ -48,7 +48,11 @@ fn translate(
     }
     Quantifier(q, expr) => {
       let (cr, pref2) = translate(tc, expr)
+      let nullable_first = expr.nullable && pref2 is First
+      let required = q.max is None && q.min > 0 && nullable_first
       let rem = match q.max {
+        None if nullable_first =>
+          @automata.e_rep_nullable(ctx~, q.mode, cr, required~)
         None => @automata.e_rep(ctx~, q.mode, pref2, cr)
         Some(max) => {
           let repeater = match q.mode {
@@ -70,8 +74,13 @@ fn translate(
           iter(max - q.min, repeater, @automata.e_eps)
         }
       }
+      // The last mandatory iteration exits immediately if it succeeds empty.
       let result = iter(
-        q.min,
+        if required {
+          q.min - 1
+        } else {
+          q.min
+        },
         rem => @automata.e_seq(ctx~, pref2, @automata.e_copy(ctx~, cr), rem),
         rem,
       )
