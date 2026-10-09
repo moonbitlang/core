@@ -303,3 +303,89 @@ test "range agrees with model and leaves tree intact" {
   }
   check_invariants(map)
 }
+
+///|
+/// Makes `writes` random `set`/`remove` calls on both `map` and `model`.
+fn random_writes(
+  rng : Rand,
+  map : SortedMap[Int, Int],
+  model : Map[Int, Int],
+  writes : Int,
+  key_space : Int,
+) -> Unit {
+  for _ in 0..<writes {
+    let j = rng.below(key_space)
+    if rng.below(3) == 0 {
+      map.remove(j)
+      model.remove(j)
+    } else {
+      map.set(j, j)
+      model[j] = j
+    }
+  }
+}
+
+///|
+/// `update_or_default` and `get_or_init` whose callback writes to the same
+/// map: the callback's own writes stay, and its result is stored under the
+/// key once it returns.
+test "reentrant update_or_default and get_or_init keep invariants" {
+  let rng = Rand::{ state: 0x5EEDUL, }
+  let key_space = 64
+  let map : SortedMap[Int, Int] = new_sorted_map()
+  let model : Map[Int, Int] = Map([])
+  for i in 0..<400 {
+    let k = rng.below(key_space)
+    let writes = rng.below(12)
+    let before = model.get(k)
+    if rng.below(2) == 0 {
+      map.update_or_default(k, -1, x => {
+        random_writes(rng, map, model, writes, key_space)
+        x + 1000
+      })
+      model[k] = match before {
+        Some(x) => x + 1000
+        None => -1
+      }
+    } else {
+      let v = map.get_or_init(k, () => {
+        random_writes(rng, map, model, writes, key_space)
+        -2
+      })
+      if before is Some(x) {
+        @test.assert_eq(v, x)
+      } else {
+        @test.assert_eq(v, -2)
+        model[k] = -2
+      }
+    }
+    check_invariants(map)
+    @test.assert_eq(map.length(), model.length())
+    if i % 16 == 15 {
+      check_against_model(map, model, key_space)
+    }
+  }
+  check_against_model(map, model, key_space)
+}
+
+///|
+test "update_or_default after the removal counter saturates" {
+  let map : SortedMap[Int, Int] = from_array([(1, 1), (2, 2)])
+  map.removals = MAX_REMOVALS - 1
+  map.update_or_default(1, 0, v => {
+    map.clear()
+    v + 1
+  })
+  @test.assert_eq(map.removals, MAX_REMOVALS)
+  check_invariants(map)
+  @test.assert_eq(map.to_array(), [(1, 2)])
+  // Saturated: `clear` no longer changes the counter, so it cannot tell that
+  // `f` unlinked the node it found.
+  map.update_or_default(1, 0, v => {
+    map.clear()
+    v + 1
+  })
+  @test.assert_eq(map.removals, MAX_REMOVALS)
+  check_invariants(map)
+  @test.assert_eq(map.to_array(), [(1, 3)])
+}
