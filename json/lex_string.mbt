@@ -16,8 +16,18 @@
 fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   let string_start = ctx.offset
   // Fast path for ordinary strings: scan raw UTF-16 code units and materialize
-  // the slice directly when there are no escapes or control characters.
-  for i in string_start..<ctx.end_offset {
+  // the slice directly when there are no escapes or control characters. On
+  // SIMD targets, this loop checks `LEX_STRING_SCALAR_UNITS` code units, so a
+  // shorter key or value is lexed without leaving it; the rest of a longer
+  // string is scanned by `lex_string_long`. Scalar targets keep the full loop.
+  let end = ctx.end_offset
+  let scalar_end = if LEX_STRING_USE_SIMD &&
+    end - string_start > LEX_STRING_SCALAR_UNITS {
+    string_start + LEX_STRING_SCALAR_UNITS
+  } else {
+    end
+  }
+  for i in string_start..<scalar_end {
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
       ctx.offset = i + 1
@@ -37,7 +47,74 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
       ctx.invalid_char(shift=-1)
     }
   }
-  raise InvalidEof
+  if LEX_STRING_USE_SIMD {
+    ctx.lex_string_long(string_start, scalar_end)
+  } else {
+    raise InvalidEof
+  }
+}
+
+///|
+/// Native keeps short and medium strings in the scalar loop: switching after
+/// 32 units regresses UUID-sized strings. Long strings still benefit from SIMD.
+#cfg(target="native")
+const LEX_STRING_SCALAR_UNITS = 128
+
+///|
+/// Wasm switches after a shorter prefix. Scalar-only targets compile out the
+/// dispatch, so this constant has no effect on their scan.
+#cfg(not(target="native"))
+const LEX_STRING_SCALAR_UNITS = 32
+
+///|
+/// Compile out the SIMD dispatch and run-limit bookkeeping on scalar targets.
+/// A large scalar threshold would still leave a comparison in the hot loop.
+#cfg(any(target="native", target="wasm"))
+const LEX_STRING_USE_SIMD = true
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+const LEX_STRING_USE_SIMD = false
+
+///|
+/// Wasm benefits from scanning long runs after escapes with SIMD as well.
+#cfg(target="wasm")
+const LEX_STRING_ESCAPE_SIMD = true
+
+///|
+/// Native retains the scalar escape loop: tracking the next SIMD threshold
+/// on every literal unit penalizes densely escaped strings.
+#cfg(not(target="wasm"))
+const LEX_STRING_ESCAPE_SIMD = false
+
+///|
+/// Continues `lex_string` from `from`, where `string_start..from` is known to
+/// be literal content, using `find_string_special_long` (eight code units at a
+/// time on native and wasm).
+fn ParseContext::lex_string_long(
+  ctx : ParseContext,
+  string_start : Int,
+  from : Int,
+) -> String raise ParseError {
+  let base = ctx.input.start_offset()
+  let i = find_string_special_long(
+      ctx.input.data(),
+      base + from,
+      base + ctx.end_offset,
+    ) -
+    base
+  guard i < ctx.end_offset else { raise InvalidEof }
+  let c = ctx.input.unsafe_get(i)
+  if c == '"' {
+    ctx.offset = i + 1
+    ctx.input.data().unsafe_substring(start=base + string_start, end=base + i)
+  } else if c == '\\' {
+    ctx.offset = i
+    ctx.lex_string_slow(string_start)
+  } else {
+    ctx.offset = i + 1
+    ctx.invalid_char(shift=-1)
+  }
 }
 
 ///|
@@ -48,27 +125,33 @@ fn ParseContext::lex_string_slow(
   run_start : Int,
 ) -> String raise ParseError {
   let buf = StringBuilder()
+  // Keep the run cursor local. A closure capturing it would allocate a
+  // mutable box and a closure environment on the native backend.
   let mut start = run_start
-  fn flush(end : Int) {
-    if start > 0 && end > start {
-      buf.write_view(ctx.input[start:end])
-    }
-  }
 
   let end = ctx.end_offset
   // Everything before the next `"`, `\` or control character is literal
   // content, and none of those code units is a surrogate, so scanning code
-  // units stops at the same place as decoding one character at a time.
+  // units stops at the same place as decoding one character at a time. On
+  // wasm, after an escape this loop checks units up to `scalar_limit`,
+  // and `find_string_special_long` scans the rest of the run. (The first unit
+  // is the backslash, which sets `scalar_limit`. If the addition wraps, the
+  // switch just happens sooner; either scan finds the same unit.)
+  let mut scalar_limit = 0
   for i = ctx.offset {
     guard i < end else { raise InvalidEof }
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
       ctx.offset = i + 1
-      flush(i)
+      if start > 0 && i > start {
+        buf.write_view(ctx.input[start:i])
+      }
       break
     } else if c == '\\' {
       ctx.offset = i + 1
-      flush(i)
+      if start > 0 && i > start {
+        buf.write_view(ctx.input[start:i])
+      }
       match ctx.read_char() {
         Some('b') => buf.write_char('\b')
         Some('f') => buf.write_char('\u{0C}')
@@ -120,16 +203,80 @@ fn ParseContext::lex_string_slow(
         None => raise InvalidEof
       }
       start = ctx.offset
+      if LEX_STRING_ESCAPE_SIMD {
+        scalar_limit = ctx.offset + LEX_STRING_SCALAR_UNITS
+      }
       continue ctx.offset
     } else if c < ' ' {
       // An unescaped control character.
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
-    } else {
+    } else if !LEX_STRING_ESCAPE_SIMD || i < scalar_limit {
       continue i + 1
+    } else {
+      // Lands on the next `"`, `\` or control character, or on `end`.
+      let base = ctx.input.start_offset()
+      continue find_string_special_long(
+          ctx.input.data(),
+          base + i + 1,
+          base + end,
+        ) -
+        base
     }
   }
   buf.to_string()
+}
+
+///|
+/// Scalar reference for `find_string_special_long`: the first index in
+/// `start..<end` of `str` holding `"`, `\` or a control character below
+/// U+0020, or `end` if there is none.
+fn find_string_special_scalar(str : String, start : Int, end : Int) -> Int {
+  for i in start..<end {
+    let c = str.unsafe_get(i)
+    if c == '"' || c == '\\' || c < ' ' {
+      break i
+    }
+  } nobreak {
+    end
+  }
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
+  find_string_special_scalar(str, start, end)
+}
+
+///|
+/// Checks eight UTF-16 code units at a time on linear-memory backends, then
+/// the remaining tail one code unit at a time. Callers pass
+/// `0 <= start <= end <= str.length()`; every load covers `pos..<pos + 8`
+/// with `start <= pos` and `end - pos >= 8` (written as a difference so it
+/// cannot overflow near `Int::max_value`).
+#cfg(any(target="native", target="wasm"))
+fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
+  let control_limit = @v128.i16x8_splat(' ')
+  let quote = @v128.i16x8_splat('"')
+  let backslash = @v128.i16x8_splat('\\')
+  let tail_start = for pos = start; end - pos >= 8; {
+    let block = @v128.v128_load_i16x8(str, pos)
+    let special = @v128.v128_or_(
+      @v128.i16x8_lt_u(block, control_limit),
+      @v128.v128_or_(
+        @v128.i16x8_eq(block, quote),
+        @v128.i16x8_eq(block, backslash),
+      ),
+    )
+    if @v128.v128_any_true(special) {
+      // Bit `k` of the mask is lane `k`, the code unit at `pos + k`.
+      return pos + @v128.i16x8_bitmask(special).ctz()
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  find_string_special_scalar(str, tail_start, end)
 }
 
 ///|
