@@ -92,6 +92,34 @@ test "nested stars execute repeatedly" {
 }
 
 ///|
+test "nullable repetition retains explicit longest and shortest preferences" {
+  let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
+  let body = @regex_engine.alt([@regex_engine.epsilon, a])
+  let repetition = @regex_engine.quantifier(body, {
+    min: 0,
+    max: None,
+    mode: Greedy,
+  })
+  for
+    (pattern, expected_end) in [
+      (@regex_engine.first(repetition), 0),
+      (@regex_engine.longest(repetition), 2),
+      (@regex_engine.shortest(repetition), 0),
+    ] {
+    let pat = @regex_engine.seq([@regex_engine.start_of_input, pattern])
+    let re = @regex_engine.compile(profile~, pat)
+    for _ in 0..<2 {
+      guard re.execute("aa!", 0) is Some(m) else { fail("Expected match") }
+      @test.assert_eq(
+        m.group(0),
+        Some((0, expected_end)),
+        msg="end=\{expected_end}",
+      )
+    }
+  }
+}
+
+///|
 test "alternation compiles and matches" {
   let pat = @regex_engine.alt([
     @regex_engine.char(@regex_engine.RecharSet::char('a')),
