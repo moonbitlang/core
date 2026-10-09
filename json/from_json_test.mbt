@@ -971,6 +971,25 @@ test "float special values" {
 }
 
 ///|
+test "float non-finite to_json roundtrip" {
+  let values : Array[Float] = [
+    @float.not_a_number, @float.infinity, @float.neg_infinity,
+  ]
+  let strings = values.map(v => Json(v).stringify())
+  debug_inspect(
+    strings,
+    content=(
+      #|["\"NaN\"", "\"Infinity\"", "\"-Infinity\""]
+    ),
+  )
+  for i, s in strings {
+    // stringify must produce valid JSON that parses back to the same value
+    let v : Float = @json.from_json(@json.parse(s))
+    assert_eq(v.reinterpret_as_uint(), values[i].reinterpret_as_uint())
+  }
+}
+
+///|
 test "Float from_json error handling" {
   let json_string = Json("not a number")
   let err = expect_json_decode_error(
