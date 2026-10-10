@@ -71,6 +71,46 @@ test "execute/range_crossing_surrogate_gap_has_no_half_match" {
 }
 
 ///|
+test "execute/colon_range" {
+  let regex = @string.Regex("^[:-@]$")
+  for ch in [":", ";", "<", "=", ">", "?", "@"] {
+    guard regex.execute(ch) is Some(_) else {
+      fail("Expected colon range endpoint to match")
+    }
+  }
+  for ch in ["!", "A", "["] {
+    guard regex.execute(ch) is None else {
+      fail("Expected character outside colon range not to match")
+    }
+  }
+  let inverse = @string.Regex("^[^:-@]$")
+  guard inverse.execute("A") is Some(_) else {
+    fail("Expected inverse colon range to match")
+  }
+  guard inverse.execute(":") is None else {
+    fail("Expected inverse colon range to exclude colon")
+  }
+  for pattern in ["^[:]$", "^[::]$", "^[:-:]$", "^[:-@:]$", "^[:a-z:]$"] {
+    let regex = @string.Regex(pattern)
+    guard regex.execute(":") is Some(_) else {
+      fail("Expected literal colon to match")
+    }
+    guard regex.execute("-") is None else {
+      fail("Expected range syntax to exclude literal hyphen")
+    }
+  }
+  let literals = @string.Regex("^[:\\-@]$")
+  for ch in [":", "-", "@"] {
+    guard literals.execute(ch) is Some(_) else {
+      fail("Expected escaped hyphen class to match its literal atoms")
+    }
+  }
+  guard literals.execute(";") is None else {
+    fail("Expected escaped hyphen not to introduce a range")
+  }
+}
+
+///|
 test "compile/error_unclosed_group" {
   try @string.Regex("(") catch {
     _ => ()
