@@ -204,7 +204,8 @@ pub fn acos(x : Double) -> Double {
   } else {
     let z = (one - x) * 0.5
     let s = z.sqrt()
-    let df = s
+    // Clear the low word so that df * df is exact
+    let df = set_low_word(s, 0)
     let c = (z - df * df) / (s + df)
     let p = z * (ps0 + z * (ps1 + z * (ps2 + z * (ps3 + z * (ps4 + z * ps5)))))
     let q = one + z * (qs1 + z * (qs2 + z * (qs3 + z * qs4)))
@@ -408,12 +409,13 @@ pub fn atan2(y : Double, x : Double) -> Double {
     return if hy < 0 { -pi_o_2 - tiny } else { pi_o_2 + tiny }
   }
   let k = (iy - ix) >> 20
-  let z = if k > 60 {
-    pi_o_2 + 0.5 * pi_lo
+  let (z, m) = if k > 60 {
+    // |y/x| > 2^60: the result is +-pi/2 whatever the sign of x
+    (pi_o_2 + 0.5 * pi_lo, m & 1)
   } else if hx < 0 && k < -60 {
-    0.0
+    (0.0, m)
   } else {
-    atan(abs(y / x))
+    (atan(abs(y / x)), m)
   }
   match m {
     0 => z
