@@ -61,3 +61,35 @@ test "bench Bytes::makei from ArrayView n=262144 sliced" (it : @bench.T) {
     it.keep(bytes_from_array_bench_makei(bytes_from_array_bench_source[1:]))
   })
 }
+
+///|
+// Fresh inputs are created inside the timed closure and consumed at their last
+// use. These measure allocation/fill plus conversion; shared inputs below keep
+// the copying fallback in the measurement.
+fn bench_bytes_from_array_ownership(it : @bench.T, size : Int) -> Unit {
+  it.bench(name="fresh FixedArray", () => {
+    let arr = FixedArray::make(size, b'a')
+    it.keep(Bytes::from_array(arr))
+  })
+  it.bench(name="fresh Array", () => {
+    let arr = Array::make(size, b'a')
+    it.keep(Bytes::from_array(arr))
+  })
+  let shared = FixedArray::make(size, b'a')
+  it.bench(name="shared full buffer", () => it.keep(Bytes::from_array(shared)))
+}
+
+///|
+test "bench Bytes::from_array ownership n=32" (it : @bench.T) {
+  bench_bytes_from_array_ownership(it, 32)
+}
+
+///|
+test "bench Bytes::from_array ownership n=4096" (it : @bench.T) {
+  bench_bytes_from_array_ownership(it, 4096)
+}
+
+///|
+test "bench Bytes::from_array ownership n=262144" (it : @bench.T) {
+  bench_bytes_from_array_ownership(it, 262144)
+}
