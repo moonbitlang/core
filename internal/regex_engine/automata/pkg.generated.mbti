@@ -25,6 +25,8 @@ pub fn e_mark(ctx~ : Context, Mark) -> Expr
 
 pub fn e_rep(ctx~ : Context, @shared_types.QuantifierMode, @shared_types.Preference, Expr) -> Expr
 
+pub fn e_rep_nullable(ctx~ : Context, @shared_types.QuantifierMode, Expr, required~ : Bool) -> Expr
+
 pub fn e_seq(ctx~ : Context, @shared_types.Preference, Expr, Expr) -> Expr
 
 pub fn is_eps(Expr) -> Bool
