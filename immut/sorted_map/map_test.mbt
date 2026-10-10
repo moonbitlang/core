@@ -194,7 +194,7 @@ test "foldl_with_key" {
 }
 
 ///|
-test "foldr_with_key" {
+test "rev_fold" {
   let m = @sorted_map.SortedMap([
     ("a", 1),
     ("b", 2),
@@ -203,7 +203,7 @@ test "foldr_with_key" {
     ("e", 5),
   ])
   @test.assert_eq(
-    m.foldr_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
+    m.rev_fold((acc, k, v) => acc + k + v.to_string(), init=""),
     "e5d4c3b2a1",
   )
 }
@@ -449,4 +449,75 @@ test "@immut/sorted_map.merge with overlapping keys" {
   debug_inspect(merged.get(3), content="Some(\"THREE\")")
   debug_inspect(merged.get(4), content="Some(\"FOUR\")")
   inspect(merged.length(), content="4")
+}
+
+///|
+fn raises(f : () -> Unit raise) -> Bool {
+  try f() catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+}
+
+///|
+test "higher-order functions propagate callback errors" {
+  let m = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
+  let seen = []
+  let r1 = raises(() => {
+    m.each((k, _) => {
+      seen.push(k)
+      if k == 2 {
+        fail("stop at 2")
+      }
+    })
+  })
+  inspect(r1, content="true")
+  debug_inspect(seen, content="[1, 2]")
+  inspect(
+    raises(() => m.eachi((i, _, _) => if i == 1 { fail("stop at index 1") })),
+    content="true",
+  )
+  inspect(
+    raises(() => {
+      ignore(
+        m.fold(init=0, (acc, k, _) => {
+          if k == 3 {
+            fail("stop at 3")
+          }
+          acc + k
+        }),
+      )
+    }),
+    content="true",
+  )
+  inspect(
+    raises(() => {
+      ignore(
+        m.rev_fold(init="", (acc, k, v) => {
+          if k == 1 {
+            fail("stop at 1")
+          }
+          acc + v
+        }),
+      )
+    }),
+    content="true",
+  )
+  inspect(
+    raises(() => {
+      ignore(
+        m.map((k, _) => {
+          if k == 2 {
+            fail("stop at 2")
+          }
+          k
+        }),
+      )
+    }),
+    content="true",
+  )
+  // Non-raising callbacks keep working without `try`.
+  inspect(m.fold(init=0, (acc, k, _) => acc + k), content="6")
+  inspect(m.rev_fold(init="", (acc, _, v) => acc + v), content="cba")
 }
