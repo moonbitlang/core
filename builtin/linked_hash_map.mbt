@@ -902,7 +902,9 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 ///|
 /// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
 ///
-/// `f` may raise; the error propagates and `self` is left unchanged.
+/// Calls `f` in insertion order and preserves that order in the result.
+/// If `f` raises, iteration stops immediately and the error propagates.
+/// This method does not modify `self`.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,
@@ -917,20 +919,25 @@ pub fn[K, V, V2] Map::map(
     head: None,
     tail: self.tail,
   }
-  if self.size == 0 {
-    return other
-  }
-  guard! self.entries[self.tail] is Some(last)
-  for entry = last, idx = self.tail, next = (None : Entry[K, V2]?) {
-    let { prev, psl, hash, key, value, .. } = entry
+  guard self.head is Some(first) else { return other }
+  for entry = first, previous = (None : Entry[K, V2]?) {
+    let { prev, next, psl, hash, key, value, } = entry
+    // The next entry's back-link identifies this entry's table slot.
+    // For the last entry, the map stores that slot in `tail`.
+    let idx = match next {
+      Some(next) => next.prev
+      None => self.tail
+    }
     let new_value = f(key, value)
-    let new_entry = { prev, next, psl, hash, key, value: new_value, }
+    let new_entry = { prev, next: None, psl, hash, key, value: new_value, }
     other.entries[idx] = Some(new_entry)
-    if prev != -1 {
-      continue self.entries[prev].unwrap(), prev, Some(new_entry)
-    } else {
-      other.head = Some(new_entry)
-      break
+    match previous {
+      Some(previous) => previous.next = Some(new_entry)
+      None => other.head = Some(new_entry)
+    }
+    match next {
+      Some(next) => continue next, Some(new_entry)
+      None => break
     }
   }
   other
