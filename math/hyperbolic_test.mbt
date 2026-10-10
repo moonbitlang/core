@@ -125,6 +125,26 @@ test "acoshf Test" {
 }
 
 ///|
+test "acoshf large and negative inputs" {
+  // x >= 0x1p12 takes the ln(x) + ln2 branch
+  let data : Array[Float] = [4096, 5000, 65536, 1.0e30, @float.max_value]
+  let expected : Array[Int] = [
+    0x41102cb3, 0x41135d8e, 0x413c8939, 0x428b8a99, 0x42b2d4fc,
+  ]
+  for i, x in data {
+    let res = @math.acoshf(x)
+    assert_true((res.reinterpret_as_int() - expected[i]).abs() <= 2)
+  }
+  // x < 1 is invalid, including -0x1p12 < x <= -2
+  let invalid : Array[Float] = [
+    -1.5, -2, -3, -100, -1024, -4095, -4096, -5000, @float.min_value,
+  ]
+  for x in invalid {
+    assert_true(@math.acoshf(x).is_nan())
+  }
+}
+
+///|
 test "atanhf Test" {
   let data : Array[Float] = [
     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65,
