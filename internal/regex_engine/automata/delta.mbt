@@ -46,11 +46,29 @@
 /// - `find_slot`: Allocates a slot for the new state to track positions
 
 ///|
-#valtype
 priv struct DeltaContext {
   c : @shared_types.Rechar
   prev_cat : @shared_types.Category
   next_cat : @shared_types.Category
+  seen : @hashset.HashSet[ExprId]
+}
+
+///|
+fn append_thread(
+  thread : Thread,
+  frame : Int,
+  frames : Array[(Expr, Int)],
+  rem : Array[Thread],
+) -> Unit {
+  let mut threads = [thread]
+  for index = frame; index >= 0; {
+    let (next, parent) = frames[index]
+    let wrapped = []
+    ts_seq(First, threads, next, wrapped)
+    threads = wrapped
+    continue parent
+  }
+  rem.append(threads)
 }
 
 ///|
@@ -94,29 +112,7 @@ fn delta_expr(
   marks : MarkSlotMap,
   rem : Array[Thread],
 ) -> Unit {
-  match expr.def {
-    Chr(s) => if s.contains(c.c) { rem.push(Exp(marks, e_eps)) }
-    Alt(exprs) =>
-      for expr in exprs {
-        delta_expr(expr, c, marks, rem)
-      }
-    Seq(pref, first, next) => {
-      let first_delta = []
-      delta_expr(first, c, marks, first_delta)
-      delta_seq(pref, first_delta, next, c, rem)
-    }
-    Rep(mode, pref, body) => delta_rep(expr, mode, pref, body, c, marks, rem)
-    Eps => rem.push(End(marks))
-    Mark(mark) => rem.push(End(marks.add_mark(mark)))
-    Before(cat) =>
-      if @shared_types.Category::intersects(c.next_cat, cat) {
-        rem.push(End(marks))
-      }
-    After(cat) =>
-      if @shared_types.Category::intersects(c.prev_cat, cat) {
-        rem.push(End(marks))
-      }
-  }
+  delta_thread(Exp(marks, expr), c, rem, false)
 }
 
 ///|
@@ -152,14 +148,119 @@ fn delta_seq(
 }
 
 ///|
-fn delta_thread(thread : Thread, c : DeltaContext, rem : Array[Thread]) -> Unit {
-  match thread {
-    End(_) => rem.push(thread)
-    Exp(marks, expr) => delta_expr(expr, c, marks, rem)
-    Seq(pref, first, next) => {
-      let first_delta = []
-      delta_threads(first, c, first_delta)
-      delta_seq(pref, first_delta, next, c, rem)
+fn delta_thread(
+  thread : Thread,
+  c : DeltaContext,
+  rem : Array[Thread],
+  ordered : Bool,
+) -> Unit {
+  let frames : Array[(Expr, Int)] = []
+  // The frame index names an immutable suffix chain. Derived work has already
+  // consumed this character and must be emitted rather than executed again.
+  let work : Array[(Thread, Int, Bool, Bool)] = [(thread, -1, false, ordered)]
+  while !work.is_empty() {
+    let (thread, frame, derived, ordered) = work.unsafe_pop()
+    if derived || thread is End(_) {
+      match thread {
+        End(marks) =>
+          if frame < 0 {
+            rem.push(thread)
+          } else {
+            let (next, parent) = frames[frame]
+            work.push((Exp(marks, next), parent, false, true))
+          }
+        _ => append_thread(thread, frame, frames, rem)
+      }
+      continue
+    }
+    match thread {
+      Seq(First, first, tail) => {
+        let index = frames.length()
+        frames.push((tail, frame))
+        for i = first.0.length() - 1; i >= 0; i = i - 1 {
+          work.push((first.0[i], index, false, true))
+        }
+      }
+      Seq(pref, first, tail) => {
+        let first_delta = []
+        delta_threads(first, c, first_delta)
+        let derived = []
+        delta_seq(pref, first_delta, tail, c, derived)
+        for i = derived.length() - 1; i >= 0; i = i - 1 {
+          work.push((derived[i], frame, true, false))
+        }
+      }
+      Exp(marks, expr) =>
+        match expr.def {
+          Seq(First, first, tail) => {
+            let index = frames.length()
+            frames.push((tail, frame))
+            work.push((Exp(marks, first), index, false, true))
+          }
+          Eps => work.push((End(marks), frame, true, false))
+          _ => {
+            let ordered = ordered ||
+              expr.def is Rep(_, First, _) ||
+              expr.def is RepStart(_)
+            if ordered {
+              guard c.seen.add_and_check(expr.id) else { continue }
+            }
+            match expr.def {
+              Chr(s) =>
+                if s.contains(c.c) {
+                  append_thread(Exp(marks, e_eps), frame, frames, rem)
+                }
+              Alt(exprs) =>
+                for i = exprs.length() - 1; i >= 0; i = i - 1 {
+                  work.push((Exp(marks, exprs[i]), frame, false, ordered))
+                }
+              Rep(mode, First, body) | RepStart(mode, body, _, _) => {
+                let repeat = match expr.def {
+                  RepStart(_, _, repeat, _) => repeat
+                  _ => expr
+                }
+                let required = expr.def is RepStart(_, _, _, true)
+                let index = frames.length()
+                frames.push((repeat, frame))
+                if !required && mode is Greedy {
+                  work.push((End(marks), frame, true, false))
+                }
+                work.push((Exp(marks, body), index, false, true))
+                if !required && mode is NonGreedy {
+                  work.push((End(marks), frame, true, false))
+                }
+              }
+              Mark(mark) =>
+                work.push((End(marks.add_mark(mark)), frame, true, false))
+              Before(cat) =>
+                if @shared_types.Category::intersects(c.next_cat, cat) {
+                  work.push((End(marks), frame, true, false))
+                }
+              After(cat) =>
+                if @shared_types.Category::intersects(c.prev_cat, cat) {
+                  work.push((End(marks), frame, true, false))
+                }
+              Seq(pref, first, tail) => {
+                let first_delta = []
+                delta_expr(first, c, marks, first_delta)
+                let derived = []
+                delta_seq(pref, first_delta, tail, c, derived)
+                for i = derived.length() - 1; i >= 0; i = i - 1 {
+                  work.push((derived[i], frame, true, false))
+                }
+              }
+              Rep(mode, pref, body) => {
+                let derived = []
+                delta_rep(expr, mode, pref, body, c, marks, derived)
+                for i = derived.length() - 1; i >= 0; i = i - 1 {
+                  work.push((derived[i], frame, true, false))
+                }
+              }
+              Eps => panic()
+            }
+          }
+        }
+      End(_) => panic()
     }
   }
 }
@@ -171,7 +272,7 @@ fn delta_threads(
   rem : Array[Thread],
 ) -> Unit {
   for thread in curr.0 {
-    delta_thread(thread, c, rem)
+    delta_thread(thread, c, rem, true)
   }
 }
 
@@ -229,7 +330,8 @@ pub fn delta(
 ) -> State {
   let prev_cat = state.cat
   let rem = []
-  delta_threads(state.desc, { prev_cat, next_cat, c, }, rem)
+  ctx.seen.clear()
+  delta_threads(state.desc, { prev_cat, next_cat, c, seen: ctx.seen, }, rem)
   ctx.seen.clear()
   remove_duplicates(rem, e_eps, ctx.seen)
   let desc = ThreadSet(rem)
