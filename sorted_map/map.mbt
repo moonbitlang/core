@@ -274,10 +274,14 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key, value: _, right, height: _, }) => {
-            todo_list.push((key, right))
-            continue left
-          }
+          Some({ left, key, value: _, right, height: _, }) =>
+            if left is None {
+              next_node = right
+              break Some(key)
+            } else {
+              todo_list.push((key, right))
+              continue left
+            }
           None if todo_list.pop() is Some((key, right)) => {
             next_node = right
             break Some(key)
@@ -300,10 +304,14 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key: _, value, right, height: _, }) => {
-            todo_list.push((value, right))
-            continue left
-          }
+          Some({ left, key: _, value, right, height: _, }) =>
+            if left is None {
+              next_node = right
+              break Some(value)
+            } else {
+              todo_list.push((value, right))
+              continue left
+            }
           None if todo_list.pop() is Some((value, right)) => {
             next_node = right
             break Some(value)
@@ -334,10 +342,16 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key, value, right, height: _, }) => {
-            todo_list.push((key, value, right))
-            continue left
-          }
+          Some({ left, key, value, right, height: _, }) =>
+            // With no left subtree, yield immediately instead of allocating
+            // a pending-entry tuple only to pop it in the next loop step.
+            if left is None {
+              next_node = right
+              break Some((key, value))
+            } else {
+              todo_list.push((key, value, right))
+              continue left
+            }
           None if todo_list.pop() is Some((key, value, right)) => {
             next_node = right
             break Some((key, value))
