@@ -1636,6 +1636,11 @@ pub extend Tuple9 with ToJson::{to_json}
 pub extend UInt with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend UInt with Default::{default}
+
+///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend UInt with Eq::{not_equal}
