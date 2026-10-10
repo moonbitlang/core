@@ -16,12 +16,42 @@
 test "@math.cbrtf" {
   inspect(@math.cbrtf(0), content="0")
   inspect(@math.cbrtf(1), content="1")
-  inspect(@math.cbrtf(2), content="1.2599210739135742")
-  inspect(@math.cbrtf(3), content="1.4422495365142822")
-  inspect(@math.cbrtf(4), content="1.587401032447815")
-  inspect(@math.cbrtf(5), content="1.7099759578704834")
-  inspect(@math.cbrtf(-6), content="-1.8171205520629883")
-  inspect(@math.cbrtf(-7), content="-1.912931203842163")
+  inspect(
+    @math.cbrtf(2),
+    content=(
+      #|1.2599211
+    ),
+  )
+  inspect(
+    @math.cbrtf(3),
+    content=(
+      #|1.4422495
+    ),
+  )
+  inspect(
+    @math.cbrtf(4),
+    content=(
+      #|1.587401
+    ),
+  )
+  inspect(
+    @math.cbrtf(5),
+    content=(
+      #|1.709976
+    ),
+  )
+  inspect(
+    @math.cbrtf(-6),
+    content=(
+      #|-1.8171206
+    ),
+  )
+  inspect(
+    @math.cbrtf(-7),
+    content=(
+      #|-1.9129312
+    ),
+  )
   inspect(@math.cbrtf(-8), content="-2")
   inspect(@math.cbrtf(@float.not_a_number), content="NaN")
   inspect(@math.cbrtf(@float.infinity), content="Infinity")

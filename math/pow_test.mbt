@@ -37,7 +37,12 @@ test "scalbn comprehensive" {
   // Test with different float values
   inspect(@math.scalbnf(0.5, 1), content="1")
   inspect(@math.scalbnf(0.25, 2), content="1")
-  inspect(@math.scalbnf(0.1, 4), content="1.600000023841858")
+  inspect(
+    @math.scalbnf(0.1, 4),
+    content=(
+      #|1.6
+    ),
+  )
 
   // Test with negative numbers
   inspect(@math.scalbnf(-2.0, 3), content="-16")
@@ -46,7 +51,12 @@ test "scalbn comprehensive" {
   // Test with small numbers
   let small_number = 1.0e-20
   let small_float = Float::from_double(small_number)
-  inspect(@math.scalbnf(small_float, 1), content="1.999999936531045e-20")
+  inspect(
+    @math.scalbnf(small_float, 1),
+    content=(
+      #|2e-20
+    ),
+  )
 }
 
 ///|
@@ -58,7 +68,12 @@ test "pow basic" {
   inspect(@math.powf(-2.0, 3.0), content="-8")
   inspect(@math.powf(2.0, -3.0), content="0.125")
   inspect(@math.powf(-2.0, -3.0), content="-0.125")
-  inspect(@math.powf(2.0, -3.14), content="0.1134398877620697")
+  inspect(
+    @math.powf(2.0, -3.14),
+    content=(
+      #|0.11343989
+    ),
+  )
   inspect(@math.powf(-2.0, -3.14), content="NaN")
 
   // Test with special values
@@ -185,7 +200,12 @@ test "powf" {
   inspect(@math.powf(-2.0, 3.0), content="-8")
   inspect(@math.powf(2.0, -3.0), content="0.125")
   inspect(@math.powf(-2.0, -3.0), content="-0.125")
-  inspect(@math.powf(2.0, -3.14), content="0.1134398877620697")
+  inspect(
+    @math.powf(2.0, -3.14),
+    content=(
+      #|0.11343989
+    ),
+  )
   inspect(@math.powf(-2.0, -3.14), content="NaN")
 }
 

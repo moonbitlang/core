@@ -42,8 +42,18 @@ fn k_expo2f(x : Float) -> Float {
 /// test {
 ///   inspect(@math.sinhf(0), content="0")
 ///   inspect(@math.sinhf(-0), content="0")
-///   inspect(@math.sinhf(1), content="1.175201177597046")
-///   inspect(@math.sinhf(2), content="3.6268603801727295")
+///   inspect(
+///     @math.sinhf(1),
+///     content=(
+///       #|1.1752012
+///     ),
+///   )
+///   inspect(
+///     @math.sinhf(2),
+///     content=(
+///       #|3.6268604
+///     ),
+///   )
 ///   inspect(@math.sinhf(1000), content="Infinity")
 ///   inspect(@math.sinhf(-1000), content="-Infinity")
 ///   inspect(@math.sinhf(@float.not_a_number), content="NaN")
@@ -98,8 +108,18 @@ pub fn sinhf(x : Float) -> Float {
 /// test {
 ///   inspect(@math.coshf(0), content="1")
 ///   inspect(@math.coshf(-0), content="1")
-///   inspect(@math.coshf(1), content="1.5430805683135986")
-///   inspect(@math.coshf(2), content="3.7621958255767822")
+///   inspect(
+///     @math.coshf(1),
+///     content=(
+///       #|1.5430806
+///     ),
+///   )
+///   inspect(
+///     @math.coshf(2),
+///     content=(
+///       #|3.7621958
+///     ),
+///   )
 ///   inspect(@math.coshf(1000), content="Infinity")
 ///   inspect(@math.coshf(-1000), content="Infinity")
 ///   inspect(@math.coshf(@float.not_a_number), content="NaN")
@@ -154,8 +174,18 @@ pub fn coshf(x : Float) -> Float {
 /// test {
 ///   inspect(@math.tanhf(0), content="0")
 ///   inspect(@math.tanhf(-0), content="0")
-///   inspect(@math.tanhf(1), content="0.7615941762924194")
-///   inspect(@math.tanhf(2), content="0.9640275835990906")
+///   inspect(
+///     @math.tanhf(1),
+///     content=(
+///       #|0.7615942
+///     ),
+///   )
+///   inspect(
+///     @math.tanhf(2),
+///     content=(
+///       #|0.9640276
+///     ),
+///   )
 ///   inspect(@math.tanhf(1000), content="1")
 ///   inspect(@math.tanhf(-1000), content="-1")
 ///   inspect(@math.tanhf(@float.not_a_number), content="NaN")
@@ -217,9 +247,24 @@ pub fn tanhf(x : Float) -> Float {
 /// test {
 ///   inspect(@math.asinhf(0), content="0")
 ///   inspect(@math.asinhf(-0), content="0")
-///   inspect(@math.asinhf(1), content="0.8813735842704773")
-///   inspect(@math.asinhf(2), content="1.4436354637145996")
-///   inspect(@math.asinhf(1000), content="7.600902557373047")
+///   inspect(
+///     @math.asinhf(1),
+///     content=(
+///       #|0.8813736
+///     ),
+///   )
+///   inspect(
+///     @math.asinhf(2),
+///     content=(
+///       #|1.4436355
+///     ),
+///   )
+///   inspect(
+///     @math.asinhf(1000),
+///     content=(
+///       #|7.6009026
+///     ),
+///   )
 ///   inspect(@math.asinhf(@float.not_a_number), content="NaN")
 ///   inspect(@math.asinhf(@float.infinity), content="Infinity")
 ///   inspect(@math.asinhf(@float.neg_infinity), content="-Infinity")
@@ -273,8 +318,18 @@ pub fn asinhf(x : Float) -> Float {
 /// ```mbt check
 /// test {
 ///   inspect(@math.acoshf(1), content="0")
-///   inspect(@math.acoshf(2), content="1.316957950592041")
-///   inspect(@math.acoshf(1000), content="7.600902080535889")
+///   inspect(
+///     @math.acoshf(2),
+///     content=(
+///       #|1.316958
+///     ),
+///   )
+///   inspect(
+///     @math.acoshf(1000),
+///     content=(
+///       #|7.600902
+///     ),
+///   )
 ///   inspect(@math.acoshf(-1), content="NaN")
 ///   inspect(@math.acoshf(-2), content="NaN")
 ///   inspect(@math.acoshf(@float.not_a_number), content="NaN")
@@ -322,8 +377,18 @@ pub fn acoshf(x : Float) -> Float {
 /// test {
 ///   inspect(@math.atanhf(0), content="0")
 ///   inspect(@math.atanhf(-0), content="0")
-///   inspect(@math.atanhf(0.5), content="0.5493061542510986")
-///   inspect(@math.atanhf(-0.5), content="-0.5493061542510986")
+///   inspect(
+///     @math.atanhf(0.5),
+///     content=(
+///       #|0.54930615
+///     ),
+///   )
+///   inspect(
+///     @math.atanhf(-0.5),
+///     content=(
+///       #|-0.54930615
+///     ),
+///   )
 ///   inspect(@math.atanhf(1), content="Infinity")
 ///   inspect(@math.atanhf(-1), content="-Infinity")
 ///   inspect(@math.atanhf(1.5), content="NaN")

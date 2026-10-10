@@ -15,7 +15,12 @@
 ///|
 test "show" {
   let f : Float = 3.14159
-  inspect(f, content="3.141590118408203")
+  inspect(
+    f,
+    content=(
+      #|3.14159
+    ),
+  )
 }
 
 ///|
@@ -246,7 +251,12 @@ test "Float::signum" {
 test "Float constructor syntax" {
   inspect(Float(3), content="3")
   inspect(Float(-3.5), content="-3.5")
-  inspect(Float(3.2), content="3.200000047683716")
+  inspect(
+    Float(3.2),
+    content=(
+      #|3.2
+    ),
+  )
   let x : Float = 42
   inspect(Float(x), content="42")
 }
