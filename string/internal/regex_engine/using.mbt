@@ -17,7 +17,6 @@ pub using @shared_types {
   type Profile,
   type Rechar,
   type RecharSet,
-  type Preference,
   type Category,
   type QuantifierMode,
 }
@@ -33,9 +32,6 @@ pub using @ast {
   empty,
   alt,
   quantifier,
-  preference,
-  shortest,
-  longest,
   first,
   capture,
   assertion,

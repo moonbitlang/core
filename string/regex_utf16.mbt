@@ -72,7 +72,9 @@ fn re_lower_cset(cs : @re.RecharSet) -> @re.Pattern {
       }
     }
   }
-  @re.shortest(@re.alt(ReadOnlyArray::from_array(alts)))
+  // The alternatives are disjoint (one BMP branch or one surrogate pair),
+  // so ordered First semantics preserve the UTF-16 lowering exactly.
+  @re.alt(ReadOnlyArray::from_array(alts))
 }
 
 ///|
@@ -82,7 +84,6 @@ fn re_lower_to_utf16(ast : @re.Pattern) -> @re.Pattern {
     Sequence(exprs) => @re.seq(exprs.map(e => re_lower_to_utf16(e)))
     Alternation(exprs) => @re.alt(exprs.map(e => re_lower_to_utf16(e)))
     Quantifier(q, expr) => @re.quantifier(re_lower_to_utf16(expr), q)
-    Preference(p, expr) => @re.preference(p, re_lower_to_utf16(expr))
     Capture(name~, expr) => @re.capture(name?, re_lower_to_utf16(expr))
     Assertion(a) => @re.assertion(a)
   }

@@ -1,0 +1,999 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+test "execute/non_capture_group" {
+  let regex = @regex.Regex::unsafe_from_string("(?:ab)(c)(?:d)")
+  guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "abcd">,
+      #|  group_names: <ReadOnlyArray: [None, None]>,
+      #|  result: MatchResult([0, 4, 2, 3]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "execute/non_capture_with_named_group" {
+  let regex = @regex.Regex::unsafe_from_string("(?:a)(b)(?:c)(?<d>d)")
+  guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "abcd">,
+      #|  group_names: <ReadOnlyArray: [None, None, Some("d")]>,
+      #|  result: MatchResult([0, 4, 1, 2, 3, 4]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "execute/any_char_on_supplementary_plane" {
+  let regex = @regex.Regex::unsafe_from_string(".")
+  guard regex.execute("😀") is Some(m) else {
+    fail("Expected match for supplementary-plane Unicode escape")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "😀">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 2]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "execute/range_crossing_surrogate_gap_has_no_half_match" {
+  let regex = @regex.Regex::unsafe_from_string("[\\uD7FF-\\uE000]")
+  guard regex.execute("😀") is None else {
+    fail("Expected no surrogate-half match")
+  }
+}
+
+///|
+test "execute/colon_range" {
+  let regex = @regex.Regex("^[:-@]$")
+  for ch in [":", ";", "<", "=", ">", "?", "@"] {
+    guard regex.execute(ch) is Some(_) else {
+      fail("Expected colon range endpoint to match")
+    }
+  }
+  for ch in ["!", "A", "["] {
+    guard regex.execute(ch) is None else {
+      fail("Expected character outside colon range not to match")
+    }
+  }
+  let inverse = @regex.Regex("^[^:-@]$")
+  guard inverse.execute("A") is Some(_) else {
+    fail("Expected inverse colon range to match")
+  }
+  guard inverse.execute(":") is None else {
+    fail("Expected inverse colon range to exclude colon")
+  }
+  for pattern in ["^[:]$", "^[::]$", "^[:-:]$", "^[:-@:]$", "^[:a-z:]$"] {
+    let regex = @regex.Regex(pattern)
+    guard regex.execute(":") is Some(_) else {
+      fail("Expected literal colon to match")
+    }
+    guard regex.execute("-") is None else {
+      fail("Expected range syntax to exclude literal hyphen")
+    }
+  }
+  let literals = @regex.Regex("^[:\\-@]$")
+  for ch in [":", "-", "@"] {
+    guard literals.execute(ch) is Some(_) else {
+      fail("Expected escaped hyphen class to match its literal atoms")
+    }
+  }
+  guard literals.execute(";") is None else {
+    fail("Expected escaped hyphen not to introduce a range")
+  }
+}
+
+///|
+test "compile/error_unclosed_group" {
+  try @regex.Regex("(") catch {
+    _ => ()
+  } noraise {
+    _ => fail("Expected compile failure for unclosed group")
+  }
+}
+
+///|
+test "compile/error_unclosed_char_class" {
+  try @regex.Regex("[abc") catch {
+    _ => ()
+  } noraise {
+    _ => fail("Expected compile failure for unclosed char class")
+  }
+}
+
+///|
+test "compile/unicode_escape_supplementary_plane" {
+  let regex = @regex.Regex::unsafe_from_string("\\u{1F600}")
+  guard regex.execute("a😀b") is Some(m) else {
+    fail("Expected match for supplementary-plane Unicode escape")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "a😀b">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 3]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "string/literal_metacharacters" {
+  let regex = @regex.Regex::string("a+b(c)")
+  guard regex.execute("xa+b(c)y") is Some(m) else {
+    fail("Expected literal match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "xa+b(c)y">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 7]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    regex.execute("xabccy"),
+    content=(
+      #|None
+    ),
+  )
+}
+
+///|
+test "repeat/greedy_and_nongreedy" {
+  let base = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  let greedy = base.repeat(min=2, max=4)
+  let nongreedy = base.repeat(min=2, max=4, greedy=false)
+  guard greedy.execute("a12345") is Some(m1) else {
+    fail("Expected greedy match")
+  }
+  guard nongreedy.execute("a12345") is Some(m2) else {
+    fail("Expected non-greedy match")
+  }
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "a12345">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 5]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "a12345">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 3]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "panic repeat/invalid_min_negative" {
+  let base = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  ignore(base.repeat(min=-1))
+}
+
+///|
+test "panic repeat/invalid_max_less_than_min" {
+  let base = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  ignore(base.repeat(min=3, max=2))
+}
+
+///|
+test "panic repeat/invalid_min_too_large" {
+  let base = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  ignore(base.repeat(min=257))
+}
+
+///|
+test "panic repeat/invalid_max_too_large" {
+  let base = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  ignore(base.repeat(min=0, max=257))
+}
+
+///|
+test "add/sequence" {
+  let regex = @regex.Regex::string("ab") + @regex.Regex::string("cd")
+  guard regex.execute("xxabcdyy") is Some(m) else {
+    fail("Expected concatenated match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "xxabcdyy">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([2, 6]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "bitor/alternation" {
+  let regex = @regex.Regex::string("cat") | @regex.Regex::string("dog")
+  debug_inspect(
+    regex.execute("dog"),
+    content=(
+      #|Some(
+      #|  {
+      #|    input: <StringView: "dog">,
+      #|    group_names: <ReadOnlyArray: [None]>,
+      #|    result: MatchResult([0, 3]),
+      #|  },
+      #|)
+    ),
+  )
+  debug_inspect(
+    regex.execute("cow"),
+    content=(
+      #|None
+    ),
+  )
+}
+
+///|
+test "complex/email_pattern" {
+  // Build readable email pattern using + and |
+  // Use simpler character class - avoid complex mixing with POSIX classes
+  // Put - at end to avoid it being interpreted as a range operator
+  let username = @regex.Regex::unsafe_from_string("[a-zA-Z0-9_.+\\-]+")
+  let domain_part = @regex.Regex::unsafe_from_string("[a-zA-Z0-9\\-]+")
+  let tld = @regex.Regex::unsafe_from_string("com") |
+    @regex.Regex::unsafe_from_string("org") |
+    @regex.Regex::unsafe_from_string("net")
+  let email = username +
+    @regex.Regex::string("@") +
+    domain_part +
+    @regex.Regex::string(".") +
+    tld
+  guard email.execute("user@example.com") is Some(m) else {
+    fail("Expected email match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "user@example.com">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 16]),
+      #|}
+    ),
+  )
+  guard email.execute("test.user+tag@my-domain.org") is Some(x) else {
+    fail("Expected complex email match")
+  }
+  debug_inspect(
+    x,
+    content=(
+      #|{
+      #|  input: <StringView: "test.user+tag@my-domain.org">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 27]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/url_protocol" {
+  // Build URL pattern with multiple protocol support
+  let http = @regex.Regex::string("http")
+  let https = @regex.Regex::string("https")
+  let ftp = @regex.Regex::string("ftp")
+  let protocol = http | https | ftp
+  let url = protocol +
+    @regex.Regex::string("://") +
+    @regex.Regex::unsafe_from_string("[^/]+")
+  guard url.execute("https://example.com") is Some(m) else {
+    fail("Expected URL match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "https://example.com">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 19]),
+      #|}
+    ),
+  )
+  guard url.execute("ftp://files.server.org") is Some(m2) else {
+    fail("Expected FTP URL match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "ftp://files.server.org">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 22]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    url.execute("gopher://old.site"),
+    content=(
+      #|None
+    ),
+  )
+}
+
+///|
+test "complex/date_formats" {
+  // Support multiple date formats using | for readability
+  let year = @regex.Regex::unsafe_from_string("[[:digit:]]{4}")
+  let month = @regex.Regex::unsafe_from_string("[[:digit:]]{2}")
+  let day = @regex.Regex::unsafe_from_string("[[:digit:]]{2}")
+  let dash_sep = @regex.Regex::string("-")
+  let slash_sep = @regex.Regex::string("/")
+  let dot_sep = @regex.Regex::string(".")
+  let sep = dash_sep | slash_sep | dot_sep
+  let date = year + sep + month + sep + day
+  guard date.execute("2026-02-26") is Some(m1) else {
+    fail("Expected dash date match")
+  }
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "2026-02-26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
+  guard date.execute("2026/02/26") is Some(m2) else {
+    fail("Expected slash date match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "2026/02/26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
+  guard date.execute("2026.02.26") is Some(m3) else {
+    fail("Expected dot date match")
+  }
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "2026.02.26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/programming_identifier" {
+  // Match valid programming identifiers with optional namespace
+  let start_char = @regex.Regex::unsafe_from_string("[[:alpha:]_]")
+  let id_char = @regex.Regex::unsafe_from_string("[[:alnum:]_]")
+  let identifier = start_char + id_char.repeat(min=0)
+  let namespace_sep = @regex.Regex::string("::")
+  let namespaced_id = (identifier + namespace_sep).repeat(min=0) + identifier
+  guard namespaced_id.execute("std::string::length") is Some(m) else {
+    fail("Expected namespaced identifier match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "std::string::length">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 19]),
+      #|}
+    ),
+  )
+  guard namespaced_id.execute("_internal_var") is Some(m2) else {
+    fail("Expected simple identifier match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "_internal_var">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 13]),
+      #|}
+    ),
+  )
+  // Test should fail to match if starting with digit - the match skips leading digits
+  guard namespaced_id.execute("123invalid") is Some(m3) else {
+    fail("Expected match somewhere in string")
+  }
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "123invalid">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([3, 10]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/log_level" {
+  // Match log levels with readable alternatives
+  let debug = @regex.Regex::string("DEBUG")
+  let info = @regex.Regex::string("INFO")
+  // Fixed: Put WARNING before WARN since WARN is a prefix of WARNING
+  let warn = @regex.Regex::string("WARNING") | @regex.Regex::string("WARN")
+  let error = @regex.Regex::string("ERROR")
+  let fatal = @regex.Regex::string("FATAL")
+  let level = debug | info | warn | error | fatal
+  // Fixed: Use [^\\]] to match anything except closing bracket
+  // Otherwise .+ is greedy and matches past the ]
+  let timestamp = @regex.Regex::string("[") +
+    @regex.Regex::unsafe_from_string("[^\\]]+") +
+    @regex.Regex::string("]")
+  let log_line = timestamp + @regex.Regex::string(" ") + level
+  guard log_line.execute("[2026-02-26 10:30:45] ERROR") is Some(m) else {
+    fail("Expected log line match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "[2026-02-26 10:30:45] ERROR">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 27]),
+      #|}
+    ),
+  )
+  guard log_line.execute("[10:30] WARNING") is Some(m2) else {
+    fail("Expected warning match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "[10:30] WARNING">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 15]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/phone_number" {
+  // Match phone with optional country code and various formats
+  let plus = @regex.Regex::string("+")
+  let country = plus + @regex.Regex::unsafe_from_string("[[:digit:]]{1,3}")
+  let space = @regex.Regex::string(" ")
+  let dash = @regex.Regex::string("-")
+  let lparen = @regex.Regex::string("(")
+  let rparen = @regex.Regex::string(")")
+  let area = @regex.Regex::unsafe_from_string("[[:digit:]]{3}")
+  let prefix = @regex.Regex::unsafe_from_string("[[:digit:]]{3}")
+  let line = @regex.Regex::unsafe_from_string("[[:digit:]]{4}")
+  let phone = country.repeat(min=0, max=1) +
+    space.repeat(min=0, max=1) +
+    ((lparen + area + rparen) | area) +
+    (space | dash).repeat(min=0, max=1) +
+    prefix +
+    (space | dash).repeat(min=0, max=1) +
+    line
+  guard phone.execute("+1 (555)123-4567") is Some(m) else {
+    fail("Expected phone match")
+  }
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "+1 (555)123-4567">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 16]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/semantic_version" {
+  // Match semantic versioning with optional pre-release and build metadata
+  let digits = @regex.Regex::unsafe_from_string("[[:digit:]]+")
+  let dot = @regex.Regex::string(".")
+  let major_minor_patch = digits + dot + digits + dot + digits
+  let dash = @regex.Regex::string("-")
+  // Fixed: pre-release and build can contain dots (e.g., "beta.1", "build.123")
+  // Put - at the very end to avoid range interpretation
+  let alphanum = @regex.Regex::unsafe_from_string("[a-zA-Z0-9.\\-]+")
+  let pre_release = dash + alphanum
+  let plus = @regex.Regex::string("+")
+  let build_meta = plus + alphanum
+  let semver = major_minor_patch +
+    pre_release.repeat(min=0, max=1) +
+    build_meta.repeat(min=0, max=1)
+  guard semver.execute("1.2.3") is Some(m1) else {
+    fail("Expected simple version match")
+  }
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "1.2.3">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 5]),
+      #|}
+    ),
+  )
+  guard semver.execute("2.0.0-beta.1+20260226") is Some(m2) else {
+    fail("Expected full version match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "2.0.0-beta.1+20260226">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 21]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/hex_color" {
+  // Match hex colors in different formats
+  let hash = @regex.Regex::string("#")
+  let hex = @regex.Regex::unsafe_from_string("[0-9a-fA-F]")
+  // Match longest first to avoid short match on long colors
+  let alpha_color = hash + hex + hex + hex + hex + hex + hex + hex + hex
+  let long_color = hash + hex + hex + hex + hex + hex + hex
+  let short_color = hash + hex + hex + hex
+  let color = alpha_color | long_color | short_color
+  guard color.execute("#FFF") is Some(m1) else {
+    fail("Expected short hex match")
+  }
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "#FFF">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 4]),
+      #|}
+    ),
+  )
+  guard color.execute("#FF5733") is Some(m2) else {
+    fail("Expected long hex match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "#FF5733">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 7]),
+      #|}
+    ),
+  )
+  guard color.execute("#FF5733AA") is Some(m3) else {
+    fail("Expected alpha hex match")
+  }
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "#FF5733AA">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 9]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "complex/json_number" {
+  // Match JSON number format
+  let minus = @regex.Regex::string("-")
+  let plus_sign = @regex.Regex::string("+")
+  let zero = @regex.Regex::string("0")
+  let digit19 = @regex.Regex::unsafe_from_string("[1-9]")
+  let digit = @regex.Regex::unsafe_from_string("[[:digit:]]")
+  let int = zero | (digit19 + digit.repeat(min=0))
+  let dot = @regex.Regex::string(".")
+  let frac = dot + digit.repeat(min=1)
+  let e = @regex.Regex::string("e") | @regex.Regex::string("E")
+  let exp = e + (plus_sign | minus).repeat(min=0, max=1) + digit.repeat(min=1)
+  let number = minus.repeat(min=0, max=1) +
+    int +
+    frac.repeat(min=0, max=1) +
+    exp.repeat(min=0, max=1)
+  guard number.execute("-42") is Some(m1) else {
+    fail("Expected integer match")
+  }
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "-42">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 3]),
+      #|}
+    ),
+  )
+  guard number.execute("3.14159") is Some(m2) else {
+    fail("Expected float match")
+  }
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "3.14159">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 7]),
+      #|}
+    ),
+  )
+  guard number.execute("6.022e23") is Some(m3) else {
+    fail("Expected scientific match")
+  }
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "6.022e23">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 8]),
+      #|}
+    ),
+  )
+}
+
+///|
+test "add/with_any_quantifier" {
+  let re1 = @regex.Regex::unsafe_from_string(".*?\\.")
+  let re2 = re1 + @regex.Regex::string(" ")
+  guard re1.execute("abc.") is Some(_) else { fail("Expected match") }
+  guard re2.execute("abc. ") is Some(_) else { fail("Expected match") }
+}
+
+///|
+test "add/with_any_quantifier_and_empty_wrappers" {
+  let empty = @regex.Regex::string("")
+  let re = empty +
+    @regex.Regex::unsafe_from_string(".*?\\.") +
+    empty +
+    @regex.Regex::string(" ")
+  guard re.execute("abc. ") is Some(m) else { fail("Expected match") }
+  inspect(m.content(), content="abc. ")
+}
+
+///|
+test "should_raise" {
+  for pattern in ["[-a]", "[^-a]", "[a-]"] {
+    try @regex.Regex(pattern) catch {
+      _ => ()
+    } noraise {
+      _ => fail("expected error for pattern \{pattern}")
+    }
+  }
+}
+
+///|
+test "escaped_dash_in_char_class" {
+  let regex = @regex.Regex::unsafe_from_string("[a\\-z]")
+  inspect(regex.execute("a-z") is Some(_), content="true")
+  inspect(regex.execute("b") is Some(_), content="false")
+  inspect(regex.execute("-") is Some(_), content="true")
+  inspect(regex.execute("a") is Some(_), content="true")
+  inspect(regex.execute("z") is Some(_), content="true")
+}
+
+///|
+test "capture/simple_named_group" {
+  let digit = @regex.Regex::unsafe_from_string("[[:digit:]]+").capture("number")
+  let regex = @regex.Regex::string("ID: ") + digit
+  guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
+  inspect(m.content(), content="ID: 12345")
+  debug_inspect(
+    m.named_group("number"),
+    content=(
+      #|Some(<StringView: "12345">)
+    ),
+  )
+}
+
+///|
+test "capture/email_with_named_groups" {
+  let user = @regex.Regex::unsafe_from_string("[[:alpha:]]+").capture("user")
+  let domain = @regex.Regex::unsafe_from_string("[[:alpha:]]+").capture(
+    "domain",
+  )
+  let tld = @regex.Regex::unsafe_from_string("[[:alpha:]]+").capture("tld")
+  let email = user +
+    @regex.Regex::string("@") +
+    domain +
+    @regex.Regex::string(".") +
+    tld
+  guard email.execute("john@example.com") is Some(m) else {
+    fail("Expected match")
+  }
+  inspect(m.content(), content="john@example.com")
+  debug_inspect(m.named_group("user"), content="Some(<StringView: \"john\">)")
+  debug_inspect(
+    m.named_group("domain"),
+    content=(
+      #|Some(<StringView: "example">)
+    ),
+  )
+  debug_inspect(
+    m.named_group("tld"),
+    content=(
+      #|Some(<StringView: "com">)
+    ),
+  )
+}
+
+// Alternation branches that accept the same character.
+//
+// When more than one branch can consume the same character, the alternation
+// leaves more than one thread behind — two that have finished it where the
+// branches are single characters, one finished and one still going where
+// they differ in length. A thread that has finished used to be rewritten to
+// carry the continuation, and the sequence it sat in then appended that
+// continuation a second time, so the text after the alternation had to
+// appear twice for the match to succeed. Every case below turns on that,
+// and each character is exercised on both sides of the overlap.
+
+///|
+test "execute/alternation with an overlapping branch" {
+  // The two branches are the same expression, so both accept 'a'.
+  guard @regex.Regex("(?:a|a)c").execute("ac") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="ac")
+  // The continuation must be consumed once, not twice.
+  guard @regex.Regex("(?:a|a)c").execute("acc") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="ac")
+  // ...however long it is.
+  guard @regex.Regex("(?:a|a)bc").execute("abcbc") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="abc")
+}
+
+///|
+test "execute/alternation of overlapping character classes" {
+  let regex = @regex.Regex("(?:[ab]|[bc])x")
+  // 'a' comes only from the left branch, 'c' only from the right, and 'b'
+  // from both — it is the shared one that used to fail.
+  guard regex.execute("ax") is Some(m) else { fail("expected a match") }
+  inspect(m.content(), content="ax")
+  guard regex.execute("bx") is Some(m) else { fail("expected a match") }
+  inspect(m.content(), content="bx")
+  guard regex.execute("cx") is Some(m) else { fail("expected a match") }
+  inspect(m.content(), content="cx")
+  // The same alternation reached through the combinator API.
+  let combined = (
+      @regex.Regex::unsafe_from_string("[ab]") |
+      @regex.Regex::unsafe_from_string("[bc]")
+    ) +
+    @regex.Regex::unsafe_from_string("x")
+  guard combined.execute("bx") is Some(m) else { fail("expected a match") }
+  inspect(m.content(), content="bx")
+}
+
+///|
+test "execute/alternation branches of different lengths" {
+  // Both branches start with 'a', and they finish at different points.
+  guard @regex.Regex("(?:a|ab)c").execute("ac") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="ac")
+  guard @regex.Regex("(?:ab|a)c").execute("abc") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="abc")
+  // A span that is not in the language must not be reported: from 0 only
+  // `a` applies, so the match can end at 1 or 2 but never at 3.
+  guard @regex.Regex("(?:.a|a)(?:b|)").execute("abb") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="ab")
+}
+
+///|
+test "execute/overlapping alternation under a counted repetition" {
+  // Each iteration can only take one character here, so the bounds are what
+  // decide the length.
+  guard @regex.Regex("(?:.|ab){2}").execute("aaaaa") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="aa")
+  guard @regex.Regex("(?:.|ab){2,4}").execute("aaaaa") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="aaaa")
+}
+
+///|
+test "execute/overlapping alternation keeps anchors and preference" {
+  // Anchored: the whole subject has to be consumed exactly once.
+  guard @regex.Regex("^(?:a|a)c$").execute("ac") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="ac")
+  inspect(@regex.Regex("^(?:a|a)c$").execute("acc") is None, content="true")
+  // Preference survives the overlap: the greedy branch wins the character
+  // and the lazy one yields it, and the capture reports which.
+  guard @regex.Regex("(?:(a+)|a)(a*)").execute("aaa") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="aaa")
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "aaa">)
+    ),
+  )
+  guard @regex.Regex("(?:(a+?)|a)(a*)").execute("aaa") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.content(), content="aaa")
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "a">)
+    ),
+  )
+  // The left branch is preferred where both accept the character.
+  guard @regex.Regex("(?:(a)|(a))b").execute("ab") is Some(m) else {
+    fail("expected a match")
+  }
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "a">)
+    ),
+  )
+  debug_inspect(m.group(2), content="None")
+}
+
+// Each character can finish the current iteration or leave its optional
+// suffix pending. Those paths converge to the same future under differently
+// nested `Seq` wrappers; without global deduplication the engine retains one
+// thread per partition of the input and grows exponentially.
+
+///|
+test "execute/variable-length repetition keeps a bounded thread set" {
+  let subject = "a".repeat(1000)
+  for
+    regex in [
+      @regex.Regex("^(?:.a?)*$"),
+      @regex.Regex::unsafe_from_string("^(?:.a?)*$"),
+      Regex("^(?:.a?b?)*$"),
+      Regex("^(?:.a?)+$"),
+      Regex("^(?:.a?){2,}$"),
+      Regex("^(?:.a?){2,}?$"),
+    ] {
+    guard regex.execute(subject) is Some(m) else { fail("expected a match") }
+    assert_eq(m.content().length(), subject.length())
+  }
+}
+
+///|
+test "capture/multiple_captures_same_pattern" {
+  let word = @regex.Regex::unsafe_from_string("[[:alpha:]]+")
+  let first = word.capture("first")
+  let second = word.capture("second")
+  let regex = first + @regex.Regex::string(" ") + second
+  guard regex.execute("hello world") is Some(m) else { fail("Expected match") }
+  debug_inspect(
+    m.named_group("first"),
+    content=(
+      #|Some(<StringView: "hello">)
+    ),
+  )
+  debug_inspect(
+    m.named_group("second"),
+    content=(
+      #|Some(<StringView: "world">)
+    ),
+  )
+}
+
+///|
+test "very long literal patterns compile without deep recursion" {
+  // Regression: sequence translation and expression copying used to recurse
+  // once per element, overflowing the stack on the JS/wasm backends.
+  let sb = StringBuilder()
+  let mut seed = 7
+  for _ in 0..<100000 {
+    seed = seed * 1103515245 + 12345
+    sb.write_char(
+      ('a'.to_int() + ((seed >> 16) & 0x7FFF) % 26).unsafe_to_char(),
+    )
+  }
+  let literal = sb.to_string()
+  let re = @regex.Regex::string(literal)
+  guard re.execute("x" + literal + "x") is Some(m) else {
+    fail("Expected match")
+  }
+  inspect(m.content().length(), content="100000")
+  let twice = re.repeat(min=2, max=2)
+  guard twice.execute(literal + literal) is Some(m2) else {
+    fail("Expected match")
+  }
+  inspect(m2.content().length(), content="200000")
+}
+
+///|
+test "matches that need more than 2047 live capture slots are found" {
+  // Regression: the packed state id reserved 11 bits for the capture slot.
+  // Every start position of a long literal run needs its own slot for the
+  // group-0 start mark, so this pattern needed slot 2048 and the match was
+  // silently lost (release) or `debug_assert` fired (debug).
+  let re = @regex.Regex::unsafe_from_string("(a)(?:a{256}){9}")
+  guard re.execute("a".repeat(2400)) is Some(m) else { fail("Expected match") }
+  inspect(m.before().length(), content="0")
+  inspect(m.content().length(), content="2305")
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "a">)
+    ),
+  )
+}
+
+///|
+test "character classes are stored with merged intervals" {
+  // Regression: union of `a`, `d`, then `b` used to leave `a` and `b` as two
+  // touching intervals, `[(97, 97), (98, 98), (100, 100)]`, which the
+  // compiler then turned into redundant symbol classes. (Only runtime-parsed
+  // patterns reach this path; compiler regex literals are lowered at compile time.)
+  let regex = @regex.Regex::unsafe_from_string("[adb]")
+  debug_inspect(regex, content="<Regex: Char([(97, 98), (100, 100)])>")
+  let ranges = @regex.Regex::unsafe_from_string("[x-zu-wa-c]")
+  debug_inspect(ranges, content="<Regex: Char([(97, 99), (117, 122)])>")
+}

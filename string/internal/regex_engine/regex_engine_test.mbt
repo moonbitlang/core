@@ -124,13 +124,15 @@ test "finite quantifiers greedy vs non-greedy compile" {
 }
 
 ///|
-test "nested sequence vs flattened sequence preserve effective-tail preference" {
+test "nested and flattened sequences preserve reluctant quantifiers" {
   let any = @regex_engine.char(@regex_engine.RecharSet::char_range(0, 0x10FFFF))
   let dot = @regex_engine.char(@regex_engine.RecharSet::char('.'))
   let space = @regex_engine.char(@regex_engine.RecharSet::char(' '))
-  let reluctant_any = @regex_engine.shortest(
-    @regex_engine.quantifier(any, { min: 0, max: None, mode: Greedy, }),
-  )
+  let reluctant_any = @regex_engine.quantifier(any, {
+    min: 0,
+    max: None,
+    mode: NonGreedy,
+  })
   let nested_pat = @regex_engine.seq([
     @regex_engine.seq([reluctant_any, dot]),
     @regex_engine.epsilon,
@@ -152,7 +154,7 @@ test "nested sequence vs flattened sequence preserve effective-tail preference" 
 }
 
 ///|
-test "epsilon in sequences (translate eps optimizations)" {
+test "epsilon in sequences" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let pat1 = @regex_engine.seq([
     @regex_engine.start_of_input, a, @regex_engine.end_of_input, @regex_engine.epsilon,
@@ -205,7 +207,7 @@ test "word boundary assertions" {
 }
 
 ///|
-test "quantifier min > 0 uses iter step" {
+test "quantifier minimum is enforced" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let pat = @regex_engine.seq([
     @regex_engine.start_of_input,
@@ -218,16 +220,13 @@ test "quantifier min > 0 uses iter step" {
 }
 
 ///|
-test "preference node triggers enforce_pref(First, k)" {
+test "ordered alternatives preserve sequence matches" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let b = @regex_engine.char(@regex_engine.RecharSet::char('b'))
   let c = @regex_engine.char(@regex_engine.RecharSet::char('c'))
   let pat = @regex_engine.seq([
     @regex_engine.start_of_input,
-    @regex_engine.alt([
-      @regex_engine.shortest(@regex_engine.seq([a, b])),
-      @regex_engine.seq([a, c]),
-    ]),
+    @regex_engine.alt([@regex_engine.seq([a, b]), @regex_engine.seq([a, c])]),
     @regex_engine.end_of_input,
   ])
   let re = @regex_engine.compile(profile~, pat)
@@ -251,7 +250,7 @@ test "Regex::group_names includes capture name" {
 }
 
 ///|
-test "slot indices above 2047 keep matching" {
+test "more than 2047 live start positions keep matching" {
   // Regression: the packed state id used to reserve 11 bits for the slot, so
   // once more than 2047 positions had to be remembered at once the encoding
   // silently corrupted and the match was lost. Every start position of the

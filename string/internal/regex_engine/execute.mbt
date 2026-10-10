@@ -13,31 +13,13 @@
 // limitations under the License.
 
 ///|
-/// NOTE: `derive(@debug.Debug)` is used here so this file doesn’t need a local `using @debug { ... }` import.
-
-///|
+/// Capture endpoints relative to the matched StringView, independent of the
+/// mutable register buffer owned by the compiled regex.
 struct MatchResult(Array[Int]) derive(@debug.Debug)
-
-///|
-const NULL_SYMBOL : Rechar = -1
-
-///|
-fn category_from_symbol(
-  profile~ : Profile,
-  symbol_repr~ : ReadOnlyArray[Rechar],
-  symbol : Rechar,
-) -> Category {
-  if symbol is NULL_SYMBOL {
-    Category::inexistant()
-  } else {
-    (profile.category)(symbol_repr[symbol])
-  }
-}
 
 ///|
 /// Access capture `group` information.
 pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
-  // Validate before multiplying so large indices cannot wrap into a group.
   guard index >= 0 && index < self.0.length() / 2 else { None }
   let start_pos = self.0.get(index * 2)
   guard start_pos is Some(start_pos) && start_pos >= 0 else { None }
@@ -47,104 +29,76 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 }
 
 ///|
-/// Execute using this compiled object.
+fn Regex::ensure_registers(self : Regex) -> Unit {
+  let required = self.max_registers + 1
+  if required > self.registers.length() {
+    let size = Int::max(self.registers.length() * 2, required + 8)
+    let registers = FixedArray::make(size, -1)
+    self.registers.blit_to(registers, len=self.registers.length())
+    self.registers = registers
+  }
+}
+
+///|
+/// Executes this compiled regex and returns the first match from `last_index`.
 pub fn Regex::execute(
   self : Regex,
   input : StringView,
   last_index : Int,
 ) -> MatchResult? {
   guard last_index >= 0 && last_index <= input.length() else { panic() }
-  let symbol_table = self.symbol_table
-  let prev_cat = category_from_symbol(
-    profile=self.profile,
-    symbol_repr=self.symbol_repr,
-    if last_index == 0 {
-      NULL_SYMBOL
-    } else {
-      let ch = input.unsafe_get(last_index - 1).to_int()
-      symbol_table.map(ch)
-    },
-  )
-  let start_state_id = self.stablize_start_state(prev_cat)
-  let positions = self.positions
-  let mut buf = positions.ensure(self.max_slot)
-  let mut transition_table = self.transition_table
-  let mut slot_table = self.slot_table
+  let prev = if last_index == 0 {
+    Category::inexistant()
+  } else {
+    self.categories[self.symbols.map(input.unsafe_get(last_index - 1).to_int())]
+  }
+  let mut state = self.start_state(prev)
+  let mut next = self.next
+  let mut actions = self.actions
+  let mut registers = self.registers
   let data = input.data()
   let mut pos = input.start_offset() + last_index
   let end = input.start_offset() + input.length()
-  // INVARIANT: The start state is never a break state, so `base` is a valid
-  // non-negative transition base on entry to the loop. Empty character classes
-  // like `/[]/` are transformed during compilation:
-  //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
-  //   `/^[]/` -> `capture(seq(start_of_input, empty))`
-  let mut base = start_state_id.0
-  let mut state_id = start_state_id
-  while pos < end {
-    let ch = data.unsafe_get(pos).to_int()
-    let symbol = symbol_table.map(ch)
-    let transition_index = base + symbol
-    let mut next = transition_table.unsafe_get(transition_index)
-    if next == -1 {
-      let next_id = self.stablize_next_state(StateId(base), symbol)
-      transition_table = self.transition_table
-      slot_table = self.slot_table
-      next = next_id.0
-      transition_table[transition_index] = next
-      slot_table[transition_index] = self.get_state(next_id).slot().index
-      buf = positions.ensure(self.max_slot)
+  while state >= 0 {
+    let symbol = if pos < end {
+      self.symbols.map(data.unsafe_get(pos).to_int())
+    } else {
+      self.repr.length()
     }
-    // Every slot in `slot_table` is <= `max_slot` and `buf` covers it.
-    // Slot::unassigned() is index 0, so writing it is harmless and keeps this
-    // path branchless.
-    let slot = slot_table.unsafe_get(transition_index)
-    buf.unsafe_set(slot, pos)
-    if next < 0 {
-      state_id = StateId(next)
+    let edge = state + symbol
+    let mut target = next.unsafe_get(edge)
+    if target == -1 {
+      self.build_edge(state, symbol)
+      self.ensure_registers()
+      next = self.next
+      actions = self.actions
+      registers = self.registers
+      target = next.unsafe_get(edge)
+    }
+    // The transition action is either zero (no tag writes) or a register
+    // index containing the current input cursor.
+    registers.unsafe_set(actions.unsafe_get(edge), pos)
+    state = target
+    if state < 0 {
       break
     }
-    base = next
+    // EOF closure cannot leave a character-consuming thread alive.
+    guard pos < end else { panic() }
     pos += 1
   }
-  if !state_id.is_break() {
-    state_id = StateId(base)
-  }
-  let state = self.get_state(state_id)
-  let matched = match state.status() {
-    Failed => None
-    Running => {
-      let next_cat = category_from_symbol(
-        profile=self.profile,
-        symbol_repr=self.symbol_repr,
-        if pos >= end {
-          NULL_SYMBOL
-        } else {
-          let ch = data.unsafe_get(pos).to_int()
-          symbol_table.map(ch)
-        },
-      )
-      // Some states require checking the next character's category to determine
-      // whether they match (e.g., for end-of-input anchors or boundary assertions)
-      let (slot, status) = self.stablize_final(state_id, state, next_cat)
-      match status {
-        Failed | Running => None
-        Match(marks) => {
-          positions.set(slot, pos)
-          Some(marks)
-        }
+  let key = self.states[-state - 2]
+  if key.threads.is_empty() {
+    None
+  } else {
+    let shift = input.start_offset()
+    let tags = key.threads[0].tags
+    let result = Array::make(tags.length(), -1)
+    for i = 0; i < tags.length(); i = i + 1 {
+      let reg = tags[i]
+      if reg >= 0 {
+        result[i] = registers[reg + 1] - shift
       }
     }
-    Match(marks) => Some(marks)
-  }
-  match matched {
-    None => None
-    Some(marks) => {
-      let mark_pos = Array::make(self.groups.length() * 2, -1)
-      let shift = input.start_offset()
-      for mark, slot in marks {
-        mark_pos[mark.0] = positions.get(slot) - shift
-      }
-      Some(MatchResult(mark_pos))
-    }
+    Some(MatchResult(result))
   }
 }

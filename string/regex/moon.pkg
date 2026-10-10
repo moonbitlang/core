@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/string/internal/regex_engine" @re,
+  "moonbitlang/core/string/internal/regex_parser",
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"

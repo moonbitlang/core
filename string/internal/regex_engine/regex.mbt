@@ -13,65 +13,61 @@
 // limitations under the License.
 
 ///|
-struct Regex {
-  profile : Profile
-  ctx : @automata.Context
-  expr : @automata.Expr
-  groups : ReadOnlyArray[String?]
-  symbol_table : @symbol_map.Table
-  symbol_repr : ReadOnlyArray[Rechar]
-  start_states : Array[(Category, StateId)]
-  state_table : @hashmap.HashMap[@automata.State, StateId]
-  /// Indexed by `transition_base + symbol`; holds the encoded next state.
-  mut transition_table : FixedArray[Int]
-  /// Parallel to `transition_table`; holds the slot of the next state so the
-  /// scan loop needs no per-state lookup.
-  mut slot_table : FixedArray[Int]
-  /// Largest slot index of any stabilized state (bounds the scratch buffer).
-  mut max_slot : Int
-  positions : Positions
-  mut final_table : FixedArray[
-    @list.List[(Category, @automata.Slot, @automata.Status)],
-  ]
-  mut states : FixedArray[@automata.State]
-  mut num_states : Int
+priv enum TaggedPattern {
+  Chr(RecharSet)
+  Seq(Array[TaggedPattern])
+  Alt(Array[TaggedPattern])
+  Rep(Quantifier, TaggedPattern)
+  Cap(Int, TaggedPattern)
+  Assert(Assertion)
 }
 
 ///|
-/// Function `group_names`.
+priv enum TaggedNode {
+  Chr(RecharSet, Int)
+  Split(Array[Int])
+  Tag(Int, Int)
+  Assert(Assertion, Int)
+  Accept
+}
+
+///|
+priv struct TaggedThread {
+  pc : Int
+  // -1 is unset; other values name registers, never input offsets.
+  tags : ReadOnlyArray[Int]
+} derive(Eq, Hash)
+
+///|
+priv struct TaggedKey {
+  prev : Category
+  threads : ReadOnlyArray[TaggedThread]
+} derive(Eq, Hash)
+
+///|
+struct Regex {
+  groups : ReadOnlyArray[String?]
+  nodes : ReadOnlyArray[TaggedNode]
+  start : Int
+  symbols : @symbol_map.Table
+  repr : ReadOnlyArray[Rechar]
+  categories : ReadOnlyArray[Category]
+  starts : Array[(Category, Int)]
+  cache : @hashmap.HashMap[TaggedKey, Int]
+  states : Array[TaggedKey]
+  // State rows include one EOF column. -1 means an uncomputed edge;
+  // nonnegative targets are row bases, and -index-2 denotes a terminal state.
+  mut next : FixedArray[Int]
+  // Each edge writes the cursor to this physical register (zero is a sink).
+  mut actions : FixedArray[Int]
+  mut registers : FixedArray[Int]
+  mut max_registers : Int
+  seen : FixedArray[Int]
+  mut generation : Int
+}
+
+///|
+/// Return the capture names for this compiled regex.
 pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
   self.groups
-}
-
-///|
-fn Regex::new(
-  profile : Profile,
-  ctx : @automata.Context,
-  expr : @automata.Expr,
-  groups : ReadOnlyArray[String?],
-  symbol_table : @symbol_map.Table,
-  symbol_repr : ReadOnlyArray[Rechar],
-) -> Regex {
-  {
-    profile,
-    ctx,
-    expr,
-    groups,
-    symbol_table,
-    symbol_repr,
-    start_states: [],
-    state_table: HashMap([]),
-    transition_table: [],
-    slot_table: [],
-    max_slot: 0,
-    positions: Positions::new(),
-    final_table: [],
-    states: [],
-    num_states: 0,
-  }
-}
-
-///|
-fn Regex::num_symbols(self : Regex) -> Int {
-  self.symbol_repr.length()
 }

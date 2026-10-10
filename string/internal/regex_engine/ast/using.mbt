@@ -13,28 +13,10 @@
 // limitations under the License.
 
 ///|
-pub using @shared_ast {
-  type Assertion,
-  type Pattern,
-  type PatternDesc,
-  type Quantifier,
-  alt,
-  assertion,
-  capture,
-  char,
-  empty,
-  end_of_input,
-  end_of_line,
-  end_of_word,
-  epsilon,
-  first,
-  longest,
-  not_word_boundary,
-  preference,
-  quantifier,
-  seq,
-  shortest,
-  start_of_input,
-  start_of_line,
-  start_of_word,
+pub using @shared_types {
+  type Profile,
+  type Rechar,
+  type RecharSet,
+  type Category,
+  type QuantifierMode,
 }

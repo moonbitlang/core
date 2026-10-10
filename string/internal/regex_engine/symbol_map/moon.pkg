@@ -1,8 +1,9 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/internal/regex_engine/symbol_map" @shared_symbols,
+  "moonbitlang/core/sorted_set",
+  "moonbitlang/core/string/internal/regex_engine/shared_types",
 }
 
 import {
-  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
+  "moonbitlang/core/string/internal/regex_engine/shared_types/rechar_set",
 } for "test"

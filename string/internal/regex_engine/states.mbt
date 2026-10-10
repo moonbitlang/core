@@ -13,118 +13,166 @@
 // limitations under the License.
 
 ///|
-fn Regex::get_state(self : Regex, state_id : StateId) -> @automata.State {
-  self.states.unsafe_get(self.state_index(state_id))
-}
-
-///|
-fn Regex::state_index(self : Regex, state_id : StateId) -> Int {
-  state_id.transition_base() / self.num_symbols()
-}
-
-///|
-fn Regex::stablize_start_state(self : Regex, prev_cat : Category) -> StateId {
-  for start_state in self.start_states {
-    let (cat, state_id) = start_state
-    if cat == prev_cat {
-      return state_id
-    }
+fn tagged_assertion(a : Assertion, prev : Category, next : Category) -> Bool {
+  match a {
+    StartOfInput => prev.intersects(Category::inexistant())
+    EndOfInput => next.intersects(Category::inexistant())
+    StartOfLine => prev.intersects(Category::inexistant_or_newline())
+    EndOfLine => next.intersects(Category::inexistant_or_newline())
+    StartOfWord =>
+      prev.intersects(Category::inexistant_or_non_word_end()) &&
+      next.intersects(Category::word())
+    EndOfWord =>
+      prev.intersects(Category::word()) &&
+      next.intersects(Category::inexistant_or_non_word_start())
+    NotWordBoundary =>
+      (prev.intersects(Category::word()) && next.intersects(Category::word())) ||
+      (
+        prev.intersects(Category::inexistant_or_non_word_end()) &&
+        next.intersects(Category::inexistant_or_non_word_start())
+      )
   }
-  let state_id = self.stablize_state(
-    @automata.State::start(prev_cat, self.expr),
-  )
-  self.start_states.push((prev_cat, state_id))
-  state_id
 }
 
 ///|
-fn Regex::stablize_state(self : Regex, state : @automata.State) -> StateId {
-  self.state_table.get_or_init(state, () => {
-    let index = self.num_states
-    self.num_states += 1
-    let num_symbols = self.num_symbols()
-    if index >= self.states.length() {
-      let new_states_len = Int::max(self.states.length() * 2, 4)
+fn Regex::width(self : Regex) -> Int {
+  self.repr.length() + 1
+}
 
-      let new_states = FixedArray::make(new_states_len, @automata.st_dummy)
-      self.states.blit_to(new_states, len=self.states.length())
-
-      let new_transition_table = FixedArray::make(
-        new_states_len * num_symbols,
-        pending_state_id.0,
-      )
-      self.transition_table.blit_to(
-        new_transition_table,
-        len=self.transition_table.length(),
-      )
-      let new_slot_table = FixedArray::make(new_states_len * num_symbols, 0)
-      self.slot_table.blit_to(new_slot_table, len=self.slot_table.length())
-
-      let new_final_table = FixedArray::make(new_states_len, @list.List([]))
-      self.final_table.blit_to(new_final_table, len=self.final_table.length())
-
-      self.states = new_states
-      self.transition_table = new_transition_table
-      self.slot_table = new_slot_table
-      self.final_table = new_final_table
+///|
+fn Regex::stabilize(self : Regex, key : TaggedKey) -> Int {
+  self.cache.get_or_init(key, () => {
+    let index = self.states.length()
+    self.states.push(key)
+    let width = self.width()
+    let required = (index + 1) * width
+    if required > self.next.length() {
+      let size = Int::max(self.next.length() * 2, Int::max(required, width * 4))
+      let next = FixedArray::make(size, -1)
+      self.next.blit_to(next, len=self.next.length())
+      let actions = FixedArray::make(size, 0)
+      self.actions.blit_to(actions, len=self.actions.length())
+      self.next = next
+      self.actions = actions
     }
-    self.states[index] = state
-    self.max_slot = Int::max(self.max_slot, state.slot().index)
-    StateId::new(
-      base=index * num_symbols,
-      is_break=state.status() is (Match(_) | Failed),
-    )
+    let terminal = key.threads.is_empty() || key.threads[0].pc == 0
+    if terminal {
+      -index - 2
+    } else {
+      index * width
+    }
   })
 }
 
 ///|
-fn Regex::stablize_next_state(
-  self : Regex,
-  prev_state_id : StateId,
-  symbol : Rechar,
-) -> StateId {
-  let cat = category_from_symbol(
-    profile=self.profile,
-    symbol_repr=self.symbol_repr,
-    symbol,
-  )
-  let prev_state = self.get_state(prev_state_id)
-  let state = @automata.delta(ctx=self.ctx, prev_state, symbol, next_cat=cat)
-  self.stablize_state(state)
+fn Regex::start_state(self : Regex, prev : Category) -> Int {
+  for (cat, state) in self.starts {
+    if cat == prev {
+      return state
+    }
+  }
+  let state = self.stabilize({
+    prev,
+    threads: [
+      {
+        pc: self.start,
+        tags: ReadOnlyArray::from_array(
+          Array::make(self.groups.length() * 2, -1),
+        ),
+      },
+    ],
+  })
+  self.starts.push((prev, state))
+  state
 }
 
 ///|
-fn Regex::stablize_final(
-  self : Regex,
-  state_id : StateId,
-  state : @automata.State,
-  next_cat : Category,
-) -> (@automata.Slot, @automata.Status) {
-  let state_index = self.state_index(state_id)
-  for entry = self.final_table[state_index] {
-    match entry {
-      Empty => {
-        let next_state = @automata.delta(
-          ctx=self.ctx,
-          state,
-          NULL_SYMBOL,
-          next_cat~,
-        )
-        let slot = next_state.slot()
-        let status = next_state.status()
-        self.max_slot = Int::max(self.max_slot, slot.index)
-        self.final_table[state_index] = @list.cons(
-          (next_cat, slot, status),
-          self.final_table[state_index],
-        )
-        break (slot, status)
+// Epsilon closure is ordered DFS, with generation-stamped PC deduplication.
+// Histories store register identities, never concrete input offsets.
+fn Regex::build_edge(self : Regex, base : Int, symbol : Int) -> Unit {
+  let key = self.states[base / self.width()]
+  let next_cat = if symbol == self.repr.length() {
+    Category::inexistant()
+  } else {
+    self.categories[symbol]
+  }
+  self.generation += 1
+  if self.generation == 0 {
+    self.seen.fill(0)
+    self.generation = 1
+  }
+  let generation = self.generation
+  let stack : Array[TaggedThread] = []
+  for i = key.threads.length() - 1; i >= 0; i = i - 1 {
+    stack.push(key.threads[i])
+  }
+  let frontier : Array[TaggedThread] = []
+  while stack.pop() is Some(thread) {
+    if self.seen[thread.pc] == generation {
+      continue
+    }
+    self.seen[thread.pc] = generation
+    match self.nodes[thread.pc] {
+      Accept => {
+        frontier.push(thread)
+        // Lower-priority paths can never beat this accepted candidate.
+        break
       }
-      More(head, tail~) =>
-        if head.0 == next_cat {
-          break (head.1, head.2)
-        } else {
-          continue tail
+      Chr(chars, next) =>
+        if symbol < self.repr.length() && chars.contains(symbol) {
+          frontier.push({ pc: next, tags: thread.tags, })
         }
+      Split(alts) =>
+        for i = alts.length() - 1; i >= 0; i = i - 1 {
+          stack.push({ pc: alts[i], tags: thread.tags, })
+        }
+      Assert(a, next) =>
+        if tagged_assertion(a, key.prev, next_cat) {
+          stack.push({ pc: next, tags: thread.tags, })
+        }
+      Tag(tag, next) => {
+        let tags = Array::makei(thread.tags.length(), i => thread.tags[i])
+        tags[tag] = -2 // SET to current cursor on this edge.
+        stack.push({ pc: next, tags: ReadOnlyArray::from_array(tags), })
+      }
     }
   }
+  // Register identities are stable within the lazy automaton. A transition
+  // writes all tags set by its epsilon closure to one fresh register, because
+  // they refer to the same input cursor.
+  let used = FixedArray::make(self.max_registers + 1, false)
+  let mut needs_write = false
+  for thread in frontier {
+    for source in thread.tags {
+      if source == -2 {
+        needs_write = true
+      }
+      if source >= 0 {
+        used[source] = true
+      }
+    }
+  }
+  let mut slot = 0
+  if needs_write {
+    while used[slot] {
+      slot += 1
+    }
+    self.max_registers = Int::max(self.max_registers, slot + 1)
+  }
+  let threads = frontier.map(thread => {
+    let tags = if thread.tags.any(source => source == -2) {
+      thread.tags.map(source => if source == -2 { slot } else { source })
+    } else {
+      thread.tags
+    }
+    { pc: thread.pc, tags, }
+  })
+  let next = self.stabilize({
+    prev: next_cat,
+    threads: ReadOnlyArray::from_array(threads),
+  })
+  let edge = base + symbol
+  self.next[edge] = next
+  // Physical register zero is a disposable sink; real register r is r + 1.
+  self.actions[edge] = if needs_write { slot + 1 } else { 0 }
 }

@@ -33,7 +33,6 @@ fn symbolize(
           symbol_map.split(split)
         }
       Assertion(StartOfInput) | Assertion(EndOfInput) => ()
-      Preference(_, r) => aux(r)
       Capture(r, ..) => aux(r)
     }
   }
