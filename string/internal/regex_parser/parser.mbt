@@ -336,7 +336,8 @@ fn Parser::term(
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, @re.capture(pat), false)
     }
-    (re"^\[:", after=_) => raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
+    (re"^\[\^?:[a-z]+:\]", after=_) =>
+      raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
     (re"^\[", after=_) => {
       let (rest, char_set) = Parser::character_class(rest, ctx~)
       (rest, @re.char(char_set), false)

@@ -278,6 +278,68 @@ test "parse/posix_classes" {
 }
 
 ///|
+test "parse/colon_ranges_are_not_bare_posix_classes" {
+  let range = parse(profile=profile_unicode(), mode=String, "[:-@]")
+  debug_inspect(range, content="Char([(58, 64)])")
+  let colon = parse(profile=profile_unicode(), mode=String, "[:]")
+  debug_inspect(colon, content="Char([(58, 58)])")
+  let two_colons = parse(profile=profile_unicode(), mode=String, "[::]")
+  debug_inspect(two_colons, content="Char([(58, 58)])")
+  let one_point_range = parse(profile=profile_unicode(), mode=String, "[:-:]")
+  debug_inspect(one_point_range, content="Char([(58, 58)])")
+  let union = parse(profile=profile_unicode(), mode=String, "[:!-@]")
+  debug_inspect(union, content="Char([(33, 64)])")
+  let inverse = parse(profile=profile_unicode(), mode=String, "[^:-@]")
+  debug_inspect(
+    inverse,
+    content="Char([(0, 57), (65, 55295), (57344, 1114111)])",
+  )
+  let escaped_hyphen = parse(profile=profile_unicode(), mode=String, "[\\-:]")
+  debug_inspect(escaped_hyphen, content="Char([(45, 45), (58, 58)])")
+  let colon_then_hyphen = parse(
+    profile=profile_unicode(),
+    mode=String,
+    "[:\\-@]",
+  )
+  debug_inspect(
+    colon_then_hyphen,
+    content="Char([(45, 45), (58, 58), (64, 64)])",
+  )
+  let trailing_colon = parse(profile=profile_unicode(), mode=String, "[:-@:]")
+  debug_inspect(trailing_colon, content="Char([(58, 64)])")
+  let alphabet_range = parse(profile=profile_unicode(), mode=String, "[:a-z:]")
+  debug_inspect(alphabet_range, content="Char([(58, 58), (97, 122)])")
+  let bytes_range = parse(profile=profile_bytes(), mode=Bytes, "[:-@]")
+  debug_inspect(bytes_range, content="Char([(58, 64)])")
+}
+
+///|
+test "parse/colon_preserves_posix_diagnostics" {
+  for pattern in ["[:digit:]", "[^:digit:]", "[:unknown:]"] {
+    let result = try {
+      ignore(parse(profile=profile_unicode(), mode=String, pattern))
+      "accepted"
+    } catch {
+      err => err.to_string()
+    }
+    assert_eq(
+      result, "ParserError at position 0: Invalid character class, bare POSIX character class not allowed",
+    )
+  }
+  let digits = parse(profile=profile_unicode(), mode=String, "[[:digit:]]")
+  debug_inspect(digits, content="Char([(48, 57)])")
+  let unknown = Ok(
+    parse(profile=profile_unicode(), mode=String, "[[:unknown:]]"),
+  ) catch {
+    err => Err(err)
+  }
+  debug_inspect(
+    unknown,
+    content="Err(ParserError(at=1, hint=\"Unsupported POSIX character class\"))",
+  )
+}
+
+///|
 test "parse/escape_sequences" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\n\\r\\t")
   debug_inspect(
