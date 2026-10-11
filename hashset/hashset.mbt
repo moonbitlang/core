@@ -187,6 +187,27 @@ fn[K : Eq] HashSet::contains_with_hash(
 }
 
 ///|
+// Retrieve the stored key representative without hashing it again.
+#inline
+fn[K : Eq] HashSet::find_entry_with_hash(
+  self : HashSet[K],
+  key : K,
+  hash : Int,
+) -> Entry[K]? {
+  for distance = 0, index = hash & self.capacity_mask {
+    // SAFETY: the initial index and each following index are masked.
+    guard self.entries.unsafe_get(index) is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry)
+    }
+    if distance > entry.psl {
+      break None
+    }
+    continue distance + 1, (index + 1) & self.capacity_mask
+  }
+}
+
+///|
 /// Remove a key from hash set. If the key exists in the set, removes it
 /// and adjusts the probe sequence length (PSL) of subsequent entries to
 /// maintain the Robin Hood hashing invariant. If the key does not exist,
@@ -449,14 +470,29 @@ pub fn[K : Eq] HashSet::union_in_place(
 
 ///|
 /// Returns a new set containing only elements present in both sets.
+/// Equal keys retain the representative from this set.
 pub fn[K : Eq] HashSet::intersection(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
   let m = new_hashset(default_init_capacity)
-  for entry in self.entries {
-    if entry is Some({ key, hash, .. }) && other.contains_with_hash(key, hash) {
-      m.add_with_hash(key, hash)
+  if self.size == 0 || other.size == 0 {
+    return m
+  }
+  // Iteration visits the entire backing table, including empty slots left by
+  // removals, so choose by capacity rather than the live element count.
+  if self.capacity <= other.capacity {
+    for entry in self.entries {
+      if entry is Some({ key, hash, .. }) && other.contains_with_hash(key, hash) {
+        m.add_with_hash(key, hash)
+      }
+    }
+  } else {
+    for candidate in other.entries {
+      if candidate is Some({ key, hash, .. }) &&
+        self.find_entry_with_hash(key, hash) is Some(original) {
+        m.add_with_hash(original.key, original.hash)
+      }
     }
   }
   m
