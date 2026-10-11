@@ -81,7 +81,9 @@ test "bench UTF-16 JSON stringify plain string 128k units" (it : @bench.T) {
 }
 
 ///|
-test "bench UTF-16 JSON stringify 1000 strings 128 units" (it : @bench.T) {
+test "bench UTF-16 JSON stringify 1000 strings 128-unit prefixes" (
+  it : @bench.T,
+) {
   let text = "plain-json-text-".repeat(8)
   let value = @json.to_json(Array::makei(1000, i => text + i.to_string()))
   it.bench(() => it.keep(value.stringify()))
