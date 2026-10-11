@@ -87,6 +87,7 @@ fn StringBuilder::grow(self : StringBuilder, required : Int) -> Unit {
 }
 
 ///|
+#cfg(not(target="wasm"))
 fn FixedArray::unsafe_blit_from_string(
   self : FixedArray[UInt16],
   dst_offset : Int,
@@ -97,6 +98,46 @@ fn FixedArray::unsafe_blit_from_string(
   let end_str_offset = str_offset + len
   for i = str_offset, j = dst_offset; i < end_str_offset; i = i + 1, j = j + 1 {
     self.unsafe_set(j, str.unsafe_get(i))
+  }
+}
+
+///|
+#cfg(target="wasm")
+fn FixedArray::unsafe_blit_from_string(
+  self : FixedArray[UInt16],
+  dst_offset : Int,
+  str : String,
+  str_offset : Int,
+  len : Int,
+) -> Unit {
+  if len >= 8 {
+    return self.unsafe_blit_from_string_simd(dst_offset, str, str_offset, len)
+  }
+  let end_str_offset = str_offset + len
+  for i = str_offset, j = dst_offset; i < end_str_offset; i = i + 1, j = j + 1 {
+    self.unsafe_set(j, str.unsafe_get(i))
+  }
+}
+
+///|
+#cfg(target="wasm")
+fn FixedArray::unsafe_blit_from_string_simd(
+  self : FixedArray[UInt16],
+  dst_offset : Int,
+  str : String,
+  str_offset : Int,
+  len : Int,
+) -> Unit {
+  let vector_len = len - (len & 7)
+  // Callers copy into separate storage. A builder grows before appending to
+  // a full buffer shared with a previously returned string.
+  // SAFETY: both ranges are in bounds. Each vector stays inside the requested
+  // range; the remainder is copied one unit at a time.
+  for i = 0; i < vector_len; i = i + 8 {
+    v128_store_i16x8(self, dst_offset + i, v128_load_i16x8(str, str_offset + i))
+  }
+  for i in vector_len..<len {
+    self.unsafe_set(dst_offset + i, str.unsafe_get(str_offset + i))
   }
 }
 
