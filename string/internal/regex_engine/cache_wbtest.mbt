@@ -73,8 +73,14 @@ test "a full cache enters a renamed copy of a cached state" {
     overlapping_starts(),
     max_cache_words=30_000,
   )
-  assert_true(tight.execute("a".repeat(5000), 0) is None)
+  let long = "a".repeat(5000)
+  assert_true(tight.execute(long, 0) is None)
   let start = tight.kernels[0].key
+  // The transitions that move registers are kept like any other, so the
+  // same scan builds nothing the second time.
+  let built = tight.epoch
+  assert_true(tight.execute(long, 0) is None)
+  @test.assert_eq(tight.epoch, built)
   // The registers are moved every time the search wraps around, and the
   // groups still end up where they belong.
   for length in 60..<400 {
@@ -120,4 +126,42 @@ test "a full cache is dropped for a state it has no copy of" {
     }
   }
   assert_true(!physical_equal(tight.kernels[0].key, start))
+}
+
+///|
+/// Found in review: with room for exactly one copy of the steady state,
+/// every step entered that copy again and rebuilt the transition to find out.
+/// Whatever the budget leaves room for, a scan that dropped nothing is not
+/// built again, and the groups are right.
+test "a second scan builds nothing at any budget that drops nothing" {
+  let roomy = compile(profile=oracle_profile(), overlapping_starts())
+  let long = "a".repeat(3000)
+  let mut kept = 0
+  for words = 9000; words < 40_000; words = words + 250 {
+    let tight = compile(
+      profile=oracle_profile(),
+      overlapping_starts(),
+      max_cache_words=words,
+    )
+    assert_true(tight.execute(long, 0) is None)
+    let start = tight.kernels[0].key
+    let built = tight.epoch
+    assert_true(tight.execute(long, 0) is None)
+    if physical_equal(tight.kernels[0].key, start) {
+      @test.assert_eq(tight.epoch, built)
+      kept += 1
+    }
+    for length in [60, 119, 120, 121, 500] {
+      let input = "a".repeat(length) + "b"
+      guard tight.execute(input, 0) is Some(m) else { fail("expected a match") }
+      guard roomy.execute(input, 0) is Some(expected) else {
+        fail("expected a match")
+      }
+      for group in 0..<4 {
+        @test.assert_eq(m.group(group), expected.group(group))
+      }
+    }
+  }
+  // Most of these budgets hold the states that lead to the steady state.
+  assert_true(kept > 50)
 }

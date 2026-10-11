@@ -18,7 +18,8 @@ const UNKNOWN : Int = -1
 
 ///|
 /// Transition table entry: no thread survives and nothing was accepted.
-/// Entries below `DEAD` denote a terminal state, see `terminal`.
+/// Entries below `DEAD` denote a terminal state or a transition that moves
+/// registers, see `terminal` and `moving`.
 const DEAD : Int = -2
 
 ///|
@@ -36,7 +37,8 @@ const CURRENT : Int = -1
 /// several times slower than a cached step. The budget is large enough for a
 /// DFA of about two hundred thousand small states. The state being added
 /// after a drop is always kept, even when it is larger than the budget on
-/// its own.
+/// its own. The register moves of transitions into a state that stands in
+/// for another are kept on top of this, up to the same number of words.
 const MAX_CACHE_WORDS : Int = 1 << 24
 
 ///|
@@ -111,6 +113,18 @@ fn set_current(row : FixedArray[Int], tag : Int) -> FixedArray[Int] {
 }
 
 ///|
+/// A transition into a cached state that stands in for the state the
+/// transition really leads to, see `reuse`.
+priv struct Move {
+  /// `(from, to)` pairs: the value of register `from` goes to register `to`.
+  /// All values are read before any is written.
+  pairs : FixedArray[Int]
+  /// Table entry of the state entered: a row base or an encoded terminal
+  /// state.
+  target : Int
+}
+
+///|
 /// A regex compiled to a tagged NFA whose tagged DFA is built lazily while
 /// matching.
 struct Regex {
@@ -131,7 +145,8 @@ struct Regex {
   state_ids : @hashmap.HashMap[FixedArray[Int], Int]
   kernels : Array[Kernel]
   /// Indexed by `state * (nsym + 1) + column`; holds the next row base,
-  /// `UNKNOWN`, `DEAD` or an encoded terminal state.
+  /// `UNKNOWN`, `DEAD`, an encoded terminal state or an encoded index into
+  /// `moves`.
   mut trans : FixedArray[Int]
   /// Parallel to `trans`: the register that receives the current position
   /// when the transition is taken. Register `0` is a sink that is never read,
@@ -147,6 +162,11 @@ struct Regex {
   /// The cached states by `shape_hash`, in the order they were added. Only
   /// needed once the cache is full, so it is built then, see `reuse`.
   mut shapes : @hashmap.HashMap[Int, Array[Int]]?
+  /// Transitions that move registers, the words they hold, and scratch space
+  /// to read all values of a move before writing any.
+  moves : Array[Move]
+  mut move_words : Int
+  mut move_values : FixedArray[Int]
   // Scratch space reused across `execute` calls.
   mut regs : FixedArray[Int]
   visited : FixedArray[Int]
@@ -236,6 +256,9 @@ pub fn compile(
     cache_words: 0,
     max_cache_words,
     shapes: None,
+    moves: [],
+    move_words: 0,
+    move_values: [],
     regs: FixedArray::make(8, -1),
     visited: FixedArray::make(nnodes, 0),
     targeted: FixedArray::make(nnodes, 0),

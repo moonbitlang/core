@@ -19,14 +19,54 @@ fn Regex::width(self : Regex) -> Int {
 
 ///|
 /// Encode a state without threads that holds a match, as a negative table
-/// entry that stops the scan loop.
+/// entry that stops the scan loop. Terminal states take every other entry
+/// below `DEAD`, transitions that move registers the entries in between.
 fn terminal(state : Int) -> Int {
-  DEAD - 1 - state
+  DEAD - 1 - 2 * state
 }
 
 ///|
 fn terminal_state(entry : Int) -> Int {
-  DEAD - 1 - entry
+  (DEAD - 1 - entry) / 2
+}
+
+///|
+/// Encode a transition that moves registers, as a negative table entry that
+/// takes the scan loop off its fast path.
+fn moving(index : Int) -> Int {
+  DEAD - 2 - 2 * index
+}
+
+///|
+fn is_moving(entry : Int) -> Bool {
+  entry < DEAD && ((DEAD - 1 - entry) & 1) == 1
+}
+
+///|
+/// Move registers as `pairs` says: the value of each `from` goes to its `to`.
+fn Regex::move_registers(self : Regex, pairs : FixedArray[Int]) -> Unit {
+  let count = pairs.length() / 2
+  if self.move_values.length() < count {
+    self.move_values = FixedArray::make(count, 0)
+  }
+  let values = self.move_values
+  let regs = self.regs
+  for i in 0..<count {
+    values[i] = regs[pairs[2 * i]]
+  }
+  for i in 0..<count {
+    regs[pairs[2 * i + 1]] = values[i]
+  }
+}
+
+///|
+/// Take a transition that moves registers, after the register of the
+/// transition itself has been written. Returns the table entry of the state
+/// entered.
+fn Regex::follow(self : Regex, entry : Int) -> Int {
+  let taken = self.moves[(DEAD - 2 - entry) / 2]
+  self.move_registers(taken.pairs)
+  taken.target
 }
 
 ///|
@@ -41,6 +81,8 @@ fn Regex::flush(self : Regex) -> Unit {
   self.start_bases.fill(UNKNOWN)
   self.cache_words = 0
   self.shapes = None
+  self.moves.clear()
+  self.move_words = 0
 }
 
 ///|
@@ -188,9 +230,9 @@ fn Regex::renaming(
 }
 
 ///|
-/// Enter a cached state in place of the state described by `key`, which does
-/// not fit in the cache. Returns the cached state, or `None` when there is
-/// none to enter.
+/// Find a cached state to enter in place of the state described by `key`,
+/// which does not fit in the cache. Returns that state and the register
+/// moves that entering it takes, or `None` when there is none.
 ///
 /// A state names the register that holds each tag of each thread. Which
 /// registers these are is an accident of the path that led to the state:
@@ -200,17 +242,12 @@ fn Regex::renaming(
 /// alive at once, one per start position, walks through one such copy after
 /// the other, and there can be as many copies as there are threads. So when
 /// there is no room, the search enters the copy that is already cached and
-/// pays for it once, by moving the values to the registers that state reads.
-///
-/// `slot` is the register the transition writes the current position `pos`
-/// to. The move needs that value, so it is written here.
+/// pays for it by moving the values to the registers that state reads.
 fn Regex::reuse(
   self : Regex,
   key : FixedArray[Int],
   threads : Int,
-  slot : Int,
-  pos : Int,
-) -> Int? {
+) -> (Int, FixedArray[Int])? {
   let shapes = match self.shapes {
     Some(shapes) => shapes
     None => {
@@ -228,18 +265,14 @@ fn Regex::reuse(
   // The oldest copy has the longest run of cached transitions ahead of it.
   for state in candidates {
     guard self.renaming(key, threads, state) is Some(forward) else { continue }
-    let regs = self.regs
-    regs[slot] = pos
-    let values = regs.copy()
+    let pairs : Array[Int] = []
     for register, target in forward {
-      if target >= 0 {
-        regs[target] = values[register]
+      if target >= 0 && target != register {
+        pairs.push(register)
+        pairs.push(target)
       }
     }
-    // The caller stores `pos` in `built_slot`; send that to the unused
-    // register `0`.
-    self.built_slot = 0
-    return Some(state)
+    return Some((state, FixedArray::from_array(pairs)))
   }
   None
 }
@@ -443,9 +476,22 @@ fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
         self.trans[base + column] = entry
         self.slots[base + column] = slot
         entry
-      } else if self.reuse(key, count, slot, pos) is Some(state) {
-        // Not recorded: the registers have to be moved every time.
-        encode(state)
+      } else if self.reuse(key, count) is Some((state, pairs)) {
+        let entry = encode(state)
+        // The move reads the register this transition writes, so that is
+        // written first. The caller writes `built_slot` once more; send that
+        // to the unused register `0`.
+        self.regs[slot] = pos
+        self.move_registers(pairs)
+        self.built_slot = 0
+        let words = pairs.length() + 2
+        if self.move_words + words <= self.max_cache_words {
+          self.move_words += words
+          self.trans[base + column] = moving(self.moves.length())
+          self.slots[base + column] = slot
+          self.moves.push({ pairs, target: entry })
+        }
+        entry
       } else {
         // The source row disappears with the cache, so the transition is
         // returned without being recorded.

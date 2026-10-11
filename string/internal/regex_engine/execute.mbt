@@ -72,6 +72,14 @@ pub fn Regex::execute(
         }
       } else {
         regs.unsafe_set(slots.unsafe_get(index), pos)
+        if is_moving(next) {
+          next = self.follow(next)
+          if next >= 0 {
+            base = next
+            pos += 1
+            continue
+          }
+        }
       }
       stop = next
       break
@@ -89,6 +97,9 @@ pub fn Regex::execute(
       regs.unsafe_set(self.built_slot, pos)
     } else {
       regs.unsafe_set(slots.unsafe_get(index), pos)
+      if is_moving(stop) {
+        stop = self.follow(stop)
+      }
     }
   }
   guard stop != DEAD else { None }
