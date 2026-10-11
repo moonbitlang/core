@@ -114,3 +114,73 @@ test "StringBuilder::write" {
   sb.write("abc\n")
   @test.assert_eq(sb.to_string(), "abc\n")
 }
+
+///|
+test "UTF-16 StringBuilder copies offset views across block boundaries" {
+  let input = "ab汉😀Bé汉😁z".repeat(8)
+  for start in [0, 1, 3, 7, 8, 15] {
+    for len in 0..<66 {
+      for size_hint in [0, 256] {
+        let builder = StringBuilder(size_hint~)
+        builder.write_string("prefix")
+        builder.write_view(input[start:start + len])
+        let first = builder.to_string()
+        builder.write_string("suffix")
+        @test.assert_eq(first, "prefix" + input[start:start + len].to_owned())
+        @test.assert_eq(builder.to_string(), first + "suffix")
+      }
+    }
+  }
+}
+
+///|
+test "UTF-16 StringBuilder appends returned strings through growth and reset" {
+  for len in [7, 8, 9, 15, 16, 17, 31, 32, 33, 65] {
+    let input = "ab汉😀Bé汉😁z".repeat(8)[:len].to_owned()
+    let builder = StringBuilder(size_hint=len * 2)
+    builder.write_string(input)
+    let first = builder.to_string()
+    builder.write_string(first)
+    let second = builder.to_string()
+    builder.reset()
+    builder.write_view(first[1:len])
+    @test.assert_eq(first, input)
+    @test.assert_eq(second, input + input)
+    @test.assert_eq(builder.to_string(), input[1:len].to_owned())
+  }
+}
+
+///|
+test "UTF-16 ASCII case conversions preserve offset view ranges" {
+  let letters = "aB0_".repeat(20)
+  for start in [0, 1, 3, 7, 8] {
+    for len in 0..<66 {
+      let view = letters[start:start + len]
+      let upper = StringBuilder()
+      let lower = StringBuilder()
+      for i in 0..<len {
+        let code = view[i].to_int()
+        upper.write_char(
+          Int::unsafe_to_char(
+            if code >= 97 && code <= 122 {
+              code - 32
+            } else {
+              code
+            },
+          ),
+        )
+        lower.write_char(
+          Int::unsafe_to_char(
+            if code >= 65 && code <= 90 {
+              code + 32
+            } else {
+              code
+            },
+          ),
+        )
+      }
+      @test.assert_eq(view.to_upper().to_owned(), upper.to_string())
+      @test.assert_eq(view.to_lower().to_owned(), lower.to_string())
+    }
+  }
+}
