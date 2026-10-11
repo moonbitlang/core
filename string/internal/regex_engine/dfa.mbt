@@ -74,7 +74,11 @@ fn Regex::insert(self : Regex, key : FixedArray[Int], threads : Int) -> Int {
   self.state_ids.set(key, state)
   self.cache_words += self.cost(key)
   if self.shapes is Some(shapes) {
-    add_shape(shapes, shape_hash(key, threads, Ranks::new(self.regs.length())), state)
+    add_shape(
+      shapes,
+      shape_hash(key, threads, Ranks::new(self.regs.length())),
+      state,
+    )
   }
   state
 }
