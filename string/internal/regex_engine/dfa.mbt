@@ -489,7 +489,7 @@ fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
           self.move_words += words
           self.trans[base + column] = moving(self.moves.length())
           self.slots[base + column] = slot
-          self.moves.push({ pairs, target: entry })
+          self.moves.push({ pairs, target: entry, })
         }
         entry
       } else {
