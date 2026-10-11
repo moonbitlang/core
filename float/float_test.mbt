@@ -257,3 +257,86 @@ test "equal signed zero values hash equally" {
   let map : Map[Float, Int] = { 0.0F: 42 }
   inspect(map.get(-0.0F) == Some(42), content="true")
 }
+
+///|
+/// Reference conversion with a single round-to-nearest-even, using integer
+/// arithmetic only. Returns the bits of the `Float`.
+fn ref_uint64_to_float_bits(x : UInt64) -> UInt {
+  if x == 0UL {
+    return 0
+  }
+  let n = 64 - x.clz()
+  let mut e = n - 1
+  let mut m = if n <= 24 {
+    x << (24 - n)
+  } else {
+    let k = n - 24
+    let q = x >> k
+    let r = x & ((1UL << k) - 1UL)
+    let half = 1UL << (k - 1)
+    if r > half || (r == half && (q & 1UL) == 1UL) {
+      q + 1UL
+    } else {
+      q
+    }
+  }
+  if m == 1UL << 24 {
+    m = m >> 1
+    e += 1
+  }
+  ((e + 127).reinterpret_as_uint() << 23) | (m.to_uint() & 0x7fffffU)
+}
+
+///|
+test "Float::from_int64 and from_uint64 round once" {
+  // 2^53 + 2^29 + 1 and 2^62 + 2^38 + 1 round down if converted to Double first
+  inspect(
+    Float::from_int64(9007199791611905L).reinterpret_as_uint(),
+    content="1509949441",
+  )
+  inspect(
+    Float::from_int64(4611686293305294849L).reinterpret_as_uint(),
+    content="1585446913",
+  )
+  inspect(
+    Float::from_uint64(9007199791611905UL).reinterpret_as_uint(),
+    content="1509949441",
+  )
+  inspect(
+    Float::from_int64(-9007199791611905L).reinterpret_as_uint(),
+    content="3657433089",
+  )
+  // Values just above a binary32 tie, where the bits lost by a first rounding
+  // to Double decide the direction
+  let mut seed = 0x9e3779b97f4a7c15UL
+  for a in 54..<64 {
+    for _ in 0..<64 {
+      seed = seed * 6364136223846793005UL + 1442695040888963407UL
+      let mant = (seed >> 41) | (1UL << 23)
+      let tie = (mant << (a - 23)) | (1UL << (a - 24))
+      for
+        low in [1UL, (1UL << (a - 53)) - 1UL, seed & ((1UL << (a - 53)) - 1UL)] {
+        for x in [tie, tie | low, tie - low] {
+          let expected = ref_uint64_to_float_bits(x)
+          assert_eq(Float::from_uint64(x).reinterpret_as_uint(), expected)
+          if a < 63 {
+            let i = x.reinterpret_as_int64()
+            assert_eq(Float::from_int64(i).reinterpret_as_uint(), expected)
+            assert_eq(
+              Float::from_int64(-i).reinterpret_as_uint(),
+              expected | 0x80000000U,
+            )
+          }
+        }
+      }
+    }
+  }
+  inspect(
+    Float::from_int64(-9223372036854775808L).reinterpret_as_uint(),
+    content="3741319168",
+  )
+  inspect(
+    Float::from_uint64(18446744073709551615UL).reinterpret_as_uint(),
+    content="1602224128",
+  )
+}
