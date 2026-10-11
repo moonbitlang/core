@@ -32,10 +32,12 @@ fn terminal_state(entry : Int) -> Int {
 ///|
 /// Drop every cached state and transition.
 fn Regex::flush(self : Regex) -> Unit {
+  // Rows past the cached states were never written.
+  let used = self.kernels.length() * self.width()
   self.state_ids.clear()
   self.kernels.clear()
-  self.trans.fill(UNKNOWN)
-  self.slots.fill(0)
+  self.trans.fill(UNKNOWN, end=used)
+  self.slots.fill(0, end=used)
   self.start_bases.fill(UNKNOWN)
   self.cache_words = 0
 }
@@ -80,10 +82,8 @@ fn Regex::start_base(self : Regex, ctx : Int) -> Int {
   if base != UNKNOWN {
     return base
   }
-  let key = FixedArray::make(3 + self.ntags, ABSENT)
-  key[0] = ctx
-  key[1] = 0
-  key[2] = self.entry
+  // One thread at the entry node that has set no tag yet.
+  let key : FixedArray[Int] = [ctx, 0, self.entry, 0]
   let state = match self.state_ids.get(key) {
     Some(state) => state
     None => self.insert(key, 1)
@@ -137,7 +137,6 @@ fn Regex::next_epoch(self : Regex) -> Int {
 /// same value, so a transition needs at most one fresh register, and taking
 /// it is a single store.
 fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
-  let ntags = self.ntags
   let nodes = self.nodes
   let width = self.width()
   let kernel = self.kernels[base / width]
@@ -152,19 +151,16 @@ fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
   let stack : Array[(Int, FixedArray[Int])] = []
   let threads = kernel.threads
   let ctx = kernel.ctx()
+  let mut offset = 2 + threads
   for i in 0..<threads {
-    let tags = FixedArray::make(ntags, ABSENT)
-    kernel.key.blit_to(tags, len=ntags, src_offset=kernel.row(i, ntags))
+    let tags = kernel.row(offset)
+    offset += 1 + tags.length()
     stack.push((kernel.node(i), tags))
     while stack.pop() is Some((node, tags)) {
       guard visited[node] != epoch else { continue }
       visited[node] = epoch
       match nodes[node] {
-        Tag(tag, next) => {
-          let tags = tags.copy()
-          tags[tag] = CURRENT
-          stack.push((next, tags))
-        }
+        Tag(tag, next) => stack.push((next, set_current(tags, tag)))
         After(bit, next) =>
           if (ctx & (1 << bit)) != 0 {
             stack.push((next, tags))
@@ -194,9 +190,8 @@ fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
     }
   }
   if accept is None && kernel.accepted() {
-    let tags = FixedArray::make(ntags, ABSENT)
-    kernel.key.blit_to(tags, len=ntags, src_offset=kernel.row(threads, ntags))
-    accept = Some(tags)
+    // Every thread row has been read, so `offset` is at the row of the match.
+    accept = Some(kernel.row(offset))
   }
   if accept is Some(tags) {
     out_tags.push(tags)
@@ -206,11 +201,14 @@ fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
   let rows = out_tags.length()
   let mut fresh = false
   let used : Array[Bool] = [true]
+  let mut size = 2 + out_nodes.length()
   for tags in out_tags {
-    for slot in tags {
+    size += 1 + tags.length()
+    for i = 1; i < tags.length(); i = i + 2 {
+      let slot = tags[i]
       if slot == CURRENT {
         fresh = true
-      } else if slot != ABSENT {
+      } else {
         while used.length() <= slot {
           used.push(false)
         }
@@ -241,16 +239,20 @@ fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
     DEAD
   }
   let count = out_nodes.length()
-  let key = FixedArray::make(2 + count + rows * ntags, ABSENT)
+  let key = FixedArray::make(size, 0)
   key[0] = if at_end { 0 } else { self.sym_ctx[column] }
   key[1] = if accept is Some(_) { 1 } else { 0 }
   for i, node in out_nodes {
     key[2 + i] = node
   }
-  for i, tags in out_tags {
-    for tag, s in tags {
-      key[2 + count + i * ntags + tag] = if s == CURRENT { slot } else { s }
+  let mut at = 2 + count
+  for tags in out_tags {
+    key[at] = tags.length() / 2
+    for i = 0; i < tags.length(); i = i + 2 {
+      key[at + 1 + i] = tags[i]
+      key[at + 2 + i] = if tags[i + 1] == CURRENT { slot } else { tags[i + 1] }
     }
+    at += 1 + tags.length()
   }
   let encode = (state : Int) => {
     if count == 0 {

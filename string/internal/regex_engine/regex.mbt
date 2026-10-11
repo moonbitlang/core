@@ -22,21 +22,20 @@ const UNKNOWN : Int = -1
 const DEAD : Int = -2
 
 ///|
-/// Tag slot of a thread: the tag was never set on this path.
-const ABSENT : Int = -1
-
-///|
-/// Tag slot while a transition is being built: the tag is set by this very
-/// transition and still needs a register.
-const CURRENT : Int = -2
+/// Register of a tag while a transition is being built: the tag is set by
+/// this very transition and still needs a register.
+const CURRENT : Int = -1
 
 ///|
 /// Default budget for the lazy DFA cache, in machine words (table entries
-/// plus state descriptions). When adding a state would exceed it, the cache
-/// is dropped and rebuilt on demand, so memory does not grow with the input.
-/// The state being added is always kept, even when it is larger than the
-/// budget on its own.
-const MAX_CACHE_WORDS : Int = 1 << 22
+/// plus state descriptions); a word is an `Int`, so this is 64 MB. When
+/// adding a state would exceed it, the cache is dropped and rebuilt on
+/// demand, so memory does not grow without bound on patterns whose DFA is
+/// huge. Past the budget every step may have to rebuild a state, which is
+/// several times slower than a cached step, so the budget is large enough
+/// for a DFA of about two hundred thousand small states. The state being
+/// added is always kept, even when it is larger than the budget on its own.
+const MAX_CACHE_WORDS : Int = 1 << 24
 
 ///|
 /// The kernel of a lazy DFA state: the NFA nodes reached right after
@@ -47,10 +46,13 @@ const MAX_CACHE_WORDS : Int = 1 << 22
 /// - `key[0]`: look-behind context, i.e. which `After` assertions hold here.
 /// - `key[1]`: `1` when a match has been found on the way to this state.
 /// - `key[2 + i]`: NFA node of thread `i`.
-/// - then one row of `ntags` registers per thread: the register holding each
-///   tag, or `ABSENT`. When a match has been found, one more row follows with
-///   the tags of that match. It plays the role of the `Accept` node in the
-///   compiler's DFA states and has the lowest priority.
+/// - then one row per thread with the tags set on its path: the number of
+///   tags, followed by `(tag, register)` pairs in increasing tag order. Tags
+///   that were never set are left out, so a row is as long as the path that
+///   led to the thread needs and not as wide as the whole pattern. When a
+///   match has been found, one more row follows with the tags of that match.
+///   It plays the role of the `Accept` node in the compiler's DFA states and
+///   has the lowest priority.
 priv struct Kernel {
   key : FixedArray[Int]
   threads : Int
@@ -72,10 +74,38 @@ fn Kernel::node(self : Kernel, thread : Int) -> Int {
 }
 
 ///|
-/// Offset in `key` of the register row of `thread`; row `threads` is the
-/// match found so far.
-fn Kernel::row(self : Kernel, thread : Int, ntags : Int) -> Int {
-  2 + self.threads + thread * ntags
+/// The `(tag, register)` pairs of the row that starts at `offset` in `key`.
+/// Rows have different lengths, so they are read in order starting at
+/// `2 + threads`; the next row starts `1 + length` words further.
+fn Kernel::row(self : Kernel, offset : Int) -> FixedArray[Int] {
+  let len = 2 * self.key[offset]
+  let row = FixedArray::make(len, 0)
+  self.key.blit_to(row, len~, src_offset=offset + 1)
+  row
+}
+
+///|
+/// `row` with `tag` set by the transition being built. Rows are shared
+/// between threads while a transition is built, so `row` is never written.
+fn set_current(row : FixedArray[Int], tag : Int) -> FixedArray[Int] {
+  let len = row.length()
+  let mut i = 0
+  while i < len && row[i] < tag {
+    i += 2
+  }
+  if i < len && row[i] == tag {
+    if row[i + 1] == CURRENT {
+      return row
+    }
+    let copy = row.copy()
+    copy[i + 1] = CURRENT
+    return copy
+  }
+  let out = FixedArray::make(len + 2, CURRENT)
+  row.blit_to(out, len=i)
+  out[i] = tag
+  row.blit_to(out, len=len - i, src_offset=i, dst_offset=i + 2)
+  out
 }
 
 ///|

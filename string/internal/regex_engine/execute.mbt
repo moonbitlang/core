@@ -92,15 +92,12 @@ pub fn Regex::execute(
     }
   }
   guard stop != DEAD else { None }
-  let ntags = self.ntags
-  // A terminal state has no threads, only the row of the match.
+  // A terminal state has no threads, only the row of the match: its length
+  // and then `(tag, register)` pairs.
   let key = self.kernels[terminal_state(stop)].key
-  let result = Array::make(ntags, -1)
-  for tag in 0..<ntags {
-    let slot = key[2 + tag]
-    if slot != ABSENT {
-      result[tag] = regs[slot] - shift
-    }
+  let result = Array::make(self.ntags, -1)
+  for i in 0..<key[2] {
+    result[key[3 + 2 * i]] = regs[key[4 + 2 * i]] - shift
   }
   Some(MatchResult(result))
 }
