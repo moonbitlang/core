@@ -111,9 +111,6 @@ fn lower_assertion(asrt : Assertion) -> Ir {
 
 ///|
 /// Number capture groups in pre-order and map character sets to symbols.
-///
-/// `Preference` nodes are transparent: this engine always uses leftmost-first
-/// (priority) semantics, like the compiler's `First_match` strategy.
 fn Builder::lower(self : Builder, pat : Pattern) -> Ir {
   match pat.desc {
     Char(set) => IChar(self.table.map_set(set))
@@ -144,7 +141,6 @@ fn Builder::lower(self : Builder, pat : Pattern) -> Ir {
         nullable=inner.nullable,
       )
     }
-    Preference(_, inner) => self.lower(inner)
     Capture(name~, inner) => {
       let index = self.groups.length()
       self.groups.push(name)
