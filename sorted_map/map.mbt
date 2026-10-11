@@ -31,6 +31,7 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 
 ///|
 /// Creates a sorted map from an array of key-value pairs.
+/// Takes O(n) for strictly ascending or descending keys, otherwise O(n log n).
 ///
 /// # Example
 /// ```mbt check
@@ -46,11 +47,65 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
+  let order = sorted_map_entries_order(entries)
+  if order != 0 {
+    return {
+      root: sorted_map_build_ordered(entries, 0, entries.length(), order == 1),
+      size: entries.length(),
+    }
+  }
   let map = new_sorted_map()
   for e in entries {
     map.set(e.0, e.1)
   }
   map
+}
+
+///|
+// Non-strict inputs keep the original insertion behavior, including duplicate
+// keys and unordered float comparisons. Returns 1, -1, or 0 for the order.
+fn[K : Compare, V] sorted_map_entries_order(
+  entries : ArrayView[(K, V)],
+) -> Int32 {
+  let len = entries.length()
+  if len < 2 {
+    return 1
+  }
+  let ascending = entries[0].0 < entries[1].0
+  if !ascending && !(entries[1].0 < entries[0].0) {
+    return 0
+  }
+  for i in 2..<len {
+    let previous = entries[i - 1].0
+    let current = entries[i].0
+    if ascending {
+      guard previous < current else { return 0 }
+    } else {
+      guard current < previous else { return 0 }
+    }
+  }
+  if ascending {
+    1
+  } else {
+    -1
+  }
+}
+
+///|
+fn[K, V] sorted_map_build_ordered(
+  entries : ArrayView[(K, V)],
+  start : Int32,
+  end : Int32,
+  ascending : Bool,
+) -> Node[K, V]? {
+  guard start < end else { return None }
+  let middle = start + (end - start) / 2
+  let index = if ascending { middle } else { entries.length() - 1 - middle }
+  let (key, value) = entries[index]
+  let left = sorted_map_build_ordered(entries, start, middle, ascending)
+  let right = sorted_map_build_ordered(entries, middle + 1, end, ascending)
+  let height = 1 + Int32::max(height(left), height(right))
+  Some({ key, value, left, right, height, })
 }
 
 ///|
@@ -813,16 +868,21 @@ test "add duplicate key" {
 
 ///|
 test "remove" {
-  let map = from_array([
-    (1, "a"),
-    (2, "b"),
-    (3, "c"),
-    (4, "d"),
-    (5, "e"),
-    (6, "f"),
-    (7, "g"),
-    (8, "h"),
-  ])
+  // Build by insertion to keep the deletion and rotation scenarios fixed.
+  let map = new_sorted_map()
+  for
+    (key, value) in [
+      (1, "a"),
+      (2, "b"),
+      (3, "c"),
+      (4, "d"),
+      (5, "e"),
+      (6, "f"),
+      (7, "g"),
+      (8, "h"),
+    ] {
+    map.set(key, value)
+  }
   inspect(
     map.debug_tree(),
     content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",
