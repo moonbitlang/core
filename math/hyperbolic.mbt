@@ -283,7 +283,7 @@ pub fn asinhf(x : Float) -> Float {
 /// }
 /// ```
 pub fn acoshf(x : Float) -> Float {
-  let ln2 : Float = 693147180559945309417232121458176568
+  let ln2 : Float = 0.693147180559945309417232121458176568
   let u = x.reinterpret_as_uint()
   let a = u & 0x7fffffffU
   if a < 0x3f800000U + (1U << 23) {
@@ -293,11 +293,11 @@ pub fn acoshf(x : Float) -> Float {
       x - 1.0 + ((x - 1.0) * (x - 1.0) + Float(2.0) * (x - 1.0)).sqrt(),
     )
   }
-  if a < 0x3f800000U + (12U << 23) {
-    // |x| < 0x1p12
+  if u < 0x3f800000U + (12U << 23) {
+    // 2 <= x < 0x1p12
     return lnf(x * 2.0 - Float(1.0) / (x + (x * x - 1.0).sqrt()))
   }
-  // x >= 0x1p12
+  // x >= 0x1p12 or x <= -2 or nan
   return lnf(x) + ln2
 }
 
