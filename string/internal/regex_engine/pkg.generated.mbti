@@ -17,7 +17,7 @@ pub fn capture(name? : String, @ast.Pattern) -> @ast.Pattern
 
 pub fn char(@rechar_set.RecharSet) -> @ast.Pattern
 
-pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern) -> Regex
+pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern, max_cache_words? : Int) -> Regex
 
 pub let empty : @ast.Pattern
 

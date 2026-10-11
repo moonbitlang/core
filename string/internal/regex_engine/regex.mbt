@@ -13,65 +13,196 @@
 // limitations under the License.
 
 ///|
-struct Regex {
-  profile : Profile
-  ctx : @automata.Context
-  expr : @automata.Expr
-  groups : ReadOnlyArray[String?]
-  symbol_table : @symbol_map.Table
-  symbol_repr : ReadOnlyArray[Rechar]
-  start_states : Array[(Category, StateId)]
-  state_table : @hashmap.HashMap[@automata.State, StateId]
-  /// Indexed by `transition_base + symbol`; holds the encoded next state.
-  mut transition_table : FixedArray[Int]
-  /// Parallel to `transition_table`; holds the slot of the next state so the
-  /// scan loop needs no per-state lookup.
-  mut slot_table : FixedArray[Int]
-  /// Largest slot index of any stabilized state (bounds the scratch buffer).
-  mut max_slot : Int
-  positions : Positions
-  mut final_table : FixedArray[
-    @list.List[(Category, @automata.Slot, @automata.Status)],
-  ]
-  mut states : FixedArray[@automata.State]
-  mut num_states : Int
+/// Transition table entry: the transition has not been built yet.
+const UNKNOWN : Int = -1
+
+///|
+/// Transition table entry: no thread survives and nothing was accepted.
+/// Entries below `DEAD` denote a terminal state, see `terminal`.
+const DEAD : Int = -2
+
+///|
+/// Tag slot of a thread: the tag was never set on this path.
+const ABSENT : Int = -1
+
+///|
+/// Tag slot while a transition is being built: the tag is set by this very
+/// transition and still needs a register.
+const CURRENT : Int = -2
+
+///|
+/// Default budget for the lazy DFA cache, in machine words (table entries
+/// plus state descriptions). When adding a state would exceed it, the cache
+/// is dropped and rebuilt on demand, so memory does not grow with the input.
+/// The state being added is always kept, even when it is larger than the
+/// budget on its own.
+const MAX_CACHE_WORDS : Int = 1 << 22
+
+///|
+/// The kernel of a lazy DFA state: the NFA nodes reached right after
+/// consuming a symbol, in priority order, before epsilon closure.
+///
+/// `key` describes the state completely and is what states are compared by:
+///
+/// - `key[0]`: look-behind context, i.e. which `After` assertions hold here.
+/// - `key[1]`: `1` when a match has been found on the way to this state.
+/// - `key[2 + i]`: NFA node of thread `i`.
+/// - then one row of `ntags` registers per thread: the register holding each
+///   tag, or `ABSENT`. When a match has been found, one more row follows with
+///   the tags of that match. It plays the role of the `Accept` node in the
+///   compiler's DFA states and has the lowest priority.
+priv struct Kernel {
+  key : FixedArray[Int]
+  threads : Int
 }
 
 ///|
-/// Function `group_names`.
+fn Kernel::ctx(self : Kernel) -> Int {
+  self.key[0]
+}
+
+///|
+fn Kernel::accepted(self : Kernel) -> Bool {
+  self.key[1] != 0
+}
+
+///|
+fn Kernel::node(self : Kernel, thread : Int) -> Int {
+  self.key[2 + thread]
+}
+
+///|
+/// Offset in `key` of the register row of `thread`; row `threads` is the
+/// match found so far.
+fn Kernel::row(self : Kernel, thread : Int, ntags : Int) -> Int {
+  2 + self.threads + thread * ntags
+}
+
+///|
+/// A regex compiled to a tagged NFA whose tagged DFA is built lazily while
+/// matching.
+struct Regex {
+  groups : ReadOnlyArray[String?]
+  table : @symbol_map.Table
+  nodes : FixedArray[Node]
+  entry : Int
+  ntags : Int
+  /// Number of input symbols. Column `nsym` of a table row is end of input.
+  nsym : Int
+  /// Look-behind context after consuming each symbol.
+  sym_ctx : FixedArray[Int]
+  /// Look-ahead category of each column, including end of input.
+  col_cat : FixedArray[Category]
+  /// Look-behind context when there is no previous character.
+  ctx_start : Int
+  // Lazy DFA cache.
+  state_ids : @hashmap.HashMap[FixedArray[Int], Int]
+  kernels : Array[Kernel]
+  /// Indexed by `state * (nsym + 1) + column`; holds the next row base,
+  /// `UNKNOWN`, `DEAD` or an encoded terminal state.
+  mut trans : FixedArray[Int]
+  /// Parallel to `trans`: the register that receives the current position
+  /// when the transition is taken. Register `0` is a sink that is never read,
+  /// so the scan loop can write unconditionally.
+  mut slots : FixedArray[Int]
+  /// Row base of the start state for each look-behind context.
+  start_bases : FixedArray[Int]
+  /// Register written by the transition most recently built by `build`.
+  mut built_slot : Int
+  /// Words currently held by the cache, and the budget that triggers a flush.
+  mut cache_words : Int
+  max_cache_words : Int
+  // Scratch space reused across `execute` calls.
+  mut regs : FixedArray[Int]
+  visited : FixedArray[Int]
+  targeted : FixedArray[Int]
+  mut epoch : Int
+}
+
+///|
+/// Names of the capture groups in index order; `None` for unnamed groups.
+/// Group 0 is the whole match.
 pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
   self.groups
 }
 
 ///|
-fn Regex::new(
-  profile : Profile,
-  ctx : @automata.Context,
-  expr : @automata.Expr,
-  groups : ReadOnlyArray[String?],
-  symbol_table : @symbol_map.Table,
-  symbol_repr : ReadOnlyArray[Rechar],
+/// Compile `ast` for searching: unless the pattern is anchored at the start
+/// of input, a lazy "any character" loop is prepended, exactly like the
+/// compiler prepares an unanchored `lexmatch` case.
+///
+/// `max_cache_words` is the budget of the lazily built DFA cache; when a new
+/// state would exceed it the cache is dropped and rebuilt on demand. One
+/// state is always kept, whatever its size.
+pub fn compile(
+  profile~ : Profile,
+  ast : Pattern,
+  max_cache_words? : Int = MAX_CACHE_WORDS,
 ) -> Regex {
-  {
-    profile,
-    ctx,
-    expr,
-    groups,
-    symbol_table,
-    symbol_repr,
-    start_states: [],
-    state_table: HashMap([]),
-    transition_table: [],
-    slot_table: [],
-    max_slot: 0,
-    positions: Positions::new(),
-    final_table: [],
-    states: [],
-    num_states: 0,
+  let symbol_map = @symbol_map.new()
+  symbolize(profile~, symbol_map~, ast)
+  let (table, symbol_repr) = symbol_map.finalize(profile.lb, profile.ub)
+  let nsym = symbol_repr.length()
+  let builder : Builder = { nodes: [], table, groups: [None], after_cats: [], }
+  let ir = IGroup(0, builder.lower(ast))
+  let accept = builder.add(Accept)
+  let body = builder.emit(ir, accept)
+  let entry = if ast.is_anchored() {
+    body
+  } else {
+    let any = RecharSet::char_range(0, nsym - 1)
+    let search = builder.add(Accept)
+    let skip = builder.add(Char(any, search))
+    builder.set_choice(search, true, body, skip)
+    search
   }
-}
+  let after_cats = builder.after_cats
+  fn ctx_of(cat : Category) -> Int {
+    for i = 0, ctx = 0; i < after_cats.length(); {
+      continue i + 1,
+        if cat.intersects(after_cats[i]) {
+          ctx | (1 << i)
+        } else {
+          ctx
+        }
+    } nobreak {
+      ctx
+    }
+  }
 
-///|
-fn Regex::num_symbols(self : Regex) -> Int {
-  self.symbol_repr.length()
+  let sym_ctx = FixedArray::makei(nsym, i => {
+    ctx_of((profile.category)(symbol_repr[i]))
+  })
+  let col_cat = FixedArray::makei(nsym + 1, i => {
+    if i == nsym {
+      Category::inexistant()
+    } else {
+      (profile.category)(symbol_repr[i])
+    }
+  })
+  let nnodes = builder.nodes.length()
+  let ntags = builder.groups.length() * 2
+  {
+    groups: ReadOnlyArray::from_array(builder.groups),
+    table,
+    nodes: FixedArray::from_array(builder.nodes),
+    entry,
+    ntags,
+    nsym,
+    sym_ctx,
+    col_cat,
+    ctx_start: ctx_of(Category::inexistant()),
+    state_ids: HashMap([]),
+    kernels: [],
+    trans: [],
+    slots: [],
+    start_bases: FixedArray::make(1 << after_cats.length(), UNKNOWN),
+    built_slot: 0,
+    cache_words: 0,
+    max_cache_words,
+    regs: FixedArray::make(8, -1),
+    visited: FixedArray::make(nnodes, 0),
+    targeted: FixedArray::make(nnodes, 0),
+    epoch: 0,
+  }
 }
