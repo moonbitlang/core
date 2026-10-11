@@ -115,11 +115,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: install
+      - name: install formatter
         if: ${{ matrix.os != 'windows-latest' }}
         uses: ./.github/actions/setup
         with:
-          version: pre-release
+          # Main and its PRs use stable formatting; pre-release branches can use new syntax.
+          version: ${{ startsWith(github.base_ref || github.ref_name, 'pre-release') && 'pre-release' || 'latest' }}
 
       - name: format diff
         timeout-minutes: 10
