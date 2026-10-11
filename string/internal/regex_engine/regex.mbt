@@ -28,13 +28,15 @@ const CURRENT : Int = -1
 
 ///|
 /// Default budget for the lazy DFA cache, in machine words (table entries
-/// plus state descriptions); a word is an `Int`, so this is 64 MB. When
-/// adding a state would exceed it, the cache is dropped and rebuilt on
-/// demand, so memory does not grow without bound on patterns whose DFA is
-/// huge. Past the budget every step may have to rebuild a state, which is
-/// several times slower than a cached step, so the budget is large enough
-/// for a DFA of about two hundred thousand small states. The state being
-/// added is always kept, even when it is larger than the budget on its own.
+/// plus state descriptions); a word is an `Int`, so this is 64 MB of table
+/// and state data. A state that does not fit is not added when a cached
+/// state can stand in for it, see `reuse`; otherwise the cache is dropped and
+/// rebuilt on demand. Memory therefore does not grow without bound on
+/// patterns whose DFA is huge, at the price of rebuilding states, which is
+/// several times slower than a cached step. The budget is large enough for a
+/// DFA of about two hundred thousand small states. The state being added
+/// after a drop is always kept, even when it is larger than the budget on
+/// its own.
 const MAX_CACHE_WORDS : Int = 1 << 24
 
 ///|
@@ -139,9 +141,12 @@ struct Regex {
   start_bases : FixedArray[Int]
   /// Register written by the transition most recently built by `build`.
   mut built_slot : Int
-  /// Words currently held by the cache, and the budget that triggers a flush.
+  /// Words currently held by the cache, and its budget.
   mut cache_words : Int
   max_cache_words : Int
+  /// The cached states by `shape_hash`, in the order they were added. Only
+  /// needed once the cache is full, so it is built then, see `reuse`.
+  mut shapes : @hashmap.HashMap[Int, Array[Int]]?
   // Scratch space reused across `execute` calls.
   mut regs : FixedArray[Int]
   visited : FixedArray[Int]
@@ -230,6 +235,7 @@ pub fn compile(
     built_slot: 0,
     cache_words: 0,
     max_cache_words,
+    shapes: None,
     regs: FixedArray::make(8, -1),
     visited: FixedArray::make(nnodes, 0),
     targeted: FixedArray::make(nnodes, 0),

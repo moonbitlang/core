@@ -60,7 +60,7 @@ pub fn Regex::execute(
     if next < 0 {
       // Off the fast path: an unbuilt transition, or the end of the scan.
       if next == UNKNOWN {
-        next = self.build(base, index - base)
+        next = self.build(base, index - base, pos)
         trans = self.trans
         slots = self.slots
         regs = self.regs
@@ -84,7 +84,7 @@ pub fn Regex::execute(
     let index = base + self.nsym
     stop = trans.unsafe_get(index)
     if stop == UNKNOWN {
-      stop = self.build(base, self.nsym)
+      stop = self.build(base, self.nsym, pos)
       regs = self.regs
       regs.unsafe_set(self.built_slot, pos)
     } else {

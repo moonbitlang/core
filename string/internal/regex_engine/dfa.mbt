@@ -40,6 +40,7 @@ fn Regex::flush(self : Regex) -> Unit {
   self.slots.fill(0, end=used)
   self.start_bases.fill(UNKNOWN)
   self.cache_words = 0
+  self.shapes = None
 }
 
 ///|
@@ -72,7 +73,171 @@ fn Regex::insert(self : Regex, key : FixedArray[Int], threads : Int) -> Int {
   self.kernels.push({ key, threads, })
   self.state_ids.set(key, state)
   self.cache_words += self.cost(key)
+  if self.shapes is Some(shapes) {
+    add_shape(shapes, shape_hash(key, threads, Ranks::new(self.regs.length())), state)
+  }
   state
+}
+
+///|
+/// Scratch space to number the registers of a key in order of appearance.
+priv struct Ranks {
+  rank : FixedArray[Int]
+  /// `rank[r]` is valid when `stamp[r] == epoch`.
+  stamp : FixedArray[Int]
+  mut epoch : Int
+}
+
+///|
+fn Ranks::new(registers : Int) -> Ranks {
+  {
+    rank: FixedArray::make(registers, 0),
+    stamp: FixedArray::make(registers, 0),
+    epoch: 0,
+  }
+}
+
+///|
+/// Hash of a state key that does not depend on which registers it uses:
+/// every register is replaced by its rank in order of first appearance. Two
+/// states that are the same up to a renaming of registers hash alike.
+fn shape_hash(key : FixedArray[Int], threads : Int, ranks : Ranks) -> Int {
+  ranks.epoch += 1
+  let epoch = ranks.epoch
+  let hasher = Hasher()
+  let rows = 2 + threads
+  for i in 0..<rows {
+    hasher.combine_int(key[i])
+  }
+  let mut next_rank = 0
+  let mut at = rows
+  while at < key.length() {
+    let pairs = key[at]
+    hasher.combine_int(pairs)
+    for i = at + 1; i < at + 1 + 2 * pairs; i = i + 2 {
+      hasher.combine_int(key[i])
+      let register = key[i + 1]
+      if ranks.stamp[register] != epoch {
+        ranks.stamp[register] = epoch
+        ranks.rank[register] = next_rank
+        next_rank += 1
+      }
+      hasher.combine_int(ranks.rank[register])
+    }
+    at += 1 + 2 * pairs
+  }
+  hasher.finalize()
+}
+
+///|
+fn add_shape(
+  shapes : @hashmap.HashMap[Int, Array[Int]],
+  hash : Int,
+  state : Int,
+) -> Unit {
+  match shapes.get(hash) {
+    Some(states) => states.push(state)
+    None => shapes.set(hash, [state])
+  }
+}
+
+///|
+/// If the state described by `key` is the cached state `state` with its
+/// registers renamed, return the renaming: for each register of `key`, the
+/// register that plays its part in `state`, and `-1` for the others.
+fn Regex::renaming(
+  self : Regex,
+  key : FixedArray[Int],
+  threads : Int,
+  state : Int,
+) -> FixedArray[Int]? {
+  let other = self.kernels[state]
+  let theirs = other.key
+  guard other.threads == threads && theirs.length() == key.length() else {
+    None
+  }
+  let rows = 2 + threads
+  for i in 0..<rows {
+    guard key[i] == theirs[i] else { return None }
+  }
+  let registers = self.regs.length()
+  let forward = FixedArray::make(registers, -1)
+  let backward = FixedArray::make(registers, -1)
+  let mut at = rows
+  while at < key.length() {
+    let pairs = key[at]
+    guard theirs[at] == pairs else { return None }
+    for i = at + 1; i < at + 1 + 2 * pairs; i = i + 2 {
+      guard key[i] == theirs[i] else { return None }
+      let mine = key[i + 1]
+      let its = theirs[i + 1]
+      if forward[mine] < 0 && backward[its] < 0 {
+        forward[mine] = its
+        backward[its] = mine
+      } else if forward[mine] != its {
+        return None
+      }
+    }
+    at += 1 + 2 * pairs
+  }
+  Some(forward)
+}
+
+///|
+/// Enter a cached state in place of the state described by `key`, which does
+/// not fit in the cache. Returns the cached state, or `None` when there is
+/// none to enter.
+///
+/// A state names the register that holds each tag of each thread. Which
+/// registers these are is an accident of the path that led to the state:
+/// two states that only differ in the names of their registers behave alike
+/// from then on. While there is room, both are kept, because moving from one
+/// state to the next then costs a single store. A search with many threads
+/// alive at once, one per start position, walks through one such copy after
+/// the other, and there can be as many copies as there are threads. So when
+/// there is no room, the search enters the copy that is already cached and
+/// pays for it once, by moving the values to the registers that state reads.
+///
+/// `slot` is the register the transition writes the current position `pos`
+/// to. The move needs that value, so it is written here.
+fn Regex::reuse(
+  self : Regex,
+  key : FixedArray[Int],
+  threads : Int,
+  slot : Int,
+  pos : Int,
+) -> Int? {
+  let shapes = match self.shapes {
+    Some(shapes) => shapes
+    None => {
+      let shapes = @hashmap.HashMap([])
+      let ranks = Ranks::new(self.regs.length())
+      for state, kernel in self.kernels {
+        add_shape(shapes, shape_hash(kernel.key, kernel.threads, ranks), state)
+      }
+      self.shapes = Some(shapes)
+      shapes
+    }
+  }
+  let hash = shape_hash(key, threads, Ranks::new(self.regs.length()))
+  guard shapes.get(hash) is Some(candidates) else { None }
+  // The oldest copy has the longest run of cached transitions ahead of it.
+  for state in candidates {
+    guard self.renaming(key, threads, state) is Some(forward) else { continue }
+    let regs = self.regs
+    regs[slot] = pos
+    let values = regs.copy()
+    for register, target in forward {
+      if target >= 0 {
+        regs[target] = values[register]
+      }
+    }
+    // The caller stores `pos` in `built_slot`; send that to the unused
+    // register `0`.
+    self.built_slot = 0
+    return Some(state)
+  }
+  None
 }
 
 ///|
@@ -113,9 +278,9 @@ fn Regex::next_epoch(self : Regex) -> Int {
 
 ///|
 /// Build the transition out of the state at row `base` on `column` (a symbol,
-/// or `nsym` for end of input). Returns the next row base, `DEAD`, or an
-/// encoded terminal state, and leaves the register written by the transition
-/// in `built_slot`.
+/// or `nsym` for end of input) taken at position `pos`. Returns the next row
+/// base, `DEAD`, or an encoded terminal state, and leaves the register
+/// written by the transition in `built_slot`.
 ///
 /// This is the compiler's `Tnfa2.epsilon_closure` followed by one step of
 /// `Tnfa2_to_tdfa.istate_next` under the `First_match` strategy, done for a
@@ -136,7 +301,7 @@ fn Regex::next_epoch(self : Regex) -> Int {
 /// registers for as long as it lives. Every tag set by one transition has the
 /// same value, so a transition needs at most one fresh register, and taking
 /// it is a single store.
-fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
+fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
   let nodes = self.nodes
   let width = self.width()
   let kernel = self.kernels[base / width]
@@ -269,17 +434,19 @@ fn Regex::build(self : Regex, base : Int, column : Int) -> Int {
       entry
     }
     None =>
-      if self.cache_words + self.cost(key) > self.max_cache_words &&
-        self.kernels.length() > 0 {
-        // The source row disappears with the cache, so the transition is
-        // returned without being recorded.
-        self.flush()
-        encode(self.insert(key, count))
-      } else {
+      if self.cache_words + self.cost(key) <= self.max_cache_words {
         let entry = encode(self.insert(key, count))
         self.trans[base + column] = entry
         self.slots[base + column] = slot
         entry
+      } else if self.reuse(key, count, slot, pos) is Some(state) {
+        // Not recorded: the registers have to be moved every time.
+        encode(state)
+      } else {
+        // The source row disappears with the cache, so the transition is
+        // returned without being recorded.
+        self.flush()
+        encode(self.insert(key, count))
       }
   }
 }
