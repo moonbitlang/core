@@ -25,6 +25,12 @@ priv enum CharOrClass {
 const MAX_QUANT = 256
 
 ///|
+/// The parser recurses once per level of nesting, so the depth is limited to
+/// keep a pattern from overflowing the stack. The compiler has the same limit
+/// for regex literals.
+const MAX_GROUP_DEPTH = 64
+
+///|
 fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
@@ -387,6 +393,10 @@ fn Parser::parse_group_continue(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Pattern) raise ParserError {
+  guard ctx.depth < MAX_GROUP_DEPTH else {
+    raise ctx.error_at(rest, HINT_NESTING_TOO_DEEP)
+  }
+  let ctx = { ..ctx, depth: ctx.depth + 1, }
   let (rest, pat) = Parser::disjunction(rest, ctx~)
   match rest {
     [')', .. rest] => (rest, pat)

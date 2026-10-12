@@ -25,6 +25,8 @@ priv struct ParserContext {
   base : Int32
   ignore_case : Bool
   mode : Mode
+  /// Number of groups open at the current position.
+  depth : Int32
 }
 
 ///|
@@ -33,7 +35,7 @@ fn ParserContext::new(
   base~ : Int32,
   mode~ : Mode,
 ) -> ParserContext {
-  { profile, base, ignore_case: false, mode, }
+  { profile, base, ignore_case: false, mode, depth: 0, }
 }
 
 ///|

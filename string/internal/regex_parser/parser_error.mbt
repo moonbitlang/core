@@ -33,6 +33,9 @@ const HINT_UNCLOSED_CHAR_CLASS = "Unclosed character class"
 const HINT_UNCLOSED_GROUP = "Unclosed group"
 
 ///|
+const HINT_NESTING_TOO_DEEP = "Groups nested too deeply"
+
+///|
 const HINT_UNEXPECTED_CHAR = "Unexpected character"
 
 ///|

@@ -1369,3 +1369,52 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
     ),
   )
 }
+
+///|
+/// A pattern that only nests used to overflow the stack instead of raising.
+test "parse/nesting_depth" {
+  fn nested(open : String, depth : Int32) -> String {
+    let pattern = open.repeat(depth) + "a" + ")".repeat(depth)
+    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+      err => err.to_string()
+    } noraise {
+      _ => "accepted"
+    }
+  }
+
+  inspect(nested("(", 64), content="accepted")
+  inspect(nested("(?:", 64), content="accepted")
+  inspect(nested("(?i:", 64), content="accepted")
+  inspect(
+    nested("(", 65),
+    content=(
+      #|ParserError at position 65: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?:", 65),
+    content=(
+      #|ParserError at position 195: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?i:", 65),
+    content=(
+      #|ParserError at position 260: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(", 100_000),
+    content=(
+      #|ParserError at position 65: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?<n>", 65),
+    content=(
+      #|ParserError at position 325: Groups nested too deeply
+    ),
+  )
+  // Sibling groups do not increase the nesting depth.
+  inspect(nested("(a)(", 64), content="accepted")
+}
