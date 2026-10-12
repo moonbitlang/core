@@ -25,6 +25,9 @@ priv struct ParserContext {
   base : Int
   ignore_case : Bool
   mode : Mode
+  /// Names of the capture groups seen so far, shared by every copy of the
+  /// context.
+  group_names : Array[String]
 }
 
 ///|
@@ -33,7 +36,7 @@ fn ParserContext::new(
   base~ : Int,
   mode~ : Mode,
 ) -> ParserContext {
-  { profile, base, ignore_case: false, mode, }
+  { profile, base, ignore_case: false, mode, group_names: [], }
 }
 
 ///|

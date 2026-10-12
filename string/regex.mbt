@@ -35,8 +35,10 @@ pub struct Regex {
 /// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
 ///
 /// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex`.
+/// metacharacters. `\xHH`, `\uXXXX` and `\u{X...}` are the code point with
+/// that hexadecimal value; the two halves of a surrogate pair, as in
+/// `\uD83D\uDE00`, are one code point. An escape that means nothing is an
+/// error, inside a character class as well.
 ///
 /// `^` and `$` are non-multiline anchors: they match only the beginning and
 /// end of the whole input, not per-line boundaries.
@@ -47,8 +49,11 @@ pub struct Regex {
 /// POSIX character classes are ASCII-based.
 ///
 /// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
-/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
-/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
+/// To match a literal dash, it must be escaped as `\-`. A dash anywhere else
+/// (e.g., `[-a]`, `[a-]` or `[a-b-c]`) is not supported. `&&` and an unescaped
+/// `[` are reserved; write `\&` and `\[`.
+///
+/// Two capture groups cannot have the same name.
 ///
 /// For full grammar and semantics, see:
 /// <https://github.com/moonbitlang/lexmatch_spec>
