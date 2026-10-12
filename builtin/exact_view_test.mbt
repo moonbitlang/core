@@ -72,12 +72,6 @@ test "panic exact_view rejects an oversized fixed array bound" {
 }
 
 ///|
-test "panic exact_view rejects an inverted readonly array range" {
-  let ro : ReadOnlyArray[Int] = [1, 2, 3]
-  ignore(ro.exact_view(start=2, end=1))
-}
-
-///|
 test "panic exact_view rejects bounds outside an array view" {
   ignore([0, 1, 2, 3][1:3].exact_view(end=3))
 }

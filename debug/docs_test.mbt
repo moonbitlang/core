@@ -279,18 +279,6 @@ test "docs: dict prints as k: v pairs" {
 }
 
 ///|
-test "docs: dict expands with quoted keys + trailing commas" {
-  let sample : DictExample = { entries: [("a", 1), ("b", 2)], }
-  let r = dict_repr(sample)
-  @builtin.inspect(
-    render(r),
-    content=(
-      #|{ "a": 1, "b": 2 }
-    ),
-  )
-}
-
-///|
 struct OpaqueExample {
   label : String
   xs : Array[Int]

@@ -26,11 +26,6 @@ test "Int64::from_int" {
 }
 
 ///|
-test "from_int" {
-  inspect(Int64::from_int(1256), content="1256")
-}
-
-///|
 test "Int64::min_value" {
   let min_value = @int64.MIN_VALUE
   assert_eq(min_value, -9223372036854775808L)

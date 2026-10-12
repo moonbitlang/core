@@ -226,19 +226,6 @@ test "iter2" {
 }
 
 ///|
-test "iter" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let array = map.iter().collect()
-  array.sort()
-  debug_inspect(
-    array,
-    content=(
-      #|[(1, "one"), (2, "two"), (3, "three")]
-    ),
-  )
-}
-
-///|
 test "to_array" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.to_array()

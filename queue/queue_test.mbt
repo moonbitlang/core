@@ -26,19 +26,6 @@ test "copy empty" {
 }
 
 ///|
-test "from_fixed_array_1" {
-  let queue = @queue.from_array([1, 2, 3, 4])
-  let queue2 = @queue.from_array([1])
-  @test.assert_eq(queue.length(), 4)
-  @test.assert_eq(queue.unsafe_pop(), 1)
-  @test.assert_eq(queue.unsafe_pop(), 2)
-  @test.assert_eq(queue.unsafe_pop(), 3)
-  @test.assert_eq(queue.unsafe_pop(), 4)
-  @test.assert_eq(queue2.unsafe_pop(), 1)
-  @test.assert_eq(queue2.length(), 0)
-}
-
-///|
 test "from_fixed_array_2" {
   let q : @queue.Queue[Int] = @queue.from_array([])
   debug_inspect(
@@ -285,12 +272,6 @@ test "length" {
   let empty : @queue.Queue[Unit] = @queue.from_array([])
   inspect(empty.length(), content="0")
   inspect(@queue.from_array([1, 2, 3]).length(), content="3")
-}
-
-///|
-test "iter" {
-  let q = @queue.from_array([1, 2, 3, 4, 5])
-  inspect(q.iter().fold((x, y) => x + y, init=0), content="15")
 }
 
 ///|

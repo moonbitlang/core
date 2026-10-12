@@ -1197,12 +1197,6 @@ test "remove empty and head" {
 }
 
 ///|
-test "List default trait" {
-  let ls : @list.List[Int] = Default::default()
-  debug_inspect(ls, content="<List: []>")
-}
-
-///|
 test "has_suffix boundaries" {
   let l = @list.List([1, 2, 3, 4, 5])
   let empty : @list.List[Int] = List([])

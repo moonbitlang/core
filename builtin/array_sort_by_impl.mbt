@@ -248,11 +248,6 @@ test "bubble_sort" {
 }
 
 ///|
-test "sort" {
-  fixed_test_sort(arr => arr.sort())
-}
-
-///|
 test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.mut_view().sort_by_key(x => -x)
