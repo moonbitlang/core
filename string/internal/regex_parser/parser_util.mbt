@@ -28,6 +28,34 @@ fn hex2i(hex : StringView) -> Int {
 }
 
 ///|
+/// The code point written as a high and a low surrogate escape.
+fn surrogate_pair(high : Int, low : Int) -> Int {
+  0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00)
+}
+
+///|
+/// Value of a braced code point escape. Any number of digits is allowed, so
+/// that leading zeros are; a value past the last code point comes back as
+/// `0x110000`, which no profile contains.
+fn hex_code_point(hex : StringView) -> Int {
+  for c in hex; value = 0 {
+    let digit = match c {
+      '0'..='9' => c.to_int() - '0'
+      'a'..='f' => c.to_int() - 'a' + 10
+      'A'..='F' => c.to_int() - 'A' + 10
+      _ => panic()
+    }
+    let value = value * 16 + digit
+    if value > 0x10FFFF {
+      break 0x110000
+    }
+    continue value
+  } nobreak {
+    value
+  }
+}
+
+///|
 fn pattern_map_char(
   pat : @re.Pattern,
   f : (@re.RecharSet) -> @re.RecharSet,

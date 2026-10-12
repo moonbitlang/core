@@ -25,6 +25,11 @@ priv struct ParserContext {
   base : Int
   ignore_case : Bool
   mode : Mode
+  /// Names of the capture groups seen so far, shared by every copy of the
+  /// context.
+  group_names : Map[String, Unit]
+  /// Number of groups open at the current position.
+  depth : Int
 }
 
 ///|
@@ -33,7 +38,16 @@ fn ParserContext::new(
   base~ : Int,
   mode~ : Mode,
 ) -> ParserContext {
-  { profile, base, ignore_case: false, mode, }
+  { profile, base, ignore_case: false, mode, group_names: {}, depth: 0, }
+}
+
+///|
+/// Whether an escape may name code point `c`. Half of a surrogate pair is a
+/// code point that no well-formed string contains: it matches nothing, but
+/// it can be the end of a range, as in `[\u0000-\uDFFF]`.
+fn ParserContext::escape_in_range(self : ParserContext, c : Int) -> Bool {
+  self.profile.valid.contains(c) ||
+  (self.mode is String && c >= 0xD800 && c <= 0xDFFF)
 }
 
 ///|

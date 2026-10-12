@@ -237,8 +237,8 @@ Use `Regex` for string regex matching, replacement, and splitting:
   for non-capturing groups, `(?<name>...)`, `a|b`), and
   assertions/modifiers (`^`, `$`, `\b`, `\B`, `(?i:...)`).
 - Common escapes include `\n`, `\r`, `\t`, `\f`, `\v`; `Regex` also
-  supports Unicode escapes `\uXXXX` and `\u{X...}`; `\xHH` is not
-  supported in `Regex`.
+  supports `\xHH`, `\uXXXX` and `\u{X...}` for the code point with that
+  hexadecimal value.
 - `^` and `$` are non-multiline anchors: they match only the start/end of the
   whole input, not per-line boundaries.
 - `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX

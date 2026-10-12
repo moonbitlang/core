@@ -48,9 +48,6 @@ const HINT_INVALID_ESCAPE = "Invalid escape sequence"
 const HINT_UNICODE_ESCAPE_NOT_ALLOWED = "Unicode escape sequences are not allowed"
 
 ///|
-const HINT_BYTE_ESCAPE_NOT_ALLOWED = "Byte escape sequences are not allowed"
-
-///|
 const HINT_CHARACTER_OUT_OF_RANGE = "Character out of range"
 
 ///|
@@ -97,3 +94,12 @@ const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w
 
 ///|
 const HINT_DASH_AT_BOUNDARY = "Dash at the start or end of character class is not supported, use \\- to match a literal dash"
+
+///|
+const HINT_UNESCAPED_DASH = "A dash in a character class must be between the two ends of a range, use \\- to match a literal dash"
+
+///|
+const HINT_DUPLICATE_GROUP_NAME = "Duplicate capture group name"
+
+///|
+const HINT_NESTING_TOO_DEEP = "Groups are nested too deeply, the supported limit is 128 levels"

@@ -576,27 +576,12 @@ test "parse/error_use_posix_class_in_char_class" {
 }
 
 ///|
-test "parse/error_byte_escape_in_string_mode" {
-  debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[\\x41]")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=5, hint="Byte escape sequences are not allowed"))
-    ),
-  )
-}
-
-///|
-test "parse/error_byte_escape_in_string_mode_term" {
-  debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\x41")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=4, hint="Byte escape sequences are not allowed"))
-    ),
-  )
+test "parse/hex_escape_in_string_mode" {
+  // As in a regex literal, `\\xHH` is the code point U+00HH.
+  let class = parse(profile=profile_unicode(), mode=String, "[\\x41]")
+  debug_inspect(class, content="Char([(65, 65)])")
+  let term = parse(profile=profile_unicode(), mode=String, "\\xE9")
+  debug_inspect(term, content="Char([(233, 233)])")
 }
 
 ///|
@@ -1366,6 +1351,288 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
     },
     content=(
       #|Err(ParserError(at=2, hint="Character out of range"))
+    ),
+  )
+}
+
+///|
+/// The same reading as the compiler gives a regex literal. Until the two
+/// parsers were compared, `[\v]` was a backslash and a `v` here.
+test "parse/class_escapes_match_regex_literals" {
+  let cases : ReadOnlyArray[(String, String)] = [
+    ("[\\v]", "Char([(11, 11)])"),
+    ("[\\0]", "Char([(0, 0)])"),
+    ("[\\cA]", "Char([(1, 1)])"),
+    ("[\\cz]", "Char([(26, 26)])"),
+    ("[\\b\\f\\n\\r\\t]", "Char([(8, 10), (12, 13)])"),
+    ("[\\:\\&\\-]", "Char([(38, 38), (45, 45), (58, 58)])"),
+    ("[!-\\[]", "Char([(33, 91)])"),
+    ("\\cA", "Char([(1, 1)])"),
+    ("\\u{0000041}", "Char([(65, 65)])"),
+    ("[\\u{00000000041}]", "Char([(65, 65)])"),
+    ("[a&b]", "Char([(38, 38), (97, 98)])"),
+    ("\\0", "Char([(0, 0)])"),
+    ("[!-\\&&]", "Char([(33, 38)])"),
+    // Half of a surrogate pair is a code point no well-formed string has:
+    // it can be the end of a range and matches nothing on its own.
+    ("[\\u0000-\\uDFFF]", "Char([(0, 55295)])"),
+    ("[\\uD800-\\uFFFF]", "Char([(57344, 65535)])"),
+    ("[^\\uD800]", "Char([(0, 55295), (57344, 1114111)])"),
+    ("[a\\uD83D]", "Char([(97, 97)])"),
+    ("\\uD83D", "Alternation(<ReadOnlyArray: []>)"),
+    ("\\u{DE00}", "Alternation(<ReadOnlyArray: []>)"),
+    // The two halves of a surrogate pair name one code point.
+    ("\\uD83D\\uDE00", "Char([(128512, 128512)])"),
+    ("[\\uD83D\\uDE00-\\uD83D\\uDE4F]", "Char([(128512, 128591)])"),
+  ]
+  for case_ in cases {
+    let (pattern, expected) = case_
+    assert_eq(
+      @debug.to_string(parse(profile=profile_unicode(), mode=String, pattern)),
+      expected,
+    )
+  }
+}
+
+///|
+fn parse_error(pattern : String) -> String {
+  try {
+    ignore(parse(profile=profile_unicode(), mode=String, pattern))
+    "accepted"
+  } catch {
+    err => err.to_string()
+  }
+}
+
+///|
+/// What the compiler rejects in a regex literal is rejected here too, with a
+/// position, and never read as something else.
+test "parse/rejected_like_regex_literals" {
+  // An escape that means nothing in a class is not a backslash and a letter.
+  inspect(
+    parse_error("[\\q]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("[\\p{L}]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("[\\00]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("[\\x4]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("[\\c1]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("\\c1"),
+    content=(
+      #|ParserError at position 0: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_error("\\u{110000}"),
+    content=(
+      #|ParserError at position 10: Character out of range
+    ),
+  )
+  // A dash is only the middle of a range.
+  inspect(
+    parse_error("[a-b-c]"),
+    content=(
+      #|ParserError at position 4: A dash in a character class must be between the two ends of a range, use \- to match a literal dash
+    ),
+  )
+  inspect(
+    parse_error("[[:digit:]-a]"),
+    content=(
+      #|ParserError at position 10: A dash in a character class must be between the two ends of a range, use \- to match a literal dash
+    ),
+  )
+  inspect(
+    parse_error("[[:digit:]-]"),
+    content=(
+      #|ParserError at position 10: A dash in a character class must be between the two ends of a range, use \- to match a literal dash
+    ),
+  )
+  inspect(
+    parse_error("\\00"),
+    content=(
+      #|ParserError at position 0: Invalid escape sequence
+    ),
+  )
+  // `&&`, `--` and an unescaped `[` are kept for set operations and nested
+  // classes.
+  inspect(
+    parse_error("[!-&&]"),
+    content=(
+      #|ParserError at position 3: Unsupported character class set expression
+    ),
+  )
+  inspect(
+    parse_error("[&-&&]"),
+    content=(
+      #|ParserError at position 3: Unsupported character class set expression
+    ),
+  )
+  inspect(
+    parse_error("[&&]"),
+    content=(
+      #|ParserError at position 1: Unsupported character class set expression
+    ),
+  )
+  inspect(
+    parse_error("[a&&b]"),
+    content=(
+      #|ParserError at position 2: Unsupported character class set expression
+    ),
+  )
+  inspect(
+    parse_error("[a--b]"),
+    content=(
+      #|ParserError at position 2: Unsupported character class set expression
+    ),
+  )
+  inspect(
+    parse_error("[!-[]"),
+    content=(
+      #|ParserError at position 3: Unsupported nested character class
+    ),
+  )
+  // Two groups cannot share a name.
+  inspect(
+    parse_error("(?<x>a)(?<x>b)"),
+    content=(
+      #|ParserError at position 7: Duplicate capture group name
+    ),
+  )
+  inspect(
+    parse_error("(?<x>a)|(?<x>b)"),
+    content=(
+      #|ParserError at position 8: Duplicate capture group name
+    ),
+  )
+  inspect(
+    parse_error("(?<x>a)(?<y>b)"),
+    content=(
+      #|accepted
+    ),
+  )
+}
+
+///|
+/// Found by comparing the two parsers on random patterns: a range cut off by
+/// the end of the pattern aborted instead of raising.
+test "parse/unterminated_range_is_an_error" {
+  inspect(
+    parse_error("[a-"),
+    content=(
+      #|ParserError at position 3: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_error("[a-b"),
+    content=(
+      #|ParserError at position 4: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_error("[\\:z-"),
+    content=(
+      #|ParserError at position 5: Unclosed character class
+    ),
+  )
+}
+
+///|
+/// Found in review: the parser recurses once per level of nesting, and a
+/// pattern that only nests overflowed the stack: past 100 levels on the wasm
+/// backend, past a few hundred on wasm-gc and JavaScript. The limit is the
+/// same as in a regex literal.
+test "parse/nesting_depth" {
+  fn nested(depth : Int) -> String {
+    "(?:".repeat(depth) + "a" + ")".repeat(depth)
+  }
+
+  inspect(
+    parse_error(nested(128)),
+    content=(
+      #|accepted
+    ),
+  )
+  inspect(
+    parse_error(nested(129)),
+    content=(
+      #|ParserError at position 387: Groups are nested too deeply, the supported limit is 128 levels
+    ),
+  )
+  inspect(
+    parse_error(nested(100_000)),
+    content=(
+      #|ParserError at position 387: Groups are nested too deeply, the supported limit is 128 levels
+    ),
+  )
+  // Groups one after the other are not nested.
+  inspect(
+    parse_error("(a)".repeat(1000)),
+    content=(
+      #|accepted
+    ),
+  )
+}
+
+///|
+/// Bytes mode shares the class escapes and the rules of string mode.
+test "parse/bytes_mode_class_escapes" {
+  fn bytes(pattern : String) -> String {
+    @debug.to_string(parse(profile=profile_bytes(), mode=Bytes, pattern)) catch {
+      err => err.to_string()
+    }
+  }
+
+  inspect(
+    bytes("[\\v\\0\\cA]"),
+    content=(
+      #|Char([(0, 1), (11, 11)])
+    ),
+  )
+  inspect(
+    bytes("[\\x80-\\xFF]"),
+    content=(
+      #|Char([(128, 255)])
+    ),
+  )
+  inspect(
+    bytes("[\\q]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    bytes("[a-b-c]"),
+    content=(
+      #|ParserError at position 4: A dash in a character class must be between the two ends of a range, use \- to match a literal dash
+    ),
+  )
+  inspect(
+    bytes("\\u0041"),
+    content=(
+      #|ParserError at position 6: Unicode escape sequences are not allowed
     ),
   )
 }
