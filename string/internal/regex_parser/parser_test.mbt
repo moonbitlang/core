@@ -1432,7 +1432,7 @@ fn parse_result(pattern : String) -> String {
 /// `\\` and `v` where a regex literal matches a vertical tab, and `[\\p{L}]`
 /// matched five literal characters.
 test "parse/unknown_escape_in_class_is_an_error" {
-  // The escapes that work outside a class work inside it.
+  // A control-character escape means the same inside a class as outside it.
   inspect(
     parse_result("\\v"),
     content=(
@@ -1457,7 +1457,7 @@ test "parse/unknown_escape_in_class_is_an_error" {
       #|Char([(45, 45), (92, 93)])
     ),
   )
-  // Everything else is rejected, as it is outside a class.
+  // An escape that is not known is rejected, as it is outside a class.
   inspect(
     parse_result("\\q"),
     content=(
