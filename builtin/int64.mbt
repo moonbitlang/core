@@ -931,12 +931,6 @@ pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 ///|
-/// Convert `Int64` to `Float` (deprecated alias).
-#deprecated("Use `Float::from_int64` instead")
-/// Convert to `float`.
-pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
-
-///|
 /// Converts an unsigned 32-bit integer to an unsigned 64-bit integer by
 /// zero-extending it. The resulting value preserves the original number's
 /// magnitude while using 64 bits to represent it.
@@ -1845,9 +1839,3 @@ pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 /// }
 /// ```
 pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
-
-///|
-/// Convert `UInt64` to `Float` (deprecated alias).
-#deprecated("Use `Float::from_uint64` instead")
-/// Convert to `float`.
-pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

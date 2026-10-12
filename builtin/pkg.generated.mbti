@@ -275,8 +275,6 @@ pub fn Hasher::combine_byte(Self, Byte) -> Unit
 pub fn Hasher::combine_bytes(Self, Bytes) -> Unit
 pub fn Hasher::combine_char(Self, Char) -> Unit
 pub fn Hasher::combine_double(Self, Double) -> Unit
-#deprecated
-pub fn Hasher::combine_float(Self, Float) -> Unit
 pub fn Hasher::combine_int(Self, Int) -> Unit
 pub fn Hasher::combine_int64(Self, Int64) -> Unit
 pub fn Hasher::combine_string(Self, String) -> Unit
@@ -541,12 +539,8 @@ pub fn Byte::shr(Byte, Int) -> Byte
 pub fn Byte::sub(Byte, Byte) -> Byte
 pub fn Byte::to_char(Byte) -> Char
 pub fn Byte::to_double(Byte) -> Double
-#deprecated
-pub fn Byte::to_float(Byte) -> Float
 pub fn Byte::to_hex(Byte) -> String
 pub fn Byte::to_int(Byte) -> Int
-#deprecated
-pub fn Byte::to_int16(Byte) -> Int16
 pub fn Byte::to_int64(Byte) -> Int64
 pub fn Byte::to_string(Byte) -> String
 pub fn Byte::to_uint(Byte) -> UInt
@@ -618,8 +612,6 @@ pub fn Int::mul(Int, Int) -> Int
 pub fn Int::neg(Int) -> Int
 pub fn Int::next_power_of_two(Int) -> Int
 pub fn Int::popcnt(Int) -> Int
-#deprecated
-pub fn Int::reinterpret_as_float(Int) -> Float
 pub fn Int::reinterpret_as_uint(Int) -> UInt
 #deprecated
 pub fn Int::shl(Int, Int) -> Int
@@ -629,10 +621,6 @@ pub fn Int::sub(Int, Int) -> Int
 pub fn Int::to_byte(Int) -> Byte
 pub fn Int::to_char(Int) -> Char?
 pub fn Int::to_double(Int) -> Double
-#deprecated
-pub fn Int::to_float(Int) -> Float
-#deprecated
-pub fn Int::to_int16(Int) -> Int16
 pub fn Int::to_int64(Int) -> Int64
 pub fn Int::to_string(Int, radix? : Int) -> String
 #deprecated
@@ -677,8 +665,6 @@ pub fn Int64::shr(Int64, Int) -> Int64
 pub fn Int64::sub(Int64, Int64) -> Int64
 pub fn Int64::to_byte(Int64) -> Byte
 pub fn Int64::to_double(Int64) -> Double
-#deprecated
-pub fn Int64::to_float(Int64) -> Float
 pub fn Int64::to_int(Int64) -> Int
 pub fn Int64::to_string(Int64, radix? : Int) -> String
 pub fn Int64::to_uint16(Int64) -> UInt16
@@ -708,8 +694,6 @@ pub fn UInt::min(UInt, UInt) -> UInt
 pub fn UInt::mod(UInt, UInt) -> UInt
 pub fn UInt::mul(UInt, UInt) -> UInt
 pub fn UInt::popcnt(UInt) -> Int
-#deprecated
-pub fn UInt::reinterpret_as_float(UInt) -> Float
 pub fn UInt::reinterpret_as_int(UInt) -> Int
 #deprecated
 pub fn UInt::shl(UInt, Int) -> UInt
@@ -718,8 +702,6 @@ pub fn UInt::shr(UInt, Int) -> UInt
 pub fn UInt::sub(UInt, UInt) -> UInt
 pub fn UInt::to_byte(UInt) -> Byte
 pub fn UInt::to_double(UInt) -> Double
-#deprecated
-pub fn UInt::to_float(UInt) -> Float
 #deprecated
 pub fn UInt::to_int(UInt) -> Int
 pub fn UInt::to_string(UInt, radix? : Int) -> String
@@ -783,8 +765,6 @@ pub fn UInt64::sub(UInt64, UInt64) -> UInt64
 pub fn UInt64::to_be_bytes(UInt64) -> Bytes
 pub fn UInt64::to_byte(UInt64) -> Byte
 pub fn UInt64::to_double(UInt64) -> Double
-#deprecated
-pub fn UInt64::to_float(UInt64) -> Float
 pub fn UInt64::to_int(UInt64) -> Int
 #deprecated
 pub fn UInt64::to_int64(UInt64) -> Int64
@@ -830,8 +810,6 @@ pub fn Double::round(Double) -> Double
 pub fn Double::signum(Double) -> Double
 pub fn Double::sqrt(Double) -> Double
 pub fn Double::sub(Double, Double) -> Double
-#deprecated
-pub fn Double::to_float(Double) -> Float
 pub fn Double::to_int(Double) -> Int
 pub fn Double::to_int64(Double) -> Int64
 pub fn Double::to_string(Double) -> String
