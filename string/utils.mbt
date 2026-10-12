@@ -13,19 +13,6 @@
 // limitations under the License.
 
 ///|
-fn code_point_of_surrogate_pair(leading : UInt16, trailing : UInt16) -> Char {
-  ((leading - 0xD800).to_int() * 0x400 + trailing.to_int() - 0xDC00 + 0x10000).unsafe_to_char()
-}
-
-///|
-test "code_point_of_surrogate_pair" {
-  let s = "😀"
-  let leading = s.code_unit_at(0)
-  let trailing = s.code_unit_at(1)
-  inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
-}
-
-///|
 test "is_leading_surrogate" {
   inspect("🤣".code_unit_at(0).is_leading_surrogate(), content="true")
   inspect("🤣".code_unit_at(1).is_leading_surrogate(), content="false")
