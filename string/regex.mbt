@@ -50,6 +50,8 @@ pub struct Regex {
 /// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
 /// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
 ///
+/// Groups can be nested at most 64 deep.
+///
 /// For full grammar and semantics, see:
 /// <https://github.com/moonbitlang/lexmatch_spec>
 ///
