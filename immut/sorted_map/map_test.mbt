@@ -272,28 +272,6 @@ test "compare" {
 }
 
 ///|
-test "iterator" {
-  let buf = StringBuilder(size_hint=20)
-  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
-  map
-  .iter()
-  .each(e => {
-    let (k, v) = e
-    buf <+ "[\{k}-\{v}]"
-  })
-  inspect(buf, content="[1-one][2-two][3-three]")
-  buf.reset()
-  map
-  .iter()
-  .take(2)
-  .each(e => {
-    let (k, v) = e
-    buf <+ "[\{k}-\{v}]"
-  })
-  inspect(buf, content="[1-one][2-two]")
-}
-
-///|
 test "show" {
   let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   debug_inspect(

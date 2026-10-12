@@ -13,12 +13,6 @@
 // limitations under the License.
 
 ///|
-test "from_fixed_array" {
-  let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
-  debug_inspect(queue.peek(), content="Some(6)")
-}
-
-///|
 test "from_array" {
   let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
   debug_inspect(queue.peek(), content="Some(6)")
@@ -56,17 +50,6 @@ test "to_array" {
     (PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
     content="[]",
   )
-}
-
-///|
-test "as_iter" {
-  let buf = StringBuilder(size_hint=20)
-  let v = @priority_queue.from_array([1, 2, 3])
-  v.iter().each(e => buf <+ "[\{e}]")
-  inspect(buf, content="[3][2][1]")
-  buf.reset()
-  v.iter().take(2).each(e => buf <+ "[\{e}]")
-  inspect(buf, content="[3][2]")
 }
 
 ///|

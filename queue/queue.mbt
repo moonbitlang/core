@@ -316,15 +316,6 @@ pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
 }
 
 ///|
-test "from_fixed_array_2" {
-  let q = from_array([1, 2, 3, 4])
-  q.push(11)
-  @test.assert_eq(q, from_array([1, 2, 3, 4, 11]))
-  q.unsafe_pop() |> ignore
-  @test.assert_eq(q, from_array([2, 3, 4, 11]))
-}
-
-///|
 test "from_array_2" {
   let q = from_array([1, 2, 3, 4])
   q.push(11)

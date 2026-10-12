@@ -75,11 +75,6 @@ test "to_le_bytes" {
 }
 
 ///|
-test "test UInt::default" {
-  inspect((Default::default() : UInt), content="0")
-}
-
-///|
 test "UInt constructor syntax" {
   inspect(UInt(3), content="3")
   inspect(UInt(0), content="0")

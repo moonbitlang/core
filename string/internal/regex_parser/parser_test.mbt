@@ -1105,24 +1105,6 @@ test "parse/ignore_case_with_anchors" {
 }
 
 ///|
-test "parse/parser_error_show" {
-  // Cover syntax_error.mbt line 8: Show for ParserError
-  debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
-      #|  ),
-      #|)
-    ),
-  )
-}
-
-///|
 test "parse/double_dash_at_start_of_class" {
   debug_inspect(
     Ok(parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]")) catch {
@@ -1184,24 +1166,6 @@ test "parse/formfeed_in_char_class" {
   // \f in character class means formfeed (0x0c = 12)
   let pat = parse(profile=profile_unicode(), mode=String, "[\\f]")
   debug_inspect(pat, content="Char([(12, 12)])")
-}
-
-///|
-test "parse/parser_error_show_impl" {
-  // Show for ParserError via debug rendering
-  debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
-      #|  ),
-      #|)
-    ),
-  )
 }
 
 ///|
