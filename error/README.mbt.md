@@ -240,7 +240,7 @@ test "error composition" {
 2. **Provide meaningful messages**: Include context and actionable information in error messages
 3. **Handle errors at appropriate levels**: Don't catch errors too early; let them propagate to where they can be properly handled
 4. **Use `try!` for operations that should not fail**: This will panic if an error occurs, making failures visible during development
-5. **Use `try?` for recoverable errors**: This returns a `Result` type that can be pattern matched
+5. **Convert recoverable errors to `Result` explicitly**: Write `Ok(f()) catch { e => Err(e) }` to get a `Result` that can be pattern matched
 6. **Implement proper cleanup**: Use the `protect` pattern or similar constructs for resource management
 
 ## Performance Notes

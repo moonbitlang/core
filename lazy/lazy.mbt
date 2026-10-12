@@ -49,9 +49,10 @@ priv enum LazyState[A] {
 ///   exception and re-raise on every retry" (OCaml-style) and "retry on
 ///   each force" (Rust-style); both are defensible but neither is
 ///   obviously right. The recommended pattern for a fallible deferred
-///   computation is to make the failure data: `Lazy(() => try? f())`
-///   produces a `Lazy[Result[A, Error]]`, and the consumer handles the
-///   result at the call site it controls.
+///   computation is to make the failure data:
+///   `Lazy(() => Ok(f()) catch { e => Err(e) })` produces a
+///   `Lazy[Result[A, Error]]`, and the consumer handles the result at the
+///   call site it controls.
 ///
 /// - **No async.** Async memoization additionally needs an in-flight
 ///   state to handle two coroutines racing to force the same cell, which
