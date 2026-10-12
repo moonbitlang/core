@@ -154,30 +154,3 @@ pub fn Bool::to_uint16(self : Bool) -> UInt16 {
     0
   }
 }
-
-///|
-/// Converts a boolean value to a 16-bit integer representation.
-///
-/// Parameters:
-///
-/// * `self` : The boolean value to be converted.
-///
-/// Returns a 16-bit integer, where `true` is converted to 1 and `false` is
-/// converted to 0.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(true.to_int16(), content="1")
-///   inspect(false.to_int16(), content="0")
-/// }
-/// ```
-///
-pub fn Bool::to_int16(self : Bool) -> Int16 {
-  if self {
-    1
-  } else {
-    0
-  }
-}

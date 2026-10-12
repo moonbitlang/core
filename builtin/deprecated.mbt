@@ -163,3 +163,18 @@ pub fn Double::until(
 ) -> Iter[Double] {
   until_impl(self, end, step, inclusive)
 }
+
+///|
+/// Converts a boolean value to a 16-bit integer: `true` becomes 1 and `false`
+/// becomes 0.
+///
+/// Deprecated: use `Int16::from_int(b.to_int())` instead.
+#deprecated("Use `Int16::from_int(b.to_int())` instead")
+#coverage.skip
+pub fn Bool::to_int16(self : Bool) -> Int16 {
+  if self {
+    1
+  } else {
+    0
+  }
+}

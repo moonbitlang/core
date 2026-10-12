@@ -511,6 +511,7 @@ pub fn Bool::hash(Bool) -> Int
 #deprecated
 pub fn Bool::op_compare(Bool, Bool) -> Int
 pub fn Bool::to_int(Bool) -> Int
+#deprecated
 pub fn Bool::to_int16(Bool) -> Int16
 pub fn Bool::to_int64(Bool) -> Int64
 pub fn Bool::to_string(Bool) -> String
