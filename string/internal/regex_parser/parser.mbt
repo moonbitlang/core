@@ -25,6 +25,10 @@ priv enum CharOrClass {
 const MAX_QUANT = 256
 
 ///|
+/// Deepest nesting of groups accepted, the same as in a regex literal.
+const MAX_GROUP_DEPTH = 128
+
+///|
 fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
@@ -63,7 +67,7 @@ fn Parser::class_atom(
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
       let c = hex2i(hex)
-      guard ctx.profile.valid.contains(c) else {
+      guard ctx.escape_in_range(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
       (rest2, Char(c))
@@ -73,7 +77,7 @@ fn Parser::class_atom(
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
       let c = hex_code_point(hex)
-      guard ctx.profile.valid.contains(c) else {
+      guard ctx.escape_in_range(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
       (rest, Char(c))
@@ -136,6 +140,12 @@ fn Parser::class_contents(
               ['-', '-', ..] =>
                 raise ctx.error_at(rest, HINT_UNSUPPORTED_CLASS_SET_EXPRESSION)
               ['-', ']', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
+              ['-', '&', '&', ..] =>
+                raise ctx.error_at(
+                  rest,
+                  offset=1,
+                  HINT_UNSUPPORTED_CLASS_SET_EXPRESSION,
+                )
               ['-', .. rest] => {
                 // An unescaped `[` is not a range end; `[:name:]` is read as
                 // a POSIX class and rejected below.
@@ -267,10 +277,28 @@ fn Parser::quant_bound(
 }
 
 ///|
-fn Parser::term(
+priv enum GroupKind {
+  Capturing(String?)
+  NonCapturing
+  IgnoreCase
+}
+
+///|
+/// How a term starts: something read in full, with whether it is an
+/// assertion, or the opening of a group whose body comes next.
+priv enum TermStart {
+  Atom(StringView, @re.Pattern, Bool)
+  Group(StringView, GroupKind)
+}
+
+///|
+/// Read the start of a term. The body of a group is not parsed here but by
+/// the caller: this function has a large frame, and nesting would otherwise
+/// keep one of them on the stack per level.
+fn Parser::term_start(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, @re.Pattern) raise ParserError {
+) -> TermStart raise ParserError {
   let (rest, pat, is_assertion) = lexmatch rest with longest {
     (re"^\^", after=rest) => (rest, @re.start_of_input, true)
     (re"^\$", after=rest) => (rest, @re.end_of_input, true)
@@ -287,6 +315,8 @@ fn Parser::term(
       (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
     (re"^\\c" + (re"[A-Za-z]" as letter), after=rest) =>
       (rest, @re.char(@re.RecharSet::char(letter.to_int() & 0x1F)), false)
+    (re"^\\0[0-9]", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
+    (re"^\\0", after=rest) => (rest, @re.char(@re.RecharSet::char(0)), false)
     (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) =>
       (rest, @re.char(@re.RecharSet::char(hex2i(hex))), false)
     (
@@ -307,20 +337,20 @@ fn Parser::term(
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
       let c = hex2i(hex)
-      guard ctx.profile.valid.contains(c) else {
+      guard ctx.escape_in_range(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(@re.RecharSet::char(c)), false)
+      (rest, @re.char(@re.RecharSet::char(c) & ctx.profile.valid), false)
     }
     (re"^\\u[{]" + (re"[0-9A-Fa-f]+" as hex) + re"[}]", after=rest) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
       let c = hex_code_point(hex)
-      guard ctx.profile.valid.contains(c) else {
+      guard ctx.escape_in_range(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(@re.RecharSet::char(c)), false)
+      (rest, @re.char(@re.RecharSet::char(c) & ctx.profile.valid), false)
     }
     (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"]" as c), after=rest) =>
@@ -340,39 +370,17 @@ fn Parser::term(
       guard !ctx.group_names.contains(name) else {
         raise ctx.error_at(rest, HINT_DUPLICATE_GROUP_NAME)
       }
-      ctx.group_names.push(name)
-      let (rest, pat) = Parser::parse_group_continue(rest2, ctx~)
-      (rest, @re.capture(name~, pat), false)
+      ctx.group_names[name] = ()
+      return Group(rest2, Capturing(Some(name)))
     }
-    (re"^\(\?:", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
-      (rest, pat, false)
-    }
+    (re"^\(\?:", after=rest) => return Group(rest, NonCapturing)
     (re"^\(\?<", after=_) => raise ctx.error_at(rest, HINT_INVALID_GROUP)
     (re"^\(\?" + (re"[A-Za-z]+" as modifier) + re":", after=rest) =>
       match modifier {
-        "i" => {
-          let need_process = !ctx.ignore_case
-          let (rest, pat) = Parser::parse_group_continue(rest, ctx={
-            ..ctx,
-            ignore_case: true,
-          })
-          (
-            rest,
-            if need_process {
-              pattern_map_char(pat, ignore_case)
-            } else {
-              pat
-            },
-            false,
-          )
-        }
+        "i" => return Group(rest, IgnoreCase)
         _ => raise ctx.error_at(rest, HINT_INVALID_GROUP)
       }
-    (re"^\(", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
-      (rest, @re.capture(pat), false)
-    }
+    (re"^\(", after=rest) => return Group(rest, Capturing(None))
     (re"^\[\^?:[a-z]+:\]", after=_) =>
       raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
     (re"^\[", after=_) => {
@@ -388,6 +396,41 @@ fn Parser::term(
       (rest2, @re.char(@re.RecharSet::char(c.to_int())), false)
     }
     _ => raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)
+  }
+  Atom(rest, pat, is_assertion)
+}
+
+///|
+fn Parser::term(
+  rest : StringView,
+  ctx~ : ParserContext,
+) -> (StringView, @re.Pattern) raise ParserError {
+  let (rest, pat, is_assertion) = match Parser::term_start(rest, ctx~) {
+    Atom(rest, pat, is_assertion) => (rest, pat, is_assertion)
+    Group(rest, Capturing(name)) => {
+      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
+      (rest, @re.capture(name?, pat), false)
+    }
+    Group(rest, NonCapturing) => {
+      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
+      (rest, pat, false)
+    }
+    Group(rest, IgnoreCase) => {
+      let need_process = !ctx.ignore_case
+      let (rest, pat) = Parser::parse_group_continue(rest, ctx={
+        ..ctx,
+        ignore_case: true,
+      })
+      (
+        rest,
+        if need_process {
+          pattern_map_char(pat, ignore_case)
+        } else {
+          pat
+        },
+        false,
+      )
+    }
   }
   if !is_assertion {
     let (rest, quantifier) = Parser::quantifier_opt(rest, ctx~)
@@ -424,6 +467,12 @@ fn Parser::parse_group_continue(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Pattern) raise ParserError {
+  // The parser recurses once per level, so a pattern that only nests would
+  // otherwise overflow the stack.
+  guard ctx.depth < MAX_GROUP_DEPTH else {
+    raise ctx.error_at(rest, HINT_NESTING_TOO_DEEP)
+  }
+  let ctx = { ..ctx, depth: ctx.depth + 1, }
   let (rest, pat) = Parser::disjunction(rest, ctx~)
   match rest {
     [')', .. rest] => (rest, pat)

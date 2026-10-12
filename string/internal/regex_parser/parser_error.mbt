@@ -100,3 +100,6 @@ const HINT_UNESCAPED_DASH = "A dash in a character class must be between the two
 
 ///|
 const HINT_DUPLICATE_GROUP_NAME = "Duplicate capture group name"
+
+///|
+const HINT_NESTING_TOO_DEEP = "Groups are nested too deeply, the supported limit is 128 levels"
