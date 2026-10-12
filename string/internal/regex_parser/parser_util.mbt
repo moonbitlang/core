@@ -34,7 +34,6 @@ fn pattern_map_char(
 ) -> @re.Pattern {
   match pat.desc {
     Capture(name~, pat) => @re.capture(name?, pattern_map_char(pat, f))
-    Preference(pref, pat) => @re.preference(pref, pattern_map_char(pat, f))
     Quantifier(quant, pat) => @re.quantifier(pattern_map_char(pat, f), quant)
     Alternation(pats) => @re.alt(pats.map(p => pattern_map_char(p, f)))
     Sequence(pats) => @re.seq(pats.map(p => pattern_map_char(p, f)))

@@ -28,14 +28,6 @@ pub fn Category::not_word_start() -> Self
 pub fn Category::word() -> Self
 pub impl Add for Category
 
-pub(all) enum Preference {
-  Shortest
-  Longest
-  First
-} derive(Eq, Hash, @debug.Debug)
-pub fn Preference::equal(Self, Self) -> Bool
-pub fn Preference::hash(Self) -> Int
-
 pub struct Profile {
   lb : Int
   ub : Int
