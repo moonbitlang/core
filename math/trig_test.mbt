@@ -505,6 +505,25 @@ test "atan2 double - large ratio cases" {
 }
 
 ///|
+test "atan2 double - large ratio with negative x" {
+  // |y/x| > 2^60 with x < 0 must still round to +-pi/2 as in fdlibm
+  inspect(@math.atan2(1.0, -5.0e-324), content="1.5707963267948966")
+  inspect(@math.atan2(-1.0, -5.0e-324), content="-1.5707963267948966")
+  inspect(@math.atan2(1.0e200, -1.0), content="1.5707963267948966")
+  inspect(@math.atan2(-1.0e200, -1.0), content="-1.5707963267948966")
+}
+
+///|
+test "acos double - correction term for x > 0.5" {
+  // fdlibm clears the low word of sqrt(z) so that df * df is exact
+  inspect(@math.acos(0.8817173517375914), content="0.49130624835428005")
+  inspect(@math.acos(0.77949211900723), content="0.6769416968997807")
+  inspect(@math.acos(0.9927264333687532), content="0.12068472343891742")
+  inspect(@math.acos(0.8358815543230681), content="0.5810594906328264")
+  inspect(@math.acos(0.6575156393348061), content="0.8532796828705003")
+}
+
+///|
 test "tan double - coverage for special paths" {
   // Test values within PI_OVER_4 (line 43-44)
   inspect(@math.tan(0.5), content="0.5463024898437905")
