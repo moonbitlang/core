@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let update_bench_set : @hashset.HashSet[Int] = @hashset.from_iter(
+let update_bench_set : @hashset.HashSet[Int32] = @hashset.from_iter(
   (0).until(100_000),
 )
 

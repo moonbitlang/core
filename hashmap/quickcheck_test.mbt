@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn model_set(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
+fn model_set(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, entry in model {
     if entry.0 == key {
       model[i] = (key, value)
@@ -24,7 +24,7 @@ fn model_set(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
 }
 
 ///|
-fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
+fn model_remove(model : Array[(Int32, Int32)], key : Int32) -> Unit {
   for i, entry in model {
     if entry.0 == key {
       model.remove(i) |> ignore
@@ -35,8 +35,8 @@ fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
 
 ///|
 fn agrees_with_model(
-  map : @hashmap.HashMap[Int, Int],
-  model : Array[(Int, Int)],
+  map : @hashmap.HashMap[Int32, Int32],
+  model : Array[(Int32, Int32)],
 ) -> Bool {
   if map.length() != model.length() {
     return false
@@ -55,9 +55,9 @@ fn agrees_with_model(
 
 ///|
 test "quickcheck: mutations agree with an association-array model" {
-  @quickcheck.check((ops : Array[(Int, Int)]) => {
-    let map : @hashmap.HashMap[Int, Int] = HashMap([])
-    let model : Array[(Int, Int)] = []
+  @quickcheck.check((ops : Array[(Int32, Int32)]) => {
+    let map : @hashmap.HashMap[Int32, Int32] = HashMap([])
+    let model : Array[(Int32, Int32)] = []
     for op in ops {
       // A small key space deliberately generates replacements and removals.
       let key = op.0 % 31

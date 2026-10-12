@@ -21,7 +21,8 @@ let profile : @regex_engine.Profile = Profile(
     @regex_engine.RecharSet::char('_'),
   category=c => {
     match c {
-      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
+      'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' =>
+        @regex_engine.Category::word()
       '\n' => @regex_engine.Category::newline()
       _ => @regex_engine.Category::not_word()
     }

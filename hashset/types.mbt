@@ -14,8 +14,8 @@
 
 ///|
 priv struct Entry[K] {
-  mut psl : Int
-  hash : Int
+  mut psl : Int32
+  hash : Int32
   key : K
 } derive(@debug.Debug)
 
@@ -39,10 +39,10 @@ priv struct Entry[K] {
 /// ```
 struct HashSet[K] {
   mut entries : FixedArray[Entry[K]?]
-  mut size : Int // active key count
-  mut capacity : Int // current capacity
-  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
-  mut grow_at : Int // threshold that triggers grow
+  mut size : Int32 // active key count
+  mut capacity : Int32 // current capacity
+  mut capacity_mask : Int32 // capacity_mask = capacity - 1, used to find idx
+  mut grow_at : Int32 // threshold that triggers grow
 }
 
 ///|

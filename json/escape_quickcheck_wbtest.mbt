@@ -23,11 +23,11 @@
 /// of the 0x20 boundary, and surrogate halves (whose high bit set exercises
 /// the unsigned SIMD comparisons). With `allow_surrogates=false` the
 /// surrogate range is remapped so the string is well-formed UTF-16.
-fn adversarial_string(seeds : Array[Int], allow_surrogates~ : Bool) -> String {
+fn adversarial_string(seeds : Array[Int32], allow_surrogates~ : Bool) -> String {
   let buf = StringBuilder(size_hint=seeds.length())
   for seed in seeds {
     let code = adversarial_unit(seed)
-    let code = if !allow_surrogates && code is (0xD800..=0xDFFF) {
+    let code = if !allow_surrogates && code is (0xD800..<=0xDFFF) {
       code ^ 0x2000
     } else {
       code
@@ -39,7 +39,7 @@ fn adversarial_string(seeds : Array[Int], allow_surrogates~ : Bool) -> String {
 
 ///|
 /// The code unit `adversarial_string` derives from `seed`.
-fn adversarial_unit(seed : Int) -> UInt16 {
+fn adversarial_unit(seed : Int32) -> UInt16 {
   match seed & 0xF {
     0 => '"'
     1 => '\\'
@@ -60,14 +60,14 @@ fn adversarial_unit(seed : Int) -> UInt16 {
 /// Like `adversarial_string`, but valid UTF-16: every surrogate the seeds pick
 /// is emitted as a complete pair, so surrogate pairs sit next to escapes
 /// without ever being split.
-fn valid_adversarial_string(seeds : Array[Int]) -> String {
+fn valid_adversarial_string(seeds : Array[Int32]) -> String {
   let buf = StringBuilder(size_hint=seeds.length() * 2)
   for seed in seeds {
     let code = adversarial_unit(seed).to_int()
-    let char = if code is (0xD800..=0xDBFF) {
+    let char = if code is (0xD800..<=0xDBFF) {
       // The supplementary character whose leading surrogate is `code`.
       0x10000 + ((code - 0xD800) << 10)
-    } else if code is (0xDC00..=0xDFFF) {
+    } else if code is (0xDC00..<=0xDFFF) {
       // The supplementary character whose trailing surrogate is `code`.
       0x10000 + (code - 0xDC00)
     } else {
@@ -107,7 +107,7 @@ fn model_escape(str : String, escape_slash : Bool) -> String {
 
 ///|
 test "quickcheck: need_escape agrees with the scalar reference" {
-  @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Bool)) => {
     let (seeds, escape_slash) = input
     let str = adversarial_string(seeds, allow_surrogates=true)
     need_escape(str, escape_slash) ==
@@ -129,7 +129,7 @@ test "quickcheck: write_escaped matches the per-code-unit model" {
     write_escaped(buf, str, escape_slash~)
     buf.to_string()
   }
-  @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Bool)) => {
     let (seeds, escape_slash) = input
     let str = valid_adversarial_string(seeds)
     guard actual(str, escape_slash) == model_escape(str, escape_slash) else {
@@ -149,7 +149,7 @@ test "quickcheck: write_escaped matches the per-code-unit model" {
 /// implementation of the same grammar. Surrogate halves are excluded because
 /// well-formed MoonBit strings contain no unpaired surrogates.
 test "quickcheck: stringify/parse roundtrip on adversarial strings" {
-  @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Bool)) => {
     let (seeds, escape_slash) = input
     let json = Json(adversarial_string(seeds, allow_surrogates=false))
     parse(json.stringify(escape_slash~)) == json
@@ -163,7 +163,7 @@ test "quickcheck: stringify/parse roundtrip on adversarial strings" {
 /// covered for both `escape_slash` values.
 test "need_escape boundary sweep" {
   let specials : Array[UInt16] = ['"', '\\', '\n', 0x00, 0x1F]
-  fn place(len : Int, pos : Int, special : UInt16) -> String {
+  fn place(len : Int32, pos : Int32, special : UInt16) -> String {
     let buf = StringBuilder(size_hint=len)
     for i in 0..<len {
       if i == pos {

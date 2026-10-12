@@ -16,7 +16,7 @@
 fn bench_retained_chunks(
   it : @bench.T,
   chunk : String,
-  chunk_count : Int,
+  chunk_count : Int32,
 ) -> Unit {
   let total = chunk.length() * chunk_count
   it.bench(fn() {

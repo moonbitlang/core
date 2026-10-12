@@ -59,7 +59,7 @@ fn div_round_even(a : @bigint.BigInt, b : @bigint.BigInt) -> @bigint.BigInt {
 ///
 /// `significand` is in `[2^52, 2^53)` for a normal number, or below `2^52`
 /// with `unbiased == -1074` for a subnormal.
-fn assemble(neg : Bool, significand : UInt64, unbiased : Int) -> Double {
+fn assemble(neg : Bool, significand : UInt64, unbiased : Int32) -> Double {
   let sign = if neg { 0x8000000000000000UL } else { 0UL }
   let bits = if significand < 0x10000000000000UL {
     // Subnormal (or zero): the exponent field is 0 and the significand is
@@ -77,7 +77,7 @@ fn assemble(neg : Bool, significand : UInt64, unbiased : Int) -> Double {
 /// or `None` when the magnitude overflows the format — matching the
 /// implementation's choice to report overflow as an error rather than as an
 /// infinity. Underflow is a signed zero, not an error.
-fn oracle_double(neg : Bool, digits : String, exponent : Int) -> Double? {
+fn oracle_double(neg : Bool, digits : String, exponent : Int32) -> Double? {
   let mantissa = @bigint.BigInt::from_string(digits)
   if mantissa.is_zero() {
     return Some(assemble(neg, 0UL, 0))
@@ -119,7 +119,11 @@ fn oracle_double(neg : Bool, digits : String, exponent : Int) -> Double? {
 
 ///|
 /// Compares `num / den` with `2^p` without dividing.
-fn scaled_compare(num : @bigint.BigInt, den : @bigint.BigInt, p : Int) -> Int {
+fn scaled_compare(
+  num : @bigint.BigInt,
+  den : @bigint.BigInt,
+  p : Int32,
+) -> Int32 {
   if p >= 0 {
     num.compare(den.shl(p))
   } else {
@@ -137,7 +141,7 @@ fn @bigint.BigInt::to_uint64_exact(self : @bigint.BigInt) -> UInt64 {
 ///|
 test "quickcheck: parse_double is the correctly rounded value" {
   @quickcheck.check(
-    (input : (Bool, Array[Int], Int, Int)) => {
+    (input : (Bool, Array[Int32], Int32, Int32)) => {
       let (neg, raw, len_code, exp_code) = input
       let exponent = wrap_index(exp_code, 760) - 380
       let lit = Literal::make(neg, raw, len_code, exponent)
@@ -157,7 +161,7 @@ test "quickcheck: parse_double is the correctly rounded value" {
 /// picks the wrong neighbour.
 test "quickcheck: parse_double rounds correctly at the boundaries" {
   @quickcheck.check(
-    (input : (UInt64, Int, Int)) => {
+    (input : (UInt64, Int32, Int32)) => {
       let (raw, exp_code, nudge) = input
       // Start from an actual double, take its exact decimal expansion, and
       // step a few units in the last decimal place. Halfway cases between

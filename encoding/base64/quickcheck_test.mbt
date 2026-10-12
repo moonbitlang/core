@@ -30,7 +30,7 @@ let invalid_chars : Array[Char] = ['$', '*', '-', '_', '#', '!', '?', '@']
 
 ///|
 /// Maps an arbitrary Int into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -46,7 +46,7 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 /// untouched.
 fn splice(
   text : String,
-  edits : Array[(Int, Int)],
+  edits : Array[(Int32, Int32)],
   alphabet : Array[Char],
 ) -> String {
   let chars = text.to_array()
@@ -88,7 +88,7 @@ test "padded and unpadded encodings decode alike" {
 /// ASCII whitespace may appear anywhere — including between the two padding
 /// characters and after them — without changing the decoded bytes.
 test "whitespace anywhere survives the round trip" {
-  @quickcheck.check((input : (Bytes, Array[(Int, Int)], Bool)) => {
+  @quickcheck.check((input : (Bytes, Array[(Int32, Int32)], Bool)) => {
     let (bytes, edits, padding) = input
     let text = splice(@base64.encode(bytes, padding~), edits, whitespace_chars)
     @base64.decode(text, ignore_whitespace=true) == bytes
@@ -99,7 +99,7 @@ test "whitespace anywhere survives the round trip" {
 /// `decode_lossy` skips invalid characters, so splicing them into an
 /// encoding must not disturb the round trip.
 test "decode_lossy round trips through invalid characters" {
-  @quickcheck.check((input : (Bytes, Array[(Int, Int)], Bool)) => {
+  @quickcheck.check((input : (Bytes, Array[(Int32, Int32)], Bool)) => {
     let (bytes, edits, padding) = input
     let text = splice(@base64.encode(bytes, padding~), edits, invalid_chars)
     @base64.decode_lossy(text) == bytes

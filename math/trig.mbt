@@ -23,7 +23,7 @@ const SIN_SWITCHOVER : Float = 201.15625
 const COS_SWITCHOVER : Float = 142.90625
 
 ///|
-fn mulh(a : UInt, b : UInt) -> UInt {
+fn mulh(a : UInt32, b : UInt32) -> UInt32 {
   let a = a.to_uint64()
   let b = b.to_uint64()
   let res = a * b
@@ -31,7 +31,7 @@ fn mulh(a : UInt, b : UInt) -> UInt {
 }
 
 ///|
-fn mul(a : UInt, b : UInt) -> (UInt, UInt) {
+fn mul(a : UInt32, b : UInt32) -> (UInt32, UInt32) {
   let a = a.to_uint64()
   let b = b.to_uint64()
   let res = a * b
@@ -39,7 +39,7 @@ fn mul(a : UInt, b : UInt) -> (UInt, UInt) {
 }
 
 ///|
-fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
+fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int32) {
   if x.abs() <= switch_over {
     let mut j : Float = 0.0
     let mut r : Float = 0.0
@@ -52,11 +52,11 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
     return (r, j.to_int())
   }
   let xispos = x > 0.0
-  let mut exp : Int = ((x.reinterpret_as_int() >> 23) & 0xff) - 126
+  let mut exp : Int32 = ((x.reinterpret_as_int() >> 23) & 0xff) - 126
   let ix = ((x.reinterpret_as_uint() & 0x007fffff) << 8) | 0x80000000
   let ind = exp >> 5
   exp = exp & 0x1f
-  let two_over_pi : ReadOnlyArray[UInt] = [
+  let two_over_pi : ReadOnlyArray[UInt32] = [
     0x00000000, 0x28be60db, 0x9391054a, 0x7f09d5f4, 0x7d4d3770, 0x36d8a566, 0x4f10e410,
     0000000000,
   ]
@@ -78,13 +78,13 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   let phi = h + (if plo < l { 1 } else { 0 })
   let l = ix * hi
   let mut phi = phi + l
-  let mut q : Int = (phi >> 30).reinterpret_as_int()
+  let mut q : Int32 = (phi >> 30).reinterpret_as_int()
   phi = phi & 0x3fffffff
   if (phi & 0x2000_0000) != 0 {
     phi -= 0x4000_0000
     q += 1
   }
-  let s : UInt = phi & 0x8000_0000
+  let s : UInt32 = phi & 0x8000_0000
   if phi >= 0x8000_0000 {
     phi = phi.lnot()
     plo = 0U - plo
@@ -138,7 +138,7 @@ fn cosf_poly(x : Float) -> Float {
 }
 
 ///|
-fn sin_cos_core(x : Float, q : Int) -> Float {
+fn sin_cos_core(x : Float, q : Int32) -> Float {
   let mut r = if (q & 1) != 0 { cosf_poly(x) } else { sinf_poly(x) }
   if (q & 2) != 0 {
     r = -r
@@ -311,7 +311,7 @@ pub fn asinf(x : Float) -> Float {
     return @float.not_a_number // asin(|x|>1) is NaN
   }
   if ix < 0x3f000000 {
-    if ix is (0x00800000..=0x39800000) {
+    if ix is (0x00800000..<=0x39800000) {
       return x
     }
     return x + x * r(x * x)

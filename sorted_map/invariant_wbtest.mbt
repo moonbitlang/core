@@ -32,10 +32,10 @@
 /// Recursively checks one node. `lower`/`upper` are exclusive bounds
 /// inherited from ancestors. Returns (recomputed_height, node_count).
 fn check_node(
-  node : Node[Int, Int]?,
-  lower : Int?,
-  upper : Int?,
-) -> (Int, Int) raise {
+  node : Node[Int32, Int32]?,
+  lower : Int32?,
+  upper : Int32?,
+) -> (Int32, Int32) raise {
   match node {
     None => (0, 0)
     Some(n) => {
@@ -66,7 +66,7 @@ fn check_node(
 
 ///|
 /// Verifies every structural invariant of the whole map.
-fn check_invariants(map : SortedMap[Int, Int]) -> Unit raise {
+fn check_invariants(map : SortedMap[Int32, Int32]) -> Unit raise {
   let (_, count) = check_node(map.root, None, None)
   if count != map.size {
     fail(
@@ -94,7 +94,7 @@ fn Rand::next(self : Rand) -> UInt64 {
 
 ///|
 /// Uniform-ish integer in [0, limit).
-fn Rand::below(self : Rand, limit : Int) -> Int {
+fn Rand::below(self : Rand, limit : Int32) -> Int32 {
   (self.next() & 0x7FFFFFFFUL).to_int() % limit
 }
 
@@ -102,15 +102,15 @@ fn Rand::below(self : Rand, limit : Int) -> Int {
 /// Checks that the map agrees with a naive model: same length, same
 /// lookups over the whole key space, and ascending iteration order.
 fn check_against_model(
-  map : SortedMap[Int, Int],
-  model : Map[Int, Int],
-  key_space : Int,
+  map : SortedMap[Int32, Int32],
+  model : Map[Int32, Int32],
+  key_space : Int32,
 ) -> Unit raise {
   @test.assert_eq(map.length(), model.length())
   for k in 0..<key_space {
     @test.assert_eq(map.get(k), model.get(k))
   }
-  let mut prev : Int? = None
+  let mut prev : Int32? = None
   map.each((k, _) => {
     if prev is Some(p) {
       @test.assert_eq(p < k, true)
@@ -125,19 +125,23 @@ fn check_against_model(
 /// Random interleaved set/remove/update_or_default sequences over a small
 /// key space (lots of collisions and removes of absent keys), invariants
 /// checked after every single operation.
-fn random_ops_scenario(seed : UInt64, ops : Int, key_space : Int) -> Unit raise {
+fn random_ops_scenario(
+  seed : UInt64,
+  ops : Int32,
+  key_space : Int32,
+) -> Unit raise {
   let rng = Rand::{ state: seed, }
-  let map : SortedMap[Int, Int] = new_sorted_map()
-  let model : Map[Int, Int] = Map([])
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
+  let model : Map[Int32, Int32] = Map([])
   for i in 0..<ops {
     let k = rng.below(key_space)
     match rng.below(10) {
-      0..=5 => {
+      0..<=5 => {
         let v = rng.below(1000)
         map.set(k, v)
         model[k] = v
       }
-      6..=8 => {
+      6..<=8 => {
         map.remove(k)
         model.remove(k)
       }
@@ -174,7 +178,7 @@ test "random ops keep invariants (large key space, deeper trees)" {
 
 ///|
 test "ascending inserts keep invariants" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for i in 0..<300 {
     map.set(i, i)
     check_invariants(map)
@@ -184,7 +188,7 @@ test "ascending inserts keep invariants" {
 
 ///|
 test "descending inserts keep invariants" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for i in 0..<300 {
     map.set(300 - i, i)
     check_invariants(map)
@@ -194,7 +198,7 @@ test "descending inserts keep invariants" {
 
 ///|
 test "zigzag inserts keep invariants" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for i in 0..<150 {
     map.set(i, i)
     check_invariants(map)
@@ -206,7 +210,7 @@ test "zigzag inserts keep invariants" {
 
 ///|
 test "ascending inserts then ascending removals keep invariants" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for i in 0..<300 {
     map.set(i, i)
   }
@@ -221,7 +225,7 @@ test "ascending inserts then ascending removals keep invariants" {
 
 ///|
 test "repeated root removal keeps invariants" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   let rng = Rand::{ state: 42UL, }
   for _ in 0..<300 {
     map.set(rng.below(100000), 0)
@@ -243,7 +247,7 @@ test "from_array and clear keep invariants" {
     let map = SortedMap::SortedMap(arr)
     check_invariants(map)
     // last write wins for duplicate keys
-    let model : Map[Int, Int] = Map([])
+    let model : Map[Int32, Int32] = Map([])
     for e in arr {
       model[e.0] = e.1
     }
@@ -258,8 +262,8 @@ test "from_array and clear keep invariants" {
 ///|
 test "copy, merge and merge_in_place keep invariants" {
   let rng = Rand::{ state: 99UL, }
-  let a : SortedMap[Int, Int] = new_sorted_map()
-  let b : SortedMap[Int, Int] = new_sorted_map()
+  let a : SortedMap[Int32, Int32] = new_sorted_map()
+  let b : SortedMap[Int32, Int32] = new_sorted_map()
   for _ in 0..<200 {
     a.set(rng.below(500), rng.below(1000))
     b.set(rng.below(500), rng.below(1000))
@@ -284,7 +288,7 @@ test "copy, merge and merge_in_place keep invariants" {
 ///|
 test "range agrees with model and leaves tree intact" {
   let rng = Rand::{ state: 1234UL, }
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for _ in 0..<300 {
     map.set(rng.below(1000), 1)
   }

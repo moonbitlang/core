@@ -17,7 +17,7 @@
 /// `indent * level` computed straight from the definition, rather than against
 /// anything the implementation produces, so it cannot reproduce a bug in the
 /// cached version.
-fn leading_spaces(line : StringView) -> Int {
+fn leading_spaces(line : StringView) -> Int32 {
   let mut n = 0
   for c in line {
     if c != ' ' {
@@ -30,7 +30,7 @@ fn leading_spaces(line : StringView) -> Int {
 
 ///|
 /// `[[[...[0]...]]]` nested `depth` levels deep.
-fn nest(depth : Int) -> Json {
+fn nest(depth : Int32) -> Json {
   let mut value : Json = Json::number(0.0)
   for _ in 0..<depth {
     value = Json::array([value])

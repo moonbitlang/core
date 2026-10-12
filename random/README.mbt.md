@@ -40,8 +40,8 @@ test {
 test {
   let r = @random.Rand()
   // full range
-  let _ : Int = r.int() // [0, 2^31)
-  let _ : UInt = r.uint() // [0, 2^32)
+  let _ : Int32 = r.int() // [0, 2^31)
+  let _ : UInt32 = r.uint() // [0, 2^32)
   let _ : Int64 = r.int64() // [0, 2^63)
   let _ : UInt64 = r.uint64() // [0, 2^64)
   // bounded

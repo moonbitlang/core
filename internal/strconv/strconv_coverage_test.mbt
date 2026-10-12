@@ -19,7 +19,7 @@
 ///|
 /// Whether parsing `s` as an Int64 (in the given base) raises the expected
 /// `Failure` (any other error propagates so it is not masked as a parse error).
-fn int64_raises(s : String, base : Int) -> Bool raise {
+fn int64_raises(s : String, base : Int32) -> Bool raise {
   try {
     @strconv.parse_int64(s, base~) |> ignore
     false

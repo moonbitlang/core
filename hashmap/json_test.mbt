@@ -14,8 +14,8 @@
 
 ///|
 test "from_json round-trips whatever to_json produced" {
-  for map in (@quickcheck.samples(50) : Array[@hashmap.HashMap[String, Int]]) {
-    let restored : @hashmap.HashMap[String, Int] = @json.from_json(
+  for map in (@quickcheck.samples(50) : Array[@hashmap.HashMap[String, Int32]]) {
+    let restored : @hashmap.HashMap[String, Int32] = @json.from_json(
       @json.to_json(map),
     )
     @debug.assert_eq(restored, map)
@@ -24,7 +24,7 @@ test "from_json round-trips whatever to_json produced" {
 
 ///|
 test "from_json decodes an object" {
-  let restored : @hashmap.HashMap[String, Int] = @json.from_json({
+  let restored : @hashmap.HashMap[String, Int32] = @json.from_json({
     "key1": 42,
     "key2": 100,
     "key3": -5,
@@ -37,9 +37,9 @@ test "from_json decodes an object" {
 
 ///|
 test "from_json decodes an empty object and nested values" {
-  let empty : @hashmap.HashMap[String, Int] = @json.from_json({})
+  let empty : @hashmap.HashMap[String, Int32] = @json.from_json({})
   inspect(empty.length(), content="0")
-  let nested : @hashmap.HashMap[String, Array[Int]] = @json.from_json({
+  let nested : @hashmap.HashMap[String, Array[Int32]] = @json.from_json({
     "a": [1, 2],
     "b": [],
   })
@@ -50,7 +50,7 @@ test "from_json decodes an empty object and nested values" {
 ///|
 test "from_json rejects a non-object" {
   let bad : Json = 1
-  try (@json.from_json(bad) : @hashmap.HashMap[String, Int]) catch {
+  try (@json.from_json(bad) : @hashmap.HashMap[String, Int32]) catch {
     err =>
       inspect(
         err,
@@ -66,7 +66,7 @@ test "from_json reports the path of the value that failed" {
   // The decoder extends the path with each key, so a failure inside one
   // entry has to name that entry rather than the object as a whole.
   let bad : Json = { "ok": 1, "wrong": "not an int" }
-  try (@json.from_json(bad) : @hashmap.HashMap[String, Int]) catch {
+  try (@json.from_json(bad) : @hashmap.HashMap[String, Int32]) catch {
     err =>
       inspect(
         err,

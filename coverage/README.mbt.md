@@ -34,7 +34,7 @@ Use coverage counters to track which code paths are executed:
 test "tracking execution paths" {
   let counter = @coverage.CoverageCounter::new(3)
   fn conditional_function(
-    x : Int,
+    x : Int32,
     coverage : @coverage.CoverageCounter,
   ) -> String {
     if x > 0 {
@@ -71,9 +71,9 @@ Track coverage in loops and iterations:
 test "loop coverage" {
   let counter = @coverage.CoverageCounter::new(2)
   fn process_array(
-    arr : Array[Int],
+    arr : Array[Int32],
     coverage : @coverage.CoverageCounter,
-  ) -> Int {
+  ) -> Int32 {
     let mut sum = 0
     for x in arr {
       if x % 2 == 0 {
@@ -108,11 +108,11 @@ Track coverage across different functions:
 test "function coverage" {
   let counter = @coverage.CoverageCounter::new(4)
   fn math_operations(
-    a : Int,
-    b : Int,
+    a : Int32,
+    b : Int32,
     op : String,
     coverage : @coverage.CoverageCounter,
-  ) -> Int {
+  ) -> Int32 {
     match op {
       "add" => {
         coverage.incr(0)
@@ -156,7 +156,7 @@ Analyze coverage data to understand code execution:
 test "coverage analysis" {
   let counter = @coverage.CoverageCounter::new(6)
   fn complex_function(
-    input : Int,
+    input : Int32,
     coverage : @coverage.CoverageCounter,
   ) -> String {
     coverage.incr(0) // Function entry
@@ -246,7 +246,7 @@ test "coverage reporting" {
   inspect(report, content="[2, 0, 1]")
 
   // In real usage, you might analyze this data:
-  fn analyze_coverage(_coverage_str : String) -> (Int, Int) {
+  fn analyze_coverage(_coverage_str : String) -> (Int32, Int32) {
     // This would parse the coverage data and return (covered, total)
     // For demonstration, we'll return mock values
     (2, 3) // 2 out of 3 lines covered
@@ -267,7 +267,7 @@ In real applications, coverage tracking is typically generated automatically:
 ```mbt check
 ///|
 ///  This is conceptual - actual coverage is compiler-generated
-fn example_function(x : Int) -> String {
+fn example_function(x : Int32) -> String {
   // Compiler automatically inserts: coverage.incr(0)
   if x > 0 {
     // Compiler automatically inserts: coverage.incr(1)
@@ -294,7 +294,7 @@ Use coverage information to improve test quality:
 ///|
 test "coverage driven testing" {
   // Write tests to ensure all code paths are covered
-  fn multi_branch_function(a : Int, b : Int) -> String {
+  fn multi_branch_function(a : Int32, b : Int32) -> String {
     if a > b {
       "greater"
     } else if a < b {

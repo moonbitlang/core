@@ -62,7 +62,7 @@ fn ParseContext::expect_char(
   } else {
     // c0 is not bmp code point
     // c1 has to be surrogate pair otherwise it is invalid
-    guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
+    guard c1 is (SURROGATE_LOW_CHAR..<=SURROGATE_HIGH_CHAR) &&
       ctx.offset < ctx.end_offset else {
       ctx.invalid_char(shift=-1)
     }

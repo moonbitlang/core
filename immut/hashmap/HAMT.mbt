@@ -183,7 +183,7 @@ fn[K : Eq, V] Node::add_with_path(
 fn[K : Eq, V] BuildEntry::add_to_node(
   self : BuildEntry[K, V],
   node : Node[K, V]?,
-  depth : Int,
+  depth : Int32,
 ) -> Node[K, V] {
   let path = self.path.advance(depth)
   match node {
@@ -195,9 +195,9 @@ fn[K : Eq, V] BuildEntry::add_to_node(
 ///|
 fn[K : Eq, V] build_hashmap_node_by_add(
   entries : Array[BuildEntry[K, V]],
-  start : Int,
-  end : Int,
-  depth : Int,
+  start : Int32,
+  end : Int32,
+  depth : Int32,
   reverse : Bool,
 ) -> Node[K, V] {
   if reverse {
@@ -222,9 +222,9 @@ fn[K : Eq, V] build_hashmap_node_by_add(
 ///|
 fn[K : Eq, V] build_hashmap_node_range(
   entries : Array[BuildEntry[K, V]],
-  start : Int,
-  end : Int,
-  depth : Int,
+  start : Int32,
+  end : Int32,
+  depth : Int32,
   reverse : Bool,
 ) -> Node[K, V] {
   if end - start == 1 {
@@ -544,7 +544,7 @@ fn[K : Eq, V] Node::remove_with_path(
 ///
 /// WARNING: this operation is `O(N)` in map size
 #alias(size, deprecated)
-pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
   fn node_size(node) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()

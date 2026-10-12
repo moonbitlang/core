@@ -52,11 +52,11 @@
 /// }
 /// ```
 pub fn exp(x : Double) -> Double {
-  fn get_high_word(x : Double) -> UInt {
+  fn get_high_word(x : Double) -> UInt32 {
     (x.reinterpret_as_uint64() >> 32).to_uint()
   }
 
-  fn get_low_word(x : Double) -> UInt {
+  fn get_low_word(x : Double) -> UInt32 {
     x.reinterpret_as_uint64().to_uint()
   }
 
@@ -91,13 +91,13 @@ pub fn exp(x : Double) -> Double {
   let huge = 1.0e+300
   let twom1000 = 9.33263618503218878990e-302
   let two1023 = 8.988465674311579539e307
-  let mut k : Int = 0
-  let mut hx : UInt = get_high_word(ori_x)
-  let xsb : Int = ((hx >> 31) & 1).reinterpret_as_int()
+  let mut k : Int32 = 0
+  let mut hx : UInt32 = get_high_word(ori_x)
+  let xsb : Int32 = ((hx >> 31) & 1).reinterpret_as_int()
   hx = hx & 0x7FFFFFFF
   if hx >= 0x40862E42 {
     if hx >= 0x7FF00000 {
-      let lx : UInt = get_low_word(ori_x)
+      let lx : UInt32 = get_low_word(ori_x)
       if ((hx & 0xFFFFF) | lx) != 0 {
         return ori_x + ori_x
       } else if xsb == 0 {
@@ -217,7 +217,7 @@ pub fn expm1(x : Double) -> Double {
   let q5 = -2.01099218183624371326e-07
   let mut x = x
   let mut hx = get_high_word(x)
-  let xsb : Int = (hx & 0x80000000).reinterpret_as_int()
+  let xsb : Int32 = (hx & 0x80000000).reinterpret_as_int()
   let mut y : Double = if xsb == 0 { x } else { -x }
   hx = hx & 0x7fffffff
   if hx >= 0x4043687A {

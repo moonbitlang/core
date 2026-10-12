@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn offset_to_position(input : StringView, offset : Int) -> Position {
+fn offset_to_position(input : StringView, offset : Int32) -> Position {
   for code_unit in input.code_units()[:offset]; line = 1, column = 0 {
     if code_unit == '\n' {
       continue line + 1, 0
@@ -28,7 +28,7 @@ fn offset_to_position(input : StringView, offset : Int) -> Position {
 ///|
 fn[T] ParseContext::invalid_char(
   ctx : ParseContext,
-  shift? : Int = 0,
+  shift~ : Int32 = 0,
 ) -> T raise ParseError {
   let offset = ctx.offset + shift
   let replacement_char : Char = '\u{fffd}'

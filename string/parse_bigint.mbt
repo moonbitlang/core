@@ -25,6 +25,9 @@
 ///   inspect(@string.parse_bigint("-ff", base=16), content="-255")
 /// }
 /// ```
-pub fn parse_bigint(str : StringView, base? : Int = 10) -> @bigint.BigInt raise {
+pub fn parse_bigint(
+  str : StringView,
+  base~ : Int32 = 10,
+) -> @bigint.BigInt raise {
   @bigint.parse_bigint(str, base~)
 }

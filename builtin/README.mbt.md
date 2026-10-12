@@ -36,7 +36,7 @@ test "inspect usage" {
   inspect(value, content="42")
   let list = [1, 2, 3]
   debug_inspect(list, content="[1, 2, 3]")
-  let result : Result[Int, String] = Ok(100)
+  let result : Result[Int32, String] = Ok(100)
   debug_inspect(result, content="Ok(100)")
 }
 ```
@@ -48,7 +48,7 @@ The `Result[T, E]` type represents operations that can succeed or fail:
 ```mbt check
 ///|
 test "result type" {
-  fn divide(a : Int, b : Int) -> Result[Int, String] {
+  fn divide(a : Int32, b : Int32) -> Result[Int32, String] {
     if b == 0 {
       Err("Division by zero")
     } else {
@@ -79,7 +79,7 @@ The `Option[T]` type represents values that may or may not exist:
 ```mbt check
 ///|
 test "option type" {
-  fn find_first_even(numbers : Array[Int]) -> Int? {
+  fn find_first_even(numbers : Array[Int32]) -> Int32? {
     for num in numbers {
       if num % 2 == 0 {
         return Some(num)
@@ -165,7 +165,7 @@ Fixed-size array for storing collections of constant size:
 ///|
 test "fixed arrays" {
   // FixedArray from literal
-  let fixed_arr : FixedArray[Int] = [10, 20, 30]
+  let fixed_arr : FixedArray[Int32] = [10, 20, 30]
   debug_inspect(
     fixed_arr,
     content=(
@@ -343,7 +343,7 @@ Basic error handling with panic and abort:
 ///|
 test "error handling" {
   // This would panic in a real scenario, but we demonstrate the concept
-  fn safe_divide(a : Int, b : Int) -> Int {
+  fn safe_divide(a : Int32, b : Int32) -> Int32 {
     if b == 0 {
       // In real code: panic()
       // For testing, we return a default value

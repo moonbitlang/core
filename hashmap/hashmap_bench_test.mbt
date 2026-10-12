@@ -129,7 +129,7 @@ test "bench HashMap::to_array Ref n=50000" (it : @bench.T) {
 }
 
 ///|
-fn filter_bench_map() -> @hashmap.HashMap[String, Int] {
+fn filter_bench_map() -> @hashmap.HashMap[String, Int32] {
   HashMap(
     [
       for i in 0..<hashmap_bench_n => ("key-number-\{i}-with-some-length", i)

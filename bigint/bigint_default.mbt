@@ -36,9 +36,9 @@
 // - forall len <= i < limbs.length(). limbs[i] == 0
 #valtype
 struct BigInt {
-  limbs : FixedArray[UInt] // Note: do not use limbs.length(), use len instead because of leading zeros
+  limbs : FixedArray[UInt32] // Note: do not use limbs.length(), use len instead because of leading zeros
   sign : Sign
-  len : Int
+  len : Int32
 }
 
 ///|
@@ -129,7 +129,7 @@ let one : BigInt = 1N
 ///   inspect(neg, content="-42")
 /// }
 /// ```
-pub fn BigInt::from_int(n : Int) -> BigInt {
+pub fn BigInt::from_int(n : Int32) -> BigInt {
   BigInt::from_int64(n.to_int64())
 }
 
@@ -150,7 +150,7 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 ///   inspect(@bigint.BigInt::from_uint(n), content="42")
 /// }
 /// ```
-pub fn BigInt::from_uint(n : UInt) -> BigInt {
+pub fn BigInt::from_uint(n : UInt32) -> BigInt {
   BigInt::from_uint64(n.to_uint64())
 }
 
@@ -416,7 +416,7 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
 /// result would be an all-zero magnitude with `len > 1`, breaking the
 /// no-leading-zeros invariant. The call site in `Mul::mul` guarantees
 /// this via its `is_zero` guard.
-fn BigInt::mul_single_limb(self : BigInt, x : UInt) -> BigInt {
+fn BigInt::mul_single_limb(self : BigInt, x : UInt32) -> BigInt {
   let n = self.len
   let limbs = FixedArray::make(n + 1, 0U)
   let x_u64 = x.to_uint64()
@@ -483,7 +483,7 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 // Get the lower half of the number.
 
 ///|
-fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
+fn BigInt::split(self : BigInt, half : Int32) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive, }, zero)
   }
@@ -755,7 +755,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///   inspect(y << 2, content="-20")
 /// }
 /// ```
-pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with fn shl(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -815,7 +815,7 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
 ///   inspect(neg >> 3, content="-128")
 /// }
 /// ```
-pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with fn shr(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -1009,7 +1009,7 @@ pub impl Eq for BigInt with fn equal(self, other) {
 ///   inspect(zero.to_string(), content="0")
 /// }
 /// ```
-pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
+pub fn BigInt::to_string(self : BigInt, radix~ : Int32 = 10) -> String {
   if radix < 2 || radix > 36 {
     abort("radix must be between 2 and 36")
   }
@@ -1076,7 +1076,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
 }
 
 ///|
-fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
+fn BigInt::to_string_radix(self : BigInt, radix : Int32) -> String {
   if self.is_zero() {
     return "0"
   }
@@ -1143,7 +1143,7 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
 }
 
 ///|
-fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
+fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int32) -> String {
   let is_negative = self.sign == Negative
   let value = if is_negative { -self } else { self }
   let bit_len = value.bit_length()
@@ -1171,7 +1171,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
 }
 
 ///|
-fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
+fn BigInt::from_string_radix(input : StringView, radix : Int32) -> BigInt raise {
   match pow2_shift(radix) {
     Some(shift) => BigInt::from_string_radix_pow2(input, radix, shift)
     None => {
@@ -1210,8 +1210,8 @@ fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
 ///|
 fn BigInt::from_string_radix_pow2(
   input : StringView,
-  radix : Int,
-  shift : Int,
+  radix : Int32,
+  shift : Int32,
 ) -> BigInt raise {
   let len = input.length()
   if len == 0 {
@@ -1270,7 +1270,7 @@ fn BigInt::from_string_radix_pow2(
 /// Returns an error if the input is malformed or the base is invalid.
 #internal(internal, "use `@string.parse_bigint` instead")
 #doc(hidden)
-pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
+pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
   if base < 2 || base > 36 {
     base_err()
   }
@@ -1284,7 +1284,7 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
 /// Converts a string representation in the specified radix to a BigInt value.
 ///
 /// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
-pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
+pub fn BigInt::from_string(input : String, radix~ : Int32 = 10) -> BigInt {
   parse_bigint(input, base=radix) catch {
     Failure(msg) => abort(msg)
     _ => abort("invalid syntax")
@@ -1342,7 +1342,7 @@ fn BigInt::copy(self : BigInt) -> BigInt {
 ///|
 /// Normalizes the len field by finding the highest non-zero limb.
 /// Ensures that the BigInt invariant is maintained: if all limbs are 0, len must be 1.
-fn normalize_len(limbs : FixedArray[UInt], max_len : Int) -> Int {
+fn normalize_len(limbs : FixedArray[UInt32], max_len : Int32) -> Int32 {
   let mut actual_len = max_len
   while actual_len > 1 && limbs[actual_len - 1] == 0U {
     actual_len -= 1
@@ -1460,7 +1460,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   inspect(@bigint.BigInt::from_octets(b""), content="0")
 /// }
 /// ```
-pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(input : BytesView, signum~ : Int32 = 1) -> BigInt {
   let len = input.length() // number of bytes
   if signum == 0 {
     return zero
@@ -1520,7 +1520,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
 ///   inspect(m.to_octets(), content="b\"\\x00\"")
 /// }
 /// ```
-pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
+pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
   let length = match length {
     None => 1
     Some(l) => if l <= 0 { abort("negative length") } else { l }
@@ -1839,7 +1839,7 @@ pub impl BitXOr for BigInt with fn lxor(self : BigInt, other : BigInt) -> BigInt
 ///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// }
 /// ```
-pub fn BigInt::to_int(self : BigInt) -> Int {
+pub fn BigInt::to_int(self : BigInt) -> Int32 {
   self.to_uint().reinterpret_as_int()
 }
 
@@ -1862,7 +1862,7 @@ pub fn BigInt::to_int(self : BigInt) -> Int {
 ///   inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
-pub fn BigInt::to_uint(self : BigInt) -> UInt {
+pub fn BigInt::to_uint(self : BigInt) -> UInt32 {
   // Truncation to the low 32 bits is a ring homomorphism, so for a
   // negative value it is the wrapping negation of the magnitude's low
   // limb. (Adding one modulus and reading the limb would be wrong
@@ -1957,7 +1957,7 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 ///   inspect(zero.bit_length(), content="0")
 /// }
 /// ```
-pub fn BigInt::bit_length(self : BigInt) -> Int {
+pub fn BigInt::bit_length(self : BigInt) -> Int32 {
   if self.len == 0 {
     return 0
   }
@@ -1988,7 +1988,7 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
 ///   inspect(0N.ctz(), content="0")
 /// }
 /// ```
-pub fn BigInt::ctz(self : BigInt) -> Int {
+pub fn BigInt::ctz(self : BigInt) -> Int32 {
   if self.is_zero() {
     return 0
   }
@@ -2003,7 +2003,7 @@ pub fn BigInt::ctz(self : BigInt) -> Int {
 }
 
 ///|
-fn unchecked_double_to_int(d : Double) -> Int = "%f64_to_i32"
+fn unchecked_double_to_int(d : Double) -> Int32 = "%f64_to_i32"
 
 ///|
 fn unsafe_fixedarray_to_bytes(arr : FixedArray[Byte]) -> Bytes = "%identity"
@@ -2056,6 +2056,6 @@ test "limb length" {
 }
 
 ///|
-fn BigInt::limbs(self : Self) -> Array[UInt] {
+fn BigInt::limbs(self : Self) -> Array[UInt32] {
   self.limbs[:self.len].to_owned()
 }

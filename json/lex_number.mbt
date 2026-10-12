@@ -65,7 +65,7 @@ priv struct JsonNumberScan {
 }
 
 ///|
-fn json_pow10_fast_path(exponent : Int) -> Double {
+fn json_pow10_fast_path(exponent : Int32) -> Double {
   pow10_table[exponent & 31]
 }
 
@@ -137,8 +137,8 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
 ///|
 fn ParseContext::scan_json_number(
   ctx : ParseContext,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> JsonNumberScan {
   let negative = ctx.input.unsafe_get(start) == '-'
   let mut has_decimal = false
@@ -151,7 +151,7 @@ fn ParseContext::scan_json_number(
   let mut seen_nonzero = false
   for i in (if negative { start + 1 } else { start })..<end {
     match ctx.input.unsafe_get(i) {
-      '0'..='9' as c => {
+      '0'..<='9' as c => {
         let digit = c.to_int() - '0'
         if has_exponent {
           if exponent_part < EXPONENT_CAP {
@@ -223,8 +223,8 @@ priv struct LexedNumber {
 ///|
 fn ParseContext::lex_integer_end(
   ctx : ParseContext,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> LexedNumber {
   let negative = ctx.input.unsafe_get(start) == '-'
   let number_start = if negative { start + 1 } else { start }
@@ -262,13 +262,13 @@ fn ParseContext::lex_integer_end(
 ///|
 fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('.') => return ctx.lex_decimal_point(start~)
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
-      Some('0'..='9') => continue
+      Some('0'..<='9') => continue
       Some(_) => {
         ctx.offset -= 1
         return ctx.lex_number_end(start, ctx.offset)
@@ -281,10 +281,10 @@ fn ParseContext::lex_decimal_integer(
 ///|
 fn ParseContext::lex_decimal_point(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
-    Some('0'..='9') => ctx.lex_decimal_fraction(start~)
+    Some('0'..<='9') => ctx.lex_decimal_fraction(start~)
     Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
@@ -293,12 +293,12 @@ fn ParseContext::lex_decimal_point(
 ///|
 fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
-      Some('0'..='9') => continue
+      Some('0'..<='9') => continue
       Some(_) => {
         ctx.offset -= 1
         return ctx.lex_number_end(start, ctx.offset)
@@ -311,11 +311,11 @@ fn ParseContext::lex_decimal_fraction(
 ///|
 fn ParseContext::lex_decimal_exponent(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('+' | '-') => return ctx.lex_decimal_exponent_sign(start~)
-    Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
+    Some('0'..<='9') => return ctx.lex_decimal_exponent_integer(start~)
     Some(_) => {
       ctx.offset -= 1
       ctx.invalid_char()
@@ -327,10 +327,10 @@ fn ParseContext::lex_decimal_exponent(
 ///|
 fn ParseContext::lex_decimal_exponent_sign(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
-    Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
+    Some('0'..<='9') => return ctx.lex_decimal_exponent_integer(start~)
     Some(_) => {
       ctx.offset -= 1
       ctx.invalid_char()
@@ -342,11 +342,11 @@ fn ParseContext::lex_decimal_exponent_sign(
 ///|
 fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber {
   for ;; {
     match ctx.read_char() {
-      Some('0'..='9') => continue
+      Some('0'..<='9') => continue
       Some(_) => {
         ctx.offset -= 1
         return ctx.lex_number_end(start, ctx.offset)
@@ -359,12 +359,12 @@ fn ParseContext::lex_decimal_exponent_integer(
 ///|
 fn ParseContext::lex_zero(
   ctx : ParseContext,
-  start~ : Int,
+  start~ : Int32,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
-    Some('0'..='9') => {
+    Some('0'..<='9') => {
       ctx.offset -= 1
       ctx.invalid_char()
     }
@@ -379,8 +379,8 @@ fn ParseContext::lex_zero(
 ///|
 fn ParseContext::lex_number_end(
   ctx : ParseContext,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> LexedNumber {
   // Fast path for JSON numbers: the lexer has already validated the grammar,
   // so scan raw UTF-16 digits once and bypass the general strconv parser for

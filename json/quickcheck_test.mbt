@@ -67,7 +67,7 @@ fn leaf_gen() -> @quickcheck.Generator[Json] {
 }
 
 ///|
-fn json_gen(depth : Int) -> @quickcheck.Generator[Json] {
+fn json_gen(depth : Int32) -> @quickcheck.Generator[Json] {
   if depth <= 0 {
     return leaf_gen()
   }
@@ -208,7 +208,7 @@ test "shrink_json candidate stream" {
 }
 
 ///|
-fn json_depth(json : Json) -> Int {
+fn json_depth(json : Json) -> Int32 {
   match json {
     Array(elements) => {
       let mut deepest = 0
@@ -235,7 +235,7 @@ fn json_depth(json : Json) -> Int {
 }
 
 ///|
-fn json_node_count(json : Json) -> Int {
+fn json_node_count(json : Json) -> Int32 {
   match json {
     Array(elements) => {
       let mut count = 1
@@ -279,7 +279,7 @@ fn parse_succeeds(text : String) -> Bool {
 
 ///|
 /// Maps an arbitrary Int into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -299,7 +299,7 @@ test "stringify/parse roundtrip on arbitrary Json" {
 
 ///|
 test "roundtrip is unaffected by formatting options" {
-  @quickcheck.check((input : (ArbJson, Int, Bool)) => {
+  @quickcheck.check((input : (ArbJson, Int32, Bool)) => {
     let (json, raw_indent, escape_slash) = input
     let original = json.0
     let text = original.stringify(
@@ -332,7 +332,7 @@ test "valid agrees with parse on arbitrary strings" {
 /// truncation) and checks the parser stays total and consistent with
 /// `valid` on near-valid input.
 test "parse stays total on mutated JSON text" {
-  @quickcheck.check((input : (ArbJson, Int, Char)) => {
+  @quickcheck.check((input : (ArbJson, Int32, Char)) => {
     let (json, position, extra) = input
     let chars = json.0.stringify().to_array()
     let cut = wrap_index(position, chars.length() + 1)
@@ -350,7 +350,7 @@ test "parse stays total on mutated JSON text" {
 /// `max_nesting_depth` is (deprecated) plumbing used only to exercise the
 /// depth-limit guard cheaply at randomized boundaries.
 #warnings("-deprecated")
-fn parse_outcome_with_limit(text : String, limit : Int) -> String {
+fn parse_outcome_with_limit(text : String, limit : Int32) -> String {
   try {
     ignore(@json.parse(text, max_nesting_depth=limit))
     "parsed"
@@ -362,7 +362,7 @@ fn parse_outcome_with_limit(text : String, limit : Int) -> String {
 
 ///|
 test "max_nesting_depth accepts exactly the documented depth" {
-  @quickcheck.check((input : (Int, Int, Bool)) => {
+  @quickcheck.check((input : (Int32, Int32, Bool)) => {
     let (raw_depth, raw_delta, use_objects) = input
     let depth = wrap_index(raw_depth, 40) + 1
     // Concentrate the limit within +-2 of the actual depth so every run
@@ -380,12 +380,12 @@ test "max_nesting_depth accepts exactly the documented depth" {
 
 ///|
 test "ToJson/FromJson roundtrips across the type zoo" {
-  @quickcheck.check((x : Int) => {
-    let back : Int = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : Int32) => {
+    let back : Int32 = @json.from_json(@json.to_json(x))
     back == x
   })
-  @quickcheck.check((x : UInt) => {
-    let back : UInt = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : UInt32) => {
+    let back : UInt32 = @json.from_json(@json.to_json(x))
     back == x
   })
   @quickcheck.check((x : Int64) => {
@@ -414,28 +414,28 @@ test "ToJson/FromJson roundtrips across the type zoo" {
   })
   // `None` maps to null while `Some(None)` maps to [null]; the roundtrip
   // must keep the two distinct.
-  @quickcheck.check((x : Int??) => {
-    let back : Int?? = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : Int32??) => {
+    let back : Int32?? = @json.from_json(@json.to_json(x))
     back == x
   })
-  @quickcheck.check((x : Result[Int, String]) => {
-    let back : Result[Int, String] = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : Result[Int32, String]) => {
+    let back : Result[Int32, String] = @json.from_json(@json.to_json(x))
     back == x
   })
-  @quickcheck.check((x : Array[Array[Int]]) => {
-    let back : Array[Array[Int]] = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : Array[Array[Int32]]) => {
+    let back : Array[Array[Int32]] = @json.from_json(@json.to_json(x))
     back == x
   })
-  @quickcheck.check((x : (Int, String, Bool)) => {
-    let back : (Int, String, Bool) = @json.from_json(@json.to_json(x))
+  @quickcheck.check((x : (Int32, String, Bool)) => {
+    let back : (Int32, String, Bool) = @json.from_json(@json.to_json(x))
     back == x
   })
-  @quickcheck.check((pairs : Array[(String, Int)]) => {
-    let members : Map[String, Int] = Map([])
+  @quickcheck.check((pairs : Array[(String, Int32)]) => {
+    let members : Map[String, Int32] = Map([])
     for pair in pairs {
       members[pair.0] = pair.1
     }
-    let back : Map[String, Int] = @json.from_json(@json.to_json(members))
+    let back : Map[String, Int32] = @json.from_json(@json.to_json(members))
     back == members
   })
   @quickcheck.check((json : ArbJson) => {

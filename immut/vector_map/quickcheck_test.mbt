@@ -24,7 +24,7 @@
 
 ///|
 /// Append if new, overwrite in place if present — `VectorMap::add`.
-fn model_add(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
+fn model_add(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
       model[i] = (key, value)
@@ -35,7 +35,7 @@ fn model_add(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
 }
 
 ///|
-fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
+fn model_remove(model : Array[(Int32, Int32)], key : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
       model.remove(i) |> ignore
@@ -47,8 +47,8 @@ fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
 ///|
 /// The full specification check for one state.
 fn agrees_with_model(
-  map : @vector_map.VectorMap[Int, Int],
-  model : Array[(Int, Int)],
+  map : @vector_map.VectorMap[Int32, Int32],
+  model : Array[(Int32, Int32)],
 ) -> Bool {
   guard map.length() == model.length() else { return false }
   guard map.is_empty() == model.is_empty() else { return false }
@@ -61,7 +61,7 @@ fn agrees_with_model(
   let via_each = []
   map.each((k, v) => via_each.push((k, v)))
   guard via_each == model else { return false }
-  let via_fold = map.fold(init=[], (acc : Array[(Int, Int)], k, v) => {
+  let via_fold = map.fold(init=[], (acc : Array[(Int32, Int32)], k, v) => {
     acc.push((k, v))
     acc
   })
@@ -112,9 +112,9 @@ fn agrees_with_model(
 /// churn eventually reaches a rebuild — but together they make both reliable
 /// within the op counts the generator produces, rather than leaving them to
 /// chance on a stream that spends its length near empty.
-fn ops_agree(ops : Array[Int], remove_bias~ : Bool) -> Bool {
-  let model : Array[(Int, Int)] = []
-  let mut map : @vector_map.VectorMap[Int, Int] = @vector_map.new()
+fn ops_agree(ops : Array[Int32], remove_bias~ : Bool) -> Bool {
+  let model : Array[(Int32, Int32)] = []
+  let mut map : @vector_map.VectorMap[Int32, Int32] = @vector_map.new()
   if remove_bias {
     for key in 0..<32 {
       map = map.add(key, key)
@@ -192,7 +192,7 @@ fn ops_agree(ops : Array[Int], remove_bias~ : Bool) -> Bool {
 ///|
 test "quickcheck: operation sequences agree with the ordered model" {
   @quickcheck.check(
-    (ops : Array[Int]) => ops_agree(ops, remove_bias=false),
+    (ops : Array[Int32]) => ops_agree(ops, remove_bias=false),
     count=300,
   )
 }
@@ -202,7 +202,7 @@ test "quickcheck: deletion-heavy sequences agree too" {
   // Same property, but starting from a full universe and draining it, so the
   // spine spends the run accumulating holes and reclaiming them.
   @quickcheck.check(
-    (ops : Array[Int]) => ops_agree(ops, remove_bias=true),
+    (ops : Array[Int32]) => ops_agree(ops, remove_bias=true),
     count=300,
   )
 }
@@ -210,9 +210,9 @@ test "quickcheck: deletion-heavy sequences agree too" {
 ///|
 /// Build a map and its model from raw pairs, applying the ordering rule.
 fn build(
-  entries : Array[(Int, Int)],
-) -> (@vector_map.VectorMap[Int, Int], Array[(Int, Int)]) {
-  let model : Array[(Int, Int)] = []
+  entries : Array[(Int32, Int32)],
+) -> (@vector_map.VectorMap[Int32, Int32], Array[(Int32, Int32)]) {
+  let model : Array[(Int32, Int32)] = []
   // Masking rather than `%` keeps keys inside the probed universe for
   // negative inputs too, and cannot overflow on `Int::min_value`.
   let normalised = entries.map(kv => (kv.0 & 31, kv.1 & 7))
@@ -225,7 +225,7 @@ fn build(
 ///|
 test "quickcheck: bulk construction matches repeated add" {
   @quickcheck.check(
-    (entries : Array[(Int, Int)]) => {
+    (entries : Array[(Int32, Int32)]) => {
       let (map, model) = build(entries)
       guard agrees_with_model(map, model) else { return false }
       // The array constructor, the iterator constructor and a fold of `add`
@@ -244,7 +244,7 @@ test "quickcheck: bulk construction matches repeated add" {
 ///|
 test "quickcheck: persistence — an operation never disturbs its receiver" {
   @quickcheck.check(
-    (input : (Array[(Int, Int)], Int, Int)) => {
+    (input : (Array[(Int32, Int32)], Int32, Int32)) => {
       let (entries, raw_key, raw_value) = input
       let (map, model) = build(entries)
       let key = raw_key & 31
@@ -264,7 +264,7 @@ test "quickcheck: persistence — an operation never disturbs its receiver" {
 ///|
 test "quickcheck: equality is exactly same-entries-same-order" {
   @quickcheck.check(
-    (input : (Array[(Int, Int)], Int)) => {
+    (input : (Array[(Int32, Int32)], Int32)) => {
       let (entries, raw_shift) = input
       let (map, model) = build(entries)
       guard map == @vector_map.from_iter(model.iter()) else { return false }
@@ -299,9 +299,9 @@ test "quickcheck: equality is exactly same-entries-same-order" {
 ///|
 test "quickcheck: json survives a round trip, order included" {
   @quickcheck.check(
-    (entries : Array[(Int, Int)]) => {
+    (entries : Array[(Int32, Int32)]) => {
       let (map, _) = build(entries)
-      let decoded : @vector_map.VectorMap[Int, Int]? = Some(
+      let decoded : @vector_map.VectorMap[Int32, Int32]? = Some(
         @json.from_json(Json(map)),
       ) catch {
         _ => None

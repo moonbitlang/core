@@ -15,8 +15,8 @@
 ///|
 test "exact_view uses the same bounds on all array types" {
   let arr = [1, 2, 3, 4]
-  let fixed : FixedArray[Int] = [1, 2, 3, 4]
-  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4]
+  let fixed : FixedArray[Int32] = [1, 2, 3, 4]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3, 4]
   let view = [0, 1, 2, 3, 4, 5][1:5]
   let mutable = arr.mut_view()
   let raw = @builtin.UninitializedArray::make(4)
@@ -67,13 +67,13 @@ test "panic exact_view rejects a negative array bound" {
 
 ///|
 test "panic exact_view rejects an oversized fixed array bound" {
-  let fixed : FixedArray[Int] = [1, 2, 3]
+  let fixed : FixedArray[Int32] = [1, 2, 3]
   ignore(fixed.exact_view(end=4))
 }
 
 ///|
 test "panic exact_view rejects an inverted readonly array range" {
-  let ro : ReadOnlyArray[Int] = [1, 2, 3]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3]
   ignore(ro.exact_view(start=2, end=1))
 }
 
@@ -89,7 +89,7 @@ test "panic exact_view rejects bounds outside a mutable view" {
 
 ///|
 test "panic exact_view rejects uninitialized array bounds" {
-  let raw : @builtin.UninitializedArray[Int] = @builtin.UninitializedArray::make(
+  let raw : @builtin.UninitializedArray[Int32] = @builtin.UninitializedArray::make(
     3,
   )
   ignore(raw.exact_view(end=4))

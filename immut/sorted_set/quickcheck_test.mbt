@@ -21,14 +21,14 @@
 // rotations after insert/remove and the bulk set operations must preserve.
 
 ///|
-fn model_add(model : Array[Int], x : Int) -> Unit {
+fn model_add(model : Array[Int32], x : Int32) -> Unit {
   if !model.contains(x) {
     model.push(x)
   }
 }
 
 ///|
-fn model_remove(model : Array[Int], x : Int) -> Unit {
+fn model_remove(model : Array[Int32], x : Int32) -> Unit {
   for i, y in model {
     if y == x {
       model.remove(i) |> ignore
@@ -38,7 +38,7 @@ fn model_remove(model : Array[Int], x : Int) -> Unit {
 }
 
 ///|
-fn sorted_model(model : Array[Int]) -> Array[Int] {
+fn sorted_model(model : Array[Int32]) -> Array[Int32] {
   let sorted = model.copy()
   sorted.sort()
   sorted
@@ -46,8 +46,8 @@ fn sorted_model(model : Array[Int]) -> Array[Int] {
 
 ///|
 fn agrees_with_model(
-  set : @sorted_set.SortedSet[Int],
-  model : Array[Int],
+  set : @sorted_set.SortedSet[Int32],
+  model : Array[Int32],
 ) -> Bool {
   if set.length() != model.length() {
     return false
@@ -82,9 +82,9 @@ fn agrees_with_model(
 ///|
 /// Build a set and its model from raw values, folding them into a small
 /// space so duplicates (and later, overlaps between two sets) are common.
-fn build(xs : Array[Int]) -> (@sorted_set.SortedSet[Int], Array[Int]) {
-  let model : Array[Int] = []
-  let values : Array[Int] = []
+fn build(xs : Array[Int32]) -> (@sorted_set.SortedSet[Int32], Array[Int32]) {
+  let model : Array[Int32] = []
+  let values : Array[Int32] = []
   for x in xs {
     let v = x % 31
     values.push(v)
@@ -96,12 +96,12 @@ fn build(xs : Array[Int]) -> (@sorted_set.SortedSet[Int], Array[Int]) {
 ///|
 test "quickcheck: op sequences agree with a model and old versions persist" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
-      let mut set : @sorted_set.SortedSet[Int] = @sorted_set.new()
-      let model : Array[Int] = []
+    (ops : Array[(Int32, Int32)]) => {
+      let mut set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+      let model : Array[Int32] = []
       // Snapshots of every intermediate version paired with its expected
       // content; persistence means none of them may change afterwards.
-      let snapshots : Array[(@sorted_set.SortedSet[Int], Array[Int])] = [
+      let snapshots : Array[(@sorted_set.SortedSet[Int32], Array[Int32])] = [
         (set, []),
       ]
       for op in ops {
@@ -145,7 +145,7 @@ test "quickcheck: op sequences agree with a model and old versions persist" {
 ///|
 test "quickcheck: set algebra agrees with array references, operands persist" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let (xs, ys) = input
       let (a, model_a) = build(xs)
       let (b, model_b) = build(ys)
@@ -184,12 +184,12 @@ test "quickcheck: set algebra agrees with array references, operands persist" {
 ///|
 test "quickcheck: union laws (commutative, associative, idempotent, unit)" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32], Array[Int32])) => {
       let (xs, ys, zs) = input
       let (a, _) = build(xs)
       let (b, _) = build(ys)
       let (c, _) = build(zs)
-      let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+      let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
       a.union(b) == b.union(a) &&
       a.union(b).union(c) == a.union(b.union(c)) &&
       a.union(a) == a &&
@@ -209,7 +209,7 @@ test "quickcheck: union laws (commutative, associative, idempotent, unit)" {
 ///|
 test "quickcheck: subset and disjoint agree with the model and each other" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let (xs, ys) = input
       let (a, model_a) = build(xs)
       let (b, model_b) = build(ys)
@@ -240,7 +240,7 @@ test "quickcheck: subset and disjoint agree with the model and each other" {
 ///|
 test "quickcheck: constructors round-trip and deduplicate" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let (set, model) = build(xs)
       if !agrees_with_model(set, model) {
         return false
@@ -259,7 +259,7 @@ test "quickcheck: constructors round-trip and deduplicate" {
 ///|
 test "quickcheck: filter and map agree with array references" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let (set, model) = build(xs)
       // filter keeps exactly the elements satisfying the predicate.
       let filtered = set.filter(x => x % 3 != 0)
@@ -275,7 +275,7 @@ test "quickcheck: filter and map agree with array references" {
       }
       // A collapsing map must deduplicate the images.
       let collapsed = set.map(x => x % 7)
-      let collapsed_model : Array[Int] = []
+      let collapsed_model : Array[Int32] = []
       for x in model {
         model_add(collapsed_model, x % 7)
       }
@@ -290,7 +290,7 @@ test "quickcheck: filter and map agree with array references" {
 ///|
 test "quickcheck: split and range partition the set around a pivot" {
   @quickcheck.check(
-    (input : (Array[Int], Int, Int)) => {
+    (input : (Array[Int32], Int32, Int32)) => {
       let (xs, raw_low, raw_high) = input
       let (set, model) = build(xs)
       // The pivot roams a slightly larger space than the elements, so it is

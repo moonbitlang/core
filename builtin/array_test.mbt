@@ -14,13 +14,13 @@
 
 ///|
 test "array_new" {
-  let arr : Array[Int] = Array()
+  let arr : Array[Int32] = Array()
   @test.assert_eq(arr.length(), 0)
 }
 
 ///|
 test "array_from_fixed_array" {
-  let fixed_arr : FixedArray[Int] = [1, 2, 3]
+  let fixed_arr : FixedArray[Int32] = [1, 2, 3]
   let arr = Array::from_fixed_array(fixed_arr)
   @test.assert_eq(arr.length(), 3)
   @test.assert_eq(arr[0], 1)
@@ -58,7 +58,7 @@ test "array_get" {
 
 ///|
 test "array_set" {
-  let arr : FixedArray[Int] = [1, 2, 3]
+  let arr : FixedArray[Int32] = [1, 2, 3]
   arr[1] = 42
   @test.assert_eq(arr[1], 42)
 }
@@ -86,7 +86,7 @@ test "array_compare" {
 
 ///|
 test "array_add" {
-  debug_inspect(([] : Array[Int]) + [], content="[]")
+  debug_inspect(([] : Array[Int32]) + [], content="[]")
   debug_inspect([] + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
   debug_inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")
   debug_inspect(
@@ -104,7 +104,7 @@ test "array_pop" {
 
 ///|
 test "array_pop_empty" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   @test.assert_eq(arr.pop(), None)
 }
 
@@ -143,7 +143,7 @@ test "array_drain" {
 ///|
 test "array_append" {
   let arr1 = [1, 2, 3]
-  let arr2 : ReadOnlyArray[Int] = [4, 5, 6]
+  let arr2 : ReadOnlyArray[Int32] = [4, 5, 6]
   arr1.append(arr2)
   @test.assert_eq(arr1.length(), 6)
   // @test.assert_eq(arr1.capacity(), 6)
@@ -269,7 +269,7 @@ test "array_map" {
   let arr = [1, 2, 3]
   let mapped = arr.map(x => x * 2)
   debug_inspect(mapped, content="[2, 4, 6]")
-  debug_inspect(([] : Array[Int]).map(x => x), content="[]")
+  debug_inspect(([] : Array[Int32]).map(x => x), content="[]")
 }
 
 ///|
@@ -284,7 +284,7 @@ test "array_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr.mapi((i, x) => i + x)
   debug_inspect(mapped, content="[1, 3, 5]")
-  debug_inspect(([] : Array[Int]).mapi((_idx, x) => x), content="[]")
+  debug_inspect(([] : Array[Int32]).mapi((_idx, x) => x), content="[]")
 }
 
 ///|
@@ -303,13 +303,13 @@ test "array_filter" {
 
 ///|
 test "array_is_empty" {
-  let arr : Array[Int] = Array()
+  let arr : Array[Int32] = Array()
   assert_true(arr.is_empty())
 }
 
 ///|
 test "array_is_sorted" {
-  assert_true(([] : Array[Int]).is_sorted())
+  assert_true(([] : Array[Int32]).is_sorted())
   assert_true([1, 2, 3].is_sorted())
   assert_false([1, 3, 2].is_sorted())
 }
@@ -317,7 +317,7 @@ test "array_is_sorted" {
 ///|
 test "array_rev" {
   debug_inspect([1, 2, 3].rev(), content="[3, 2, 1]")
-  debug_inspect(([] : Array[Int]).rev(), content="[]")
+  debug_inspect(([] : Array[Int32]).rev(), content="[]")
 }
 
 ///|
@@ -325,7 +325,7 @@ test "array_rev_inplace" {
   let arr = [1, 2, 3]
   arr.rev_in_place()
   debug_inspect(arr, content="[3, 2, 1]")
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   arr.rev_in_place()
   debug_inspect(arr, content="[]")
 }
@@ -380,12 +380,12 @@ test "array_has_suffix" {
 test "lexical_compare" {
   // Test equal arrays
   inspect([1, 2, 3].lexical_compare([1, 2, 3]), content="0")
-  inspect(([] : Array[Int]).lexical_compare([]), content="0")
+  inspect(([] : Array[Int32]).lexical_compare([]), content="0")
 
   // Test shorter is less when prefix matches
   inspect([1, 2].lexical_compare([1, 2, 3]), content="-1")
   inspect([1, 2, 3].lexical_compare([1, 2]), content="1")
-  inspect(([] : Array[Int]).lexical_compare([1]), content="-1")
+  inspect(([] : Array[Int32]).lexical_compare([1]), content="-1")
   inspect([1].lexical_compare([]), content="1")
 
   // Test element-wise comparison
@@ -529,7 +529,7 @@ test "array_dedup - edge cases" {
   let arr = [1, 1, 1, 1, 1]
   arr.dedup()
   debug_inspect(arr, content="[1]")
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   arr.dedup()
   debug_inspect(arr, content="[]")
   let arr = [1, 2, 3, 4, 5]
@@ -637,9 +637,9 @@ test "array_suffixes" {
   @json.json_inspect(suffixes_with_empty, content=[[1, 2, 3], [2, 3], [3], []])
   let suffixes_no_empty = [1, 2, 3].suffixes(include_empty=false).collect()
   @json.json_inspect(suffixes_no_empty, content=[[1, 2, 3], [2, 3], [3]])
-  let empty_suffixes = ([] : Array[Int]).suffixes().collect()
+  let empty_suffixes = ([] : Array[Int32]).suffixes().collect()
   @json.json_inspect(empty_suffixes, content=[])
-  let empty_suffixes_with_empty = ([] : Array[Int])
+  let empty_suffixes_with_empty = ([] : Array[Int32])
     .suffixes(include_empty=true)
     .collect()
   @json.json_inspect(empty_suffixes_with_empty, content=[[]])
@@ -736,7 +736,7 @@ test "array_binary_search_duplicate_int_test" {
 
 ///|
 struct TestStruct {
-  num : Int
+  num : Int32
 }
 
 ///|
@@ -767,7 +767,7 @@ test "array of bytes, new & push" {
 
 ///|
 priv struct MX {
-  mm_num : Array[Int]
+  mm_num : Array[Int32]
 } derive(Default, @json.ToJson)
 
 ///|
@@ -777,11 +777,11 @@ test {
 
 ///|
 test "array view implicit conversion" {
-  fn f(x : ArrayView[Int]) {
+  fn f(x : ArrayView[Int32]) {
     x.length()
   }
 
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   inspect(f(arr), content="3")
 }
 
@@ -988,7 +988,7 @@ test "Array::count basic" {
 
 ///|
 test "Array::count empty" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   inspect(arr.count(1), content="0")
 }
 
@@ -1096,7 +1096,7 @@ test "retain_map" {
 
 ///|
 test "retain_map empty" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   arr.retain_map(x => Some(x))
   debug_inspect(arr, content="[]")
 }
@@ -1160,7 +1160,7 @@ test "array_fill - single element" {
 
 ///|
 test "array_fill - empty array" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   arr.fill(123)
   debug_inspect(arr, content="[]") // Should remain empty
 }
@@ -1205,7 +1205,7 @@ test "array_fill - full range explicit" {
 
 ///|
 test "to_string" {
-  let empty : Array[Int] = []
+  let empty : Array[Int32] = []
   debug_inspect(empty, content="[]")
   let a0 = [0]
   debug_inspect(a0, content="[0]")
@@ -1225,12 +1225,12 @@ test "push_iter" {
 
 ///|
 test "shuffle_in_place" {
-  let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  fn rand1(upper : Int) -> Int {
+  let arr : Array[Int32] = [1, 2, 3, 4, 5, 6, 7]
+  fn rand1(upper : Int32) -> Int32 {
     let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
     rng.int() % upper
   }
-  fn rand2(upper : Int) -> Int {
+  fn rand2(upper : Int32) -> Int32 {
     let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
     rng.int() % upper
   }
@@ -1247,7 +1247,7 @@ test "copy" {
   let copied = arr.copy()
   @test.assert_eq(copied, [1, 2, 3, 4, 5])
   @test.assert_not_same_object(arr, copied)
-  debug_inspect(([] : Array[Int]).copy(), content="[]")
+  debug_inspect(([] : Array[Int32]).copy(), content="[]")
 }
 
 ///|
@@ -1277,7 +1277,7 @@ test "filter_map" {
 
 ///|
 test "from_iter" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   debug_inspect(Array::from_iter(arr.iter()), content="[]")
   let arr = [1, 2, 3, 4, 5]
   debug_inspect(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
@@ -1320,7 +1320,7 @@ test "zip" {
   )
 
   // Test with an empty array
-  let arr5 : Array[Int] = []
+  let arr5 : Array[Int32] = []
   let arr6 = ["a", "b", "c"]
   debug_inspect(arr5.zip(arr6), content="[]")
 }
@@ -1334,7 +1334,7 @@ test "unzip" {
   @test.assert_eq(strs, ["a", "b", "c"])
 
   // Test with an empty array
-  let empty : Array[(Int, String)] = []
+  let empty : Array[(Int32, String)] = []
   let (e1, e2) = empty.unzip()
   @test.assert_eq(e1, [])
   @test.assert_eq(e2, [])
@@ -1354,7 +1354,7 @@ test "@array.zip_with" {
   debug_inspect(@array.zip_with(arr3, arr4, add), content="[5, 7]")
 
   // Test with an empty array and a function
-  let arr5 : Array[Int] = []
+  let arr5 : Array[Int32] = []
   let arr6 = [4, 5, 6]
   debug_inspect(@array.zip_with(arr5, arr6, add), content="[]")
 }
@@ -1380,7 +1380,7 @@ test "zip_to_iter2" {
   )
 
   // Test with an empty array
-  let arr5 : Array[Int] = []
+  let arr5 : Array[Int32] = []
   let arr6 = ["a", "b", "c"]
   debug_inspect(
     arr5.zip_to_iter2(arr6).to_array(),
@@ -1414,7 +1414,7 @@ test "zip_to_iter2 early termination" {
 
 ///|
 test "arbitrary" {
-  let arr : Array[Array[Int]] = @quickcheck.samples(20)
+  let arr : Array[Array[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     arr[5:9],
     content=(
@@ -1527,7 +1527,7 @@ test "Array::rev_iter" {
 
 ///|
 test "Array::rev_iter empty" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   let iter = arr.rev_iter()
   @test.assert_eq(iter.next(), None)
 }
@@ -1545,7 +1545,7 @@ test "Array::iter2" {
 
 ///|
 test "Array::iter2 empty" {
-  let arr : Array[Int] = []
+  let arr : Array[Int32] = []
   let iter = arr.iter2()
   @test.assert_eq(iter.next(), None)
 }
@@ -1585,8 +1585,8 @@ test "Array::append/self_alias_partial" {
 ///|
 /// A wrapper type that counts comparisons for testing purposes
 priv struct CompareCounter {
-  value : Int
-  counter : Ref[Int]
+  value : Int32
+  counter : Ref[Int32]
 }
 
 ///|
@@ -1605,7 +1605,7 @@ impl Compare for CompareCounter with fn compare(self, other) {
 /// The bug (missing return statement after insertion_sort for small arrays)
 /// would cause timsort to continue processing, resulting in extra comparisons.
 test "timsort_early_return_for_small_arrays" {
-  let count : Ref[Int] = Ref(0)
+  let count : Ref[Int32] = Ref(0)
   let arr : FixedArray[CompareCounter] = FixedArray::make(10, {
     value: 0,
     counter: count,

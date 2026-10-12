@@ -271,7 +271,7 @@ test "combine_bool" {
 test "Result::hash_combine Ok case" {
   // Test the Ok case
   let hasher = Hasher(seed=0)
-  let ok_result : Result[Int, String] = Ok(42)
+  let ok_result : Result[Int32, String] = Ok(42)
   hasher.combine(ok_result)
   inspect(hasher.finalize(), content="-1948635851")
 }
@@ -279,7 +279,7 @@ test "Result::hash_combine Ok case" {
 ///|
 test "Result::hash_combine Err case" {
   let hasher = Hasher(seed=0)
-  let err_result : Result[Int, String] = Err("error")
+  let err_result : Result[Int32, String] = Err("error")
   hasher.combine(err_result)
   inspect(hasher.finalize(), content="1953766574")
 }
@@ -287,11 +287,11 @@ test "Result::hash_combine Err case" {
 ///|
 test "option hash" {
   let hasher = @builtin.Hasher(seed=0)
-  let some_val : Int? = Some(42)
+  let some_val : Int32? = Some(42)
   hasher.combine(some_val)
   inspect(hasher.finalize(), content="2103260413")
   let hasher2 = @builtin.Hasher(seed=0)
-  let none_val : Int? = None
+  let none_val : Int32? = None
   hasher2.combine(none_val)
   inspect(hasher2.finalize(), content="148298089")
 }
@@ -307,7 +307,7 @@ test "UInt64::hash_combine test" {
 ///|
 test "hash_combine for UInt" {
   let hasher = Hasher(seed=0)
-  let value : UInt = 42U
+  let value : UInt32 = 42U
   Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="1161967057")
 }

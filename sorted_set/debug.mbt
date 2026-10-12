@@ -22,6 +22,6 @@ pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V] with fn to_repr(self) {
 
 ///|
 test "Debug for SortedSet" {
-  let ss : SortedSet[Int] = from_array([3, 1, 2])
+  let ss : SortedSet[Int32] = from_array([3, 1, 2])
   @debug.debug_inspect(ss, content="<SortedSet: [1, 2, 3]>")
 }

@@ -14,14 +14,14 @@
 
 ///|
 test "remove on empty set" {
-  let set : @sorted_set.SortedSet[Int] = SortedSet([])
+  let set : @sorted_set.SortedSet[Int32] = SortedSet([])
   set.remove(0)
   inspect(set.length(), content="0")
 }
 
 ///|
 test "default" {
-  let set : @sorted_set.SortedSet[Int] = Default::default()
+  let set : @sorted_set.SortedSet[Int32] = Default::default()
   inspect(set.length(), content="0")
 }
 
@@ -93,7 +93,7 @@ test "each" {
   let result = StringBuilder(size_hint=10)
   set.each(x => result.write_string(x.to_string()))
   inspect(result.to_string(), content="123456789")
-  let set : @sorted_set.SortedSet[Int] = SortedSet([])
+  let set : @sorted_set.SortedSet[Int32] = SortedSet([])
   set.each(_x => abort("Impossible to reach"))
 }
 
@@ -155,7 +155,7 @@ test "to_array" {
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
   debug_inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).to_array(),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int32]).to_array(),
     content="[]",
   )
 }
@@ -169,7 +169,7 @@ test "to_string" {
     ),
   )
   debug_inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int32]),
     content=(
       #|<SortedSet: []>
     ),
@@ -189,7 +189,7 @@ test "from_array" {
 ///|
 test "is_empty" {
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).is_empty(),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int32]).is_empty(),
     content="true",
   )
   inspect(@sorted_set.from_array([1]).is_empty(), content="false")
@@ -200,7 +200,7 @@ test "size" {
   inspect(@sorted_set.from_array([1, 2, 3, 4, 5]).length(), content="5")
   inspect(@sorted_set.from_array([1]).length(), content="1")
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).length(),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int32]).length(),
     content="0",
   )
 }
@@ -221,7 +221,7 @@ test "show" {
       #|<SortedSet: [1, 2, 3, 4, 5]>
     ),
   )
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
+  let set : @sorted_set.SortedSet[Int32] = @sorted_set.from_array([])
   debug_inspect(
     set,
     content=(
@@ -407,7 +407,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter([||])
+  let pq : @sorted_set.SortedSet[Int32] = @sorted_set.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -513,8 +513,8 @@ test "@sorted_set.symmetric_difference/identical" {
 /// Compare/Eq on `Keyed` look only at `key`; `payload` records which set a
 /// stored representative came from.
 priv struct Keyed {
-  key : Int
-  payload : Int
+  key : Int32
+  payload : Int32
 }
 
 ///|
@@ -528,7 +528,10 @@ impl Compare for Keyed with fn compare(self, other) {
 }
 
 ///|
-fn keyed_set(keys : Array[Int], payload : Int) -> @sorted_set.SortedSet[Keyed] {
+fn keyed_set(
+  keys : Array[Int32],
+  payload : Int32,
+) -> @sorted_set.SortedSet[Keyed] {
   let s : @sorted_set.SortedSet[Keyed] = SortedSet([])
   for k in keys {
     s.add({ key: k, payload, })
@@ -606,12 +609,12 @@ test "clear" {
 test "JSON round-trip" {
   let set = @sorted_set.from_array([3, 1, 2, 3])
   @json.json_inspect(set, content=[1, 2, 3])
-  let back : @sorted_set.SortedSet[Int] = @json.from_json([2, 3, 1, 3])
+  let back : @sorted_set.SortedSet[Int32] = @json.from_json([2, 3, 1, 3])
   inspect(back == set, content="true")
-  let empty : @sorted_set.SortedSet[Int] = @json.from_json([])
+  let empty : @sorted_set.SortedSet[Int32] = @json.from_json([])
   inspect(empty.is_empty(), content="true")
   let bad : Json = { "a": 1 }
-  try (@json.from_json(bad) : @sorted_set.SortedSet[Int]) |> ignore catch {
+  try (@json.from_json(bad) : @sorted_set.SortedSet[Int32]) |> ignore catch {
     e =>
       inspect(
         e,

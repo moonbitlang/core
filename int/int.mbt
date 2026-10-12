@@ -33,6 +33,6 @@ pub let min_value = -2147483648
 ///|
 /// Return absolute value.
 #deprecated("Use Int::abs instead")
-pub fn abs(x : Int) -> Int {
-  Int::abs(x)
+pub fn abs(x : Int32) -> Int32 {
+  Int32::abs(x)
 }

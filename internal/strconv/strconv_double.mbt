@@ -14,9 +14,9 @@
 
 ///|
 priv struct FloatInfo {
-  mantissa_bits : Int
-  exponent_bits : Int
-  bias : Int
+  mantissa_bits : Int32
+  exponent_bits : Int32
+  bias : Int32
 }
 
 ///|
@@ -120,7 +120,7 @@ let table : ReadOnlyArray[Double] = [
 ]
 
 ///|
-fn pow10_fast_path(exponent : Int) -> Double {
+fn pow10_fast_path(exponent : Int32) -> Double {
   table[exponent & 31]
 }
 

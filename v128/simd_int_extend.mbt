@@ -37,7 +37,7 @@ fn narrow_i16_to_i8_u(value : UInt16) -> Byte {
 }
 
 ///|
-fn narrow_i32_to_i16_s(value : UInt) -> UInt16 {
+fn narrow_i32_to_i16_s(value : UInt32) -> UInt16 {
   let signed = value.reinterpret_as_int()
   if signed > 32767 {
     0x7fff
@@ -49,7 +49,7 @@ fn narrow_i32_to_i16_s(value : UInt) -> UInt16 {
 }
 
 ///|
-fn narrow_i32_to_i16_u(value : UInt) -> UInt16 {
+fn narrow_i32_to_i16_u(value : UInt32) -> UInt16 {
   let signed = value.reinterpret_as_int()
   if signed < 0 {
     0
@@ -73,7 +73,7 @@ fn i16_q15mulr_sat_s(value : UInt16, other : UInt16) -> UInt16 {
 }
 
 ///|
-fn i16_pair_dot(value : V128, other : V128, pair : Int) -> UInt {
+fn i16_pair_dot(value : V128, other : V128, pair : Int32) -> UInt32 {
   (i16_signed(u16_lane(value, pair * 2)) * i16_signed(u16_lane(other, pair * 2)) +
   i16_signed(u16_lane(value, pair * 2 + 1)) *
   i16_signed(u16_lane(other, pair * 2 + 1))).reinterpret_as_uint()

@@ -7,7 +7,7 @@ A persistent hash map based on hash array mapped tries (HAMT). All operations re
 ```mbt check
 ///|
 test "create" {
-  let empty : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let empty : @hashmap.HashMap[String, Int32] = @hashmap.new()
   inspect(empty.length(), content="0")
   let single = @hashmap.singleton("a", 1)
   debug_inspect(single.get("a"), content="Some(1)")
@@ -125,7 +125,11 @@ test "equality is content equality" {
   let b = @hashmap.new().add("z", 3).add("y", 2).add("x", 1)
   assert_true(a == b)
   // Bulk construction and incremental adds agree
-  let c : @hashmap.HashMap[String, Int] = HashMap([("x", 1), ("y", 2), ("z", 3)])
+  let c : @hashmap.HashMap[String, Int32] = HashMap([
+    ("x", 1),
+    ("y", 2),
+    ("z", 3),
+  ])
   assert_true(c == a)
   // Operation history is invisible: add/remove round-trips restore equality
   assert_true(a.add("w", 9).remove("w") == a)
@@ -234,7 +238,7 @@ The invariant holds even under engineered collisions:
 ```mbt check
 ///|
 /// Every key hashes to the same value: all entries share one bucket.
-priv struct SameHashKey(Int) derive(Eq)
+priv struct SameHashKey(Int32) derive(Eq)
 
 ///|
 impl Hash for SameHashKey with fn hash(_) {

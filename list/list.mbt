@@ -157,7 +157,7 @@ pub fn[A] List::List(arr : ArrayView[A]) -> List[A] {
 
 ///|
 /// Get the length of the list.
-pub fn[A] List::length(self : List[A]) -> Int {
+pub fn[A] List::length(self : List[A]) -> Int32 {
   for x = self, acc = 0 {
     match (x, acc) {
       (Empty, len) => break len
@@ -206,7 +206,7 @@ pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
 #locals(f)
 pub fn[A] List::eachi(
   self : List[A],
-  f : (Int, A) -> Unit raise?,
+  f : (Int32, A) -> Unit raise?,
 ) -> Unit raise? {
   for x = self, i = 0 {
     match (x, i) {
@@ -272,7 +272,7 @@ pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
 #locals(f)
 pub fn[A, B] List::mapi(
   self : List[A],
-  f : (Int, A) -> B raise?,
+  f : (Int32, A) -> B raise?,
 ) -> List[B] raise? {
   match self {
     Empty => Empty
@@ -660,7 +660,7 @@ pub fn[A, B] List::fold(
 pub fn[A, B] List::foldi(
   self : List[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   for xs = self, i = 0, acc = init {
     match xs {
@@ -832,7 +832,7 @@ pub fn[A, B] List::filter_map(
 /// Panics if the index is out of bounds.
 #internal(unsafe, "Panic if the index is out of bounds")
 #doc(hidden)
-pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
+pub fn[A] List::unsafe_nth(self : List[A], n : Int32) -> A {
   for x = self, i = n {
     match (x, i) {
       (Empty, _) => break abort("nth: index out of bounds")
@@ -857,7 +857,7 @@ pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
 ///   assert_true(ls.nth(10) == None)
 /// }
 /// ```
-pub fn[A] List::nth(self : List[A], n : Int) -> A? {
+pub fn[A] List::nth(self : List[A], n : Int32) -> A? {
   for x = self, i = n {
     match (x, i) {
       (Empty, _) => break None
@@ -880,7 +880,7 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 /// }
 /// ```
 #as_free_fn
-pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
+pub fn[A] List::repeat(n : Int32, x : A) -> List[A] {
   if n < 0 {
     abort("negative repeat count")
   }
@@ -939,7 +939,7 @@ pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   let empty_list : @list.List[Int] = List([])
+///   let empty_list : @list.List[Int32] = List([])
 ///   @test.assert_eq(empty_list.is_empty(), true)
 ///   let non_empty = @list.List([1, 2, 3])
 ///   @test.assert_eq(non_empty.is_empty(), false)
@@ -1080,7 +1080,7 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
 /// test {
 ///   let ls = @list.List([1, 3, 2, 5, 4])
 ///   assert_true(ls.maximum() == Some(5))
-///   let empty : @list.List[Int] = List([])
+///   let empty : @list.List[Int32] = List([])
 ///   assert_true(empty.maximum() == None)
 /// }
 /// ```
@@ -1132,7 +1132,7 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// test {
 ///   let ls = @list.List([1, 3, 2, 5, 4])
 ///   assert_true(ls.minimum() == Some(1))
-///   let empty : @list.List[Int] = List([])
+///   let empty : @list.List[Int32] = List([])
 ///   assert_true(empty.minimum() == None)
 /// }
 /// ```
@@ -1289,7 +1289,7 @@ pub fn[A, S] List::rev_unfold(
 ///   @debug.assert_eq(r, List([1, 2, 3]))
 /// }
 /// ```
-pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
+pub fn[A] List::take(self : List[A], n : Int32) -> List[A] {
   if n <= 0 {
     Empty
   } else {
@@ -1326,7 +1326,7 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
 ///   @debug.assert_eq(r, List([4, 5]))
 /// }
 /// ```
-pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
+pub fn[A] List::drop(self : List[A], n : Int32) -> List[A] {
   if n <= 0 {
     self
   } else {
@@ -1539,7 +1539,7 @@ pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
 pub fn[A] List::find_index(
   self : Self[A],
   f : (A) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   for cur = self, idx = 0 {
     match (cur, idx) {
       (Empty, _) => break None
@@ -1575,7 +1575,10 @@ pub fn[A] List::find_index(
 /// }
 /// ```
 #locals(f)
-pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
+pub fn[A] List::findi(
+  self : List[A],
+  f : (A, Int32) -> Bool raise?,
+) -> A? raise? {
   for list = self, index = 0 {
     match list {
       Empty => break None
@@ -1599,7 +1602,7 @@ pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? 
 ///   @debug.assert_eq(@list.List([1, 2, 3, 4, 5]).remove_at(2), List([1, 2, 4, 5]))
 /// }
 /// ```
-pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
+pub fn[A] List::remove_at(self : List[A], index : Int32) -> List[A] {
   match (index, self) {
     (0, More(_, tail~))
     | ((_, Empty) with tail = Empty)
@@ -1809,7 +1812,7 @@ pub fn[A] List::iter(self : List[A]) -> Iter[A] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
+pub fn[A] List::iter2(self : List[A]) -> Iter2[Int32, A] {
   let mut i = 0
   let mut next = self
   Iter2::new(fn() {

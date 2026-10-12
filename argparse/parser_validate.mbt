@@ -23,7 +23,7 @@ priv struct ValidationCtx {
 
 ///|
 fn ValidationCtx::new(
-  inherited_global_names? : @set.Set[String] = Set([]),
+  inherited_global_names~ : @set.Set[String] = Set([]),
 ) -> ValidationCtx {
   {
     inherited_global_names: inherited_global_names.copy(),

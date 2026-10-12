@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn make_bytes_hash_bench_bytes(length : Int) -> Bytes {
+fn make_bytes_hash_bench_bytes(length : Int32) -> Bytes {
   Bytes::makei(length, i => ((i * 37 + 11) & 0xff).to_byte())
 }
 
@@ -36,8 +36,8 @@ fn make_bytes_hash_bench_map_keys() -> Array[Bytes] {
 }
 
 ///|
-fn make_bytes_hash_bench_map(keys : Array[Bytes]) -> Map[Bytes, Int] {
-  let map : Map[Bytes, Int] = Map([], capacity=bytes_hash_bench_map_size * 2)
+fn make_bytes_hash_bench_map(keys : Array[Bytes]) -> Map[Bytes, Int32] {
+  let map : Map[Bytes, Int32] = Map([], capacity=bytes_hash_bench_map_size * 2)
   for i in 0..<keys.length() {
     map.set(keys[i], i)
   }

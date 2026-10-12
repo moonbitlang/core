@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-fn normalized(xs : Array[Int]) -> Array[Int] {
-  let result : Array[Int] = []
+fn normalized(xs : Array[Int32]) -> Array[Int32] {
+  let result : Array[Int32] = []
   for x in xs {
     let x = x % 47
     if !result.contains(x) {
@@ -27,9 +27,9 @@ fn normalized(xs : Array[Int]) -> Array[Int] {
 
 ///|
 test "quickcheck: construction and mutation preserve set semantics" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (inserted, removed) = input
-    let set : @hashset.HashSet[Int] = HashSet([])
+    let set : @hashset.HashSet[Int32] = HashSet([])
     for x in inserted {
       set.add(x % 47)
     }
@@ -47,7 +47,7 @@ test "quickcheck: construction and mutation preserve set semantics" {
 
 ///|
 test "quickcheck: union, intersection, and difference obey membership laws" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @hashset.from_array(xs.map(x => x % 47))
     let b = @hashset.from_array(ys.map(x => x % 47))
@@ -67,10 +67,10 @@ test "quickcheck: union, intersection, and difference obey membership laws" {
 
 ///|
 test "quickcheck: set predicates and equality agree with a sorted-array model" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     // String elements, so the probes reuse non-trivial stored hashes.
-    let key = (x : Int) => "k\{x % 23}"
+    let key = (x : Int32) => "k\{x % 23}"
     let xs = normalized(xs.map(x => x % 23))
     let ys = normalized(ys.map(y => y % 23))
     let a = @hashset.from_array(xs.map(key))

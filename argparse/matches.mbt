@@ -34,10 +34,10 @@ pub enum ValueSource {
 pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
-  flag_counts : Map[String, Int]
+  flag_counts : Map[String, Int32]
   sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
-  priv counts : Map[String, Int]
+  priv counts : Map[String, Int32]
   priv flag_sources : Map[String, ValueSource]
   priv value_sources : Map[String, ValueSource]
   priv mut parsed_subcommand : (String, Matches)?

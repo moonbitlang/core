@@ -50,8 +50,8 @@
 pub fn Float::until(
   self : Float,
   end : Float,
-  step? : Float = 1.0,
-  inclusive? : Bool = false,
+  step~ : Float = 1.0,
+  inclusive~ : Bool = false,
 ) -> Iter[Float] {
   if step == 0.0 {
     return [||]

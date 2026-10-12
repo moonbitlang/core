@@ -14,9 +14,9 @@
 
 ///|
 test "Tree::is_node" {
-  let empty_tree : Tree[Int] = Empty
+  let empty_tree : Tree[Int32] = Empty
   let leaf_tree = Leaf(FixedArray::from_array([1, 2, 3]))
-  let node_tree : Tree[Int] = Node(FixedArray::from_array([Empty]), None)
+  let node_tree : Tree[Int32] = Node(FixedArray::from_array([Empty]), None)
   inspect(empty_tree.is_node(), content="false")
   inspect(leaf_tree.is_node(), content="false")
   inspect(node_tree.is_node(), content="true")
@@ -24,9 +24,9 @@ test "Tree::is_node" {
 
 ///|
 test "Tree::is_leaf" {
-  let empty_tree : Tree[Int] = Empty
+  let empty_tree : Tree[Int32] = Empty
   let leaf_tree = Leaf(FixedArray::from_array([1, 2, 3]))
-  let node_tree : Tree[Int] = Node(FixedArray::from_array([Empty]), None)
+  let node_tree : Tree[Int32] = Node(FixedArray::from_array([Empty]), None)
   inspect(empty_tree.is_leaf(), content="false")
   inspect(leaf_tree.is_leaf(), content="true")
   inspect(node_tree.is_leaf(), content="false")
@@ -71,9 +71,9 @@ test "Tree::node_children" {
 
 ///|
 test "Tree::local_size" {
-  let empty_tree : Tree[Int] = Empty
+  let empty_tree : Tree[Int32] = Empty
   let leaf_tree = Leaf(FixedArray::from_array([1, 2, 3]))
-  let node_tree : Tree[Int] = Node(
+  let node_tree : Tree[Int32] = Node(
     FixedArray::from_array([Empty, Empty, Empty]),
     None,
   )
@@ -84,7 +84,7 @@ test "Tree::local_size" {
 
 ///|
 test "Tree::size for Empty" {
-  let empty_tree : Tree[Int] = Empty
+  let empty_tree : Tree[Int32] = Empty
   inspect(empty_tree.size(5), content="0")
 }
 

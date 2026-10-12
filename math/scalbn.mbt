@@ -29,7 +29,7 @@
 
 ///|
 /// Scale by power-of-two exponent.
-pub fn scalbn(x : Double, exp : Int) -> Double {
+pub fn scalbn(x : Double, exp : Int32) -> Double {
   let mut n = exp
   let mut y : Double = x
   if n > 1023 {
@@ -84,7 +84,7 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
 ///   inspect(@math.scalbnf(-2, 128), content="-Infinity")
 /// }
 /// ```
-pub fn scalbnf(y : Float, exp : Int) -> Float {
+pub fn scalbnf(y : Float, exp : Int32) -> Float {
   let mut y = y
   let mut n = exp
   if n > 127 {

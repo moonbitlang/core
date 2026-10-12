@@ -14,7 +14,7 @@
 
 ///|
 /// A JSON array of `count` strings, each `body(i)` wrapped in quotes.
-fn lex_string_bench_array(count : Int, body : (Int) -> String) -> String {
+fn lex_string_bench_array(count : Int32, body : (Int32) -> String) -> String {
   let buf = StringBuilder()
   buf.write_char('[')
   for i in 0..<count {
@@ -31,10 +31,10 @@ fn lex_string_bench_array(count : Int, body : (Int) -> String) -> String {
 
 ///|
 /// `len` code units of varied ASCII text with no escapes.
-fn lex_string_bench_text(len : Int, seed : Int) -> String {
+fn lex_string_bench_text(len : Int32, seed : Int32) -> String {
   let buf = StringBuilder(size_hint=len)
   for i in 0..<len {
-    buf.write_char((('a' : Int) + (i * 7 + seed) % 26).unsafe_to_char())
+    buf.write_char((('a' : Int32) + (i * 7 + seed) % 26).unsafe_to_char())
   }
   buf.to_string()
 }

@@ -25,7 +25,7 @@ test "Bool hash function" {
 ///|
 priv struct TestHash {
   flag : Bool
-  x : Int
+  x : Int32
 } derive(Hash, Eq, Debug)
 
 ///|

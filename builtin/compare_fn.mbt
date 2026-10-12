@@ -26,6 +26,6 @@
 ///   inspect(compare("abc", "abc"), content="0")
 /// }
 /// ```
-pub fn[A : Compare] compare(x : A, y : A) -> Int {
+pub fn[A : Compare] compare(x : A, y : A) -> Int32 {
   Compare::compare(x, y)
 }

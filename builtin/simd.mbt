@@ -51,7 +51,7 @@ fn i16x8_splat(value : UInt16) -> V128 {
 ///|
 #borrow(bytes)
 #intrinsic("%v128.v128_load")
-fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
+fn v128_load(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   v128_make(
     fixedarray_read_uint64_le(bytes, offset),
     fixedarray_read_uint64_le(bytes, offset + 8),
@@ -64,7 +64,7 @@ fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(str)
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_load_i16x8")
-fn v128_load_i16x8(str : String, offset : Int) -> V128 {
+fn v128_load_i16x8(str : String, offset : Int32) -> V128 {
   let lo = for i in 0..<4; word = (0 : UInt64) {
     continue word | (str.unsafe_get(offset + i).to_uint64() << (16 * i))
   } nobreak {
@@ -84,7 +84,10 @@ fn v128_load_i16x8(str : String, offset : Int) -> V128 {
 #borrow(data)
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_load_i16x8")
-fn v128_load_fixedarray_i16x8(data : FixedArray[UInt16], offset : Int) -> V128 {
+fn v128_load_fixedarray_i16x8(
+  data : FixedArray[UInt16],
+  offset : Int32,
+) -> V128 {
   let lo = for i in 0..<4; word = (0 : UInt64) {
     continue word | (data.unsafe_get(offset + i).to_uint64() << (16 * i))
   } nobreak {
@@ -106,7 +109,7 @@ fn v128_load_fixedarray_i16x8(data : FixedArray[UInt16], offset : Int) -> V128 {
 #intrinsic("%v128.v128_store_i16x8")
 fn v128_store_i16x8(
   data : FixedArray[UInt16],
-  offset : Int,
+  offset : Int32,
   value : V128,
 ) -> Unit {
   for i in 0..<4 {
@@ -191,14 +194,14 @@ fn i16x8_eq(a : V128, b : V128) -> V128 {
 ///|
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.i8x16_bitmask")
-fn i8x16_bitmask(value : V128) -> Int {
+fn i8x16_bitmask(value : V128) -> Int32 {
   u64_high_bits(v128_lo(value)) | (u64_high_bits(v128_hi(value)) << 8)
 }
 
 ///|
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.i16x8_bitmask")
-fn i16x8_bitmask(value : V128) -> Int {
+fn i16x8_bitmask(value : V128) -> Int32 {
   u64_u16_high_bits(v128_lo(value)) | (u64_u16_high_bits(v128_hi(value)) << 4)
 }
 
@@ -304,7 +307,7 @@ fn u64_u16x4_le_mask(a : UInt64, b : UInt64) -> UInt64 {
 // Gathers the high bit (bit 7) of each of the eight bytes of a `UInt64` into
 // the low eight bits of an `Int`.
 #cfg(any(target="native", target="wasm"))
-fn u64_high_bits(value : UInt64) -> Int {
+fn u64_high_bits(value : UInt64) -> Int32 {
   for i in 0..<8; result = 0 {
     let bit = ((value >> (8 * i + 7)) & 1).to_int()
     continue result | (bit << i)
@@ -317,7 +320,7 @@ fn u64_high_bits(value : UInt64) -> Int {
 // Gathers the high bit (bit 15) of each of the four 16-bit lanes of a `UInt64`
 // into the low four bits of an `Int`.
 #cfg(any(target="native", target="wasm"))
-fn u64_u16_high_bits(value : UInt64) -> Int {
+fn u64_u16_high_bits(value : UInt64) -> Int32 {
   for i in 0..<4; result = 0 {
     let bit = ((value >> (16 * i + 15)) & 1).to_int()
     continue result | (bit << i)

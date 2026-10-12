@@ -17,7 +17,7 @@
 /// first `len` code units, both when the buffer is full and when it must
 /// truncate.
 test "quickcheck: finish_string keeps exactly the first len code units" {
-  @quickcheck.check(count=100, (input : (Array[Int], Int)) => {
+  @quickcheck.check(count=100, (input : (Array[Int32], Int32)) => {
     let units = input.0.map(x => (x & 0x7F).to_uint16())
     let buffer = FixedArray::makei(units.length(), i => units[i])
     let take = if units.is_empty() {

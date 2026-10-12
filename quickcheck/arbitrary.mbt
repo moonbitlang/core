@@ -18,7 +18,7 @@ pub(open) trait Arbitrary {
   // `arbitrary` takes a size hint and a random number generator, and returns a
   // generated value. Types whose complexity is independent of size may ignore
   // the hint.
-  fn arbitrary(Int, @splitmix.RandomState) -> Self
+  fn arbitrary(Int32, @splitmix.RandomState) -> Self
 }
 
 ///|
@@ -95,7 +95,7 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with fn arbitrary(size, rs) {
 
 ///|
 /// Generates a single random value, optionally with a given size and random state.
-pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
+pub fn[T : Arbitrary] gen(size? : Int32, state? : @splitmix.RandomState) -> T {
   let size = size.unwrap_or(0)
   let state = state.unwrap_or_else(() => {
     (Default::default() : @splitmix.RandomState)

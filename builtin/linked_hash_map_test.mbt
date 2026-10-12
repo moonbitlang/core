@@ -29,13 +29,13 @@ test "Map keys iter" {
     ),
   )
   debug_inspect(
-    (Map([]) : Map[String, Int]).keys().to_array(),
+    (Map([]) : Map[String, Int32]).keys().to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    (Map([]) : Map[String, Int]).values().to_array(),
+    (Map([]) : Map[String, Int32]).values().to_array(),
     content=(
       #|[]
     ),
@@ -44,14 +44,14 @@ test "Map keys iter" {
 
 ///|
 test "Map::default" {
-  let m : Map[String, Int] = Default::default()
+  let m : Map[String, Int32] = Default::default()
   inspect(m.length(), content="0")
 }
 
 ///|
 #warnings("-deprecated")
 test "Map::of" {
-  let arr : FixedArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
+  let arr : FixedArray[(String, Int32)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = Map::of(arr)
   debug_inspect(
     map,
@@ -63,7 +63,7 @@ test "Map::of" {
   debug_inspect(map.get("a"), content="Some(1)")
   debug_inspect(map.get("b"), content="Some(2)")
   debug_inspect(map.get("c"), content="Some(3)")
-  let large_arr : FixedArray[(String, Int)] = [
+  let large_arr : FixedArray[(String, Int32)] = [
     ("k1", 1),
     ("k2", 2),
     ("k3", 3),
@@ -114,11 +114,11 @@ test "Map::from_iter" {
 
 ///|
 test "Map::get_from_view" {
-  let string_map : Map[String, Int] = { "alpha": 1, "beta": 2 }
+  let string_map : Map[String, Int32] = { "alpha": 1, "beta": 2 }
   debug_inspect(Map::get_from_string(string_map, "alp"), content="None")
   debug_inspect(Map::get_from_string(string_map, "alphx"), content="None")
   debug_inspect(Map::get_from_string(string_map, "alpha"), content="Some(1)")
-  let bytes_map : Map[Bytes, Int] = { b"abc": 10, b"xyz": 20 }
+  let bytes_map : Map[Bytes, Int32] = { b"abc": 10, b"xyz": 20 }
   debug_inspect(Map::get_from_bytes(bytes_map, b"ab"), content="None")
   debug_inspect(Map::get_from_bytes(bytes_map, b"abd"), content="None")
   debug_inspect(Map::get_from_bytes(bytes_map, b"abc"), content="Some(10)")
@@ -256,7 +256,7 @@ test "Map::update" {
   inspect(map.length(), content="3")
 
   // Test incrementing a counter (common use case)
-  let counter_map : Map[String, Int] = Map([])
+  let counter_map : Map[String, Int32] = Map([])
   counter_map.update("clicks", fn(v) {
     match v {
       Some(count) => Some(count + 1)
@@ -273,7 +273,7 @@ test "Map::update" {
   debug_inspect(counter_map.get("clicks"), content="Some(2)")
 
   // Test on empty map
-  let empty_map : Map[String, Int] = Map([])
+  let empty_map : Map[String, Int32] = Map([])
 
   // Test no-op on empty map
   empty_map.update("empty", fn(_) { None })
@@ -289,7 +289,7 @@ test "Map::update" {
   inspect(empty_map.length(), content="1")
 
   // Test adding to empty map
-  let empty_map : Map[String, Int] = Map([], capacity=1)
+  let empty_map : Map[String, Int32] = Map([], capacity=1)
   empty_map.update("a", _ => Some(1))
   empty_map.update("b", _ => Some(2))
   empty_map.update("c", _ => Some(3))
@@ -330,7 +330,7 @@ test "Map::retain - remove all" {
 
 ///|
 test "Map::retain - empty map" {
-  let map : Map[String, Int] = Map([])
+  let map : Map[String, Int32] = Map([])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
@@ -387,7 +387,7 @@ test "Map::retain - filter by both key and value" {
 
 ///|
 test "Map::retain - large map performance" {
-  let map : Map[String, Int] = Map([])
+  let map : Map[String, Int32] = Map([])
   for i in 0..<1000 {
     map.set("key" + i.to_string(), i)
   }
@@ -481,7 +481,7 @@ test "Map::retain - edge case with all elements removed then re-added" {
 
 ///|
 test "Map::retain - with hash collisions simulation" {
-  let map : Map[String, Int] = Map([])
+  let map : Map[String, Int32] = Map([])
   // Create keys that might have similar hash values
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa"]
   for i, k in keys {
@@ -573,8 +573,8 @@ test "Map::get_from_bytes" {
 
 ///|
 test "Map::merge" {
-  let map1 : Map[String, Int] = { "a": 1, "b": 2 }
-  let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+  let map1 : Map[String, Int32] = { "a": 1, "b": 2 }
+  let map2 : Map[String, Int32] = { "b": 3, "c": 4 }
   let merged = map1.merge(map2)
   debug_inspect(merged.get("a"), content="Some(1)")
   debug_inspect(merged.get("b"), content="Some(3)")
@@ -587,8 +587,8 @@ test "Map::merge" {
 
 ///|
 test "Map::merge empty maps" {
-  let map1 : Map[String, Int] = Map([])
-  let map2 : Map[String, Int] = { "a": 1, "b": 2 }
+  let map1 : Map[String, Int32] = Map([])
+  let map2 : Map[String, Int32] = { "a": 1, "b": 2 }
   let merged1 = map1.merge(map2)
   inspect(merged1.length(), content="2")
   debug_inspect(merged1.get("a"), content="Some(1)")
@@ -601,8 +601,8 @@ test "Map::merge empty maps" {
 
 ///|
 test "Map::merge_in_place" {
-  let map1 : Map[String, Int] = { "a": 1, "b": 2 }
-  let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+  let map1 : Map[String, Int32] = { "a": 1, "b": 2 }
+  let map2 : Map[String, Int32] = { "b": 3, "c": 4 }
   map1.merge_in_place(map2)
   debug_inspect(map1.get("a"), content="Some(1)")
   debug_inspect(map1.get("b"), content="Some(3)")
@@ -614,8 +614,8 @@ test "Map::merge_in_place" {
 
 ///|
 test "Map::merge_in_place empty maps" {
-  let map1 : Map[String, Int] = Map([])
-  let map2 : Map[String, Int] = { "a": 1, "b": 2 }
+  let map1 : Map[String, Int32] = Map([])
+  let map2 : Map[String, Int32] = { "a": 1, "b": 2 }
   map1.merge_in_place(map2)
   inspect(map1.length(), content="2")
   debug_inspect(map1.get("a"), content="Some(1)")
@@ -624,7 +624,7 @@ test "Map::merge_in_place empty maps" {
 }
 
 ///|
-priv struct LKey(Int, Int) derive(Eq)
+priv struct LKey(Int32, Int32) derive(Eq)
 
 ///|
 impl Hash for LKey with fn hash(self) {
@@ -640,7 +640,7 @@ impl Hash for LKey with fn hash_combine(self, hasher) {
 
 ///|
 test "Map collision probe paths" {
-  let map : Map[LKey, Int] = Map([])
+  let map : Map[LKey, Int32] = Map([])
   let k1 = LKey::LKey(1, 1)
   let k2 = LKey::LKey(2, 2)
   map[k1] = 10
@@ -660,7 +660,7 @@ test "Map collision probe paths" {
 
 ///|
 test "Map grow rehashes collision cluster in insertion order" {
-  let map : Map[LKey, Int] = Map([], capacity=2)
+  let map : Map[LKey, Int32] = Map([], capacity=2)
   for i in 0..<12 {
     map[LKey(i, i % 4)] = i * 10
   }
@@ -680,7 +680,7 @@ test "Map grow rehashes collision cluster in insertion order" {
 
 ///|
 test "Map early exit on psl" {
-  let map : Map[LKey, Int] = Map([])
+  let map : Map[LKey, Int32] = Map([])
   let k1 = LKey::LKey(1, 0)
   let k2 = LKey::LKey(2, 1)
   map[k1] = 10
@@ -692,7 +692,7 @@ test "Map early exit on psl" {
 
 ///|
 test "Map::merge_in_place self should not grow" {
-  let map : Map[String, Int] = Map([])
+  let map : Map[String, Int32] = Map([])
   // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
   for i in 0..<6 {
     map.set(i.to_string(), i)
@@ -710,7 +710,7 @@ test "Map::merge_in_place self should not grow" {
 
 ///|
 test "Map::set updating existing key should not grow" {
-  let map : Map[String, Int] = Map([])
+  let map : Map[String, Int32] = Map([])
   // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
   for i in 0..<6 {
     map.set(i.to_string(), i)
@@ -731,7 +731,7 @@ test "Map::set updating existing key should not grow" {
 
 ///|
 test "filter sizes the result for the kept entries" {
-  let m : Map[Int, Int] = Map([ for i in 0..<10000 => (i, i) ])
+  let m : Map[Int32, Int32] = Map([ for i in 0..<10000 => (i, i) ])
   for keep in [0, 1, 10, 5000, 10000] {
     let kept = m.filter((k, _) => k < keep)
     let rebuilt = Map([ for k, v in m if k < keep => (k, v) ])
@@ -743,7 +743,7 @@ test "filter sizes the result for the kept entries" {
 ///|
 test "filter keeps lookups working after removals and collisions" {
   // Small table, colliding hashes, and entries removed before filtering.
-  let m : Map[Int, Int] = Map([], capacity=2)
+  let m : Map[Int32, Int32] = Map([], capacity=2)
   for i in 0..<200 {
     m.set(i * 64, i)
   }
@@ -762,7 +762,7 @@ test "filter keeps lookups working after removals and collisions" {
   kept.set(-1, -1)
   assert_eq(kept.get(-1), Some(-1))
   assert_eq(m.get(-1), None)
-  let empty : Map[Int, Int] = Map([])
+  let empty : Map[Int32, Int32] = Map([])
   assert_eq(empty.filter((_, _) => true).length(), 0)
 }
 
@@ -808,14 +808,14 @@ test "map propagates errors and leaves the source unchanged" {
 ///|
 /// Not declared `raise`, so this compiles only if `map` with a non-raising
 /// function is itself non-raising.
-fn map_times_ten(m : Map[String, Int]) -> Map[String, Int] {
+fn map_times_ten(m : Map[String, Int32]) -> Map[String, Int32] {
   m.map((_, v) => v * 10)
 }
 
 ///|
 test "remove_and_get returns the removed value and keeps the rest intact" {
   // Small table and colliding hashes, so removals shift probe chains.
-  let m : Map[Int, Int] = Map([], capacity=2)
+  let m : Map[Int32, Int32] = Map([], capacity=2)
   for i in 0..<200 {
     m.set(i * 64, i)
   }
@@ -834,14 +834,14 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   assert_eq(m.to_array(), [ for i in 0..<200 if i % 3 != 0 => (i * 64, i) ])
   m.set(0, -1)
   assert_eq(m.to_array().last(), Some((0, -1)))
-  let empty : Map[String, Int] = Map([])
+  let empty : Map[String, Int32] = Map([])
   assert_eq(empty.remove_and_get("x"), None)
 }
 
 ///|
 /// A key whose hash is the integer itself, so the table layouts in the
 /// reentrancy tests below do not depend on the per-process hash seed.
-priv struct Id(Int) derive(Eq)
+priv struct Id(Int32) derive(Eq)
 
 ///|
 impl Hash for Id with fn hash_combine(self, hasher) {
@@ -855,13 +855,13 @@ impl Hash for Id with fn hash(self) {
 
 ///|
 /// `(length, keys in insertion order, keys that `get` can find)`.
-fn id_map_state(m : Map[Id, Int]) -> (Int, Array[Int], Array[Int]) {
+fn id_map_state(m : Map[Id, Int32]) -> (Int32, Array[Int32], Array[Int32]) {
   let keys = m.keys().map(k => k.0).to_array()
   (m.length(), keys, [ for k in keys if m.get(Id(k)) is Some(_) => k ])
 }
 
 ///|
-fn id_map_fib(memo : Map[Id, Int], n : Int) -> Int {
+fn id_map_fib(memo : Map[Id, Int32], n : Int32) -> Int32 {
   if n < 2 {
     return n
   }
@@ -872,7 +872,7 @@ fn id_map_fib(memo : Map[Id, Int], n : Int) -> Int {
 
 ///|
 test "get_or_init: default may write to the same map (memoization)" {
-  let memo : Map[Id, Int] = Map([])
+  let memo : Map[Id, Int32] = Map([])
   inspect(id_map_fib(memo, 30), content="832040")
   let missing = [ for k in 2..<=30 if memo.get(Id(k)) is None => k ]
   debug_inspect(
@@ -885,7 +885,7 @@ test "get_or_init: default may write to the same map (memoization)" {
 
 ///|
 test "get_or_init: default grows the map" {
-  let m : Map[Id, Int] = Map([])
+  let m : Map[Id, Int32] = Map([])
   let v = m.get_or_init(Id(8), () => {
     for i in 0..<8 {
       m.set(Id(i), i)
@@ -909,7 +909,7 @@ test "get_or_init: default grows the map" {
 
 ///|
 test "get_or_init: default inserts the same key" {
-  let m : Map[Id, Int] = Map([])
+  let m : Map[Id, Int32] = Map([])
   let v = m.get_or_init(Id(3), () => {
     m.set(Id(3), 1)
     2
@@ -925,7 +925,7 @@ test "get_or_init: default inserts the same key" {
 
 ///|
 test "update: f grows the map when the key is absent" {
-  let m : Map[Id, Int] = Map([])
+  let m : Map[Id, Int32] = Map([])
   m.update(Id(8), _ => {
     for i in 0..<8 {
       m.set(Id(i), i)
@@ -948,7 +948,7 @@ test "update: f grows the map when the key is absent" {
 
 ///|
 test "update: f grows the map, then the present key is removed" {
-  let m : Map[Id, Int] = Map([(Id(8), 8)])
+  let m : Map[Id, Int32] = Map([(Id(8), 8)])
   m.update(Id(8), _ => {
     for i in 0..<8 {
       m.set(Id(i), i)
@@ -971,7 +971,7 @@ test "update: f grows the map, then the present key is removed" {
 
 ///|
 test "update: f removes the present key and returns a value" {
-  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  let m : Map[Id, Int32] = Map([(Id(1), 1), (Id(2), 2)])
   m.update(Id(1), v => {
     m.remove(Id(1))
     v.map(x => x + 10)
@@ -986,7 +986,7 @@ test "update: f removes the present key and returns a value" {
 
 ///|
 test "update_or_default: f removes the present key" {
-  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  let m : Map[Id, Int32] = Map([(Id(1), 1), (Id(2), 2)])
   m.update_or_default(Id(1), 0, v => {
     m.remove(Id(1))
     v + 10
@@ -1003,7 +1003,7 @@ test "update_or_default: f removes the present key" {
 test "get_or_init: default removes a key on the probe path and inserts another" {
   // Id(16) probes slot 0 (Id(0)) and then slot 1. `default` empties slot 0
   // and adds a key elsewhere, so the length is unchanged when it returns.
-  let m : Map[Id, Int] = Map([(Id(0), 0)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0)], capacity=16)
   let v = m.get_or_init(Id(16), () => {
     m.remove(Id(0))
     m.set(Id(5), 5)
@@ -1020,7 +1020,7 @@ test "get_or_init: default removes a key on the probe path and inserts another" 
 
 ///|
 test "update: f grows the map and updates the present key" {
-  let m : Map[Id, Int] = Map([(Id(8), 8)])
+  let m : Map[Id, Int32] = Map([(Id(8), 8)])
   m.update(Id(8), v => {
     for i in 0..<8 {
       m.set(Id(i), i)
@@ -1044,7 +1044,7 @@ test "update: f grows the map and updates the present key" {
 ///|
 test "update: f removes a key before the present key in its probe chain" {
   // Id(16) sits in slot 1 behind Id(0); removing Id(0) shifts it to slot 0.
-  let m : Map[Id, Int] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
   m.update(Id(16), _ => {
     m.remove(Id(0))
     None
@@ -1061,7 +1061,7 @@ test "update: f removes a key before the present key in its probe chain" {
       #|None
     ),
   )
-  let m : Map[Id, Int] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
   m.update(Id(16), v => {
     m.remove(Id(0))
     v.map(x => x + 1)
@@ -1076,7 +1076,7 @@ test "update: f removes a key before the present key in its probe chain" {
 
 ///|
 test "update: f replaces the present key and returns None" {
-  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  let m : Map[Id, Int32] = Map([(Id(1), 1), (Id(2), 2)])
   m.update(Id(1), _ => {
     m.remove(Id(1))
     m.set(Id(1), 5)
@@ -1101,7 +1101,7 @@ test "update: f replaces the present key and returns None" {
 test "update: f inserts the absent key and returns None" {
   // `None` for a key that was absent when `f` was called is a no-op, so the
   // entry `f` stored stays.
-  let m : Map[Id, Int] = Map([])
+  let m : Map[Id, Int32] = Map([])
   m.update(Id(3), _ => {
     m.set(Id(3), 1)
     None
@@ -1116,7 +1116,7 @@ test "update: f inserts the absent key and returns None" {
 
 ///|
 test "update_or_default: f grows the map" {
-  let m : Map[Id, Int] = Map([(Id(8), 8)])
+  let m : Map[Id, Int32] = Map([(Id(8), 8)])
   m.update_or_default(Id(8), 0, v => {
     for i in 0..<8 {
       m.set(Id(i), i)
@@ -1139,7 +1139,7 @@ test "update_or_default: f grows the map" {
 
 ///|
 test "update_or_default: f replaces the present key" {
-  let m : Map[Id, Int] = Map([(Id(1), 1), (Id(2), 2)])
+  let m : Map[Id, Int32] = Map([(Id(1), 1), (Id(2), 2)])
   m.update_or_default(Id(1), 0, v => {
     m.remove(Id(1))
     m.set(Id(1), 5)

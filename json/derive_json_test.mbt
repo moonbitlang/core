@@ -23,7 +23,7 @@ priv struct Hello[A, B] {
 test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 }, }
   let vj = @json.ToJson::to_json(v)
-  let v0 : Hello[Int, Int] = @json.from_json(vj)
+  let v0 : Hello[Int32, Int32] = @json.from_json(vj)
   debug_inspect(
     v0,
     content=(
@@ -44,7 +44,7 @@ test {
 priv struct Hello3[A, B] {
   fieldAX : A
   fieldB : B
-  data : Map[Int, A]
+  data : Map[Int32, A]
 } derive(@json.ToJson)
 
 ///|

@@ -19,7 +19,7 @@
 /// backends cannot yet flatten nested value types.
 priv struct DecimalDivisor {
   value : BigInt
-  digits : Int
+  digits : Int32
 }
 
 ///|
@@ -34,7 +34,7 @@ const DECIMAL_RECURSIVE_THRESHOLD = 32
 /// Bit length of a normalized magnitude represented by `limbs` limbs and its
 /// most significant limb. This stays wide enough even when the result exceeds
 /// `Int::max_value`.
-fn decimal_bit_length_from_parts(limbs : Int, top_limb : UInt64) -> Int64 {
+fn decimal_bit_length_from_parts(limbs : Int32, top_limb : UInt64) -> Int64 {
   if limbs == 0 {
     return 0L
   }
@@ -119,8 +119,8 @@ fn decimal_divisor_table(value : BigInt) -> Array[DecimalDivisor] {
 fn write_decimal(
   value : BigInt,
   table : Array[DecimalDivisor],
-  max_index : Int,
-  width : Int,
+  max_index : Int32,
+  width : Int32,
   builder : StringBuilder,
 ) -> Unit {
   let mut index = max_index
@@ -151,7 +151,7 @@ fn write_decimal(
 /// Convert a small block iteratively, padding lower recursive blocks exactly.
 fn write_decimal_leaf(
   value : BigInt,
-  width : Int,
+  width : Int32,
   builder : StringBuilder,
 ) -> Unit {
   if value.is_zero() {

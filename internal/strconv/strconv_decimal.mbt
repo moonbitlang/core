@@ -20,17 +20,17 @@ let max_shift = 59
 ///|
 priv struct Decimal {
   digits : FixedArray[Byte]
-  mut digits_num : Int
-  mut decimal_point : Int
+  mut digits_num : Int32
+  mut decimal_point : Int32
   mut negative : Bool
   mut truncated : Bool
-  mut overflowed : Int
+  mut overflowed : Int32
 }
 
 ///|
 /// Decimal power of ten to binary power of two.
 /// The Ith entry (starting at I = 0) is the largest power of 2 less than (10 ** I)
-let powtab : ReadOnlyArray[Int] = [
+let powtab : ReadOnlyArray[Int32] = [
   1, 3, 6, 9, 13, 16, 19, 23, 26, 29, 33, 36, 39, 43, 46, 49, 53, 56, 59,
 ]
 
@@ -82,7 +82,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
         d.decimal_point = d.digits_num
         continue rest
       }
-      ['0'..='9' as digit, .. rest] => {
+      ['0'..<='9' as digit, .. rest] => {
         has_digits = true
         if digit == '0' && d.digits_num == 0 {
           // ignore leading zeros
@@ -121,7 +121,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
         }
         rest => rest
       }
-      guard rest is ['0'..='9', ..] else { syntax_err() }
+      guard rest is ['0'..<='9', ..] else { syntax_err() }
       // Clamp the exponent accumulator so huge exponents cannot overflow `Int`.
       // The clamp lands `decimal_point` exactly at the boundary that
       // `to_double_priv` already treats as overflow / underflow:
@@ -148,7 +148,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
       let rest = for rest = rest {
         match rest {
           ['_', .. rest] => continue rest
-          ['0'..='9' as digit, .. rest] => {
+          ['0'..<='9' as digit, .. rest] => {
             if exp < exp_limit {
               exp = exp * 10 + (digit.to_int() - '0')
               if exp > exp_limit {
@@ -264,7 +264,7 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise {
 }
 
 ///|
-fn Decimal::shift_priv(self : Decimal, s : Int) -> Unit {
+fn Decimal::shift_priv(self : Decimal, s : Int32) -> Unit {
   if self.digits_num == 0 {
     return
   }
@@ -286,7 +286,7 @@ fn Decimal::shift_priv(self : Decimal, s : Int) -> Unit {
 }
 
 ///|
-fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
+fn assemble_bits(mantissa : Int64, exponent : Int32, negative : Bool) -> Int64 {
   let biased_exp = exponent - double_info.bias
   // set the mantissa bits
   let mut bits = mantissa & ((1L << double_info.mantissa_bits) - 1L)
@@ -327,7 +327,7 @@ fn Decimal::rounded_integer(self : Decimal) -> Int64 {
 /// Check if truncate at d digits should round up.
 /// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8.
 /// Rounding numbers like 7.5, half-way between two integers, will round to even.
-fn Decimal::should_round_up(self : Decimal, d : Int) -> Bool {
+fn Decimal::should_round_up(self : Decimal, d : Int32) -> Bool {
   if d < 0 || d >= self.digits_num {
     return false
   }
@@ -370,7 +370,7 @@ fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
 
 ///|
 /// Binary shift right by s bits.
-fn Decimal::right_shift(self : Decimal, s : Int) -> Unit {
+fn Decimal::right_shift(self : Decimal, s : Int32) -> Unit {
   let mut read_index = 0
   let mut write_index = 0
 
@@ -427,7 +427,7 @@ fn Decimal::right_shift(self : Decimal, s : Int) -> Unit {
 /// Cheat sheet for left shift: table indexed by shift count giving
 /// number of new digits that will be introduced by that shift.
 /// left_shift_cheats[s] = (new digits num, (5 ** s))
-let left_shift_cheats : ReadOnlyArray[(Int, String)] = [
+let left_shift_cheats : ReadOnlyArray[(Int32, String)] = [
   (0, ""),
   (1, "5"), // * 2
   (1, "25"), // * 4
@@ -493,7 +493,7 @@ let left_shift_cheats : ReadOnlyArray[(Int, String)] = [
 
 ///|
 /// Lookup the cheat sheet to find the new digits num.
-fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
+fn Decimal::new_digits(self : Decimal, s : Int32) -> Int32 {
   let new_digits = left_shift_cheats[s].0
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
@@ -517,7 +517,7 @@ fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
 
 ///|
 /// Binary shift left by s bits.
-fn Decimal::left_shift(self : Decimal, s : Int) -> Unit {
+fn Decimal::left_shift(self : Decimal, s : Int32) -> Unit {
   let new_digits = self.new_digits(s)
   // from right to left
   let mut read_index = self.digits_num

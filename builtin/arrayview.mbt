@@ -56,16 +56,16 @@ type ArrayView[T]
 fn[T] ArrayView::buf(self : ArrayView[T]) -> UninitializedArray[T] = "%arrayview.buf"
 
 ///|
-fn[T] ArrayView::start(self : ArrayView[T]) -> Int = "%arrayview.start"
+fn[T] ArrayView::start(self : ArrayView[T]) -> Int32 = "%arrayview.start"
 
 ///|
-fn[T] ArrayView::len(self : ArrayView[T]) -> Int = "%arrayview.len"
+fn[T] ArrayView::len(self : ArrayView[T]) -> Int32 = "%arrayview.len"
 
 ///|
 fn[T] ArrayView::make(
   buf : UninitializedArray[T],
-  start : Int,
-  len : Int,
+  start : Int32,
+  len : Int32,
 ) -> ArrayView[T] = "%arrayview.make"
 
 // #endregion
@@ -91,7 +91,7 @@ fn[T] ArrayView::make(
 /// }
 /// ```
 #intrinsic("%arrayview.length")
-pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
+pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int32 {
   self.len()
 }
 
@@ -124,7 +124,7 @@ pub fn[T] ArrayView::is_empty(self : ArrayView[T]) -> Bool {
 ///   inspect(v.start_offset(), content="1")
 /// }
 /// ```
-pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
+pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int32 {
   self.start()
 }
 
@@ -154,7 +154,7 @@ pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
 /// ```
 #intrinsic("%arrayview.get")
 #alias("_[_]")
-pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
+pub fn[T] ArrayView::at(self : ArrayView[T], index : Int32) -> T {
   guard index >= 0 && index < self.len() else {
     index_out_of_bounds(self.len(), index)
   }
@@ -186,7 +186,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 #intrinsic("%arrayview.get_opt")
-pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
+pub fn[T] ArrayView::get(self : ArrayView[T], index : Int32) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
   Some(self.buf().unsafe_get(self.start() + index))
@@ -238,7 +238,7 @@ pub fn[T] ArrayView::last(self : ArrayView[T]) -> T? {
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
 #doc(hidden)
-pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
+pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int32) -> T {
   self.buf()[self.start() + index]
 }
 
@@ -274,8 +274,8 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] Array::exact_view(
   self : Array[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -321,8 +321,8 @@ pub fn[T] Array::exact_view(
 /// ```
 pub fn[T] Array::get_view(
   self : Array[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
@@ -368,8 +368,8 @@ pub fn[T] Array::get_view(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] ArrayView::exact_view(
   self : ArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -417,8 +417,8 @@ pub fn[T] ArrayView::exact_view(
 /// ```
 pub fn[T] ArrayView::get_view(
   self : ArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
@@ -479,8 +479,8 @@ pub fn[T] ArrayView::get_view(
 #alias("_[_:_]")
 pub fn[T] Array::clamped_view(
   self : Array[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -520,8 +520,8 @@ pub fn[T] Array::clamped_view(
 #alias("_[_:_]")
 pub fn[T] ArrayView::clamped_view(
   self : ArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -561,7 +561,7 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   let view = arr.exact_view(start=1, end=4) // view = [2, 3, 4]
 ///   inspect(view[0], content="2")
 /// }
@@ -571,8 +571,8 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] FixedArray::exact_view(
   self : FixedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -606,7 +606,7 @@ pub fn[T] FixedArray::exact_view(
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
 ///   debug_inspect(
@@ -622,8 +622,8 @@ pub fn[T] FixedArray::exact_view(
 /// ```
 pub fn[T] FixedArray::get_view(
   self : FixedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
@@ -648,7 +648,7 @@ pub fn[T] FixedArray::get_view(
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.clamped_view(start=3, end=10),
 ///     content=(
@@ -666,8 +666,8 @@ pub fn[T] FixedArray::get_view(
 #alias("_[_:_]")
 pub fn[T] FixedArray::clamped_view(
   self : FixedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -705,7 +705,7 @@ pub fn[T] FixedArray::clamped_view(
 /// ```
 pub fn[T] ArrayView::suffixes(
   self : Self[T],
-  include_empty? : Bool = false,
+  include_empty~ : Bool = false,
 ) -> Iter[ArrayView[T]] {
   let len = self.length()
   let mut i = 0
@@ -753,7 +753,7 @@ pub fn[T] ArrayView::suffixes(
 /// ```
 pub fn[T] ArrayView::chunks(
   self : ArrayView[T],
-  size : Int,
+  size : Int32,
 ) -> Array[ArrayView[T]] {
   guard! size > 0
   let len = self.length()
@@ -763,7 +763,7 @@ pub fn[T] ArrayView::chunks(
   let num_chunks = (len - 1) / size + 1
   Array::makei(num_chunks, i => {
     let start = i * size
-    let end = start + Int::min(size, len - start)
+    let end = start + Int32::min(size, len - start)
     self[start:end]
   })
 }
@@ -839,7 +839,7 @@ pub fn[T] ArrayView::chunk_by(
 /// ```
 pub fn[T] ArrayView::windows(
   self : ArrayView[T],
-  size : Int,
+  size : Int32,
 ) -> Array[ArrayView[T]] {
   guard! size > 0
   let len = self.length() - size + 1
@@ -941,7 +941,7 @@ pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
+pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int32, X] {
   let mut i = 0
   let len = self.length()
   Iter2::new(
@@ -1000,7 +1000,7 @@ pub fn[T] ArrayView::each(
 #locals(f)
 pub fn[T] ArrayView::eachi(
   self : ArrayView[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -1050,7 +1050,7 @@ pub fn[T] ArrayView::rev_each(
 #locals(f)
 pub fn[T] ArrayView::rev_eachi(
   self : ArrayView[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
@@ -1152,7 +1152,7 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 ///   inspect(view.count(4), content="0")
 /// }
 /// ```
-pub fn[T : Eq] ArrayView::count(self : ArrayView[T], value : T) -> Int {
+pub fn[T : Eq] ArrayView::count(self : ArrayView[T], value : T) -> Int32 {
   for v in self; count = 0 {
     if v == value {
       continue count + 1
@@ -1177,7 +1177,7 @@ pub fn[T : Eq] ArrayView::count(self : ArrayView[T], value : T) -> Int {
 pub fn[T] ArrayView::count_if(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
-) -> Int raise? {
+) -> Int32 raise? {
   for v in self; count = 0 {
     if f(v) {
       continue count + 1
@@ -1199,7 +1199,7 @@ pub fn[T] ArrayView::count_if(
 ///   debug_inspect(view.search(5), content="None")
 /// }
 /// ```
-pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
+pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int32? {
   for i, x in self {
     if x == value {
       break Some(i)
@@ -1226,7 +1226,7 @@ pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
 pub fn[T] ArrayView::search_by(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   for i, v in self {
     if f(v) {
       break Some(i)
@@ -1368,7 +1368,7 @@ pub fn[T : Eq] ArrayView::strip_suffix(
 pub fn[T : Compare] ArrayView::binary_search(
   self : ArrayView[T],
   value : T,
-) -> Result[Int, Int] {
+) -> Result[Int32, Int32] {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
@@ -1400,8 +1400,8 @@ pub fn[T : Compare] ArrayView::binary_search(
 #locals(cmp)
 pub fn[T] ArrayView::binary_search_by(
   self : ArrayView[T],
-  cmp : (T) -> Int raise?,
-) -> Result[Int, Int] raise? {
+  cmp : (T) -> Int32 raise?,
+) -> Result[Int32, Int32] raise? {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
@@ -1479,7 +1479,7 @@ pub fn[A, B] ArrayView::rev_fold(
 pub fn[A, B] ArrayView::foldi(
   self : ArrayView[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   for i, x in self; acc = init {
     continue f(i, acc, x)
@@ -1504,7 +1504,7 @@ pub fn[A, B] ArrayView::foldi(
 pub fn[A, B] ArrayView::rev_foldi(
   self : ArrayView[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
   for i in len>..0; acc = init {
@@ -1551,7 +1551,7 @@ pub fn[T, U] ArrayView::map(
 #locals(f)
 pub fn[T, U] ArrayView::mapi(
   self : ArrayView[T],
-  f : (Int, T) -> U raise?,
+  f : (Int32, T) -> U raise?,
 ) -> Array[U] raise? {
   let arr = Array::unsafe_make_uninit(self.length())
   for i, x in self {
@@ -1715,7 +1715,7 @@ pub fn[A : ToStringView] ArrayView::join(
 pub fn[T : Compare] ArrayView::lexical_compare(
   self : ArrayView[T],
   other : ArrayView[T],
-) -> Int {
+) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
@@ -1785,7 +1785,7 @@ pub impl[T : Eq] Eq for ArrayView[T] with fn equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[T : Compare] Compare for ArrayView[T] with fn compare(self, other) -> Int {
+pub impl[T : Compare] Compare for ArrayView[T] with fn compare(self, other) -> Int32 {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)

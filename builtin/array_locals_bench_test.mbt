@@ -16,12 +16,12 @@
 let array_locals_bench_size = 100_000
 
 ///|
-fn make_array_locals_bench_array() -> Array[Int] {
+fn make_array_locals_bench_array() -> Array[Int32] {
   Array::makei(array_locals_bench_size, i => i)
 }
 
 ///|
-fn make_array_locals_bench_fixedarray() -> FixedArray[Int] {
+fn make_array_locals_bench_fixedarray() -> FixedArray[Int32] {
   FixedArray::makei(array_locals_bench_size, i => i)
 }
 
@@ -37,7 +37,7 @@ test "bench Array::retain_map n=100000" (it : @bench.T) {
 ///|
 test "bench Array::shuffle_in_place n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_array()
-  fn rand(upper : Int) -> Int {
+  fn rand(upper : Int32) -> Int32 {
     upper - 1
   }
   it.bench(fn() {

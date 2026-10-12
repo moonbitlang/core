@@ -19,7 +19,7 @@ fn assert_bits(value : V128, lo : UInt64, hi : UInt64) -> Unit raise {
 }
 
 ///|
-fn make_by_index(index : Int) -> V128 {
+fn make_by_index(index : Int32) -> V128 {
   match index {
     0 => @v128.i64x2_const(0x0000000000000000UL, 0x0000000000000001UL)
     1 => @v128.i64x2_const(0x1111111111111111UL, 0x1111111111111112UL)

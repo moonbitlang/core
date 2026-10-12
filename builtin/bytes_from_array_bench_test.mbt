@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let bytes_from_array_bench_size : Int = 256 * 1024
+let bytes_from_array_bench_size : Int32 = 256 * 1024
 
 ///|
 let bytes_from_array_bench_source : FixedArray[Byte] = FixedArray::makei(

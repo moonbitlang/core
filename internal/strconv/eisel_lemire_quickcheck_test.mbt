@@ -24,7 +24,7 @@
 ///|
 fn eisel_lemire_is_exact(
   mantissa : UInt64,
-  exponent : Int,
+  exponent : Int32,
   negative : Bool,
 ) -> Bool {
   let fast = @strconv.try_eisel_lemire64(
@@ -45,7 +45,7 @@ fn eisel_lemire_is_exact(
 /// Whatever the fast path accepts must match the exact conversion.
 test "quickcheck: accepted Eisel-Lemire values are correctly rounded" {
   @quickcheck.check(
-    (input : (UInt64, Int, Int, Bool)) => {
+    (input : (UInt64, Int32, Int32, Bool)) => {
       let (raw, shift_code, exp_code, negative) = input
       // The shift spreads mantissas across every magnitude, including the
       // small values a uniform UInt64 almost never produces.
@@ -65,7 +65,7 @@ test "quickcheck: accepted Eisel-Lemire values are correctly rounded" {
 /// rejection has to fire exactly there.
 test "quickcheck: Eisel-Lemire stays exact near binade boundaries" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (bit_code, delta_code, exp_code, negative) = input
       let base = 1UL << wrap_index(bit_code, 64)
       let delta = (wrap_index(delta_code, 9) - 4).to_int64()

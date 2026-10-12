@@ -19,14 +19,14 @@
 /// from the previous pile so the final increasing chain can be reconstructed
 /// once the last pile is known.
 priv struct BackPointer {
-  value : (Int, Int)
+  value : (Int32, Int32)
   prev : BackPointer?
 }
 
 ///|
 /// Materialize the predecessor chain ending at `self`, preserving left-to-right
 /// subsequence order.
-fn BackPointer::to_array(self : BackPointer) -> Array[(Int, Int)] {
+fn BackPointer::to_array(self : BackPointer) -> Array[(Int32, Int32)] {
   let result = []
   let mut self = self
   while self.prev is Some(prev) {

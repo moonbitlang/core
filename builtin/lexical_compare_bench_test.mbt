@@ -54,12 +54,12 @@ test "bench lexical_compare early-diff n=256" (it : @bench.T) {
 }
 
 ///|
-fn lc_string_make(len : Int, diff_at? : Int = -1) -> String {
+fn lc_string_make(len : Int32, diff_at~ : Int32 = -1) -> String {
   let sb = StringBuilder(size_hint=len)
   for i in 0..<len {
     sb.write_char(
       // 'a' + (i % 26), with the diff position bumped to 'z' + 1
-      Int::unsafe_to_char(if i == diff_at { '{' } else { 'a' + i % 26 }),
+      Int32::unsafe_to_char(if i == diff_at { '{' } else { 'a' + i % 26 }),
     )
   }
   sb.to_string()

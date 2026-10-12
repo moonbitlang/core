@@ -128,7 +128,7 @@ test "acoshf Test" {
 test "acoshf large and negative inputs" {
   // x >= 0x1p12 takes the ln(x) + ln2 branch
   let data : Array[Float] = [4096, 5000, 65536, 1.0e30, @float.max_value]
-  let expected : Array[Int] = [
+  let expected : Array[Int32] = [
     0x41102cb3, 0x41135d8e, 0x413c8939, 0x428b8a99, 0x42b2d4fc,
   ]
   for i, x in data {

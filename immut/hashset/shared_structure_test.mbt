@@ -17,11 +17,11 @@
 /// share most of their structure) must agree with a model and stay
 /// canonical; no-op updates must return the very same set.
 fn[A : Eq + Hash] derived_versions_agree(
-  mk : (Int) -> A,
-  input : (Array[Int], Array[Int]),
+  mk : (Int32) -> A,
+  input : (Array[Int32], Array[Int32]),
 ) -> Bool {
   let (xs, edits) = input
-  let model : Array[Int] = []
+  let model : Array[Int32] = []
   let mut a : @hashset.HashSet[A] = @hashset.new()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
@@ -50,7 +50,7 @@ fn[A : Eq + Hash] derived_versions_agree(
       model_delete(b_model, k)
     }
   }
-  let rebuild = (m : Array[Int]) => @hashset.from_iter(m.iter().map(mk))
+  let rebuild = (m : Array[Int32]) => @hashset.from_iter(m.iter().map(mk))
   let union_model = model.copy()
   for k in b_model {
     model_insert(union_model, k)
@@ -67,35 +67,35 @@ fn[A : Eq + Hash] derived_versions_agree(
 
 ///|
 test "quickcheck: derived versions (distinct hashes)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_versions_agree(n => n, input)
   })
 }
 
 ///|
 test "quickcheck: derived versions (first-segment collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_versions_agree(n => CollidingElem(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived versions (mid-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_versions_agree(n => MidDepthElem(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived versions (maximum-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_versions_agree(n => DeepElem(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived versions (single collision bucket)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_versions_agree(n => ZeroHashElem(n), input)
   })
 }

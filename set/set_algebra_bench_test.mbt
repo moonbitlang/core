@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-fn set_algebra_bench_strings(lo : Int, hi : Int) -> @set.Set[String] {
+fn set_algebra_bench_strings(lo : Int32, hi : Int32) -> @set.Set[String] {
   Set(Array::makei(hi - lo, i => "key_number_\{lo + i}_suffix"))
 }
 
 ///|
-fn set_algebra_bench_ints(lo : Int, hi : Int) -> @set.Set[Int] {
+fn set_algebra_bench_ints(lo : Int32, hi : Int32) -> @set.Set[Int32] {
   Set(Array::makei(hi - lo, i => lo + i))
 }
 

@@ -10,7 +10,7 @@ input type must implement `Arbitrary`, `Shrink`, and `Debug`.
 ```mbt check
 ///|
 test "adding zero is an identity" {
-  @quickcheck.check((x : Int) => x + 0 == x)
+  @quickcheck.check((x : Int32) => x + 0 == x)
 }
 ```
 
@@ -25,7 +25,7 @@ Use the pure `filter` function for a precondition:
 ```mbt check
 ///|
 test "division identity" {
-  @quickcheck.check((x : Int) => x / x == 1, filter=x => x != 0)
+  @quickcheck.check((x : Int32) => x / x == 1, filter=x => x != 0)
 }
 ```
 
@@ -40,7 +40,7 @@ The optional controls are deterministic:
 ///|
 test "configured property run" {
   @quickcheck.check(
-    (xs : Array[Int]) => xs.length() >= 0,
+    (xs : Array[Int32]) => xs.length() >= 0,
     count=200,
     max_size=50,
     max_shrinks=100,
@@ -68,7 +68,7 @@ catching the `Failure` raised by `check`:
 ///|
 test "inspect a counterexample" {
   let report = @quickcheck.report(
-    (_ : Int) => false,
+    (_ : Int32) => false,
     count=1,
     max_size=0,
     max_shrinks=0,
@@ -104,7 +104,7 @@ rather than its AST):
 ///|
 test "context describes the shrunk counterexample" {
   let report = @quickcheck.report(
-    (x : Int) => x < 3,
+    (x : Int32) => x < 3,
     counterexample_context=x => "rendered input <\{x}>",
     seed=7,
   )
@@ -175,7 +175,7 @@ Generate random values of any type that implements the `Arbitrary` trait:
 test "basic generation" {
   let b : Bool = @quickcheck.gen()
   inspect(b, content="true")
-  let x : Int = @quickcheck.gen()
+  let x : Int32 = @quickcheck.gen()
   inspect(
     x,
     content=(
@@ -184,7 +184,7 @@ test "basic generation" {
   )
 
   // Generate with size parameter
-  let sized : Array[Int] = @quickcheck.gen(size=5)
+  let sized : Array[Int32] = @quickcheck.gen(size=5)
   inspect(sized.length() <= 5, content="true")
 }
 ```
@@ -196,7 +196,7 @@ Generate multiple test cases using the `samples` function:
 ```mbt check
 ///|
 test "multiple samples" {
-  let ints : Array[Int] = @quickcheck.samples(5)
+  let ints : Array[Int32] = @quickcheck.samples(5)
   debug_inspect(
     ints,
     content=(
@@ -229,7 +229,7 @@ test "builtin types" {
     ),
   )
   // Numeric types
-  let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
+  let v : (Int32, Int64, UInt32, UInt64, Float, Double, BigInt) = @quickcheck.gen()
   debug_inspect(
     v,
     content=(
@@ -245,7 +245,7 @@ test "builtin types" {
     ),
   )
   // Collections
-  let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
+  let v : (String, Bytes, Iter[Int32]) = @quickcheck.gen()
   let (s, b, iter) = v
   debug_inspect(
     (s, b, iter.to_array()),
@@ -282,8 +282,8 @@ is needed:
 ```mbt check
 ///|
 priv struct Point {
-  x : Int
-  y : Int
+  x : Int32
+  y : Int32
 } derive(Debug)
 
 ///|

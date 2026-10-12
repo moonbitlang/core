@@ -40,7 +40,7 @@ test "range equality through the public view APIs" {
 ///|
 test "quickcheck: StringView == agrees with a char-by-char comparison" {
   @quickcheck.check(
-    (input : (Array[Byte], UInt, UInt, UInt, UInt)) => {
+    (input : (Array[Byte], UInt32, UInt32, UInt32, UInt32)) => {
       let (seed, len0, lo0, ro0, pos0) = input
       let len = (len0 % 80).reinterpret_as_int()
       let lo = (lo0 % 9).reinterpret_as_int()
@@ -84,7 +84,7 @@ test "quickcheck: StringView == agrees with a char-by-char comparison" {
 ///|
 test "quickcheck: BytesView == agrees with a byte-by-byte comparison" {
   @quickcheck.check(
-    (input : (Array[Byte], UInt, UInt, UInt, UInt)) => {
+    (input : (Array[Byte], UInt32, UInt32, UInt32, UInt32)) => {
       let (seed, len0, lo0, ro0, pos0) = input
       let len = (len0 % 150).reinterpret_as_int()
       let lo = (lo0 % 17).reinterpret_as_int()

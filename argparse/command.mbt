@@ -47,19 +47,19 @@ pub struct Command {
 #alias(new, deprecated="Use `Command()` instead")
 pub fn Command::Command(
   name : StringView,
-  flags? : ArrayView[FlagArg] = [],
-  options? : ArrayView[OptionArg] = [],
-  positionals? : ArrayView[PositionArg] = [],
-  subcommands? : ArrayView[Command] = [],
+  flags~ : ArrayView[FlagArg] = [],
+  options~ : ArrayView[OptionArg] = [],
+  positionals~ : ArrayView[PositionArg] = [],
+  subcommands~ : ArrayView[Command] = [],
   about? : StringView,
   version? : StringView,
-  disable_help_flag? : Bool = false,
-  disable_version_flag? : Bool = false,
-  disable_help_subcommand? : Bool = false,
-  arg_required_else_help? : Bool = false,
-  subcommand_required? : Bool = false,
-  hidden? : Bool = false,
-  groups? : ArrayView[ArgGroup] = [],
+  disable_help_flag~ : Bool = false,
+  disable_version_flag~ : Bool = false,
+  disable_help_subcommand~ : Bool = false,
+  arg_required_else_help~ : Bool = false,
+  subcommand_required~ : Bool = false,
+  hidden~ : Bool = false,
+  groups~ : ArrayView[ArgGroup] = [],
   default_subcommand? : StringView,
 ) -> Command {
   let (parsed_args, arg_error) = collect_args(flags, options, positionals)
@@ -113,8 +113,8 @@ pub fn Command::render_help(self : Command) -> String {
 #as_free_fn
 pub fn Command::parse(
   self : Command,
-  argv? : ArrayView[String] = default_argv(),
-  env? : Map[String, String] = Map([]),
+  argv~ : ArrayView[String] = default_argv(),
+  env~ : Map[String, String] = Map([]),
 ) -> Matches raise {
   try {
     let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)

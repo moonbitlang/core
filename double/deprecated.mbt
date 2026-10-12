@@ -26,8 +26,8 @@ pub fn pow(m : Double, n : Double) -> Double {
 pub fn is_close(
   d : Double,
   other : Double,
-  relative_tolerance? : Double = 1.0e-09,
-  absolute_tolerance? : Double = 0.0,
+  relative_tolerance~ : Double = 1.0e-09,
+  absolute_tolerance~ : Double = 0.0,
 ) -> Bool {
   d.is_close(other, relative_tolerance~, absolute_tolerance~)
 }
@@ -35,7 +35,7 @@ pub fn is_close(
 ///|
 /// Create from `int`.
 #deprecated("Use `Double::from_int` instead")
-pub fn from_int(i : Int) -> Double {
+pub fn from_int(i : Int32) -> Double {
   Double::from_int(i)
 }
 

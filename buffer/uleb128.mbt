@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl Leb128 for UInt with fn output(self, buffer) {
+pub impl Leb128 for UInt32 with fn output(self, buffer) {
   // A 32-bit LEB128 value needs at most 5 bytes. Reserving them before
   // caching `data` makes every unsafe write below stay within the buffer.
   let required = buffer.len + 5

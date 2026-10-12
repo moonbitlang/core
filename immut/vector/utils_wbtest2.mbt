@@ -74,7 +74,7 @@ test "copy_sizes with Some" {
 
 ///|
 test "copy_sizes with None" {
-  let sizes : FixedArray[Int]? = None
+  let sizes : FixedArray[Int32]? = None
   let copied = copy_sizes(sizes)
   match copied {
     None => inspect("None copied correctly", content="None copied correctly")

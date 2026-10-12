@@ -16,10 +16,10 @@
 
 ///|
 priv struct Entry[K] {
-  mut prev : Int
+  mut prev : Int32
   mut next : Entry[K]?
-  mut psl : Int
-  hash : Int
+  mut psl : Int32
+  hash : Int32
   key : K
 }
 
@@ -40,12 +40,12 @@ priv struct Entry[K] {
 /// ```
 struct Set[K] {
   mut entries : FixedArray[Entry[K]?]
-  mut size : Int // active keys count
-  mut capacity : Int // current capacity
-  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
-  mut grow_at : Int // threshold that triggers grow
+  mut size : Int32 // active keys count
+  mut capacity : Int32 // current capacity
+  mut capacity_mask : Int32 // capacity_mask = capacity - 1, used to find idx
+  mut grow_at : Int32 // threshold that triggers grow
   mut head : Entry[K]? // head of linked list
-  mut tail : Int // tail of linked list
+  mut tail : Int32 // tail of linked list
 }
 
 // Implementations
@@ -75,7 +75,7 @@ struct Set[K] {
 let default_init_capacity = 8
 
 ///|
-fn[K] new_set(capacity : Int) -> Set[K] {
+fn[K] new_set(capacity : Int32) -> Set[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -89,7 +89,7 @@ fn[K] new_set(capacity : Int) -> Set[K] {
 }
 
 ///|
-fn capacity_for_length(length : Int) -> Int {
+fn capacity_for_length(length : Int32) -> Int32 {
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -105,7 +105,7 @@ fn capacity_for_length(length : Int) -> Int {
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
+pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int32) -> Set[K] {
   let length = arr.length()
   let capacity = match capacity {
     Some(capacity) => capacity.max(capacity_for_length(length))
@@ -153,7 +153,7 @@ pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
 }
 
 ///|
-fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
+fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
@@ -179,7 +179,7 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
 
 ///|
 #owned(entry)
-fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
+fn[K] Set::push_away(self : Set[K], idx : Int32, entry : Entry[K]) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries.unsafe_get(idx) {
@@ -204,7 +204,7 @@ fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
 
 ///|
 #owned(entry)
-fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
+fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int32) -> Unit {
   // Fix up the neighbor links before the store: the store consumes the owned
   // `entry` reference, and touching `entry` after it would force the compiler
   // to keep `entry` alive across the store with an extra incref/decref pair.
@@ -275,7 +275,11 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// stored in the other set's entry: both sets hash `K` with the same `Hash`
 /// impl, so the stored hash is exactly what `contains` would recompute.
 #inline
-fn[K : Eq] Set::contains_with_hash(self : Set[K], key : K, hash : Int) -> Bool {
+fn[K : Eq] Set::contains_with_hash(
+  self : Set[K],
+  key : K,
+  hash : Int32,
+) -> Bool {
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
@@ -371,7 +375,7 @@ pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
 #owned(entry)
 fn[K] Set::add_entry_to_tail(
   self : Set[K],
-  idx : Int,
+  idx : Int32,
   entry : Entry[K],
 ) -> Unit {
   match self.tail {
@@ -396,7 +400,7 @@ fn[K] Set::remove_entry(self : Set[K], entry : Entry[K]) -> Unit {
 }
 
 ///|
-fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
+fn[K] Set::shift_back(self : Set[K], idx : Int32) -> Unit {
   // SAFETY: the initial `cur` is in bounds by every route its callers take,
   // and none of them requires trusting the list invariant: `remove` and
   // `remove_and_check` pass a masked probe index, and `retain` performs its
@@ -475,13 +479,13 @@ fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
 ///|
 /// Get the number of keys in the set.
 #alias(size, deprecated)
-pub fn[K] Set::length(self : Set[K]) -> Int {
+pub fn[K] Set::length(self : Set[K]) -> Int32 {
   self.size
 }
 
 ///|
 /// Get the capacity of the set.
-pub fn[K] Set::capacity(self : Set[K]) -> Int {
+pub fn[K] Set::capacity(self : Set[K]) -> Int32 {
   self.capacity
 }
 
@@ -509,7 +513,10 @@ pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
 #locals(f)
-pub fn[K] Set::eachi(self : Set[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
+pub fn[K] Set::eachi(
+  self : Set[K],
+  f : (Int32, K) -> Unit raise?,
+) -> Unit raise? {
   for i = 0, curr = self.head {
     match (i, curr) {
       (i, Some({ key, next, .. })) => {
@@ -865,7 +872,7 @@ pub impl[X : @json.ToJson] @json.ToJson for Set[X] with fn to_json(self) {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[Int] = @json.from_json([3, 1, 3, 2])
+///   let set : @set.Set[Int32] = @json.from_json([3, 1, 3, 2])
 ///   debug_inspect(set.to_array(), content="[3, 1, 2]")
 /// }
 /// ```

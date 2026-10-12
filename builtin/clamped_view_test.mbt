@@ -87,7 +87,7 @@ test "Array::clamped_view clamps out-of-range and inverted offsets" {
   json_inspect(arr.clamped_view(start=100).to_owned(), content=[])
   json_inspect(arr.clamped_view(start=4, end=1).to_owned(), content=[])
   json_inspect(arr.clamped_view(start=-9, end=-3).to_owned(), content=[])
-  json_inspect(([] : Array[Int]).clamped_view(end=10).to_owned(), content=[])
+  json_inspect(([] : Array[Int32]).clamped_view(end=10).to_owned(), content=[])
 }
 
 ///|
@@ -206,7 +206,7 @@ test "clamped_view saturates at the extremes of Int" {
 
 ///|
 test "FixedArray::clamped_view clamps out-of-range and inverted offsets" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
   json_inspect(arr.clamped_view().to_owned(), content=[1, 2, 3, 4, 5])
   json_inspect(arr.clamped_view(start=1, end=4).to_owned(), content=[2, 3, 4])
   json_inspect(arr.clamped_view(end=100).to_owned(), content=[1, 2, 3, 4, 5])
@@ -222,7 +222,7 @@ test "FixedArray::clamped_view clamps out-of-range and inverted offsets" {
     arr.clamped_view(start=@int.MAX_VALUE, end=@int.MIN_VALUE).to_owned(),
     content=[],
   )
-  json_inspect(([] : FixedArray[Int]).clamped_view(end=10).to_owned(), content=[])
+  json_inspect(([] : FixedArray[Int32]).clamped_view(end=10).to_owned(), content=[])
   // empty results sit at the clamped start
   inspect(arr.clamped_view(start=4, end=1).start_offset(), content="4")
   inspect(arr.clamped_view(start=100).start_offset(), content="5")
@@ -231,7 +231,7 @@ test "FixedArray::clamped_view clamps out-of-range and inverted offsets" {
 
 ///|
 test "FixedArray::clamped_view aliases the backing array" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
   let v = arr.clamped_view(start=1, end=100)
   arr[1] = 20
   json_inspect(v.to_owned(), content=[20, 3, 4, 5])
@@ -239,7 +239,7 @@ test "FixedArray::clamped_view aliases the backing array" {
 
 ///|
 test "ReadOnlyArray::clamped_view clamps out-of-range and inverted offsets" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   json_inspect(arr.clamped_view().to_owned(), content=[1, 2, 3, 4, 5])
   json_inspect(arr.clamped_view(start=1, end=4).to_owned(), content=[2, 3, 4])
   json_inspect(arr.clamped_view(end=100).to_owned(), content=[1, 2, 3, 4, 5])
@@ -255,7 +255,7 @@ test "ReadOnlyArray::clamped_view clamps out-of-range and inverted offsets" {
     arr.clamped_view(start=@int.MAX_VALUE, end=@int.MIN_VALUE).to_owned(),
     content=[],
   )
-  json_inspect(([] : ReadOnlyArray[Int]).clamped_view(end=10).to_owned(), content=[])
+  json_inspect(([] : ReadOnlyArray[Int32]).clamped_view(end=10).to_owned(), content=[])
   // the `end=None` arm delegates separately; it must clamp `start` too
   inspect(arr.clamped_view(start=100).start_offset(), content="5")
   inspect(arr.clamped_view(start=4, end=1).start_offset(), content="4")
@@ -266,8 +266,8 @@ test "clamped_view with `end` omitted forwards `start` unchanged" {
   // `ReadOnlyArray::clamped_view` handles `end=None` in a separate arm, so an
   // interior start is what catches a mangled `start` there: 0 / negative /
   // past-the-end starts all survive a doubled `start`.
-  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
+  let fixed : FixedArray[Int32] = [1, 2, 3, 4, 5]
   json_inspect(ro.clamped_view(start=1).to_owned(), content=[2, 3, 4, 5])
   json_inspect(fixed.clamped_view(start=1).to_owned(), content=[2, 3, 4, 5])
   for start in -1..<=6 {
@@ -294,8 +294,8 @@ test "clamped_view with `end` omitted forwards `start` unchanged" {
 
 ///|
 test "FixedArray/ReadOnlyArray clamped_view agree with get_view" {
-  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
-  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let fixed : FixedArray[Int32] = [1, 2, 3, 4, 5]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   for start in -1..<=6 {
     for end in -1..<=6 {
       // get_view rejects out-of-range and inverted ranges; clamped_view
@@ -317,7 +317,7 @@ test "FixedArray/ReadOnlyArray clamped_view agree with get_view" {
 test "MutArrayView/UninitializedArray clamped_view bounds and offsets" {
   let lo = @int.MIN_VALUE
   let hi = @int.MAX_VALUE
-  let cases : ReadOnlyArray[(Int, Int, Int, Array[Int])] = [
+  let cases : ReadOnlyArray[(Int32, Int32, Int32, Array[Int32])] = [
     (-5, 100, 0, [1, 2, 3, 4, 5]),
     (-2, 2, 0, [1, 2]),
     (1, 4, 1, [2, 3, 4]),
@@ -394,10 +394,10 @@ test "MutArrayView/UninitializedArray clamped_view nested views share storage" {
 
 ///|
 test "MutArrayView/UninitializedArray clamped_view empty arrays" {
-  let raw : @builtin.UninitializedArray[Int] = @builtin.UninitializedArray::make(
+  let raw : @builtin.UninitializedArray[Int32] = @builtin.UninitializedArray::make(
     0,
   )
-  let view = ([] : Array[Int]).mut_view()
+  let view = ([] : Array[Int32]).mut_view()
   for
     (start, end) in [
       (@int.MIN_VALUE, @int.MAX_VALUE),
@@ -419,7 +419,7 @@ test "MutArrayView/UninitializedArray clamped_view empty arrays" {
 ///|
 test "Iter::clamped_view clamps finite iterator bounds" {
   let arr = [1, 2, 3]
-  let cases : ReadOnlyArray[(Int, Int, Array[Int])] = [
+  let cases : ReadOnlyArray[(Int32, Int32, Array[Int32])] = [
     (-5, 100, [1, 2, 3]),
     (-2, 2, [1, 2]),
     (1, 3, [2, 3]),
@@ -451,7 +451,7 @@ test "Iter::clamped_view clamps finite iterator bounds" {
     content="[1, 2, 3]",
   )
   debug_inspect(arr.iter().clamped_view(start=100).collect(), content="[]")
-  let empty : Iter[Int] = Iter::empty()
+  let empty : Iter[Int32] = Iter::empty()
   debug_inspect(
     empty.clamped_view(start=@int.MIN_VALUE, end=@int.MAX_VALUE).collect(),
     content="[]",
@@ -475,7 +475,7 @@ test "Iter::clamped_view stays lazy and composes" {
 test "bracket slicing clamps bounds on arrays and bytes" {
   let lo = @int.MIN_VALUE
   let hi = @int.MAX_VALUE
-  let cases : ReadOnlyArray[(Int, Int, Int, Array[Int])] = [
+  let cases : ReadOnlyArray[(Int32, Int32, Int32, Array[Int32])] = [
     (-5, 100, 0, [1, 2, 3, 4, 5]),
     (-2, 2, 0, [1, 2]),
     (1, 4, 1, [2, 3, 4]),
@@ -489,8 +489,8 @@ test "bracket slicing clamps bounds on arrays and bytes" {
     (hi, hi, 5, []),
   ]
   let arr = [1, 2, 3, 4, 5]
-  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
-  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let fixed : FixedArray[Int32] = [1, 2, 3, 4, 5]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   let backing = [0, 1, 2, 3, 4, 5, 6]
   let view = backing[1:6]
   let mut_view = backing.mut_view(start=1, end=6)
@@ -525,8 +525,8 @@ test "bracket slicing clamps bounds on arrays and bytes" {
 ///|
 test "bracket slicing defaults and nested array views" {
   let arr = [1, 2, 3, 4, 5]
-  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
-  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let fixed : FixedArray[Int32] = [1, 2, 3, 4, 5]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   let view = [0, 1, 2, 3, 4, 5, 6][1:6]
   let mut_view = [0, 1, 2, 3, 4, 5, 6].mut_view(start=1, end=6)
   let raw = @builtin.UninitializedArray::make(5)
@@ -624,7 +624,7 @@ test "bracket slicing defaults and nested byte views" {
 test "bracket slicing clamps UTF-16 bounds and trims surrogate pairs inward" {
   let lo = @int.MIN_VALUE
   let hi = @int.MAX_VALUE
-  let cases : ReadOnlyArray[(Int, Int, Int, String)] = [
+  let cases : ReadOnlyArray[(Int32, Int32, Int32, String)] = [
     (-5, 100, 0, "ab😀cd"),
     (-2, 2, 0, "ab"),
     (1, 3, 1, "b"),
@@ -685,12 +685,12 @@ test "bracket slicing preserves unpaired surrogates" {
 test "bracket slicing empty containers clamps integer extremes" {
   let lo = @int.MIN_VALUE
   let hi = @int.MAX_VALUE
-  let arr : Array[Int] = []
-  let fixed : FixedArray[Int] = []
-  let ro : ReadOnlyArray[Int] = []
+  let arr : Array[Int32] = []
+  let fixed : FixedArray[Int32] = []
+  let ro : ReadOnlyArray[Int32] = []
   let view = arr[:]
   let mut_view = arr.mut_view()
-  let raw : @builtin.UninitializedArray[Int] = @builtin.UninitializedArray::make(
+  let raw : @builtin.UninitializedArray[Int32] = @builtin.UninitializedArray::make(
     0,
   )
   for
@@ -723,7 +723,7 @@ test "clamped bracket slices share backing storage" {
   json_inspect(slice.to_owned(), content=[20, 30, 4, 5])
   json_inspect(nested.to_owned(), content=[30, 4, 5])
   json_inspect(read_view.to_owned(), content=[20, 30, 4])
-  let fixed : FixedArray[Int] = [1, 2, 3]
+  let fixed : FixedArray[Int32] = [1, 2, 3]
   let slice = fixed[-1:100]
   fixed[1] = 20
   json_inspect(slice.to_owned(), content=[1, 20, 3])
@@ -775,9 +775,9 @@ priv struct SliceProbe {
 #alias("_[_:_]")
 fn SliceProbe::slice(
   self : SliceProbe,
-  start? : Int = 17,
-  end? : Int = 23,
-) -> (Int, Int) {
+  start~ : Int32 = 17,
+  end~ : Int32 = 23,
+) -> (Int32, Int32) {
   self.events.push("slice")
   (start, end)
 }
@@ -810,24 +810,24 @@ test "rest patterns keep exact array byte and Unicode contents" {
 
 ///|
 test "panic ReadOnlyArray::exact_view rejects negative start with omitted end" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   ignore(arr.exact_view(start=-1))
 }
 
 ///|
 test "panic ReadOnlyArray::exact_view rejects start beyond length with omitted end" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   ignore(arr.exact_view(start=4))
 }
 
 ///|
 test "panic ReadOnlyArray::exact_view rejects end beyond length" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   ignore(arr.exact_view(start=1, end=4))
 }
 
 ///|
 test "panic ReadOnlyArray::exact_view rejects inverted range" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   ignore(arr.exact_view(start=2, end=1))
 }

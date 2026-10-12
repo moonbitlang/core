@@ -37,7 +37,7 @@ test "code_unit_at" {
   assert_true(s[:].code_unit_at(0) is 'H')
   assert_true(s[:].code_unit_at(7) is '世')
   assert_true(s[:].code_unit_at(8) is '界')
-  assert_true(s[:].code_unit_at(0) is ('A'..='Z'))
+  assert_true(s[:].code_unit_at(0) is ('A'..<='Z'))
   inspect(s[:].code_unit_at(0), content="72") // 'H'
   inspect(s[:].code_unit_at(7), content="19990") // '世'
   inspect(s[:].code_unit_at(8), content="30028") // '界'

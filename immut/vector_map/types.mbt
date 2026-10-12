@@ -65,13 +65,13 @@
 /// and, for a map that has shrunk to almost nothing, a floor set by the
 /// exemption rather than by the entry count.
 struct VectorMap[K, V] {
-  index : @hashmap.HashMap[K, Int]
+  index : @hashmap.HashMap[K, Int32]
   spine : @vector.Vector[(K, V)?]
-  size : Int
+  size : Int32
 }
 
 ///|
 /// A spine shorter than this is never compacted: rebuilding it costs more than
 /// the slots it wastes. Matches the threshold Immutable.js uses for the same
 /// representation.
-const MIN_COMPACT_LENGTH : Int = 32
+const MIN_COMPACT_LENGTH : Int32 = 32

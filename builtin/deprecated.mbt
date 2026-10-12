@@ -60,7 +60,7 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 ///
 /// Deprecated: use `Map([], capacity=...)` instead.
 #deprecated("Use `Map([], capacity=...)` instead")
-pub fn[K, V] Map::new(capacity? : Int = default_init_capacity) -> Map[K, V] {
+pub fn[K, V] Map::new(capacity~ : Int32 = default_init_capacity) -> Map[K, V] {
   new_map(capacity)
 }
 
@@ -77,7 +77,7 @@ pub fn[K, V] Map::new(capacity? : Int = default_init_capacity) -> Map[K, V] {
 ///
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
-pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
+pub fn Byte::lsl(self : Byte, count : Int32) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
@@ -94,14 +94,14 @@ pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
 ///
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
-pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
+pub fn Byte::lsr(self : Byte, count : Int32) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
 
 ///|
 /// Returns the Unicode code point at the given index without bounds checking.
 #deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=true)
-pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
+pub fn String::unsafe_char_at(self : String, index : Int32) -> Char {
   let c1 = self.unsafe_get(index)
   if c1.is_leading_surrogate() {
     let c2 = self.unsafe_get(index + 1)
@@ -116,7 +116,7 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 ///
 /// Deprecated: use `Array(capacity=...)` instead.
 #deprecated("Use `Array(capacity=...)` instead")
-pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::new(capacity~ : Int32 = 0) -> Array[T] {
   Array(capacity~)
 }
 
@@ -158,8 +158,8 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 pub fn Double::until(
   self : Double,
   end : Double,
-  step? : Double = 1.0,
-  inclusive? : Bool = false,
+  step~ : Double = 1.0,
+  inclusive~ : Bool = false,
 ) -> Iter[Double] {
   until_impl(self, end, step, inclusive)
 }

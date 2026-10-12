@@ -38,7 +38,7 @@ fn parsed(text : String) -> Double? {
 }
 
 ///|
-fn repeat_char(c : Char, n : Int) -> String {
+fn repeat_char(c : Char, n : Int32) -> String {
   String::from_array(Array::make(n, c))
 }
 
@@ -48,7 +48,7 @@ fn repeat_char(c : Char, n : Int) -> String {
 struct Literal {
   neg : Bool
   digits : String
-  exponent : Int
+  exponent : Int32
 }
 
 ///|
@@ -57,9 +57,9 @@ struct Literal {
 /// they are going to.
 fn Literal::make(
   neg : Bool,
-  raw : ArrayView[Int],
-  length_code : Int,
-  exponent : Int,
+  raw : ArrayView[Int32],
+  length_code : Int32,
+  exponent : Int32,
 ) -> Literal {
   let length = wrap_index(length_code, 45) + 1
   let digits = String::from_array(
@@ -89,7 +89,7 @@ fn Literal::plain(self : Literal) -> String {
 ///|
 /// The decimal point moved `p` digits in from the left, with the exponent
 /// compensating. `p == len` is the plain spelling with a trailing point.
-fn Literal::pointed(self : Literal, p : Int) -> String {
+fn Literal::pointed(self : Literal, p : Int32) -> String {
   let len = self.digits.length()
   let p = wrap_index(p, len + 1)
   let head = self.digits[0:p].to_owned()
@@ -102,14 +102,14 @@ fn Literal::pointed(self : Literal, p : Int) -> String {
 /// `k` zeros appended to the mantissa, with the exponent compensating. This
 /// is the spelling that forces the slow path once the digit count passes
 /// the fast path's limit.
-fn Literal::padded(self : Literal, k : Int) -> String {
+fn Literal::padded(self : Literal, k : Int32) -> String {
   let k = wrap_index(k, 30)
   "\{self.sign()}\{self.digits}\{repeat_char('0', k)}e\{self.exponent - k}"
 }
 
 ///|
 /// `k` insignificant zeros in front of the mantissa.
-fn Literal::leading(self : Literal, k : Int) -> String {
+fn Literal::leading(self : Literal, k : Int32) -> String {
   let k = wrap_index(k, 30)
   "\{self.sign()}\{repeat_char('0', k)}\{self.digits}e\{self.exponent}"
 }
@@ -117,7 +117,7 @@ fn Literal::leading(self : Literal, k : Int) -> String {
 ///|
 /// `0.000…digits`, with the exponent compensating — the same value written
 /// as a pure fraction.
-fn Literal::fractional(self : Literal, k : Int) -> String {
+fn Literal::fractional(self : Literal, k : Int32) -> String {
   let k = wrap_index(k, 30)
   let len = self.digits.length()
   "\{self.sign()}0.\{repeat_char('0', k)}\{self.digits}e\{self.exponent + len + k}"
@@ -127,7 +127,7 @@ fn Literal::fractional(self : Literal, k : Int) -> String {
 /// Every spelling of the same exact decimal must parse to the same double.
 test "quickcheck: parse_double is independent of the spelling" {
   @quickcheck.check(
-    (input : (Bool, Array[Int], Int, Int, Int, Int)) => {
+    (input : (Bool, Array[Int32], Int32, Int32, Int32, Int32)) => {
       let (neg, raw, len_code, exp_code, p, k) = input
       // Exponents span the whole interesting range: subnormal, normal, and
       // both saturating ends.
@@ -159,7 +159,7 @@ test "quickcheck: parse_double is independent of the spelling" {
 /// on that subset the parser must agree with plain double arithmetic.
 test "quickcheck: parse_double is exact on the Clinger subset" {
   @quickcheck.check(
-    (input : (Int64, Int)) => {
+    (input : (Int64, Int32)) => {
       let (raw, exp_code) = input
       // |mantissa| <= 2^53 and |exponent| <= 22 keep both operands exact.
       let mantissa = raw % 9007199254740993L
@@ -187,7 +187,7 @@ test "quickcheck: parse_double is exact on the Clinger subset" {
 /// to a smaller double.
 test "quickcheck: parse_double is monotone in the mantissa" {
   @quickcheck.check(
-    (input : (UInt64, UInt64, Int)) => {
+    (input : (UInt64, UInt64, Int32)) => {
       let (a, b, exp_code) = input
       let lo = if a <= b { a } else { b }
       let hi = if a <= b { b } else { a }

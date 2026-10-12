@@ -15,7 +15,10 @@
 /// Tree-local helpers used by vector push and tail normalization.
 
 ///|
-fn append_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? {
+fn append_sizes_last(
+  sizes : FixedArray[Int32]?,
+  delta : Int32,
+) -> FixedArray[Int32]? {
   match sizes {
     Some(sizes) => {
       let new_sizes = sizes.copy()
@@ -27,7 +30,10 @@ fn append_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? 
 }
 
 ///|
-fn push_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? {
+fn push_sizes_last(
+  sizes : FixedArray[Int32]?,
+  delta : Int32,
+) -> FixedArray[Int32]? {
   match sizes {
     Some(sizes) =>
       Some(immutable_push(sizes, delta + sizes[sizes.length() - 1]))
@@ -41,9 +47,9 @@ fn push_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? {
 /// any partial leaf leaves the node non-full, so it needs explicit sizes.
 fn[T] radix_append_sizes(
   children : FixedArray[Tree[T]],
-  child_shift : Int,
-  delta : Int,
-) -> FixedArray[Int]? {
+  child_shift : Int32,
+  delta : Int32,
+) -> FixedArray[Int32]? {
   if delta == BRANCHING_FACTOR {
     None
   } else {
@@ -55,17 +61,17 @@ fn[T] radix_append_sizes(
 /// Append a leaf to the right spine of a tree without going through generic tree concat.
 fn[T] Tree::append_right_leaf(
   self : Tree[T],
-  shift : Int,
+  shift : Int32,
   leaf : FixedArray[T],
-) -> (Tree[T], Int) {
+) -> (Tree[T], Int32) {
   let delta = leaf.length()
   guard delta > 0 else { return (self, shift) }
 
   fn worker(
     node : Tree[T],
-    shift : Int,
+    shift : Int32,
     leaf : FixedArray[T],
-    delta : Int,
+    delta : Int32,
   ) -> Tree[T]? {
     match node {
       Leaf(elems) => {
@@ -125,7 +131,7 @@ fn[T] Tree::append_right_leaf(
         Empty =>
           abort("Unreachable: Empty tree should have been handled in worker")
       }
-      let new_sizes : FixedArray[Int]? = if self_radix &&
+      let new_sizes : FixedArray[Int32]? = if self_radix &&
         delta == BRANCHING_FACTOR {
         None
       } else {
@@ -142,12 +148,12 @@ fn[T] Tree::append_right_leaf(
 /// through the splice recursion, avoiding a full normalize-then-concat pass.
 fn[T] Tree::concat_with_suffix(
   left : Tree[T],
-  left_shift : Int,
+  left_shift : Int32,
   suffix : FixedArray[T],
   right : Tree[T],
-  right_shift : Int,
+  right_shift : Int32,
   top : Bool,
-) -> (Tree[T], Int) {
+) -> (Tree[T], Int32) {
   if suffix.is_empty() {
     return Tree::concat(left, left_shift, right, right_shift, top)
   }

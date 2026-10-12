@@ -51,7 +51,7 @@
 /// Returns `(length, lo, hi)`, with `length == 0` for a byte that
 /// begins no well-formed sequence at all (`80..C1` and `F5..FF`) and
 /// `length == 1` for ASCII, where the range is unused.
-fn lead_class(b0 : Int) -> (Int, Int, Int) {
+fn lead_class(b0 : Int32) -> (Int32, Int32, Int32) {
   if b0 <= 0x7F {
     (1, 0, 0)
   } else if b0 < 0xC2 {
@@ -86,7 +86,7 @@ fn lead_class(b0 : Int) -> (Int, Int, Int) {
 /// longest prefix that is still a prefix of some well-formed sequence,
 /// and at least one byte. That is exactly the quantity a conformant
 /// lossy decoder replaces with a single U+FFFD.
-fn scan(bytes : ArrayView[Byte], index : Int) -> (Int, Int) {
+fn scan(bytes : ArrayView[Byte], index : Int32) -> (Int32, Int32) {
   let b0 = bytes[index].to_int()
   let (length, lo, hi) = lead_class(b0)
   if length == 0 {
@@ -121,7 +121,7 @@ fn scan(bytes : ArrayView[Byte], index : Int) -> (Int, Int) {
 ///|
 /// The scalars a strict decoder must produce, or `None` together with
 /// the offset at which it must report `Malformed`.
-fn oracle_strict(bytes : ArrayView[Byte]) -> (Array[Int]?, Int) {
+fn oracle_strict(bytes : ArrayView[Byte]) -> (Array[Int32]?, Int32) {
   let scalars = []
   let mut index = 0
   while index < bytes.length() {
@@ -138,7 +138,7 @@ fn oracle_strict(bytes : ArrayView[Byte]) -> (Array[Int]?, Int) {
 ///|
 /// The scalars a lossy decoder must produce: one U+FFFD per maximal
 /// subpart of each ill-formed subsequence.
-fn oracle_lossy(bytes : ArrayView[Byte]) -> Array[Int] {
+fn oracle_lossy(bytes : ArrayView[Byte]) -> Array[Int32] {
   let scalars = []
   let mut index = 0
   while index < bytes.length() {
@@ -151,7 +151,7 @@ fn oracle_lossy(bytes : ArrayView[Byte]) -> Array[Int] {
 
 ///|
 /// The closed-form UTF-8 encoder for a single scalar.
-fn push_scalar(out : Array[Byte], scalar : Int) -> Unit {
+fn push_scalar(out : Array[Byte], scalar : Int32) -> Unit {
   if scalar <= 0x7F {
     out.push(scalar.to_byte())
   } else if scalar <= 0x7FF {
@@ -172,8 +172,8 @@ fn push_scalar(out : Array[Byte], scalar : Int) -> Unit {
 ///|
 /// Materializes oracle scalars as a `String`, so results can be
 /// compared with `decode`'s output directly.
-fn scalars_to_string(scalars : Array[Int]) -> String {
-  String::from_array(scalars.map(Int::unsafe_to_char))
+fn scalars_to_string(scalars : Array[Int32]) -> String {
+  String::from_array(scalars.map(Int32::unsafe_to_char))
 }
 
 ///|
@@ -182,7 +182,7 @@ fn scalars_to_string(scalars : Array[Int]) -> String {
 /// reported as `Malformed`.
 priv enum Outcome {
   Decoded(String)
-  Rejected(Int)
+  Rejected(Int32)
 }
 
 ///|
@@ -211,14 +211,14 @@ let edge_bytes : Array[Byte] = [
 ///|
 /// Scalars on the boundaries of the 1/2/3/4-byte length classes, around
 /// the surrogate block, and at the U+10FFFF ceiling.
-let edge_scalars : Array[Int] = [
+let edge_scalars : Array[Int32] = [
   0x00, 0x01, 0x7F, 0x80, 0x7FF, 0x800, 0xD7FF, 0xE000, 0xFFFD, 0xFEFF, 0xFFFF, 0x10000,
   0x3FFFF, 0x40000, 0xFFFFF, 0x100000, 0x10FFFE, 0x10FFFF,
 ]
 
 ///|
 /// Maps an arbitrary `Int` into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -229,7 +229,7 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 
 ///|
 /// An arbitrary scalar value: any code point except the surrogates.
-fn wrap_scalar(value : Int) -> Int {
+fn wrap_scalar(value : Int32) -> Int32 {
   let cp = wrap_index(value, 0x110000 - 0x800)
   if cp >= 0xD800 {
     cp + 0x800
@@ -245,7 +245,7 @@ fn wrap_scalar(value : Int) -> Int {
 /// is where a decoder's range checks actually get decided. Purely
 /// random bytes would almost never produce a valid multi-byte sequence
 /// at all, and would exercise only the "reject immediately" path.
-fn build_bytes(chunks : Array[(Int, Int)]) -> Bytes {
+fn build_bytes(chunks : Array[(Int32, Int32)]) -> Bytes {
   let out = []
   for chunk in chunks {
     let (kind, value) = chunk
@@ -321,7 +321,7 @@ fn check_lossy(bytes : Bytes) -> Bool {
 ///|
 test "quickcheck: decode and decode_lossy match the Table 3-7 oracle" {
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let bytes = build_bytes(chunks)
       check_strict(bytes) && check_lossy(bytes)
     },
@@ -390,7 +390,7 @@ test "quickcheck: decode then encode is the identity on accepted bytes" {
   // this round-trip pins — a decoder that accepted an overlong form
   // would re-encode it to different (shorter) bytes and fail here.
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let bytes = build_bytes(chunks)
       match decode_outcome(bytes) {
         Decoded(text) => @utf8.encode(text) == bytes
@@ -408,7 +408,7 @@ test "quickcheck: decode_lossy output is always well-formed" {
   // round-trip — a lossy decoder that emitted an unpaired surrogate
   // would break here.
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let text = @utf8.decode_lossy(build_bytes(chunks))
       @utf8.decode(@utf8.encode(text)) == text
     },
@@ -420,7 +420,7 @@ test "quickcheck: decode_lossy output is always well-formed" {
 ///|
 test "quickcheck: decode_lossy agrees with decode whenever decode succeeds" {
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let bytes = build_bytes(chunks)
       match decode_outcome(bytes) {
         Decoded(text) => @utf8.decode_lossy(bytes) == text
@@ -434,7 +434,7 @@ test "quickcheck: decode_lossy agrees with decode whenever decode succeeds" {
 
 ///|
 test "every scalar round-trips, with the byte length Table 3-6 prescribes" {
-  fn expected_length(scalar : Int) -> Int {
+  fn expected_length(scalar : Int32) -> Int32 {
     if scalar <= 0x7F {
       1
     } else if scalar <= 0x7FF {
@@ -446,7 +446,7 @@ test "every scalar round-trips, with the byte length Table 3-6 prescribes" {
     }
   }
 
-  fn check(scalar : Int) -> Unit raise {
+  fn check(scalar : Int32) -> Unit raise {
     let text = String::from_array([scalar.unsafe_to_char()])
     let bytes = @utf8.encode(text)
     assert_eq(bytes.length(), expected_length(scalar))
@@ -547,7 +547,7 @@ test "quickcheck: every proper prefix of a sequence is rejected at its start" {
   // point where the scanner noticed. This is the offset half of the
   // `Malformed` contract, which `check_strict` pins only in aggregate.
   @quickcheck.check(
-    (input : (Int, Int)) => {
+    (input : (Int32, Int32)) => {
       let (index, _) = input
       let scalar = edge_scalars[wrap_index(index, edge_scalars.length())]
       let tail = []
@@ -576,7 +576,7 @@ test "quickcheck: a well-formed string decodes the same from any split point" {
   // `decode` is applied to a `BytesView`; decoding a view must not
   // depend on the view's offset within its backing store.
   @quickcheck.check(
-    (input : (String, Int)) => {
+    (input : (String, Int32)) => {
       let bytes = @utf8.encode(input.0)
       let padded = b"\xFF\xFE\xFD" + bytes + b"\xFF"
       let view = padded[3:padded.length() - 1]

@@ -42,9 +42,9 @@ Tuples implement `Default` when all element types do (up to 16 elements):
 ```mbt check
 ///|
 test {
-  let pair : (Int, String) = Default::default()
+  let pair : (Int32, String) = Default::default()
   debug_inspect(pair, content="(0, \"\")")
-  let triple : (Int, Bool, Double) = Default::default()
+  let triple : (Int32, Bool, Double) = Default::default()
   debug_inspect(triple, content="(0, false, 0)")
 }
 ```

@@ -16,7 +16,7 @@
 pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1) with fn compare(
   self : (T0, T1),
   other : (T0, T1),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   self.1.compare(other.1)
@@ -26,7 +26,7 @@ pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1) with fn compare(
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2) with fn compare(
   self : (T0, T1, T2),
   other : (T0, T1, T2),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -40,7 +40,7 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Compare for (
   T1,
   T2,
   T3,
-) with fn compare(self : (T0, T1, T2, T3), other : (T0, T1, T2, T3)) -> Int {
+) with fn compare(self : (T0, T1, T2, T3), other : (T0, T1, T2, T3)) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -57,7 +57,7 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] C
   T2,
   T3,
   T4,
-) with fn compare(self : (T0, T1, T2, T3, T4), other : (T0, T1, T2, T3, T4)) -> Int {
+) with fn compare(self : (T0, T1, T2, T3, T4), other : (T0, T1, T2, T3, T4)) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -80,7 +80,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5) with fn compare(
   self : (T0, T1, T2, T3, T4, T5),
   other : (T0, T1, T2, T3, T4, T5),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -106,7 +106,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6),
   other : (T0, T1, T2, T3, T4, T5, T6),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -135,7 +135,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
   other : (T0, T1, T2, T3, T4, T5, T6, T7),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -167,7 +167,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -202,7 +202,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -240,7 +240,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -281,7 +281,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -325,7 +325,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -372,7 +372,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -422,7 +422,7 @@ pub impl[
 ] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)
@@ -492,7 +492,7 @@ pub impl[
 ) with fn compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
   other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
-) -> Int {
+) -> Int32 {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
   let t1 = self.1.compare(other.1)

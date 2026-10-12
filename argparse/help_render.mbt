@@ -276,7 +276,7 @@ fn group_entries(cmd : Command) -> Array[String] {
 fn render_section(
   header : String,
   lines : Array[String],
-  keep_empty? : Bool = false,
+  keep_empty~ : Bool = false,
 ) -> String {
   if lines.is_empty() {
     if keep_empty {

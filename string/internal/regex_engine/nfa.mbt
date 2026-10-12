@@ -20,15 +20,15 @@
 /// zero-width assertions are explicit nodes resolved during epsilon closure.
 priv enum Node {
   /// Consume one symbol from the set, then continue at the target node.
-  Char(RecharSet, Int)
+  Char(RecharSet, Int32)
   /// Epsilon alternatives, highest priority first.
-  Union(FixedArray[Int])
+  Union(FixedArray[Int32])
   /// Record the current position in the tag, then continue.
-  Tag(Int, Int)
+  Tag(Int32, Int32)
   /// Look-behind: bit index into the DFA state's context mask.
-  After(Int, Int)
+  After(Int32, Int32)
   /// Look-ahead: the category of the next symbol must intersect.
-  Before(Category, Int)
+  Before(Category, Int32)
   Accept
 }
 
@@ -40,8 +40,8 @@ priv enum Ir {
   IChar(RecharSet)
   ISeq(Array[Ir])
   IAlt(Array[Ir])
-  IRepeat(Ir, min~ : Int, max~ : Int?, greedy~ : Bool, nullable~ : Bool)
-  IGroup(Int, Ir)
+  IRepeat(Ir, min~ : Int32, max~ : Int32?, greedy~ : Bool, nullable~ : Bool)
+  IGroup(Int32, Ir)
   IAfter(Category)
   IBefore(Category)
 }
@@ -55,13 +55,13 @@ priv struct Builder {
 }
 
 ///|
-fn Builder::add(self : Builder, node : Node) -> Int {
+fn Builder::add(self : Builder, node : Node) -> Int32 {
   self.nodes.push(node)
   self.nodes.length() - 1
 }
 
 ///|
-fn Builder::after_bit(self : Builder, cat : Category) -> Int {
+fn Builder::after_bit(self : Builder, cat : Category) -> Int32 {
   match self.after_cats.search(cat) {
     Some(i) => i
     None => {
@@ -155,19 +155,19 @@ fn Builder::lower(self : Builder, pat : Pattern) -> Ir {
 fn Builder::choice(
   self : Builder,
   greedy : Bool,
-  first : Int,
-  second : Int,
-) -> Int {
+  first : Int32,
+  second : Int32,
+) -> Int32 {
   self.add(Union(if greedy { [first, second] } else { [second, first] }))
 }
 
 ///|
 fn Builder::set_choice(
   self : Builder,
-  at : Int,
+  at : Int32,
   greedy : Bool,
-  first : Int,
-  second : Int,
+  first : Int32,
+  second : Int32,
 ) -> Unit {
   self.nodes[at] = Union(if greedy { [first, second] } else { [second, first] })
 }
@@ -175,7 +175,7 @@ fn Builder::set_choice(
 ///|
 /// Emit nodes matching `ir` and then continuing at `next`; returns the entry
 /// node. The shapes follow the compiler's `Regex_compile2.build_tnfa`.
-fn Builder::emit(self : Builder, ir : Ir, next : Int) -> Int {
+fn Builder::emit(self : Builder, ir : Ir, next : Int32) -> Int32 {
   match ir {
     IChar(set) => self.add(Char(set, next))
     ISeq(irs) =>

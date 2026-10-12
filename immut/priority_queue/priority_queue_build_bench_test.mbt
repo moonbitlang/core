@@ -16,19 +16,19 @@
 let priority_queue_build_bench_size = 10_000
 
 ///|
-fn make_priority_queue_ordered_values() -> Array[Int] {
+fn make_priority_queue_ordered_values() -> Array[Int32] {
   Array::makei(priority_queue_build_bench_size, i => i)
 }
 
 ///|
-fn make_priority_queue_reverse_values() -> Array[Int] {
+fn make_priority_queue_reverse_values() -> Array[Int32] {
   Array::makei(priority_queue_build_bench_size, i => {
     priority_queue_build_bench_size - i - 1
   })
 }
 
 ///|
-fn make_priority_queue_random_values() -> Array[Int] {
+fn make_priority_queue_random_values() -> Array[Int32] {
   Array::makei(priority_queue_build_bench_size, i => {
     (i * 1103515245 + 12345) & 0x7fffffff
   })

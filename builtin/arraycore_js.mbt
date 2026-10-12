@@ -43,7 +43,7 @@ fn[T] JSArray::ofAnyFixedArray(array : FixedArray[T]) -> JSArray = "%identity"
 fn[T] JSArray::toAnyFixedArray(self : JSArray) -> FixedArray[T] = "%identity"
 
 ///|
-extern "js" fn JSArray::set_length(self : JSArray, new_len : Int) -> Unit =
+extern "js" fn JSArray::set_length(self : JSArray, new_len : Int32) -> Unit =
   #| (arr, len) => { arr.length = len; }
 
 ///|
@@ -54,8 +54,8 @@ extern "js" fn JSArray::push(self : JSArray, value : JSValue) -> Unit =
 extern "js" fn JSArray::append_view(
   self : JSArray,
   src : JSArray,
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit =
   #| (dst, src, src_offset, len) => {
   #|   for (let i = 0; i < len; i++) {
@@ -70,16 +70,16 @@ extern "js" fn JSArray::pop(self : JSArray) -> JSValue =
 ///|
 extern "js" fn JSArray::splice(
   self : JSArray,
-  index : Int,
-  count : Int,
+  index : Int32,
+  count : Int32,
 ) -> JSArray =
   #| (arr, idx, cnt) => arr.splice(idx, cnt)
 
 ///|
 extern "js" fn JSArray::splice1(
   self : JSArray,
-  index : Int,
-  count : Int,
+  index : Int32,
+  count : Int32,
   value : JSValue,
 ) -> JSArray =
   #| (arr, idx, cnt, val) => arr.splice(idx, cnt, val)
@@ -88,8 +88,8 @@ extern "js" fn JSArray::splice1(
 extern "js" fn JSArray::fill(
   self : JSArray,
   value : JSValue,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> Unit =
   #| (arr, val, start, end) => arr.fill(val, start, end)
 
@@ -113,15 +113,15 @@ type Array[T]
 /// Prefer `Array::makei` unless the initializing loop cannot be expressed as
 /// a function of the index.
 #doc(hidden)
-pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
+pub fn[T] Array::unsafe_make_uninit(len : Int32) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
 fn[T] Array::unsafe_make_and_blit(
   src : UninitializedArray[T],
-  allocate_len~ : Int,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Array[T] {
   let dst = Array::unsafe_make_uninit(allocate_len)
   UninitializedArray::unsafe_blit(
@@ -137,10 +137,10 @@ fn[T] Array::unsafe_make_and_blit(
 ///|
 fn[T] Array::unsafe_make_and_blit_from_fixed(
   src : FixedArray[T],
-  allocate_len~ : Int,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Array[T] {
   let dst = Array::unsafe_make_uninit(allocate_len)
   UninitializedArray::unsafe_blit_fixed(
@@ -156,7 +156,7 @@ fn[T] Array::unsafe_make_and_blit_from_fixed(
 ///|
 fn[T] Array::unsafe_resize_with_default(
   self : Array[T],
-  new_len : Int,
+  new_len : Int32,
   value : T,
 ) -> Unit {
   let len = self.length()
@@ -169,17 +169,20 @@ fn[T] Array::unsafe_resize_with_default(
 
 ///|
 /// Creates a new array.
-pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity~ : Int32 = 0) -> Array[T] {
   ignore(capacity)
   []
 }
 
 ///|
 /// Returns the number of elements in the array.
-pub fn[T] Array::length(self : Array[T]) -> Int = "%fixedarray.length"
+pub fn[T] Array::length(self : Array[T]) -> Int32 = "%fixedarray.length"
 
 ///|
-fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_truncate_to_length(
+  self : Array[T],
+  new_len : Int32,
+) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
@@ -226,7 +229,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 ///   @test.assert_eq(v.capacity(), 1)
 /// }
 /// ```
-pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
+pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int32) -> Unit {
   ignore(self)
   ignore(capacity)
 }
@@ -305,11 +308,11 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
+///   let v2 : ReadOnlyArray[Int32] = [4, 5, 6]
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
 ///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = []
+///   let v2 : ReadOnlyArray[Int32] = []
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3]")
 /// }
@@ -333,9 +336,9 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 pub fn[A] Array::blit_to(
   self : Array[A],
   dst : Array[A],
-  len? : Int = self.length(),
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  len~ : Int32 = self.length(),
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   let old_len = dst.length()
   guard! len >= 0 &&
@@ -357,7 +360,7 @@ pub fn[A] Array::blit_to(
 pub fn[A] ArrayView::blit_to(
   self : ArrayView[A],
   dst : Array[A],
-  dst_offset? : Int = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   let len = self.len()
   let old_len = dst.length()
@@ -426,7 +429,7 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 ///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
-pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
+pub fn[T] Array::remove(self : Array[T], index : Int32) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -456,7 +459,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///
 /// On this backend the underlying JavaScript array is spliced directly, which
 /// already releases the drained elements.
-pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
+pub fn[T] Array::drain(self : Array[T], begin : Int32, end : Int32) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
       "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
@@ -476,7 +479,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///   [3, 4, 5].insert(1, 6)
 /// }
 /// ```
-pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
+pub fn[T] Array::insert(self : Array[T], index : Int32, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -530,8 +533,8 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
 pub fn[A] Array::fill(
   self : Array[A],
   value : A,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }

@@ -18,7 +18,7 @@
 // re-adding a key moves it to the end.
 
 ///|
-fn model_add(model : Array[Int], key : Int) -> Unit {
+fn model_add(model : Array[Int32], key : Int32) -> Unit {
   // Re-adding an existing key keeps its original position.
   if !model.contains(key) {
     model.push(key)
@@ -26,7 +26,7 @@ fn model_add(model : Array[Int], key : Int) -> Unit {
 }
 
 ///|
-fn model_remove(model : Array[Int], key : Int) -> Unit {
+fn model_remove(model : Array[Int32], key : Int32) -> Unit {
   match model.search(key) {
     Some(i) => model.remove(i) |> ignore
     None => ()
@@ -34,8 +34,8 @@ fn model_remove(model : Array[Int], key : Int) -> Unit {
 }
 
 ///|
-fn first_occurrences(xs : Array[Int]) -> Array[Int] {
-  let result : Array[Int] = []
+fn first_occurrences(xs : Array[Int32]) -> Array[Int32] {
+  let result : Array[Int32] = []
   for x in xs {
     if !result.contains(x) {
       result.push(x)
@@ -45,7 +45,7 @@ fn first_occurrences(xs : Array[Int]) -> Array[Int] {
 }
 
 ///|
-fn agrees_with_model(set : @set.Set[Int], model : Array[Int]) -> Bool {
+fn agrees_with_model(set : @set.Set[Int32], model : Array[Int32]) -> Bool {
   if set.length() != model.length() || set.is_empty() != model.is_empty() {
     return false
   }
@@ -71,9 +71,9 @@ fn agrees_with_model(set : @set.Set[Int], model : Array[Int]) -> Bool {
 ///|
 test "quickcheck: add/remove sequences agree with an ordered array model" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
-      let set : @set.Set[Int] = Set([])
-      let model : Array[Int] = []
+    (ops : Array[(Int32, Int32)]) => {
+      let set : @set.Set[Int32] = Set([])
+      let model : Array[Int32] = []
       for op in ops {
         // A small key space deliberately re-adds present keys and removes
         // absent ones; a third of the ops are removals so keys churn through
@@ -103,7 +103,7 @@ test "quickcheck: add/remove sequences agree with an ordered array model" {
 ///|
 test "quickcheck: unlinking head, tail, and middle keeps the chain intact" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let model = first_occurrences(xs.map(x => x % 31))
       let set = @set.Set(model)
       guard set.to_array() == model else { return false }
@@ -139,13 +139,13 @@ test "quickcheck: unlinking head, tail, and middle keeps the chain intact" {
 ///|
 test "quickcheck: construction keeps first-occurrence order and iterators agree" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let keys = xs.map(x => x % 31)
       let expected = first_occurrences(keys)
       let set = @set.Set(keys)
-      let via_each : Array[Int] = []
+      let via_each : Array[Int32] = []
       set.each(k => via_each.push(k))
-      let via_eachi : Array[Int] = []
+      let via_eachi : Array[Int32] = []
       let mut indices_ok = true
       set.eachi((i, k) => {
         if i != via_eachi.length() {
@@ -170,7 +170,7 @@ test "quickcheck: construction keeps first-occurrence order and iterators agree"
 ///|
 test "quickcheck: set algebra matches array references, order included" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let (xs, ys) = input
       let a_keys = first_occurrences(xs.map(x => x % 31))
       let b_keys = first_occurrences(ys.map(x => x % 31))
@@ -209,9 +209,9 @@ test "quickcheck: set algebra matches array references, order included" {
 
 ///|
 test "quickcheck: insertion order survives repeated rehashing" {
-  @quickcheck.check((xs : Array[Int]) => {
-    let set : @set.Set[Int] = Set([])
-    let model : Array[Int] = []
+  @quickcheck.check((xs : Array[Int32]) => {
+    let set : @set.Set[Int32] = Set([])
+    let model : Array[Int32] = []
     // Churn a small key space first so the linked list contains entries that
     // were removed and re-added before any growth happens.
     for x in xs {
@@ -242,10 +242,10 @@ test "quickcheck: insertion order survives repeated rehashing" {
 
 ///|
 test "quickcheck: set algebra keeps insertion order and matches a model" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     // String elements, so the probes reuse non-trivial stored hashes.
-    let dedup = (zs : Array[Int]) => {
+    let dedup = (zs : Array[Int32]) => {
       let out : Array[String] = []
       for z in zs {
         let k = "k\{z % 17}"

@@ -80,9 +80,9 @@ fn[V] copy_tree(node : Node[V]?) -> Node[V]? {
 #owned(value, left, right)
 fn[V] new_node(
   value : V,
-  left? : Node[V]? = None,
-  right? : Node[V]? = None,
-  height? : Int = 1,
+  left~ : Node[V]? = None,
+  right~ : Node[V]? = None,
+  height~ : Int32 = 1,
 ) -> Node[V] {
   { value, left, right, height, }
 }
@@ -534,7 +534,7 @@ pub fn[V] SortedSet::is_empty(self : SortedSet[V]) -> Bool {
 ///|
 /// Returns the number of elements in the set.
 #alias(size, deprecated)
-pub fn[V] SortedSet::length(self : SortedSet[V]) -> Int {
+pub fn[V] SortedSet::length(self : SortedSet[V]) -> Int32 {
   self.size
 }
 
@@ -559,7 +559,7 @@ pub fn[V] SortedSet::each(
 /// Iterates over all elements in the set with their index, in ascending order.
 pub fn[V] SortedSet::eachi(
   self : SortedSet[V],
-  f : (Int, V) -> Unit raise?,
+  f : (Int32, V) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
   self.each(v => {
@@ -650,7 +650,7 @@ impl[T : Show] Show for Node[T]
 
 ///|
 impl[T : Show] Show for Node[T] with fn output(self, logger) {
-  fn count(root : Node[T]?) -> Int {
+  fn count(root : Node[T]?) -> Int32 {
     match root {
       None => 0
       Some(root) => count(root.left) + count(root.right) + 1
@@ -882,7 +882,7 @@ test "copy" {
     ),
   )
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
-  let set : SortedSet[Int] = from_array([])
+  let set : SortedSet[Int32] = from_array([])
   let copied_set = set.copy()
   @debug.debug_inspect(
     copied_set,
@@ -935,7 +935,7 @@ test "union" {
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 4: Union of two empty sets
-  let set1 : SortedSet[Int] = new_sorted_set()
+  let set1 : SortedSet[Int32] = new_sorted_set()
   let set2 = new_sorted_set()
   let set3 = set1.union(set2)
   @debug.debug_inspect(
@@ -1076,12 +1076,12 @@ test "split_member" {
 ///|
 test "join" {
   fn join_to_array(
-    l : SortedSet[Int],
-    value : Int,
-    r : SortedSet[Int],
-  ) -> Array[Int] {
+    l : SortedSet[Int32],
+    value : Int32,
+    r : SortedSet[Int32],
+  ) -> Array[Int32] {
     let root = join(l.root, value, r.root)
-    ({ root: Some(root), size: l.size + r.size + 1, } : SortedSet[Int]).to_array()
+    ({ root: Some(root), size: l.size + r.size + 1, } : SortedSet[Int32]).to_array()
   }
 
   let l = from_array([13, 8, 17, 1, 11, 15, 25, 6])
@@ -1527,7 +1527,7 @@ pub impl[V : @json.ToJson] @json.ToJson for SortedSet[V] with fn to_json(self) {
 ///
 /// ```mbt check
 /// test {
-///   let set : @sorted_set.SortedSet[Int] = @json.from_json([3, 1, 3, 2])
+///   let set : @sorted_set.SortedSet[Int32] = @json.from_json([3, 1, 3, 2])
 ///   @debug.debug_inspect(set.to_array(), content="[1, 2, 3]")
 /// }
 /// ```

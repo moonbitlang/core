@@ -14,11 +14,11 @@
 
 ///|
 fn size_at(
-  index : UInt,
-  count : UInt,
-  max_size : UInt,
-  recent_discards : UInt,
-) -> Int {
+  index : UInt32,
+  count : UInt32,
+  max_size : UInt32,
+  recent_discards : UInt32,
+) -> Int32 {
   let base_size = if count <= 1 {
     0UL
   } else {
@@ -53,26 +53,30 @@ priv enum CaseOutcome {
 /// including candidates rejected by `filter`. `observations` contains only
 /// successful top-level cases.
 enum QuickCheckReport[A] {
-  Passed(tests~ : UInt, observations~ : ObservationSummary)
+  Passed(tests~ : UInt32, observations~ : ObservationSummary)
   /// The configured discard budget was exhausted before `count` tests completed.
-  GaveUp(tests~ : UInt, discarded~ : UInt, observations~ : ObservationSummary)
+  GaveUp(
+    tests~ : UInt32,
+    discarded~ : UInt32,
+    observations~ : ObservationSummary
+  )
   Falsified(
     counterexample~ : A,
     context~ : String?,
-    tests~ : UInt,
-    size~ : Int,
-    shrinks~ : UInt,
-    shrink_attempts~ : UInt,
+    tests~ : UInt32,
+    size~ : Int32,
+    shrinks~ : UInt32,
+    shrink_attempts~ : UInt32,
     observations~ : ObservationSummary
   )
   Raised(
     counterexample~ : A,
     error~ : Error,
     context~ : String?,
-    tests~ : UInt,
-    size~ : Int,
-    shrinks~ : UInt,
-    shrink_attempts~ : UInt,
+    tests~ : UInt32,
+    size~ : Int32,
+    shrinks~ : UInt32,
+    shrink_attempts~ : UInt32,
     observations~ : ObservationSummary
   )
 }
@@ -193,8 +197,8 @@ fn[A : @shrink.Shrink] shrink_failure(
   filter : (A) -> Bool,
   input : A,
   initial : CaseOutcome,
-  max_shrinks : UInt,
-) -> (A, CaseOutcome, UInt, UInt) {
+  max_shrinks : UInt32,
+) -> (A, CaseOutcome, UInt32, UInt32) {
   let mut current = input
   let mut current_outcome = initial
   let mut successful = 0U
@@ -287,14 +291,14 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 /// property itself.
 pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
-  filter? : (A) -> Bool = _ => true,
-  observe? : (A) -> Observations = _ => [],
+  filter~ : (A) -> Bool = _ => true,
+  observe~ : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
-  count? : UInt = 100,
-  max_size? : UInt = 100,
-  max_shrinks? : UInt = 100,
-  discard_ratio? : UInt = 10,
-  seed? : UInt64 = 37,
+  count~ : UInt32 = 100,
+  max_size~ : UInt32 = 100,
+  max_shrinks~ : UInt32 = 100,
+  discard_ratio~ : UInt32 = 10,
+  seed~ : UInt64 = 37,
 ) -> QuickCheckReport[A] {
   let state = @splitmix.RandomState(seed~)
   let observations = ObservationSummary::empty()
@@ -398,20 +402,20 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 ///
 /// ```mbt check
 /// test "adding zero is an identity" {
-///   @quickcheck.check((x : Int) => x + 0 == x)
+///   @quickcheck.check((x : Int32) => x + 0 == x)
 /// }
 /// ```
 #callsite(autofill(loc))
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
-  filter? : (A) -> Bool = _ => true,
-  observe? : (A) -> Observations = _ => [],
+  filter~ : (A) -> Bool = _ => true,
+  observe~ : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
-  count? : UInt = 100,
-  max_size? : UInt = 100,
-  max_shrinks? : UInt = 100,
-  discard_ratio? : UInt = 10,
-  seed? : UInt64 = 37,
+  count~ : UInt32 = 100,
+  max_size~ : UInt32 = 100,
+  max_shrinks~ : UInt32 = 100,
+  discard_ratio~ : UInt32 = 10,
+  seed~ : UInt64 = 37,
   loc~ : SourceLoc,
 ) -> Unit raise {
   let result = report(

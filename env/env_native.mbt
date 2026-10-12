@@ -103,4 +103,4 @@ fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
 
 ///|
 #borrow(to_be_filled)
-extern "c" fn moonbit_rt_get_random(to_be_filled : FixedArray[Byte]) -> Int = "moonbit_rt_get_random"
+extern "c" fn moonbit_rt_get_random(to_be_filled : FixedArray[Byte]) -> Int32 = "moonbit_rt_get_random"

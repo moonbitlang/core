@@ -27,7 +27,7 @@
 /// ```mbt check
 /// test {
 ///   // `Int` has a built-in Shrink instance that walks toward 0.
-///   let candidates : Array[Int] = Shrink::shrink(100).collect()
+///   let candidates : Array[Int32] = Shrink::shrink(100).collect()
 ///   assert_true(candidates.contains(0))
 ///   assert_true(candidates.length() > 0)
 ///   // `Bool` shrinks `true` to `false`, and `false` has no shrinks.
@@ -45,7 +45,7 @@ impl Shrink with fn shrink(_a) {
 }
 
 ///|
-pub impl Shrink for Int with fn shrink(x) {
+pub impl Shrink for Int32 with fn shrink(x) {
   [|..[ for z = x / 2; z != 0; z = z / 2 => x - z ], ..if x != 0 { [0] }|]
 }
 
@@ -61,7 +61,7 @@ pub impl Shrink for Int16 with fn shrink(x) {
 
 ///|
 pub impl Shrink for UInt16 with fn shrink(x) {
-  Shrink::shrink(x.to_uint()).map(UInt::to_uint16)
+  Shrink::shrink(x.to_uint()).map(UInt32::to_uint16)
 }
 
 ///|
@@ -91,7 +91,7 @@ pub impl Shrink for @bigint.BigInt with fn shrink(x) {
 }
 
 ///|
-pub impl Shrink for UInt with fn shrink(x) {
+pub impl Shrink for UInt32 with fn shrink(x) {
   [|..[ for z = x / 2; z > 0; z = z / 2 => x - z ], ..if x != 0 { [0U] }|]
 }
 

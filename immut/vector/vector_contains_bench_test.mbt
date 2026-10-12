@@ -16,7 +16,7 @@
 let contains_bench_size = 100_000
 
 ///|
-fn make_contains_bench_vector() -> @vector.Vector[Int] {
+fn make_contains_bench_vector() -> @vector.Vector[Int32] {
   @vector.from_iter((0).until(contains_bench_size))
 }
 

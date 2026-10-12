@@ -18,8 +18,8 @@
 pub struct Lexbuf {
   priv source : () -> String?
   priv storage : LexbufStorage
-  priv mut cursor : Int
-  priv mut retained_from : Int
+  priv mut cursor : Int32
+  priv mut retained_from : Int32
   priv mut eof : Bool
 }
 
@@ -41,7 +41,7 @@ pub fn Lexbuf::from_fn(source : () -> String?) -> Lexbuf {
 /// The cursor must stay in the buffered range. Generated `lexscan` code calls
 /// this when starting a scan and when recording or comparing scan positions.
 #doc(hidden)
-pub fn Lexbuf::__get_cursor(self : Lexbuf) -> Int {
+pub fn Lexbuf::__get_cursor(self : Lexbuf) -> Int32 {
   self.cursor
 }
 
@@ -50,7 +50,7 @@ pub fn Lexbuf::__get_cursor(self : Lexbuf) -> Int {
 /// The cursor must not exceed this offset. Generated `lexscan` code calls this
 /// before reading a code unit and before deciding whether to refill.
 #doc(hidden)
-pub fn Lexbuf::__buffer_end(self : Lexbuf) -> Int {
+pub fn Lexbuf::__buffer_end(self : Lexbuf) -> Int32 {
   self.storage.buffer_end
 }
 
@@ -68,7 +68,7 @@ pub fn Lexbuf::__eof_reached(self : Lexbuf) -> Bool {
 /// `position` must be in the currently buffered half-open range. Generated
 /// `lexscan` code calls this only after checking against `__buffer_end`.
 #doc(hidden)
-pub fn Lexbuf::__unsafe_code_unit_at(self : Lexbuf, position : Int) -> Int {
+pub fn Lexbuf::__unsafe_code_unit_at(self : Lexbuf, position : Int32) -> Int32 {
   debug_assert(() => {
     position >= self.storage.buffer_start && position < self.__buffer_end()
   })
@@ -80,7 +80,7 @@ pub fn Lexbuf::__unsafe_code_unit_at(self : Lexbuf, position : Int) -> Int {
 /// `count` must be non-negative and the new cursor must not pass
 /// `__buffer_end`. Generated `lexscan` code calls this after consuming input.
 #doc(hidden)
-pub fn Lexbuf::__advance(self : Lexbuf, count : Int) -> Unit {
+pub fn Lexbuf::__advance(self : Lexbuf, count : Int32) -> Unit {
   debug_assert(() => count >= 0 && self.cursor + count <= self.__buffer_end())
   self.cursor += count
 }
@@ -104,8 +104,8 @@ pub fn Lexbuf::__retain_from_cursor(self : Lexbuf) -> Unit {
 #doc(hidden)
 pub fn Lexbuf::__get_stringview(
   self : Lexbuf,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> StringView {
   guard self.retained_from >= 0 &&
     self.retained_from <= start &&
@@ -122,7 +122,7 @@ pub fn Lexbuf::__get_stringview(
 /// Retention must be active and `position` must be buffered and no later than
 /// the current cursor. Generated `lexscan` code calls this after selecting a case.
 #doc(hidden)
-pub fn Lexbuf::__commit_to(self : Lexbuf, position : Int) -> Unit {
+pub fn Lexbuf::__commit_to(self : Lexbuf, position : Int32) -> Unit {
   guard self.retained_from >= 0 &&
     self.storage.buffer_start <= position &&
     position <= self.cursor else {

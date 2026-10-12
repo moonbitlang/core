@@ -14,7 +14,10 @@
 
 ///|
 test "Queue capacity is forwarded to the backing deque" {
-  inspect(Queue(([] : Array[Int]), capacity=16).inner.capacity(), content="16")
+  inspect(
+    Queue(([] : Array[Int32]), capacity=16).inner.capacity(),
+    content="16",
+  )
   inspect(Queue([1, 2, 3], capacity=1).inner.capacity(), content="3")
   inspect(Queue([1, 2, 3]).inner.capacity(), content="3")
 }

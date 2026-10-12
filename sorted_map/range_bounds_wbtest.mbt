@@ -15,8 +15,8 @@
 ///|
 /// Every bound kind over keys in `-1..=key_space`, so bounds fall below,
 /// inside, between and above the stored keys.
-fn all_bounds(key_space : Int) -> Array[@cmp.Bound[Int]] {
-  let bounds : Array[@cmp.Bound[Int]] = [Unbounded]
+fn all_bounds(key_space : Int32) -> Array[@cmp.Bound[Int32]] {
+  let bounds : Array[@cmp.Bound[Int32]] = [Unbounded]
   for k in -1..<=key_space {
     bounds.push(Included(k))
     bounds.push(Excluded(k))
@@ -25,7 +25,11 @@ fn all_bounds(key_space : Int) -> Array[@cmp.Bound[Int]] {
 }
 
 ///|
-fn in_bounds(k : Int, lower : @cmp.Bound[Int], upper : @cmp.Bound[Int]) -> Bool {
+fn in_bounds(
+  k : Int32,
+  lower : @cmp.Bound[Int32],
+  upper : @cmp.Bound[Int32],
+) -> Bool {
   let above = match lower {
     Included(b) => k >= b
     Excluded(b) => k > b
@@ -40,7 +44,7 @@ fn in_bounds(k : Int, lower : @cmp.Bound[Int], upper : @cmp.Bound[Int]) -> Bool 
 }
 
 ///|
-fn check_bounds(map : SortedMap[Int, Int], key_space : Int) -> Unit raise {
+fn check_bounds(map : SortedMap[Int32, Int32], key_space : Int32) -> Unit raise {
   let sorted = map.to_array()
   let bounds = all_bounds(key_space)
   for lower in bounds {
@@ -63,7 +67,7 @@ test "bounded ranges agree with a sorted-array model" {
   let rng = Rand::{ state: 0x5EED_1234UL, }
   for round in 0..<12 {
     let key_space = 4 + round * 3
-    let map : SortedMap[Int, Int] = new_sorted_map()
+    let map : SortedMap[Int32, Int32] = new_sorted_map()
     check_bounds(map, key_space)
     for _ in 0..<(key_space * 2) {
       let k = rng.below(key_space)
@@ -79,7 +83,7 @@ test "bounded ranges agree with a sorted-array model" {
 
 ///|
 test "range iterators stop early and leave the tree intact" {
-  let map : SortedMap[Int, Int] = new_sorted_map()
+  let map : SortedMap[Int32, Int32] = new_sorted_map()
   for k in 0..<1000 {
     map.set(k, k)
   }
@@ -92,7 +96,7 @@ test "range iterators stop early and leave the tree intact" {
 }
 
 ///|
-fn double_keys(it : Iter2[Double, Int]) -> Array[String] {
+fn double_keys(it : Iter2[Double, Int32]) -> Array[String] {
   it.iter().map(p => p.0.to_string()).to_array()
 }
 
@@ -102,7 +106,7 @@ test "range bounds follow Compare ordering for NaN keys" {
   // `range`, `get` and the nearest-key queries use) treats NaN as equal to
   // every value. Bounded ranges must follow `compare`, like `range` does.
   let nan = 0.0 / 0.0
-  let map : SortedMap[Double, Int] = new_sorted_map()
+  let map : SortedMap[Double, Int32] = new_sorted_map()
   map.set(1.0, 1)
   map.set(nan, 2)
   map.set(-1.0, 3)

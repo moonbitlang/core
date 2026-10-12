@@ -49,7 +49,7 @@
 /// values; capping both sides keeps that case a *prefix* check instead
 /// of a hang, and still fails if the two disagree anywhere in the
 /// prefix or on where the sequence ends.
-const CAP : Int = 300
+const CAP : Int32 = 300
 
 ///|
 /// The reference enumeration, in exact integer arithmetic.
@@ -100,7 +100,7 @@ fn model(
 
 ///|
 /// Maps an arbitrary `Int` into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -159,9 +159,9 @@ fn anchors(min : BigInt, max : BigInt) -> Array[BigInt] {
 fn build_case(
   min : BigInt,
   max : BigInt,
-  a : Int,
-  b : Int,
-  c : Int,
+  a : Int32,
+  b : Int32,
+  c : Int32,
 ) -> (BigInt, BigInt, BigInt) {
   let anc = anchors(min, max)
   let from = anc[wrap_index(a, anc.length())]
@@ -207,7 +207,7 @@ let unbounded : BigInt = 1N << 200
 ///|
 test "quickcheck: Int matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = -2147483648N
       let max = 2147483647N
@@ -230,7 +230,7 @@ test "quickcheck: Int matches the exact-arithmetic model" {
 ///|
 test "quickcheck: Int64 matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let (from, to, step) = build_case(i64_min, i64_max, a, b, c)
       @range.iter(
@@ -251,7 +251,7 @@ test "quickcheck: Int64 matches the exact-arithmetic model" {
 ///|
 test "quickcheck: UInt matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = 0N
       let max = 4294967295N
@@ -274,7 +274,7 @@ test "quickcheck: UInt matches the exact-arithmetic model" {
 ///|
 test "quickcheck: UInt64 matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = 0N
       let max = 18446744073709551615N
@@ -297,7 +297,7 @@ test "quickcheck: UInt64 matches the exact-arithmetic model" {
 ///|
 test "quickcheck: Int16 matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = -32768N
       let max = 32767N
@@ -320,7 +320,7 @@ test "quickcheck: Int16 matches the exact-arithmetic model" {
 ///|
 test "quickcheck: UInt16 matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = 0N
       let max = 65535N
@@ -343,7 +343,7 @@ test "quickcheck: UInt16 matches the exact-arithmetic model" {
 ///|
 test "quickcheck: Byte matches the exact-arithmetic model" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = 0N
       let max = 255N
@@ -368,7 +368,7 @@ test "quickcheck: BigInt matches the exact-arithmetic model" {
   // `BigInt` has no range to overflow, so the oracle's stop condition
   // must never fire: the sequence is decided purely by `to`.
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let (from, to, step) = build_case(i64_min, i64_max, a, b, c)
       @range.iter(from~, to~, step~, inclusive~).take(CAP).to_array() ==
@@ -389,7 +389,7 @@ test "quickcheck: the general shape of an Int enumeration" {
   // direction, each strictly on the correct side of `to` (or equal to
   // it exactly once, at the end, when inclusive).
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let min = -2147483648N
       let max = 2147483647N
@@ -434,7 +434,7 @@ test "quickcheck: the general shape of an Int enumeration" {
 ///|
 test "quickcheck: an inclusive range is the exclusive one plus at most its endpoint" {
   @quickcheck.check(
-    (input : (Int, Int, Int)) => {
+    (input : (Int32, Int32, Int32)) => {
       let (a, b, c) = input
       let min = -2147483648N
       let max = 2147483647N
@@ -471,7 +471,7 @@ test "quickcheck: reversing the step reverses the enumeration" {
   // the negated step must retrace exactly the same values. This ties
   // the ascending and descending branches together without the oracle.
   @quickcheck.check(
-    (input : (Int, Int)) => {
+    (input : (Int32, Int32)) => {
       let start = wrap_index(input.0, 200) - 100
       let step = 1 + wrap_index(input.1, 9)
       let count = wrap_index(input.0 / 200, 30)
@@ -500,7 +500,7 @@ test "quickcheck: reversing the step reverses the enumeration" {
 /// sub-precision step from silently spinning forever -- terminating.
 test "quickcheck: Double enumerations are monotonic, bounded, and finite" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let from = (wrap_index(a, 400) - 200).to_double() / 8.0
       let to = (wrap_index(b, 400) - 200).to_double() / 8.0
@@ -547,7 +547,7 @@ test "quickcheck: Float agrees with Double on exactly representable values" {
   // impls must enumerate the same values -- any divergence is a bug in
   // one of the two `Step` instances rather than a rounding artefact.
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let from = (wrap_index(a, 400) - 200).to_double() / 8.0
       let to = (wrap_index(b, 400) - 200).to_double() / 8.0
@@ -657,7 +657,7 @@ test "quickcheck: Double element k is exactly from + k * step" {
   // Tenths are not exactly representable, so repeated addition would
   // drift away from this reference; the direct formula must not.
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let from = (wrap_index(a, 2001) - 1000).to_double() / 10.0
       let to = (wrap_index(b, 2001) - 1000).to_double() / 10.0
@@ -673,7 +673,7 @@ test "quickcheck: Double element k is exactly from + k * step" {
 ///|
 test "quickcheck: Float element k is from + k * step rounded from Double" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let from = Float::from_double(
         (wrap_index(a, 2001) - 1000).to_double() / 10.0,
@@ -714,7 +714,7 @@ test "quickcheck: Double near overflow agrees with the range scaled down by 2^64
   // range scaled down (where nothing overflows), scaled back up.
   let scale = 5.421010862427522e-20 // 2^-64
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let from = (wrap_index(a, 3401) - 1700).to_double() * 1.0e305
       let to = (wrap_index(b, 3401) - 1700).to_double() * 1.0e305

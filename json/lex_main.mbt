@@ -52,7 +52,7 @@ fn ParseContext::lex_value(
           let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
-        Some('1'..='9') => {
+        Some('1'..<='9') => {
           let { value: n, repr, } = ctx.lex_decimal_integer(
             start=ctx.offset - 2,
           )
@@ -65,7 +65,7 @@ fn ParseContext::lex_value(
       let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
-    Some('1'..='9') => {
+    Some('1'..<='9') => {
       let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }

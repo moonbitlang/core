@@ -16,17 +16,17 @@
 let hashset_build_bench_size = 10_000
 
 ///|
-fn hashset_build_random_key(i : Int) -> Int {
+fn hashset_build_random_key(i : Int32) -> Int32 {
   (i * 1103515245 + 12345) & 0x7fffffff
 }
 
 ///|
-fn make_hashset_ordered_build_data() -> Array[Int] {
+fn make_hashset_ordered_build_data() -> Array[Int32] {
   Array::makei(hashset_build_bench_size, i => i)
 }
 
 ///|
-fn make_hashset_random_build_data() -> Array[Int] {
+fn make_hashset_random_build_data() -> Array[Int32] {
   Array::makei(hashset_build_bench_size, hashset_build_random_key)
 }
 

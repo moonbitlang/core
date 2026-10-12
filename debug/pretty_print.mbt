@@ -14,13 +14,13 @@
 
 ///|
 /// Default max depth for pruning.
-let default_max_depth : Int = 16
+let default_max_depth : Int32 = 16
 
 ///|
 /// Default layout threshold for compact-vs-multiline decisions.
 ///
 /// Larger values prefer single-line output.
-let default_threshold : Int = 70
+let default_threshold : Int32 = 70
 
 ///|
 /// Prune a `Repr` tree to a given depth (replacing pruned subtrees with
@@ -39,13 +39,13 @@ let default_threshold : Int = 70
 ///   - otherwise the whole subtree is replaced by `replacement`.
 fn Repr::prune_info(
   self : Repr,
-  replacement? : Repr = Repr::omitted(),
-  max_depth~ : Int?,
+  replacement~ : Repr = Repr::omitted(),
+  max_depth~ : Int32?,
 ) -> Repr {
   match max_depth {
     None => self
     Some(depth) => {
-      fn go(d : Int, node : Repr) -> Repr {
+      fn go(d : Int32, node : Repr) -> Repr {
         let children = node.children()
         if d <= 0 {
           if children.is_empty() {
@@ -63,7 +63,7 @@ fn Repr::prune_info(
         }
       }
 
-      go(Int::max(1, depth), self)
+      go(Int32::max(1, depth), self)
     }
   }
 }
@@ -80,7 +80,7 @@ fn Repr::info_adds_depth(info : Repr) -> Bool {
 
 ///|
 /// Heuristic "size" of a node for compact-vs-multiline decisions.
-fn info_size(info : Repr) -> Int {
+fn info_size(info : Repr) -> Int32 {
   match info {
     UnitLit => 1
     Integer(_) => 1
@@ -107,8 +107,8 @@ fn info_size(info : Repr) -> Int {
 /// Returns `true` when a record field name can be printed without quotes.
 fn is_unquoted_key(key : String) -> Bool {
   match key {
-    ['a'..='z' | '_', .. rest] =>
-      rest.all(c => c is ('a'..='z' | 'A'..='Z' | '0'..='9' | '_'))
+    ['a'..<='z' | '_', .. rest] =>
+      rest.all(c => c is ('a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_'))
     _ => false
   }
 }
@@ -224,7 +224,7 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
 
 ///|
 /// Render a `Repr` as `Content` with resizing decisions.
-fn Repr::render_repr(self : Repr, threshold : Int) -> Content {
+fn Repr::render_repr(self : Repr, threshold : Int32) -> Content {
   let label = self.shallow()
   let children = self.children().map(child => child.render_repr(threshold))
   with_resizing(info_size(label), threshold, label.pretty_print(children))
@@ -240,8 +240,8 @@ fn Repr::render_repr(self : Repr, threshold : Int) -> Content {
 /// The compact-vs-multiline layout threshold is not configurable here: `render`
 /// always uses the internal default of `70`, keeping a node on one line when
 /// every line of its compacted form fits within that many characters.
-pub fn render(r : Repr, max_depth? : Int) -> String {
-  let max_depth : Int? = match max_depth {
+pub fn render(r : Repr, max_depth? : Int32) -> String {
+  let max_depth : Int32? = match max_depth {
     Some(_) => max_depth
     None => Some(default_max_depth)
   }

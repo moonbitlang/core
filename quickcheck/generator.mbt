@@ -18,13 +18,13 @@ pub using @splitmix {type RandomState}
 ///|
 /// A size-aware random value generator.
 struct Generator[T] {
-  generate : (Int, RandomState) -> T
+  generate : (Int32, RandomState) -> T
 }
 
 ///|
 /// Creates a generator from a function of size and random state.
 pub fn[T] Generator::Generator(
-  generate : (Int, RandomState) -> T,
+  generate : (Int32, RandomState) -> T,
 ) -> Generator[T] {
   { generate, }
 }
@@ -54,7 +54,7 @@ pub fn[T : Arbitrary] spawn() -> Generator[T] {
 /// Runs a generator with an explicit size and random state.
 pub fn[T] Generator::run(
   self : Generator[T],
-  size : Int,
+  size : Int32,
   state : RandomState,
 ) -> T {
   (self.generate)(size, state)
@@ -64,8 +64,8 @@ pub fn[T] Generator::run(
 /// Generates one deterministic sample.
 pub fn[T] Generator::sample(
   self : Generator[T],
-  size? : Int = 100,
-  seed? : UInt64 = 37,
+  size~ : Int32 = 100,
+  seed~ : UInt64 = 37,
 ) -> T {
   self.run(size, RandomState(seed~))
 }
@@ -74,9 +74,9 @@ pub fn[T] Generator::sample(
 /// Generates several deterministic samples from one random state.
 pub fn[T] Generator::samples(
   self : Generator[T],
-  count? : Int = 10,
-  size? : Int = 100,
-  seed? : UInt64 = 37,
+  count~ : Int32 = 10,
+  size~ : Int32 = 100,
+  seed~ : UInt64 = 37,
 ) -> Array[T] {
   let state = @splitmix.RandomState(seed~)
   Array::makei(count, _ => self.run(size, state))
@@ -152,7 +152,7 @@ pub fn[T, U, V, W] Generator::zip_with3(
 
 ///|
 /// Creates a generator that can inspect the current size.
-pub fn[T] sized(create : (Int) -> Generator[T]) -> Generator[T] {
+pub fn[T] sized(create : (Int32) -> Generator[T]) -> Generator[T] {
   Generator((size, state) => create(size).run(size, state))
 }
 
@@ -160,14 +160,14 @@ pub fn[T] sized(create : (Int) -> Generator[T]) -> Generator[T] {
 /// Transforms the size supplied to a generator.
 pub fn[T] Generator::scale(
   self : Generator[T],
-  transform : (Int) -> Int,
+  transform : (Int32) -> Int32,
 ) -> Generator[T] {
   Generator((size, state) => self.run(transform(size), state))
 }
 
 ///|
 /// Runs a generator with a fixed size.
-pub fn[T] Generator::resize(self : Generator[T], size : Int) -> Generator[T] {
+pub fn[T] Generator::resize(self : Generator[T], size : Int32) -> Generator[T] {
   self.scale(_ => size)
 }
 
@@ -176,7 +176,7 @@ pub fn[T] Generator::resize(self : Generator[T], size : Int) -> Generator[T] {
 ///
 /// The degenerate range where `lower == upper` always yields `lower`. Aborts
 /// if `lower` is greater than `upper`.
-pub fn int_range(lower : Int, upper : Int) -> Generator[Int] {
+pub fn int_range(lower : Int32, upper : Int32) -> Generator[Int32] {
   guard lower < upper else {
     if lower == upper {
       return pure(lower)
@@ -200,7 +200,7 @@ pub fn int_range(lower : Int, upper : Int) -> Generator[Int] {
 pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
   let lo = lower.to_int()
   let hi = upper.to_int()
-  fn is_surrogate(code : Int) -> Bool {
+  fn is_surrogate(code : Int32) -> Bool {
     code >= 0xD800 && code <= 0xDFFF
   }
 
@@ -234,7 +234,7 @@ pub fn[T] elements(values : Array[T]) -> Generator[T] {
 
 ///|
 /// Randomly selects a generator according to its weight.
-pub fn[T] frequency(generators : Array[(UInt, Generator[T])]) -> Generator[T] {
+pub fn[T] frequency(generators : Array[(UInt32, Generator[T])]) -> Generator[T] {
   guard !generators.is_empty() else { abort("frequency: empty array") }
   let total = for pair in generators; total = 0U {
     let (weight, _) = pair
@@ -261,7 +261,7 @@ pub fn[T] frequency(generators : Array[(UInt, Generator[T])]) -> Generator[T] {
 /// Generates an array with exactly `size` independently drawn elements.
 pub fn[T] Generator::array_with_size(
   self : Generator[T],
-  size : Int,
+  size : Int32,
 ) -> Generator[Array[T]] {
   guard size >= 0 else { abort("array_with_size: negative size") }
   Generator((sample_size, state) => {

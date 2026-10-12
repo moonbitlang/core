@@ -14,4 +14,4 @@
 
 ///|
 /// Type `Rechar` used by this package APIs.
-pub type Rechar = Int
+pub type Rechar = Int32

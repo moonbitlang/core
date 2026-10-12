@@ -14,7 +14,7 @@
 
 ///|
 test "array_capacity" {
-  let arr : Array[Int] = Array(capacity=10)
+  let arr : Array[Int32] = Array(capacity=10)
   assert_true(arr.capacity() >= 10)
 }
 

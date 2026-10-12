@@ -316,7 +316,7 @@ test "panic MutArrayView set out of bounds" {
 
 ///|
 test "panic FixedArray mut_view invalid range" {
-  let arr : FixedArray[Int] = [1, 2, 3]
+  let arr : FixedArray[Int32] = [1, 2, 3]
   let _ = arr.mut_view(start=2, end=1)
 }
 

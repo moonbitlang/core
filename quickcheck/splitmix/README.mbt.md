@@ -229,12 +229,12 @@ test "deterministic testing" {
   let rng2 = @splitmix.RandomState(seed=777UL)
 
   // Generate same sequence
-  let seq1 : ReadOnlyArray[Int] = [
+  let seq1 : ReadOnlyArray[Int32] = [
     rng1.next_int(),
     rng1.next_int(),
     rng1.next_int(),
   ]
-  let seq2 : ReadOnlyArray[Int] = [
+  let seq2 : ReadOnlyArray[Int32] = [
     rng2.next_int(),
     rng2.next_int(),
     rng2.next_int(),

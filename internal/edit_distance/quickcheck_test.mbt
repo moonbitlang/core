@@ -47,7 +47,7 @@
 /// first `i` elements of `a` and the first `j` of `b`, and the answer
 /// is `d[m][n]`. Deliberately unoptimized — no trimming, no banding, no
 /// rolling rows — so it shares no structure with the code under test.
-fn oracle(a : ArrayView[Int], b : ArrayView[Int]) -> Int {
+fn oracle(a : ArrayView[Int32], b : ArrayView[Int32]) -> Int32 {
   let m = a.length()
   let n = b.length()
   let d = Array::makei(m + 1, _ => Array::make(n + 1, 0))
@@ -82,9 +82,9 @@ fn oracle(a : ArrayView[Int], b : ArrayView[Int]) -> Int {
 
 ///|
 /// Every word of length `0 ..= max_length` over `0 ..< alphabet`.
-fn all_words(alphabet : Int, max_length : Int) -> Array[Array[Int]] {
+fn all_words(alphabet : Int32, max_length : Int32) -> Array[Array[Int32]] {
   let out = [[]]
-  let mut frontier : Array[Array[Int]] = [[]]
+  let mut frontier : Array[Array[Int32]] = [[]]
   for _ in 0..<max_length {
     let next = []
     for word in frontier {
@@ -104,7 +104,7 @@ fn all_words(alphabet : Int, max_length : Int) -> Array[Array[Int]] {
 
 ///|
 /// Maps an arbitrary `Int` into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -121,7 +121,7 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 /// to `max(m, n)` and the interesting part of the DP — the substitution
 /// versus insert/delete choice, and the prefix/suffix trimming — is
 /// never reached.
-fn narrow(values : ArrayView[Int], alphabet : Int) -> Array[Int] {
+fn narrow(values : ArrayView[Int32], alphabet : Int32) -> Array[Int32] {
   values.map(v => wrap_index(v, alphabet))
 }
 
@@ -133,7 +133,7 @@ fn narrow(values : ArrayView[Int], alphabet : Int) -> Array[Int] {
 /// Checks both entry points against the oracle for one pair, at every
 /// distance bound from `-1` (which must always be rejected) to one past
 /// the largest possible distance.
-fn check_pair(a : Array[Int], b : Array[Int]) -> Bool {
+fn check_pair(a : Array[Int32], b : Array[Int32]) -> Bool {
   let expected = oracle(a, b)
   // the exact distance, and its symmetry
   guard @edit_distance.edit_distance(a, b) == expected &&
@@ -186,7 +186,7 @@ test "exhaustive: every pair of ternary words up to length 4" {
 ///|
 test "quickcheck: longer inputs agree with the definition" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Int32)) => {
       let alphabet = 1 + wrap_index(input.2, 5)
       let a = narrow(input.0, alphabet)
       let b = narrow(input.1, alphabet)
@@ -201,7 +201,7 @@ test "quickcheck: longer inputs agree with the definition" {
 ///|
 test "quickcheck: the banded search agrees at every bound" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Int32)) => {
       let alphabet = 1 + wrap_index(input.2, 5)
       let a = narrow(input.0, alphabet)
       let b = narrow(input.1, alphabet)
@@ -233,7 +233,7 @@ test "quickcheck: the banded search agrees at every bound" {
 ///|
 test "quickcheck: identity of indiscernibles, and symmetry" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Int32)) => {
       let alphabet = 1 + wrap_index(input.2, 4)
       let a = narrow(input.0, alphabet)
       let b = narrow(input.1, alphabet)
@@ -251,7 +251,7 @@ test "quickcheck: identity of indiscernibles, and symmetry" {
 ///|
 test "quickcheck: the triangle inequality" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Array[Int32], Int32)) => {
       let alphabet = 1 + wrap_index(input.3, 4)
       let a = narrow(input.0, alphabet)
       let b = narrow(input.1, alphabet)
@@ -266,7 +266,7 @@ test "quickcheck: the triangle inequality" {
 ///|
 test "quickcheck: bounded below by the length difference, above by the longer length" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Int32)) => {
       let alphabet = 1 + wrap_index(input.2, 4)
       let a = narrow(input.0, alphabet)
       let b = narrow(input.1, alphabet)
@@ -290,7 +290,7 @@ test "quickcheck: a shared prefix and suffix do not change the distance" {
   // context is drawn from the same small alphabet, so the trimming loop
   // may well run past the intended boundary if its bound is wrong.
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32], Array[Int32], Array[Int32])) => {
       let a = narrow(input.0, 3)
       let b = narrow(input.1, 3)
       let prefix = narrow(input.2, 3)
@@ -309,7 +309,7 @@ test "quickcheck: a shared prefix and suffix do not change the distance" {
 ///|
 test "quickcheck: a single edit costs exactly one" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let a = narrow(input.0, 3)
       if a.is_empty() {
         return true
@@ -335,9 +335,9 @@ test "quickcheck: a single edit costs exactly one" {
 ///|
 test "quickcheck: the empty input is at distance length" {
   @quickcheck.check(
-    (values : Array[Int]) => {
+    (values : Array[Int32]) => {
       let a = narrow(values, 3)
-      let empty : Array[Int] = []
+      let empty : Array[Int32] = []
       @edit_distance.edit_distance(a, empty) == a.length() &&
       @edit_distance.edit_distance(empty, a) == a.length() &&
       @edit_distance.edit_distance(empty, empty) == 0
@@ -355,7 +355,7 @@ test "quickcheck: the string API is the array API over code units" {
   // `edit_distance_str` is documented as UTF-16 code-unit distance,
   // which is exactly what the array API computes over `code_units()`.
   @quickcheck.check(
-    (input : (String, String, Int)) => {
+    (input : (String, String, Int32)) => {
       let a = input.0
       let b = input.1
       let ua = a.code_units().map(u => u.to_int())

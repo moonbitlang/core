@@ -11,7 +11,7 @@ You can use `PriorityQueue([])` or `from_array()` to create a priority queue.
 ```mbt check
 ///|
 test {
-  let queue1 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let queue1 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   let queue2 = @priority_queue.from_array([1, 2, 3])
   @json.json_inspect(queue1, content=[])
   @json.json_inspect(queue2, content=[3, 2, 1])
@@ -57,7 +57,7 @@ Similarly, you can use the `is_empty` to determine whether the priority queue is
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   @test.assert_eq(pq.is_empty(), true)
 }
 ```
@@ -81,7 +81,7 @@ You can use `push()` to add elements to the priority queue.
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   pq.push(1)
   pq.push(2)
   @test.assert_eq(pq.peek(), Some(2))

@@ -16,7 +16,7 @@
 let string_equal_bench_size = 100_000
 
 ///|
-fn make_string_equal_bench_string(diff_at? : Int = -1) -> String {
+fn make_string_equal_bench_string(diff_at~ : Int32 = -1) -> String {
   let builder = StringBuilder(size_hint=string_equal_bench_size * 2)
   for i in 0..<string_equal_bench_size {
     builder.write_char(if i == diff_at { 'b' } else { 'a' })

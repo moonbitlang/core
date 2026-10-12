@@ -23,7 +23,7 @@ fn profile_unicode() -> @re.Profile {
       @re.RecharSet::char('_'),
     category=fn(c) {
       match c {
-        'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
+        'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' => @re.Category::word()
         '\n' => @re.Category::newline()
         _ => @re.Category::not_word()
       }
@@ -41,7 +41,7 @@ fn profile_bytes() -> @re.Profile {
       @re.RecharSet::char('_'),
     category=fn(c) {
       match c {
-        'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
+        'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' => @re.Category::word()
         '\n' => @re.Category::newline()
         _ => @re.Category::not_word()
       }

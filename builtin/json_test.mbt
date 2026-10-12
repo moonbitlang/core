@@ -117,31 +117,31 @@ test "test_float_to_json" {
 
 ///|
 test "to_json on empty fixed array" {
-  let arr : FixedArray[Int] = FixedArray::make(0, 0)
+  let arr : FixedArray[Int32] = FixedArray::make(0, 0)
   debug_inspect(Json(arr), content="Array([])")
 }
 
 ///|
 test "test map with string values" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   debug_inspect(Json(m), content="Object({})")
 }
 
 ///|
 test "Option::to_json with None" {
-  let none : Int? = None
+  let none : Int32? = None
   debug_inspect(Json(none), content="Null")
 }
 
 ///|
 test "Option::to_json with Some value" {
-  let some : Int? = Some(42)
+  let some : Int32? = Some(42)
   debug_inspect(Json(some), content="Array([Number(42)])")
 }
 
 ///|
 test "Result to_json with Ok value" {
-  let ok : Result[Int, String] = Ok(42)
+  let ok : Result[Int32, String] = Ok(42)
   debug_inspect(Json(ok), content="Object({ \"Ok\": Number(42) })")
 }
 
@@ -207,7 +207,7 @@ test "to_json BigInt" {
 
 ///|
 test "Result to_json with Err value" {
-  let err : Result[Int, String] = Err("error")
+  let err : Result[Int32, String] = Err("error")
   debug_inspect(Json(err), content="Object({ \"Err\": String(\"error\") })")
 }
 

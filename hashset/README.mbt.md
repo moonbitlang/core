@@ -60,7 +60,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 ```mbt check
 ///|
 test {
-  let set : @hashset.HashSet[Int] = HashSet([])
+  let set : @hashset.HashSet[Int32] = HashSet([])
   @test.assert_eq(set.is_empty(), true)
 }
 ```

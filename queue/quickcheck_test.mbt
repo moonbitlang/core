@@ -16,20 +16,20 @@
 /// Full observational agreement between a queue and its array model (front of
 /// the queue is index 0 of the model): length, emptiness, peek, iteration in
 /// all its forms, and structural equality with a freshly built queue.
-fn agrees_with_model(q : @queue.Queue[Int], model : Array[Int]) -> Bool {
+fn agrees_with_model(q : @queue.Queue[Int32], model : Array[Int32]) -> Bool {
   guard q.length() == model.length() &&
     q.is_empty() == model.is_empty() &&
     q.peek() == model.get(0) else {
     return false
   }
   guard q.iter().to_array() == model else { return false }
-  let collected : Array[Int] = []
+  let collected : Array[Int32] = []
   q.each(x => collected.push(x))
   guard collected == model else { return false }
   let mut indices_ok = true
   q.eachi((i, x) => if model[i] != x { indices_ok = false })
   guard indices_ok else { return false }
-  q.fold(init=[], (acc : Array[Int], x) => {
+  q.fold(init=[], (acc : Array[Int32], x) => {
     acc.push(x)
     acc
   }) ==
@@ -39,9 +39,9 @@ fn agrees_with_model(q : @queue.Queue[Int], model : Array[Int]) -> Bool {
 ///|
 test "quickcheck: mutation sequences agree with an array model" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
-      let q : @queue.Queue[Int] = @queue.from_array([])
-      let model : Array[Int] = []
+    (ops : Array[(Int32, Int32)]) => {
+      let q : @queue.Queue[Int32] = @queue.from_array([])
+      let model : Array[Int32] = []
       let mut step = 0
       for op in ops {
         let v = op.1
@@ -102,15 +102,15 @@ test "quickcheck: mutation sequences agree with an array model" {
 ///|
 test "quickcheck: FIFO law - pushing xs then popping yields xs in order" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let q : @queue.Queue[Int] = @queue.from_array([])
+    (xs : Array[Int32]) => {
+      let q : @queue.Queue[Int32] = @queue.from_array([])
       for x in xs {
         q.push(x)
       }
       guard q.length() == xs.length() && q.peek() == xs.get(0) else {
         return false
       }
-      let out : Array[Int] = []
+      let out : Array[Int32] = []
       while q.pop() is Some(x) {
         out.push(x)
       }
@@ -123,12 +123,12 @@ test "quickcheck: FIFO law - pushing xs then popping yields xs in order" {
 ///|
 test "quickcheck: interleaved pushes and pops match the model prediction" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Int32)) => {
       let (a_elems, b_elems, r) = input
       // Split point: pop k elements between the two push phases.
       let k = (r & 0x3fffffff) % (a_elems.length() + 1)
-      let q : @queue.Queue[Int] = @queue.from_array([])
-      let out : Array[Int] = []
+      let q : @queue.Queue[Int32] = @queue.from_array([])
+      let out : Array[Int32] = []
       for x in a_elems {
         q.push(x)
       }
@@ -158,7 +158,7 @@ test "quickcheck: interleaved pushes and pops match the model prediction" {
 ///|
 test "quickcheck: construction roundtrips and non-consuming iteration" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let q = @queue.from_array(xs)
       guard agrees_with_model(q, xs) else { return false }
       guard agrees_with_model(@queue.from_iter(xs.iter()), xs) else {
@@ -179,7 +179,7 @@ test "quickcheck: construction roundtrips and non-consuming iteration" {
 ///|
 test "quickcheck: copy is deep - either side can mutate independently" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, v) = input
       let original = @queue.from_array(xs)
       let copied = original.copy()
@@ -204,7 +204,7 @@ test "quickcheck: copy is deep - either side can mutate independently" {
 ///|
 test "quickcheck: transfer appends source to destination and empties source" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let (src_elems, dst_elems) = input
       let src = @queue.from_array(src_elems)
       let dst = @queue.from_array(dst_elems)
@@ -229,7 +229,7 @@ test "quickcheck: transfer appends source to destination and empties source" {
 ///|
 test "quickcheck: after clear the queue is indistinguishable from new" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let q = @queue.from_array(xs)
       q.clear()
       guard agrees_with_model(q, []) && q.pop() == None && q.peek() == None else {

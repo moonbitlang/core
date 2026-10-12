@@ -19,7 +19,7 @@
 /// checked accessor bodies (`Deque::at` / `Deque::set`), keeping them small
 /// enough for the C/LLVM backend to inline while preserving the exact message.
 #inline(never)
-fn[T] index_out_of_bounds(len : Int, index : Int) -> T {
+fn[T] index_out_of_bounds(len : Int32, index : Int32) -> T {
   abort(
     "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
   )

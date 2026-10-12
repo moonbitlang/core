@@ -43,7 +43,7 @@ pub fn Double::Double(self : Double) -> Double = "%identity"
 ///   inspect(Double::from_int(-1), content="-1")
 /// }
 /// ```
-pub fn Double::from_int(i : Int) -> Double {
+pub fn Double::from_int(i : Int32) -> Double {
   i.to_double()
 }
 
@@ -337,8 +337,8 @@ pub impl Show for Double with fn to_string(self) {
 pub fn Double::is_close(
   self : Self,
   other : Self,
-  relative_tolerance? : Self = 1.0e-09,
-  absolute_tolerance? : Self = 0.0,
+  relative_tolerance~ : Self = 1.0e-09,
+  absolute_tolerance~ : Self = 0.0,
 ) -> Bool {
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")

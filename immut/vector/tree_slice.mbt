@@ -15,7 +15,7 @@
 /// Tree-local slicing helpers used by vector slice/split.
 
 ///|
-fn[A] Tree::slice_right(self : Tree[A], shift : Int, end : Int) -> Tree[A] {
+fn[A] Tree::slice_right(self : Tree[A], shift : Int32, end : Int32) -> Tree[A] {
   guard end > 0 else { return Empty }
   guard end < self.size(shift) else { return self }
   match self {
@@ -46,7 +46,7 @@ fn[A] Tree::slice_right(self : Tree[A], shift : Int, end : Int) -> Tree[A] {
 }
 
 ///|
-fn[A] Tree::slice_left(self : Tree[A], shift : Int, start : Int) -> Tree[A] {
+fn[A] Tree::slice_left(self : Tree[A], shift : Int32, start : Int32) -> Tree[A] {
   guard start > 0 else { return self }
   match self {
     Empty => Empty

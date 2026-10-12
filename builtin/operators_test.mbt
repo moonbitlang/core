@@ -14,11 +14,11 @@
 
 ///|
 struct Num {
-  value : Int
+  value : Int32
 }
 
 ///|
-fn num(value : Int) -> Num {
+fn num(value : Int32) -> Num {
   { value, }
 }
 

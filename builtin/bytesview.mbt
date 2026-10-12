@@ -16,13 +16,13 @@
 fn BytesView::bytes(self : BytesView) -> Bytes = "%bytesview.bytes"
 
 ///|
-fn BytesView::start(self : BytesView) -> Int = "%bytesview.start"
+fn BytesView::start(self : BytesView) -> Int32 = "%bytesview.start"
 
 ///|
-fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
+fn BytesView::len(self : BytesView) -> Int32 = "%bytesview.len"
 
 ///|
-fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview.make"
+fn BytesView::make(b : Bytes, start : Int32, len : Int32) -> BytesView = "%bytesview.make"
 
 ///|
 /// Returns the number of bytes in the view.
@@ -43,7 +43,7 @@ fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview
 /// }
 /// ```
 #intrinsic("%bytesview.length")
-pub fn BytesView::length(self : BytesView) -> Int {
+pub fn BytesView::length(self : BytesView) -> Int32 {
   self.len()
 }
 
@@ -88,7 +88,7 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 /// ```
 #intrinsic("%bytesview.get")
 #alias("_[_]")
-pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
+pub fn BytesView::at(self : BytesView, index : Int32) -> Byte {
   guard index >= 0 && index < self.length() else {
     index_out_of_bounds(self.length(), index)
   }
@@ -125,7 +125,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 /// }
 /// ```
 #intrinsic("%bytesview.get_opt")
-pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
+pub fn BytesView::get(self : BytesView, index : Int32) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self.bytes().unsafe_get(self.start() + index))
 }
@@ -158,7 +158,7 @@ pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
 #intrinsic("%bytesview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
 #doc(hidden)
-pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
+pub fn BytesView::unsafe_get(self : BytesView, index : Int32) -> Byte {
   self.bytes().unsafe_get(self.start() + index)
 }
 
@@ -183,8 +183,8 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn Bytes::exact_view(
   self : Bytes,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView {
   let len = self.length()
   let end = match end {
@@ -215,8 +215,8 @@ pub fn Bytes::exact_view(
 /// ```
 pub fn Bytes::get_view(
   self : Bytes,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView? {
   let len = self.length()
   let end = match end {
@@ -231,8 +231,8 @@ pub fn Bytes::get_view(
 /// range is invalid. The optional variant of `BytesView::exact_view`.
 pub fn BytesView::get_view(
   self : BytesView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView? {
   let len = self.length()
   let end = match end {
@@ -261,8 +261,8 @@ pub fn BytesView::get_view(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn BytesView::exact_view(
   self : BytesView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView {
   let len = self.length()
   let end = match end {
@@ -300,8 +300,8 @@ pub fn BytesView::exact_view(
 #alias("_[_:_]")
 pub fn Bytes::clamped_view(
   self : Bytes,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -331,8 +331,8 @@ pub fn Bytes::clamped_view(
 #alias("_[_:_]")
 pub fn BytesView::clamped_view(
   self : BytesView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> BytesView {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -391,7 +391,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
+pub fn BytesView::iter2(self : BytesView) -> Iter2[Int32, Byte] {
   let mut i = 0
   let len = self.length()
   Iter2::new(
@@ -407,7 +407,7 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 
 ///|
 fn[T : Logger] write_byte_hex(logger : T, byte : Byte) -> Unit {
-  fn hex_digit(value : Int) -> Char {
+  fn hex_digit(value : Int32) -> Char {
     if value < 10 {
       (value + '0'.to_int()).unsafe_to_char()
     } else {
@@ -426,7 +426,7 @@ fn[T : Logger] write_byte_hex(logger : T, byte : Byte) -> Unit {
 /// which adds the quotes, and `ToJson`, which does not.
 fn[T : Logger] BytesView::escape_to(self : BytesView, logger : T) -> Unit {
   for byte in self {
-    if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
+    if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
     } else {
       logger.write_string("\\x")
@@ -532,7 +532,7 @@ pub fn BytesView::equal_to_bytes(self : BytesView, other : Bytes) -> Bool {
 ///   inspect(bytes[1:5].compare(bytes[2:5]), content="1") // bcab > cab
 /// }
 /// ```
-pub impl Compare for BytesView with fn compare(self, other) -> Int {
+pub impl Compare for BytesView with fn compare(self, other) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
@@ -564,7 +564,7 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
 ///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"), content="-1")
 /// }
 /// ```
-pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
+pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int32 {
   self.bytesview_lexical_compare_impl(other)
 }
 
@@ -573,7 +573,7 @@ pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
 fn BytesView::bytesview_lexical_compare_impl(
   self : BytesView,
   other : BytesView,
-) -> Int {
+) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
@@ -624,7 +624,7 @@ fn BytesView::bytesview_lexical_compare_impl(
 fn BytesView::bytesview_lexical_compare_impl(
   self : BytesView,
   other : BytesView,
-) -> Int {
+) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
@@ -647,7 +647,7 @@ pub fn BytesView::data(self : BytesView) -> Bytes {
 
 ///|
 /// Retrieves the start index of the view.
-pub fn BytesView::start_offset(self : BytesView) -> Int {
+pub fn BytesView::start_offset(self : BytesView) -> Int32 {
   self.start()
 }
 

@@ -16,12 +16,12 @@
 let array_retain_bench_size = 100_000
 
 ///|
-fn make_array_retain_bench_ints() -> Array[Int] {
+fn make_array_retain_bench_ints() -> Array[Int32] {
   Array::makei(array_retain_bench_size, i => i)
 }
 
 ///|
-fn make_array_retain_bench_refs() -> Array[Ref[Int]] {
+fn make_array_retain_bench_refs() -> Array[Ref[Int32]] {
   Array::makei(array_retain_bench_size, i => Ref(i))
 }
 

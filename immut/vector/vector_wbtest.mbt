@@ -149,7 +149,7 @@ test "mix" {
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
   let large_const = BRANCHING_FACTOR * BRANCHING_FACTOR + 1
-  let v = for i in 0..<large_const; v = (new() : Vector[Int]) {
+  let v = for i in 0..<large_const; v = (new() : Vector[Int32]) {
     continue v.push(i)
   } nobreak {
     v
@@ -329,7 +329,7 @@ test "slice across tree and tail preserves right tail chunk" {
 /// Inputs:
 /// - `n`: the number of operations to be generated
 /// - `len_gen`: a function that generates the length of the vector to be concatenated
-fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Op] {
+fn gen_concat_seq(n : Int32, len_gen : (Int32) -> Int32) -> Array[Op] {
   let ret = []
   for i in 0..<n {
     ret.push(Op::Concat(random_array(len_gen(i))))
@@ -341,7 +341,7 @@ fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Op] {
 /// Generate a sequence of concatenation operations as a test case,
 /// similar to `gen_concat_seq`, but this time, the length of the vector
 /// to be concatenated is given as an array.
-fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Op] {
+fn gen_concat_seq_from_len_array(len : Array[Int32]) -> Array[Op] {
   let ret = []
   for l in len {
     ret.push(Op::Concat(random_array(l)))

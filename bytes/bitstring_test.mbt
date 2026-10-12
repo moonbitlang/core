@@ -158,7 +158,7 @@ test "extract_byte - bit patterns and edge cases" {
 // ============================================================================
 
 ///|
-fn UInt::to_be_bytes_local(self : UInt) -> Bytes {
+fn UInt32::to_be_bytes_local(self : UInt32) -> Bytes {
   [
     (self >> 24).to_byte(),
     (self >> 16).to_byte(),

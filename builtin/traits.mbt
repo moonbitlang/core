@@ -32,7 +32,7 @@ impl Eq with fn not_equal(x, y) {
 /// - negative, if the first argument is smaller
 /// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
-  fn compare(Self, Self) -> Int
+  fn compare(Self, Self) -> Int32
   fn op_lt(Self, Self) -> Bool = _
   fn op_gt(Self, Self) -> Bool = _
   fn op_le(Self, Self) -> Bool = _
@@ -72,7 +72,7 @@ impl Compare with fn op_ge(x, y) {
 /// When implemented separately, `hash` **does not need** to produce a hash value that is consistent with `hash_combine`.
 pub(open) trait Hash {
   fn hash_combine(Self, Hasher) -> Unit
-  fn hash(Self) -> Int = _
+  fn hash(Self) -> Int32 = _
 }
 
 ///|
@@ -104,7 +104,7 @@ pub(open) trait Logger {
   fn write_string(Self, String) -> Unit = _
   /// Writes a substring of the given string to the logger.
   #deprecated("use `write_view` instead", skip_current_package=true)
-  fn write_substring(Self, String, Int, Int) -> Unit = _
+  fn write_substring(Self, String, Int32, Int32) -> Unit = _
   /// Writes a string view to the logger.
   fn write_view(Self, StringView) -> Unit = _
   /// Writes a character to the logger.
@@ -189,10 +189,10 @@ pub fn[Obj : Show] &Logger::write_object(self : &Logger, obj : Obj) -> Unit {
 pub fn[T : Show] &Logger::write_iter(
   self : &Logger,
   iter : Iter[T],
-  prefix? : String = "[",
-  suffix? : String = "]",
-  sep? : String = ", ",
-  trailing? : Bool = false,
+  prefix~ : String = "[",
+  suffix~ : String = "]",
+  sep~ : String = ", ",
+  trailing~ : Bool = false,
 ) -> Unit {
   self.write_string(prefix)
   if trailing {

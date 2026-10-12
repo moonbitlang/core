@@ -17,8 +17,8 @@ let default_init_capacity = 8
 
 ///|
 priv struct Key {
-  id : Int
-  hash_value : Int
+  id : Int32
+  hash_value : Int32
 } derive(Eq)
 
 ///|
@@ -33,14 +33,14 @@ impl Hash for Key with fn hash(self) {
 
 ///|
 test "empty constructor" {
-  let m : @set.Set[Int] = Set([])
+  let m : @set.Set[Int32] = Set([])
   assert_eq(m.capacity(), default_init_capacity)
   assert_eq(m.length(), 0)
 }
 
 ///|
 test "constructor capacity" {
-  let empty : @set.Set[Int] = Set([], capacity=16)
+  let empty : @set.Set[Int32] = Set([], capacity=16)
   assert_eq(empty.capacity(), 16)
   assert_eq(empty.length(), 0)
   let below_length = @set.Set([1, 2, 3], capacity=2)
@@ -53,13 +53,13 @@ test "constructor capacity" {
 
 ///|
 test "default" {
-  let m : @set.Set[Int] = Default::default()
+  let m : @set.Set[Int32] = Default::default()
   inspect(m.length(), content="0")
 }
 
 ///|
 test "copy empty" {
-  let m : @set.Set[Int] = Set([])
+  let m : @set.Set[Int32] = Set([])
   let copied = m.copy()
   inspect(copied.length(), content="0")
 }
@@ -312,7 +312,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @set.Set[Int] = @set.Set::from_iter([||])
+  let map : @set.Set[Int32] = @set.Set::from_iter([||])
   debug_inspect(
     map,
     content=(
@@ -332,7 +332,7 @@ test "remove item causes break when psl < i" {
 
 ///|
 test "to_array_empty" {
-  debug_inspect((Set([]) : @set.Set[Int]).to_array(), content="[]")
+  debug_inspect((Set([]) : @set.Set[Int32]).to_array(), content="[]")
 }
 
 ///|
@@ -372,8 +372,8 @@ test "equal: same sets" {
 
 ///|
 test "equal: empty sets" {
-  let set1 : @set.Set[Int] = Set([])
-  let set2 : @set.Set[Int] = Set([])
+  let set1 : @set.Set[Int32] = Set([])
+  let set2 : @set.Set[Int32] = Set([])
   inspect(set1 == set2, content="true")
 }
 
@@ -579,8 +579,8 @@ test "bitwise_operations" {
 
 ///|
 /// A set with colliding hashes and some elements already removed.
-fn filter_fixture() -> @set.Set[Int] {
-  let s : @set.Set[Int] = Set([], capacity=2)
+fn filter_fixture() -> @set.Set[Int32] {
+  let s : @set.Set[Int32] = Set([], capacity=2)
   for i in 0..<200 {
     s.add(i * 64)
   }
@@ -609,7 +609,7 @@ test "filter keeps order and lookups after removals and collisions" {
 
 ///|
 test "filter sizes the result for the kept elements" {
-  let s : @set.Set[Int] = Set([ for i in 0..<10000 => i ])
+  let s : @set.Set[Int32] = Set([ for i in 0..<10000 => i ])
   for keep in [0, 1, 10, 5000, 10000] {
     let kept = s.filter(k => k < keep)
     let rebuilt = @set.Set([ for k in s if k < keep => k ])
@@ -632,7 +632,7 @@ test "filter propagates errors" {
 
 ///|
 test "retain matches filter, keeps order, and leaves a usable set" {
-  let predicates : Array[(Int) -> Bool] = [
+  let predicates : Array[(Int32) -> Bool] = [
     k => k % 3 == 0,
     _ => true,
     _ => false,
@@ -661,8 +661,8 @@ test "retain matches filter, keeps order, and leaves a usable set" {
 
 ///|
 test "from_json round-trips whatever to_json produced, in order" {
-  for set in (@quickcheck.samples(50) : Array[@set.Set[Int]]) {
-    let restored : @set.Set[Int] = @json.from_json(@json.to_json(set))
+  for set in (@quickcheck.samples(50) : Array[@set.Set[Int32]]) {
+    let restored : @set.Set[Int32] = @json.from_json(@json.to_json(set))
     assert_eq(restored.to_array(), set.to_array())
   }
 }
@@ -671,17 +671,17 @@ test "from_json round-trips whatever to_json produced, in order" {
 test "from_json keeps array order and drops repeated elements" {
   let set : @set.Set[String] = @json.from_json(["b", "a", "b", "c", "a"])
   assert_eq(set.to_array(), ["b", "a", "c"])
-  let empty : @set.Set[Int] = @json.from_json([])
+  let empty : @set.Set[Int32] = @json.from_json([])
   assert_eq(empty.length(), 0)
-  assert_eq(empty.capacity(), (Set([]) : @set.Set[Int]).capacity())
-  let nested : @set.Set[Array[Int]] = @json.from_json([[1, 2], [], [1, 2]])
+  assert_eq(empty.capacity(), (Set([]) : @set.Set[Int32]).capacity())
+  let nested : @set.Set[Array[Int32]] = @json.from_json([[1, 2], [], [1, 2]])
   assert_eq(nested.to_array(), [[1, 2], []])
 }
 
 ///|
 test "from_json sizes the set like the constructor" {
   for n in [1, 2, 13, 100, 1000] {
-    let set : @set.Set[Int] = @json.from_json([ for i in 0..<n => Json(i) ])
+    let set : @set.Set[Int32] = @json.from_json([ for i in 0..<n => Json(i) ])
     assert_eq(set.capacity(), @set.Set([ for i in 0..<n => i ]).capacity())
   }
 }
@@ -689,7 +689,7 @@ test "from_json sizes the set like the constructor" {
 ///|
 test "from_json rejects a non-array" {
   let bad : Json = { "a": 1 }
-  try (@json.from_json(bad) : @set.Set[Int]) catch {
+  try (@json.from_json(bad) : @set.Set[Int32]) catch {
     err =>
       inspect(
         err,
@@ -703,7 +703,7 @@ test "from_json rejects a non-array" {
 ///|
 test "from_json reports the index of the element that failed" {
   let bad : Json = [1, "two", 3]
-  try (@json.from_json(bad) : @set.Set[Int]) catch {
+  try (@json.from_json(bad) : @set.Set[Int32]) catch {
     err =>
       inspect(
         err,
@@ -717,7 +717,7 @@ test "from_json reports the index of the element that failed" {
 ///|
 test "union_in_place matches union, in order, and leaves other unchanged" {
   // `self` starts small, so absorbing `other` forces several grows.
-  let cases : Array[(Array[Int], Array[Int])] = [
+  let cases : Array[(Array[Int32], Array[Int32])] = [
     ([3, 1], [2, 3, 4]),
     ([], [1, 2]),
     ([1, 2], []),

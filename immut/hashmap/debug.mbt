@@ -24,7 +24,7 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V] with
 
 ///|
 test "Debug for HashMap" {
-  let hm : HashMap[Int, String] = HashMap([(2, "b")])
+  let hm : HashMap[Int32, String] = HashMap([(2, "b")])
   @debug.debug_inspect(
     hm,
     content=(

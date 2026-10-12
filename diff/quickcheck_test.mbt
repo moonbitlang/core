@@ -16,15 +16,15 @@
 /// Central QuickCheck knobs, shared by every property in this file so the
 /// suite's CI cost is tunable in one place. With these settings the whole
 /// diff package tests in well under a second per target.
-const QC_COUNT : UInt = 200
+const QC_COUNT : UInt32 = 200
 
 ///|
-const QC_MAX_SIZE : UInt = 100
+const QC_MAX_SIZE : UInt32 = 100
 
 ///|
 /// The repetitive two-symbol property deliberately uses longer sequences,
 /// since repetition is what stresses the Myers diagonal bookkeeping.
-const QC_LONG_MAX_SIZE : UInt = 200
+const QC_LONG_MAX_SIZE : UInt32 = 200
 
 ///|
 /// The kind of the edit preceding the current one while scanning a script.
@@ -43,7 +43,7 @@ enum PrevEdit {
 /// Clamp every element into a small alphabet (`mask` must be `2^k - 1`).
 /// A small alphabet forces repeated elements, which is where diff algorithms
 /// actually have to work; unrelated random arrays share almost nothing.
-fn confine(a : Array[Int], mask : Int) -> Array[Int] {
+fn confine(a : Array[Int32], mask : Int32) -> Array[Int32] {
   a.map(x => x & mask)
 }
 
@@ -52,10 +52,10 @@ fn confine(a : Array[Int], mask : Int) -> Array[Int] {
 /// (insert, delete, substitute, duplicate a block, move a block, append,
 /// swap, no-op), so generated pairs share nontrivial structure.
 fn mutate(
-  base : Array[Int],
-  ops : Array[(Int, Int, Int)],
-  mask : Int,
-) -> Array[Int] {
+  base : Array[Int32],
+  ops : Array[(Int32, Int32, Int32)],
+  mask : Int32,
+) -> Array[Int32] {
   let out = base.copy()
   for op in ops {
     let kind = op.0 & 7
@@ -70,7 +70,7 @@ fn mutate(
         if !out.is_empty() {
           let start = pos % out.length()
           let stop = (start + (op.2 & 3) + 1).min(out.length())
-          let block : Array[Int] = []
+          let block : Array[Int32] = []
           for k in start..<stop {
             block.push(out[k])
           }
@@ -83,7 +83,7 @@ fn mutate(
         if !out.is_empty() {
           let start = pos % out.length()
           let stop = (start + (op.2 & 3) + 1).min(out.length())
-          let block : Array[Int] = []
+          let block : Array[Int32] = []
           for k in start..<stop {
             block.push(out[k])
           }
@@ -117,11 +117,11 @@ fn mutate(
 /// `Equal` runs pair equal elements — and replaying the script (keep for
 /// `Equal`, skip for `Delete`, emit for `Insert`) reproduces `new` exactly.
 fn script_ok(
-  old : Array[Int],
-  new : Array[Int],
+  old : Array[Int32],
+  new : Array[Int32],
   edits : ArrayView[@diff.Edit],
 ) -> Bool {
-  let out : Array[Int] = []
+  let out : Array[Int32] = []
   let mut oi = 0
   let mut ni = 0
   let mut prev : PrevEdit = ScriptStart
@@ -186,7 +186,7 @@ fn script_ok(
 ///|
 /// The insert/delete cost of an edit script: every inserted or deleted
 /// element counts 1, so a replacement costs 2.
-fn indel_cost(edits : ArrayView[@diff.Edit]) -> Int {
+fn indel_cost(edits : ArrayView[@diff.Edit]) -> Int32 {
   let mut cost = 0
   for e in edits {
     match e {
@@ -204,11 +204,11 @@ fn indel_cost(edits : ArrayView[@diff.Edit]) -> Int {
 /// one-to-one, and every pair is unequal. The documented tie-break — a
 /// deletion is always emitted before an adjacent insertion — is also checked.
 fn lev_ok(
-  old : Array[Int],
-  new : Array[Int],
+  old : Array[Int32],
+  new : Array[Int32],
   edits : Array[@diff.LevenshteinEdit],
 ) -> Bool {
-  let out : Array[Int] = []
+  let out : Array[Int32] = []
   let mut oi = 0
   let mut ni = 0
   let mut prev : PrevEdit = ScriptStart
@@ -291,7 +291,7 @@ fn lev_ok(
 ///|
 /// The cost of a Levenshtein script: every inserted, deleted, or replaced
 /// element counts exactly 1.
-fn lev_cost(edits : Array[@diff.LevenshteinEdit]) -> Int {
+fn lev_cost(edits : Array[@diff.LevenshteinEdit]) -> Int32 {
   let mut cost = 0
   for e in edits {
     match e {
@@ -305,7 +305,7 @@ fn lev_cost(edits : Array[@diff.LevenshteinEdit]) -> Int {
 }
 
 ///|
-fn old_span(e : @diff.Edit) -> (Int, Int) {
+fn old_span(e : @diff.Edit) -> (Int32, Int32) {
   match e {
     Delete(old_index~, old_len~, ..) => (old_index, old_index + old_len)
     Insert(old_index~, ..) => (old_index, old_index)
@@ -314,7 +314,7 @@ fn old_span(e : @diff.Edit) -> (Int, Int) {
 }
 
 ///|
-fn new_span(e : @diff.Edit) -> (Int, Int) {
+fn new_span(e : @diff.Edit) -> (Int32, Int32) {
   match e {
     Delete(new_index~, ..) => (new_index, new_index)
     Insert(new_index~, new_len~, ..) => (new_index, new_index + new_len)
@@ -329,7 +329,7 @@ fn new_span(e : @diff.Edit) -> (Int, Int) {
 /// its rendered anchor is that previous line's 1-based number — legally
 /// `0` when the range sits before the first line, as in `@@ -0,0 +1 @@`
 /// for an insertion at the start of a file.
-fn range_text(start : Int, len : Int) -> String {
+fn range_text(start : Int32, len : Int32) -> String {
   if len == 1 {
     (start + 1).to_string()
   } else if len == 0 {
@@ -349,11 +349,11 @@ fn range_text(start : Int, len : Int) -> String {
 /// the documented `@@ -a,b +c,d @@` numbering, and that `render` emits one
 /// line per element plus the header.
 fn hunks_ok(
-  old : Array[Int],
-  new : Array[Int],
-  hunks : Array[@diff.Hunk[Int]],
+  old : Array[Int32],
+  new : Array[Int32],
+  hunks : Array[@diff.Hunk[Int32]],
 ) -> Bool {
-  let out : Array[Int] = []
+  let out : Array[Int32] = []
   let mut oi = 0
   for h in hunks {
     if h.old_view().length() != old.length() ||
@@ -455,7 +455,7 @@ fn changes(edits : ArrayView[@diff.Edit]) -> Array[@diff.Edit] {
 }
 
 ///|
-fn to_text(a : Array[Int]) -> String {
+fn to_text(a : Array[Int32]) -> String {
   let buf = StringBuilder()
   for x in a {
     buf.write_char(
@@ -473,7 +473,7 @@ fn to_text(a : Array[Int]) -> String {
 ///|
 test "quickcheck: myers scripts are well-formed and replay old into new" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)])) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       let forward = @diff.Diff(old~, new~)
@@ -489,7 +489,7 @@ test "quickcheck: myers scripts are well-formed and replay old into new" {
 ///|
 test "quickcheck: patience scripts are well-formed and replay old into new" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)])) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       let forward = @diff.Diff(old~, new~, algorithm=Patience)
@@ -505,7 +505,7 @@ test "quickcheck: patience scripts are well-formed and replay old into new" {
 ///|
 test "quickcheck: tiny cutoffs force heuristics but stay sound" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)], Int)) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)], Int32)) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       let cutoff = input.2 & 3 // 0 relies on heuristics immediately
@@ -524,7 +524,7 @@ test "quickcheck: tiny cutoffs force heuristics but stay sound" {
 ///|
 test "quickcheck: repetitive two-symbol inputs stress the diagonal bookkeeping" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)])) => {
       let old = confine(input.0, 1)
       let new = mutate(old, input.1, 1)
       script_ok(old, new, @diff.Diff(old~, new~).edits()) &&
@@ -538,10 +538,10 @@ test "quickcheck: repetitive two-symbol inputs stress the diagonal bookkeeping" 
 ///|
 test "quickcheck: degenerate pairs produce canonical scripts" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let a = confine(input.0, 3)
       let b = confine(input.1, 3)
-      let empty : Array[Int] = []
+      let empty : Array[Int32] = []
       let same = @diff.Diff(old=a, new=a)
       guard script_ok(a, a, same.edits()) && same.edits() is ([] | [Equal(..)]) else {
         return false
@@ -570,7 +570,7 @@ test "quickcheck: degenerate pairs produce canonical scripts" {
 ///|
 test "quickcheck: minimal myers cost brackets the levenshtein distance" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)])) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       // The default cutoff is at least 4096, far above any distance these
@@ -588,7 +588,7 @@ test "quickcheck: minimal myers cost brackets the levenshtein distance" {
 ///|
 test "quickcheck: levenshtein scripts replay and cost exactly the distance" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)])) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       let edits = @diff.levenshtein_edits(old~, new~)
@@ -603,9 +603,9 @@ test "quickcheck: levenshtein scripts replay and cost exactly the distance" {
 ///|
 test "quickcheck: levenshtein degenerate scripts match their contract" {
   @quickcheck.check(
-    (a : Array[Int]) => {
+    (a : Array[Int32]) => {
       let a = confine(a, 3)
-      let empty : Array[Int] = []
+      let empty : Array[Int32] = []
       @diff.levenshtein_edits(old=a, new=a) is ([] | [Equal(..)]) &&
       @diff.levenshtein_edits(old=a, new=empty) is ([] | [Delete(..)]) &&
       @diff.levenshtein_edits(old=empty, new=a) is ([] | [Insert(..)])
@@ -618,7 +618,13 @@ test "quickcheck: levenshtein degenerate scripts match their contract" {
 ///|
 test "quickcheck: edit distance is a metric on correlated triples" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)], Array[(Int, Int, Int)])) => {
+    (
+      input : (
+        Array[Int32],
+        Array[(Int32, Int32, Int32)],
+        Array[(Int32, Int32, Int32)],
+      ),
+    ) => {
       let a = confine(input.0, 3)
       let b = mutate(a, input.1, 3)
       let c = mutate(b, input.2, 3)
@@ -639,7 +645,7 @@ test "quickcheck: edit distance is a metric on correlated triples" {
 ///|
 test "quickcheck: banded distance agrees with the full distance" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)], Int)) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)], Int32)) => {
       let a = confine(input.0, 3)
       let b = mutate(a, input.1, 3)
       let d = @diff.edit_distance(a, b)
@@ -657,7 +663,7 @@ test "quickcheck: banded distance agrees with the full distance" {
 ///|
 test "quickcheck: string distance matches the generic distance on ascii" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)], Int)) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)], Int32)) => {
       let a = confine(input.0, 3)
       let b = mutate(a, input.1, 3)
       let sa = to_text(a)
@@ -676,7 +682,7 @@ test "quickcheck: string distance matches the generic distance on ascii" {
 ///|
 test "quickcheck: grouped hunks apply as a patch and keep every change" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int, Int)], Int)) => {
+    (input : (Array[Int32], Array[(Int32, Int32, Int32)], Int32)) => {
       let old = confine(input.0, 3)
       let new = mutate(old, input.1, 3)
       let context = input.2 & 3 // includes context=0

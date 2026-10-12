@@ -42,8 +42,8 @@
 ///|
 /// Compares on `id` only; `tag` records where the element came from.
 priv struct BElem {
-  id : Int
-  tag : Int
+  id : Int32
+  tag : Int32
 }
 
 ///|
@@ -103,7 +103,7 @@ fn bulk_set_agrees(actual : Array[BElem], expect : Array[BElem]) -> Bool {
 
 ///|
 /// A small id space keeps duplicates common; `tag` is the original position.
-fn bulk_set_values(raw : ArrayView[Int]) -> Array[BElem] {
+fn bulk_set_values(raw : ArrayView[Int32]) -> Array[BElem] {
   Array::makei(raw.length(), i => {
     let id = raw[i] % 37
     { id: if id < 0 { id + 37 } else { id }, tag: i, }
@@ -115,7 +115,7 @@ fn bulk_set_values(raw : ArrayView[Int]) -> Array[BElem] {
 /// duplicate-heavy cases; the strictly monotonic and small-unordered shapes are
 /// explicit, since generated arrays never have distinct leading elements. The
 /// 80-element shapes sit above the length threshold, the 9-element one below.
-fn bulk_set_shapes(raw : ArrayView[Int]) -> Array[(String, Array[BElem])] {
+fn bulk_set_shapes(raw : ArrayView[Int32]) -> Array[(String, Array[BElem])] {
   let base = bulk_set_values(raw)
   let ascending_with_duplicates = base.copy()
   ascending_with_duplicates.sort_by((a, b) => a.id.compare(b.id))
@@ -156,7 +156,7 @@ fn bulk_set_shapes(raw : ArrayView[Int]) -> Array[(String, Array[BElem])] {
 ///|
 test "quickcheck: bulk set build agrees with the model on every input shape" {
   @quickcheck.check(
-    (raw : Array[Int]) => {
+    (raw : Array[Int32]) => {
       for shape in bulk_set_shapes(raw) {
         let (_, values) = shape
         // The constructor keeps the last equal element...
@@ -184,7 +184,7 @@ test "quickcheck: bulk set build agrees with the model on every input shape" {
 ///|
 test "quickcheck: bulk set build matches inserting one at a time" {
   @quickcheck.check(
-    (raw : Array[Int]) => {
+    (raw : Array[Int32]) => {
       for shape in bulk_set_shapes(raw) {
         let (_, values) = shape
         let built = @sorted_set.SortedSet(values)

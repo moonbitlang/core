@@ -14,7 +14,7 @@
 
 ///|
 test "last None" {
-  assert_true((List([]) : @list.List[Int]).last() == None)
+  assert_true((List([]) : @list.List[Int32]).last() == None)
 }
 
 ///|
@@ -29,12 +29,12 @@ test "panic @list.exn with empty list" {
 
 ///|
 test "panic @list.unsafe_maximum with empty list" {
-  inspect((List([]) : @list.List[Int]).unsafe_maximum())
+  inspect((List([]) : @list.List[Int32]).unsafe_maximum())
 }
 
 ///|
 test "panic @list.unsafe_minimum with empty list" {
-  inspect((List([]) : @list.List[Int]).unsafe_minimum())
+  inspect((List([]) : @list.List[Int32]).unsafe_minimum())
 }
 
 ///|

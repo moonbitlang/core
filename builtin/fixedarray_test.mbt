@@ -15,22 +15,22 @@
 ///|
 #warnings("-deprecated")
 test "to_string with empty FixedArray" {
-  let emptyArray : FixedArray[Int] = ([] : FixedArray[_])
+  let emptyArray : FixedArray[Int32] = ([] : FixedArray[_])
   @test.assert_eq(emptyArray.to_string(), "[]")
 }
 
 ///|
 #warnings("-deprecated")
 test "to_string with non-empty FixedArray" {
-  let array : FixedArray[Int] = [1, 2, 3]
+  let array : FixedArray[Int32] = [1, 2, 3]
   @test.assert_eq(array.to_string(), "[1, 2, 3]")
 }
 
 ///|
 test "compare" {
-  let arr1 : FixedArray[Int] = [1, 2, 3]
-  let arr2 : FixedArray[Int] = [1, 2, 4]
-  let arr3 : FixedArray[Int] = [1, 2]
+  let arr1 : FixedArray[Int32] = [1, 2, 3]
+  let arr2 : FixedArray[Int32] = [1, 2, 4]
+  let arr3 : FixedArray[Int32] = [1, 2]
   inspect(arr1.compare(arr2), content="-1")
   inspect(arr1.compare(arr3), content="1")
   inspect(arr3.compare(arr1), content="-1")
@@ -40,43 +40,43 @@ test "compare" {
 ///|
 test "lexical_compare" {
   // Test equal arrays
-  let arr1 : FixedArray[Int] = [1, 2, 3]
-  let arr2 : FixedArray[Int] = [1, 2, 3]
+  let arr1 : FixedArray[Int32] = [1, 2, 3]
+  let arr2 : FixedArray[Int32] = [1, 2, 3]
   inspect(arr1.lexical_compare(arr2), content="0")
-  let empty1 : FixedArray[Int] = []
-  let empty2 : FixedArray[Int] = []
+  let empty1 : FixedArray[Int32] = []
+  let empty2 : FixedArray[Int32] = []
   inspect(empty1.lexical_compare(empty2), content="0")
 
   // Test shorter is less when prefix matches
-  let short : FixedArray[Int] = [1, 2]
-  let long : FixedArray[Int] = [1, 2, 3]
+  let short : FixedArray[Int32] = [1, 2]
+  let long : FixedArray[Int32] = [1, 2, 3]
   inspect(short.lexical_compare(long), content="-1")
   inspect(long.lexical_compare(short), content="1")
-  let one : FixedArray[Int] = [1]
+  let one : FixedArray[Int32] = [1]
   inspect(empty1.lexical_compare(one), content="-1")
   inspect(one.lexical_compare(empty1), content="1")
 
   // Test element-wise comparison
-  let arr3 : FixedArray[Int] = [1, 2, 4]
+  let arr3 : FixedArray[Int32] = [1, 2, 4]
   inspect(arr1.lexical_compare(arr3), content="-1")
   inspect(arr3.lexical_compare(arr1), content="1")
 
   // Elements are compared before considering length
-  let a : FixedArray[Int] = [1, 3]
-  let b : FixedArray[Int] = [1, 2, 9]
+  let a : FixedArray[Int32] = [1, 3]
+  let b : FixedArray[Int32] = [1, 2, 9]
   inspect(a.lexical_compare(b), content="1")
   inspect(b.lexical_compare(a), content="-1")
 }
 
 ///|
 test "is_empty" {
-  let arr : FixedArray[Int] = []
+  let arr : FixedArray[Int32] = []
   assert_true(arr.is_empty())
 }
 
 ///|
 test "fill with range" {
-  let arr : FixedArray[Int] = [0, 0, 0, 0]
+  let arr : FixedArray[Int32] = [0, 0, 0, 0]
   arr.fill(5, start=1, end=3)
   debug_inspect(
     arr,
@@ -88,7 +88,7 @@ test "fill with range" {
 
 ///|
 test "stable_sort short run" {
-  let arr : FixedArray[Int] = [
+  let arr : FixedArray[Int32] = [
     1, 2, 3, 0, 9, 8, 7, 6, 5, 4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23,
   ]
@@ -98,7 +98,7 @@ test "stable_sort short run" {
 
 ///|
 test "fixed array iter with early termination" {
-  let arr : FixedArray[Int] = [1, 2, 3]
+  let arr : FixedArray[Int32] = [1, 2, 3]
   let mut count = 0
   let iter = arr.iter()
   for x in iter {
@@ -112,7 +112,7 @@ test "fixed array iter with early termination" {
 
 ///|
 test "FixedArray::iter2 with empty array" {
-  let arr : FixedArray[Int] = []
+  let arr : FixedArray[Int32] = []
   let mut count = 0
   arr.iter2().each((_, _) => count += 1)
   inspect(count, content="0")
@@ -121,14 +121,14 @@ test "FixedArray::iter2 with empty array" {
 ///|
 test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
-  let pairs : Array[(Int, Int)] = []
+  let pairs : Array[(Int32, Int32)] = []
   arr.iter2().each((i, x) => pairs.push((i, x)))
   debug_inspect(pairs, content="[(0, 42)]")
 }
 
 ///|
 test "fixedarray_binary_search_int_test" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4]
   @test.assert_eq(arr.binary_search(-100), Err(0))
   @test.assert_eq(arr.binary_search(-1), Err(0))
   @test.assert_eq(arr.binary_search(1), Ok(0))
@@ -140,7 +140,7 @@ test "fixedarray_binary_search_int_test" {
 
 ///|
 test "fixedarray_binary_search_duplicate_int_test" {
-  let arr : FixedArray[Int] = [1, 2, 3, 3, 4, 4, 4, 5]
+  let arr : FixedArray[Int32] = [1, 2, 3, 3, 4, 4, 4, 5]
   @test.assert_eq(arr.binary_search(3), Ok(2))
   @test.assert_eq(arr.binary_search(4), Ok(4))
   @test.assert_eq(arr.binary_search(5), Ok(7))
@@ -169,7 +169,7 @@ test "fixedarray_binary_search_str_test" {
 
 ///|
 struct TestStruct2 {
-  num2 : Int
+  num2 : Int32
 }
 
 ///|
@@ -202,7 +202,7 @@ test "fixedarray_binary_search_by_test" {
 
 ///|
 test "fixedarray_fill - basic functionality" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(42)
   debug_inspect(
     fa,
@@ -214,7 +214,7 @@ test "fixedarray_fill - basic functionality" {
 
 ///|
 test "fixedarray_fill - with start parameter only" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(99, start=2)
   debug_inspect(
     fa,
@@ -226,7 +226,7 @@ test "fixedarray_fill - with start parameter only" {
 
 ///|
 test "fixedarray_fill - with start and end parameters" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(77, start=1, end=3)
   debug_inspect(
     fa,
@@ -238,7 +238,7 @@ test "fixedarray_fill - with start and end parameters" {
 
 ///|
 test "fixedarray_fill - start equals end" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(88, start=2, end=2)
   debug_inspect(
     fa,
@@ -250,7 +250,7 @@ test "fixedarray_fill - start equals end" {
 
 ///|
 test "fixedarray_fill - start at beginning" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(10, start=0, end=2)
   debug_inspect(
     fa,
@@ -262,7 +262,7 @@ test "fixedarray_fill - start at beginning" {
 
 ///|
 test "fixedarray_fill - end at array length" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(20, start=3, end=5)
   debug_inspect(
     fa,
@@ -274,7 +274,7 @@ test "fixedarray_fill - end at array length" {
 
 ///|
 test "fixedarray_fill - single element" {
-  let fa : FixedArray[Int] = [100]
+  let fa : FixedArray[Int32] = [100]
   fa.fill(50)
   debug_inspect(
     fa,
@@ -286,7 +286,7 @@ test "fixedarray_fill - single element" {
 
 ///|
 test "fixedarray_fill - empty array" {
-  let fa : FixedArray[Int] = []
+  let fa : FixedArray[Int32] = []
   fa.fill(123)
   debug_inspect(
     fa,
@@ -308,7 +308,7 @@ test "fixedarray_fill - with different types" {
 
 ///|
 test "fixedarray_fill - boundary conditions start" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   // Test with start at last valid index
   fa.fill(555, start=4, end=5)
   debug_inspect(
@@ -321,7 +321,7 @@ test "fixedarray_fill - boundary conditions start" {
 
 ///|
 test "fixedarray_fill - boundary conditions end" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   // Test with end at array length
   fa.fill(666, start=2, end=5)
   debug_inspect(
@@ -334,7 +334,7 @@ test "fixedarray_fill - boundary conditions end" {
 
 ///|
 test "fixedarray_fill - full range explicit" {
-  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let fa : FixedArray[Int32] = [1, 2, 3, 4, 5]
   fa.fill(777, start=0, end=5)
   debug_inspect(
     fa,
@@ -358,7 +358,7 @@ test "fixedarray_fill - test with FixedArray::make" {
 
 ///|
 test "fixedarray_fill - existing documentation example" {
-  let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+  let fa : FixedArray[Int32] = [0, 0, 0, 0, 0]
   fa.fill(3)
   debug_inspect(
     fa[:],
@@ -382,7 +382,7 @@ test "FixedArray::exact_view" {
 }
 
 ///|
-fn sum(xs : ArrayView[Int]) -> Int {
+fn sum(xs : ArrayView[Int32]) -> Int32 {
   xs.fold(init=0, (acc, x) => acc + x)
 }
 
@@ -396,14 +396,14 @@ test "FixedArray::exact_view - sum" {
 
 ///|
 test "FixedArray::from_array with empty array" {
-  let array : Array[Int] = []
+  let array : Array[Int32] = []
   let fixedArray = FixedArray::from_array(array)
   inspect(fixedArray.length(), content="0")
 }
 
 ///|
 test "FixedArray::from_array with non-empty array" {
-  let array : Array[Int] = [1, 2, 3, 4, 5]
+  let array : Array[Int32] = [1, 2, 3, 4, 5]
   let fixedArray = FixedArray::from_array(array)
   inspect(fixedArray.length(), content="5")
   for i in 0..<5 {
@@ -437,7 +437,7 @@ test "FixedArray::from_iter with single element iterator" {
 
 ///|
 test "FixedArray::from_iter with empty iterator" {
-  let iter : Iter[Int] = [||]
+  let iter : Iter[Int32] = [||]
   let result = FixedArray::from_iter(iter)
   @test.assert_eq(result, [])
 }
@@ -462,7 +462,7 @@ test "FixedArray::last" {
 
 ///|
 test "FixedArray::arbitrary" {
-  let samples : Array[FixedArray[Int]] = @quickcheck.samples(15)
+  let samples : Array[FixedArray[Int32]] = @quickcheck.samples(15)
   debug_inspect(
     samples[0:10],
     content=(
@@ -522,12 +522,12 @@ test "FixedArray::arbitrary" {
 
 ///|
 test "FixedArray::makei" {
-  let empty : FixedArray[Ref[Int]] = FixedArray::makei(0, _i => Ref(3))
+  let empty : FixedArray[Ref[Int32]] = FixedArray::makei(0, _i => Ref(3))
   inspect(empty.length(), content="0")
-  let simple_arr : FixedArray[Ref[Int]] = FixedArray::makei(1, _i => Ref(2))
+  let simple_arr : FixedArray[Ref[Int32]] = FixedArray::makei(1, _i => Ref(2))
   inspect(simple_arr.length(), content="1")
   inspect(simple_arr[0].val, content="2")
-  let arr : FixedArray[Ref[Int]] = FixedArray::makei(2, _i => Ref(1))
+  let arr : FixedArray[Ref[Int32]] = FixedArray::makei(2, _i => Ref(1))
   inspect(arr.length(), content="2")
   @test.assert_not_same_object(arr[0], arr[1])
   inspect(arr[0].val, content="1")
@@ -536,17 +536,17 @@ test "FixedArray::makei" {
 
 ///|
 test "FixedArray compare" {
-  let arr1 : FixedArray[Int] = [1, 2, 3]
-  let arr2 : FixedArray[Int] = [1, 2, 4]
-  let arr3 : FixedArray[Int] = [1, 2]
+  let arr1 : FixedArray[Int32] = [1, 2, 3]
+  let arr2 : FixedArray[Int32] = [1, 2, 4]
+  let arr3 : FixedArray[Int32] = [1, 2]
   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
   inspect(arr2.compare(arr1), content="1") // arr2 > arr1
   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 
   // Test empty arrays
-  let empty1 : FixedArray[Int] = []
-  let empty2 : FixedArray[Int] = []
+  let empty1 : FixedArray[Int32] = []
+  let empty2 : FixedArray[Int32] = []
   inspect(empty1.compare(empty2), content="0")
   inspect(empty1.compare(arr1), content="-1")
   inspect(arr1.compare(empty1), content="1")
@@ -554,8 +554,8 @@ test "FixedArray compare" {
 
 ///|
 test "panic FixedArray blit" {
-  let a : FixedArray[Int] = [1, 2, 3, 4]
-  let b : FixedArray[Int] = [1, 2, 3, 4]
+  let a : FixedArray[Int32] = [1, 2, 3, 4]
+  let b : FixedArray[Int32] = [1, 2, 3, 4]
   a.blit_to(b, len=13)
 }
 
@@ -579,7 +579,7 @@ test "copy" {
     ),
   )
   debug_inspect(
-    ([] : FixedArray[Int]).copy(),
+    ([] : FixedArray[Int32]).copy(),
     content=(
       #|<FixedArray: []>
     ),

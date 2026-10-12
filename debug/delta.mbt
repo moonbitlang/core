@@ -142,7 +142,7 @@ fn diff_info_with(
 fn diff_repr(
   x : Repr,
   y : Repr,
-  max_relative_error? : Double = DEFAULT_MAX_RELATIVE_ERROR,
+  max_relative_error~ : Double = DEFAULT_MAX_RELATIVE_ERROR,
 ) -> ReprDelta {
   diff_info_with(x, y, max_relative_error~)
 }
@@ -160,11 +160,11 @@ fn diff_repr(
 ///   Defaults to `true` when omitted.
 fn pretty_print_delta(
   d : ReprDelta,
-  max_depth? : Int,
-  compact_threshold? : Int = default_threshold,
-  use_ansi? : Bool = true,
+  max_depth? : Int32,
+  compact_threshold~ : Int32 = default_threshold,
+  use_ansi~ : Bool = true,
 ) -> String {
-  let max_depth : Int? = match max_depth {
+  let max_depth : Int32? = match max_depth {
     Some(_) => max_depth
     None => Some(default_max_depth)
   }
@@ -174,8 +174,8 @@ fn pretty_print_delta(
 
 ///|
 /// Prune a `ReprDelta` using max_depth (replacing with `Same(Omitted, [])`).
-fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
-  fn go(d : Int, node : ReprDelta) -> ReprDelta {
+fn prune_delta(max_depth : Int32?, delta : ReprDelta) -> ReprDelta {
+  fn go(d : Int32, node : ReprDelta) -> ReprDelta {
     if d <= 0 {
       match node {
         Same(label, children) =>
@@ -207,13 +207,13 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
 
   match max_depth {
     None => delta
-    Some(depth) => go(Int::max(1, depth), delta)
+    Some(depth) => go(Int32::max(1, depth), delta)
   }
 }
 
 ///|
 /// Heuristic "size" of a delta for compact-vs-multiline decisions.
-fn delta_root_size(delta : ReprDelta) -> Int {
+fn delta_root_size(delta : ReprDelta) -> Int32 {
   match delta {
     Same(label, _) => info_size(label)
     _ => 0
@@ -254,7 +254,11 @@ fn mark_added(use_ansi : Bool, x : ContentParens) -> ContentParens {
 
 ///|
 /// Render a `ReprDelta` as `Content` with resizing decisions.
-fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content {
+fn render_delta(
+  threshold : Int32,
+  use_ansi : Bool,
+  delta : ReprDelta,
+) -> Content {
   match delta {
     Same(label, children_delta) => {
       let children = children_delta.map(child => {

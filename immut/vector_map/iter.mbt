@@ -33,7 +33,7 @@ pub fn[K, V] VectorMap::each(
 /// underneath. `O(n)`.
 pub fn[K, V] VectorMap::eachi(
   self : VectorMap[K, V],
-  f : (Int, K, V) -> Unit raise?,
+  f : (Int32, K, V) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
   self.spine.each(entry => {

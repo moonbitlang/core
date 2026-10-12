@@ -20,7 +20,7 @@ fn abs(x : Double) -> Double {
 }
 
 ///|
-let two_over_pi : ReadOnlyArray[Int] = [
+let two_over_pi : ReadOnlyArray[Int32] = [
   0xA2F983, 0x6E4E44, 0x1529FC, 0x2757D1, 0xF534DD, 0xC0DB62, 0x95993C, 0x439041,
   0xFE5163, 0xABDEBB, 0xC561B7, 0x246E3A, 0x424DD2, 0xE00649, 0x2EEA09, 0xD1921C,
   0xFE1DEB, 0x1CB129, 0xA73EE8, 0x8235F5, 0x2EBB44, 0x84E99C, 0x7026B4, 0x5F7E41,
@@ -45,7 +45,7 @@ let pi_over_2 : ReadOnlyArray[Double] = [
 ]
 
 ///|
-let npio2_hw : ReadOnlyArray[Int] = [
+let npio2_hw : ReadOnlyArray[Int32] = [
   0x3FF921FB, 0x400921FB, 0x4012D97C, 0x401921FB, 0x401F6A7A, 0x4022D97C, 0x4025FDBB,
   0x402921FB, 0x402C463A, 0x402F6A7A, 0x4031475C, 0x4032D97C, 0x40346B9C, 0x4035FDBB,
   0x40378FDB, 0x403921FB, 0x403AB41B, 0x403C463A, 0x403DD85A, 0x403F6A7A, 0x40407E4C,
@@ -84,7 +84,7 @@ const HALF : Double = 0.5
 const TWO24 : Double = 16777216.0 // 0x41700000, 0x00000000 */
 
 ///|
-fn set_low_word(d : Double, v : UInt) -> Double {
+fn set_low_word(d : Double, v : UInt32) -> Double {
   let bits : UInt64 = d.reinterpret_as_uint64()
   let bits = bits & 0xFFFF_FFFF_0000_0000
   let bits = bits | v.to_uint64()
@@ -92,7 +92,7 @@ fn set_low_word(d : Double, v : UInt) -> Double {
 }
 
 ///|
-fn set_high_word(d : Double, v : UInt) -> Double {
+fn set_high_word(d : Double, v : UInt32) -> Double {
   let bits : UInt64 = d.reinterpret_as_uint64()
   let bits = bits & 0x0000_0000_FFFF_FFFF
   let bits = bits | (v.to_uint64() << 32)
@@ -100,12 +100,12 @@ fn set_high_word(d : Double, v : UInt) -> Double {
 }
 
 ///|
-fn get_high_word(x : Double) -> UInt {
+fn get_high_word(x : Double) -> UInt32 {
   (x.reinterpret_as_uint64() >> 32).to_uint()
 }
 
 ///|
-fn get_low_word(x : Double) -> UInt {
+fn get_low_word(x : Double) -> UInt32 {
   x.reinterpret_as_uint64().to_uint()
 }
 
@@ -122,7 +122,7 @@ const LN2_HI = 6.93147180369123816490e-01 // 3fe62e42 fee00000
 const LN2_LO = 1.90821492927058770002e-10 // 3dea39ef 35793c76
 
 ///|
-fn normalize(f : Double) -> (Double, Int) {
+fn normalize(f : Double) -> (Double, Int32) {
   if f.abs() < @double.min_positive {
     return (f * (1L << 52).to_double(), -52)
   }
@@ -130,7 +130,7 @@ fn normalize(f : Double) -> (Double, Int) {
 }
 
 ///|
-fn frexp(f : Double) -> (Double, Int) {
+fn frexp(f : Double) -> (Double, Int32) {
   if f == 0.0 || f.is_inf() || f.is_nan() {
     return (f, 0)
   }

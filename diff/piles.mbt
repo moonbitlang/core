@@ -38,7 +38,7 @@ fn Piles::last(self : Piles) -> Pile? {
 
 ///|
 #alias("_[_]")
-fn Piles::at(self : Piles, i : Int) -> Pile {
+fn Piles::at(self : Piles, i : Int32) -> Pile {
   self.0[i]
 }
 
@@ -50,8 +50,8 @@ fn Piles::at(self : Piles, i : Int) -> Pile {
 /// back to `(old_idx, new_idx)` pairs.
 fn Piles::put_by_binary_search(
   self : Piles,
-  new_idx~ : Int,
-  place~ : Int,
+  new_idx~ : Int32,
+  place~ : Int32,
 ) -> Unit {
   let mut lo = -1
   let mut hi = self.0.length()

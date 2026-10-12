@@ -18,12 +18,12 @@
 /// `indices[i]` stores the original position in `source` for the `i`th visible
 /// element. This lets the Myers implementation skip values that cannot match
 /// while still translating results back to the original coordinates.
-priv struct CompactedElements[T]((ArrayView[T], FixedArray[Int]))
+priv struct CompactedElements[T]((ArrayView[T], FixedArray[Int32]))
 
 ///|
 /// Read the `index`th retained element.
 #alias("_[_]")
-fn[T] CompactedElements::at(self : CompactedElements[T], index : Int) -> T {
+fn[T] CompactedElements::at(self : CompactedElements[T], index : Int32) -> T {
   let (source, indices) = self.0
   source[indices[index]]
 }
@@ -32,20 +32,20 @@ fn[T] CompactedElements::at(self : CompactedElements[T], index : Int) -> T {
 /// Map a retained position back to its original index in `source`.
 fn[T] CompactedElements::get_index(
   self : CompactedElements[T],
-  index : Int,
-) -> Int {
+  index : Int32,
+) -> Int32 {
   let (_, indices) = self.0
   indices[index]
 }
 
 ///|
 /// Return the number of retained elements visible through this compacted view.
-fn[T] CompactedElements::indices_length(self : CompactedElements[T]) -> Int {
+fn[T] CompactedElements::indices_length(self : CompactedElements[T]) -> Int32 {
   self.0.1.length()
 }
 
 ///|
 /// Return the length of the underlying unfiltered source sequence.
-fn[T] CompactedElements::source_length(self : CompactedElements[T]) -> Int {
+fn[T] CompactedElements::source_length(self : CompactedElements[T]) -> Int32 {
   self.0.0.length()
 }

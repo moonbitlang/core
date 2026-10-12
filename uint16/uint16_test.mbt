@@ -21,16 +21,16 @@ test "UInt16::to_int" {
 
 ///|
 test "UInt16::from_int" {
-  inspect(Int::to_uint16(0), content="0")
-  inspect(Int::to_uint16(123), content="123")
-  inspect(Int::to_uint16(65535), content="65535")
-  inspect(Int::to_uint16(-1), content="65535")
-  inspect(Int::to_uint16(-123), content="65413")
-  inspect(Int::to_uint16(65536), content="0")
-  inspect(Int::to_uint16(65537), content="1")
-  inspect(Int::to_uint16(131071), content="65535")
-  inspect(Int::to_uint16(-65536), content="0")
-  inspect(Int::to_uint16(-65537), content="65535")
+  inspect(Int32::to_uint16(0), content="0")
+  inspect(Int32::to_uint16(123), content="123")
+  inspect(Int32::to_uint16(65535), content="65535")
+  inspect(Int32::to_uint16(-1), content="65535")
+  inspect(Int32::to_uint16(-123), content="65413")
+  inspect(Int32::to_uint16(65536), content="0")
+  inspect(Int32::to_uint16(65537), content="1")
+  inspect(Int32::to_uint16(131071), content="65535")
+  inspect(Int32::to_uint16(-65536), content="0")
+  inspect(Int32::to_uint16(-65537), content="65535")
 }
 
 ///|
@@ -56,21 +56,21 @@ test "UInt16::to_int64" {
 
 ///|
 test "UInt16::from_int64" {
-  inspect(Int::to_uint16(0), content="0")
-  inspect(Int::to_uint16(123), content="123")
-  inspect(Int::to_uint16(65535), content="65535")
-  inspect(Int::to_uint16(-1), content="65535")
-  inspect(Int::to_uint16(-123), content="65413")
-  inspect(Int::to_uint16(65536), content="0")
-  inspect(Int::to_uint16(65537), content="1")
-  inspect(Int::to_uint16(131071), content="65535")
-  inspect(Int::to_uint16(-65536), content="0")
-  inspect(Int::to_uint16(-65537), content="65535")
-  inspect(Int::to_uint16(1000000), content="16960") // Large positive number wraps around
-  inspect(Int::to_uint16(-1000000), content="48576") // Large negative number wraps around
-  inspect(Int::to_uint16(32768), content="32768") // Half of max value
-  inspect(Int::to_uint16(49152), content="49152") // 3/4 of max value
-  inspect(Int::to_uint16(16384), content="16384") // 1/4 of max value
+  inspect(Int32::to_uint16(0), content="0")
+  inspect(Int32::to_uint16(123), content="123")
+  inspect(Int32::to_uint16(65535), content="65535")
+  inspect(Int32::to_uint16(-1), content="65535")
+  inspect(Int32::to_uint16(-123), content="65413")
+  inspect(Int32::to_uint16(65536), content="0")
+  inspect(Int32::to_uint16(65537), content="1")
+  inspect(Int32::to_uint16(131071), content="65535")
+  inspect(Int32::to_uint16(-65536), content="0")
+  inspect(Int32::to_uint16(-65537), content="65535")
+  inspect(Int32::to_uint16(1000000), content="16960") // Large positive number wraps around
+  inspect(Int32::to_uint16(-1000000), content="48576") // Large negative number wraps around
+  inspect(Int32::to_uint16(32768), content="32768") // Half of max value
+  inspect(Int32::to_uint16(49152), content="49152") // 3/4 of max value
+  inspect(Int32::to_uint16(16384), content="16384") // 1/4 of max value
   inspect(UInt16(65535) + 1, content="0") // Max value + 1 wraps to 0
 }
 
@@ -209,7 +209,7 @@ test "UInt16::equal" {
 
 ///|
 test "UInt16::shl" {
-  fn shl(a : UInt16, b : Int) -> UInt16 {
+  fn shl(a : UInt16, b : Int32) -> UInt16 {
     a << b
   }
 
@@ -235,7 +235,7 @@ test "UInt16::shl" {
 
 ///|
 test "UInt16::shr" {
-  fn shr(a : UInt16, b : Int) -> UInt16 {
+  fn shr(a : UInt16, b : Int32) -> UInt16 {
     a >> b
   }
 

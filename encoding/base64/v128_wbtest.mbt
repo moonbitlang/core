@@ -19,7 +19,7 @@
 ///|
 /// Deterministic pseudo-random bytes, so the corpus covers all 256 byte
 /// values and every sextet class rather than a repeated pattern.
-fn sample_bytes(length : Int) -> Bytes {
+fn sample_bytes(length : Int32) -> Bytes {
   let out = FixedArray::make(length, b'\x00')
   let mut state = 0x2545F491U
   for i in 0..<length {

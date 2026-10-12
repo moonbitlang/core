@@ -86,7 +86,7 @@ pub fn UInt16::unsafe_to_char(self : UInt16) -> Char {
 ///|
 /// Convert to `char`.
 pub fn UInt16::to_char(self : UInt16) -> Char? {
-  if self is (0..=0xD7FF) || self is (0xE000..<_) {
+  if self is (0..<=0xD7FF) || self is (0xE000..<_) {
     Some(self.unsafe_to_char())
   } else {
     None
@@ -151,12 +151,12 @@ pub impl Hash for UInt16 with fn hash_combine(self, hasher) {
 }
 
 ///|
-pub impl Shl for UInt16 with fn shl(self : UInt16, that : Int) -> UInt16 {
+pub impl Shl for UInt16 with fn shl(self : UInt16, that : Int32) -> UInt16 {
   (self.to_int() << that).to_uint16()
 }
 
 ///|
-pub impl Shr for UInt16 with fn shr(self : UInt16, that : Int) -> UInt16 {
+pub impl Shr for UInt16 with fn shr(self : UInt16, that : Int32) -> UInt16 {
   (self.to_int() >> that).to_uint16()
 }
 
@@ -209,7 +209,7 @@ pub impl ToJson for UInt16 with fn to_json(self : UInt16) -> Json {
 
 ///|
 /// Convert to `uint`.
-pub fn UInt16::to_uint(self : UInt16) -> UInt {
+pub fn UInt16::to_uint(self : UInt16) -> UInt32 {
   self.to_int().reinterpret_as_uint()
 }
 

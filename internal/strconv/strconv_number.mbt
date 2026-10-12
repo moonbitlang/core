@@ -25,19 +25,22 @@ priv struct Number {
 
 ///|
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
-fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
+fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int32) {
   s.fold_digits(x, (digit, acc : UInt64) => {
     acc * 10UL + UInt64::extend_uint(digit.reinterpret_as_uint())
   })
 }
 
 ///|
-fn try_parse_19digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
+fn try_parse_19digits(
+  s : StringView,
+  x : UInt64,
+) -> (StringView, UInt64, Int32) {
   let mut x = x
   let mut len = 0
   for s = s {
     match s {
-      ['0'..='9' as ch, .. rest] if x < min_19digit_int => {
+      ['0'..<='9' as ch, .. rest] if x < min_19digit_int => {
         len += 1
         x = x * 10UL +
           UInt64::extend_uint((ch.to_int() - '0').reinterpret_as_uint()) // no overflows here
@@ -58,7 +61,7 @@ fn parse_scientific(s : StringView) -> (StringView, Int64)? {
     neg_exp = ch == '-'
     s = rest
   }
-  if s is ['0'..='9', ..] {
+  if s is ['0'..<='9', ..] {
     let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => {
       if exp_num < 0x10000L {
         10L * exp_num + digit.to_int64() // no overflows here
