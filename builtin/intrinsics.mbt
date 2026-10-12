@@ -2628,46 +2628,10 @@ pub fn UInt::to_byte(self : UInt) -> Byte {
 pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
 
 ///|
-/// Convert `Int` to `Float` (deprecated alias).
-/// Convert to `float`.
-#deprecated("Use `Float::from_int` instead")
-pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
-
-///|
-/// Reinterpret `Int` bit pattern as `Float` (deprecated alias).
-/// Function `reinterpret_as_float`.
-#deprecated("Use `Float::reinterpret_from_int` instead")
-pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
-
-///|
-/// Reinterpret `UInt` bit pattern as `Float` (deprecated alias).
-/// Function `reinterpret_as_float`.
-#deprecated("Use `Float::reinterpret_from_uint` instead")
-pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
-
-///|
-/// Convert `Byte` to `Float` (deprecated alias).
-/// Convert to `float`.
-#deprecated("Use `Float::from_byte` instead")
-pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
-
-///|
 /// TODO: use intrinsics implement this
 pub fn Byte::to_double(self : Byte) -> Double {
   self.to_int().to_double()
 }
-
-///|
-/// TODO: enable skip_current_package=false
-/// Convert `Double` to `Float` (deprecated alias).
-#deprecated("Use `Float::from_double` instead", skip_current_package=true)
-pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
-
-///|
-/// Convert `UInt` to `Float` (deprecated alias).
-/// Convert to `float`.
-#deprecated("Use `Float::from_uint` instead")
-pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 
 ///|
 /// The identity constructor for `Float`, allowing values to be written using
@@ -2694,26 +2658,6 @@ pub fn Float::Float(self : Float) -> Float = "%identity"
 /// }
 /// ```
 pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
-
-///|
-/// Convert `Int` to `Int16` (deprecated alias).
-/// Convert to `int16`.
-#deprecated("Use `Int16::from_int` instead")
-pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
-
-///|
-/// Converts a byte value to a 16-bit signed integer. The byte value is
-/// zero-extended to 16 bits during the conversion, so the result is always in
-/// the range [0, 255].
-///
-/// Parameters:
-///
-/// * `byte` : The byte value to be converted to an `Int16`.
-///
-/// Returns a 16-bit signed integer representing the same value as the input
-/// byte.
-#deprecated("Use `Int16::from_byte` instead")
-pub fn Byte::to_int16(self : Byte) -> Int16 = "%byte_to_i16"
 
 ///|
 /// Converts an unsigned 16-bit integer to a 32-bit signed integer. The value is

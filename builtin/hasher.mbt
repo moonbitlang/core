@@ -311,34 +311,6 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 }
 
 ///|
-/// Combines a 32-bit floating-point value into the hasher by reinterpreting its
-/// bit pattern as a 32-bit integer. Positive and negative zero have the same
-/// hash, consistently with floating-point equality.
-///
-/// Parameters:
-///
-/// * `hasher` : The hasher object that maintains the internal state of the
-/// hashing operation.
-/// * `value` : The 32-bit floating-point value to be combined into the hash.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let hasher = Hasher(seed=0)
-///   hasher.combine(3.14F)
-///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
-/// }
-/// ```
-#deprecated
-pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  self.combine_uint(if value is 0 { 0U } else { value.reinterpret_as_uint() })
-}
-
-///|
-fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
-
-///|
 /// Combines a byte value into the hash state.
 ///
 /// Parameters:
