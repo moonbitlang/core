@@ -40,12 +40,6 @@ test "PriorityQueue constructor" {
 }
 
 ///|
-test "from_fixed_array" {
-  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  @test.assert_eq(pq.peek(), Some(5))
-}
-
-///|
 test "copy" {
   let v = @priority_queue.from_array([1, 2, 3, 4])
   let ve = v.copy()

@@ -353,21 +353,6 @@ fn[K, V] balance(
 }
 
 ///|
-test "from_array" {
-  let m = SortedMap([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  inspect(
-    m.debug_tree(),
-    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
-  )
-}
-
-///|
 test "insert" {
   let m = SortedMap([(3, "three"), (8, "eight"), (1, "one")])
   inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")

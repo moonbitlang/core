@@ -1369,3 +1369,159 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
     ),
   )
 }
+
+///|
+/// A pattern that only nests used to overflow the stack instead of raising.
+test "parse/nesting_depth" {
+  fn nested(open : String, depth : Int32) -> String {
+    let pattern = open.repeat(depth) + "a" + ")".repeat(depth)
+    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+      err => err.to_string()
+    } noraise {
+      _ => "accepted"
+    }
+  }
+
+  inspect(nested("(", 64), content="accepted")
+  inspect(nested("(?:", 64), content="accepted")
+  inspect(nested("(?i:", 64), content="accepted")
+  inspect(
+    nested("(", 65),
+    content=(
+      #|ParserError at position 65: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?:", 65),
+    content=(
+      #|ParserError at position 195: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?i:", 65),
+    content=(
+      #|ParserError at position 260: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(", 100_000),
+    content=(
+      #|ParserError at position 65: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?<n>", 65),
+    content=(
+      #|ParserError at position 325: Groups nested too deeply
+    ),
+  )
+  // Sibling groups do not increase the nesting depth.
+  inspect(nested("(a)(", 64), content="accepted")
+}
+
+///|
+fn parse_result(pattern : String) -> String {
+  @debug.to_string(parse(profile=profile_unicode(), mode=String, pattern)) catch {
+    err => err.to_string()
+  }
+}
+
+///|
+/// An escape that means nothing in a character class used to be read as a
+/// backslash followed by the next character, with no error: `[\\v]` matched
+/// `\\` and `v` where a regex literal matches a vertical tab, and `[\\p{L}]`
+/// matched five literal characters.
+test "parse/unknown_escape_in_class_is_an_error" {
+  // A control-character escape means the same inside a class as outside it.
+  inspect(
+    parse_result("\\v"),
+    content=(
+      #|Char([(11, 11)])
+    ),
+  )
+  inspect(
+    parse_result("[\\v]"),
+    content=(
+      #|Char([(11, 11)])
+    ),
+  )
+  inspect(
+    parse_result("[\\t\\n\\r\\f\\v]"),
+    content=(
+      #|Char([(9, 13)])
+    ),
+  )
+  inspect(
+    parse_result("[\\-\\]\\\\]"),
+    content=(
+      #|Char([(45, 45), (92, 93)])
+    ),
+  )
+  // An escape that is not known is rejected, as it is outside a class.
+  inspect(
+    parse_result("\\q"),
+    content=(
+      #|ParserError at position 0: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\q]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\0]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\cA]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\p{L}]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[a\\q-z]"),
+    content=(
+      #|ParserError at position 2: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+}
+
+///|
+/// Found by running random patterns through the parser: a range cut off by
+/// the end of the pattern aborted the program instead of raising.
+test "parse/unterminated_range_is_an_error" {
+  inspect(
+    parse_result("[a-"),
+    content=(
+      #|ParserError at position 3: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_result("[a-b"),
+    content=(
+      #|ParserError at position 4: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_result("[a"),
+    content=(
+      #|ParserError at position 2: Unclosed character class
+    ),
+  )
+}

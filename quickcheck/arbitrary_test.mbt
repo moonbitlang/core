@@ -29,37 +29,51 @@ fn[T : @quickcheck.Arbitrary] scalar_samples_at_zero(
 test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size zero" {
   // Seeds select, in order: full-width, canonical, binary boundary,
   // decimal boundary, and type-extreme generation.
-  let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
+  let seeds = [1UL, 3UL, 2UL, 6UL, 8UL]
   let int16s : Array[Int16] = scalar_samples_at_zero(seeds)
   let uint16s : Array[UInt16] = scalar_samples_at_zero(seeds)
   let ints : Array[Int32] = scalar_samples_at_zero(seeds)
   let uints : Array[UInt32] = scalar_samples_at_zero(seeds)
   let int64s : Array[Int64] = scalar_samples_at_zero(seeds)
   let uint64s : Array[UInt64] = scalar_samples_at_zero(seeds)
-  debug_inspect(int16s, content="[-3191, -1, 2047, -10000, 32766]")
-  debug_inspect(uint16s, content="[62345, 2, 2047, 10000, 65533]")
-  debug_inspect(ints, content="[167113609, -1, 134217727, -10, 2147483646]")
-  debug_inspect(uints, content="[167113609, 2, 134217727, 10, 4294967293]")
+  debug_inspect(
+    int16s,
+    content=(
+      #|[-17438, 1, 1023, -1000, 32766]
+    ),
+  )
+  debug_inspect(
+    uint16s,
+    content=(
+      #|[48098, 1, 1023, 1000, 65533]
+    ),
+  )
+  debug_inspect(
+    ints,
+    content=(
+      #|[316390370, 1, 67108863, -1000, 2147483646]
+    ),
+  )
+  debug_inspect(
+    uints,
+    content=(
+      #|[316390370, 1, 67108863, 1000, 4294967293]
+    ),
+  )
   debug_inspect(
     int64s,
     content=(
-      #|[
-      #|  -8964471365135109239,
-      #|  -1,
-      #|  134217727,
-      #|  -100000000000000000,
-      #|  9223372036854775806,
-      #|]
+      #|[8873074891056462818, 1, 67108863, -1000, 9223372036854775806]
     ),
   )
   debug_inspect(
     uint64s,
     content=(
       #|[
-      #|  9482272708574442377,
-      #|  2,
-      #|  134217727,
-      #|  100000000000000000,
+      #|  8873074891056462818,
+      #|  1,
+      #|  67108863,
+      #|  10000000000000000000,
       #|  18446744073709551613,
       #|]
     ),
@@ -70,7 +84,12 @@ test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size 
 test "Byte Arbitrary draws raw random bits" {
   let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
   let bytes : Array[Byte] = scalar_samples_at_zero(seeds)
-  debug_inspect(bytes, content="[0x89, 0x36, 0x3c, 0x56, 0x5f]")
+  debug_inspect(
+    bytes,
+    content=(
+      #|[0xf5, 0xd8, 0xb6, 0x58, 0xc3]
+    ),
+  )
 }
 
 ///|
@@ -81,7 +100,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: 1118850684, y: -99999 }
+      #|{ x: -1757125880, y: -2 }
     ),
   )
   let state = state.split()
@@ -89,7 +108,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: -1001, y: -115158677 }
+      #|{ x: 1745005340, y: -1330484014 }
     ),
   )
   let state = state.split()
@@ -97,7 +116,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: 10000, y: 515456824 }
+      #|{ x: -480557882, y: 0 }
     ),
   )
 }
@@ -125,19 +144,19 @@ test "iter arbitrary" {
   debug_inspect(
     samples[9].to_array(),
     content=(
-      #|[67108863, 16777217, -365961592, 128, -65535]
+      #|[90462686, 33554432, 2147483646, 63, 71960070, -1045010830, 2]
     ),
   )
   debug_inspect(
     samples[1:5].map(iter => iter.to_array()),
     content=(
-      #|[[], [], [-2], [311628954]]
+      #|[[], [], [], []]
     ),
   )
   debug_inspect(
     samples[10].to_array(),
     content=(
-      #|[-999999999, -10000000]
+      #|[2, 4194303, -1710626808, 917696847]
     ),
   )
 }
@@ -182,7 +201,7 @@ test "arbitrary gen bytes" {
   inspect(
     bytes,
     content=(
-      #|b"\xcb"
+      #|b"T\xea\x7fM\xe9"
     ),
   )
 }

@@ -472,14 +472,14 @@ test "generated Json distribution stays healthy" {
       #|  tests=200,
       #|  observations={
       #|    labels: {
-      #|      <List: ["string"]>: 44,
-      #|      <List: ["bool"]>: 21,
-      #|      <List: ["number"]>: 39,
-      #|      <List: ["null"]>: 30,
-      #|      <List: ["array"]>: 38,
-      #|      <List: ["object"]>: 28,
+      #|      <List: ["bool"]>: 16,
+      #|      <List: ["number"]>: 42,
+      #|      <List: ["string"]>: 37,
+      #|      <List: ["null"]>: 25,
+      #|      <List: ["array"]>: 46,
+      #|      <List: ["object"]>: 34,
       #|    },
-      #|    classes: { "nests >= 2 levels": 35, "has >= 10 nodes": 9 },
+      #|    classes: { "nests >= 2 levels": 37, "has >= 10 nodes": 13 },
       #|  },
       #|)
     ),

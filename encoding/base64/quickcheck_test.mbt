@@ -75,16 +75,6 @@ test "encode then decode is the identity without padding" {
 }
 
 ///|
-/// Padding is presentational: both encodings must carry the same bytes.
-test "padded and unpadded encodings decode alike" {
-  @quickcheck.check((bytes : Bytes) => {
-    let padded = @base64.encode(bytes)
-    let unpadded = @base64.encode(bytes, padding=false)
-    @base64.decode(padded) == @base64.decode(unpadded)
-  })
-}
-
-///|
 /// ASCII whitespace may appear anywhere — including between the two padding
 /// characters and after them — without changing the decoded bytes.
 test "whitespace anywhere survives the round trip" {

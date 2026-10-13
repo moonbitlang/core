@@ -78,7 +78,7 @@ test "inspect a counterexample" {
     report,
     content=(
       #|Falsified(
-      #|  counterexample=-1028290551,
+      #|  counterexample=1164562236,
       #|  tests=1,
       #|  size=0,
       #|  shrinks=0,
@@ -114,10 +114,10 @@ test "context describes the shrunk counterexample" {
       #|Falsified(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  tests=2,
-      #|  size=1,
-      #|  shrinks=30,
-      #|  shrink_attempts=33,
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=29,
+      #|  shrink_attempts=31,
       #|)
     ),
   )
@@ -179,7 +179,7 @@ test "basic generation" {
   inspect(
     x,
     content=(
-      #|1118850684
+      #|-1757125880
     ),
   )
 
@@ -200,14 +200,15 @@ test "multiple samples" {
   debug_inspect(
     ints,
     content=(
-      #|[1118850684, -99999, 846697896, -134217729, 67108863]
+      #|[-1757125880, -2, -1, 534197635, -1073741824]
     ),
   )
   let strings : Array[String] = @quickcheck.samples(12)
   debug_inspect(
     strings[5:10],
     content=(
-      #|<ArrayView: ["(K񁁛!", "", "vx2\b", "", "𶏱Hp9\u{18}Rx"]>
+      #|<ArrayView:
+      #|  ["󈇚\u{03}>", "2", "򞆄Z^", "96񮗾f\u{1c}\u{06}", ".񳼮󂇅\u{1c}"]>
     ),
   )
 }
@@ -225,7 +226,7 @@ test "builtin types" {
   debug_inspect(
     v,
     content=(
-      #|(false, '~', 0x4d)
+      #|(false, 'O', 0xd9)
     ),
   )
   // Numeric types
@@ -234,13 +235,13 @@ test "builtin types" {
     v,
     content=(
       #|(
-      #|  -99999,
-      #|  5259998046134461054,
-      #|  228947857,
-      #|  8766027650639656979,
-      #|  0.23986786603927612,
-      #|  0.7917029935679342,
       #|  -2,
+      #|  -6688783864181708209,
+      #|  512,
+      #|  12085892970581224893,
+      #|  0.29428136348724365,
+      #|  0.6038538294571573,
+      #|  -18446744073709551617,
       #|)
     ),
   )
@@ -307,7 +308,7 @@ test "custom type generation" {
   debug_inspect(
     point,
     content=(
-      #|{ x: -99999, y: 2 }
+      #|{ x: -2, y: -841733569 }
     ),
   )
   let points : Array[Point] = @quickcheck.samples(10)
@@ -316,10 +317,10 @@ test "custom type generation" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    { x: 46354256, y: 1201652877 },
-      #|    { x: 1, y: 2147483646 },
-      #|    { x: 108552206, y: -1 },
-      #|    { x: -1073741824, y: 2147483647 },
+      #|    { x: 1153847821, y: -99999999 },
+      #|    { x: 2, y: 1983292812 },
+      #|    { x: 4194303, y: 999999 },
+      #|    { x: 917696847, y: -372937489 },
       #|  ]>
     ),
   )

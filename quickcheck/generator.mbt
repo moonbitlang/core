@@ -41,7 +41,7 @@ pub fn[T] Generator::Generator(
 ///   debug_inspect(
 ///     lengths,
 ///     content=(
-///       #|[3, 2, 1]
+///       #|[4, 2, 2]
 ///     ),
 ///   )
 /// }

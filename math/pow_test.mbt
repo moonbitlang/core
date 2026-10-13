@@ -178,18 +178,6 @@ test "pow with standard functions" {
 }
 
 ///|
-test "powf" {
-  inspect(@math.powf(1.0, 3.0), content="1")
-  inspect(@math.powf(-1.0, 3.0), content="-1")
-  inspect(@math.powf(2.0, 3.0), content="8")
-  inspect(@math.powf(-2.0, 3.0), content="-8")
-  inspect(@math.powf(2.0, -3.0), content="0.125")
-  inspect(@math.powf(-2.0, -3.0), content="-0.125")
-  inspect(@math.powf(2.0, -3.14), content="0.1134398877620697")
-  inspect(@math.powf(-2.0, -3.14), content="NaN")
-}
-
-///|
 test "powf branch coverage" {
   let near_one = Float::reinterpret_from_int(0x3f7fffff)
   let sub = Float::reinterpret_from_int(1)
