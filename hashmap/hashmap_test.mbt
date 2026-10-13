@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([])
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap([])
   inspect(m.capacity(), content="8")
   inspect(m.length(), content="0")
 }
@@ -57,7 +57,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : @hashmap.HashMap[String, Array[Int]] = HashMap([])
+  let m : @hashmap.HashMap[String, Array[Int32]] = HashMap([])
   m.get_or_init("a", () => Array()).push(1)
   m.get_or_init("b", () => Array()).push(2)
   m.get_or_init("a", () => Array()).push(3)
@@ -96,7 +96,7 @@ test "update_or_default applies f when present" {
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : @hashmap.HashMap[String, Int] = HashMap([])
+  let counts : @hashmap.HashMap[String, Int32] = HashMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
@@ -107,7 +107,7 @@ test "update_or_default counter pattern" {
 
 ///|
 test "update_or_default triggers grow" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap([], capacity=2)
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }
@@ -240,7 +240,7 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let map : @hashmap.HashMap[Int, String] = HashMap([])
+  let map : @hashmap.HashMap[Int32, String] = HashMap([])
   debug_inspect(map.to_array(), content="[]")
 }
 
@@ -339,7 +339,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter([||])
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.from_iter([||])
   debug_inspect(
     map,
     content=(
@@ -350,7 +350,7 @@ test "from_iter empty iter" {
 
 ///|
 test "@hashmap.contains/empty" {
-  let map : @hashmap.HashMap[Int, String] = HashMap([])
+  let map : @hashmap.HashMap[Int32, String] = HashMap([])
   inspect(map.contains(42), content="false")
 }
 
@@ -374,7 +374,7 @@ test "@hashmap.contains/after_operations" {
 
 ///|
 test "@hashmap.from_array" {
-  let array : ReadOnlyArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
+  let array : ReadOnlyArray[(String, Int32)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = @hashmap.from_array(array)
   for k, v in map {
     @test.assert_eq(map.get(k), Some(v))
@@ -384,7 +384,7 @@ test "@hashmap.from_array" {
 
 ///|
 test "@hashmap.from_array with int key" {
-  let array : ReadOnlyArray[(Int, String)] = [
+  let array : ReadOnlyArray[(Int32, String)] = [
     (1, "one"),
     (2, "two"),
     (3, "three"),
@@ -497,7 +497,7 @@ test "@hashmap.merge" {
 
 ///|
 test "@hashmap.merge empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
+  let map1 : @hashmap.HashMap[String, Int32] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   let merged1 = map1.merge(map2)
   verify_content(merged1, [("a", 1), ("b", 2)])
@@ -522,7 +522,7 @@ test "@hashmap.merge_in_place" {
 
 ///|
 test "@hashmap.merge_in_place empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
+  let map1 : @hashmap.HashMap[String, Int32] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   map1.merge_in_place(map2)
   verify_content(map1, [("a", 1), ("b", 2)])
@@ -532,7 +532,7 @@ test "@hashmap.merge_in_place empty maps" {
 
 ///|
 test "@hashmap.merge_in_place self-aliasing should be no-op" {
-  let map : @hashmap.HashMap[String, Int] = HashMap([])
+  let map : @hashmap.HashMap[String, Int32] = HashMap([])
   // With 4 elements: capacity=8, size=4
   // The grow condition is size >= capacity/2, i.e., 4 >= 4
   // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
@@ -554,7 +554,7 @@ test "@hashmap.merge_in_place self-aliasing should be no-op" {
 
 ///|
 test "@hashmap.set updating existing key should not grow" {
-  let map : @hashmap.HashMap[String, Int] = HashMap([])
+  let map : @hashmap.HashMap[String, Int32] = HashMap([])
   // Fill to exactly at grow threshold: capacity=8, size=4
   for i in 0..<4 {
     map.set(i.to_string(), i)
@@ -574,7 +574,7 @@ test "@hashmap.set updating existing key should not grow" {
 }
 
 ///|
-priv struct Key(Int, Int) derive(Eq)
+priv struct Key(Int32, Int32) derive(Eq)
 
 ///|
 impl Hash for Key with fn hash(self) {
@@ -590,7 +590,7 @@ impl Hash for Key with fn hash_combine(self, hasher) {
 
 ///|
 test "hashmap collision probe paths" {
-  let map : @hashmap.HashMap[Key, Int] = HashMap([])
+  let map : @hashmap.HashMap[Key, Int32] = HashMap([])
   let k0 = Key::Key(0, 0)
   let k1 = Key::Key(1, 1)
   map.set(k0, 10)
@@ -601,7 +601,7 @@ test "hashmap collision probe paths" {
 
 ///|
 test "hashmap get_or_init push_away" {
-  let map : @hashmap.HashMap[Key, Int] = HashMap([])
+  let map : @hashmap.HashMap[Key, Int32] = HashMap([])
   map.set(Key(1, 1), 10)
   map.set(Key(2, 2), 20)
   inspect(map.get_or_init(Key(3, 1), () => 30), content="30")
@@ -610,7 +610,7 @@ test "hashmap get_or_init push_away" {
 
 ///|
 test "hashmap grow rehashes collision cluster" {
-  let map : @hashmap.HashMap[Key, Int] = HashMap([], capacity=2)
+  let map : @hashmap.HashMap[Key, Int32] = HashMap([], capacity=2)
   for i in 0..<12 {
     map.set(Key(i, i % 4), i * 10)
   }
@@ -627,7 +627,7 @@ test "hashmap grow rehashes collision cluster" {
 
 ///|
 test "hashmap default" {
-  let map : @hashmap.HashMap[Int, Int] = Default::default()
+  let map : @hashmap.HashMap[Int32, Int32] = Default::default()
   inspect(map.length(), content="0")
 }
 
@@ -706,7 +706,7 @@ test "HashMap::get_from_bytes" {
 ///|
 test "filter keeps lookups working after removals and collisions" {
   // Small table, colliding hashes, and entries removed before filtering.
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap([], capacity=2)
   for i in 0..<200 {
     m.set(i * 64, i)
   }
@@ -733,7 +733,11 @@ test "filter keeps lookups working after removals and collisions" {
 
 ///|
 test "filter sizes the result for the kept entries" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([ for i in 0..<10000 => (i, i) ])
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap(
+    [
+      for i in 0..<10000 => (i, i)
+    ],
+  )
   for keep in [0, 1, 10, 5000, 10000] {
     let kept = m.filter((k, _) => k < keep)
     let rebuilt = @hashmap.HashMap([ for k, v in m if k < keep => (k, v) ])
@@ -790,15 +794,15 @@ test "map propagates errors and leaves the source unchanged" {
 /// Not declared `raise`, so this compiles only if `map` with a non-raising
 /// function is itself non-raising.
 fn map_times_ten(
-  m : @hashmap.HashMap[String, Int],
-) -> @hashmap.HashMap[String, Int] {
+  m : @hashmap.HashMap[String, Int32],
+) -> @hashmap.HashMap[String, Int32] {
   m.map((_, v) => v * 10)
 }
 
 ///|
 test "remove_and_get returns the removed value and keeps the rest intact" {
   // Small table and colliding hashes, so removals shift probe chains.
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap([], capacity=2)
   for i in 0..<200 {
     m.set(i * 64, i)
   }
@@ -816,13 +820,13 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   // The map stays usable.
   m.set(0, -1)
   assert_eq(m.get(0), Some(-1))
-  let empty : @hashmap.HashMap[String, Int] = HashMap([])
+  let empty : @hashmap.HashMap[String, Int32] = HashMap([])
   assert_eq(empty.remove_and_get("x"), None)
 }
 
 ///|
 test "retain visits each entry once when a cluster wraps around the table" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([])
+  let m : @hashmap.HashMap[Int32, Int32] = HashMap([])
   let mask = m.capacity() - 1
   // Two keys whose home is the last slot: the second one wraps to slot 0.
   let keys = []
@@ -860,7 +864,7 @@ test "retain visits every entry exactly once" {
 ///|
 /// A key whose hash is the integer itself, so the table layouts in the
 /// reentrancy tests below do not depend on the per-process hash seed.
-priv struct Id(Int) derive(Eq)
+priv struct Id(Int32) derive(Eq)
 
 ///|
 impl Hash for Id with fn hash_combine(self, hasher) {
@@ -874,13 +878,15 @@ impl Hash for Id with fn hash(self) {
 
 ///|
 /// `(length, keys in table order, keys that `get` can find)`.
-fn id_map_state(m : @hashmap.HashMap[Id, Int]) -> (Int, Array[Int], Array[Int]) {
+fn id_map_state(
+  m : @hashmap.HashMap[Id, Int32],
+) -> (Int32, Array[Int32], Array[Int32]) {
   let keys = m.keys().map(k => k.0).to_array()
   (m.length(), keys, [ for k in keys if m.get(Id(k)) is Some(_) => k ])
 }
 
 ///|
-fn id_map_fib(memo : @hashmap.HashMap[Id, Int], n : Int) -> Int {
+fn id_map_fib(memo : @hashmap.HashMap[Id, Int32], n : Int32) -> Int32 {
   if n < 2 {
     return n
   }
@@ -891,7 +897,7 @@ fn id_map_fib(memo : @hashmap.HashMap[Id, Int], n : Int) -> Int {
 
 ///|
 test "get_or_init: init may write to the same map (memoization)" {
-  let memo : @hashmap.HashMap[Id, Int] = HashMap([])
+  let memo : @hashmap.HashMap[Id, Int32] = HashMap([])
   inspect(id_map_fib(memo, 30), content="832040")
   let missing = [ for k in 2..<=30 if memo.get(Id(k)) is None => k ]
   debug_inspect(
@@ -904,7 +910,7 @@ test "get_or_init: init may write to the same map (memoization)" {
 
 ///|
 test "get_or_init: init grows the map" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([])
   let v = m.get_or_init(Id(8), () => {
     for i in 0..<7 {
       m.set(Id(i), i)
@@ -928,7 +934,7 @@ test "get_or_init: init grows the map" {
 
 ///|
 test "get_or_init: init inserts the same key" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([])
   let v = m.get_or_init(Id(3), () => {
     m.set(Id(3), 1)
     2
@@ -950,7 +956,7 @@ test "get_or_init: init inserts the same key" {
 
 ///|
 test "update: f grows the map when the key is absent" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([])
   m.update(Id(8), _ => {
     for i in 0..<7 {
       m.set(Id(i), i)
@@ -973,7 +979,7 @@ test "update: f grows the map when the key is absent" {
 
 ///|
 test "update: f grows the map, then the present key is removed" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(8), 8)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(8), 8)])
   m.update(Id(8), _ => {
     for i in 0..<7 {
       m.set(Id(i), i)
@@ -996,7 +1002,7 @@ test "update: f grows the map, then the present key is removed" {
 
 ///|
 test "update: f removes the present key and returns a value" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(1), 1), (Id(2), 2)])
   m.update(Id(1), v => {
     m.remove(Id(1))
     v.map(x => x + 10)
@@ -1011,7 +1017,7 @@ test "update: f removes the present key and returns a value" {
 
 ///|
 test "update_or_default: f removes the present key" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(1), 1), (Id(2), 2)])
   m.update_or_default(Id(1), 0, v => {
     m.remove(Id(1))
     v + 10
@@ -1028,7 +1034,7 @@ test "update_or_default: f removes the present key" {
 test "get_or_init: init removes a key on the probe path and inserts another" {
   // Id(16) probes slot 0 (Id(0)) and then slot 1. `init` empties slot 0
   // and adds a key elsewhere, so the length is unchanged when it returns.
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(0), 0)], capacity=16)
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(0), 0)], capacity=16)
   let v = m.get_or_init(Id(16), () => {
     m.remove(Id(0))
     m.set(Id(5), 5)
@@ -1045,7 +1051,7 @@ test "get_or_init: init removes a key on the probe path and inserts another" {
 
 ///|
 test "update: f grows the map and updates the present key" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(8), 8)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(8), 8)])
   m.update(Id(8), v => {
     for i in 0..<7 {
       m.set(Id(i), i)
@@ -1069,7 +1075,7 @@ test "update: f grows the map and updates the present key" {
 ///|
 test "update: f removes a key before the present key in its probe chain" {
   // Id(16) sits in slot 1 behind Id(0); removing Id(0) shifts it to slot 0.
-  let m : @hashmap.HashMap[Id, Int] = HashMap(
+  let m : @hashmap.HashMap[Id, Int32] = HashMap(
     [(Id(0), 0), (Id(16), 16)],
     capacity=16,
   )
@@ -1089,7 +1095,7 @@ test "update: f removes a key before the present key in its probe chain" {
       #|None
     ),
   )
-  let m : @hashmap.HashMap[Id, Int] = HashMap(
+  let m : @hashmap.HashMap[Id, Int32] = HashMap(
     [(Id(0), 0), (Id(16), 16)],
     capacity=16,
   )
@@ -1107,7 +1113,7 @@ test "update: f removes a key before the present key in its probe chain" {
 
 ///|
 test "update: f replaces the present key and returns None" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(1), 1), (Id(2), 2)])
   m.update(Id(1), _ => {
     m.remove(Id(1))
     m.set(Id(1), 5)
@@ -1132,7 +1138,7 @@ test "update: f replaces the present key and returns None" {
 test "update: f inserts the absent key and returns None" {
   // `None` for a key that was absent when `f` was called is a no-op, so the
   // entry `f` stored stays.
-  let m : @hashmap.HashMap[Id, Int] = HashMap([])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([])
   m.update(Id(3), _ => {
     m.set(Id(3), 1)
     None
@@ -1147,7 +1153,7 @@ test "update: f inserts the absent key and returns None" {
 
 ///|
 test "update_or_default: f grows the map" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(8), 8)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(8), 8)])
   m.update_or_default(Id(8), 0, v => {
     for i in 0..<7 {
       m.set(Id(i), i)
@@ -1170,7 +1176,7 @@ test "update_or_default: f grows the map" {
 
 ///|
 test "update_or_default: f replaces the present key" {
-  let m : @hashmap.HashMap[Id, Int] = HashMap([(Id(1), 1), (Id(2), 2)])
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(1), 1), (Id(2), 2)])
   m.update_or_default(Id(1), 0, v => {
     m.remove(Id(1))
     m.set(Id(1), 5)

@@ -14,12 +14,12 @@
 
 ///|
 test "panic unsafe_pop_front" {
-  @deque.from_array(([] : Array[Int])).unsafe_pop_front()
+  @deque.from_array(([] : Array[Int32])).unsafe_pop_front()
 }
 
 ///|
 test "panic unsafe_pop_back" {
-  @deque.from_array(([] : Array[Int])).unsafe_pop_back()
+  @deque.from_array(([] : Array[Int32])).unsafe_pop_back()
 }
 
 ///|

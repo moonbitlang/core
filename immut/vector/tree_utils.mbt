@@ -66,7 +66,7 @@ fn[A] Tree::node_children(self : Tree[A]) -> FixedArray[Tree[A]] {
 
 ///|
 /// Get the physical size of the current node, not the total number of elements in the tree.
-fn[A] Tree::local_size(self : Tree[A]) -> Int {
+fn[A] Tree::local_size(self : Tree[A]) -> Int32 {
   match self {
     Empty => 0
     Leaf(l) => l.length()
@@ -76,7 +76,7 @@ fn[A] Tree::local_size(self : Tree[A]) -> Int {
 
 ///|
 /// Get the total number of elements in the tree.
-fn[A] Tree::size(self : Tree[A], shift : Int) -> Int {
+fn[A] Tree::size(self : Tree[A], shift : Int32) -> Int32 {
   match self {
     Empty => 0
     Leaf(l) => l.length()

@@ -31,7 +31,7 @@ fn scalar_outcome(view : BytesView) -> (String?, Bytes?) {
 /// success, same remaining view on failure — on arbitrary payloads seen
 /// through views with arbitrary (unaligned) start offsets.
 test "quickcheck: V128 decode agrees with scalar decode" {
-  @quickcheck.check(count=300, (input : (Array[Int], Int, Bool)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Int32, Bool)) => {
     let (seeds, pad_seed, all_valid) = input
     let payload = seeds.map(seed => {
       if all_valid || (seed & 0xF) != 0xF {

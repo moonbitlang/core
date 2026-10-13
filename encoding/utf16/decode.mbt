@@ -66,7 +66,7 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
         }
         continue tail
       }
-      [u16le(0xD800..=0xDFFF), ..] => return true
+      [u16le(0xD800..<=0xDFFF), ..] => return true
       [u16le(_), .. tail] => continue tail
       [] => break false
       _ => break true
@@ -88,7 +88,7 @@ fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
         }
         continue tail
       }
-      [u16be(0xD800..=0xDFFF), ..] => return true
+      [u16be(0xD800..<=0xDFFF), ..] => return true
       [u16be(_), .. tail] => continue tail
       [] => break false
       _ => break true
@@ -150,8 +150,8 @@ fn decode_scalar(
       match x {
         [] => break
         [
-          u16le(0xD800..=0xDBFF as higher),
-          u16le(0xDC00..=0xDFFF as lower),
+          u16le(0xD800..<=0xDBFF as higher),
+          u16le(0xDC00..<=0xDFFF as lower),
           .. rest,
         ] as bytes => {
           if ((higher.reinterpret_as_int() - 0xD800) << 10) +
@@ -162,7 +162,7 @@ fn decode_scalar(
           }
           continue rest
         }
-        [u16le(0xD800..=0xDFFF), ..] as bytes => raise Malformed(bytes)
+        [u16le(0xD800..<=0xDFFF), ..] as bytes => raise Malformed(bytes)
         [u16le(_), .. rest] => continue rest
         _ as bytes => raise Malformed(bytes)
       }
@@ -177,8 +177,8 @@ fn decode_scalar(
       match x {
         [] => break
         [
-          u16be(0xD800..=0xDBFF as higher),
-          u16be(0xDC00..=0xDFFF as lower),
+          u16be(0xD800..<=0xDBFF as higher),
+          u16be(0xDC00..<=0xDFFF as lower),
           .. rest,
         ] as bytes => {
           if ((higher.reinterpret_as_int() - 0xD800) << 10) +
@@ -194,7 +194,7 @@ fn decode_scalar(
           i += 4
           continue rest
         }
-        [u16be(0xD800..=0xDFFF), ..] as bytes => raise Malformed(bytes)
+        [u16be(0xD800..<=0xDFFF), ..] as bytes => raise Malformed(bytes)
         [u16be(code_unit), .. rest] => {
           string_bytes[i] = (code_unit & 0xFF).to_byte()
           string_bytes[i + 1] = (code_unit >> 8).to_byte()
@@ -213,8 +213,8 @@ fn decode_scalar(
 #cfg(target="js")
 pub fn decode(
   bytes : BytesView,
-  ignore_bom? : Bool = false,
-  endianness? : Endian = Little,
+  ignore_bom~ : Bool = false,
+  endianness~ : Endian = Little,
 ) -> String raise Malformed {
   decode_scalar(drop_utf16_bom(bytes, ignore_bom, endianness), endianness)
 }
@@ -224,8 +224,8 @@ pub fn decode(
 #cfg(not(target="js"))
 pub fn decode(
   bytes : BytesView,
-  ignore_bom? : Bool = false,
-  endianness? : Endian = Little,
+  ignore_bom~ : Bool = false,
+  endianness~ : Endian = Little,
 ) -> String raise Malformed {
   let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
   if endianness is Little {
@@ -246,8 +246,8 @@ pub fn decode(
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G66453
 pub fn decode_lossy(
   bytes : BytesView,
-  ignore_bom? : Bool = false,
-  endianness? : Endian = Little,
+  ignore_bom~ : Bool = false,
+  endianness~ : Endian = Little,
 ) -> String {
   let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
   let builder = StringBuilder(size_hint=bytes.length())
@@ -256,8 +256,8 @@ pub fn decode_lossy(
       match x {
         [] => break
         [
-          u16le(0xD800..=0xDBFF as higher),
-          u16le(0xDC00..=0xDFFF as lower),
+          u16le(0xD800..<=0xDBFF as higher),
+          u16le(0xDC00..<=0xDFFF as lower),
           .. rest,
         ] => {
           let ch = ((higher.reinterpret_as_int() - 0xD800) << 10) +
@@ -270,7 +270,7 @@ pub fn decode_lossy(
           }
           continue rest
         }
-        [u16le(0xD800..=0xDFFF), .. rest] => {
+        [u16le(0xD800..<=0xDFFF), .. rest] => {
           builder.write_char(U_REP)
           continue rest
         }
@@ -289,8 +289,8 @@ pub fn decode_lossy(
       match x {
         [] => break
         [
-          u16be(0xD800..=0xDBFF as higher),
-          u16be(0xDC00..=0xDFFF as lower),
+          u16be(0xD800..<=0xDBFF as higher),
+          u16be(0xDC00..<=0xDFFF as lower),
           .. rest,
         ] => {
           let ch = ((higher.reinterpret_as_int() - 0xD800) << 10) +
@@ -303,7 +303,7 @@ pub fn decode_lossy(
           }
           continue rest
         }
-        [u16be(0xD800..=0xDFFF), .. rest] => {
+        [u16be(0xD800..<=0xDFFF), .. rest] => {
           builder.write_char(U_REP)
           continue rest
         }

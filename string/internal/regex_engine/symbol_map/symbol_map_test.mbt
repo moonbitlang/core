@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn range(lo : Int, hi : Int) -> @rechar_set.RecharSet {
+fn range(lo : Int32, hi : Int32) -> @rechar_set.RecharSet {
   @rechar_set.RecharSet::char_range(lo, hi)
 }
 

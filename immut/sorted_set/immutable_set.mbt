@@ -96,7 +96,7 @@ fn[A : Compare] sorted_set_from_unsorted_buffer(
 // of each run. The unique elements are packed at the front and their count is
 // returned; the tail is left untouched. Indices are monotonic
 // (write <= start <= end < len), so the unchecked accessors stay in bounds.
-fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int {
+fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
   let len = buf.length()
   let mut write = 0
   for start = 0; start < len; {
@@ -139,7 +139,7 @@ pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
 }
 
 ///|
-fn[A : Compare] sorted_set_array_order(array : ArrayView[A]) -> (Int, Bool) {
+fn[A : Compare] sorted_set_array_order(array : ArrayView[A]) -> (Int32, Bool) {
   let len = array.length()
   guard len > 1 else { return (1, false) }
   let mut order = 0
@@ -198,8 +198,8 @@ fn[A : Compare] sorted_set_compact_ordered_array(
 /// The ascending case of a monotonic array is exactly this construction.
 fn[A] sorted_set_from_ascending_array(
   array : ArrayView[A],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> SortedSet[A] {
   if start >= end {
     Empty
@@ -218,8 +218,8 @@ fn[A] sorted_set_from_ascending_array(
 /// but the smaller values sit at the higher indices, so the halves are swapped.
 fn[A] sorted_set_from_descending_array(
   array : ArrayView[A],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> SortedSet[A] {
   if start >= end {
     Empty
@@ -1070,7 +1070,7 @@ fn[A : Compare] SortedSet::split_bis(
 /// Returns the number of elements in the set.
 #alias(size, deprecated)
 #inline
-pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
+pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int32 {
   match self {
     Node(size~, ..) | (Empty with size = 0) => size
   }

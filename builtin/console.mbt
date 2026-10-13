@@ -75,7 +75,7 @@ pub fn[T : Show] eprintln(input : T) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let x : Int = 42
+///   let x : Int32 = 42
 ///   inspect(x, content="42") // A mismatch would raise InspectError with a detailed message
 /// }
 /// ```
@@ -209,7 +209,7 @@ test {
 #callsite(autofill(args_loc, loc))
 pub fn inspect(
   obj : &Show,
-  content? : String = "",
+  content~ : String = "",
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
@@ -258,6 +258,6 @@ pub(all) suberror BenchError {
 
 ///|
 test "panic error case of inspect" {
-  let x : Int = 42
+  let x : Int32 = 42
   inspect(x, content="100")
 }

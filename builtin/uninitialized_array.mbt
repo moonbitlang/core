@@ -23,7 +23,7 @@ struct UninitializedArray[T](FixedArray[UnsafeMaybeUninit[T]])
 /// - `size` : The number of elements the array should hold.
 ///
 /// Returns an uninitialized array of type `T` with the specified size.
-pub fn[T] UninitializedArray::make(size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
+pub fn[T] UninitializedArray::make(size : Int32) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
 ///|
 /// Retrieves the element at the specified index from an uninitialized array.
@@ -37,14 +37,14 @@ pub fn[T] UninitializedArray::make(size : Int) -> UninitializedArray[T] = "%fixe
 #alias("_[_]")
 pub fn[T] UninitializedArray::at(
   self : UninitializedArray[T],
-  index : Int,
+  index : Int32,
 ) -> T = "%fixedarray.get"
 
 ///|
 #internal(unsafe, "For internal use only.")
 fn[T] UninitializedArray::unsafe_get(
   self : UninitializedArray[T],
-  index : Int,
+  index : Int32,
 ) -> T = "%fixedarray.unsafe_get"
 
 ///|
@@ -58,7 +58,7 @@ fn[T] UninitializedArray::unsafe_get(
 #alias("_[_]=_")
 pub fn[T] UninitializedArray::set(
   self : UninitializedArray[T],
-  index : Int,
+  index : Int32,
   value : T,
 ) = "%fixedarray.set"
 
@@ -66,7 +66,7 @@ pub fn[T] UninitializedArray::set(
 #internal(unsafe, "For internal use only.")
 fn[T] UninitializedArray::unsafe_set(
   self : UninitializedArray[T],
-  index : Int,
+  index : Int32,
   value : T,
 ) -> Unit = "%fixedarray.unsafe_set"
 
@@ -88,8 +88,8 @@ fn[T] UninitializedArray::unsafe_set(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] UninitializedArray::exact_view(
   self : UninitializedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -122,8 +122,8 @@ pub fn[T] UninitializedArray::exact_view(
 #alias("_[_:_]")
 pub fn[T] UninitializedArray::clamped_view(
   self : UninitializedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -143,7 +143,7 @@ pub fn[T] UninitializedArray::clamped_view(
 /// - `array` : The uninitialized array whose length is to be determined.
 ///
 /// Returns the length of the uninitialized array as an integer.
-pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
+pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int32 {
   self.0.length()
 }
 
@@ -153,10 +153,10 @@ pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
 #doc(hidden)
 pub fn[T] UninitializedArray::unsafe_blit(
   dst : UninitializedArray[T],
-  dst_offset : Int,
+  dst_offset : Int32,
   src : UninitializedArray[T],
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit {
   FixedArray::unsafe_blit(dst.0, dst_offset, src.0, src_offset, len)
 }
@@ -167,10 +167,10 @@ pub fn[T] UninitializedArray::unsafe_blit(
 #owned(src)
 fn[T] UninitializedArray::unsafe_make_and_blit(
   src : UninitializedArray[T],
-  allocate_len : Int,
-  src_offset : Int,
-  dst_offset : Int,
-  blit_len : Int,
+  allocate_len : Int32,
+  src_offset : Int32,
+  dst_offset : Int32,
+  blit_len : Int32,
 ) -> UninitializedArray[T] {
   let dst = UninitializedArray::make(allocate_len)
   UninitializedArray::unsafe_blit(dst, dst_offset, src, src_offset, blit_len)
@@ -184,11 +184,11 @@ fn[T] UninitializedArray::unsafe_make_and_blit(
 #owned(src, init)
 fn[T] UninitializedArray::unsafe_make_and_blit_with_init(
   src : UninitializedArray[T],
-  allocate_len : Int,
+  allocate_len : Int32,
   init : T,
-  src_offset : Int,
-  dst_offset : Int,
-  blit_len : Int,
+  src_offset : Int32,
+  dst_offset : Int32,
+  blit_len : Int32,
 ) -> UninitializedArray[T] {
   let dst = UninitializedArray::make(allocate_len)
   dst.unchecked_fill(0, init, allocate_len)
@@ -201,10 +201,10 @@ fn[T] UninitializedArray::unsafe_make_and_blit_with_init(
 #owned(src)
 pub fn[T] UninitializedArray::make_and_blit(
   src : UninitializedArray[T],
-  allocate_len~ : Int,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> UninitializedArray[T] {
   guard allocate_len >= 0 &&
     len >= 0 &&
@@ -228,10 +228,10 @@ pub fn[T] UninitializedArray::make_and_blit(
 #owned(src)
 fn[T] UninitializedArray::unsafe_make_and_blit_from_fixed(
   src : FixedArray[T],
-  allocate_len : Int,
-  src_offset : Int,
-  dst_offset : Int,
-  blit_len : Int,
+  allocate_len : Int32,
+  src_offset : Int32,
+  dst_offset : Int32,
+  blit_len : Int32,
 ) -> UninitializedArray[T] {
   let dst = UninitializedArray::make(allocate_len)
   UninitializedArray::unsafe_blit_fixed(
@@ -242,7 +242,7 @@ fn[T] UninitializedArray::unsafe_make_and_blit_from_fixed(
 
 ///|
 test "as_view with valid_range" {
-  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  let arr : UninitializedArray[Int32] = UninitializedArray::make(5)
   let view = arr[1:4]
   inspect(view.start(), content="1")
   inspect(view.len(), content="3")
@@ -250,13 +250,13 @@ test "as_view with valid_range" {
 
 ///|
 test "panic as_view with invalid_start" {
-  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  let arr : UninitializedArray[Int32] = UninitializedArray::make(5)
   ignore(arr.exact_view(start=-1))
 }
 
 ///|
 test "panic as_view with invalid_end" {
-  let arr : UninitializedArray[Int] = UninitializedArray::make(5)
+  let arr : UninitializedArray[Int32] = UninitializedArray::make(5)
   ignore(arr.exact_view(start=2, end=10))
 }
 
@@ -267,9 +267,9 @@ test "panic as_view with invalid_end" {
 #owned(value)
 fn[T] UninitializedArray::unchecked_fill(
   self : UninitializedArray[T],
-  start : Int,
+  start : Int32,
   value : T,
-  len : Int,
+  len : Int32,
 ) -> Unit {
   for i in start..<(start + len) {
     self[i] = value

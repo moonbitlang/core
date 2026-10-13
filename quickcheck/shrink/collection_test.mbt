@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv struct StableInt(Int) derive(Eq)
+priv struct StableInt(Int32) derive(Eq)
 
 ///|
 impl Hash for StableInt with fn hash_combine(self, hasher) {
@@ -37,7 +37,7 @@ impl @shrink.Shrink for StableInt with fn shrink(self) {
 
 ///|
 test "shrink int list" {
-  let il : @list.List[Int] = List([1, 2, 3, 4, 5, 6])
+  let il : @list.List[Int32] = List([1, 2, 3, 4, 5, 6])
   debug_inspect(
     @shrink.Shrink::shrink(il).collect(),
     content=(

@@ -35,7 +35,7 @@ let logf_off = 0x3f330000U
 let logf_table_bits = 4
 
 ///|
-let logf_n : UInt = 1U << logf_table_bits
+let logf_n : UInt32 = 1U << logf_table_bits
 
 ///|
 priv struct LogfData {
@@ -89,7 +89,7 @@ let logf_data : LogfData = {
 /// }
 /// ```
 pub fn lnf(x : Float) -> Float {
-  let mut ix : UInt = x.reinterpret_as_uint()
+  let mut ix : UInt32 = x.reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
   }
@@ -157,10 +157,10 @@ pub fn ln_1pf(x : Float) -> Float {
   let lg4_f : Float = 0.24279078841
   let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
   let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
-  let mut ui : UInt = x.reinterpret_as_uint()
+  let mut ui : UInt32 = x.reinterpret_as_uint()
   let mut f : Float = 0
   let mut c : Float = 0
-  let mut iu : UInt = 0
+  let mut iu : UInt32 = 0
   let one : Float = 1.0
   let mut k = 1
   if ui < 0x3ed413d0 || ui >> 31 > 0 {

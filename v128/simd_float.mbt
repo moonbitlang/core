@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-fn pack_f32x4_by(f : (Int) -> Float) -> V128 {
+fn pack_f32x4_by(f : (Int32) -> Float) -> V128 {
   pack_u32x4_by(i => f(i).reinterpret_as_uint())
 }
 
 ///|
-fn pack_f64x2_by(f : (Int) -> Double) -> V128 {
+fn pack_f64x2_by(f : (Int32) -> Double) -> V128 {
   pack_u64x2_by(i => f(i).reinterpret_as_uint64())
 }
 
@@ -225,22 +225,22 @@ fn f64_pmax(value : Double, other : Double) -> Double {
 }
 
 ///|
-fn f32_trunc_sat_s(value : Float) -> UInt {
+fn f32_trunc_sat_s(value : Float) -> UInt32 {
   value.to_int().reinterpret_as_uint()
 }
 
 ///|
-fn f32_trunc_sat_u(value : Float) -> UInt {
+fn f32_trunc_sat_u(value : Float) -> UInt32 {
   value.to_double().to_uint()
 }
 
 ///|
-fn f64_trunc_sat_s(value : Double) -> UInt {
+fn f64_trunc_sat_s(value : Double) -> UInt32 {
   value.to_int().reinterpret_as_uint()
 }
 
 ///|
-fn f64_trunc_sat_u(value : Double) -> UInt {
+fn f64_trunc_sat_u(value : Double) -> UInt32 {
   value.to_uint()
 }
 

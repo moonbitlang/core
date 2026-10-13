@@ -15,12 +15,12 @@
 ///|
 /// Capture offsets of a successful match: `[start0, end0, start1, end1, ...]`
 /// relative to the searched view, `-1` for groups that did not participate.
-struct MatchResult(Array[Int]) derive(@debug.Debug)
+struct MatchResult(Array[Int32]) derive(@debug.Debug)
 
 ///|
 /// The `(start, end)` offsets of capture group `index`, or `None` when the
 /// index is out of range or the group did not participate in the match.
-pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
+pub fn MatchResult::group(self : MatchResult, index : Int32) -> (Int32, Int32)? {
   // Validate before multiplying so large indices cannot wrap into a group.
   guard index >= 0 && index < self.0.length() / 2 else { None }
   let start = self.0[index * 2]
@@ -35,7 +35,7 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 pub fn Regex::execute(
   self : Regex,
   input : StringView,
-  last_index : Int,
+  last_index : Int32,
 ) -> MatchResult? {
   guard last_index >= 0 && last_index <= input.length() else { panic() }
   let table = self.table

@@ -50,7 +50,7 @@ test "Arbitrary for BigInt" {
 test "Arbitrary for BigInt favors boundaries across multiple limbs" {
   let samples : Array[@bigint.BigInt] = @quickcheck.samples(256)
   let canonical : Array[@bigint.BigInt] = [0N, 1N, -1N, 2N, -2N, 10N, -10N]
-  let count : ((@bigint.BigInt) -> Bool) -> Int = predicate => {
+  let count : ((@bigint.BigInt) -> Bool) -> Int32 = predicate => {
     samples.iter().filter(predicate).count()
   }
   let is_wide : (@bigint.BigInt) -> Bool = value => value.bit_length() > 64
@@ -74,7 +74,7 @@ test "Arbitrary for BigInt favors boundaries across multiple limbs" {
 
 ///|
 test "Arbitrary for builtin Map" {
-  let samples : Array[Map[Int, Bool]] = @quickcheck.samples(20)
+  let samples : Array[Map[Int32, Bool]] = @quickcheck.samples(20)
   debug_inspect(
     [samples[0], samples[10], samples[16], samples[19]],
     content=(
@@ -108,7 +108,7 @@ test "Arbitrary for builtin Map" {
 
 ///|
 test "Arbitrary for linked Set" {
-  let samples : Array[@set.Set[Int]] = @quickcheck.samples(20)
+  let samples : Array[@set.Set[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     [samples[0], samples[9], samples[12], samples[17]],
     content=(
@@ -119,7 +119,7 @@ test "Arbitrary for linked Set" {
 
 ///|
 test "Arbitrary for Deque" {
-  let samples : Array[@deque.Deque[Int]] = @quickcheck.samples(20)
+  let samples : Array[@deque.Deque[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     [samples[0], samples[9], samples[12], samples[17]],
     content=(
@@ -130,7 +130,7 @@ test "Arbitrary for Deque" {
 
 ///|
 test "Arbitrary for ReadOnlyArray" {
-  let samples : Array[ReadOnlyArray[Int]] = @quickcheck.samples(20)
+  let samples : Array[ReadOnlyArray[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     [samples[0], samples[9], samples[12], samples[17]],
     content=(
@@ -161,7 +161,7 @@ test "Arbitrary for 16-bit integers" {
 
 ///|
 test "Arbitrary for HashMap" {
-  let samples : Array[@hashmap.HashMap[String, Int]] = @quickcheck.samples(20)
+  let samples : Array[@hashmap.HashMap[String, Int32]] = @quickcheck.samples(20)
   let selected = [samples[0], samples[10], samples[13], samples[19]].map(sample => {
     let entries = sample.to_array()
     entries.sort()
@@ -205,7 +205,7 @@ test "Arbitrary for HashMap" {
 
 ///|
 test "Arbitrary for Queue" {
-  let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
+  let samples : Array[@queue.Queue[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     samples[1:5],
     content=(
@@ -240,13 +240,15 @@ test "Arbitrary for Queue" {
 
 ///|
 test "Arbitrary for SortedSet" {
-  let samples = (@quickcheck.samples(3) : Array[@sorted_set.SortedSet[Int]])
+  let samples = (@quickcheck.samples(3) : Array[@sorted_set.SortedSet[Int32]])
   inspect(samples.length(), content="3")
 }
 
 ///|
 test "Arbitrary for SortedMap" {
-  let map : Array[@sorted_map.SortedMap[Int, UInt]] = @quickcheck.samples(20)
+  let map : Array[@sorted_map.SortedMap[Int32, UInt32]] = @quickcheck.samples(
+    20,
+  )
   debug_inspect(
     map[5:10],
     content=(
@@ -321,7 +323,7 @@ test "Arbitrary for SortedMap" {
 
 ///|
 test "Arbitrary for tuples" {
-  let t : Array[(Int, String)] = @quickcheck.samples(5)
+  let t : Array[(Int32, String)] = @quickcheck.samples(5)
   debug_inspect(
     t,
     content=(
@@ -334,7 +336,7 @@ test "Arbitrary for tuples" {
       #|]
     ),
   )
-  let t : Array[(Int, String, UInt)] = @quickcheck.samples(5)
+  let t : Array[(Int32, String, UInt32)] = @quickcheck.samples(5)
   debug_inspect(
     t,
     content=(
@@ -347,7 +349,7 @@ test "Arbitrary for tuples" {
       #|]
     ),
   )
-  let t : Array[(Int, String, UInt, Byte)] = @quickcheck.samples(5)
+  let t : Array[(Int32, String, UInt32, Byte)] = @quickcheck.samples(5)
   debug_inspect(
     t,
     content=(
@@ -360,7 +362,7 @@ test "Arbitrary for tuples" {
       #|]
     ),
   )
-  let t : Array[(Int, String, UInt, Byte, Char)] = @quickcheck.samples(5)
+  let t : Array[(Int32, String, UInt32, Byte, Char)] = @quickcheck.samples(5)
   debug_inspect(
     t,
     content=(
@@ -373,7 +375,9 @@ test "Arbitrary for tuples" {
       #|]
     ),
   )
-  let t : Array[(Int, String, UInt, Byte, Char, Bool)] = @quickcheck.samples(5)
+  let t : Array[(Int32, String, UInt32, Byte, Char, Bool)] = @quickcheck.samples(
+    5,
+  )
   debug_inspect(
     t,
     content=(
@@ -386,7 +390,7 @@ test "Arbitrary for tuples" {
       #|]
     ),
   )
-  let t : Array[(Int, String, UInt, Byte, Char, Bool, Unit)] = @quickcheck.samples(
+  let t : Array[(Int32, String, UInt32, Byte, Char, Bool, Unit)] = @quickcheck.samples(
     5,
   )
   debug_inspect(
@@ -405,7 +409,7 @@ test "Arbitrary for tuples" {
 
 ///|
 test "Arbitrary for 8-tuple" {
-  let samples : Array[(Int, String, UInt, Byte, Char, Bool, Unit, Int16)] = @quickcheck.samples(
+  let samples : Array[(Int32, String, UInt32, Byte, Char, Bool, Unit, Int16)] = @quickcheck.samples(
     5,
   )
   debug_inspect(
@@ -424,9 +428,9 @@ test "Arbitrary for 8-tuple" {
 
 ///|
 test "Arbitrary for 9-tuple" {
-  let samples : Array[(Int, String, UInt, Byte, Char, Bool, Unit, Int16, Byte)] = @quickcheck.samples(
-    5,
-  )
+  let samples : Array[
+    (Int32, String, UInt32, Byte, Char, Bool, Unit, Int16, Byte),
+  ] = @quickcheck.samples(5)
   debug_inspect(
     samples,
     content=(
@@ -443,7 +447,7 @@ test "Arbitrary for 9-tuple" {
 
 ///|
 test "Arbitrary for Ref" {
-  let samples = (@quickcheck.samples(5) : Array[@ref.Ref[Int]])
+  let samples = (@quickcheck.samples(5) : Array[@ref.Ref[Int32]])
   debug_inspect(
     samples,
     content=(
@@ -460,7 +464,7 @@ test "Arbitrary for Ref" {
 
 ///|
 test "Arbitrary for PriorityQueue" {
-  let samples : Array[@priority_queue.PriorityQueue[Int]] = @quickcheck.samples(
+  let samples : Array[@priority_queue.PriorityQueue[Int32]] = @quickcheck.samples(
     20,
   )
   debug_inspect(
@@ -516,7 +520,7 @@ test "Arbitrary for PriorityQueue" {
 
 ///|
 test "Arbitrary for HashSet" {
-  let samples : ArrayView[@hashset.HashSet[Int]] = @quickcheck.samples(20)[8:12]
+  let samples : ArrayView[@hashset.HashSet[Int32]] = @quickcheck.samples(20)[8:12]
   let selected = samples.map(sample => {
     let values = sample.to_array()
     values.sort()
@@ -537,7 +541,7 @@ test "Arbitrary for HashSet" {
 
 ///|
 test "Option arbitrary" {
-  let samples : Array[Int?] = @quickcheck.samples(10)
+  let samples : Array[Int32?] = @quickcheck.samples(10)
   debug_inspect(
     samples,
     content=(
@@ -559,13 +563,13 @@ test "Option arbitrary" {
 
 ///|
 test "Arbitrary for immutable vector" {
-  let samples = (@quickcheck.samples(3) : Array[@immut_vector.Vector[Int]])
+  let samples = (@quickcheck.samples(3) : Array[@immut_vector.Vector[Int32]])
   inspect(samples.length(), content="3")
 }
 
 ///|
 test "Arbitrary for immutable hashmap" {
-  let samples : Array[@immut_hashmap.HashMap[Int, Int]] = @quickcheck.samples(
+  let samples : Array[@immut_hashmap.HashMap[Int32, Int32]] = @quickcheck.samples(
     10,
   )
   inspect(samples.length(), content="10")
@@ -573,14 +577,14 @@ test "Arbitrary for immutable hashmap" {
 
 ///|
 test "Arbitrary for immutable hashset" {
-  let set : @immut_hashset.HashSet[Int] = @quickcheck.gen(size=10)
+  let set : @immut_hashset.HashSet[Int32] = @quickcheck.gen(size=10)
   let roundtrip = @immut_hashset.HashSet(set.iter().to_array())
   inspect(set == roundtrip, content="true")
 }
 
 ///|
 test "Arbitrary for immutable priority queue" {
-  let samples : Array[@immut_priority_queue.PriorityQueue[Int]] = @quickcheck.samples(
+  let samples : Array[@immut_priority_queue.PriorityQueue[Int32]] = @quickcheck.samples(
     10,
   )
   inspect(samples.length(), content="10")

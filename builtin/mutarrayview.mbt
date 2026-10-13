@@ -33,16 +33,16 @@ type MutArrayView[T]
 fn[T] MutArrayView::buf(self : MutArrayView[T]) -> UninitializedArray[T] = "%arrayview.buf"
 
 ///|
-fn[T] MutArrayView::start(self : MutArrayView[T]) -> Int = "%arrayview.start"
+fn[T] MutArrayView::start(self : MutArrayView[T]) -> Int32 = "%arrayview.start"
 
 ///|
-fn[T] MutArrayView::len(self : MutArrayView[T]) -> Int = "%arrayview.len"
+fn[T] MutArrayView::len(self : MutArrayView[T]) -> Int32 = "%arrayview.len"
 
 ///|
 fn[T] MutArrayView::make(
   buf : UninitializedArray[T],
-  start : Int,
-  len : Int,
+  start : Int32,
+  len : Int32,
 ) -> MutArrayView[T] = "%arrayview.make"
 
 ///|
@@ -64,7 +64,7 @@ fn[T] MutArrayView::make(
 /// }
 /// ```
 #intrinsic("%mutarrayview.length")
-pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
+pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int32 {
   self.len()
 }
 
@@ -85,7 +85,7 @@ pub fn[T] MutArrayView::is_empty(self : MutArrayView[T]) -> Bool {
 
 ///|
 /// Returns the start offset of the mutable array view in its backing array.
-pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int {
+pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int32 {
   self.start()
 }
 
@@ -115,7 +115,7 @@ pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int {
 /// ```
 #intrinsic("%mutarrayview.get")
 #alias("_[_]")
-pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
+pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int32) -> T {
   guard index >= 0 && index < self.len() else {
     index_out_of_bounds(self.len(), index)
   }
@@ -145,7 +145,7 @@ pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
 /// ```
 #intrinsic("%mutarrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
+pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int32) -> T {
   self.buf()[self.start() + index]
 }
 
@@ -177,7 +177,7 @@ pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
 #owned(value)
 pub fn[T] MutArrayView::set(
   self : MutArrayView[T],
-  index : Int,
+  index : Int32,
   value : T,
 ) -> Unit {
   guard index >= 0 && index < self.len() else {
@@ -211,7 +211,7 @@ pub fn[T] MutArrayView::set(
 #owned(value)
 pub fn[T] MutArrayView::unsafe_set(
   self : MutArrayView[T],
-  index : Int,
+  index : Int32,
   value : T,
 ) -> Unit {
   self.buf()[self.start() + index] = value
@@ -247,8 +247,8 @@ pub fn[T] MutArrayView::unsafe_set(
 #intrinsic("%array.mut_view")
 pub fn[T] Array::mut_view(
   self : Array[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> MutArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -295,8 +295,8 @@ pub fn[T] Array::mut_view(
 #intrinsic("%mutarrayview.mut_view")
 pub fn[T] MutArrayView::mut_view(
   self : MutArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> MutArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -331,7 +331,7 @@ pub fn[T] MutArrayView::mut_view(
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
 ///   inspect(view[0], content="2")
 /// }
@@ -339,8 +339,8 @@ pub fn[T] MutArrayView::mut_view(
 #intrinsic("%fixedarray.mut_view")
 pub fn[T] FixedArray::mut_view(
   self : FixedArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> MutArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -372,8 +372,8 @@ pub fn[T] FixedArray::mut_view(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] MutArrayView::exact_view(
   self : MutArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -403,8 +403,8 @@ pub fn[T] MutArrayView::exact_view(
 #alias("_[_:_]")
 pub fn[T] MutArrayView::clamped_view(
   self : MutArrayView[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let len = self.length()
   let lo = clamp_offset(start, len)
@@ -473,7 +473,7 @@ pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
 ///|
 /// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
-pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
+pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int32, X] {
   let mut i = 0
   let len = self.length()
   Iter2::new(
@@ -503,7 +503,7 @@ pub impl[T : Eq] Eq for MutArrayView[T] with fn equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[T : Compare] Compare for MutArrayView[T] with fn compare(self, other) -> Int {
+pub impl[T : Compare] Compare for MutArrayView[T] with fn compare(self, other) -> Int32 {
   self[:].compare(other)
 }
 

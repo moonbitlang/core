@@ -34,7 +34,7 @@ fn sym(u : Double) -> Double {
 
 ///|
 /// Maps `v` in [0, 1] onto an integer exponent in [lo, hi].
-fn expo(v : Double, lo : Int, hi : Int) -> Int {
+fn expo(v : Double, lo : Int32, hi : Int32) -> Int32 {
   lo + (v * (hi - lo).to_double()).to_int()
 }
 
@@ -42,7 +42,7 @@ fn expo(v : Double, lo : Int, hi : Int) -> Int {
 /// A log-uniform positive double: mantissa in [1, 2], binary exponent in
 /// [lo, hi]. `scalbn` scaling by a power of two is exact, so this does not
 /// itself introduce rounding error.
-fn logu(u : Double, v : Double, lo : Int, hi : Int) -> Double {
+fn logu(u : Double, v : Double, lo : Int32, hi : Int32) -> Double {
   @math.scalbn(1.0 + u, expo(v, lo, hi))
 }
 
@@ -699,7 +699,7 @@ test "quickcheck: rounding functions are exact on n and half-up on n + 0.5" {
   // so ties must follow the documented round-half-up rule: round(n + 0.5) =
   // n + 1 for every integer n, including negatives (round(-3.5) = -3).
   @quickcheck.check(
-    (k : Int) => {
+    (k : Int32) => {
       let n = k.to_double()
       let x = n + 0.5
       @math.round(n) == n &&

@@ -26,7 +26,7 @@
 fn[T : Eq + Hash] unique_lcs(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
-) -> ArrayView[(Int, Int)] {
+) -> ArrayView[(Int32, Int32)] {
   let matches = find_unique(old~, new~)
   let piles = Piles(Array(capacity=matches.length()))
   for place in 0..<matches.length() {

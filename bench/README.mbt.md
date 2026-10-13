@@ -10,7 +10,7 @@ Use the `single_bench` function to benchmark individual operations:
 ///|
 #skip("slow tests")
 test "basic benchmarking" {
-  fn simple_calc(n : Int) -> Int {
+  fn simple_calc(n : Int32) -> Int32 {
     n * 2 + 1
   }
   // Benchmark a simple computation
@@ -108,7 +108,7 @@ test "data structure benchmarks" {
 
   // Benchmark FixedArray access
   bencher.bench(name="fixedarray_access", fn() {
-    let arr : ReadOnlyArray[Int] = [0, 1, 2, 3, 4]
+    let arr : ReadOnlyArray[Int32] = [0, 1, 2, 3, 4]
     let mut sum = 0
     for i in 0..<arr.length() {
       sum = sum + arr[i]
@@ -239,7 +239,7 @@ test "isolation example" {
 #skip("slow tests")
 test "warmup example" {
   let bencher = @bench.Bench()
-  fn expensive_operation() -> Int {
+  fn expensive_operation() -> Int32 {
     let mut result = 0
     for i in 0..<5 {
       result = result + i * i

@@ -14,21 +14,21 @@
 
 ///|
 test "Result unwrap should return Ok value" {
-  let ok_result : Result[Int, Error] = Ok(42)
+  let ok_result : Result[Int32, Error] = Ok(42)
   assert_eq(ok_result.unwrap(), 42)
   assert_eq(ok_result.unwrap_or_error(), 42)
 }
 
 ///|
 test "bind with Err" {
-  let x : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Err("error")
   let y = x.bind(v => Ok(v * 7))
   @debug.assert_eq(y, Err("error"))
 }
 
 ///|
 test "wrap0 with error" {
-  let f : () -> Int raise Failure = () => raise Failure("error")
+  let f : () -> Int32 raise Failure = () => raise Failure("error")
   try f() catch {
     e =>
       debug_inspect(
@@ -44,7 +44,9 @@ test "wrap0 with error" {
 
 ///|
 test "wrap2 with error result" {
-  let f : (Int, Int) -> Unit raise Failure = (_, _) => raise Failure("error")
+  let f : (Int32, Int32) -> Unit raise Failure = (_, _) => {
+    raise Failure("error")
+  }
   try f(1, 2) catch {
     e =>
       debug_inspect(

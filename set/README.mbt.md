@@ -10,12 +10,12 @@ There are several ways to create sets:
 ///|
 test "creating sets" {
   // Empty set
-  let empty_set : @set.Set[Int] = Set([])
+  let empty_set : @set.Set[Int32] = Set([])
   inspect(empty_set.length(), content="0")
   inspect(empty_set.is_empty(), content="true")
 
   // Set with initial capacity
-  let set_with_capacity : @set.Set[Int] = Set([], capacity=16)
+  let set_with_capacity : @set.Set[Int32] = Set([], capacity=16)
   inspect(set_with_capacity.capacity(), content="16")
 
   // From array

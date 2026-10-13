@@ -17,7 +17,7 @@ test "panic reentrant force on a tail aborts" {
   // A thunk that forces the very tail it is producing. Letting it through
   // would re-run the thunk and break the at-most-once guarantee, so it
   // aborts instead — the same trade-off `@lazy.Lazy::force` makes.
-  let slot : Array[@lazy_list.LazyList[Int]] = []
+  let slot : Array[@lazy_list.LazyList[Int32]] = []
   let xs = @lazy_list.lazy_cons(1, () => slot[0].tail().unwrap())
   slot.push(xs)
   ignore(xs.tail())
@@ -27,7 +27,7 @@ test "panic reentrant force on a tail aborts" {
 test "panic reentrant force through a suspended concat aborts" {
   // Same, but the reentrant force lands on a suspended append rather
   // than on a thunk.
-  let slot : Array[@lazy_list.LazyList[Int]] = []
+  let slot : Array[@lazy_list.LazyList[Int32]] = []
   let left = @lazy_list.lazy_cons(1, () => slot[0].tail().unwrap())
   let both = left.concat(@lazy_list.from_iter([|2|]))
   slot.push(both)

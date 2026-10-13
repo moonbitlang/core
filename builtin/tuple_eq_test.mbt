@@ -14,17 +14,17 @@
 
 ///|
 test "test_tuple3_eq" {
-  let t1 : (Int, String, Bool) = (1, "a", true)
-  let t2 : (Int, String, Bool) = (1, "a", true)
-  let t3 : (Int, String, Bool) = (2, "a", true)
+  let t1 : (Int32, String, Bool) = (1, "a", true)
+  let t2 : (Int32, String, Bool) = (1, "a", true)
+  let t3 : (Int32, String, Bool) = (2, "a", true)
   inspect(t1 == t2, content="true")
   inspect(t1 == t3, content="false")
 }
 
 ///|
 test "test tuple4 equality - same values" {
-  let t1 : (Int, Int, Int, Int) = (1, 2, 3, 4)
-  let t2 : (Int, Int, Int, Int) = (1, 2, 3, 4)
+  let t1 : (Int32, Int32, Int32, Int32) = (1, 2, 3, 4)
+  let t2 : (Int32, Int32, Int32, Int32) = (1, 2, 3, 4)
   assert_true(t1 == t2)
 }
 
@@ -82,20 +82,20 @@ test "tuple12_equal_same_values" {
 ///|
 test "tuple14_equal_true" {
   let t1 : (
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
   ) = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
   inspect(t1 == t2, content="true")

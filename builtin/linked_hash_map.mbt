@@ -17,10 +17,10 @@
 ///|
 #unsafe_cycle_free
 priv struct Entry[K, V] {
-  mut prev : Int
+  mut prev : Int32
   mut next : Entry[K, V]?
-  mut psl : Int
-  hash : Int
+  mut psl : Int32
+  hash : Int32
   key : K
   mut value : V
 }
@@ -41,12 +41,12 @@ priv struct Entry[K, V] {
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
-  mut size : Int // active key-value pairs count
-  mut capacity : Int // current capacity
-  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
-  mut grow_at : Int // threshold that triggers grow
+  mut size : Int32 // active key-value pairs count
+  mut capacity : Int32 // current capacity
+  mut capacity_mask : Int32 // capacity_mask = capacity - 1, used to find idx
+  mut grow_at : Int32 // threshold that triggers grow
   mut head : Entry[K, V]? // head of linked list
-  mut tail : Int // tail of linked list
+  mut tail : Int32 // tail of linked list
 }
 
 // Implementations
@@ -78,7 +78,7 @@ struct Map[K, V] {
 let default_init_capacity = 8
 
 ///|
-fn[K, V] new_map(capacity : Int) -> Map[K, V] {
+fn[K, V] new_map(capacity : Int32) -> Map[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -92,7 +92,7 @@ fn[K, V] new_map(capacity : Int) -> Map[K, V] {
 }
 
 ///|
-fn capacity_for_length(length : Int) -> Int {
+fn capacity_for_length(length : Int32) -> Int32 {
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -107,7 +107,7 @@ fn capacity_for_length(length : Int) -> Int {
 #alias(from_array)
 pub fn[K : Hash + Eq, V] Map::Map(
   arr : ArrayView[(K, V)],
-  capacity? : Int,
+  capacity? : Int32,
 ) -> Map[K, V] {
   let length = arr.length()
   let capacity = match capacity {
@@ -141,7 +141,7 @@ pub fn[K : Hash + Eq, V] Map::Map(
 ///
 /// ```mbt check
 /// test {
-///   let map : Map[String, Int] = Map([])
+///   let map : Map[String, Int32] = Map([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -160,7 +160,7 @@ fn[K : Eq, V] Map::set_with_hash(
   self : Map[K, V],
   key : K,
   value : V,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   // Only grow when actually inserting a new entry, not when updating existing
   // SAFETY: masked probe index; see the note at the top of this file.
@@ -205,7 +205,7 @@ fn[K : Eq, V] Map::set_with_hash(
 #owned(entry)
 fn[K, V] Map::push_away(
   self : Map[K, V],
-  idx : Int,
+  idx : Int32,
   entry : Entry[K, V],
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
@@ -235,7 +235,7 @@ fn[K, V] Map::push_away(
 fn[K, V] Map::set_entry(
   self : Map[K, V],
   entry : Entry[K, V],
-  new_idx : Int,
+  new_idx : Int32,
 ) -> Unit {
   // Fix up the neighbor links before the store: the store consumes the owned
   // `entry` reference, and touching `entry` after it would force the compiler
@@ -380,7 +380,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 ///
 /// ```mbt check
 /// test {
-///   let counts : Map[String, Int] = Map([])
+///   let counts : Map[String, Int32] = Map([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)
@@ -529,7 +529,7 @@ pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
 fn[K : Eq, V] Map::remove_with_hash(
   self : Map[K, V],
   key : K,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
@@ -584,7 +584,7 @@ pub fn[K : Hash + Eq, V] Map::remove_and_get(self : Map[K, V], key : K) -> V? {
 #owned(entry)
 fn[K, V] Map::add_entry_to_tail(
   self : Map[K, V],
-  idx : Int,
+  idx : Int32,
   entry : Entry[K, V],
 ) -> Unit {
   match self.tail {
@@ -609,7 +609,7 @@ fn[K, V] Map::remove_entry(self : Map[K, V], entry : Entry[K, V]) -> Unit {
 }
 
 ///|
-fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
+fn[K, V] Map::shift_back(self : Map[K, V], idx : Int32) -> Unit {
   // SAFETY: the initial `cur` is in bounds by every route its callers take,
   // and none of them requires trusting the list invariant: `remove`,
   // `remove_and_get` and `update` pass a masked probe index, and `retain`
@@ -684,7 +684,7 @@ fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit 
 }
 
 ///|
-fn calc_grow_threshold(capacity : Int) -> Int {
+fn calc_grow_threshold(capacity : Int32) -> Int32 {
   capacity * 13 / 16
 }
 
@@ -715,13 +715,13 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with fn output(self, logger) {
 ///|
 /// Get the number of key-value pairs in the map.
 #alias(size, deprecated)
-pub fn[K, V] Map::length(self : Map[K, V]) -> Int {
+pub fn[K, V] Map::length(self : Map[K, V]) -> Int32 {
   self.size
 }
 
 ///|
 /// Get the capacity of the map.
-pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int {
+pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int32 {
   self.capacity
 }
 
@@ -754,7 +754,7 @@ pub fn[K, V] Map::each(
 #locals(f)
 pub fn[K, V] Map::eachi(
   self : Map[K, V],
-  f : (Int, K, V) -> Unit raise?,
+  f : (Int32, K, V) -> Unit raise?,
 ) -> Unit raise? {
   for x = 0, y = self.head {
     match (x, y) {
@@ -988,8 +988,8 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map1 : Map[String, Int] = { "a": 1, "b": 2 }
-///   let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+///   let map1 : Map[String, Int32] = { "a": 1, "b": 2 }
+///   let map2 : Map[String, Int32] = { "b": 3, "c": 4 }
 ///   let merged = map1.merge(map2)
 ///   @json.json_inspect(merged, content={ "a": 1, "b": 3, "c": 4 })
 /// }
@@ -1018,8 +1018,8 @@ pub fn[K : Eq, V] Map::merge(self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map1 : Map[String, Int] = { "a": 1, "b": 2 }
-///   let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+///   let map1 : Map[String, Int32] = { "a": 1, "b": 2 }
+///   let map2 : Map[String, Int32] = { "b": 3, "c": 4 }
 ///   map1.merge_in_place(map2)
 ///   @json.json_inspect(map1, content={ "a": 1, "b": 3, "c": 4 })
 /// }
@@ -1162,7 +1162,7 @@ fn[K, V] Map::add_unique_with_hash(
   self : Map[K, V],
   key : K,
   value : V,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {

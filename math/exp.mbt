@@ -25,22 +25,22 @@
 //
 
 ///|
-fn top12(x : Float) -> UInt {
+fn top12(x : Float) -> UInt32 {
   x.reinterpret_as_uint() >> 20
 }
 
 ///|
-fn __math_xflowf(sign : UInt, y : Float) -> Float {
+fn __math_xflowf(sign : UInt32, y : Float) -> Float {
   return (if sign != 0 { -y } else { y }) * y
 }
 
 ///|
-fn __math_oflowf(sign : UInt) -> Float {
+fn __math_oflowf(sign : UInt32) -> Float {
   return __math_xflowf(sign, 0x1.0p97)
 }
 
 ///|
-fn __math_uflowf(sign : UInt) -> Float {
+fn __math_uflowf(sign : UInt32) -> Float {
   return __math_xflowf(sign, 0x1.0p-95)
 }
 
@@ -186,7 +186,7 @@ pub fn expm1f(x : Float) -> Float {
       return x
     }
   }
-  let mut k : Int = 0
+  let mut k : Int32 = 0
   let mut hi : Float = 0
   let mut lo : Float = 0
   let mut c : Float = 0
@@ -244,7 +244,7 @@ pub fn expm1f(x : Float) -> Float {
     return Float(1.0) + Float(2.0) * (x - e)
   }
   let twopk = Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
-  if !(k is (0..=56)) {
+  if !(k is (0..<=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
     if k == 128 {

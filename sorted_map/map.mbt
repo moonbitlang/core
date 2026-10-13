@@ -166,7 +166,7 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// # Example
 /// ```mbt check
 /// test {
-///   let counts : @sorted_map.SortedMap[String, Int] = SortedMap([])
+///   let counts : @sorted_map.SortedMap[String, Int32] = SortedMap([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)
@@ -223,7 +223,7 @@ pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
 ///|
 /// Returns the count of key-value pairs in the map.
 #alias(size, deprecated)
-pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
+pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int32 {
   self.size
 }
 
@@ -255,7 +255,7 @@ pub fn[K, V] SortedMap::each(
 /// Calls `f` on each key-value pair with its index (0-based), in ascending key order.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
-  f : (Int, K, V) -> Unit raise?,
+  f : (Int32, K, V) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
   self.each((k, v) => {
@@ -733,7 +733,7 @@ fn[K : Compare, V] delete_node(
 
 ///|
 test "new" {
-  let map : SortedMap[Int, String] = new_sorted_map()
+  let map : SortedMap[Int32, String] = new_sorted_map()
   inspect(map.debug_tree(), content="_")
   inspect(map.length(), content="0")
 }

@@ -24,19 +24,19 @@
 /// For example, `Path::of(x) = 0b11_10000_10101_00100_11111_01010_00110`
 /// represents segments as
 /// [0b_10000, 0b_10101, 0b_00100, 0b_11111, 0b_01010, 0b_00110]
-pub struct Path(UInt) derive(Eq)
+pub struct Path(UInt32) derive(Eq)
 
 ///|
-const SEGMENT_LENGTH : Int = 5
+const SEGMENT_LENGTH : Int32 = 5
 
 ///|
-const INDEX_MASK : UInt = (1 << SEGMENT_LENGTH) - 1
+const INDEX_MASK : UInt32 = (1 << SEGMENT_LENGTH) - 1
 
 ///|
-const SEGMENT_NUM : Int = 32 / SEGMENT_LENGTH
+const SEGMENT_NUM : Int32 = 32 / SEGMENT_LENGTH
 
 ///|
-const HEAD_TAG : UInt = 0xffffffffU << (SEGMENT_LENGTH * SEGMENT_NUM)
+const HEAD_TAG : UInt32 = 0xffffffffU << (SEGMENT_LENGTH * SEGMENT_NUM)
 
 ///|
 /// Creates a Path using the lowest (SEGMENT_LENGTH * SEGMENT_NUM)
@@ -47,7 +47,7 @@ pub fn[A : Hash] of(key : A) -> Path {
 
 ///|
 /// If SEGMENT_LENGTH == 5, MAX_TAIL == 0b11_11111
-const MAX_TAIL : UInt = 0xffffffffU >> (SEGMENT_LENGTH * (SEGMENT_NUM - 1))
+const MAX_TAIL : UInt32 = 0xffffffffU >> (SEGMENT_LENGTH * (SEGMENT_NUM - 1))
 
 ///|
 /// Returns if at most one index segment remains in the path. This also holds
@@ -59,21 +59,21 @@ pub fn Path::is_last(self : Path) -> Bool {
 
 ///|
 /// Push the given `idx` as the last segment to `self`.
-pub fn Path::push(self : Path, idx : Int) -> Path {
+pub fn Path::push(self : Path, idx : Int32) -> Path {
   let Path(self) = self
   (self << SEGMENT_LENGTH) | idx.reinterpret_as_uint()
 }
 
 ///|
 /// The last segment of `self`.
-pub fn Path::idx(self : Path) -> Int {
+pub fn Path::idx(self : Path) -> Int32 {
   let Path(self) = self
   (self & INDEX_MASK).reinterpret_as_int()
 }
 
 ///|
 /// Returns the segment at `depth` without consuming the path.
-pub fn Path::idx_at(self : Path, depth : Int) -> Int {
+pub fn Path::idx_at(self : Path, depth : Int32) -> Int32 {
   let Path(self) = self
   ((self >> (SEGMENT_LENGTH * depth)) & INDEX_MASK).reinterpret_as_int()
 }
@@ -87,7 +87,7 @@ pub fn Path::next(self : Path) -> Path {
 
 ///|
 /// Removes `depth` segments from the path.
-pub fn Path::advance(self : Path, depth : Int) -> Path {
+pub fn Path::advance(self : Path, depth : Int32) -> Path {
   let Path(self) = self
   self >> (SEGMENT_LENGTH * depth)
 }

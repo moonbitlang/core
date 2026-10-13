@@ -21,7 +21,7 @@
 /// so insertions collide heavily and deterministically (independent of the
 /// runtime hash seed, which is randomized on some targets). This forces the
 /// Robin Hood push-away path to run regardless of platform.
-priv struct Collide(Int) derive(Eq)
+priv struct Collide(Int32) derive(Eq)
 
 ///|
 impl Hash for Collide with fn hash(self) {
@@ -39,7 +39,7 @@ impl Hash for Collide with fn hash_combine(self, hasher) {
 test "set into a half-full map triggers robin hood displacement" {
   // a large capacity keeps the map below the grow threshold while the
   // collision-heavy keys force entries to be pushed away
-  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
+  let m : @hashmap.HashMap[Collide, Int32] = HashMap([], capacity=512)
   for i in 0..<240 {
     m.set(Collide(i), i * 10)
   }
@@ -56,7 +56,7 @@ test "set into a half-full map triggers robin hood displacement" {
 
 ///|
 test "update inserts, modifies and removes through the probe chain" {
-  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
+  let m : @hashmap.HashMap[Collide, Int32] = HashMap([], capacity=512)
   // insert many colliding keys via update (f(None) -> Some) to force displacement
   for i in 0..<240 {
     m.update(Collide(i), v => {
@@ -87,7 +87,7 @@ test "update inserts, modifies and removes through the probe chain" {
 
 ///|
 test "update_or_default inserts and modifies through the probe chain" {
-  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
+  let m : @hashmap.HashMap[Collide, Int32] = HashMap([], capacity=512)
   for i in 0..<240 {
     m.update_or_default(Collide(i), 1, x => x + 1)
   }
@@ -112,7 +112,7 @@ fn bytes_of(s : String) -> Bytes {
 
 ///|
 test "get_from_bytes and get_from_string miss after probing" {
-  let bytes_map : @hashmap.HashMap[Bytes, Int] = HashMap([], capacity=64)
+  let bytes_map : @hashmap.HashMap[Bytes, Int32] = HashMap([], capacity=64)
   for i in 0..<28 {
     bytes_map.set(bytes_of("key\{i}"), i)
   }
@@ -121,7 +121,7 @@ test "get_from_bytes and get_from_string miss after probing" {
   for i in 0..<12 {
     @debug.assert_eq(bytes_map.get_from_bytes(bytes_of("absent\{i}")), None)
   }
-  let str_map : @hashmap.HashMap[String, Int] = HashMap([], capacity=64)
+  let str_map : @hashmap.HashMap[String, Int32] = HashMap([], capacity=64)
   for i in 0..<28 {
     str_map.set("k\{i}", i)
   }

@@ -14,11 +14,11 @@
 
 ///|
 #cfg(target="wasm")
-fn runtime_wasm_exit(code : Int) -> Unit = "wasi_snapshot_preview1" "proc_exit"
+fn runtime_wasm_exit(code : Int32) -> Unit = "wasi_snapshot_preview1" "proc_exit"
 
 ///|
 #cfg(target="wasm-gc")
-fn runtime_wasm_exit(code : Int) -> Unit = "__moonbit_sys_unstable" "exit"
+fn runtime_wasm_exit(code : Int32) -> Unit = "__moonbit_sys_unstable" "exit"
 
 ///|
 #cfg(any(target="wasm", target="wasm-gc"))

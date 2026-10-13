@@ -15,10 +15,10 @@
 // Code generated from Go's internal/strconv/pow10tab.go. DO NOT EDIT.
 
 ///|
-const EISEL_LEMIRE_POW10_MIN : Int = -348
+const EISEL_LEMIRE_POW10_MIN : Int32 = -348
 
 ///|
-const EISEL_LEMIRE_POW10_MAX : Int = 347
+const EISEL_LEMIRE_POW10_MAX : Int32 = 347
 
 ///|
 // Flat pairs of high and low UInt64 limbs. Each pair is a 128-bit mantissa

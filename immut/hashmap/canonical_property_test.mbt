@@ -28,7 +28,7 @@
 ///|
 /// Keys whose hash lives only in path segment 3 (bits 10..=14): all keys
 /// share segments 1-2 and diverge — or fully collide — at mid-trie depth.
-priv struct MidDepthKey(Int) derive(Eq)
+priv struct MidDepthKey(Int32) derive(Eq)
 
 ///|
 impl Hash for MidDepthKey with fn hash(self) {
@@ -42,7 +42,7 @@ impl Hash for MidDepthKey with fn hash_combine(self, hasher) {
 
 ///|
 /// Keys that all share the one and only collision bucket.
-priv struct ZeroHashKey(Int) derive(Eq)
+priv struct ZeroHashKey(Int32) derive(Eq)
 
 ///|
 impl Hash for ZeroHashKey with fn hash(_) {
@@ -56,7 +56,7 @@ impl Hash for ZeroHashKey with fn hash_combine(_, hasher) {
 
 ///|
 /// Replace-or-append, mirroring `HashMap::add`.
-fn model_add(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
+fn model_add(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
       model[i] = (key, value)
@@ -67,7 +67,7 @@ fn model_add(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
 }
 
 ///|
-fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
+fn model_remove(model : Array[(Int32, Int32)], key : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
       let _ = model.remove(i)
@@ -77,7 +77,7 @@ fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
 }
 
 ///|
-fn model_lookup(model : Array[(Int, Int)], key : Int) -> Int? {
+fn model_lookup(model : Array[(Int32, Int32)], key : Int32) -> Int32? {
   for kv in model {
     if kv.0 == key {
       return Some(kv.1)
@@ -92,12 +92,12 @@ fn model_lookup(model : Array[(Int, Int)], key : Int) -> Int? {
 /// `un` projects a key back to the underlying `Int` (for iteration
 /// comparison against the model).
 fn[K : Eq + Hash] canonical_after_ops(
-  mk : (Int) -> K,
-  un : (K) -> Int,
-  ops : Array[Int],
+  mk : (Int32) -> K,
+  un : (K) -> Int32,
+  ops : Array[Int32],
 ) -> Bool {
-  let model : Array[(Int, Int)] = []
-  let mut hm : @hashmap.HashMap[K, Int] = @hashmap.new()
+  let model : Array[(Int32, Int32)] = []
+  let mut hm : @hashmap.HashMap[K, Int32] = @hashmap.new()
   for op in ops {
     let n = op & 0x7fffffff
     let key = n / 8 % 16
@@ -120,7 +120,7 @@ fn[K : Eq + Hash] canonical_after_ops(
       op_code => {
         // A second map derived from a slice of the current content plus
         // one possibly-fresh key, built canonically via `from_iter`.
-        let other_model : Array[(Int, Int)] = []
+        let other_model : Array[(Int32, Int32)] = []
         for kv in model {
           if (kv.0 + key) % 3 != 0 {
             model_add(other_model, kv.0, kv.1 + 1)
@@ -132,7 +132,7 @@ fn[K : Eq + Hash] canonical_after_ops(
         )
         // The key's parity picks between the plain and the `_with`
         // flavor of the merge, so both trie walks get exercised.
-        let merge = (x : Int, y : Int) => x * 2 + y
+        let merge = (x : Int32, y : Int32) => x * 2 + y
         match op_code {
           5 =>
             if key % 2 == 0 {
@@ -222,7 +222,7 @@ fn[K : Eq + Hash] canonical_after_ops(
   }
   // Insertion-order independence: adding the final content in reverse
   // order must reproduce the exact structure.
-  let mut reversed : @hashmap.HashMap[K, Int] = @hashmap.new()
+  let mut reversed : @hashmap.HashMap[K, Int32] = @hashmap.new()
   for i in 0..<model.length() {
     let kv = model[model.length() - 1 - i]
     reversed = reversed.add(mk(kv.0), kv.1)
@@ -232,35 +232,35 @@ fn[K : Eq + Hash] canonical_after_ops(
 
 ///|
 test "quickcheck: canonical after every op (distinct hashes)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => n, k => k, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (first-segment collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => CollidingKey(n), k => k.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (mid-depth collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => MidDepthKey(n), k => k.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (maximum-depth collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => DeepKey(n), k => k.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (single collision bucket)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => ZeroHashKey(n), k => k.0, ops)
   })
 }
@@ -268,9 +268,9 @@ test "quickcheck: canonical after every op (single collision bucket)" {
 ///|
 /// Build a map from an `add` stream over the 16-key universe.
 fn[K : Eq + Hash] build_map(
-  mk : (Int) -> K,
-  xs : Array[Int],
-) -> @hashmap.HashMap[K, Int] {
+  mk : (Int32) -> K,
+  xs : Array[Int32],
+) -> @hashmap.HashMap[K, Int32] {
   let mut m = @hashmap.new()
   for x in xs {
     let n = x & 0x7fffffff
@@ -284,14 +284,14 @@ fn[K : Eq + Hash] build_map(
 /// which canonicity makes a valid way to compare independently computed
 /// results.
 fn[K : Eq + Hash] map_laws(
-  mk : (Int) -> K,
-  input : (Array[Int], Array[Int], Array[Int]),
+  mk : (Int32) -> K,
+  input : (Array[Int32], Array[Int32], Array[Int32]),
 ) -> Bool {
   let (xs, ys, zs) = input
   let a = build_map(mk, xs)
   let b = build_map(mk, ys)
   let c = build_map(mk, zs)
-  let empty : @hashmap.HashMap[K, Int] = @hashmap.new()
+  let empty : @hashmap.HashMap[K, Int32] = @hashmap.new()
   // union: associative, idempotent, empty is the identity
   guard a.union(b).union(c) == a.union(b.union(c)) else { return false }
   guard a.union(a) == a else { return false }
@@ -331,14 +331,14 @@ fn[K : Eq + Hash] map_laws(
 
 ///|
 test "quickcheck: merge-operation laws (distinct hashes)" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Array[Int32])) => {
     map_laws(n => n, input)
   })
 }
 
 ///|
 test "quickcheck: merge-operation laws (maximum-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Array[Int32])) => {
     map_laws(n => DeepKey(n), input)
   })
 }

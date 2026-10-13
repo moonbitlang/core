@@ -22,6 +22,6 @@ pub impl[K : @debug.Debug] @debug.Debug for HashSet[K] with fn to_repr(self) {
 
 ///|
 test "Debug for HashSet" {
-  let hs : HashSet[Int] = HashSet([3])
+  let hs : HashSet[Int32] = HashSet([3])
   @debug.debug_inspect(hs, content="<HashSet: [3]>")
 }

@@ -28,7 +28,7 @@ trait Range {
 }
 
 ///|
-impl Range for Int with fn range(lo, hi) {
+impl Range for Int32 with fn range(lo, hi) {
   { lo, hi, }
 }
 

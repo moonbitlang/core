@@ -18,7 +18,7 @@
 
 ///|
 priv struct SameRankValue {
-  rank : Int
+  rank : Int32
   label : String
 }
 
@@ -38,7 +38,7 @@ impl Compare for SameRankValue with fn compare(self, other) {
 
 ///|
 test "new" {
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   debug_inspect(
     empty,
     content=(
@@ -49,7 +49,7 @@ test "new" {
 
 ///|
 test "default" {
-  let set : @sorted_set.SortedSet[Int] = Default::default()
+  let set : @sorted_set.SortedSet[Int32] = Default::default()
   debug_inspect(
     set,
     content=(
@@ -530,7 +530,7 @@ test "min" {
 
 ///|
 test "min_option" {
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   debug_inspect(empty.min_option(), content="None")
   debug_inspect(
     @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
@@ -545,7 +545,7 @@ test "max" {
 
 ///|
 test "max_option" {
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   debug_inspect(empty.max_option(), content="None")
   debug_inspect(
     @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
@@ -556,7 +556,7 @@ test "max_option" {
 ///|
 test "is_empty" {
   inspect(
-    (SortedSet([]) : @sorted_set.SortedSet[Int]).is_empty(),
+    (SortedSet([]) : @sorted_set.SortedSet[Int32]).is_empty(),
     content="true",
   )
   inspect(@sorted_set.SortedSet([1]).is_empty(), content="false")
@@ -571,7 +571,7 @@ test "to_string" {
     ),
   )
   debug_inspect(
-    (SortedSet([]) : @sorted_set.SortedSet[Int]),
+    (SortedSet([]) : @sorted_set.SortedSet[Int32]),
     content=(
       #|<SortedSet: []>
     ),
@@ -580,7 +580,7 @@ test "to_string" {
 
 ///|
 test "equal" {
-  let xss : Array[@sorted_set.SortedSet[Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_set.SortedSet[Int32]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       if xs.to_array() == ys.to_array() {
@@ -594,7 +594,7 @@ test "equal" {
 
 ///|
 test "compare" {
-  let xss : Array[@sorted_set.SortedSet[Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_set.SortedSet[Int32]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       @test.assert_eq(
@@ -610,12 +610,12 @@ test "to_json" {
   @json.json_inspect(@sorted_set.SortedSet([5, 2, 4, 3, 1]), content=[
     1, 2, 3, 4, 5,
   ])
-  @json.json_inspect((SortedSet([]) : @sorted_set.SortedSet[Int]), content=[])
+  @json.json_inspect((SortedSet([]) : @sorted_set.SortedSet[Int32]), content=[])
 }
 
 ///|
 test "from_json" {
-  for xs in (@quickcheck.samples(20) : Array[@sorted_set.SortedSet[Int]]) {
+  for xs in (@quickcheck.samples(20) : Array[@sorted_set.SortedSet[Int32]]) {
     @test.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
@@ -623,7 +623,7 @@ test "from_json" {
 ///|
 test "from_json via @json.from_json" {
   let json : Json = [1, 2, 3]
-  let set : @sorted_set.SortedSet[Int] = @json.from_json(json)
+  let set : @sorted_set.SortedSet[Int32] = @json.from_json(json)
   debug_inspect(
     set,
     content=(
@@ -635,7 +635,7 @@ test "from_json via @json.from_json" {
 ///|
 test "from_json rejects non-array" {
   let bad_json : Json = { "a": 1 }
-  try (@json.from_json(bad_json) : @sorted_set.SortedSet[Int]) catch {
+  try (@json.from_json(bad_json) : @sorted_set.SortedSet[Int32]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")
@@ -649,7 +649,7 @@ test "iter" {
     s += x.to_string()
   })
   inspect(s, content="123456789")
-  let empty : @sorted_set.SortedSet[Int] = SortedSet([])
+  let empty : @sorted_set.SortedSet[Int32] = SortedSet([])
   s = ""
   empty.each(x => s += x.to_string())
   inspect(s, content="")
@@ -841,7 +841,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter([||])
+  let pq : @sorted_set.SortedSet[Int32] = @sorted_set.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -853,7 +853,7 @@ test "from_iter empty iter" {
 ///|
 test "size" {
   // Empty set should have size 0
-  let empty_set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let empty_set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   inspect(empty_set.length(), content="0")
 
   // Single element set should have size 1
@@ -920,7 +920,7 @@ test "@sorted_set.symmetric_difference/overlapping" {
 
 ///|
 test "range on empty set" {
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   let count = for _ in empty.range(low=1, high=5); count = 0 {
     continue count + 1
   } nobreak {

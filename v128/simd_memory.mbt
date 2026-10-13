@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-fn load_u16_le(bytes : FixedArray[Byte], offset : Int) -> UInt16 {
+fn load_u16_le(bytes : FixedArray[Byte], offset : Int32) -> UInt16 {
   bytes.unsafe_get(offset).to_uint16() |
   (bytes.unsafe_get(offset + 1).to_uint16() << 8)
 }
 
 ///|
-fn load_u16x4_le(str : String, offset : Int) -> UInt64 {
+fn load_u16x4_le(str : String, offset : Int32) -> UInt64 {
   for i in 0..<4; word = UInt64(0) {
     continue word | (str.unsafe_get(offset + i).to_uint64() << (16 * i))
   } nobreak {
@@ -28,7 +28,7 @@ fn load_u16x4_le(str : String, offset : Int) -> UInt64 {
 }
 
 ///|
-fn load_u32_le(bytes : FixedArray[Byte], offset : Int) -> UInt {
+fn load_u32_le(bytes : FixedArray[Byte], offset : Int32) -> UInt32 {
   bytes.unsafe_get(offset).to_uint() |
   (bytes.unsafe_get(offset + 1).to_uint() << 8) |
   (bytes.unsafe_get(offset + 2).to_uint() << 16) |
@@ -36,7 +36,7 @@ fn load_u32_le(bytes : FixedArray[Byte], offset : Int) -> UInt {
 }
 
 ///|
-fn load_u64_le(bytes : FixedArray[Byte], offset : Int) -> UInt64 {
+fn load_u64_le(bytes : FixedArray[Byte], offset : Int32) -> UInt64 {
   bytes.unsafe_get(offset).to_uint64() |
   (bytes.unsafe_get(offset + 1).to_uint64() << 8) |
   (bytes.unsafe_get(offset + 2).to_uint64() << 16) |
@@ -48,13 +48,21 @@ fn load_u64_le(bytes : FixedArray[Byte], offset : Int) -> UInt64 {
 }
 
 ///|
-fn store_u16_le(bytes : FixedArray[Byte], offset : Int, value : UInt16) -> Unit {
+fn store_u16_le(
+  bytes : FixedArray[Byte],
+  offset : Int32,
+  value : UInt16,
+) -> Unit {
   bytes.unsafe_set(offset, value.to_byte())
   bytes.unsafe_set(offset + 1, (value >> 8).to_byte())
 }
 
 ///|
-fn store_u32_le(bytes : FixedArray[Byte], offset : Int, value : UInt) -> Unit {
+fn store_u32_le(
+  bytes : FixedArray[Byte],
+  offset : Int32,
+  value : UInt32,
+) -> Unit {
   bytes.unsafe_set(offset, value.to_byte())
   bytes.unsafe_set(offset + 1, (value >> 8).to_byte())
   bytes.unsafe_set(offset + 2, (value >> 16).to_byte())
@@ -62,7 +70,11 @@ fn store_u32_le(bytes : FixedArray[Byte], offset : Int, value : UInt) -> Unit {
 }
 
 ///|
-fn store_u64_le(bytes : FixedArray[Byte], offset : Int, value : UInt64) -> Unit {
+fn store_u64_le(
+  bytes : FixedArray[Byte],
+  offset : Int32,
+  value : UInt64,
+) -> Unit {
   bytes.unsafe_set(offset, value.to_byte())
   bytes.unsafe_set(offset + 1, (value >> 8).to_byte())
   bytes.unsafe_set(offset + 2, (value >> 16).to_byte())
@@ -99,7 +111,7 @@ pub fn i8x16_relaxed_swizzle(value : V128, indices : V128) -> V128 {
 }
 
 ///|
-fn shuffle_lane(value : V128, other : V128, index : Int) -> Byte {
+fn shuffle_lane(value : V128, other : V128, index : Int32) -> Byte {
   if index < 16 {
     u8_lane(value, index)
   } else {
@@ -115,22 +127,22 @@ fn shuffle_lane(value : V128, other : V128, index : Int) -> Byte {
 pub fn i8x16_shuffle(
   value : V128,
   other : V128,
-  i0 : Int,
-  i1 : Int,
-  i2 : Int,
-  i3 : Int,
-  i4 : Int,
-  i5 : Int,
-  i6 : Int,
-  i7 : Int,
-  i8 : Int,
-  i9 : Int,
-  i10 : Int,
-  i11 : Int,
-  i12 : Int,
-  i13 : Int,
-  i14 : Int,
-  i15 : Int,
+  i0 : Int32,
+  i1 : Int32,
+  i2 : Int32,
+  i3 : Int32,
+  i4 : Int32,
+  i5 : Int32,
+  i6 : Int32,
+  i7 : Int32,
+  i8 : Int32,
+  i9 : Int32,
+  i10 : Int32,
+  i11 : Int32,
+  i12 : Int32,
+  i13 : Int32,
+  i14 : Int32,
+  i15 : Int32,
 ) -> V128 {
   pack_u8x16_by(fn(i) {
     match i {
@@ -160,7 +172,7 @@ pub fn i8x16_shuffle(
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   make(load_u64_le(bytes, offset), load_u64_le(bytes, offset + 8))
 }
 
@@ -172,7 +184,7 @@ pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(str)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load_i16x8(str : String, offset : Int) -> V128 {
+pub fn v128_load_i16x8(str : String, offset : Int32) -> V128 {
   make(load_u16x4_le(str, offset), load_u16x4_le(str, offset + 4))
 }
 
@@ -182,7 +194,7 @@ pub fn v128_load_i16x8(str : String, offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(sign_extend_u8x4_to_u16x4(value), sign_extend_u8x4_to_u16x4(value >> 32))
 }
@@ -193,7 +205,7 @@ pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(widen_u8x4_to_u16x4(value), widen_u8x4_to_u16x4(value >> 32))
 }
@@ -204,7 +216,7 @@ pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(
     sign_extend_u16x2_to_u32x2(value),
@@ -218,7 +230,7 @@ pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(widen_u16x2_to_u32x2(value), widen_u16x2_to_u32x2(value >> 32))
 }
@@ -229,7 +241,7 @@ pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(sign_extend_u32_to_u64(value), sign_extend_u32_to_u64(value >> 32))
 }
@@ -240,7 +252,7 @@ pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   let value = load_u64_le(bytes, offset)
   make(value & 0xffffffffUL, value >> 32)
 }
@@ -251,7 +263,7 @@ pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load8_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load8_splat(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   i8x16_splat(bytes.unsafe_get(offset))
 }
 
@@ -261,7 +273,7 @@ pub fn v128_load8_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load16_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load16_splat(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   i16x8_splat(load_u16_le(bytes, offset))
 }
 
@@ -271,7 +283,7 @@ pub fn v128_load16_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load32_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load32_splat(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   i32x4_splat(load_u32_le(bytes, offset))
 }
 
@@ -281,7 +293,7 @@ pub fn v128_load32_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load64_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load64_splat(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   i64x2_splat(load_u64_le(bytes, offset))
 }
 
@@ -291,7 +303,7 @@ pub fn v128_load64_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load32_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load32_zero(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   i32x4_const(load_u32_le(bytes, offset), 0, 0, 0)
 }
 
@@ -301,7 +313,7 @@ pub fn v128_load32_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_load64_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
+pub fn v128_load64_zero(bytes : FixedArray[Byte], offset : Int32) -> V128 {
   make(load_u64_le(bytes, offset), 0UL)
 }
 
@@ -313,9 +325,9 @@ pub fn v128_load64_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #doc(hidden)
 pub fn v128_load8_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i8x16_replace_lane(value, bytes.unsafe_get(offset).to_uint(), lane)
 }
@@ -328,9 +340,9 @@ pub fn v128_load8_lane(
 #doc(hidden)
 pub fn v128_load16_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i16x8_replace_lane(value, load_u16_le(bytes, offset).to_uint(), lane)
 }
@@ -343,9 +355,9 @@ pub fn v128_load16_lane(
 #doc(hidden)
 pub fn v128_load32_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i32x4_replace_lane(value, load_u32_le(bytes, offset), lane)
 }
@@ -358,9 +370,9 @@ pub fn v128_load32_lane(
 #doc(hidden)
 pub fn v128_load64_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i64x2_replace_lane(value, load_u64_le(bytes, offset), lane)
 }
@@ -371,7 +383,11 @@ pub fn v128_load64_lane(
 #borrow(bytes)
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn v128_store(bytes : FixedArray[Byte], offset : Int, value : V128) -> Unit {
+pub fn v128_store(
+  bytes : FixedArray[Byte],
+  offset : Int32,
+  value : V128,
+) -> Unit {
   store_u64_le(bytes, offset, lo(value))
   store_u64_le(bytes, offset + 8, hi(value))
 }
@@ -384,9 +400,9 @@ pub fn v128_store(bytes : FixedArray[Byte], offset : Int, value : V128) -> Unit 
 #doc(hidden)
 pub fn v128_store8_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> Unit {
   bytes.unsafe_set(offset, u8_lane(value, lane))
 }
@@ -399,9 +415,9 @@ pub fn v128_store8_lane(
 #doc(hidden)
 pub fn v128_store16_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> Unit {
   store_u16_le(bytes, offset, u16_lane(value, lane))
 }
@@ -414,9 +430,9 @@ pub fn v128_store16_lane(
 #doc(hidden)
 pub fn v128_store32_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> Unit {
   store_u32_le(bytes, offset, u32_lane(value, lane))
 }
@@ -429,9 +445,9 @@ pub fn v128_store32_lane(
 #doc(hidden)
 pub fn v128_store64_lane(
   bytes : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : V128,
-  lane : Int,
+  lane : Int32,
 ) -> Unit {
   store_u64_le(bytes, offset, u64_lane(value, lane))
 }

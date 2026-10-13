@@ -18,7 +18,7 @@
 // move when the fallback changes.
 
 ///|
-fn string_find_adversary_needle(half : Int) -> String {
+fn string_find_adversary_needle(half : Int32) -> String {
   String::make(half, 'a') + "Z" + String::make(half - 1, 'a')
 }
 

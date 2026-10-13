@@ -14,7 +14,7 @@
 
 ///|
 test "panic get on empty tree should panic" {
-  let tree : Tree[Int] = Empty
+  let tree : Tree[Int32] = Empty
   tree.get(0, 5) |> ignore
 }
 

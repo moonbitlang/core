@@ -37,13 +37,17 @@
 /// ```
 struct Buffer {
   mut data : FixedArray[Byte]
-  mut len : Int
+  mut len : Int32
 }
 
 ///|
 /// Compute the next capacity without allocating. Since appends never shrink the
 /// buffer, `required < len` means the required-size calculation overflowed.
-fn buffer_growth_capacity(current : Int, len : Int, required : Int) -> Int {
+fn buffer_growth_capacity(
+  current : Int32,
+  len : Int32,
+  required : Int32,
+) -> Int32 {
   if required < len {
     abort("Buffer capacity overflow")
   }
@@ -66,7 +70,7 @@ fn buffer_growth_capacity(current : Int, len : Int, required : Int) -> Int {
 /// their fast path and enter here only when growth or overflow handling is
 /// needed. The buffer invariant `0 <= len <= data.length()` lets fixed-size
 /// appends compare against the remaining capacity without overflowing.
-fn Buffer::grow(self : Buffer, required : Int) -> Unit {
+fn Buffer::grow(self : Buffer, required : Int32) -> Unit {
   let new_capacity = buffer_growth_capacity(
     self.data.length(),
     self.len,
@@ -99,7 +103,7 @@ fn Buffer::grow(self : Buffer, required : Int) -> Unit {
 ///   inspect(buf.length(), content="8") // each char takes 2 bytes in UTF-16
 /// }
 /// ```
-pub fn Buffer::length(self : Buffer) -> Int {
+pub fn Buffer::length(self : Buffer) -> Int32 {
   self.len
 }
 
@@ -149,7 +153,7 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 /// }
 /// ```
 #deprecated("use `Buffer()` instead (with `Buffer` in scope via the prelude)")
-pub fn new(size_hint? : Int = 0) -> Buffer {
+pub fn new(size_hint~ : Int32 = 0) -> Buffer {
   Buffer(size_hint~)
 }
 
@@ -173,7 +177,7 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 ///   inspect(buf.length(), content="8")
 /// }
 /// ```
-pub fn Buffer::Buffer(size_hint? : Int = 0) -> Buffer {
+pub fn Buffer::Buffer(size_hint~ : Int32 = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, b'\x00')
   { data, len: 0, }
@@ -412,7 +416,7 @@ pub fn Buffer::write_int64_le(self : Buffer, value : Int64) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
+pub fn Buffer::write_uint_be(self : Buffer, value : UInt32) -> Unit {
   if self.data.length() - self.len < 4 {
     self.grow(self.len + 4)
   }
@@ -450,7 +454,7 @@ pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
+pub fn Buffer::write_uint_le(self : Buffer, value : UInt32) -> Unit {
   if self.data.length() - self.len < 4 {
     self.grow(self.len + 4)
   }
@@ -487,7 +491,7 @@ pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_int_be(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::write_int_be(self : Buffer, value : Int32) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
@@ -510,7 +514,7 @@ pub fn Buffer::write_int_be(self : Buffer, value : Int) -> Unit {
 ///   inspect(buf.contents(), content="b\"\\xff\\xff\\xff\\xff\"")
 /// }
 /// ```
-pub fn Buffer::write_int_le(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::write_int_le(self : Buffer, value : Int32) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }
 

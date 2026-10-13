@@ -15,7 +15,7 @@
 ///|
 struct StringBuilder {
   mut data : FixedArray[UInt16]
-  mut len : Int
+  mut len : Int32
 }
 
 ///|
@@ -30,7 +30,7 @@ struct StringBuilder {
 /// Returns a new `StringBuilder` instance with the specified initial capacity.
 ///
 #alias(new, deprecated="Use `StringBuilder()` instead")
-pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
+pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
   let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
   { data, len: 0, }
@@ -47,10 +47,10 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 /// builder, `required < len` means the required-size calculation overflowed.
 #inline
 fn stringbuilder_growth_capacity(
-  current : Int,
-  len : Int,
-  required : Int,
-) -> Int {
+  current : Int32,
+  len : Int32,
+  required : Int32,
+) -> Int32 {
   if required < len {
     abort("StringBuilder capacity overflow")
   }
@@ -71,7 +71,7 @@ fn stringbuilder_growth_capacity(
 /// their fast path and enter here only when growth or overflow handling is
 /// needed. The builder invariant `0 <= len <= data.length()` lets fixed-size
 /// appends compare against the remaining capacity without overflowing.
-fn StringBuilder::grow(self : StringBuilder, required : Int) -> Unit {
+fn StringBuilder::grow(self : StringBuilder, required : Int32) -> Unit {
   let new_capacity = stringbuilder_growth_capacity(
     self.data.length(),
     self.len,
@@ -90,10 +90,10 @@ fn StringBuilder::grow(self : StringBuilder, required : Int) -> Unit {
 #cfg(not(target="wasm"))
 fn FixedArray::unsafe_blit_from_string(
   self : FixedArray[UInt16],
-  dst_offset : Int,
+  dst_offset : Int32,
   str : String,
-  str_offset : Int,
-  len : Int,
+  str_offset : Int32,
+  len : Int32,
 ) -> Unit {
   let end_str_offset = str_offset + len
   for i = str_offset, j = dst_offset; i < end_str_offset; i = i + 1, j = j + 1 {
@@ -105,10 +105,10 @@ fn FixedArray::unsafe_blit_from_string(
 #cfg(target="wasm")
 fn FixedArray::unsafe_blit_from_string(
   self : FixedArray[UInt16],
-  dst_offset : Int,
+  dst_offset : Int32,
   str : String,
-  str_offset : Int,
-  len : Int,
+  str_offset : Int32,
+  len : Int32,
 ) -> Unit {
   if len >= 8 {
     return self.unsafe_blit_from_string_simd(dst_offset, str, str_offset, len)
@@ -123,10 +123,10 @@ fn FixedArray::unsafe_blit_from_string(
 #cfg(target="wasm")
 fn FixedArray::unsafe_blit_from_string_simd(
   self : FixedArray[UInt16],
-  dst_offset : Int,
+  dst_offset : Int32,
   str : String,
-  str_offset : Int,
-  len : Int,
+  str_offset : Int32,
+  len : Int32,
 ) -> Unit {
   let vector_len = len - (len & 7)
   // Callers copy into separate storage. A builder grows before appending to

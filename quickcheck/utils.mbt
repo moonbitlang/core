@@ -14,7 +14,7 @@
 
 ///|
 /// Generates an array of `x` random sample values for property-based testing.
-pub fn[X : Arbitrary] samples(x : Int) -> Array[X] {
+pub fn[X : Arbitrary] samples(x : Int32) -> Array[X] {
   let rs = @splitmix.RandomState()
   let array = Array::make(x, X::arbitrary(0, rs))
   for i in 1..<x {

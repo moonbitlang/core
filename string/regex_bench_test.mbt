@@ -41,7 +41,7 @@ test "bench regex phone lines" (it : @bench.T) {
 
 ///|
 test "bench regex large pattern" (it : @bench.T) {
-  fn padded3(i : Int) -> String {
+  fn padded3(i : Int32) -> String {
     "\{i}".pad_start(3, '0')
   }
   fn make_large_pattern() -> String {

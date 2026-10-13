@@ -73,7 +73,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// This is because all the cells reference to the same object (the Array[Int] in this case).
 /// One should use makei() instead which creates an object for each index.
 #owned(elem)
-pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
+pub fn[T] Array::make(len : Int32, elem : T) -> Array[T] {
   let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, elem)
@@ -105,7 +105,10 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::makei(length : Int, f : (Int) -> T raise?) -> Array[T] raise? {
+pub fn[T] Array::makei(
+  length : Int32,
+  f : (Int32) -> T raise?,
+) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
@@ -129,7 +132,7 @@ pub fn[T] Array::makei(length : Int, f : (Int) -> T raise?) -> Array[T] raise? {
 ///
 /// NOTE: The capacity of an array may not be consistent across different backends
 /// and/or different versions of the MoonBit compiler/core.
-pub fn[T] Array::capacity(self : Array[T]) -> Int {
+pub fn[T] Array::capacity(self : Array[T]) -> Int32 {
   self.buffer().0.length()
 }
 
@@ -148,13 +151,13 @@ pub fn[T] Array::capacity(self : Array[T]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = [1, 2, 3]
+///   let arr : Array[Int32] = [1, 2, 3]
 ///   inspect(arr.unsafe_get(1), content="2")
 /// }
 /// ```
 ///
 #intrinsic("%array.unsafe_get")
-pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
+pub fn[T] Array::unsafe_get(self : Array[T], idx : Int32) -> T {
   self.buffer().unsafe_get(idx)
 }
 
@@ -175,14 +178,14 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = [1, 2, 3]
+///   let arr : Array[Int32] = [1, 2, 3]
 ///   inspect(arr[1], content="2")
 /// }
 /// ```
 ///
 #intrinsic("%array.get")
 #alias("_[_]")
-pub fn[T] Array::at(self : Array[T], index : Int) -> T {
+pub fn[T] Array::at(self : Array[T], index : Int32) -> T {
   let len = self.length()
   guard! index >= 0 && index < len
   self.buffer().unsafe_get(index)
@@ -210,7 +213,7 @@ pub fn[T] Array::at(self : Array[T], index : Int) -> T {
 /// }
 /// ```
 #intrinsic("%array.get_opt")
-pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
+pub fn[T] Array::get(self : Array[T], index : Int32) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
   Some(self.unsafe_get(index))
@@ -232,7 +235,7 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 /// ```
 #intrinsic("%array.unsafe_set")
 #owned(val)
-pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
+pub fn[T] Array::unsafe_set(self : Array[T], idx : Int32, val : T) -> Unit {
   self.buffer().unsafe_set(idx, val)
 }
 
@@ -262,7 +265,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 #intrinsic("%array.set")
 #alias("_[_]=_")
 #owned(value)
-pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
+pub fn[T] Array::set(self : Array[T], index : Int32, value : T) -> Unit {
   let len = self.length()
   guard! index >= 0 && index < len
   self.buffer().unsafe_set(index, value)
@@ -477,7 +480,7 @@ pub fn[T] Array::rev_each(
 #locals(f)
 pub fn[T] Array::rev_eachi(
   self : Array[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
@@ -500,7 +503,7 @@ pub fn[T] Array::rev_eachi(
 #locals(f)
 pub fn[T] Array::eachi(
   self : Array[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -638,7 +641,7 @@ pub fn[T] Array::map_in_place(
 #locals(f)
 pub fn[T, U] Array::mapi(
   self : Array[T],
-  f : (Int, T) -> U raise?,
+  f : (Int32, T) -> U raise?,
 ) -> Array[U] raise? {
   if self.is_empty() {
     return []
@@ -665,7 +668,7 @@ pub fn[T, U] Array::mapi(
 #alias(mapi_inplace, deprecated)
 pub fn[T] Array::mapi_in_place(
   self : Array[T],
-  f : (Int, T) -> T raise?,
+  f : (Int32, T) -> T raise?,
 ) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
@@ -721,7 +724,7 @@ pub fn[T] Array::filter(
 ///
 /// ```mbt check
 /// test {
-///   let empty : Array[Int] = []
+///   let empty : Array[Int32] = []
 ///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
 ///   inspect(non_empty.is_empty(), content="false")
@@ -746,7 +749,7 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.rev_in_place()
 ///   debug_inspect(arr, content="[5, 4, 3, 2, 1]")
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   arr.rev_in_place()
 ///   debug_inspect(arr, content="[]")
 /// }
@@ -804,7 +807,10 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// ```
 #deprecated("Use ArrayView instead, e.g, (a.exact_view(end=index), a.exact_view(start=index))")
 #doc(hidden)
-pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
+pub fn[T] Array::split_at(
+  self : Array[T],
+  index : Int32,
+) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
     abort(
@@ -848,7 +854,7 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.contains(3), content="true")
 ///   inspect(arr.contains(6), content="false")
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   inspect(arr.contains(1), content="false")
 /// }
 /// ```
@@ -873,7 +879,7 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 ///   inspect(arr.count(4), content="0")
 /// }
 /// ```
-pub fn[T : Eq] Array::count(self : Array[T], value : T) -> Int {
+pub fn[T : Eq] Array::count(self : Array[T], value : T) -> Int32 {
   self[:].count(value)
 }
 
@@ -891,7 +897,7 @@ pub fn[T : Eq] Array::count(self : Array[T], value : T) -> Int {
 pub fn[T] Array::count_if(
   self : Array[T],
   f : (T) -> Bool raise?,
-) -> Int raise? {
+) -> Int32 raise? {
   for v in self; count = 0 {
     if f(v) {
       continue count + 1
@@ -953,7 +959,7 @@ pub fn[T : Eq] Array::has_prefix(
 ///   inspect(arr.has_suffix([4, 5]), content="true")
 ///   inspect(arr.has_suffix([3, 4]), content="false")
 ///   inspect(arr.has_suffix([]), content="true")
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   inspect(arr.has_suffix([]), content="true")
 ///   inspect(arr.has_suffix([1]), content="false")
 /// }
@@ -1041,7 +1047,7 @@ pub fn[T : Eq] Array::strip_suffix(
 ///   debug_inspect(arr.search(5), content="None") // not found
 /// }
 /// ```
-pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
+pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int32? {
   self[:].search(value)
 }
 
@@ -1064,7 +1070,7 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 pub fn[T] Array::search_by(
   self : Array[T],
   f : (T) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   for i, v in self {
     if f(v) {
       break Some(i)
@@ -1102,7 +1108,7 @@ pub fn[T] Array::search_by(
 pub fn[T : Compare] Array::binary_search(
   self : Array[T],
   value : T,
-) -> Result[Int, Int] {
+) -> Result[Int32, Int32] {
   self[:].binary_search(value)
 }
 
@@ -1148,8 +1154,8 @@ pub fn[T : Compare] Array::binary_search(
 /// found
 pub fn[T] Array::binary_search_by(
   self : Array[T],
-  cmp : (T) -> Int raise?,
-) -> Result[Int, Int] raise? {
+  cmp : (T) -> Int32 raise?,
+) -> Result[Int32, Int32] raise? {
   self[:].binary_search_by(cmp)
 }
 
@@ -1174,7 +1180,7 @@ pub fn[T] Array::binary_search_by(
 ///   debug_inspect(arr, content="[3, 2, 1]")
 /// }
 /// ```
-pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
+pub fn[T] Array::swap(self : Array[T], i : Int32, j : Int32) -> Unit {
   if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
     index_out_of_bounds2(self.length(), i, j)
   }
@@ -1254,7 +1260,7 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
 /// }
 /// ```
 ///
-pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
+pub fn[T] Array::resize(self : Array[T], new_len : Int32, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
   }
@@ -1304,7 +1310,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 ///   @test.assert_eq(v, [3, 4, 3, 4])
 /// }
 /// ```
-pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
+pub fn[T] Array::repeat(self : Array[T], times : Int32) -> Array[T] {
   if times < 0 {
     abort("negative repeat count")
   }
@@ -1394,7 +1400,7 @@ pub fn[A, B] Array::rev_fold(
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   for i, x in self; acc = init {
     continue f(i, acc, x)
@@ -1419,7 +1425,7 @@ pub fn[A, B] Array::foldi(
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
   for i in len>..0; acc = init {
@@ -1449,7 +1455,7 @@ pub fn[A, B] Array::rev_foldi(
 ///   let arr = [1, 2, 2, 2, 3, 3]
 ///   arr.dedup()
 ///   debug_inspect(arr, content="[1, 2, 3]")
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   arr.dedup()
 ///   debug_inspect(arr, content="[]")
 /// }
@@ -1546,11 +1552,11 @@ pub fn[T] Array::extract_if(
 ///       #|[<ArrayView: [1, 2]>, <ArrayView: [3, 4]>, <ArrayView: [5]>]
 ///     ),
 ///   )
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   debug_inspect(arr.chunks(3), content="[]")
 /// }
 /// ```
-pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
+pub fn[T] Array::chunks(self : Array[T], size : Int32) -> Array[ArrayView[T]] {
   self[:].chunks(size)
 }
 
@@ -1583,7 +1589,7 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 ///       #|]
 ///     ),
 ///   )
-///   let v : Array[Int] = []
+///   let v : Array[Int32] = []
 ///   debug_inspect(v.chunk_by((x, y) => x <= y), content="[]")
 /// }
 /// ```
@@ -1643,7 +1649,7 @@ pub fn[T] Array::chunk_by(
 ///   debug_inspect(arr.windows(3), content="[]")
 /// }
 /// ```
-pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
+pub fn[T] Array::windows(self : Array[T], size : Int32) -> Array[ArrayView[T]] {
   self[:].windows(size)
 }
 
@@ -1674,7 +1680,7 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// ```
 pub fn[T] Array::suffixes(
   self : Array[T],
-  include_empty? : Bool = false,
+  include_empty~ : Bool = false,
 ) -> Iter[ArrayView[T]] {
   self[:].suffixes(include_empty~)
 }
@@ -1804,7 +1810,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
+pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int32, A] {
   self[:].iter2()
 }
 
@@ -1817,7 +1823,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = []
+///   let arr : Array[Int32] = []
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }
@@ -1876,7 +1882,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 ///   debug_inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
-pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
+pub fn[A] Array::truncate(self : Array[A], len : Int32) -> Unit {
   guard len >= 0 && len < self.length() else { return }
   self.unsafe_truncate_to_length(len)
 }
@@ -1988,7 +1994,7 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 #locals(rand)
 pub fn[T] Array::shuffle_in_place(
   self : Array[T],
-  rand~ : (Int) -> Int,
+  rand~ : (Int32) -> Int32,
 ) -> Unit {
   let n = self.length()
   for i in n>..1 {
@@ -2010,14 +2016,14 @@ pub fn[T] Array::shuffle_in_place(
 /// ```mbt nocheck
 /// let arr = [1, 2, 3, 4, 5]
 ///
-/// fn rand(upper : Int) -> Int {
+/// fn rand(upper : Int32) -> Int32 {
 ///   let rng = @random.Rand()
 ///   rng.int(limit=upper)
 /// }
 ///
 /// let _shuffled = Array::shuffle(arr, rand~)
 /// ```
-pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
+pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int32) -> Int32) -> Array[T] {
   let new_arr = self.copy()
   Array::shuffle_in_place(new_arr, rand~)
   new_arr
@@ -2069,7 +2075,7 @@ pub fn[A, B] Array::filter_map(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   debug_inspect(arr.last(), content="Some(3)")
-///   let empty : Array[Int] = []
+///   let empty : Array[Int32] = []
 ///   debug_inspect(empty.last(), content="None")
 /// }
 /// ```
@@ -2224,6 +2230,6 @@ pub fn[A : ToStringView] Array::join(
 pub fn[T : Compare] Array::lexical_compare(
   self : Array[T],
   other : Array[T],
-) -> Int {
+) -> Int32 {
   self[:].lexical_compare(other)
 }

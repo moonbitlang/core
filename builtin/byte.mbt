@@ -147,7 +147,7 @@ pub impl Sub for Byte with fn sub(self : Byte, that : Byte) -> Byte {
 /// - A value less than 0 indicates that `byte1` is less than `byte2`.
 /// - A value of 0 indicates that `byte1` is equal to `byte2`.
 /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-pub impl Compare for Byte with fn compare(self : Byte, that : Byte) -> Int {
+pub impl Compare for Byte with fn compare(self : Byte, that : Byte) -> Int32 {
   self.to_int().compare(that.to_int())
 }
 
@@ -172,7 +172,7 @@ pub impl Compare for Byte with fn op_ge(x, y) {
 }
 
 ///|
-fn alphabet(x : Int) -> String {
+fn alphabet(x : Int32) -> String {
   match x {
     0 => "0"
     1 => "1"
@@ -305,7 +305,7 @@ pub impl BitXOr for Byte with fn lxor(self : Byte, that : Byte) -> Byte {
 /// - `byte` : The `Byte` value to be converted.
 ///
 /// Returns the `UInt` representation of the `Byte`.
-pub fn Byte::to_uint(self : Byte) -> UInt {
+pub fn Byte::to_uint(self : Byte) -> UInt32 {
   self.to_int().reinterpret_as_uint()
 }
 
@@ -347,7 +347,7 @@ pub fn Byte::to_uint64(self : Byte) -> UInt64 {
 ///   inspect(b.popcnt(), content="4")
 /// }
 /// ```
-pub fn Byte::popcnt(self : Byte) -> Int {
+pub fn Byte::popcnt(self : Byte) -> Int32 {
   self.to_uint().popcnt()
 }
 
@@ -362,7 +362,7 @@ pub fn Byte::popcnt(self : Byte) -> Int {
 ///   the left.
 ///
 /// Returns the resulting `Byte` value after the shift operation.
-pub impl Shl for Byte with fn shl(self : Byte, count : Int) -> Byte {
+pub impl Shl for Byte with fn shl(self : Byte, count : Int32) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
@@ -377,6 +377,6 @@ pub impl Shl for Byte with fn shl(self : Byte, count : Int) -> Byte {
 ///   right.
 ///
 /// Returns the resulting `Byte` value after the bitwise right shift operation.
-pub impl Shr for Byte with fn shr(self : Byte, count : Int) -> Byte {
+pub impl Shr for Byte with fn shr(self : Byte, count : Int32) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }

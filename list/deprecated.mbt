@@ -30,7 +30,7 @@ pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
 pub fn[A, B] List::rev_foldi(
   self : List[A],
   init~ : B,
-  f : (Int, B, A) -> B,
+  f : (Int32, B, A) -> B,
 ) -> B {
   self.rev().foldi(init~, (i, b, a) => f(i, b, a))
 }

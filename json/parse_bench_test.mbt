@@ -28,7 +28,7 @@ let parse_bench_item =
   #|}
 
 ///|
-fn repeat_parse_bench_item(count : Int) -> String {
+fn repeat_parse_bench_item(count : Int32) -> String {
   let buf = StringBuilder(size_hint=count * parse_bench_item.length())
   buf.write_char('[')
   for i in 0..<count {

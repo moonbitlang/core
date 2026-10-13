@@ -22,6 +22,6 @@ pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A] with fn t
 
 ///|
 test "Debug for PriorityQueue" {
-  let pq : PriorityQueue[Int] = from_array([3, 1, 2])
+  let pq : PriorityQueue[Int32] = from_array([3, 1, 2])
   @debug.debug_inspect(pq, content="<PriorityQueue: [3, 2, 1]>")
 }

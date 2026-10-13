@@ -28,7 +28,7 @@
 struct BigInt {
   limbs : FixedArray[UInt64]
   sign : Sign
-  len : Int
+  len : Int32
 }
 
 ///|
@@ -54,13 +54,13 @@ let one : BigInt = { limbs: FixedArray::make(1, 1UL), sign: Positive, len: 1, }
 // Construction
 
 ///|
-fn make(len : Int) -> FixedArray[UInt64] {
+fn make(len : Int32) -> FixedArray[UInt64] {
   FixedArray::make(len, 0UL)
 }
 
 ///|
 /// Drop leading zero limbs; never returns less than 1.
-fn normalize_len(limbs : FixedArray[UInt64], max_len : Int) -> Int {
+fn normalize_len(limbs : FixedArray[UInt64], max_len : Int32) -> Int32 {
   let mut i = max_len
   while i > 1 && limbs.unsafe_get(i - 1) == 0 {
     i -= 1
@@ -76,7 +76,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 
 ///|
 /// Creates a non-negative `BigInt` from an unsigned 32-bit integer.
-pub fn BigInt::from_uint(n : UInt) -> BigInt {
+pub fn BigInt::from_uint(n : UInt32) -> BigInt {
   BigInt::from_uint64(n.to_uint64())
 }
 
@@ -101,7 +101,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 
 ///|
 /// Creates a `BigInt` from a signed 32-bit integer.
-pub fn BigInt::from_int(n : Int) -> BigInt {
+pub fn BigInt::from_int(n : Int32) -> BigInt {
   BigInt::from_int64(n.to_int64())
 }
 
@@ -132,7 +132,7 @@ pub impl Neg for BigInt with fn neg(self : BigInt) -> BigInt {
 
 ///|
 /// Compare |self| with |other|.
-fn BigInt::cmp_mag(self : BigInt, other : BigInt) -> Int {
+fn BigInt::cmp_mag(self : BigInt, other : BigInt) -> Int32 {
   if self.len != other.len {
     return if self.len < other.len { -1 } else { 1 }
   }
@@ -147,7 +147,7 @@ fn BigInt::cmp_mag(self : BigInt, other : BigInt) -> Int {
 }
 
 ///|
-pub impl Compare for BigInt with fn compare(self : BigInt, other : BigInt) -> Int {
+pub impl Compare for BigInt with fn compare(self : BigInt, other : BigInt) -> Int32 {
   match (self.sign, other.sign) {
     (Positive, Negative) =>
       if self.is_zero() && other.is_zero() {
@@ -295,7 +295,7 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 
 ///|
 /// `z[i..zn) += t`, skipping the no-op case so `add_at` never walks a zero.
-fn add_term(z : FixedArray[UInt64], zn : Int, t : BigInt, i : Int) -> Unit {
+fn add_term(z : FixedArray[UInt64], zn : Int32, t : BigInt, i : Int32) -> Unit {
   if !t.is_zero() {
     add_at(z, zn, t.limbs, t.len, i)
   }
@@ -303,7 +303,7 @@ fn add_term(z : FixedArray[UInt64], zn : Int, t : BigInt, i : Int) -> Unit {
 
 ///|
 /// A normalized magnitude holding `x[off..off+n)`; `zero` when `n <= 0`.
-fn slice_mag(x : FixedArray[UInt64], off : Int, n : Int) -> BigInt {
+fn slice_mag(x : FixedArray[UInt64], off : Int32, n : Int32) -> BigInt {
   if n <= 0 {
     return zero
   }
@@ -451,7 +451,7 @@ fn BigInt::knuth_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 // Shifts
 
 ///|
-pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with fn shl(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -474,7 +474,7 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with fn shr(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -518,7 +518,7 @@ pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
 ///|
 /// Returns the number of bits in the minimal representation excluding its
 /// sign bit.
-pub fn BigInt::bit_length(self : BigInt) -> Int {
+pub fn BigInt::bit_length(self : BigInt) -> Int32 {
   if self.is_zero() {
     return 0
   }
@@ -606,7 +606,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 
 ///|
 /// Bit `i` of the magnitude.
-fn BigInt::test_bit(self : BigInt, i : Int) -> Bool {
+fn BigInt::test_bit(self : BigInt, i : Int32) -> Bool {
   let w = i / 64
   if w >= self.len {
     return false
@@ -697,7 +697,7 @@ fn BigInt::pow_mont(self : BigInt, exp : BigInt, m : BigInt) -> BigInt {
 // Conversions and bitwise operations.
 
 ///|
-fn minimum_int(a : Int, b : Int) -> Int {
+fn minimum_int(a : Int32, b : Int32) -> Int32 {
   if a < b {
     a
   } else {
@@ -706,7 +706,7 @@ fn minimum_int(a : Int, b : Int) -> Int {
 }
 
 ///|
-fn maximum_int(a : Int, b : Int) -> Int {
+fn maximum_int(a : Int32, b : Int32) -> Int32 {
   if a > b {
     a
   } else {
@@ -716,7 +716,7 @@ fn maximum_int(a : Int, b : Int) -> Int {
 
 ///|
 /// Converts this integer to a string in a radix between 2 and 36.
-pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
+pub fn BigInt::to_string(self : BigInt, radix~ : Int32 = 10) -> String {
   if radix < 2 || radix > 36 {
     abort("radix must be between 2 and 36")
   }
@@ -728,7 +728,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
 }
 
 ///|
-fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
+fn BigInt::to_string_radix(self : BigInt, radix : Int32) -> String {
   if self.is_zero() {
     return "0"
   }
@@ -759,7 +759,7 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
 }
 
 ///|
-fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
+fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int32) -> String {
   let is_negative = self.sign == Negative
   let value = if is_negative { -self } else { self }
   let bit_len = value.bit_length()
@@ -786,7 +786,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
 }
 
 ///|
-fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
+fn BigInt::from_string_radix(input : StringView, radix : Int32) -> BigInt raise {
   match pow2_shift(radix) {
     Some(shift) => BigInt::from_string_radix_pow2(input, radix, shift)
     None => {
@@ -817,8 +817,8 @@ fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
 ///|
 fn BigInt::from_string_radix_pow2(
   input : StringView,
-  radix : Int,
-  shift : Int,
+  radix : Int32,
+  shift : Int32,
 ) -> BigInt raise {
   let len = input.length()
   if len == 0 {
@@ -899,7 +899,7 @@ fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
 /// Parses a string into a `BigInt` using a base between 2 and 36.
 #internal(internal, "use `@string.parse_bigint` instead")
 #doc(hidden)
-pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
+pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
   if base < 2 || base > 36 {
     base_err()
   }
@@ -915,7 +915,7 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
 ///
 /// Panics if the input is malformed. Use `@string.parse_bigint` to handle
 /// errors.
-pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
+pub fn BigInt::from_string(input : String, radix~ : Int32 = 10) -> BigInt {
   parse_bigint(input, base=radix) catch {
     Failure(msg) => abort(msg)
     _ => abort("invalid syntax")
@@ -924,7 +924,7 @@ pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
 
 ///|
 /// Creates a magnitude from unsigned big-endian bytes.
-pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(input : BytesView, signum~ : Int32 = 1) -> BigInt {
   if signum == 0 || input.length() == 0 {
     return zero
   }
@@ -953,7 +953,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
 
 ///|
 /// Converts a non-negative integer to unsigned big-endian bytes.
-pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
+pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
   let minimum_length = match length {
     None => 1
     Some(value) => if value <= 0 { abort("negative length") } else { value }
@@ -1050,13 +1050,13 @@ pub impl BitXOr for BigInt with fn lxor(self : BigInt, other : BigInt) -> BigInt
 
 ///|
 /// Returns the low 32 bits reinterpreted as a signed integer.
-pub fn BigInt::to_int(self : BigInt) -> Int {
+pub fn BigInt::to_int(self : BigInt) -> Int32 {
   self.to_uint().reinterpret_as_int()
 }
 
 ///|
 /// Returns the low 32 bits as an unsigned integer.
-pub fn BigInt::to_uint(self : BigInt) -> UInt {
+pub fn BigInt::to_uint(self : BigInt) -> UInt32 {
   let low = self.limbs.unsafe_get(0).to_uint()
   if self.sign == Negative {
     0U - low
@@ -1084,7 +1084,7 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 
 ///|
 /// Returns the number of trailing zero bits in the magnitude.
-pub fn BigInt::ctz(self : BigInt) -> Int {
+pub fn BigInt::ctz(self : BigInt) -> Int32 {
   if self.is_zero() {
     return 0
   }
@@ -1126,7 +1126,7 @@ fn is_neg(x : BigInt) -> Bool {
 ///|
 /// Returns the magnitude as 32-bit words so hashing remains representation
 /// independent and agrees with the JavaScript backend.
-fn BigInt::limbs(self : Self) -> Array[UInt] {
+fn BigInt::limbs(self : Self) -> Array[UInt32] {
   let result = []
   for i in 0..<self.len {
     let word = self.limbs.unsafe_get(i)

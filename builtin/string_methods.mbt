@@ -15,7 +15,7 @@
 ///|
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
-pub fn StringView::find(self : StringView, str : StringView) -> Int? {
+pub fn StringView::find(self : StringView, str : StringView) -> Int32? {
   let pattern_len = str.length()
   match pattern_len {
     0 => Some(0)
@@ -47,7 +47,7 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int? {
 ///|
 /// Returns the offset of the first occurrence of the given substring. If the
 /// substring is not found, it returns None.
-pub fn String::find(self : String, str : StringView) -> Int? {
+pub fn String::find(self : String, str : StringView) -> Int32? {
   self[:].find(str)
 }
 
@@ -82,7 +82,7 @@ test "find" {
 pub fn StringView::find_by(
   self : StringView,
   pred : (Char) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   for c in self; offset = 0 {
     if pred(c) {
       break Some(offset)
@@ -100,7 +100,7 @@ pub fn StringView::find_by(
 pub fn String::find_by(
   self : String,
   pred : (Char) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   self[:].find_by(pred)
 }
 
@@ -110,10 +110,10 @@ test "find_by" {
   assert_true("hello".find_by(c => c == 'l') == Some(2))
   assert_true("hello".find_by(c => c == 'z') == None)
   assert_true("".find_by(c => c == 'a') == None)
-  assert_true("hello".find_by(c => c is ('0'..='9')) == None)
-  assert_true("hello123".find_by(c => c is ('0'..='9')) == Some(5))
-  assert_true("hello".find_by(c => c is ('A'..='Z')) == None)
-  assert_true("Hello".find_by(c => c is ('A'..='Z')) == Some(0))
+  assert_true("hello".find_by(c => c is ('0'..<='9')) == None)
+  assert_true("hello123".find_by(c => c is ('0'..<='9')) == Some(5))
+  assert_true("hello".find_by(c => c is ('A'..<='Z')) == None)
+  assert_true("Hello".find_by(c => c is ('A'..<='Z')) == Some(0))
   assert_true("αβγ".find_by(c => c == 'β') == Some(1))
 }
 
@@ -128,7 +128,7 @@ test "find_by returns UTF-16 code-unit offsets" {
 ///|
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
-pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
+pub fn StringView::rev_find(self : StringView, str : StringView) -> Int32? {
   let pattern_len = str.length()
   match pattern_len {
     0 => Some(self.length())
@@ -160,7 +160,7 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
 ///|
 /// Returns the offset (charcode index) of the last occurrence of the given
 /// substring. If the substring is not found, it returns None.
-pub fn String::rev_find(self : String, str : StringView) -> Int? {
+pub fn String::rev_find(self : String, str : StringView) -> Int32? {
   self[:].rev_find(str)
 }
 
@@ -502,8 +502,8 @@ pub fn StringView::contains_code_unit(self : StringView, code : UInt16) -> Bool 
 #inline
 fn string_contains_code_unit_scalar(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
 ) -> Bool {
   for i in start..<end {
@@ -518,8 +518,8 @@ fn string_contains_code_unit_scalar(
 #cfg(not(any(target="native", target="wasm")))
 fn string_contains_code_unit(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
 ) -> Bool {
   string_contains_code_unit_scalar(str, start, end, code)
@@ -531,8 +531,8 @@ fn string_contains_code_unit(
 #cfg(any(target="native", target="wasm"))
 fn string_contains_code_unit(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
 ) -> Bool {
   guard start + 8 <= end else {
@@ -576,10 +576,10 @@ pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
 }
 
 ///|
-const ASCII_CHAR_SET_LIMIT : UInt = 128U
+const ASCII_CHAR_SET_LIMIT : UInt32 = 128U
 
 ///|
-const ASCII_CHAR_SET_WORD_MASK : UInt = 31U
+const ASCII_CHAR_SET_WORD_MASK : UInt32 = 31U
 
 ///|
 const ASCII_CHAR_SET_WORD_SHIFT = 5
@@ -592,7 +592,9 @@ const ASCII_CHAR_SET_SIMD_MAX_CHARS = 8
 
 ///|
 #inline
-fn build_ascii_char_set(chars : StringView) -> (UInt, UInt, UInt, UInt)? {
+fn build_ascii_char_set(
+  chars : StringView,
+) -> (UInt32, UInt32, UInt32, UInt32)? {
   let mut bits0 = 0U
   let mut bits1 = 0U
   let mut bits2 = 0U
@@ -620,11 +622,11 @@ fn build_ascii_char_set(chars : StringView) -> (UInt, UInt, UInt, UInt)? {
 /// sets scanning raw code units is equivalent to scanning characters.
 #inline
 fn ascii_char_set_contains(
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-  code : UInt,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+  code : UInt32,
 ) -> Bool {
   guard code < ASCII_CHAR_SET_LIMIT else { return false }
   let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
@@ -642,12 +644,12 @@ fn ascii_char_set_contains(
 #inline
 fn string_contains_any_ascii_scalar(
   str : String,
-  start : Int,
-  end : Int,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
+  start : Int32,
+  end : Int32,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
 ) -> Bool {
   for i in start..<end {
     if ascii_char_set_contains(
@@ -669,13 +671,13 @@ fn string_contains_any_ascii_scalar(
 #inline
 fn string_trim_start_ascii_scalar(
   str : String,
-  start : Int,
-  end : Int,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  start : Int32,
+  end : Int32,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   for pos = start {
     if pos < end &&
       ascii_char_set_contains(
@@ -698,13 +700,13 @@ fn string_trim_start_ascii_scalar(
 #inline
 fn string_trim_end_ascii_scalar(
   str : String,
-  start : Int,
-  end : Int,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  start : Int32,
+  end : Int32,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   for pos = end {
     if pos > start &&
       ascii_char_set_contains(
@@ -726,7 +728,11 @@ fn string_trim_end_ascii_scalar(
 // slots, so the compare tree stays branchless) for the SIMD scan.
 #cfg(any(target="native", target="wasm"))
 #inline
-fn ascii_char_set_splat(chars : StringView, count : Int, index : Int) -> V128 {
+fn ascii_char_set_splat(
+  chars : StringView,
+  count : Int32,
+  index : Int32,
+) -> V128 {
   i16x8_splat(chars.unsafe_get(if index < count { index } else { 0 }))
 }
 
@@ -764,13 +770,13 @@ fn ascii_char_set_block_mask(
 #cfg(target="js")
 fn string_contains_any_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   _chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
 ) -> Bool {
   StringView::make_view(str, start, end).contains_any_ascii_chars(
     bits0, bits1, bits2, bits3,
@@ -781,10 +787,10 @@ fn string_contains_any_ascii(
 #cfg(target="js")
 fn StringView::contains_any_ascii_chars(
   self : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
 ) -> Bool {
   for c in self {
     if ascii_char_set_contains(bits0, bits1, bits2, bits3, c.to_uint()) {
@@ -798,13 +804,13 @@ fn StringView::contains_any_ascii_chars(
 #cfg(not(any(target="native", target="wasm", target="js")))
 fn string_contains_any_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   _chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
 ) -> Bool {
   string_contains_any_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
 }
@@ -816,13 +822,13 @@ fn string_contains_any_ascii(
 #cfg(any(target="native", target="wasm"))
 fn string_contains_any_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
 ) -> Bool {
   let count = chars.length()
   guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
@@ -858,14 +864,14 @@ fn string_contains_any_ascii(
 #cfg(not(any(target="native", target="wasm")))
 fn string_trim_start_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   _chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   string_trim_start_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
 }
 
@@ -876,14 +882,14 @@ fn string_trim_start_ascii(
 #cfg(any(target="native", target="wasm"))
 fn string_trim_start_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   let count = chars.length()
   guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
     return string_trim_start_ascii_scalar(
@@ -915,14 +921,14 @@ fn string_trim_start_ascii(
 #cfg(not(any(target="native", target="wasm")))
 fn string_trim_end_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   _chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   string_trim_end_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
 }
 
@@ -931,14 +937,14 @@ fn string_trim_end_ascii(
 #cfg(any(target="native", target="wasm"))
 fn string_trim_end_ascii(
   str : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   chars : StringView,
-  bits0 : UInt,
-  bits1 : UInt,
-  bits2 : UInt,
-  bits3 : UInt,
-) -> Int {
+  bits0 : UInt32,
+  bits1 : UInt32,
+  bits2 : UInt32,
+  bits3 : UInt32,
+) -> Int32 {
   let count = chars.length()
   guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
     return string_trim_end_ascii_scalar(
@@ -1197,7 +1203,7 @@ test "contains_char" {
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_start(
   self : StringView,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   match build_ascii_char_set(chars) {
     Some((bits0, bits1, bits2, bits3)) => {
@@ -1223,7 +1229,7 @@ pub fn StringView::trim_start(
 #label_migration(chars, alias=char_set)
 pub fn String::trim_start(
   self : String,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   self[:].trim_start(chars~)
 }
@@ -1250,7 +1256,7 @@ test "trim_start" {
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_end(
   self : StringView,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   match build_ascii_char_set(chars) {
     Some((bits0, bits1, bits2, bits3)) => {
@@ -1278,7 +1284,7 @@ pub fn StringView::trim_end(
 #label_migration(chars, alias=char_set)
 pub fn String::trim_end(
   self : String,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   self[:].trim_end(chars~)
 }
@@ -1304,7 +1310,7 @@ test "trim_end" {
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim(
   self : StringView,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   match build_ascii_char_set(chars) {
     Some((bits0, bits1, bits2, bits3)) => {
@@ -1340,7 +1346,7 @@ pub fn StringView::trim(
 #label_migration(chars, alias=char_set)
 pub fn String::trim(
   self : String,
-  chars? : StringView = "\t\n\r ",
+  chars~ : StringView = "\t\n\r ",
 ) -> StringView {
   self[:].trim(chars~)
 }
@@ -1463,7 +1469,7 @@ test "is_blank" {
 /// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_start(
   self : StringView,
-  total_width : Int,
+  total_width : Int32,
   padding_char : Char,
 ) -> String {
   let len = self.length()
@@ -1482,7 +1488,7 @@ pub fn StringView::pad_start(
 /// UTF-16 length exceeds `total_width`.
 pub fn String::pad_start(
   self : String,
-  total_width : Int,
+  total_width : Int32,
   padding_char : Char,
 ) -> String {
   let len = self.length()
@@ -1526,7 +1532,7 @@ test "pad_start" {
 /// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_end(
   self : StringView,
-  total_width : Int,
+  total_width : Int32,
   padding_char : Char,
 ) -> String {
   let len = self.length()
@@ -1545,7 +1551,7 @@ pub fn StringView::pad_end(
 /// UTF-16 length exceeds `total_width`.
 pub fn String::pad_end(
   self : String,
-  total_width : Int,
+  total_width : Int32,
   padding_char : Char,
 ) -> String {
   let len = self.length()
@@ -1583,7 +1589,7 @@ test "pad_end" {
 /// Returns a new string with `self` repeated `n` times.
 ///
 /// Aborts if `n` is negative. When `n` is `0`, returns the empty string.
-pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
+pub fn StringView::repeat(self : StringView, n : Int32) -> StringView {
   match n {
     _..<0 => abort("negative repeat count")
     0 => ""
@@ -1608,7 +1614,7 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
 /// Returns a new string with `self` repeated `n` times.
 ///
 /// Aborts if `n` is negative. When `n` is `0`, returns the empty string.
-pub fn String::repeat(self : String, n : Int) -> String {
+pub fn String::repeat(self : String, n : Int32) -> String {
   match n {
     _..<0 => abort("negative repeat count")
     0 => ""
@@ -2272,14 +2278,14 @@ test "View::replace_all boundary cases" {
 #cfg(not(any(target="js", target="native", target="wasm")))
 fn find_ascii_uppercase_code_unit(
   data : String,
-  start : Int,
-  len : Int,
-) -> Int? {
+  start : Int32,
+  len : Int32,
+) -> Int32? {
   let end = start + len
   for i in start..<end {
     // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
     let code_unit = data.unsafe_get(i)
-    if code_unit is ('A'..='Z') {
+    if code_unit is ('A'..<='Z') {
       return Some(i - start)
     }
   }
@@ -2290,14 +2296,14 @@ fn find_ascii_uppercase_code_unit(
 #cfg(not(any(target="js", target="native", target="wasm")))
 fn find_ascii_lowercase_code_unit(
   data : String,
-  start : Int,
-  len : Int,
-) -> Int? {
+  start : Int32,
+  len : Int32,
+) -> Int32? {
   let end = start + len
   for i in start..<end {
     // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
     let code_unit = data.unsafe_get(i)
-    if code_unit is ('a'..='z') {
+    if code_unit is ('a'..<='z') {
       return Some(i - start)
     }
   }
@@ -2316,11 +2322,11 @@ fn find_ascii_lowercase_code_unit(
 #cfg(any(target="native", target="wasm"))
 fn find_ascii_range_code_unit_simd(
   data : String,
-  start : Int,
-  len : Int,
+  start : Int32,
+  len : Int32,
   first : UInt16,
   last : UInt16,
-) -> Int? {
+) -> Int32? {
   let end = start + len
   let code_unit = data.unsafe_get(start)
   if code_unit >= first && code_unit <= last {
@@ -2360,15 +2366,15 @@ fn find_ascii_range_code_unit_simd(
 #cfg(any(target="native", target="wasm"))
 fn find_ascii_uppercase_code_unit(
   data : String,
-  start : Int,
-  len : Int,
-) -> Int? {
+  start : Int32,
+  len : Int32,
+) -> Int32? {
   if len < 24 {
     let end = start + len
     for i in start..<end {
       // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
       let code_unit = data.unsafe_get(i)
-      if code_unit is ('A'..='Z') {
+      if code_unit is ('A'..<='Z') {
         return Some(i - start)
       }
     }
@@ -2384,15 +2390,15 @@ fn find_ascii_uppercase_code_unit(
 #cfg(any(target="native", target="wasm"))
 fn find_ascii_lowercase_code_unit(
   data : String,
-  start : Int,
-  len : Int,
-) -> Int? {
+  start : Int32,
+  len : Int32,
+) -> Int32? {
   if len < 24 {
     let end = start + len
     for i in start..<end {
       // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
       let code_unit = data.unsafe_get(i)
-      if code_unit is ('a'..='z') {
+      if code_unit is ('a'..<='z') {
         return Some(i - start)
       }
     }
@@ -2413,10 +2419,10 @@ fn find_ascii_lowercase_code_unit(
 #cfg(any(target="native", target="wasm"))
 fn ascii_case_copy(
   view : StringView,
-  first_match : Int,
+  first_match : Int32,
   first : UInt16,
   last : UInt16,
-  delta : Int,
+  delta : Int32,
 ) -> String {
   let len = view.length()
   let output : FixedArray[UInt16] = FixedArray::make(len, 0)
@@ -2454,10 +2460,10 @@ fn ascii_case_copy(
 #cfg(not(any(target="js", target="native", target="wasm")))
 fn ascii_case_copy(
   view : StringView,
-  first_match : Int,
+  first_match : Int32,
   first : UInt16,
   last : UInt16,
-  delta : Int,
+  delta : Int32,
 ) -> String {
   let len = view.length()
   let output : FixedArray[UInt16] = FixedArray::make(len, 0)
@@ -2829,7 +2835,7 @@ test "rev_fold with raise" {
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
 #intrinsic("%string.get_opt")
-pub fn String::get(self : String, idx : Int) -> UInt16? {
+pub fn String::get(self : String, idx : Int32) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))
 }
@@ -2838,7 +2844,7 @@ pub fn String::get(self : String, idx : Int) -> UInt16? {
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
 #intrinsic("%stringview.get_opt")
-pub fn StringView::get(self : StringView, idx : Int) -> UInt16? {
+pub fn StringView::get(self : StringView, idx : Int32) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))
 }
@@ -2874,7 +2880,7 @@ test "View::get basic cases" {
 ///|
 /// Returns the character at the given index. Returns `None` if the index is out
 /// of bounds or the index splits a surrogate pair.
-pub fn String::get_char(self : String, idx : Int) -> Char? {
+pub fn String::get_char(self : String, idx : Int32) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_get(idx)
   if c.is_leading_surrogate() {
@@ -2895,7 +2901,7 @@ pub fn String::get_char(self : String, idx : Int) -> Char? {
 ///|
 /// Returns the character at the given index. Returns `None` if the index is out
 /// of bounds or the index splits a surrogate pair.
-pub fn StringView::get_char(self : StringView, idx : Int) -> Char? {
+pub fn StringView::get_char(self : StringView, idx : Int32) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_get(idx)
   if c.is_leading_surrogate() {

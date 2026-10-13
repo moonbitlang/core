@@ -16,17 +16,17 @@
 let hashmap_build_bench_size = 10_000
 
 ///|
-fn hashmap_build_random_key(i : Int) -> Int {
+fn hashmap_build_random_key(i : Int32) -> Int32 {
   (i * 1103515245 + 12345) & 0x7fffffff
 }
 
 ///|
-fn make_hashmap_ordered_build_data() -> Array[(Int, Int)] {
+fn make_hashmap_ordered_build_data() -> Array[(Int32, Int32)] {
   Array::makei(hashmap_build_bench_size, i => (i, i))
 }
 
 ///|
-fn make_hashmap_random_build_data() -> Array[(Int, Int)] {
+fn make_hashmap_random_build_data() -> Array[(Int32, Int32)] {
   Array::makei(hashmap_build_bench_size, i => {
     let key = hashmap_build_random_key(i)
     (key, i)

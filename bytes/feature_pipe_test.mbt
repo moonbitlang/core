@@ -22,7 +22,7 @@ test "feature pipe" {
       x
     }
     |> Bytes::length() // test _.length()
-    |> Int::to_int64() // test _.to_int()
+    |> Int32::to_int64() // test _.to_int()
   inspect(v, content="5")
   inspect(
     b,

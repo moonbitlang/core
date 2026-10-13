@@ -23,9 +23,9 @@
 /// an empty vector, a tail-only vector, one full leaf plus/minus one, two
 /// leaves, the depth-two transition around 1024, and the merge widths around
 /// 1056 and 2080 that `concat` rebalancing is sensitive to.
-fn pick_len(seed : Int) -> Int {
+fn pick_len(seed : Int32) -> Int32 {
   let n = seed & 0x7fffffff
-  let boundaries : ReadOnlyArray[Int] = [
+  let boundaries : ReadOnlyArray[Int32] = [
     0, 1, 2, 31, 32, 33, 63, 64, 65, 1023, 1024, 1025, 1055, 1056, 1057, 2048, 2080,
   ]
   if n % 3 != 0 {
@@ -60,11 +60,15 @@ fn pick_len(seed : Int) -> Int {
 ///   merges (65 children at `cut = 1056`, the #4086 family).
 ///
 /// Modes 2, 3, 4 and 6 all leave relaxed (`Some(sizes)`) nodes behind.
-fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
+fn build_vec(
+  len : Int32,
+  offset : Int32,
+  mode : Int32,
+) -> @vector.Vector[Int32] {
   match (mode & 0x7fffffff) % 7 {
     0 => @vector.makei(len, i => offset + i)
     1 => {
-      let mut v : @vector.Vector[Int] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.new()
       for i in 0..<len {
         v = v.push(offset + i)
       }
@@ -72,7 +76,7 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
     }
     2 => @vector.makei(len + 50, i => offset + i - 33).slice(33, 33 + len)
     3 => {
-      let mut v : @vector.Vector[Int] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.new()
       for lo = 0; lo < len; {
         let step = 1 + (lo * 7 + 13) % 47
         let hi = if lo + step > len { len } else { lo + step }
@@ -96,7 +100,7 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
       // operand of 1024+, that merge is 31 + 3 + 31 = 65 children wide — the
       // widest the splice can produce, and the one #4086 mishandled.
       let cut = if len >= 2080 { 1056 } else { len / 32 * 32 }
-      let mut v : @vector.Vector[Int] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.new()
       for i in 0..<cut {
         v = v.push(offset + i)
       }
@@ -108,9 +112,9 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
 ///|
 test "quickcheck: push agrees with the array model and preserves history" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let snapshots : Array[(Int, @vector.Vector[Int])] = []
-      let mut v : @vector.Vector[Int] = @vector.new()
+    (xs : Array[Int32]) => {
+      let snapshots : Array[(Int32, @vector.Vector[Int32])] = []
+      let mut v : @vector.Vector[Int32] = @vector.new()
       for i, x in xs {
         v = v.push(x)
         guard v.length() == i + 1 && v.get(i) == Some(x) else { return false }
@@ -142,7 +146,7 @@ test "quickcheck: push agrees with the array model and preserves history" {
 ///|
 test "quickcheck: set is a persistent point update" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32)])) => {
       let (xs, updates) = input
       guard xs.length() > 0 else { return true }
       let n = xs.length()
@@ -175,7 +179,7 @@ test "quickcheck: set is a persistent point update" {
 ///|
 test "quickcheck: concat agrees with array append at tree-shape boundaries" {
   @quickcheck.check(
-    (seeds : (Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32)) => {
       let (sa, sb, sm) = seeds
       let la = pick_len(sa)
       let lb = pick_len(sb)
@@ -207,7 +211,7 @@ test "quickcheck: concat agrees with array append at tree-shape boundaries" {
 ///|
 test "quickcheck: concat is associative" {
   @quickcheck.check(
-    (seeds : (Int, Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32, Int32)) => {
       let (sa, sb, sc, sm) = seeds
       let m = sm & 0x7fffffff
       let a = build_vec(pick_len(sa), 0, m)
@@ -225,7 +229,7 @@ test "quickcheck: concat is associative" {
 ///|
 test "quickcheck: iteration, folds and roundtrips agree with the array model" {
   @quickcheck.check(
-    (v : @vector.Vector[Int]) => {
+    (v : @vector.Vector[Int32]) => {
       let xs = v.to_array()
       let n = v.length()
       guard xs.length() == n && v.is_empty() == (n == 0) else { return false }
@@ -233,22 +237,22 @@ test "quickcheck: iteration, folds and roundtrips agree with the array model" {
       guard @vector.from_iter(xs.iter()) == v else { return false }
       guard @vector.from_array(xs) == v else { return false }
       guard v.rev().to_array() == xs.rev() else { return false }
-      let folded : Array[Int] = v.fold(init=[], (acc, x) => {
+      let folded : Array[Int32] = v.fold(init=[], (acc, x) => {
         acc.push(x)
         acc
       })
       guard folded == xs else { return false }
-      let rev_folded : Array[Int] = v.rev_fold(init=[], (acc, x) => {
+      let rev_folded : Array[Int32] = v.rev_fold(init=[], (acc, x) => {
         acc.push(x)
         acc
       })
       guard rev_folded == xs.rev() else { return false }
-      let eached : Array[Int] = []
+      let eached : Array[Int32] = []
       v.each(x => eached.push(x))
       guard eached == xs else { return false }
-      let pairs : Array[(Int, Int)] = []
+      let pairs : Array[(Int32, Int32)] = []
       v.eachi((i, x) => pairs.push((i, x)))
-      let expected_pairs : Array[(Int, Int)] = []
+      let expected_pairs : Array[(Int32, Int32)] = []
       for i, x in xs {
         expected_pairs.push((i, x))
       }
@@ -269,7 +273,7 @@ test "quickcheck: iteration, folds and roundtrips agree with the array model" {
 ///|
 test "quickcheck: take/drop/split/slice agree with the array model" {
   @quickcheck.check(
-    (input : (@vector.Vector[Int], Int, Int)) => {
+    (input : (@vector.Vector[Int32], Int32, Int32)) => {
       let (v, i_raw, j_raw) = input
       let xs = v.to_array()
       let n = xs.length()
@@ -312,7 +316,7 @@ test "quickcheck: take/drop/split/slice agree with the array model" {
 ///|
 test "quickcheck: pop walks back through every push boundary" {
   @quickcheck.check(
-    (v : @vector.Vector[Int]) => {
+    (v : @vector.Vector[Int32]) => {
       let xs = v.to_array()
       let n = xs.length()
       // push-then-pop is the identity
@@ -362,9 +366,9 @@ test "quickcheck: random access survives slice/concat/push/pop pipelines" {
   // length almost never lands on a transition.
   let chunk = 32
   let node = chunk * chunk
-  let offsets : ReadOnlyArray[Int] = [0, 1, chunk, chunk + 1, 2 * chunk]
+  let offsets : ReadOnlyArray[Int32] = [0, 1, chunk, chunk + 1, 2 * chunk]
   @quickcheck.check(
-    (seeds : (Int, Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32, Int32)) => {
       let (s0, s1, s2, s3) = seeds
       // `gap` leaves the tree's right-most leaf `chunk - gap` long...
       let gap = 1 + (s1 & 0x7fffffff) % (chunk - 1)
@@ -373,7 +377,7 @@ test "quickcheck: random access survives slice/concat/push/pop pipelines" {
       // and a second one that overflows the tail makes `normalize_tree` fold
       // the first back in, topping the partial leaf up to a full `chunk`.
       let second = chunk - gap + 1 + (s2 & 0x7fffffff) % gap
-      let model : Array[Int] = []
+      let model : Array[Int32] = []
       let mut v = @vector.makei(base, i => i).slice(0, base - gap)
       for i in 0..<(base - gap) {
         model.push(i)
@@ -422,7 +426,7 @@ test "quickcheck: random access survives slice/concat/push/pop pipelines" {
 test "quickcheck: bulk constructors round-trip at level boundaries" {
   let chunk = 32
   let level = chunk * chunk * chunk
-  let offsets : ReadOnlyArray[Int] = [
+  let offsets : ReadOnlyArray[Int32] = [
     0,
     1,
     chunk,
@@ -432,7 +436,7 @@ test "quickcheck: bulk constructors round-trip at level boundaries" {
     level / chunk + chunk,
   ]
   @quickcheck.check(
-    (seed : (Int, Int)) => {
+    (seed : (Int32, Int32)) => {
       let (s0, s1) = seed
       let n = level * (1 + (s0 & 0x7fffffff) % 2) +
         offsets[(s1 & 0x7fffffff) % offsets.length()]
@@ -465,7 +469,7 @@ test "quickcheck: bulk constructors round-trip at level boundaries" {
 
 ///|
 test "quickcheck: Eq and Compare agree with the array model" {
-  @quickcheck.check((pair : (@vector.Vector[Int], @vector.Vector[Int])) => {
+  @quickcheck.check((pair : (@vector.Vector[Int32], @vector.Vector[Int32])) => {
     let (a, b) = pair
     let ax = a.to_array()
     let bx = b.to_array()
@@ -493,7 +497,7 @@ test "quickcheck: Eq and Compare agree with the array model" {
 /// `contains` is here too, since no other property exercises it.
 test "quickcheck: the same content is one vector, whatever built it" {
   @quickcheck.check(
-    (seeds : (Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32)) => {
       let (sl, sa, sb) = seeds
       let n = pick_len(sl)
       let a = build_vec(n, 7, sa)
@@ -527,7 +531,7 @@ test "quickcheck: the same content is one vector, whatever built it" {
 /// search branch never runs. Irregular shapes exercise both.
 test "quickcheck: set agrees with the array model on relaxed trees" {
   @quickcheck.check(
-    (input : (Int, Int, Array[(Int, Int)])) => {
+    (input : (Int32, Int32, Array[(Int32, Int32)])) => {
       let (sl, sm, updates) = input
       let n = pick_len(sl)
       guard n > 0 else { return true }
@@ -556,7 +560,7 @@ test "quickcheck: set agrees with the array model on relaxed trees" {
 /// single slice reaches.
 test "quickcheck: slicing composes" {
   @quickcheck.check(
-    (seeds : (Int, Int, (Int, Int), (Int, Int))) => {
+    (seeds : (Int32, Int32, (Int32, Int32), (Int32, Int32))) => {
       let (sl, sm, outer, inner) = seeds
       let n = pick_len(sl)
       let v = build_vec(n, 0, sm)
@@ -576,7 +580,7 @@ test "quickcheck: slicing composes" {
 /// `rev` is an involution, and it turns `concat` around.
 test "quickcheck: rev is an involution and reverses concat" {
   @quickcheck.check(
-    (seeds : (Int, Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32, Int32)) => {
       let (sa, ma, sb, mb) = seeds
       let a = build_vec(pick_len(sa), 0, ma)
       let b = build_vec(pick_len(sb), 1000000, mb)
@@ -596,7 +600,7 @@ test "quickcheck: rev is an involution and reverses concat" {
 /// methods like `take` document that the source must not be reused.)
 test "quickcheck: the iterator resumes where it stopped" {
   @quickcheck.check(
-    (seeds : (Int, Int, Int)) => {
+    (seeds : (Int32, Int32, Int32)) => {
       let (sl, sm, sk) = seeds
       let n = pick_len(sl)
       let v = build_vec(n, 0, sm)
@@ -618,10 +622,10 @@ test "quickcheck: the iterator resumes where it stopped" {
 /// round-trips through JSON to an equal vector.
 test "quickcheck: json round-trips whatever the tree shape" {
   @quickcheck.check(
-    (seeds : (Int, Int)) => {
+    (seeds : (Int32, Int32)) => {
       let (sl, sm) = seeds
       let v = build_vec(pick_len(sl), 0, sm)
-      let back : @vector.Vector[Int] = @json.from_json(Json(v))
+      let back : @vector.Vector[Int32] = @json.from_json(Json(v))
       back == v
     },
     count=40,

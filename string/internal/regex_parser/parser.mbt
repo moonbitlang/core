@@ -232,7 +232,7 @@ fn Parser::quantifier_opt(
 fn Parser::quant_bound(
   digits : StringView,
   ctx~ : ParserContext,
-) -> Int raise ParserError {
+) -> Int32 raise ParserError {
   for c in digits; value = 0 {
     let digit = c.to_int() - '0'
     let next = value * 10 + digit

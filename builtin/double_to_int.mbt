@@ -40,7 +40,7 @@
 ///   inspect((-1.0 / 0.0).to_int(), content="-2147483648") // -Infinity
 /// }
 /// ```
-pub fn Double::to_int(self : Double) -> Int {
+pub fn Double::to_int(self : Double) -> Int32 {
   if self != self {
     0
   } else if self >= 2147483647 {
@@ -53,4 +53,4 @@ pub fn Double::to_int(self : Double) -> Int {
 }
 
 ///|
-fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
+fn Double::to_unchecked_int(self : Double) -> Int32 = "%f64_to_i32"

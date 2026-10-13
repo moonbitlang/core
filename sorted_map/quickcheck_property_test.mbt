@@ -14,7 +14,7 @@
 
 ///|
 test "quickcheck: iteration is ordered and round-trips map contents" {
-  @quickcheck.check((entries : Array[(Int, Int)]) => {
+  @quickcheck.check((entries : Array[(Int32, Int32)]) => {
     let map = @sorted_map.from_array(entries)
     let actual = map.to_array()
     for i in 1..<actual.length() {
@@ -28,7 +28,7 @@ test "quickcheck: iteration is ordered and round-trips map contents" {
 
 ///|
 test "quickcheck: nearest-key queries match a linear scan" {
-  @quickcheck.check((input : (Array[(Int, Int)], Int)) => {
+  @quickcheck.check((input : (Array[(Int32, Int32)], Int32)) => {
     let (entries, key) = input
     let map = @sorted_map.from_array(entries)
     let sorted = map.to_array()

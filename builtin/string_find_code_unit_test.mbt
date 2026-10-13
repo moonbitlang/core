@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn scalar_find_for_test(target : StringView, pattern : StringView) -> Int? {
+fn scalar_find_for_test(target : StringView, pattern : StringView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   if pattern_len == 0 {
@@ -39,7 +39,10 @@ fn scalar_find_for_test(target : StringView, pattern : StringView) -> Int? {
 }
 
 ///|
-fn scalar_rev_find_for_test(target : StringView, pattern : StringView) -> Int? {
+fn scalar_rev_find_for_test(
+  target : StringView,
+  pattern : StringView,
+) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   if pattern_len == 0 {

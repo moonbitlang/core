@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn sort_bench_data(n : Int) -> Array[Int] {
+fn sort_bench_data(n : Int32) -> Array[Int32] {
   Array::makei(n, i => (i * 1103515245 + 12345) & 0x7fffffff)
 }
 

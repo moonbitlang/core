@@ -25,11 +25,11 @@
 //     tree — a flat list copies the whole backlog on every step.
 
 ///|
-let concat_bench_len : Int = 2048
+let concat_bench_len : Int32 = 2048
 
 ///|
-fn bench_left_nested(depth : Int) -> @lazy_list.LazyList[Int] {
-  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+fn bench_left_nested(depth : Int32) -> @lazy_list.LazyList[Int32] {
+  let mut acc : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   for i in 0..<depth {
     acc = acc.concat(@lazy_list.from_iter([|i|]))
   }

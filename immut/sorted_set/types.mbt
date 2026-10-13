@@ -23,5 +23,5 @@
 /// children of size 1 and 0.
 enum SortedSet[A] {
   Empty
-  Node(left~ : SortedSet[A], right~ : SortedSet[A], size~ : Int, value~ : A)
+  Node(left~ : SortedSet[A], right~ : SortedSet[A], size~ : Int32, value~ : A)
 }

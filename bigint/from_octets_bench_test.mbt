@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn from_octets_bench_data(len : Int) -> Bytes {
+fn from_octets_bench_data(len : Int32) -> Bytes {
   Bytes::makei(len, i => ((i * 37 + 11) & 0xff).to_byte())
 }
 

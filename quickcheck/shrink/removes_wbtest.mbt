@@ -15,7 +15,7 @@
 ///|
 /// The block offsets `removes_array` and `removes_list` remove, ascending:
 /// every multiple of `k` that still leaves a whole block inside `n`.
-fn block_offsets(k : Int, n : Int) -> Array[Int] {
+fn block_offsets(k : Int32, n : Int32) -> Array[Int32] {
   let offsets = []
   for start = 0; start + k <= n; start = start + k {
     offsets.push(start)
@@ -51,7 +51,7 @@ test "removes_array removes one block per offset, ascending" {
 /// The same for `removes_list`, whose offsets run the other way.
 test "removes_list removes one block per offset, descending" {
   for n = 0; n <= 24; n = n + 1 {
-    let xs : @list.List[Int] = List(Array::makei(n, i => i))
+    let xs : @list.List[Int32] = List(Array::makei(n, i => i))
     for k = 1; k <= n; k = k + 1 {
       let expected = block_offsets(k, n)
         .rev()
@@ -73,7 +73,7 @@ test "removes_list removes one block per offset, descending" {
 /// `k` larger than the collection leaves nothing to remove.
 test "removing more than the collection holds yields nothing" {
   let xs = Array::makei(4, i => i)
-  let ls : @list.List[Int] = List(xs)
+  let ls : @list.List[Int32] = List(xs)
   guard removes_array(5, 4, xs).collect() is [] else { abort("array") }
   guard removes_list(5, 4, ls).collect() is [] else { abort("list") }
 }

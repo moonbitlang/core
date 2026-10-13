@@ -248,7 +248,7 @@ fn parse_command(
   inherited_version_long : Map[String, String],
   inherited_version_short : Map[Char, String],
   command_path : String,
-  seed_matches? : Matches = new_matches_parse_state(),
+  seed_matches~ : Matches = new_matches_parse_state(),
 ) -> Matches raise {
   parse_command_impl(
     cmd, argv, env, inherited_globals, inherited_version_long, inherited_version_short,

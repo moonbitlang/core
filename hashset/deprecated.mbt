@@ -18,6 +18,6 @@
 /// Deprecated: use `HashSet([], capacity=...)` instead.
 #deprecated("Use `HashSet([], capacity=...)` instead")
 #as_free_fn(deprecated="Use `HashSet([], capacity=...)` instead")
-pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
+pub fn[K] HashSet::new(capacity~ : Int32 = default_init_capacity) -> HashSet[K] {
   new_hashset(capacity)
 }

@@ -87,7 +87,7 @@ pub fn i16x8_const(
 #intrinsic("%v128.v128_const_i32x4")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i32x4_const(a0 : UInt, a1 : UInt, a2 : UInt, a3 : UInt) -> V128 {
+pub fn i32x4_const(a0 : UInt32, a1 : UInt32, a2 : UInt32, a3 : UInt32) -> V128 {
   make(
     a0.to_uint64() | (a1.to_uint64() << 32),
     a2.to_uint64() | (a3.to_uint64() << 32),
@@ -149,7 +149,7 @@ pub fn i16x8_splat(value : UInt16) -> V128 {
 #intrinsic("%v128.i32x4_splat")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i32x4_splat(value : UInt) -> V128 {
+pub fn i32x4_splat(value : UInt32) -> V128 {
   pack_u32x4_by(_ => value)
 }
 
@@ -185,7 +185,7 @@ pub fn f64x2_splat(value : Double) -> V128 {
 #intrinsic("%v128.i8x16_extract_lane_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
+pub fn i8x16_extract_lane_u(value : V128, lane : Int32) -> UInt32 {
   u8_lane(value, lane).to_uint()
 }
 
@@ -194,7 +194,7 @@ pub fn i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i8x16_extract_lane_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
+pub fn i8x16_extract_lane_s(value : V128, lane : Int32) -> UInt32 {
   i8_signed(u8_lane(value, lane)).reinterpret_as_uint()
 }
 
@@ -203,7 +203,7 @@ pub fn i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i16x8_extract_lane_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
+pub fn i16x8_extract_lane_u(value : V128, lane : Int32) -> UInt32 {
   u16_lane(value, lane).to_uint()
 }
 
@@ -212,7 +212,7 @@ pub fn i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i16x8_extract_lane_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
+pub fn i16x8_extract_lane_s(value : V128, lane : Int32) -> UInt32 {
   i16_signed(u16_lane(value, lane)).reinterpret_as_uint()
 }
 
@@ -221,7 +221,7 @@ pub fn i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i32x4_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i32x4_extract_lane(value : V128, lane : Int) -> UInt {
+pub fn i32x4_extract_lane(value : V128, lane : Int32) -> UInt32 {
   u32_lane(value, lane)
 }
 
@@ -230,7 +230,7 @@ pub fn i32x4_extract_lane(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i64x2_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
+pub fn i64x2_extract_lane(value : V128, lane : Int32) -> UInt64 {
   u64_lane(value, lane)
 }
 
@@ -239,7 +239,7 @@ pub fn i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
 #intrinsic("%v128.f32x4_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn f32x4_extract_lane(value : V128, lane : Int) -> Float {
+pub fn f32x4_extract_lane(value : V128, lane : Int32) -> Float {
   Float::reinterpret_from_uint(u32_lane(value, lane))
 }
 
@@ -248,7 +248,7 @@ pub fn f32x4_extract_lane(value : V128, lane : Int) -> Float {
 #intrinsic("%v128.f64x2_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
+pub fn f64x2_extract_lane(value : V128, lane : Int32) -> Double {
   u64_lane(value, lane).reinterpret_as_double()
 }
 
@@ -258,7 +258,11 @@ pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
 #intrinsic("%v128.i8x16_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+pub fn i8x16_replace_lane(
+  value : V128,
+  replacement : UInt32,
+  lane : Int32,
+) -> V128 {
   guard lane >= 0 && lane < 16 else { return value }
   let shift = (lane & 7) * 8
   let mask = 0xffUL << shift
@@ -275,7 +279,11 @@ pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 
 #intrinsic("%v128.i16x8_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+pub fn i16x8_replace_lane(
+  value : V128,
+  replacement : UInt32,
+  lane : Int32,
+) -> V128 {
   guard lane >= 0 && lane < 8 else { return value }
   let shift = (lane & 3) * 16
   let mask = 0xffffUL << shift
@@ -292,7 +300,11 @@ pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 
 #intrinsic("%v128.i32x4_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+pub fn i32x4_replace_lane(
+  value : V128,
+  replacement : UInt32,
+  lane : Int32,
+) -> V128 {
   guard lane >= 0 && lane < 4 else { return value }
   let shift = (lane & 1) * 32
   let mask = 0xffffffffUL << shift
@@ -312,7 +324,7 @@ pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 
 pub fn i64x2_replace_lane(
   value : V128,
   replacement : UInt64,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   if lane == 0 {
     make(replacement, hi(value))
@@ -331,7 +343,7 @@ pub fn i64x2_replace_lane(
 pub fn f32x4_replace_lane(
   value : V128,
   replacement : Float,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i32x4_replace_lane(value, replacement.reinterpret_as_uint(), lane)
 }
@@ -344,7 +356,7 @@ pub fn f32x4_replace_lane(
 pub fn f64x2_replace_lane(
   value : V128,
   replacement : Double,
-  lane : Int,
+  lane : Int32,
 ) -> V128 {
   i64x2_replace_lane(value, replacement.reinterpret_as_uint64(), lane)
 }

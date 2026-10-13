@@ -21,7 +21,7 @@
 
 ///|
 /// Replace-or-append, mirroring `SortedMap::add` (last write wins).
-fn model_set(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
+fn model_set(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, entry in model {
     if entry.0 == key {
       model[i] = (key, value)
@@ -32,7 +32,7 @@ fn model_set(model : Array[(Int, Int)], key : Int, value : Int) -> Unit {
 }
 
 ///|
-fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
+fn model_remove(model : Array[(Int32, Int32)], key : Int32) -> Unit {
   for i, entry in model {
     if entry.0 == key {
       model.remove(i) |> ignore
@@ -44,7 +44,7 @@ fn model_remove(model : Array[(Int, Int)], key : Int) -> Unit {
 ///|
 /// The model's entries sorted by key (keys are unique, so tuple order is
 /// key order).
-fn sorted_entries(model : Array[(Int, Int)]) -> Array[(Int, Int)] {
+fn sorted_entries(model : Array[(Int32, Int32)]) -> Array[(Int32, Int32)] {
   let sorted = model.copy()
   sorted.sort()
   sorted
@@ -52,8 +52,8 @@ fn sorted_entries(model : Array[(Int, Int)]) -> Array[(Int, Int)] {
 
 ///|
 fn agrees_with_model(
-  map : @sorted_map.SortedMap[Int, Int],
-  model : Array[(Int, Int)],
+  map : @sorted_map.SortedMap[Int32, Int32],
+  model : Array[(Int32, Int32)],
 ) -> Bool {
   if map.length() != model.length() {
     return false
@@ -84,10 +84,10 @@ fn agrees_with_model(
 /// Build a map and its model from raw entries, folding keys into a small
 /// space so replacements (and later, overlaps between two maps) are common.
 fn build(
-  entries : Array[(Int, Int)],
-) -> (@sorted_map.SortedMap[Int, Int], Array[(Int, Int)]) {
-  let model : Array[(Int, Int)] = []
-  let pairs : Array[(Int, Int)] = []
+  entries : Array[(Int32, Int32)],
+) -> (@sorted_map.SortedMap[Int32, Int32], Array[(Int32, Int32)]) {
+  let model : Array[(Int32, Int32)] = []
+  let pairs : Array[(Int32, Int32)] = []
   for entry in entries {
     let key = entry.0 % 31
     pairs.push((key, entry.1))
@@ -99,13 +99,13 @@ fn build(
 ///|
 test "quickcheck: op sequences agree with a model and old versions persist" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
-      let mut map : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
-      let model : Array[(Int, Int)] = []
+    (ops : Array[(Int32, Int32)]) => {
+      let mut map : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+      let model : Array[(Int32, Int32)] = []
       // Snapshots of every intermediate version paired with its expected
       // content; persistence means none of them may change afterwards.
       let snapshots : Array[
-        (@sorted_map.SortedMap[Int, Int], Array[(Int, Int)]),
+        (@sorted_map.SortedMap[Int32, Int32], Array[(Int32, Int32)]),
       ] = [(map, [])]
       for op in ops {
         // A small key space deliberately generates replacements and
@@ -138,7 +138,7 @@ test "quickcheck: op sequences agree with a model and old versions persist" {
 ///|
 test "quickcheck: remove leaves exactly the other keys, present or not" {
   @quickcheck.check(
-    (input : (Array[(Int, Int)], Int)) => {
+    (input : (Array[(Int32, Int32)], Int32)) => {
       let (entries, raw_key) = input
       let (map, model) = build(entries)
       // Drain the map one key at a time in generated order; every step
@@ -170,7 +170,7 @@ test "quickcheck: remove leaves exactly the other keys, present or not" {
 ///|
 test "quickcheck: constructor is last-wins and round-trips via to_array" {
   @quickcheck.check(
-    (entries : Array[(Int, Int)]) => {
+    (entries : Array[(Int32, Int32)]) => {
       let (map, model) = build(entries)
       if !agrees_with_model(map, model) {
         return false
@@ -187,7 +187,7 @@ test "quickcheck: constructor is last-wins and round-trips via to_array" {
 ///|
 test "quickcheck: merge is model union with right bias, empty is identity" {
   @quickcheck.check(
-    (input : (Array[(Int, Int)], Array[(Int, Int)])) => {
+    (input : (Array[(Int32, Int32)], Array[(Int32, Int32)])) => {
       let (xs, ys) = input
       let (a, model_a) = build(xs)
       let (b, model_b) = build(ys)
@@ -203,7 +203,7 @@ test "quickcheck: merge is model union with right bias, empty is identity" {
       if !agrees_with_model(a, model_a) || !agrees_with_model(b, model_b) {
         return false
       }
-      let empty : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
+      let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
       a.merge(empty) == a && empty.merge(a) == a
     },
     count=200,
@@ -213,7 +213,7 @@ test "quickcheck: merge is model union with right bias, empty is identity" {
 ///|
 test "quickcheck: filter and map agree with the array reference" {
   @quickcheck.check(
-    (entries : Array[(Int, Int)]) => {
+    (entries : Array[(Int32, Int32)]) => {
       let (map, model) = build(entries)
       // filter on a key/value predicate
       let filtered = map.filter((k, v) => (k + v) % 3 != 0)
@@ -234,7 +234,7 @@ test "quickcheck: filter and map agree with the array reference" {
 ///|
 test "quickcheck: range yields exactly the in-bounds entries in order" {
   @quickcheck.check(
-    (input : (Array[(Int, Int)], Int, Int)) => {
+    (input : (Array[(Int32, Int32)], Int32, Int32)) => {
       let (entries, raw_low, raw_high) = input
       let (map, model) = build(entries)
       // Bounds roam a slightly larger space than the keys, and low > high

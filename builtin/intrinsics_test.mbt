@@ -305,49 +305,49 @@ test "Int::to_double" {
 ///|
 test "Int::clz" {
   // Test for the smallest positive integer
-  inspect(Int::clz(1), content="31")
+  inspect(Int32::clz(1), content="31")
 
   // Test for the largest positive integer
-  inspect(Int::clz(2147483647), content="1")
+  inspect(Int32::clz(2147483647), content="1")
 
   // Test for zero, which is an edge case
-  inspect(Int::clz(0), content="32")
+  inspect(Int32::clz(0), content="32")
 
   // Test for the smallest negative integer
-  inspect(Int::clz(-2147483648), content="0")
+  inspect(Int32::clz(-2147483648), content="0")
 
   // Test for the largest negative integer
-  inspect(Int::clz(-1), content="0")
+  inspect(Int32::clz(-1), content="0")
   // Random cases to cover various scenarios
-  inspect(Int::clz(123456), content="15")
-  inspect(Int::clz(987654), content="12")
-  inspect(Int::clz(54321), content="16")
-  inspect(Int::clz(123456789), content="5")
-  inspect(Int::clz(987654321), content="2")
-  inspect(Int::clz(1024), content="21")
-  inspect(Int::clz(65536), content="15")
-  inspect(Int::clz(32768), content="16")
-  inspect(Int::clz(16384), content="17")
-  inspect(Int::clz(8192), content="18")
+  inspect(Int32::clz(123456), content="15")
+  inspect(Int32::clz(987654), content="12")
+  inspect(Int32::clz(54321), content="16")
+  inspect(Int32::clz(123456789), content="5")
+  inspect(Int32::clz(987654321), content="2")
+  inspect(Int32::clz(1024), content="21")
+  inspect(Int32::clz(65536), content="15")
+  inspect(Int32::clz(32768), content="16")
+  inspect(Int32::clz(16384), content="17")
+  inspect(Int32::clz(8192), content="18")
 }
 
 ///|
 test "grouped test for boundary cases: clz" {
-  inspect(UInt::clz(0x00000000U), content="32")
-  inspect(UInt::clz(0x80000000U), content="0")
-  inspect(UInt::clz(0x40000000U), content="1")
-  inspect(UInt::clz(0x20000000U), content="2")
-  inspect(UInt::clz(0x10000000U), content="3")
+  inspect(UInt32::clz(0x00000000U), content="32")
+  inspect(UInt32::clz(0x80000000U), content="0")
+  inspect(UInt32::clz(0x40000000U), content="1")
+  inspect(UInt32::clz(0x20000000U), content="2")
+  inspect(UInt32::clz(0x10000000U), content="3")
 }
 
 ///|
 test "grouped test for random cases" {
-  inspect(UInt::clz(0x12345678U), content="3")
-  inspect(UInt::clz(0x87654321U), content="0")
-  inspect(UInt::clz(0xABCDEF01U), content="0")
-  inspect(UInt::clz(0x0FEDCBA9U), content="4")
-  inspect(UInt::clz(0x0000FFFFU), content="16")
-  inspect(UInt::clz(0xFFFF0000U), content="0")
+  inspect(UInt32::clz(0x12345678U), content="3")
+  inspect(UInt32::clz(0x87654321U), content="0")
+  inspect(UInt32::clz(0xABCDEF01U), content="0")
+  inspect(UInt32::clz(0x0FEDCBA9U), content="4")
+  inspect(UInt32::clz(0x0000FFFFU), content="16")
+  inspect(UInt32::clz(0xFFFF0000U), content="0")
   // Random float values
   inspect(Float::reinterpret_as_uint(123.456), content="1123477881")
   inspect(Float::reinterpret_as_uint(-123.456), content="3270961529")
@@ -361,38 +361,38 @@ test "grouped test for random cases" {
 
 ///|
 test "grouped test for edge and random cases" {
-  inspect(UInt::clz(0x00000001U), content="31")
-  inspect(UInt::clz(0x00000002U), content="30")
-  inspect(UInt::clz(0x00000004U), content="29")
-  inspect(UInt::clz(0x00000008U), content="28")
-  inspect(UInt::clz(0x00000010U), content="27")
-  inspect(UInt::clz(0x00000020U), content="26")
-  inspect(UInt::clz(0x00000040U), content="25")
-  inspect(UInt::clz(0x00000080U), content="24")
-  inspect(UInt::clz(0x00000100U), content="23")
-  inspect(UInt::clz(0x00000200U), content="22")
-  inspect(UInt::clz(0x00000400U), content="21")
-  inspect(UInt::clz(0x00000800U), content="20")
-  inspect(UInt::clz(0x00001000U), content="19")
-  inspect(UInt::clz(0x00002000U), content="18")
-  inspect(UInt::clz(0x00004000U), content="17")
-  inspect(UInt::clz(0x00008000U), content="16")
-  inspect(UInt::clz(0x00010000U), content="15")
-  inspect(UInt::clz(0x00020000U), content="14")
-  inspect(UInt::clz(0x00040000U), content="13")
-  inspect(UInt::clz(0x00080000U), content="12")
-  inspect(UInt::clz(0x00100000U), content="11")
-  inspect(UInt::clz(0x00200000U), content="10")
-  inspect(UInt::clz(0x00400000U), content="9")
-  inspect(UInt::clz(0x00800000U), content="8")
-  inspect(UInt::clz(0x01000000U), content="7")
-  inspect(UInt::clz(0x02000000U), content="6")
-  inspect(UInt::clz(0x04000000U), content="5")
-  inspect(UInt::clz(0x08000000U), content="4")
-  inspect(UInt::clz(0x10000000U), content="3")
-  inspect(UInt::clz(0x20000000U), content="2")
-  inspect(UInt::clz(0x40000000U), content="1")
-  inspect(UInt::clz(0x80000000U), content="0")
+  inspect(UInt32::clz(0x00000001U), content="31")
+  inspect(UInt32::clz(0x00000002U), content="30")
+  inspect(UInt32::clz(0x00000004U), content="29")
+  inspect(UInt32::clz(0x00000008U), content="28")
+  inspect(UInt32::clz(0x00000010U), content="27")
+  inspect(UInt32::clz(0x00000020U), content="26")
+  inspect(UInt32::clz(0x00000040U), content="25")
+  inspect(UInt32::clz(0x00000080U), content="24")
+  inspect(UInt32::clz(0x00000100U), content="23")
+  inspect(UInt32::clz(0x00000200U), content="22")
+  inspect(UInt32::clz(0x00000400U), content="21")
+  inspect(UInt32::clz(0x00000800U), content="20")
+  inspect(UInt32::clz(0x00001000U), content="19")
+  inspect(UInt32::clz(0x00002000U), content="18")
+  inspect(UInt32::clz(0x00004000U), content="17")
+  inspect(UInt32::clz(0x00008000U), content="16")
+  inspect(UInt32::clz(0x00010000U), content="15")
+  inspect(UInt32::clz(0x00020000U), content="14")
+  inspect(UInt32::clz(0x00040000U), content="13")
+  inspect(UInt32::clz(0x00080000U), content="12")
+  inspect(UInt32::clz(0x00100000U), content="11")
+  inspect(UInt32::clz(0x00200000U), content="10")
+  inspect(UInt32::clz(0x00400000U), content="9")
+  inspect(UInt32::clz(0x00800000U), content="8")
+  inspect(UInt32::clz(0x01000000U), content="7")
+  inspect(UInt32::clz(0x02000000U), content="6")
+  inspect(UInt32::clz(0x04000000U), content="5")
+  inspect(UInt32::clz(0x08000000U), content="4")
+  inspect(UInt32::clz(0x10000000U), content="3")
+  inspect(UInt32::clz(0x20000000U), content="2")
+  inspect(UInt32::clz(0x40000000U), content="1")
+  inspect(UInt32::clz(0x80000000U), content="0")
 }
 
 ///|
@@ -482,31 +482,31 @@ test "Char::to_uint - Unicode Characters" {
 
 ///|
 test "Int::to_uint64 - Boundary Cases" {
-  inspect(Int::to_uint64(0), content="0")
-  inspect(Int::to_uint64(1), content="1")
-  inspect(Int::to_uint64(-1), content="18446744073709551615")
-  inspect(Int::to_uint64(2147483647), content="2147483647")
-  inspect(Int::to_uint64(-2147483648), content="18446744071562067968")
+  inspect(Int32::to_uint64(0), content="0")
+  inspect(Int32::to_uint64(1), content="1")
+  inspect(Int32::to_uint64(-1), content="18446744073709551615")
+  inspect(Int32::to_uint64(2147483647), content="2147483647")
+  inspect(Int32::to_uint64(-2147483648), content="18446744071562067968")
 }
 
 ///|
 test "Int::to_uint64 - Random Cases" {
-  inspect(Int::to_uint64(123456789), content="123456789")
-  inspect(Int::to_uint64(-987654321), content="18446744072721897295")
-  inspect(Int::to_uint64(987654321), content="987654321")
-  inspect(Int::to_uint64(-123456789), content="18446744073586094827")
+  inspect(Int32::to_uint64(123456789), content="123456789")
+  inspect(Int32::to_uint64(-987654321), content="18446744072721897295")
+  inspect(Int32::to_uint64(987654321), content="987654321")
+  inspect(Int32::to_uint64(-123456789), content="18446744073586094827")
 }
 
 ///|
 test "Int::to_uint64 - Edge Cases with Zero" {
-  inspect(Int::to_uint64(0), content="0")
-  inspect(Int::to_uint64(-0), content="0")
+  inspect(Int32::to_uint64(0), content="0")
+  inspect(Int32::to_uint64(-0), content="0")
 }
 
 ///|
 test "Int::to_uint64 - Random Values" {
-  inspect(Int::to_uint64(1234567890), content="1234567890")
-  inspect(Int::to_uint64(-1234567890), content="18446744072474983726")
+  inspect(Int32::to_uint64(1234567890), content="1234567890")
+  inspect(Int32::to_uint64(-1234567890), content="18446744072474983726")
 }
 
 ///|
@@ -540,45 +540,45 @@ test "convert byte to int64" {
 
 ///|
 test "Int::to_char" {
-  debug_inspect(Int::to_char(97), content="Some('a')")
-  debug_inspect(Int::to_char(65), content="Some('A')")
-  debug_inspect(Int::to_char(49), content="Some('1')")
-  debug_inspect(Int::to_char(33), content="Some('!')")
+  debug_inspect(Int32::to_char(97), content="Some('a')")
+  debug_inspect(Int32::to_char(65), content="Some('A')")
+  debug_inspect(Int32::to_char(49), content="Some('1')")
+  debug_inspect(Int32::to_char(33), content="Some('!')")
 }
 
 ///|
 test "Int::to_char - Invalid values" {
-  debug_inspect(Int::to_char(-1), content="None")
-  debug_inspect(Int::to_char(1114112), content="None")
-  debug_inspect(Int::to_char(1114113), content="None")
-  debug_inspect(Int::to_char(-1), content="None")
-  debug_inspect(Int::to_char(0x10FFFF + 1), content="None")
-  debug_inspect(Int::to_char(0xD800), content="None")
-  debug_inspect(Int::to_char(0xDFFF), content="None")
-  debug_inspect(Int::to_char(0xD900), content="None")
-  debug_inspect(Int::to_char(0xDF00), content="None")
+  debug_inspect(Int32::to_char(-1), content="None")
+  debug_inspect(Int32::to_char(1114112), content="None")
+  debug_inspect(Int32::to_char(1114113), content="None")
+  debug_inspect(Int32::to_char(-1), content="None")
+  debug_inspect(Int32::to_char(0x10FFFF + 1), content="None")
+  debug_inspect(Int32::to_char(0xD800), content="None")
+  debug_inspect(Int32::to_char(0xDFFF), content="None")
+  debug_inspect(Int32::to_char(0xD900), content="None")
+  debug_inspect(Int32::to_char(0xDF00), content="None")
 }
 
 ///|
 test "Int::to_char - Valid values" {
-  debug_inspect(Int::to_char(0), content="Some('\\u{00}')")
-  debug_inspect(Int::to_char(127), content="Some('\\u{7f}')")
-  debug_inspect(Int::to_char(128), content="Some('\\u{80}')")
-  debug_inspect(Int::to_char(0x7F), content="Some('\\u{7f}')")
-  debug_inspect(Int::to_char(0x80), content="Some('\\u{80}')")
-  debug_inspect(Int::to_char(0xFF), content="Some('ÿ')")
-  debug_inspect(Int::to_char(0x100), content="Some('Ā')")
-  debug_inspect(Int::to_char(0xFFFF), content="Some('\\u{ffff}')")
-  debug_inspect(Int::to_char(0x10000), content="Some('𐀀')")
-  debug_inspect(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
+  debug_inspect(Int32::to_char(0), content="Some('\\u{00}')")
+  debug_inspect(Int32::to_char(127), content="Some('\\u{7f}')")
+  debug_inspect(Int32::to_char(128), content="Some('\\u{80}')")
+  debug_inspect(Int32::to_char(0x7F), content="Some('\\u{7f}')")
+  debug_inspect(Int32::to_char(0x80), content="Some('\\u{80}')")
+  debug_inspect(Int32::to_char(0xFF), content="Some('ÿ')")
+  debug_inspect(Int32::to_char(0x100), content="Some('Ā')")
+  debug_inspect(Int32::to_char(0xFFFF), content="Some('\\u{ffff}')")
+  debug_inspect(Int32::to_char(0x10000), content="Some('𐀀')")
+  debug_inspect(Int32::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
 }
 
 ///|
 test "Int::to_char - Boundary cases" {
-  debug_inspect(Int::to_char(0xD7FF), content="Some('퟿')")
-  debug_inspect(Int::to_char(0xE000), content="Some('\\u{e000}')")
-  debug_inspect(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
-  debug_inspect(Int::to_char(0x10FFFF + 1), content="None")
+  debug_inspect(Int32::to_char(0xD7FF), content="Some('퟿')")
+  debug_inspect(Int32::to_char(0xE000), content="Some('\\u{e000}')")
+  debug_inspect(Int32::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
+  debug_inspect(Int32::to_char(0x10FFFF + 1), content="None")
 }
 
 ///|

@@ -53,7 +53,7 @@ pub fn Pattern::empty() -> Pattern {
 /// Create a single-character-class pattern from an inclusive integer range.
 #internal(internal, "not intended for public use")
 #doc(hidden)
-pub fn Pattern::char_range(lo : Int, hi : Int) -> Pattern {
+pub fn Pattern::char_range(lo : Int32, hi : Int32) -> Pattern {
   Pattern(@re.char(@re.RecharSet::char_range(lo, hi)))
 }
 
@@ -61,7 +61,7 @@ pub fn Pattern::char_range(lo : Int, hi : Int) -> Pattern {
 /// Create a single-character-class pattern from sorted disjoint intervals.
 #internal(internal, "not intended for public use")
 #doc(hidden)
-pub fn Pattern::char_set(cs : ReadOnlyArray[(Int, Int)]) -> Pattern {
+pub fn Pattern::char_set(cs : ReadOnlyArray[(Int32, Int32)]) -> Pattern {
   Pattern(@re.char(@re.RecharSet::from_sorted_array(cs)))
 }
 
@@ -91,8 +91,8 @@ pub fn Pattern::alt(pats : ReadOnlyArray[Pattern]) -> Pattern {
 #doc(hidden)
 pub fn Pattern::quantifier(
   pat : Pattern,
-  min~ : Int,
-  max~ : Int?,
+  min~ : Int32,
+  max~ : Int32?,
   greedy~ : Bool,
 ) -> Pattern {
   Pattern(

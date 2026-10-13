@@ -19,7 +19,7 @@
 
 ///|
 /// Builds a string from raw UTF-16 code units (little-endian storage).
-fn range_equal_units_to_string(units : Array[Int]) -> String {
+fn range_equal_units_to_string(units : Array[Int32]) -> String {
   let bytes = FixedArray::make(units.length() * 2, b'\x00')
   for i, u in units {
     bytes[2 * i] = (u & 0xFF).to_byte()
@@ -34,7 +34,7 @@ fn range_equal_units_to_string(units : Array[Int]) -> String {
 /// ASCII, a BMP CJK unit, a surrogate pair, and units whose low or high byte
 /// is zero. XOR-ing any of them with 0x1 or 0x100 yields a unit of the same
 /// kind, so a planted mismatch keeps surrogate pairs well-formed.
-let range_equal_unit_pattern : Array[Int] = [
+let range_equal_unit_pattern : Array[Int32] = [
   0x61, 0x4E2D, 0xD83D, 0xDE00, 0xFF, 0x100, 0x7A,
 ]
 
@@ -43,11 +43,11 @@ let range_equal_unit_pattern : Array[Int] = [
 /// `pad` chooses the filler so the two sides of a comparison differ outside
 /// the compared ranges.
 fn range_equal_make_units(
-  prefix : Int,
-  len : Int,
-  suffix : Int,
-  pad : Int,
-) -> Array[Int] {
+  prefix : Int32,
+  len : Int32,
+  suffix : Int32,
+  pad : Int32,
+) -> Array[Int32] {
   let units = []
   for i in 0..<prefix {
     units.push(pad + i)
@@ -64,7 +64,7 @@ fn range_equal_make_units(
 ///|
 /// Offsets `(left, right)` for the boundary tests: aligned, unaligned on one
 /// side, and unaligned on both sides.
-let range_equal_offsets : Array[(Int, Int)] = [
+let range_equal_offsets : Array[(Int32, Int32)] = [
   (0, 0),
   (1, 0),
   (0, 3),
@@ -78,9 +78,9 @@ let range_equal_offsets : Array[(Int, Int)] = [
 /// and checks `eq` against the expected answer. `suffix == 0` makes each
 /// range end exactly at the end of its backing string.
 fn check_string_range_equal(
-  eq : (String, Int, String, Int, Int) -> Bool,
-  min_len : Int,
-  max_len : Int,
+  eq : (String, Int32, String, Int32, Int32) -> Bool,
+  min_len : Int32,
+  max_len : Int32,
 ) -> Unit raise {
   for len in min_len..<=max_len {
     for offsets in range_equal_offsets {
@@ -119,10 +119,10 @@ fn check_string_range_equal(
 
 ///|
 fn range_equal_make_bytes(
-  prefix : Int,
-  len : Int,
-  suffix : Int,
-  pad : Int,
+  prefix : Int32,
+  len : Int32,
+  suffix : Int32,
+  pad : Int32,
 ) -> FixedArray[Byte] {
   let data = FixedArray::make(prefix + len + suffix, b'\x00')
   for i in 0..<prefix {
@@ -140,9 +140,9 @@ fn range_equal_make_bytes(
 
 ///|
 fn check_bytes_range_equal(
-  eq : (Bytes, Int, Bytes, Int, Int) -> Bool,
-  min_len : Int,
-  max_len : Int,
+  eq : (Bytes, Int32, Bytes, Int32, Int32) -> Bool,
+  min_len : Int32,
+  max_len : Int32,
 ) -> Unit raise {
   for len in min_len..<=max_len {
     for offsets in range_equal_offsets {

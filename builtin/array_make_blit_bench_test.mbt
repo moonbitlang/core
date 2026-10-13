@@ -19,12 +19,12 @@ let make_blit_ref_bench_size = 1_000_000
 let make_blit_ref_bench_half_size = 500_000
 
 ///|
-fn make_blit_ref_array(len : Int) -> Array[String] {
+fn make_blit_ref_array(len : Int32) -> Array[String] {
   Array::make(len, "value")
 }
 
 ///|
-fn make_blit_ref_fixedarray(len : Int) -> FixedArray[String] {
+fn make_blit_ref_fixedarray(len : Int32) -> FixedArray[String] {
   FixedArray::make(len, "value")
 }
 
@@ -118,7 +118,7 @@ test "bench Array::push Ref n=1000000 resize" (it : @bench.T) {
 }
 
 ///|
-fn make_blit_int_array(len : Int) -> Array[Int] {
+fn make_blit_int_array(len : Int32) -> Array[Int32] {
   Array::makei(len, i => i)
 }
 

@@ -16,7 +16,7 @@
 /// Deterministic mix of ASCII, CJK, surrogate pairs and lone trailing
 /// surrogates, optionally ending in a lone leading surrogate.
 #cfg(any(target="native", target="wasm"))
-fn char_length_wb_string(seed : Int, n : Int, lead_at_end : Bool) -> String {
+fn char_length_wb_string(seed : Int32, n : Int32, lead_at_end : Bool) -> String {
   let units : Array[Char] = []
   let mut state = seed.reinterpret_as_uint() | 1
   for _ in 0..<n {

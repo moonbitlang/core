@@ -16,7 +16,7 @@
 let bytes_equal_bench_size = 100_000
 
 ///|
-fn make_bytes_equal_bench_bytes(diff_at? : Int = -1) -> Bytes {
+fn make_bytes_equal_bench_bytes(diff_at~ : Int32 = -1) -> Bytes {
   let arr = Array::make(bytes_equal_bench_size, b'\x61')
   if diff_at >= 0 {
     arr[diff_at] = b'\x62'

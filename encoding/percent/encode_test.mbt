@@ -25,7 +25,7 @@ test "every other ASCII character escapes with uppercase hex" {
   for code in 0..<128 {
     let ch = code.unsafe_to_char()
     let encoded = @percent.encode(ch.to_string())
-    if ch is ('A'..='Z' | 'a'..='z' | '0'..='9' | '-' | '.' | '_' | '~') {
+    if ch is ('A'..<='Z' | 'a'..<='z' | '0'..<='9' | '-' | '.' | '_' | '~') {
       assert_eq(encoded, ch.to_string())
     } else {
       assert_eq(encoded.length(), 3)

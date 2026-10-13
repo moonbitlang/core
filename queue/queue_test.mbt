@@ -14,20 +14,20 @@
 
 ///|
 test "new" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   @test.assert_eq(queue.length(), 0)
 }
 
 ///|
 test "copy empty" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   let copied = queue.copy()
   inspect(copied.length(), content="0")
 }
 
 ///|
 test "from_fixed_array_2" {
-  let q : @queue.Queue[Int] = @queue.from_array([])
+  let q : @queue.Queue[Int32] = @queue.from_array([])
   debug_inspect(
     q,
     content=(
@@ -60,7 +60,7 @@ test "Queue constructor" {
 
 ///|
 test "from_array_2" {
-  let q : @queue.Queue[Int] = @queue.from_array([])
+  let q : @queue.Queue[Int32] = @queue.from_array([])
   debug_inspect(
     q,
     content=(
@@ -68,14 +68,14 @@ test "from_array_2" {
     ),
   )
   let array = Array::makei(3, idx => idx + 1)
-  let q : @queue.Queue[Int] = @queue.from_array(array)
+  let q : @queue.Queue[Int32] = @queue.from_array(array)
   debug_inspect(
     q,
     content=(
       #|<Queue: [1, 2, 3]>
     ),
   )
-  let q : @queue.Queue[Int] = @queue.from_array(Array(capacity=10))
+  let q : @queue.Queue[Int32] = @queue.from_array(Array(capacity=10))
   debug_inspect(
     q,
     content=(
@@ -86,7 +86,7 @@ test "from_array_2" {
 
 ///|
 test "to_string" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   debug_inspect(
     queue,
     content=(
@@ -107,14 +107,14 @@ test "to_string" {
       #|<Queue: [2, 3, 4, 11]>
     ),
   )
-  let queue : @queue.Queue[Int] = @queue.from_array([])
+  let queue : @queue.Queue[Int32] = @queue.from_array([])
   debug_inspect(
     queue,
     content=(
       #|<Queue: []>
     ),
   )
-  let queue : @queue.Queue[Int] = @queue.from_array([9, 8, 7, 5])
+  let queue : @queue.Queue[Int32] = @queue.from_array([9, 8, 7, 5])
   debug_inspect(
     queue,
     content=(
@@ -125,7 +125,7 @@ test "to_string" {
 
 ///|
 test "clear" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   @test.assert_eq(queue.length(), 4)
   queue.clear()
   @test.assert_eq(queue.length(), 0)
@@ -133,7 +133,7 @@ test "clear" {
 
 ///|
 test "is_empty" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   assert_true(queue.is_empty())
   queue.push(1)
   queue.push(2)
@@ -144,7 +144,7 @@ test "is_empty" {
 
 ///|
 test "unsafe_peek" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   @test.assert_eq(queue.unsafe_peek(), 1)
   @test.assert_eq(queue.length(), 4)
   @test.assert_eq(queue.unsafe_pop(), 1)
@@ -154,7 +154,7 @@ test "unsafe_peek" {
 
 ///|
 test "peek" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   @test.assert_eq(queue.peek(), Some(1))
   queue.clear()
   @test.assert_eq(queue.peek(), None)
@@ -162,7 +162,7 @@ test "peek" {
 
 ///|
 test "unsafe_pop" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   @test.assert_eq(queue.unsafe_pop(), 1)
   @test.assert_eq(queue.unsafe_pop(), 2)
   @test.assert_eq(queue.unsafe_pop(), 3)
@@ -172,7 +172,7 @@ test "unsafe_pop" {
 
 ///|
 test "pop" {
-  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
   @test.assert_eq(queue.pop(), Some(1))
   @test.assert_eq(queue.pop(), Some(2))
   @test.assert_eq(queue.pop(), Some(3))
@@ -182,7 +182,7 @@ test "pop" {
 
 ///|
 test "each" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   let mut sum = 0
   queue.each(x => sum += x)
   @test.assert_eq(sum, 0)
@@ -200,7 +200,7 @@ test "iter_fold" {
 
 ///|
 test "iteri" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   let mut sum = 0
   queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 0)
@@ -212,7 +212,7 @@ test "iteri" {
 
 ///|
 test "fold" {
-  let queue : @queue.Queue[Int] = Queue([])
+  let queue : @queue.Queue[Int32] = Queue([])
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
@@ -237,7 +237,7 @@ fn expect_callback_failure(action : () -> Unit raise) -> Unit raise {
 }
 
 ///|
-fn fail_on_two(x : Int) -> Unit raise {
+fn fail_on_two(x : Int32) -> Unit raise {
   if x == 2 {
     raise Failure::Failure("callback failed")
   }
@@ -296,7 +296,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @queue.Queue[Int] = @queue.from_iter([||])
+  let pq : @queue.Queue[Int32] = @queue.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -308,7 +308,7 @@ test "from_iter empty iter" {
 ///|
 test "transfer_self" {
   // Test self-transfer: q.transfer(q) should be a no-op
-  let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+  let q : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
   q.transfer(q)
   // After self-transfer, queue should remain unchanged
   debug_inspect(
@@ -322,7 +322,7 @@ test "transfer_self" {
 ///|
 test "transfer_self_empty" {
   // Test self-transfer on empty queue
-  let q : @queue.Queue[Int] = Queue([])
+  let q : @queue.Queue[Int32] = Queue([])
   q.transfer(q)
   debug_inspect(
     q,
@@ -334,7 +334,7 @@ test "transfer_self_empty" {
 
 ///|
 test "Queue constructor with capacity" {
-  let q : @queue.Queue[Int] = Queue([], capacity=16)
+  let q : @queue.Queue[Int32] = Queue([], capacity=16)
   inspect(q.is_empty(), content="true")
   for i in 0..<20 {
     q.push(i)
@@ -361,7 +361,7 @@ test "Eq compares elements in order" {
 
 ///|
 test "Default is the empty queue" {
-  let q : @queue.Queue[Int] = Default::default()
+  let q : @queue.Queue[Int32] = Default::default()
   inspect(q.is_empty(), content="true")
 }
 
@@ -371,7 +371,10 @@ test "to_array is front first" {
   q.push(3)
   ignore(q.pop())
   @debug.debug_inspect(q.to_array(), content="[2, 3]")
-  @debug.debug_inspect((Queue([]) : @queue.Queue[Int]).to_array(), content="[]")
+  @debug.debug_inspect(
+    (Queue([]) : @queue.Queue[Int32]).to_array(),
+    content="[]",
+  )
 }
 
 ///|
@@ -380,11 +383,11 @@ test "JSON round-trip" {
   ignore(q.pop())
   q.push(4)
   @json.json_inspect(q, content=[2, 3, 4])
-  let back : @queue.Queue[Int] = @json.from_json(Json(q))
+  let back : @queue.Queue[Int32] = @json.from_json(Json(q))
   inspect(back == q, content="true")
   @debug.debug_inspect(back.pop(), content="Some(2)")
   let bad : Json = { "a": 1 }
-  try (@json.from_json(bad) : @queue.Queue[Int]) |> ignore catch {
+  try (@json.from_json(bad) : @queue.Queue[Int32]) |> ignore catch {
     e =>
       inspect(
         e,
@@ -396,7 +399,7 @@ test "JSON round-trip" {
     _ => fail("expected JsonDecodeError")
   }
   let bad_elem : Json = [1, "x"]
-  try (@json.from_json(bad_elem) : @queue.Queue[Int]) |> ignore catch {
+  try (@json.from_json(bad_elem) : @queue.Queue[Int32]) |> ignore catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")

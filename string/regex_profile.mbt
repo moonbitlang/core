@@ -25,7 +25,7 @@ let re_profile_unicode : @re.Profile = Profile(
   word=word_set,
   category=c => {
     match c {
-      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
+      'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' => @re.Category::word()
       '\n' => @re.Category::newline() + @re.Category::not_word()
       _ => @re.Category::not_word()
     }
@@ -45,8 +45,8 @@ let re_profile_utf16 : @re.Profile = Profile(
   ],
   category=c => {
     match c {
-      0xD800..=0xDBFF => @re.Category::not_word_start()
-      0xDC00..=0xDFFF => @re.Category::not_word_end()
+      0xD800..<=0xDBFF => @re.Category::not_word_start()
+      0xDC00..<=0xDFFF => @re.Category::not_word_end()
       _ => (re_profile_unicode.category)(c)
     }
   },

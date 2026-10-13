@@ -19,8 +19,8 @@
 /// - `max`: optional maximum repetition count.
 /// - `mode`: greedy/non-greedy mode.
 pub(all) struct Quantifier {
-  min : Int
-  max : Int?
+  min : Int32
+  max : Int32?
   mode : @shared_types.QuantifierMode
 } derive(@debug.Debug)
 

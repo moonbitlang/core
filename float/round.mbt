@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let sign_mask : UInt = 0x8000_0000
+let sign_mask : UInt32 = 0x8000_0000
 
 ///|
 let exp_bias = 127

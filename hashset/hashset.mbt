@@ -18,7 +18,7 @@
 let default_init_capacity = 8
 
 ///|
-fn[K] new_hashset(capacity : Int) -> HashSet[K] {
+fn[K] new_hashset(capacity : Int32) -> HashSet[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -30,7 +30,7 @@ fn[K] new_hashset(capacity : Int) -> HashSet[K] {
 }
 
 ///|
-fn capacity_for_length(length : Int) -> Int {
+fn capacity_for_length(length : Int32) -> Int32 {
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -48,7 +48,7 @@ fn capacity_for_length(length : Int) -> Int {
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq] HashSet::HashSet(
   arr : ArrayView[K],
-  capacity? : Int,
+  capacity? : Int32,
 ) -> HashSet[K] {
   let length = arr.length()
   let capacity = match capacity {
@@ -88,7 +88,7 @@ pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
 fn[K : Eq] HashSet::add_with_hash(
   self : HashSet[K],
   key : K,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
@@ -119,7 +119,7 @@ fn[K : Eq] HashSet::add_with_hash(
 #owned(entry)
 fn[K] HashSet::push_away(
   self : HashSet[K],
-  idx : Int,
+  idx : Int32,
   entry : Entry[K],
 ) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
@@ -150,7 +150,7 @@ fn[K] HashSet::push_away(
 fn[K] HashSet::set_entry(
   self : HashSet[K],
   entry : Entry[K],
-  new_idx : Int,
+  new_idx : Int32,
 ) -> Unit {
   // SAFETY: every caller supplies an index already proven in bounds -- from
   // a masked probe, or from `shift_back`'s `cur`.
@@ -171,7 +171,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 fn[K : Eq] HashSet::contains_with_hash(
   self : HashSet[K],
   key : K,
-  hash : Int,
+  hash : Int32,
 ) -> Bool {
   for i = 0, idx = hash & self.capacity_mask {
     // SAFETY: same masked-index invariant as `add_with_hash`.
@@ -225,7 +225,7 @@ pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
 }
 
 ///|
-fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
+fn[K] HashSet::shift_back(self : HashSet[K], idx : Int32) -> Unit {
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
     // SAFETY: the initial `cur` is in bounds by either route its callers
@@ -310,13 +310,13 @@ pub impl[K : Show] Show for HashSet[K] with fn output(self, logger) {
 ///|
 /// Returns the number of elements in the set.
 #alias(size, deprecated)
-pub fn[K] HashSet::length(self : HashSet[K]) -> Int {
+pub fn[K] HashSet::length(self : HashSet[K]) -> Int32 {
   self.size
 }
 
 ///|
 /// Returns the current capacity of the internal storage.
-pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int {
+pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int32 {
   self.capacity
 }
 
@@ -345,7 +345,7 @@ pub fn[K] HashSet::each(
 #locals(f)
 pub fn[K] HashSet::eachi(
   self : HashSet[K],
-  f : (Int, K) -> Unit raise?,
+  f : (Int32, K) -> Unit raise?,
 ) -> Unit raise? {
   for i in 0..<self.capacity; idx = 0 {
     if self.entries[i] is Some({ key, .. }) {
@@ -647,7 +647,7 @@ pub fn[K] HashSet::filter(
 }
 
 ///|
-fn calc_grow_threshold(capacity : Int) -> Int {
+fn calc_grow_threshold(capacity : Int32) -> Int32 {
   capacity * 13 / 16
 }
 
@@ -844,7 +844,7 @@ pub impl[X : @json.ToJson] @json.ToJson for HashSet[X] with fn to_json(self) {
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[Int] = @json.from_json([3, 1, 3, 2])
+///   let set : @hashset.HashSet[Int32] = @json.from_json([3, 1, 3, 2])
 ///   inspect(set.length(), content="3")
 ///   inspect(set.contains(3), content="true")
 /// }

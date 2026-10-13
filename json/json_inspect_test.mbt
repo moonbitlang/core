@@ -24,8 +24,8 @@ test {
 
 ///|
 priv struct P {
-  x : Int
-  y : Int
+  x : Int32
+  y : Int32
   color : Color
 } derive(@json.ToJson)
 

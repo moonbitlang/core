@@ -18,6 +18,6 @@
 /// Deprecated: use `Deque([], capacity=...)` instead.
 #deprecated("Use `Deque([], capacity=...)` instead")
 #as_free_fn(deprecated="Use `Deque([], capacity=...)` instead")
-pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
+pub fn[A] Deque::new(capacity~ : Int32 = 0) -> Deque[A] {
   new_deque(capacity)
 }

@@ -426,9 +426,9 @@ pub fn atan2(y : Double, x : Double) -> Double {
 }
 
 ///|
-fn rem_pio2(x : Double, y : Array[Double]) -> Int {
+fn rem_pio2(x : Double, y : Array[Double]) -> Int32 {
   let hx = get_high_word(x).reinterpret_as_int()
-  let ix : Int = hx & 0x7fffffff
+  let ix : Int32 = hx & 0x7fffffff
   let mut z = 0.0
   if ix <= 0x3fe921fb {
     // |x| <= pi/4, no reduction needed
@@ -544,29 +544,29 @@ fn rem_pio2(x : Double, y : Array[Double]) -> Int {
 fn __kernel_rem_pio2(
   x : Array[Double],
   y : Array[Double],
-  e0 : Int,
-  nx : Int,
-  prec : Int,
-) -> Int {
-  let init_jk : ReadOnlyArray[Int] = [2, 3, 4, 6]
+  e0 : Int32,
+  nx : Int32,
+  prec : Int32,
+) -> Int32 {
+  let init_jk : ReadOnlyArray[Int32] = [2, 3, 4, 6]
   let two24 : Double = 16777216.0 // 0x41700000, 0x00000000
   let twon24 : Double = 5.96046447753906250000e-08 // 0x3E700000, 0x00000000
 
   // Declare variables at the beginning, as in the original C code
-  let mut jz : Int = 0
-  let mut jx : Int = 0
-  let mut jv : Int = 0
-  let mut jp : Int = 0
-  let mut jk : Int = 0
-  let mut carry : Int = 0
-  let mut n : Int = 0
-  let iq : Array[Int] = Array::make(20, 0)
-  let mut i : Int = 0
-  let mut j : Int = 0
-  let mut k : Int = 0
-  let mut m : Int = 0
-  let mut q0 : Int = 0
-  let mut ih : Int = 0
+  let mut jz : Int32 = 0
+  let mut jx : Int32 = 0
+  let mut jv : Int32 = 0
+  let mut jp : Int32 = 0
+  let mut jk : Int32 = 0
+  let mut carry : Int32 = 0
+  let mut n : Int32 = 0
+  let iq : Array[Int32] = Array::make(20, 0)
+  let mut i : Int32 = 0
+  let mut j : Int32 = 0
+  let mut k : Int32 = 0
+  let mut m : Int32 = 0
+  let mut q0 : Int32 = 0
+  let mut ih : Int32 = 0
   let mut z : Double = 0
   let mut fw : Double = 0
   let f : Array[Double] = Array::make(20, 0.0)
@@ -817,7 +817,7 @@ fn __kernel_rem_pio2(
 }
 
 ///|
-fn __kernel_sin(x : Double, y : Double, iy : Int) -> Double {
+fn __kernel_sin(x : Double, y : Double, iy : Int32) -> Double {
   let s1 = -1.66666666666666324348e-01
   let s2 = 8.33333333332248946124e-03
   let s3 = -1.98412698298579493134e-04
@@ -880,7 +880,7 @@ fn __kernel_cos(x : Double, y : Double) -> Double {
 }
 
 ///|
-fn __kernal_tan(x : Double, y : Double, iy : Int) -> Double {
+fn __kernal_tan(x : Double, y : Double, iy : Int32) -> Double {
   let one = 1.0
   let pio4 = 7.85398163397448278999e-01
   let pio4lo = 3.06161699786838301793e-17

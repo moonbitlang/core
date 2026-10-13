@@ -32,7 +32,7 @@ pub(open) trait FromJson {
 /// Create from `json`.
 pub fn[T : FromJson] from_json(
   json : Json,
-  path? : JsonPath = Root,
+  path~ : JsonPath = Root,
 ) -> T raise JsonDecodeError {
   FromJson::from_json(json, path)
 }
@@ -52,7 +52,7 @@ pub impl FromJson for Bool with fn from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Int with fn from_json(json, path) {
+pub impl FromJson for Int32 with fn from_json(json, path) {
   guard json is Number(n, ..) &&
     n != @double.infinity &&
     n != @double.neg_infinity else {
@@ -84,7 +84,7 @@ pub impl FromJson for Int64 with fn from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for UInt with fn from_json(json, path) {
+pub impl FromJson for UInt32 with fn from_json(json, path) {
   guard json is Number(n, ..) &&
     n != @double.infinity &&
     n != @double.neg_infinity else {
@@ -164,7 +164,7 @@ pub impl FromJson for Char with fn from_json(json, path) {
   } else if len == 2 {
     let c1 = a.unsafe_get(0).to_int()
     let c2 = a.unsafe_get(1).to_int()
-    if c1 is (0xD800..=0xDBFF) && c2 is (0xDC00..=0xDFFF) {
+    if c1 is (0xD800..<=0xDBFF) && c2 is (0xDC00..<=0xDFFF) {
       let c3 = (c1 << 10) + c2 - 0x35fdc00
       c3.unsafe_to_char()
     } else {
@@ -316,10 +316,10 @@ pub impl FromJson for Bytes with fn from_json(json, path) {
       [] => break
       [
         .. "\\x",
-        '0'..='9'
-        | 'a'..='f' as x,
-        '0'..='9'
-        | 'a'..='f' as y,
+        '0'..<='9'
+        | 'a'..<='f' as x,
+        '0'..<='9'
+        | 'a'..<='f' as y,
         .. rest,
       ] => {
         let upper = (x.to_int() & 0xF) + (x.to_int() >> 6) * 9
@@ -327,7 +327,7 @@ pub impl FromJson for Bytes with fn from_json(json, path) {
         buffer.write_byte(((upper << 4) | lower).to_byte())
         continue rest
       }
-      [' '..='~' as ch, .. rest] => {
+      [' '..<='~' as ch, .. rest] => {
         guard ch != '\\' && ch != '"' else {
           decode_error(path, "Bytes::from_json: invalid escape sequence")
         }

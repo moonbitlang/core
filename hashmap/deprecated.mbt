@@ -21,7 +21,7 @@
 #deprecated("Use `HashMap([], capacity=...)` instead")
 #as_free_fn(deprecated="Use `HashMap([], capacity=...)` instead")
 pub fn[K, V] HashMap::new(
-  capacity? : Int = default_init_capacity,
+  capacity~ : Int32 = default_init_capacity,
 ) -> HashMap[K, V] {
   new_hashmap(capacity)
 }

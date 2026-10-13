@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let update_bench_map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(
+let update_bench_map : @hashmap.HashMap[Int32, Int32] = @hashmap.from_iter(
   (0).until(100_000).map(i => (i, i)),
 )
 

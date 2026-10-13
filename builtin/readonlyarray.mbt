@@ -31,12 +31,12 @@ fn[T] unsafe_reinterpret_from_fixed_array(
 ///
 /// ```mbt check
 /// test {
-///   let a : ReadOnlyArray[Int] = [10, 20, 30]
+///   let a : ReadOnlyArray[Int32] = [10, 20, 30]
 ///   inspect(a.at(1), content="20")
 /// }
 /// ```
 #alias("_[_]")
-pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
+pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int32) -> T {
   self.unsafe_reinterpret_to_fixed_array()[index]
 }
 
@@ -46,7 +46,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dynamic_array : Array[Int] = [1, 2, 3, 4, 5]
+///   let dynamic_array : Array[Int32] = [1, 2, 3, 4, 5]
 ///   let immut_array = ReadOnlyArray::from_array(dynamic_array)
 ///   inspect(immut_array[0], content="1")
 /// }
@@ -82,8 +82,8 @@ pub fn[T] ReadOnlyArray::from_iter(iter : Iter[T]) -> ReadOnlyArray[T] {
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::makei(
-  length : Int,
-  value : (Int) -> T raise?,
+  length : Int32,
+  value : (Int32) -> T raise?,
 ) -> ReadOnlyArray[T] raise? {
   unsafe_reinterpret_from_fixed_array(FixedArray::makei(length, value))
 }
@@ -95,13 +95,13 @@ pub fn[T] ReadOnlyArray::makei(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   debug_inspect(arr.get(1), content="Some(2)")
 ///   debug_inspect(arr.get(5), content="None")
 /// }
 /// ```
 #intrinsic("%readonlyarray.get_opt")
-pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
+pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int32) -> T? {
   self.unsafe_reinterpret_to_fixed_array().get(index)
 }
 
@@ -123,14 +123,17 @@ pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [42, 42, 42]
+///   let arr : ReadOnlyArray[Int32] = [42, 42, 42]
 ///   inspect(arr.unsafe_get(1), content="42")
 /// }
 /// ```
 ///
 #internal(unsafe, "Undefined behavior if index is out of bounds")
 #doc(hidden)
-pub fn[T] ReadOnlyArray::unsafe_get(self : ReadOnlyArray[T], index : Int) -> T {
+pub fn[T] ReadOnlyArray::unsafe_get(
+  self : ReadOnlyArray[T],
+  index : Int32,
+) -> T {
   self.unsafe_reinterpret_to_fixed_array().unsafe_get(index)
 }
 
@@ -140,11 +143,11 @@ pub fn[T] ReadOnlyArray::unsafe_get(self : ReadOnlyArray[T], index : Int) -> T {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
 /// }
 /// ```
-pub fn[T] ReadOnlyArray::length(self : ReadOnlyArray[T]) -> Int {
+pub fn[T] ReadOnlyArray::length(self : ReadOnlyArray[T]) -> Int32 {
   self.unsafe_reinterpret_to_fixed_array().length()
 }
 
@@ -154,9 +157,9 @@ pub fn[T] ReadOnlyArray::length(self : ReadOnlyArray[T]) -> Int {
 /// # Example
 /// ```mbt check
 /// test {
-///   let empty_arr : ReadOnlyArray[Int] = []
+///   let empty_arr : ReadOnlyArray[Int32] = []
 ///   inspect(empty_arr.is_empty(), content="true")
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr.is_empty(), content="false")
 /// }
 /// ```
@@ -170,9 +173,9 @@ pub fn[T] ReadOnlyArray::is_empty(self : ReadOnlyArray[T]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   debug_inspect(arr.last(), content="Some(3)")
-///   let empty_arr : ReadOnlyArray[Int] = []
+///   let empty_arr : ReadOnlyArray[Int32] = []
 ///   debug_inspect(empty_arr.last(), content="None")
 /// }
 /// ```
@@ -186,7 +189,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let mut sum = 0
 ///   arr.iter().each(fn(x) { sum += x })
 ///   inspect(sum, content="6")
@@ -203,13 +206,13 @@ pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
+///   let arr : ReadOnlyArray[Int32] = [10, 20, 30]
 ///   let mut sum = 0
 ///   arr.iter2().each(fn(i, x) { sum += i + x })
 ///   inspect(sum, content="63") // (0+10) + (1+20) + (2+30) = 63
 /// }
 /// ```
-pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
+pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int32, T] {
   self.unsafe_reinterpret_to_fixed_array().iter2()
 }
 
@@ -219,7 +222,7 @@ pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_iter().each(x => result.push(x))
 ///   debug_inspect(result, content="[3, 2, 1]")
@@ -235,7 +238,7 @@ pub fn[T] ReadOnlyArray::rev_iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let result = []
 ///   arr.each(fn(x) { result.push(x * 2) })
 ///   debug_inspect(result, content="[2, 4, 6]")
@@ -254,7 +257,7 @@ pub fn[T] ReadOnlyArray::each(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
+///   let arr : ReadOnlyArray[Int32] = [10, 20, 30]
 ///   let result = []
 ///   arr.eachi(fn(i, x) { result.push((i, x)) })
 ///   debug_inspect(result, content="[(0, 10), (1, 20), (2, 30)]")
@@ -262,7 +265,7 @@ pub fn[T] ReadOnlyArray::each(
 /// ```
 pub fn[T] ReadOnlyArray::eachi(
   self : ReadOnlyArray[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   self.unsafe_reinterpret_to_fixed_array().eachi(f)
 }
@@ -273,7 +276,7 @@ pub fn[T] ReadOnlyArray::eachi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_each(fn(x) { result.push(x) })
 ///   debug_inspect(result, content="[3, 2, 1]")
@@ -292,7 +295,7 @@ pub fn[T] ReadOnlyArray::rev_each(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
+///   let arr : ReadOnlyArray[Int32] = [10, 20, 30]
 ///   let result = []
 ///   arr.rev_eachi(fn(i, x) { result.push((i, x)) })
 ///   debug_inspect(result, content="[(0, 30), (1, 20), (2, 10)]")
@@ -300,7 +303,7 @@ pub fn[T] ReadOnlyArray::rev_each(
 /// ```
 pub fn[T] ReadOnlyArray::rev_eachi(
   self : ReadOnlyArray[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   self.unsafe_reinterpret_to_fixed_array().rev_eachi(f)
 }
@@ -311,7 +314,7 @@ pub fn[T] ReadOnlyArray::rev_eachi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let doubled = arr.map(fn(x) { x * 2 })
 ///   inspect(doubled[0], content="2")
 ///   inspect(doubled[2], content="6")
@@ -332,14 +335,14 @@ pub fn[T, U] ReadOnlyArray::map(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
+///   let arr : ReadOnlyArray[Int32] = [10, 20, 30]
 ///   let result = arr.mapi(fn(i, x) { i + x })
 ///   inspect(result[1], content="21") // index 1 + value 20 = 21
 /// }
 /// ```
 pub fn[T, U] ReadOnlyArray::mapi(
   self : ReadOnlyArray[T],
-  f : (Int, T) -> U raise?,
+  f : (Int32, T) -> U raise?,
 ) -> ReadOnlyArray[U] raise? {
   unsafe_reinterpret_from_fixed_array(
     self.unsafe_reinterpret_to_fixed_array().mapi(f),
@@ -353,7 +356,7 @@ pub fn[T, U] ReadOnlyArray::mapi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.filter(x => x % 2 == 0),
 ///     content=(
@@ -376,7 +379,7 @@ pub fn[T] ReadOnlyArray::filter(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let out = arr.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
 ///   debug_inspect(
 ///     out,
@@ -399,7 +402,7 @@ pub fn[A, B] ReadOnlyArray::filter_map(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let sum = arr.fold(init=0, fn(acc, x) { acc + x })
 ///   inspect(sum, content="15")
 /// }
@@ -418,7 +421,7 @@ pub fn[A, B] ReadOnlyArray::fold(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   let result = arr.rev_fold(init="", fn(acc, x) { acc + x.to_string() })
 ///   inspect(result, content="321") // Processed in reverse order
 /// }
@@ -437,7 +440,7 @@ pub fn[A, B] ReadOnlyArray::rev_fold(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [2, 3]
+///   let arr : ReadOnlyArray[Int32] = [2, 3]
 ///   let sum = arr.foldi(init=0, fn(i, acc, x) { acc + i * x })
 ///   inspect(sum, content="3") // 0 + (0*2) + (1*3) = 3
 /// }
@@ -445,7 +448,7 @@ pub fn[A, B] ReadOnlyArray::rev_fold(
 pub fn[A, B] ReadOnlyArray::foldi(
   self : ReadOnlyArray[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   self.unsafe_reinterpret_to_fixed_array().foldi(init~, f)
 }
@@ -456,7 +459,7 @@ pub fn[A, B] ReadOnlyArray::foldi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [2, 3]
+///   let arr : ReadOnlyArray[Int32] = [2, 3]
 ///   let sum = arr.rev_foldi(init=0, fn(i, acc, x) { acc + i * x })
 ///   inspect(sum, content="2") // 0 + (0*3) + (1*2) = 2
 /// }
@@ -464,7 +467,7 @@ pub fn[A, B] ReadOnlyArray::foldi(
 pub fn[A, B] ReadOnlyArray::rev_foldi(
   self : ReadOnlyArray[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   self.unsafe_reinterpret_to_fixed_array().rev_foldi(init~, f)
 }
@@ -475,7 +478,7 @@ pub fn[A, B] ReadOnlyArray::rev_foldi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let reversed = arr.rev()
 ///   inspect(reversed[0], content="5")
 ///   inspect(reversed[4], content="1")
@@ -493,7 +496,7 @@ pub fn[T] ReadOnlyArray::rev(self : ReadOnlyArray[T]) -> ReadOnlyArray[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 2, 4]
 ///   debug_inspect(arr.search(2), content="Some(1)") // Returns first occurrence
 ///   debug_inspect(arr.search(5), content="None")
 /// }
@@ -501,7 +504,7 @@ pub fn[T] ReadOnlyArray::rev(self : ReadOnlyArray[T]) -> ReadOnlyArray[T] {
 pub fn[T : Eq] ReadOnlyArray::search(
   self : ReadOnlyArray[T],
   value : T,
-) -> Int? {
+) -> Int32? {
   self.unsafe_reinterpret_to_fixed_array().search(value)
 }
 
@@ -511,7 +514,7 @@ pub fn[T : Eq] ReadOnlyArray::search(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(arr.search_by(x => x > 3), content="Some(3)")
 ///   debug_inspect(arr.search_by(x => x > 99), content="None")
 /// }
@@ -519,7 +522,7 @@ pub fn[T : Eq] ReadOnlyArray::search(
 pub fn[T] ReadOnlyArray::search_by(
   self : ReadOnlyArray[T],
   f : (T) -> Bool raise?,
-) -> Int? raise? {
+) -> Int32? raise? {
   self[:].search_by(f)
 }
 
@@ -529,7 +532,7 @@ pub fn[T] ReadOnlyArray::search_by(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr.contains(2), content="true")
 ///   inspect(arr.contains(4), content="false")
 /// }
@@ -547,9 +550,9 @@ pub fn[T : Eq] ReadOnlyArray::contains(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr.is_sorted(), content="true")
-///   let arr2 : ReadOnlyArray[Int] = [2, 1]
+///   let arr2 : ReadOnlyArray[Int32] = [2, 1]
 ///   inspect(arr2.is_sorted(), content="false")
 /// }
 /// ```
@@ -563,7 +566,7 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(self : ReadOnlyArray[T]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   inspect(arr.has_prefix([1, 2]), content="true")
 /// }
 /// ```
@@ -581,7 +584,7 @@ pub fn[T : Eq] ReadOnlyArray::has_prefix(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   inspect(arr.has_suffix([4, 5]), content="true")
 /// }
 /// ```
@@ -601,7 +604,7 @@ pub fn[T : Eq] ReadOnlyArray::has_suffix(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.strip_prefix([1, 2]),
 ///     content=(
@@ -626,7 +629,7 @@ pub fn[T : Eq] ReadOnlyArray::strip_prefix(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.strip_suffix([4, 5]),
 ///     content=(
@@ -649,9 +652,9 @@ pub fn[T : Eq] ReadOnlyArray::strip_suffix(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [2, 4, 6]
+///   let arr : ReadOnlyArray[Int32] = [2, 4, 6]
 ///   inspect(arr.all(fn(x) { x % 2 == 0 }), content="true")
-///   let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr2 : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr2.all(fn(x) { x % 2 == 0 }), content="false")
 /// }
 /// ```
@@ -669,9 +672,9 @@ pub fn[T] ReadOnlyArray::all(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 3, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 3, 5]
 ///   inspect(arr.any(fn(x) { x % 2 == 0 }), content="false")
-///   let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr2 : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(arr2.any(fn(x) { x % 2 == 0 }), content="true")
 /// }
 /// ```
@@ -689,7 +692,7 @@ pub fn[T] ReadOnlyArray::any(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
+///   let arr : ReadOnlyArray[Int32] = [1, 3, 5, 7, 9]
 ///   debug_inspect(arr.binary_search(5), content="Ok(2)")
 ///   debug_inspect(arr.binary_search(6), content="Err(3)")
 /// }
@@ -697,7 +700,7 @@ pub fn[T] ReadOnlyArray::any(
 pub fn[T : Compare] ReadOnlyArray::binary_search(
   self : ReadOnlyArray[T],
   value : T,
-) -> Result[Int, Int] {
+) -> Result[Int32, Int32] {
   self.unsafe_reinterpret_to_fixed_array().binary_search(value)
 }
 
@@ -707,15 +710,15 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
+///   let arr : ReadOnlyArray[Int32] = [1, 3, 5, 7, 9]
 ///   let result = arr.binary_search_by(fn(x) { x.compare(5) })
 ///   debug_inspect(result, content="Ok(2)")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::binary_search_by(
   self : ReadOnlyArray[T],
-  cmp : (T) -> Int raise?,
-) -> Result[Int, Int] raise? {
+  cmp : (T) -> Int32 raise?,
+) -> Result[Int32, Int32] raise? {
   self.unsafe_reinterpret_to_fixed_array().binary_search_by(cmp)
 }
 
@@ -730,7 +733,7 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5, 6, 7]
 ///   debug_inspect(
 ///     arr.chunks(3),
 ///     content=(
@@ -741,7 +744,7 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 /// ```
 pub fn[T] ReadOnlyArray::chunks(
   self : ReadOnlyArray[T],
-  size : Int,
+  size : Int32,
 ) -> Array[ArrayView[T]] {
   self[:].chunks(size)
 }
@@ -756,7 +759,7 @@ pub fn[T] ReadOnlyArray::chunks(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4]
 ///   debug_inspect(
 ///     arr.windows(2),
 ///     content=(
@@ -767,7 +770,7 @@ pub fn[T] ReadOnlyArray::chunks(
 /// ```
 pub fn[T] ReadOnlyArray::windows(
   self : ReadOnlyArray[T],
-  size : Int,
+  size : Int32,
 ) -> Array[ArrayView[T]] {
   self[:].windows(size)
 }
@@ -780,7 +783,7 @@ pub fn[T] ReadOnlyArray::windows(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 1, 2, 2, 2, 3, 1]
+///   let arr : ReadOnlyArray[Int32] = [1, 1, 2, 2, 2, 3, 1]
 ///   debug_inspect(
 ///     arr.chunk_by((a, b) => a == b),
 ///     content=(
@@ -809,7 +812,7 @@ pub fn[T] ReadOnlyArray::chunk_by(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2]
+///   let arr : ReadOnlyArray[Int32] = [1, 2]
 ///   debug_inspect(
 ///     arr.suffixes().collect(),
 ///     content=(
@@ -826,7 +829,7 @@ pub fn[T] ReadOnlyArray::chunk_by(
 /// ```
 pub fn[T] ReadOnlyArray::suffixes(
   self : ReadOnlyArray[T],
-  include_empty? : Bool = false,
+  include_empty~ : Bool = false,
 ) -> Iter[ArrayView[T]] {
   self[:].suffixes(include_empty~)
 }
@@ -841,19 +844,19 @@ pub fn[T] ReadOnlyArray::suffixes(
 /// # Example
 /// ```mbt check
 /// test {
-///   let a : ReadOnlyArray[Int] = [1, 2]
-///   let b : ReadOnlyArray[Int] = [1, 2, 3]
+///   let a : ReadOnlyArray[Int32] = [1, 2]
+///   let b : ReadOnlyArray[Int32] = [1, 2, 3]
 ///   inspect(a.lexical_compare(b), content="-1")
 ///   inspect(b.lexical_compare(a), content="1")
 ///   inspect(b.lexical_compare(b), content="0")
-///   let c : ReadOnlyArray[Int] = [1, 2, 4]
+///   let c : ReadOnlyArray[Int32] = [1, 2, 4]
 ///   inspect(b.lexical_compare(c), content="-1")
 /// }
 /// ```
 pub fn[T : Compare] ReadOnlyArray::lexical_compare(
   self : ReadOnlyArray[T],
   other : ReadOnlyArray[T],
-) -> Int {
+) -> Int32 {
   self[:].lexical_compare(other)
 }
 
@@ -864,7 +867,7 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let view = arr.exact_view(start=1, end=4)
 ///   inspect(view[0], content="2")
 ///   inspect(view[2], content="4")
@@ -875,8 +878,8 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] ReadOnlyArray::exact_view(
   self : ReadOnlyArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let fixed = self.unsafe_reinterpret_to_fixed_array()
   match end {
@@ -891,7 +894,7 @@ pub fn[T] ReadOnlyArray::exact_view(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
 ///   debug_inspect(
@@ -907,8 +910,8 @@ pub fn[T] ReadOnlyArray::exact_view(
 /// ```
 pub fn[T] ReadOnlyArray::get_view(
   self : ReadOnlyArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T]? {
   let fixed = self.unsafe_reinterpret_to_fixed_array()
   match end {
@@ -925,7 +928,7 @@ pub fn[T] ReadOnlyArray::get_view(
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.clamped_view(start=3, end=10),
 ///     content=(
@@ -943,8 +946,8 @@ pub fn[T] ReadOnlyArray::get_view(
 #alias("_[_:_]")
 pub fn[T] ReadOnlyArray::clamped_view(
   self : ReadOnlyArray[T],
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> ArrayView[T] {
   let fixed = self.unsafe_reinterpret_to_fixed_array()
   match end {

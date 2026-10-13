@@ -197,7 +197,7 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 
 ///|
 /// Returns the number of elements in the queue.
-pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
+pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int32 {
   self.len
 }
 
@@ -309,7 +309,7 @@ pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+///   let queue : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
 ///   @test.assert_eq(queue.is_empty(), true)
 /// }
 /// ```

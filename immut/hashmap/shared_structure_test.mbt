@@ -17,12 +17,12 @@
 /// share most of their structure) must agree with a model and stay
 /// canonical; removing an absent key must return the very same map.
 fn[K : Eq + Hash] derived_map_versions_agree(
-  mk : (Int) -> K,
-  input : (Array[Int], Array[Int]),
+  mk : (Int32) -> K,
+  input : (Array[Int32], Array[Int32]),
 ) -> Bool {
   let (xs, edits) = input
-  let model : Array[(Int, Int)] = []
-  let mut a : @hashmap.HashMap[K, Int] = @hashmap.new()
+  let model : Array[(Int32, Int32)] = []
+  let mut a : @hashmap.HashMap[K, Int32] = @hashmap.new()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
     a = a.add(mk(k), x)
@@ -46,21 +46,21 @@ fn[K : Eq + Hash] derived_map_versions_agree(
       model_remove(b_model, k)
     }
   }
-  let rebuild = (m : Array[(Int, Int)]) => {
+  let rebuild = (m : Array[(Int32, Int32)]) => {
     @hashmap.from_iter(m.iter().map(kv => (mk(kv.0), kv.1)))
   }
   // union/intersection keep the right-hand side's value.
-  let right_union = (l : Array[(Int, Int)], r : Array[(Int, Int)]) => {
+  let right_union = (l : Array[(Int32, Int32)], r : Array[(Int32, Int32)]) => {
     let out = l.copy()
     for kv in r {
       model_add(out, kv.0, kv.1)
     }
     out
   }
-  let right_inter = (l : Array[(Int, Int)], r : Array[(Int, Int)]) => {
+  let right_inter = (l : Array[(Int32, Int32)], r : Array[(Int32, Int32)]) => {
     r.filter(kv => model_lookup(l, kv.0) is Some(_))
   }
-  let diff = (l : Array[(Int, Int)], r : Array[(Int, Int)]) => {
+  let diff = (l : Array[(Int32, Int32)], r : Array[(Int32, Int32)]) => {
     l.filter(kv => model_lookup(r, kv.0) is None)
   }
   a.union(b) == rebuild(right_union(model, b_model)) &&
@@ -76,35 +76,35 @@ fn[K : Eq + Hash] derived_map_versions_agree(
 
 ///|
 test "quickcheck: derived map versions (distinct hashes)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_map_versions_agree(n => n, input)
   })
 }
 
 ///|
 test "quickcheck: derived map versions (first-segment collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_map_versions_agree(n => CollidingKey(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived map versions (mid-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_map_versions_agree(n => MidDepthKey(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived map versions (maximum-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_map_versions_agree(n => DeepKey(n), input)
   })
 }
 
 ///|
 test "quickcheck: derived map versions (single collision bucket)" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     derived_map_versions_agree(n => ZeroHashKey(n), input)
   })
 }

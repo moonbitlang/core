@@ -15,6 +15,6 @@
 ///|
 /// Create a new instance.
 #deprecated("Use `RandomState()` instead")
-pub fn RandomState::new(seed? : UInt64 = 37) -> RandomState {
+pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
   RandomState(seed~)
 }

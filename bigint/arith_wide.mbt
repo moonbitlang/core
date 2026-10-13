@@ -76,7 +76,7 @@ fn mul_add_www(x : UInt64, y : UInt64, c : UInt64) -> UMul {
 
 ///|
 /// Number of leading zero bits, as an `Int`.
-fn nlz(x : UInt64) -> Int {
+fn nlz(x : UInt64) -> Int32 {
   x.clz()
 }
 
@@ -168,12 +168,12 @@ fn greater_than(x1 : UInt64, x2 : UInt64, y1 : UInt64, y2 : UInt64) -> Bool {
 /// `z[zi..zi+n] = x[xi..xi+n] + y[yi..yi+n]`, returns the carry out (0 or 1).
 fn add_vv(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : FixedArray[UInt64],
-  yi : Int,
-  n : Int,
+  yi : Int32,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = 0UL {
     let a = x.unsafe_get(xi + i)
@@ -191,12 +191,12 @@ fn add_vv(
 /// `z[zi..zi+n] = x[xi..xi+n] - y[yi..yi+n]`, returns the borrow out (0 or 1).
 fn sub_vv(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : FixedArray[UInt64],
-  yi : Int,
-  n : Int,
+  yi : Int32,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = 0UL {
     let a = x.unsafe_get(xi + i)
@@ -215,11 +215,11 @@ fn sub_vv(
 /// `z[zi..zi+n] = x[xi..xi+n] + y`, returns the carry out.
 fn add_vw(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : UInt64,
-  n : Int,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = y {
     if c == 0 {
@@ -244,11 +244,11 @@ fn add_vw(
 /// `z[zi..zi+n] = x[xi..xi+n] - y`, returns the borrow out.
 fn sub_vw(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : UInt64,
-  n : Int,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = y {
     if c == 0 {
@@ -275,12 +275,12 @@ fn sub_vw(
 /// "multiply and subtract" step.
 fn mul_add_vww(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : UInt64,
   r : UInt64,
-  n : Int,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = r {
     let m = mul_add_www(x.unsafe_get(xi + i), y, c)
@@ -300,11 +300,11 @@ fn mul_add_vww(
 /// never overflows.
 fn add_mul_vvw(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   m : UInt64,
-  n : Int,
+  n : Int32,
 ) -> UInt64 {
   for i in 0..<n; c = 0UL {
     let p = umul_wide(x.unsafe_get(i + xi), m)
@@ -333,13 +333,13 @@ fn add_mul_vvw(
 /// `z` is scratch space still holding earlier partial products.
 fn basic_mul(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
-  an : Int,
+  xi : Int32,
+  an : Int32,
   y : FixedArray[UInt64],
-  yi : Int,
-  bn : Int,
+  yi : Int32,
+  bn : Int32,
 ) -> Unit {
   z.unsafe_set(zi + an, mul_add_vww(z, zi, x, xi, y.unsafe_get(yi), 0, an))
   for j in 1..<bn {
@@ -356,7 +356,7 @@ fn basic_mul(
 /// The largest `k <= n` of the form `t << i` with `t <= threshold`. Splitting
 /// at `k` makes every level of the recursion divide evenly, which is what lets
 /// the scratch layout below be a fixed size.
-fn karatsuba_len(n : Int, threshold : Int) -> Int {
+fn karatsuba_len(n : Int32, threshold : Int32) -> Int32 {
   let mut n = n
   let mut i = 0
   while n > threshold {
@@ -371,10 +371,10 @@ fn karatsuba_len(n : Int, threshold : Int) -> Int {
 /// `n/2` words.
 fn karatsuba_add(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
-  n : Int,
+  xi : Int32,
+  n : Int32,
 ) -> Unit {
   let c = add_vv(z, zi, z, zi, x, xi, n)
   if c != 0 {
@@ -387,10 +387,10 @@ fn karatsuba_add(
 /// `n/2` words.
 fn karatsuba_sub(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
-  n : Int,
+  xi : Int32,
+  n : Int32,
 ) -> Unit {
   let c = sub_vv(z, zi, z, zi, x, xi, n)
   if c != 0 {
@@ -412,12 +412,12 @@ fn karatsuba_sub(
 ///   x*y = z2*B^2 + (xd*yd + z2 + z0)*B + z0    with z0 = x0*y0, z2 = x1*y1
 fn karatsuba(
   z : FixedArray[UInt64],
-  zi : Int,
+  zi : Int32,
   x : FixedArray[UInt64],
-  xi : Int,
+  xi : Int32,
   y : FixedArray[UInt64],
-  yi : Int,
-  n : Int,
+  yi : Int32,
+  n : Int32,
 ) -> Unit {
   if n % 2 != 0 || n < KARATSUBA_THRESHOLD || n < 2 {
     basic_mul(z, zi, x, xi, n, y, yi, n)
@@ -459,10 +459,10 @@ fn karatsuba(
 /// `z[i..zn) += x[0..xn)`.
 fn add_at(
   z : FixedArray[UInt64],
-  zn : Int,
+  zn : Int32,
   x : FixedArray[UInt64],
-  xn : Int,
-  i : Int,
+  xn : Int32,
+  i : Int32,
 ) -> Unit {
   if xn == 0 {
     return
@@ -489,10 +489,10 @@ fn add_at(
 fn div_w(
   q : FixedArray[UInt64],
   x : FixedArray[UInt64],
-  n : Int,
+  n : Int32,
   dn : UInt64,
   rec : UInt64,
-  s : Int,
+  s : Int32,
 ) -> UInt64 {
   let mut r = 0UL
   if s == 0 {
@@ -552,7 +552,7 @@ fn montgomery(
   y : FixedArray[UInt64],
   m : FixedArray[UInt64],
   k : UInt64,
-  n : Int,
+  n : Int32,
   t : FixedArray[UInt64],
 ) -> Unit {
   // Only the low half needs clearing; t[n..2n) is written as the loop advances.
@@ -582,8 +582,8 @@ fn montgomery(
 fn shl_vu(
   z : FixedArray[UInt64],
   x : FixedArray[UInt64],
-  s : Int,
-  n : Int,
+  s : Int32,
+  n : Int32,
 ) -> UInt64 {
   if n == 0 {
     return 0
@@ -603,8 +603,8 @@ fn shl_vu(
 fn shr_vu(
   z : FixedArray[UInt64],
   x : FixedArray[UInt64],
-  s : Int,
-  n : Int,
+  s : Int32,
+  n : Int32,
 ) -> UInt64 {
   if n == 0 {
     return 0

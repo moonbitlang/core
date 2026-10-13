@@ -29,7 +29,7 @@ fn[T : Eq] check(actual : T, expected : T) -> Unit raise {
 }
 
 ///|
-fn ref_read_u16_le(b : Bytes, index : Int) -> UInt16 {
+fn ref_read_u16_le(b : Bytes, index : Int32) -> UInt16 {
   for i in 0..<=1; result = (0 : UInt16) {
     continue result | (b[i + index].to_uint16() << (8 * i))
   } nobreak {
@@ -38,7 +38,7 @@ fn ref_read_u16_le(b : Bytes, index : Int) -> UInt16 {
 }
 
 ///|
-fn ref_read_u16_be(b : Bytes, index : Int) -> UInt16 {
+fn ref_read_u16_be(b : Bytes, index : Int32) -> UInt16 {
   for i in 0..<=1; result = (0 : UInt16) {
     continue result | (b[i + index].to_uint16() << (8 * (1 - i)))
   } nobreak {
@@ -47,8 +47,8 @@ fn ref_read_u16_be(b : Bytes, index : Int) -> UInt16 {
 }
 
 ///|
-fn ref_read_u32_le(b : Bytes, index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
+fn ref_read_u32_le(b : Bytes, index : Int32) -> UInt32 {
+  for i in 0..<=3; result = (0 : UInt32) {
     continue result | (b[i + index].to_uint() << (8 * i))
   } nobreak {
     result
@@ -56,8 +56,8 @@ fn ref_read_u32_le(b : Bytes, index : Int) -> UInt {
 }
 
 ///|
-fn ref_read_u32_be(b : Bytes, index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
+fn ref_read_u32_be(b : Bytes, index : Int32) -> UInt32 {
+  for i in 0..<=3; result = (0 : UInt32) {
     continue result | (b[i + index].to_uint() << (8 * (3 - i)))
   } nobreak {
     result
@@ -65,7 +65,7 @@ fn ref_read_u32_be(b : Bytes, index : Int) -> UInt {
 }
 
 ///|
-fn ref_read_u64_le(b : Bytes, index : Int) -> UInt64 {
+fn ref_read_u64_le(b : Bytes, index : Int32) -> UInt64 {
   for i in 0..<=7; result = (0 : UInt64) {
     continue result | (b[i + index].to_uint64() << (8 * i))
   } nobreak {
@@ -74,7 +74,7 @@ fn ref_read_u64_le(b : Bytes, index : Int) -> UInt64 {
 }
 
 ///|
-fn ref_read_u64_be(b : Bytes, index : Int) -> UInt64 {
+fn ref_read_u64_be(b : Bytes, index : Int32) -> UInt64 {
   for i in 0..<=7; result = (0 : UInt64) {
     continue result | (b[i + index].to_uint64() << (8 * (7 - i)))
   } nobreak {
@@ -85,7 +85,7 @@ fn ref_read_u64_be(b : Bytes, index : Int) -> UInt64 {
 ///|
 /// A byte pattern with every bit position exercised, plus 0x00 and 0xFF runs so
 /// sign-extension and zero-extension slips show up.
-fn sample_bytes(len : Int) -> Bytes {
+fn sample_bytes(len : Int32) -> Bytes {
   Bytes::makei(len, i => {
     match i % 8 {
       0 => b'\x00'
@@ -187,8 +187,8 @@ test "unrolled writes do not disturb neighbouring bytes" {
   let len = 32
   let fill = b'\x3C'
   fn check_span(
-    width : Int,
-    write : (FixedArray[Byte], Int) -> Unit,
+    width : Int32,
+    write : (FixedArray[Byte], Int32) -> Unit,
   ) -> Unit raise {
     for i in 0..<(len - width + 1) {
       let fa = FixedArray::make(len, fill)

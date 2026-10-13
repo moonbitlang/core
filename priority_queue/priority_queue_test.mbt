@@ -14,13 +14,13 @@
 
 ///|
 test "new" {
-  let queue : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let queue : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   @test.assert_eq(queue.length(), 0)
 }
 
 ///|
 test "default" {
-  let queue : @priority_queue.PriorityQueue[Int] = Default::default()
+  let queue : @priority_queue.PriorityQueue[Int32] = Default::default()
   inspect(queue.length(), content="0")
 }
 
@@ -28,7 +28,7 @@ test "default" {
 test "from_array" {
   let pq = @priority_queue.from_array([1, 3, 6, 4, 5])
   debug_inspect(pq.peek(), content="Some(6)")
-  let pq_ : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([])
+  let pq_ : @priority_queue.PriorityQueue[Int32] = @priority_queue.from_array([])
   debug_inspect(pq_.peek(), content="None")
 }
 
@@ -127,7 +127,7 @@ test "pop" {
 
 ///|
 test "pop empty" {
-  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   debug_inspect(pq.pop(), content="None")
 }
 
@@ -185,7 +185,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter([||])
+  let pq : @priority_queue.PriorityQueue[Int32] = @priority_queue.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -196,7 +196,7 @@ test "from_iter empty iter" {
 
 ///|
 test "complex" {
-  let rand = (upper : Int) => {
+  let rand = (upper : Int32) => {
     let rng = @random.Rand()
     rng.int(limit=upper)
   }

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn re_surrogate_pair(codepoint : Int) -> (Int, Int) {
+fn re_surrogate_pair(codepoint : Int32) -> (Int32, Int32) {
   let cp = codepoint - 0x10000
   let high = 0xD800 + ((cp >> 10) & 0x3FF)
   let low = 0xDC00 + (cp & 0x3FF)

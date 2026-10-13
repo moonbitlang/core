@@ -20,7 +20,7 @@
 ///|
 /// Builds a string from raw UTF-16 code units, so lone surrogates can be
 /// placed anywhere.
-fn char_length_units(units : Array[Int]) -> String {
+fn char_length_units(units : Array[Int32]) -> String {
   String::from_array(units.map(u => u.unsafe_to_char()))
 }
 
@@ -29,7 +29,7 @@ fn char_length_units(units : Array[Int]) -> String {
 /// scalar walk aborts (a leading surrogate followed, inside the range, by a
 /// unit that is not a trailing surrogate), otherwise the number of units
 /// minus the leading surrogates that are not the last unit of the range.
-fn char_length_model(s : String, start : Int, end : Int) -> Int? {
+fn char_length_model(s : String, start : Int32, end : Int32) -> Int32? {
   let mut pairs = 0
   for i in start..<(end - 1) {
     if s[i].is_leading_surrogate() {
@@ -43,7 +43,7 @@ fn char_length_model(s : String, start : Int, end : Int) -> Int? {
 ///|
 /// The scalar walk `char_length` used before the SIMD paths, kept as the
 /// reference for `s[start:end]`.
-fn reference_char_length(s : String, start : Int, end : Int) -> Int {
+fn reference_char_length(s : String, start : Int32, end : Int32) -> Int32 {
   for index = start, count = 0
       index < end
       index = index + 1, count = count + 1 {
@@ -65,9 +65,9 @@ fn reference_char_length(s : String, start : Int, end : Int) -> Int {
 /// before the SIMD paths, kept as the reference for `s[start:end]`.
 fn reference_char_length_cmp(
   s : String,
-  len : Int,
-  start : Int,
-  end : Int,
+  len : Int32,
+  start : Int32,
+  end : Int32,
   exact : Bool,
 ) -> Bool {
   for index = start, count = 0
@@ -93,7 +93,7 @@ fn reference_char_length_cmp(
 ///|
 /// Checks `char_length`, `char_length_eq` and `char_length_ge` on
 /// `s[start:end]` against the model, for a range the model says is valid.
-fn check_char_length_range(s : String, start : Int, end : Int) -> Bool {
+fn check_char_length_range(s : String, start : Int32, end : Int32) -> Bool {
   guard char_length_model(s, start, end) is Some(expected) else { return true }
   guard s.char_length(start_offset=start, end_offset=end) == expected else {
     return false
@@ -132,7 +132,7 @@ fn check_char_length_range(s : String, start : Int, end : Int) -> Bool {
 ///|
 /// Special units planted into an ASCII/CJK background. Each entry is the unit
 /// sequence to plant.
-let char_length_plants : Array[Array[Int]] = [
+let char_length_plants : Array[Array[Int32]] = [
   [0xD83D, 0xDE00], // surrogate pair
   [0xD800, 0xDC00], // lowest pair
   [0xDBFF, 0xDFFF], // highest pair
@@ -252,7 +252,7 @@ test "char_length_eq/ge: reversed ranges read nothing" {
 /// Code units drawn by the differential test: ASCII, BMP (including both
 /// sides of the surrogate range), surrogate pairs, and lone trailing
 /// surrogates.
-fn char_length_alphabet(seed : Int) -> Array[Int] {
+fn char_length_alphabet(seed : Int32) -> Array[Int32] {
   match seed % 12 {
     0 | 1 | 2 => [0x61]
     3 => [0x7F]
@@ -268,7 +268,11 @@ fn char_length_alphabet(seed : Int) -> Array[Int] {
 
 ///|
 /// Deterministically builds up to `n` characters' worth of units from `seed`.
-fn char_length_random_units(seed : Int, n : Int, lead_at_end : Bool) -> String {
+fn char_length_random_units(
+  seed : Int32,
+  n : Int32,
+  lead_at_end : Bool,
+) -> String {
   let units = []
   let mut state = seed.reinterpret_as_uint() | 1
   for _ in 0..<n {
@@ -285,7 +289,7 @@ fn char_length_random_units(seed : Int, n : Int, lead_at_end : Bool) -> String {
 
 ///|
 test "quickcheck: char_length agrees with the scalar walk and the model" {
-  @quickcheck.check(count=500, (input : (Int, Int, Int, Int)) => {
+  @quickcheck.check(count=500, (input : (Int32, Int32, Int32, Int32)) => {
     let (seed, n, a, b) = input
     let s = char_length_random_units(seed, (n & 0xFFFF) % 160, (seed & 4) != 0)
     let len = s.length()

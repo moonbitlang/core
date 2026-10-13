@@ -20,7 +20,7 @@
 
 ///|
 /// Deterministic pseudo-random bytes covering all 256 byte values.
-fn sample_bytes(length : Int) -> Bytes {
+fn sample_bytes(length : Int32) -> Bytes {
   let out = FixedArray::make(length, b'\x00')
   let mut state = 0x2545F491U
   for i in 0..<length {
@@ -55,7 +55,7 @@ test "decode agrees with the scalar decoder across all block counts" {
 ///|
 /// Builds a string from raw UTF-16 code units, so that a test can plant code
 /// units -- lone surrogates included -- that no `Char` can express.
-fn string_of_code_units(units : ArrayView[Int]) -> String {
+fn string_of_code_units(units : ArrayView[Int32]) -> String {
   let out = FixedArray::make(units.length() * 2, b'\x00')
   for i, unit in units {
     out[i * 2] = (unit & 0xFF).to_byte()

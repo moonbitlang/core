@@ -90,7 +90,7 @@ fn encode_block_v128(data : V128) -> V128 {
 /// Writes one ASCII character as a little-endian UTF-16 code unit.
 #cfg(any(target="native", target="wasm"))
 #inline
-fn write_code_unit(out : FixedArray[Byte], offset : Int, code : Byte) -> Unit {
+fn write_code_unit(out : FixedArray[Byte], offset : Int32, code : Byte) -> Unit {
   out[offset] = code
   out[offset + 1] = 0
 }

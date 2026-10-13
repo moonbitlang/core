@@ -79,7 +79,7 @@ test "rev_iter returns elements in descending order" {
 
 ///|
 test "rev_iter on empty set" {
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   let result = set.rev_iter().collect()
   debug_inspect(result, content="[]")
 }

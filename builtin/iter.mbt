@@ -26,12 +26,12 @@
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-pub fn Int::until(
-  self : Int,
-  end : Int,
-  step? : Int = 1,
-  inclusive? : Bool = false,
-) -> Iter[Int] {
+pub fn Int32::until(
+  self : Int32,
+  end : Int32,
+  step~ : Int32 = 1,
+  inclusive~ : Bool = false,
+) -> Iter[Int32] {
   until_impl(self, end, step, inclusive)
 }
 
@@ -52,8 +52,8 @@ pub fn Int::until(
 pub fn Int64::until(
   self : Int64,
   end : Int64,
-  step? : Int64 = 1L,
-  inclusive? : Bool = false,
+  step~ : Int64 = 1L,
+  inclusive~ : Bool = false,
 ) -> Iter[Int64] {
   until_impl(self, end, step, inclusive)
 }

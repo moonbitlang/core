@@ -43,14 +43,14 @@ fn mix64(s : UInt64) -> UInt64 {
 }
 
 ///|
-fn seed_u64(i : Int) -> UInt64 {
+fn seed_u64(i : Int32) -> UInt64 {
   i.to_int64().reinterpret_as_uint64()
 }
 
 ///|
 /// A pseudorandom positive BigInt with exactly `limbs` 32-bit limbs (the
 /// top byte is forced nonzero), built through the octet path.
-fn mag_of_limbs(seed : UInt64, limbs : Int) -> @bigint.BigInt {
+fn mag_of_limbs(seed : UInt64, limbs : Int32) -> @bigint.BigInt {
   let n = limbs * 4
   let bytes = Bytes::makei(n, i => {
     let b = (mix64(seed + seed_u64(i)) & 0xffUL).to_int()
@@ -105,7 +105,7 @@ test "multiplication straddling the Karatsuba threshold" {
     }
   }
   // asymmetric and large sizes, plus the sign table
-  let sizes : Array[(Int, Int)] = [
+  let sizes : Array[(Int32, Int32)] = [
     (50, 99),
     (99, 50),
     (100, 100),
@@ -130,7 +130,7 @@ test "multiplication closed forms with maximal carry chains" {
   // (2^n - 1)(2^m - 1) and (2^n + 1)(2^m + 1) have shift-and-add closed
   // forms, giving an oracle that never routes through multiplication.
   // 1600 bits = 50 limbs, exactly the Karatsuba threshold.
-  let cases : Array[(Int, Int)] = [
+  let cases : Array[(Int32, Int32)] = [
     (1599, 1601),
     (1600, 1600),
     (3199, 1601),
@@ -152,9 +152,9 @@ test "quickcheck: distributivity across mixed size classes" {
   // sizes span 1 limb to 120 limbs so that schoolbook, single-limb, and
   // Karatsuba paths all participate in the same identity
   @quickcheck.check(
-    (input : (Int, Int, Int, Int)) => {
+    (input : (Int32, Int32, Int32, Int32)) => {
       let (s, i, j, k) = input
-      let szs : Array[Int] = [1, 2, 49, 50, 51, 120]
+      let szs : Array[Int32] = [1, 2, 49, 50, 51, 120]
       let sa = szs[(i & 0x7fffffff) % szs.length()]
       let sb = szs[(j & 0x7fffffff) % szs.length()]
       let sc = szs[(k & 0x7fffffff) % szs.length()]
@@ -174,7 +174,7 @@ test "quickcheck: distributivity across mixed size classes" {
 ///|
 test "quickcheck: truncated division law across mixed size classes" {
   @quickcheck.check(
-    (input : (Int, Int, Int, Bool, Bool)) => {
+    (input : (Int32, Int32, Int32, Bool, Bool)) => {
       let (s, i, j, na, nb) = input
       // `mag_of_limbs` counts 32-bit chunks. Extending through 256 chunks
       // crosses the native/wasm recursive-division threshold at 128 chunks.
@@ -208,7 +208,7 @@ test "recursive division across threshold and block boundaries" {
   // Exact bit lengths put divisors immediately below, at, and above the
   // 64-limb native/wasm threshold, with both normalized and heavily shifted
   // top limbs. Quotients range from a partial block through several blocks.
-  let sizes : Array[(Int, Int)] = [
+  let sizes : Array[(Int32, Int32)] = [
     (4032, 4109),
     (4033, 8197),
     (4096, 12293),
@@ -249,7 +249,7 @@ test "recursive division with highly unbalanced operands" {
 test "large divisors with narrow quotients" {
   // On native/wasm these sizes straddle and exceed the 64-limb recursive
   // divisor threshold. Their single-limb quotients must stay on Knuth D.
-  let divisor_sizes : Array[Int] = [126, 128, 130, 256]
+  let divisor_sizes : Array[Int32] = [126, 128, 130, 256]
   let quotients : Array[@bigint.BigInt] = [
     2N,
     9N,
@@ -301,7 +301,7 @@ test "division with adversarial divisor top limbs" {
 
 ///|
 test "division qh estimation corners, three-limb divisors" {
-  let pats : Array[UInt] = [
+  let pats : Array[UInt32] = [
     0U, 1U, 0x7fffffffU, 0x80000000U, 0x80000001U, 0xffffffffU,
   ]
   let big_qs : Array[@bigint.BigInt] = [
@@ -345,7 +345,9 @@ test "division qh estimation corners, three-limb divisors" {
 
 ///|
 test "shifts against multiplication and floor division" {
-  let ks : Array[Int] = [1, 31, 32, 33, 63, 64, 65, 95, 1023, 1024, 1025, 1600]
+  let ks : Array[Int32] = [
+    1, 31, 32, 33, 63, 64, 65, 95, 1023, 1024, 1025, 1600,
+  ]
   for t in 0..<4 {
     let m = mag_of_limbs(0xBEEF00UL + seed_u64(t), 40 + t * 17)
     for a in ([m, -m] : Array[_]) {
@@ -457,7 +459,7 @@ test "pow against iterated multiplication, modpow against reduction" {
 
 ///|
 test "octets roundtrip at every length" {
-  let lens : Array[Int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 63, 64, 65]
+  let lens : Array[Int32] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 63, 64, 65]
   for li in 0..<lens.length() {
     let n = lens[li]
     let bytes = Bytes::makei(n, i => {
@@ -504,7 +506,7 @@ test "fixed-width conversion boundaries and truncation" {
 
 ///|
 test "comparison sign agrees with subtraction" {
-  let sizes : Array[Int] = [1, 2, 3, 40, 60, 100]
+  let sizes : Array[Int32] = [1, 2, 3, 40, 60, 100]
   for si in 0..<sizes.length() {
     for sj in 0..<sizes.length() {
       let a0 = mag_of_limbs(seed_u64(si * 31 + sj) + 5UL, sizes[si])

@@ -16,7 +16,7 @@
 let default_init_capacity = 8
 
 ///|
-priv struct HashSetKey(Int, Int) derive(Eq)
+priv struct HashSetKey(Int32, Int32) derive(Eq)
 
 ///|
 impl Hash for HashSetKey with fn hash(self) {
@@ -94,14 +94,14 @@ test "to_json" {
 
 ///|
 test "new" {
-  let m : @hashset.HashSet[Int] = HashSet([])
+  let m : @hashset.HashSet[Int32] = HashSet([])
   @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
 }
 
 ///|
 test "new with zero capacity grows on insert" {
-  let m : @hashset.HashSet[Int] = HashSet([], capacity=0)
+  let m : @hashset.HashSet[Int32] = HashSet([], capacity=0)
   m.add(1)
   assert_true(m.contains(1))
   assert_true(m.capacity() > 0)
@@ -109,7 +109,7 @@ test "new with zero capacity grows on insert" {
 
 ///|
 test "default" {
-  let m : @hashset.HashSet[Int] = Default::default()
+  let m : @hashset.HashSet[Int32] = Default::default()
   inspect(m.length(), content="0")
 }
 
@@ -409,7 +409,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashset.HashSet[Int] = @hashset.from_iter([||])
+  let map : @hashset.HashSet[Int32] = @hashset.from_iter([||])
   debug_inspect(
     map,
     content=(
@@ -420,7 +420,7 @@ test "from_iter empty iter" {
 
 ///|
 test "@hashset.to_array/empty" {
-  let set : @hashset.HashSet[Int] = HashSet([])
+  let set : @hashset.HashSet[Int32] = HashSet([])
   debug_inspect(set.to_array(), content="[]")
 }
 
@@ -473,7 +473,7 @@ test "retain/none_removed" {
 
 ///|
 test "retain/empty_set" {
-  let set : @hashset.HashSet[Int] = HashSet([])
+  let set : @hashset.HashSet[Int32] = HashSet([])
   set.retain(_x => true)
   @test.assert_eq(set.length(), 0)
 }
@@ -481,7 +481,7 @@ test "retain/empty_set" {
 ///|
 test "filter keeps lookups working after removals and collisions" {
   // Small table, colliding hashes, and elements removed before filtering.
-  let s : @hashset.HashSet[Int] = HashSet([], capacity=2)
+  let s : @hashset.HashSet[Int32] = HashSet([], capacity=2)
   for i in 0..<200 {
     s.add(i * 64)
   }
@@ -507,7 +507,7 @@ test "filter keeps lookups working after removals and collisions" {
 
 ///|
 test "filter sizes the result for the kept elements" {
-  let s : @hashset.HashSet[Int] = HashSet([ for i in 0..<10000 => i ])
+  let s : @hashset.HashSet[Int32] = HashSet([ for i in 0..<10000 => i ])
   for keep in [0, 1, 10, 5000, 10000] {
     let kept = s.filter(k => k < keep)
     let rebuilt = @hashset.HashSet([ for k in s if k < keep => k ])
@@ -530,7 +530,7 @@ test "filter propagates errors" {
 
 ///|
 test "equal ignores order, capacity and removal history" {
-  let a : @hashset.HashSet[Int] = HashSet([], capacity=2)
+  let a : @hashset.HashSet[Int32] = HashSet([], capacity=2)
   for i in 0..<100 {
     a.add(i)
   }
@@ -539,7 +539,7 @@ test "equal ignores order, capacity and removal history" {
       a.remove(i)
     }
   }
-  let b : @hashset.HashSet[Int] = HashSet(
+  let b : @hashset.HashSet[Int32] = HashSet(
     [
       for i in 0..<100 if i % 3 != 0 => 99 - i
     ],
@@ -548,8 +548,8 @@ test "equal ignores order, capacity and removal history" {
   assert_true(a == b)
   assert_true(b == a)
   assert_true(a == a)
-  let empty1 : @hashset.HashSet[Int] = HashSet([])
-  let empty2 : @hashset.HashSet[Int] = HashSet([], capacity=64)
+  let empty1 : @hashset.HashSet[Int32] = HashSet([])
+  let empty2 : @hashset.HashSet[Int32] = HashSet([], capacity=64)
   assert_true(empty1 == empty2)
 }
 
@@ -567,7 +567,7 @@ test "equal detects a different element or size" {
 }
 
 ///|
-fn sorted_elements(set : @hashset.HashSet[Int]) -> Array[Int] {
+fn sorted_elements(set : @hashset.HashSet[Int32]) -> Array[Int32] {
   let elements = set.to_array()
   elements.sort()
   elements
@@ -575,19 +575,19 @@ fn sorted_elements(set : @hashset.HashSet[Int]) -> Array[Int] {
 
 ///|
 test "from_json round-trips whatever to_json produced" {
-  for set in (@quickcheck.samples(50) : Array[@hashset.HashSet[Int]]) {
-    let restored : @hashset.HashSet[Int] = @json.from_json(@json.to_json(set))
+  for set in (@quickcheck.samples(50) : Array[@hashset.HashSet[Int32]]) {
+    let restored : @hashset.HashSet[Int32] = @json.from_json(@json.to_json(set))
     assert_eq(sorted_elements(restored), sorted_elements(set))
   }
 }
 
 ///|
 test "from_json drops repeated elements" {
-  let set : @hashset.HashSet[Int] = @json.from_json([3, 1, 3, 2, 1])
+  let set : @hashset.HashSet[Int32] = @json.from_json([3, 1, 3, 2, 1])
   assert_eq(sorted_elements(set), [1, 2, 3])
-  let empty : @hashset.HashSet[Int] = @json.from_json([])
+  let empty : @hashset.HashSet[Int32] = @json.from_json([])
   assert_eq(empty.length(), 0)
-  let nested : @hashset.HashSet[Array[Int]] = @json.from_json([[1], [], [1]])
+  let nested : @hashset.HashSet[Array[Int32]] = @json.from_json([[1], [], [1]])
   assert_eq(nested.length(), 2)
   assert_true(nested.contains([1]) && nested.contains([]))
 }
@@ -595,7 +595,7 @@ test "from_json drops repeated elements" {
 ///|
 test "from_json sizes the set like the constructor" {
   for n in [0, 1, 2, 13, 100, 1000] {
-    let set : @hashset.HashSet[Int] = @json.from_json(
+    let set : @hashset.HashSet[Int32] = @json.from_json(
       [
         for i in 0..<n => Json(i)
       ],
@@ -610,7 +610,7 @@ test "from_json sizes the set like the constructor" {
 ///|
 test "from_json rejects a non-array" {
   let bad : Json = { "a": 1 }
-  try (@json.from_json(bad) : @hashset.HashSet[Int]) catch {
+  try (@json.from_json(bad) : @hashset.HashSet[Int32]) catch {
     err =>
       inspect(
         err,
@@ -624,7 +624,7 @@ test "from_json rejects a non-array" {
 ///|
 test "from_json reports the index of the element that failed" {
   let bad : Json = [1, "two", 3]
-  try (@json.from_json(bad) : @hashset.HashSet[Int]) catch {
+  try (@json.from_json(bad) : @hashset.HashSet[Int32]) catch {
     err =>
       inspect(
         err,
@@ -636,7 +636,7 @@ test "from_json reports the index of the element that failed" {
 }
 
 ///|
-fn sorted_union_elements(set : @hashset.HashSet[Int]) -> Array[Int] {
+fn sorted_union_elements(set : @hashset.HashSet[Int32]) -> Array[Int32] {
   let elements = set.to_array()
   elements.sort()
   elements
@@ -645,7 +645,7 @@ fn sorted_union_elements(set : @hashset.HashSet[Int]) -> Array[Int] {
 ///|
 test "union_in_place matches union and leaves other unchanged" {
   // `self` starts small, so absorbing `other` forces several grows.
-  let cases : Array[(Array[Int], Array[Int])] = [
+  let cases : Array[(Array[Int32], Array[Int32])] = [
     ([3, 1], [2, 3, 4]),
     ([], [1, 2]),
     ([1, 2], []),
@@ -689,7 +689,7 @@ test "union_in_place with itself is a no-op" {
 
 ///|
 test "retain visits each element once when a cluster wraps around the table" {
-  let s : @hashset.HashSet[Int] = HashSet([])
+  let s : @hashset.HashSet[Int32] = HashSet([])
   let mask = s.capacity() - 1
   // Two elements whose home is the last slot: the second one wraps to slot 0.
   let keys = []

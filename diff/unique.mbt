@@ -14,10 +14,10 @@
 
 ///|
 priv struct CountRecord {
-  old_idx : Int
-  mut old_count : Int
-  mut new_idx : Int
-  mut new_count : Int
+  old_idx : Int32
+  mut old_count : Int32
+  mut new_idx : Int32
+  mut new_count : Int32
 }
 
 ///|
@@ -28,7 +28,7 @@ priv struct CountRecord {
 fn[T : Eq + Hash] find_unique(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
-) -> Array[(Int, Int)] {
+) -> Array[(Int32, Int32)] {
   // Track where a value first appears on each side and how often it appears.
   let match_lines : @hashmap.HashMap[T, CountRecord] = HashMap(
     [],

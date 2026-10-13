@@ -13,6 +13,6 @@
 // limitations under the License.
 
 ///|
-fn calc_grow_threshold(capacity : Int) -> Int {
+fn calc_grow_threshold(capacity : Int32) -> Int32 {
   capacity * 13 / 16
 }

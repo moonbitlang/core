@@ -161,17 +161,17 @@ test "json array navigation" {
 test "json decode" {
   // Decode basic types
   let json_number = (42 : Json)
-  let number : Int = @json.from_json(json_number)
+  let number : Int32 = @json.from_json(json_number)
   inspect(number, content="42")
 
   // Decode arrays
   let json_array = ([1, 2, 3] : Json)
-  let array : Array[Int] = @json.from_json(json_array)
+  let array : Array[Int32] = @json.from_json(json_array)
   debug_inspect(array, content="[1, 2, 3]")
 
   // Decode maps
   let json_map = ({ "a": 1, "b": 2 } : Json)
-  let map : Map[String, Int] = @json.from_json(json_map)
+  let map : Map[String, Int32] = @json.from_json(json_map)
   debug_inspect(
     map,
     content=(
@@ -188,7 +188,7 @@ test "json decode" {
 test "json path" {
   // Handle decode errors
   try {
-    let _arr : Array[Int] = @json.from_json(([42, "not a number", 49] : Json))
+    let _arr : Array[Int32] = @json.from_json(([42, "not a number", 49] : Json))
     panic()
   } catch {
     JsonDecodeError((path, msg)) => {
@@ -310,14 +310,14 @@ Types that implement `FromJson` can be decoded from JSON via `@json.from_json()`
 test "from_json" {
   // decode a tuple
   let json : Json = [1, "hello"]
-  let tuple : (Int, String) = @json.from_json(json)
+  let tuple : (Int32, String) = @json.from_json(json)
   debug_inspect(tuple, content="(1, \"hello\")")
   // decode an optional
-  let opt : Int? = @json.from_json(null)
+  let opt : Int32? = @json.from_json(null)
   debug_inspect(opt, content="None")
   // decode a Result
   let json3 : Json = { "Ok": 42 }
-  let result : Result[Int, String] = @json.from_json(json3)
+  let result : Result[Int32, String] = @json.from_json(json3)
   debug_inspect(result, content="Ok(42)")
 }
 ```

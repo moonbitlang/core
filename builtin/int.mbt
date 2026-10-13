@@ -23,7 +23,7 @@
 ///   inspect(Int(3), content="3")
 /// }
 /// ```
-pub fn Int::Int(self : Int) -> Int = "%identity"
+pub fn Int32::Int(self : Int32) -> Int32 = "%identity"
 
 ///|
 /// Returns the smallest power of two greater than or equal to `self`.
@@ -43,7 +43,7 @@ pub fn Int::Int(self : Int) -> Int = "%identity"
 ///   inspect((2000000000).next_power_of_two(), content="1073741824")
 /// }
 /// ```
-pub fn Int::next_power_of_two(self : Int) -> Int {
+pub fn Int32::next_power_of_two(self : Int32) -> Int32 {
   guard! self >= 0
   if self <= 1 {
     return 1
@@ -67,7 +67,7 @@ pub fn Int::next_power_of_two(self : Int) -> Int {
 ///   inspect((2).min(1), content="1")
 /// }
 /// ```
-pub fn Int::min(self : Int, other : Int) -> Int {
+pub fn Int32::min(self : Int32, other : Int32) -> Int32 {
   if self < other {
     self
   } else {
@@ -85,7 +85,7 @@ pub fn Int::min(self : Int, other : Int) -> Int {
 ///   inspect((2).max(1), content="2")
 /// }
 /// ```
-pub fn Int::max(self : Int, other : Int) -> Int {
+pub fn Int32::max(self : Int32, other : Int32) -> Int32 {
   if self > other {
     self
   } else {
@@ -106,7 +106,7 @@ pub fn Int::max(self : Int, other : Int) -> Int {
 ///   inspect((-1).clamp(min=0, max=2), content="0")
 /// }
 /// ```
-pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
+pub fn Int32::clamp(self : Int32, min~ : Int32, max~ : Int32) -> Int32 {
   guard! min <= max
   if self < min {
     min
@@ -130,7 +130,7 @@ pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
 ///   inspect((0x41).is_leading_surrogate(), content="false") // 'A'
 /// }
 /// ```
-pub fn Int::is_leading_surrogate(self : Int) -> Bool {
+pub fn Int32::is_leading_surrogate(self : Int32) -> Bool {
   0xD800 <= self && self <= 0xDBFF
 }
 
@@ -147,7 +147,7 @@ pub fn Int::is_leading_surrogate(self : Int) -> Bool {
 ///   inspect((0x41).is_trailing_surrogate(), content="false") // 'A'
 /// }
 /// ```
-pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
+pub fn Int32::is_trailing_surrogate(self : Int32) -> Bool {
   0xDC00 <= self && self <= 0xDFFF
 }
 
@@ -165,7 +165,7 @@ pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
 ///   inspect((0x1F600).is_surrogate(), content="false") // 😀 emoji codepoint
 /// }
 /// ```
-pub fn Int::is_surrogate(self : Int) -> Bool {
+pub fn Int32::is_surrogate(self : Int32) -> Bool {
   0xD800 <= self && self <= 0xDFFF
 }
 
@@ -184,12 +184,12 @@ pub fn Int::is_surrogate(self : Int) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   inspect(Int::abs(42), content="42")
-///   inspect(Int::abs(-42), content="42")
-///   inspect(Int::abs(0), content="0")
+///   inspect(Int32::abs(42), content="42")
+///   inspect(Int32::abs(-42), content="42")
+///   inspect(Int32::abs(0), content="0")
 /// }
 /// ```
-pub fn Int::abs(self : Int) -> Int {
+pub fn Int32::abs(self : Int32) -> Int32 {
   if self < 0 {
     -self
   } else {

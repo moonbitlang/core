@@ -122,7 +122,7 @@ pub impl[A : Eq] Eq for SortedSet[A] with fn equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[A : Compare] Compare for SortedSet[A] with fn compare(self, other) -> Int {
+pub impl[A : Compare] Compare for SortedSet[A] with fn compare(self, other) -> Int32 {
   let my_size = self.length()
   let other_size = other.length()
   guard my_size == other_size else { return my_size - other_size }
@@ -159,14 +159,14 @@ test "Eq - different sizes" {
 
 ///|
 test "Eq - empty sets" {
-  let s1 : SortedSet[Int] = new()
-  let s2 : SortedSet[Int] = new()
+  let s1 : SortedSet[Int32] = new()
+  let s2 : SortedSet[Int32] = new()
   inspect(s1 == s2, content="true")
 }
 
 ///|
 test "Eq - one empty one not" {
-  let s1 : SortedSet[Int] = new()
+  let s1 : SortedSet[Int32] = new()
   let s2 = SortedSet([1])
   inspect(s1 == s2, content="false")
 }
@@ -208,7 +208,7 @@ test "Compare - same size first larger by elements" {
 
 ///|
 test "Compare - empty sets" {
-  let s1 : SortedSet[Int] = new()
-  let s2 : SortedSet[Int] = new()
+  let s1 : SortedSet[Int32] = new()
+  let s2 : SortedSet[Int32] = new()
   inspect(s1.compare(s2), content="0")
 }

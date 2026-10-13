@@ -24,7 +24,7 @@ fn[A] Tree::last_leaf_elements(self : Tree[A]) -> FixedArray[A] {
 }
 
 ///|
-fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int) -> Tree[A] {
+fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int32) -> Tree[A] {
   match self {
     Empty | Leaf(_) => Empty
     Node(children, _) => {
@@ -46,7 +46,7 @@ fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int) -> Tree[A] {
 }
 
 ///|
-fn[A] Tree::shrink_top(self : Tree[A], shift : Int) -> (Tree[A], Int) {
+fn[A] Tree::shrink_top(self : Tree[A], shift : Int32) -> (Tree[A], Int32) {
   let mut current_shift = shift
   for tree = self {
     match tree {

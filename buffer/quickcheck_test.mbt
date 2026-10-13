@@ -24,19 +24,19 @@ fn model_push_bytes(model : Array[Byte], bytes : BytesView) -> Unit {
 }
 
 ///|
-fn model_push_uint16_le(model : Array[Byte], value : Int) -> Unit {
+fn model_push_uint16_le(model : Array[Byte], value : Int32) -> Unit {
   model.push((value & 0xFF).to_byte())
   model.push(((value >> 8) & 0xFF).to_byte())
 }
 
 ///|
-fn model_push_uint16_be(model : Array[Byte], value : Int) -> Unit {
+fn model_push_uint16_be(model : Array[Byte], value : Int32) -> Unit {
   model.push(((value >> 8) & 0xFF).to_byte())
   model.push((value & 0xFF).to_byte())
 }
 
 ///|
-fn model_push_uint_le(model : Array[Byte], value : UInt) -> Unit {
+fn model_push_uint_le(model : Array[Byte], value : UInt32) -> Unit {
   model.push(value.to_byte())
   model.push((value >> 8).to_byte())
   model.push((value >> 16).to_byte())
@@ -44,7 +44,7 @@ fn model_push_uint_le(model : Array[Byte], value : UInt) -> Unit {
 }
 
 ///|
-fn model_push_uint_be(model : Array[Byte], value : UInt) -> Unit {
+fn model_push_uint_be(model : Array[Byte], value : UInt32) -> Unit {
   model.push((value >> 24).to_byte())
   model.push((value >> 16).to_byte())
   model.push((value >> 8).to_byte())
@@ -82,7 +82,7 @@ fn model_bytes(model : Array[Byte]) -> Bytes {
 ///|
 /// Deterministic pseudo-random payload so op-driven tests can request
 /// payloads of any size from a single Int seed.
-fn payload(seed : Int, len : Int) -> Bytes {
+fn payload(seed : Int32, len : Int32) -> Bytes {
   Bytes::makei(len, i => ((seed + i * 131) & 0xFF).to_byte())
 }
 
@@ -96,7 +96,7 @@ let sample_strings : Array[String] = [
 ///|
 test "quickcheck: op sequences agree with an Array[Byte] model" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
+    (ops : Array[(Int32, Int32)]) => {
       let buf = @buffer.Buffer()
       let model : Array[Byte] = []
       for op in ops {
@@ -162,7 +162,7 @@ test "quickcheck: op sequences agree with an Array[Byte] model" {
 ///|
 test "quickcheck: multi-width integer writes reconstruct the original value" {
   @quickcheck.check(
-    (input : (Int, Int64, UInt, Double)) => {
+    (input : (Int32, Int64, UInt32, Double)) => {
       let (i, l, u, d) = input
       let buf = @buffer.Buffer()
       buf.write_int_le(i)
@@ -179,21 +179,21 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
         return false
       }
       let b = buf.contents()
-      fn u32_le(off : Int) -> UInt {
+      fn u32_le(off : Int32) -> UInt32 {
         b[off].to_uint() |
         (b[off + 1].to_uint() << 8) |
         (b[off + 2].to_uint() << 16) |
         (b[off + 3].to_uint() << 24)
       }
 
-      fn u32_be(off : Int) -> UInt {
+      fn u32_be(off : Int32) -> UInt32 {
         (b[off].to_uint() << 24) |
         (b[off + 1].to_uint() << 16) |
         (b[off + 2].to_uint() << 8) |
         b[off + 3].to_uint()
       }
 
-      fn u64_le(off : Int) -> UInt64 {
+      fn u64_le(off : Int32) -> UInt64 {
         let mut acc : UInt64 = 0
         for k in 0..<8 {
           acc = acc | (b[off + k].to_uint64() << (8 * k))
@@ -201,7 +201,7 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
         acc
       }
 
-      fn u64_be(off : Int) -> UInt64 {
+      fn u64_be(off : Int32) -> UInt64 {
         let mut acc : UInt64 = 0
         for k in 0..<8 {
           acc = (acc << 8) | b[off + k].to_uint64()
@@ -228,7 +228,7 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
 ///|
 test "quickcheck: write_bytesview of any slice equals writing the sliced copy" {
   @quickcheck.check(
-    (input : (Bytes, Int, Int)) => {
+    (input : (Bytes, Int32, Int32)) => {
       let (data, a, b) = input
       let n = data.length()
       // Derive an arbitrary valid (offset, length) pair, including empty

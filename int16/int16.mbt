@@ -98,12 +98,12 @@ pub impl Hash for Int16 with fn hash_combine(self, hasher) {
 }
 
 ///|
-pub impl Shl for Int16 with fn shl(self : Int16, that : Int) -> Int16 {
+pub impl Shl for Int16 with fn shl(self : Int16, that : Int32) -> Int16 {
   Int16::from_int(self.to_int() << that)
 }
 
 ///|
-pub impl Shr for Int16 with fn shr(self : Int16, that : Int) -> Int16 {
+pub impl Shr for Int16 with fn shr(self : Int16, that : Int32) -> Int16 {
   Int16::from_int(self.to_int() >> that)
 }
 
@@ -212,7 +212,7 @@ pub fn Int16::reinterpret_from_uint16(self : UInt16) -> Int16 {
 ///   inspect(neg, content="-42")
 /// }
 /// ```
-pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
+pub fn Int16::from_int(self : Int32) -> Int16 = "%i32_to_i16"
 
 ///|
 /// Converts a `Byte` value to a 16-bit signed integer (`Int16`).
@@ -305,7 +305,7 @@ pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 ///   inspect(neg.to_int(), content="-42")
 /// }
 /// ```
-pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
+pub fn Int16::to_int(self : Int16) -> Int32 = "%i16_to_i32"
 
 ///|
 /// Converts a 16-bit signed integer to a byte by truncating its value to fit
@@ -330,6 +330,6 @@ pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
 
 ///|
 /// Convert to `string`.
-pub fn Int16::to_string(self : Int16, radix? : Int = 10) -> String {
+pub fn Int16::to_string(self : Int16, radix~ : Int32 = 10) -> String {
   self.to_int().to_string(radix~)
 }

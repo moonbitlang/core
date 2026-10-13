@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-let find_max_short_pattern : Int = 32
+let find_max_short_pattern : Int32 = 32
 
 ///|
-let find_max_bruteforce : Int = 64
+let find_max_bruteforce : Int32 = 64
 
 ///|
-let find_prime_rk : UInt = 16777619U
+let find_prime_rk : UInt32 = 16777619U
 
 ///|
 /// Returns the offset of the first occurrence of the given bytes substring.
 ///
 /// If the substring is not found, `None` is returned.
-pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
+pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int32? {
   find_index(target, pattern)
 }
 
@@ -33,14 +33,14 @@ pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
 /// Returns the offset of the first occurrence of the given bytes substring.
 ///
 /// If the substring is not found, `None` is returned.
-pub fn Bytes::find(target : Bytes, pattern : BytesView) -> Int? {
+pub fn Bytes::find(target : Bytes, pattern : BytesView) -> Int32? {
   target[:].find(pattern)
 }
 
 ///|
 // Handle trivial cases first, use the short-pattern scanner when the pattern is
 // small, then use the guarded long-pattern scanner.
-fn find_index(target : BytesView, pattern : BytesView) -> Int? {
+fn find_index(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   if pattern_len == 0 {
@@ -78,7 +78,7 @@ fn find_index(target : BytesView, pattern : BytesView) -> Int? {
 // Number of failed first-byte candidates tolerated before the long scanner
 // switches to Rabin-Karp. This keeps dense false positives linear-time.
 #inline
-fn find_cutover(i : Int) -> Int {
+fn find_cutover(i : Int32) -> Int32 {
   4 + i / 16
 }
 
@@ -98,20 +98,20 @@ fn find_cutover(i : Int) -> Int {
 /// ```
 declare fn find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int
+) -> Int32
 
 ///|
 // Scalar byte scanner for backends without direct linear-memory vector loads.
 #cfg(any(target="js", target="wasm-gc"))
 fn find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   for pos in start..<end {
     if target.unsafe_get(pos) == byte {
       break pos
@@ -126,10 +126,10 @@ fn find_byte_from_view(
 #cfg(any(target="native", target="wasm"))
 fn find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   let target_start = target.start_offset()
   let found = find_byte_from_bytes(
     target.data(),
@@ -160,10 +160,10 @@ fn find_byte_from_view(
 /// ```
 declare fn rev_find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int
+) -> Int32
 
 ///|
 // Scalar reverse byte scanner for backends without direct linear-memory vector
@@ -171,10 +171,10 @@ declare fn rev_find_byte_from_view(
 #cfg(any(target="js", target="wasm-gc"))
 fn rev_find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   for pos = end - 1; pos >= start; {
     if target.unsafe_get(pos) == byte {
       break pos
@@ -191,10 +191,10 @@ fn rev_find_byte_from_view(
 #cfg(any(target="native", target="wasm"))
 fn rev_find_byte_from_view(
   target : BytesView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   let target_start = target.start_offset()
   let found = rev_find_byte_from_bytes(
     target.data(),
@@ -211,7 +211,7 @@ fn rev_find_byte_from_view(
 
 ///|
 #cfg(any(target="native", target="wasm"))
-fn Bytes::v128_load(self : Bytes, offset : Int) -> V128 {
+fn Bytes::v128_load(self : Bytes, offset : Int32) -> V128 {
   v128_load(unsafe_from_bytes(self), offset)
 }
 
@@ -223,10 +223,10 @@ fn Bytes::v128_load(self : Bytes, offset : Int) -> V128 {
 #cfg(any(target="native", target="wasm"))
 fn find_byte_from_bytes(
   data : Bytes,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   // Broadcast the needle to all 16 lanes so a single vector compare tests 16
   // haystack bytes at once:
   //   byte_v = [byte, byte, byte, ..., byte]   (lanes 15..0)
@@ -270,10 +270,10 @@ fn find_byte_from_bytes(
 #cfg(any(target="native", target="wasm"))
 fn rev_find_byte_from_bytes(
   data : Bytes,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   byte : Byte,
-) -> Int {
+) -> Int32 {
   let byte_v = i8x16_splat(byte)
   let head_end = for pos = end; pos - 16 >= start; {
     let chunk_start = pos - 16
@@ -308,13 +308,13 @@ fn rev_find_byte_from_bytes(
 ///   debug_inspect(target.find(b"abd"), content="None")
 /// }
 /// ```
-declare fn find_short(target : BytesView, pattern : BytesView) -> Int?
+declare fn find_short(target : BytesView, pattern : BytesView) -> Int32?
 
 ///|
 // Scalar short-pattern scanner: find matches for the last byte, then verify
 // the unchecked prefix range for each candidate.
 #cfg(any(target="js", target="wasm-gc"))
-fn find_short(target : BytesView, pattern : BytesView) -> Int? {
+fn find_short(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let target_start = target.start_offset()
@@ -348,7 +348,7 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
 // Native/wasm short-needle path: use the SIMD prefilter to skip most false
 // candidates, then compare the unchecked middle range only on hits.
 #cfg(any(target="native", target="wasm"))
-fn find_short(target : BytesView, pattern : BytesView) -> Int? {
+fn find_short(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
@@ -396,12 +396,12 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
 #cfg(any(target="js", target="wasm-gc"))
 fn rev_find_short_candidate_from_view(
   target : BytesView,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : Byte,
-  last_offset : Int,
+  last_offset : Int32,
   last : Byte,
-) -> Int {
+) -> Int32 {
   for pos = candidate_end - 1; pos >= start; {
     if target.unsafe_get(pos) == first &&
       target.unsafe_get(pos + last_offset) == last {
@@ -419,12 +419,12 @@ fn rev_find_short_candidate_from_view(
 #cfg(any(target="native", target="wasm"))
 fn find_short_candidate_from_bytes(
   data : Bytes,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : Byte,
-  last_offset : Int,
+  last_offset : Int32,
   last : Byte,
-) -> Int {
+) -> Int32 {
   let first_v = i8x16_splat(first)
   let last_v = i8x16_splat(last)
   let tail_start = for pos = start; pos + 16 <= candidate_end; {
@@ -456,12 +456,12 @@ fn find_short_candidate_from_bytes(
 #cfg(any(target="native", target="wasm"))
 fn rev_find_short_candidate_from_bytes(
   data : Bytes,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : Byte,
-  last_offset : Int,
+  last_offset : Int32,
   last : Byte,
-) -> Int {
+) -> Int32 {
   let first_v = i8x16_splat(first)
   let last_v = i8x16_splat(last)
   let head_end = for pos = candidate_end; pos - 16 >= start; {
@@ -505,13 +505,13 @@ fn rev_find_short_candidate_from_bytes(
 declare fn rev_find_by_byte_scanner(
   target : BytesView,
   pattern : BytesView,
-) -> Int?
+) -> Int32?
 
 ///|
 // Scalar reverse scanner for all multi-byte patterns. It searches candidate
 // positions by first/last byte and verifies only the middle range on hits.
 #cfg(any(target="js", target="wasm-gc"))
-fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
+fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
@@ -551,7 +551,7 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
 // Native/wasm reverse scanner for all multi-byte patterns. It uses the SIMD
 // first/last byte prefilter and verifies only the middle range on hits.
 #cfg(any(target="native", target="wasm"))
-fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
+fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
@@ -598,9 +598,9 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
 fn find_rabin_karp_from(
   target : BytesView,
   pattern : BytesView,
-  start : Int,
-) -> Int? {
-  fn hash(bytes : BytesView, start : Int, length : Int) -> UInt {
+  start : Int32,
+) -> Int32? {
+  fn hash(bytes : BytesView, start : Int32, length : Int32) -> UInt32 {
     for i in 0..<length; hash = 0U {
       continue hash * find_prime_rk + bytes.unsafe_get(start + i).to_uint()
     } nobreak {
@@ -608,7 +608,7 @@ fn find_rabin_karp_from(
     }
   }
 
-  fn prime_pow(length : Int) -> UInt {
+  fn prime_pow(length : Int32) -> UInt32 {
     for pow = 1U, square = find_prime_rk, exp = length; exp > 0; {
       let next_pow = if exp % 2 == 1 { pow * square } else { pow }
       continue next_pow, square * square, exp / 2
@@ -662,7 +662,7 @@ fn find_rabin_karp_from(
 ///|
 // Long-needle scanner: start with first-byte candidates for common fast cases,
 // but switch to Rabin-Karp after enough failed verifications.
-fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
+fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
@@ -698,7 +698,7 @@ fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
 ///|
 /// Returns the offset of the last occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
+pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   if pattern_len == 0 {
@@ -733,7 +733,7 @@ pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
 ///|
 /// Returns the offset of the last occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int? {
+pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int32? {
   target[:].rev_find(pattern)
 }
 

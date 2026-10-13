@@ -52,7 +52,7 @@ fn qc_upper_ref(s : String) -> String {
 }
 
 ///|
-fn qc_sign(x : Int) -> Int {
+fn qc_sign(x : Int32) -> Int32 {
   if x < 0 {
     -1
   } else if x > 0 {
@@ -66,7 +66,7 @@ fn qc_sign(x : Int) -> Int {
 /// Shortlex reference for `String::compare`: shorter strings sort first, equal
 /// lengths fall back to UTF-16 code-unit order. Comparisons go through `Int`
 /// so the specialized `UInt16` operators stay out of the reference.
-fn qc_shortlex_ref(a : String, b : String) -> Int {
+fn qc_shortlex_ref(a : String, b : String) -> Int32 {
   let au = a.code_units()
   let bu = b.code_units()
   if au.length() != bu.length() {
@@ -85,7 +85,7 @@ fn qc_shortlex_ref(a : String, b : String) -> Int {
 ///|
 /// Plain lexicographic reference for `lexical_compare`: code-unit order with
 /// the prefix rule, again routed through `Int`.
-fn qc_lexical_ref(a : String, b : String) -> Int {
+fn qc_lexical_ref(a : String, b : String) -> Int32 {
   let au = a.code_units()
   let bu = b.code_units()
   let min_len = if au.length() < bu.length() {
@@ -106,7 +106,7 @@ fn qc_lexical_ref(a : String, b : String) -> Int {
 ///|
 /// Naive first-occurrence scan over UTF-16 code units, the specification for
 /// `String::find` / `String::contains`.
-fn qc_naive_find(s : String, pat : String) -> Int? {
+fn qc_naive_find(s : String, pat : String) -> Int32? {
   let su = s.code_units()
   let pu = pat.code_units()
   let n = su.length()
@@ -139,7 +139,7 @@ let qc_boundary_chars : Array[Char] = [
 ]
 
 ///|
-fn qc_boundary_string(picks : Array[UInt]) -> String {
+fn qc_boundary_string(picks : Array[UInt32]) -> String {
   String::from_iter(
     picks
     .iter()
@@ -165,7 +165,7 @@ test "quickcheck: case conversion on boundary code points" {
   // off-by-one in the SIMD range check or a signedness slip in the UInt16
   // comparison would flip the result.
   @quickcheck.check(
-    (picks : Array[UInt]) => {
+    (picks : Array[UInt32]) => {
       let s = qc_boundary_string(picks)
       s.to_lower() == qc_lower_ref(s) && s.to_upper() == qc_upper_ref(s)
     },
@@ -179,7 +179,7 @@ test "quickcheck: case conversion across SIMD block boundaries" {
   // prefix (< 24 units), full 8-lane vector blocks, and the scalar tail of
   // the SIMD search are all exercised, with arbitrary content after it.
   @quickcheck.check(
-    (arg : (UInt, String)) => {
+    (arg : (UInt32, String)) => {
       let (n, s) = arg
       let pad = "x".repeat((n % 70).reinterpret_as_int())
       let source = pad + "A" + s
@@ -263,7 +263,7 @@ test "quickcheck: comparisons on boundary code points" {
   // Code units near 0x7F/0x80 and around 0xFFFF are where a signed/unsigned
   // mix-up in the UInt16 comparison specialization would show.
   @quickcheck.check(
-    (arg : (Array[UInt], Array[UInt])) => {
+    (arg : (Array[UInt32], Array[UInt32])) => {
       let a = qc_boundary_string(arg.0)
       let b = qc_boundary_string(arg.1)
       qc_sign(a.compare(b)) == qc_sign(qc_shortlex_ref(a, b)) &&

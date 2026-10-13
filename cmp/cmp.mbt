@@ -57,9 +57,9 @@ pub impl[T : Compare] Compare for Reverse[T] with fn compare(a, b) {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@cmp.maximum_by_key(1, -2, Int::abs), content="-2")
-///   inspect(@cmp.maximum_by_key(-2, 1, Int::abs), content="-2")
-///   inspect(@cmp.maximum_by_key(-2, 2, Int::abs), content="2")
+///   inspect(@cmp.maximum_by_key(1, -2, Int32::abs), content="-2")
+///   inspect(@cmp.maximum_by_key(-2, 1, Int32::abs), content="-2")
+///   inspect(@cmp.maximum_by_key(-2, 2, Int32::abs), content="2")
 /// }
 /// ```
 pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
@@ -79,9 +79,9 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@cmp.minimum_by_key(1, -2, Int::abs), content="1")
-///   inspect(@cmp.minimum_by_key(-2, 1, Int::abs), content="1")
-///   inspect(@cmp.minimum_by_key(-2, 2, Int::abs), content="-2")
+///   inspect(@cmp.minimum_by_key(1, -2, Int32::abs), content="1")
+///   inspect(@cmp.minimum_by_key(-2, 1, Int32::abs), content="1")
+///   inspect(@cmp.minimum_by_key(-2, 2, Int32::abs), content="-2")
 /// }
 /// ```
 pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
@@ -188,9 +188,9 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(@cmp.minmax_by_key(1, -2, Int::abs), content="(1, -2)")
-///   debug_inspect(@cmp.minmax_by_key(-2, 1, Int::abs), content="(1, -2)")
-///   debug_inspect(@cmp.minmax_by_key(-2, 2, Int::abs), content="(-2, 2)")
+///   debug_inspect(@cmp.minmax_by_key(1, -2, Int32::abs), content="(1, -2)")
+///   debug_inspect(@cmp.minmax_by_key(-2, 1, Int32::abs), content="(1, -2)")
+///   debug_inspect(@cmp.minmax_by_key(-2, 2, Int32::abs), content="(-2, 2)")
 /// }
 /// ```
 pub fn[T, K : Compare] minmax_by_key(x : T, y : T, f : (T) -> K) -> (T, T) {

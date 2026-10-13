@@ -30,7 +30,7 @@
 /// Recompute the number of elements under `t` from the leaves up, ignoring
 /// every cached `sizes` array. This is the reference `Tree::size` is checked
 /// against.
-fn[A] true_size(t : Tree[A]) -> Int {
+fn[A] true_size(t : Tree[A]) -> Int32 {
   match t {
     Empty => 0
     Leaf(l) => l.length()
@@ -62,7 +62,7 @@ fn[A] all_radix(t : Tree[A]) -> Bool {
 /// node's sizes as it grows and never re-derive them — but it is the shape
 /// that used to make `compute_sizes` mark the parent radix. Kept so the
 /// regression test below can assert it really built one.
-fn[A] has_full_but_relaxed(t : Tree[A], shift : Int) -> Bool {
+fn[A] has_full_but_relaxed(t : Tree[A], shift : Int32) -> Bool {
   match t {
     Empty | Leaf(_) => false
     Node(children, sizes) => {
@@ -88,7 +88,7 @@ fn ensure(cond : Bool, msg : String) -> Unit raise {
 ///|
 /// Walk the tree, checking every structural invariant. `path` names the node
 /// being checked so a failure points at it.
-fn[A] check_tree(t : Tree[A], shift : Int, path : String) -> Unit raise {
+fn[A] check_tree(t : Tree[A], shift : Int32, path : String) -> Unit raise {
   match t {
     Empty => fail("\{path}: Empty may only appear as the whole tree")
     Leaf(l) => {
@@ -194,8 +194,8 @@ fn[A] check_invariants(v : Vector[A], what : String) -> Unit raise {
 /// Read every index through the public path, which is what a malformed tree
 /// eventually breaks.
 fn check_contents(
-  v : Vector[Int],
-  model : Array[Int],
+  v : Vector[Int32],
+  model : Array[Int32],
   what : String,
 ) -> Unit raise {
   ensure(
@@ -223,7 +223,7 @@ fn check_contents(
 /// overflows the tail, so `normalize_tree` calls `append_right_leaf` with
 /// delta = 4, which tops the partial `L28` up to a full `L32` while patching
 /// the node's existing sizes array instead of re-deriving it.
-fn full_but_relaxed_vector() -> Vector[Int] {
+fn full_but_relaxed_vector() -> Vector[Int32] {
   makei(1024, i => i)
   .slice(0, 1020)
   .concat(makei(4, i => 1020 + i))
@@ -349,11 +349,11 @@ test "concat never builds a node wider than the branching factor" {
 ///|
 /// Build `offset ..< offset + len` through one of the construction paths, so
 /// the sweep sees the different tree shapes each of them leaves behind.
-fn build_by(mode : Int, len : Int, offset : Int) -> Vector[Int] {
+fn build_by(mode : Int32, len : Int32, offset : Int32) -> Vector[Int32] {
   match mode % 5 {
     0 => makei(len, i => offset + i)
     1 => {
-      let mut v : Vector[Int] = new()
+      let mut v : Vector[Int32] = new()
       for i in 0..<len {
         v = v.push(offset + i)
       }
@@ -368,7 +368,7 @@ fn build_by(mode : Int, len : Int, offset : Int) -> Vector[Int] {
 }
 
 ///|
-fn replace_model(model : Array[Int], next : Array[Int]) -> Unit {
+fn replace_model(model : Array[Int32], next : Array[Int32]) -> Unit {
   model.clear()
   for x in next {
     model.push(x)
@@ -379,8 +379,8 @@ fn replace_model(model : Array[Int], next : Array[Int]) -> Unit {
 test "tree invariants hold across mixed operation sequences" {
   let rng = Random(Ref(20260816UL))
   for trial in 0..<60 {
-    let mut v : Vector[Int] = new()
-    let model : Array[Int] = []
+    let mut v : Vector[Int32] = new()
+    let model : Array[Int32] = []
     let mut next = 0
     for step in 0..<20 {
       let op = rng.int(limit=7)

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-const UINT_MAX : UInt = 0xffffffff
+const UINT_MAX : UInt32 = 0xffffffff
 
 ///|
 const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
@@ -41,7 +41,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// }
 /// ```
 ///
-pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
+pub fn parse_uint64(str : StringView, base~ : Int32 = 0) -> UInt64 raise {
   guard str != "" else { syntax_err() }
   if str is ['+' | '-', ..] {
     syntax_err()
@@ -57,8 +57,8 @@ pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
     _ => UINT64_MAX / num_base.to_uint64() + 1
   }
   let has_digit = rest
-    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+    is (['0'..<='9' | 'a'..<='z' | 'A'..<='Z', ..]
+    | ['_', '0'..<='9' | 'a'..<='z' | 'A'..<='Z', ..])
   guard has_digit else { syntax_err() }
   for rest = rest, acc = 0UL, allow_underscore = allow_underscore {
     match (rest, acc, allow_underscore) {
@@ -70,9 +70,9 @@ pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
       ([c, .. rest], acc, _) => {
         let c = c.to_int()
         let d = match c {
-          '0'..='9' => c - '0'
-          'a'..='z' => c + (10 - 'a')
-          'A'..='Z' => c + (10 - 'A')
+          '0'..<='9' => c - '0'
+          'a'..<='z' => c + (10 - 'a')
+          'A'..<='Z' => c + (10 - 'A')
           _ => syntax_err()
         }
         guard d < num_base else { syntax_err() }
@@ -89,7 +89,7 @@ pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
+pub fn parse_uint(str : StringView, base~ : Int32 = 0) -> UInt32 raise {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {
     range_err()
@@ -131,7 +131,7 @@ test "parse_uint64" {
 
 ///|
 test "parse_uint64_base" {
-  let tests : Array[(String, Int, Result[UInt64, String])] = [
+  let tests : Array[(String, Int32, Result[UInt64, String])] = [
     ("", 0, Err(syntax_err_str)),
     ("0", 0, Ok(0UL)),
     ("1", 0, Ok(1UL)),
@@ -229,7 +229,7 @@ test "parse_uint64_base" {
 
 ///|
 test "parse_uint" {
-  let tests : Array[(String, Result[UInt, String])] = [
+  let tests : Array[(String, Result[UInt32, String])] = [
     ("", Err(syntax_err_str)),
     ("0", Ok(0)),
     ("-0", Err(syntax_err_str)),

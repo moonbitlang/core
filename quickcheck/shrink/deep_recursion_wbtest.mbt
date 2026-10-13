@@ -16,7 +16,7 @@
 /// The size these tests use. It has to clear the js and wasm-gc stack limits
 /// (both are in the low tens of thousands of frames) while staying small
 /// enough that building one candidate is cheap.
-const DEEP : Int = 20000
+const DEEP : Int32 = 20000
 
 ///|
 /// `removes_list` used to recurse once per removed block, with the recursive
@@ -25,7 +25,7 @@ const DEEP : Int = 20000
 /// stack frame per element, and this test overflowed the stack on js, wasm and
 /// wasm-gc.
 test "removes_list builds its candidates without recursing per element" {
-  let xs : @list.List[Int] = List(Array::makei(DEEP, i => i))
+  let xs : @list.List[Int32] = List(Array::makei(DEEP, i => i))
   guard removes_list(1, DEEP, xs).next() is Some(candidate) else {
     abort("expected a candidate")
   }
@@ -54,7 +54,7 @@ test "removes_array builds its candidates without recursing per element" {
 /// counterexample was a large list crashed while shrinking instead of
 /// reporting the counterexample.
 test "shrinking a large list yields a candidate" {
-  let xs : @list.List[Int] = List(Array::makei(DEEP, i => i))
+  let xs : @list.List[Int32] = List(Array::makei(DEEP, i => i))
   guard Shrink::shrink(xs).next() is Some(candidate) else {
     abort("expected a candidate")
   }

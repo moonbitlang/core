@@ -14,7 +14,7 @@
 
 ///|
 priv struct JsonAliasValue {
-  count : Int
+  count : Int32
 } derive(@json.ToJson)
 
 ///|
@@ -211,14 +211,14 @@ test "Json constructor converts maps" {
 
 ///|
 priv struct Opt {
-  x : Int?
-  t : Int??
+  x : Int32?
+  t : Int32??
 } derive(@json.ToJson, @json.FromJson, Eq)
 
 ///|
 test "Option::to_json" {
-  debug_inspect(Json((Some(42) : Int?)), content="Array([Number(42)])")
-  debug_inspect(Json((None : Int?)), content="Null")
+  debug_inspect(Json((Some(42) : Int32?)), content="Array([Number(42)])")
+  debug_inspect(Json((None : Int32?)), content="Null")
   debug_inspect(Json((Some(None) : Unit??)), content="Array([Null])")
   debug_inspect(
     Json((Some(Some(None)) : Unit???)),

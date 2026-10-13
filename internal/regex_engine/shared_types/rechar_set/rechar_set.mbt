@@ -301,7 +301,10 @@ pub fn RecharSet::difference(self : RecharSet, other : RecharSet) -> RecharSet {
 
 ///|
 /// Map each interval boundary through `f` and rebuild a set.
-pub fn RecharSet::offset_by(self : RecharSet, f : (Int) -> Int) -> RecharSet {
+pub fn RecharSet::offset_by(
+  self : RecharSet,
+  f : (Int32) -> Int32,
+) -> RecharSet {
   fn aux(t : Tree) -> Tree {
     match t {
       Empty => Empty

@@ -14,6 +14,6 @@
 
 ///|
 test "panic array_pop_exn_empty" {
-  let arr : Array[Int] = Array()
+  let arr : Array[Int32] = Array()
   arr.unsafe_pop() |> ignore // This should panic
 }

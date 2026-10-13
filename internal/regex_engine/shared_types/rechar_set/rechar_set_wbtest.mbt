@@ -18,7 +18,7 @@ priv struct Rng {
 }
 
 ///|
-fn Rng::next(self : Rng, n : Int) -> Int {
+fn Rng::next(self : Rng, n : Int32) -> Int32 {
   self.s = self.s * 6364136223846793005UL + 1442695040888963407UL
   ((self.s >> 33).to_int() & 0x7FFFFFFF) % n
 }
@@ -55,7 +55,7 @@ fn is_canonical(s : RecharSet) -> Bool {
 }
 
 ///|
-fn rand_set(r : Rng, depth : Int) -> RecharSet {
+fn rand_set(r : Rng, depth : Int32) -> RecharSet {
   if depth == 0 || r.next(3) == 0 {
     let k = r.next(4)
     let mut s = RecharSet::empty()

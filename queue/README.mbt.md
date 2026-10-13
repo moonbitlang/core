@@ -9,7 +9,7 @@ You can create an empty queue with `Queue([])`, or construct one from an array w
 ```mbt check
 ///|
 test {
-  let _queue : @queue.Queue[Int] = Queue([])
+  let _queue : @queue.Queue[Int32] = Queue([])
   let _queue1 = @queue.from_array([1, 2, 3])
 }
 ```

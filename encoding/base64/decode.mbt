@@ -28,11 +28,11 @@ const PADDING = -2
 const INVALID_CHAR = -1
 
 ///|
-fn base64_value(code_unit : Int) -> Int {
+fn base64_value(code_unit : Int32) -> Int32 {
   match code_unit {
-    'A'..='Z' => code_unit - 'A'
-    'a'..='z' => code_unit - 'a' + 26
-    '0'..='9' => code_unit - '0' + 52
+    'A'..<='Z' => code_unit - 'A'
+    'a'..<='z' => code_unit - 'a' + 26
+    '0'..<='9' => code_unit - '0' + 52
     '+' => 62
     '/' => 63
     ' ' | '\n' | '\r' | '\t' => WRITESPACE
@@ -50,7 +50,7 @@ fn base64_value(code_unit : Int) -> Int {
 #cfg(not(any(target="native", target="wasm")))
 pub fn decode(
   text : StringView,
-  ignore_whitespace? : Bool = false,
+  ignore_whitespace~ : Bool = false,
 ) -> Bytes raise Malformed {
   decode_scalar(text, ignore_whitespace)
 }
@@ -64,7 +64,7 @@ pub fn decode(
 #cfg(any(target="native", target="wasm"))
 pub fn decode(
   text : StringView,
-  ignore_whitespace? : Bool = false,
+  ignore_whitespace~ : Bool = false,
 ) -> Bytes raise Malformed {
   if !ignore_whitespace && decode_v128(text) is Some(bytes) {
     return bytes
@@ -166,7 +166,7 @@ fn decode_scalar(
 /// Decoding always stops once padding is encountered.
 pub fn decode_lossy(
   text : StringView,
-  ignore_whitespace? : Bool = false,
+  ignore_whitespace~ : Bool = false,
 ) -> Bytes {
   let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)

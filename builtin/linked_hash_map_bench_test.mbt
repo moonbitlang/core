@@ -18,7 +18,7 @@ let map_bench_n = 50000
 ///|
 test "bench Map::set n=50000" (it : @bench.T) {
   it.bench(fn() {
-    let m : Map[Int, Int] = Map([])
+    let m : Map[Int32, Int32] = Map([])
     for i in 0..<map_bench_n {
       m.set(i * 1103515245, i)
     }
@@ -28,7 +28,7 @@ test "bench Map::set n=50000" (it : @bench.T) {
 
 ///|
 test "bench Map::get n=50000" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<map_bench_n {
     m.set(i * 1103515245, i)
   }
@@ -45,7 +45,7 @@ test "bench Map::get n=50000" (it : @bench.T) {
 
 ///|
 test "bench Map::get miss n=50000" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<map_bench_n {
     m.set(i * 1103515245, i)
   }
@@ -66,7 +66,7 @@ test "bench Map::get miss n=50000" (it : @bench.T) {
 /// cost cannot be isolated from the insertion cost.
 test "bench Map::set+remove n=50000" (it : @bench.T) {
   it.bench(fn() {
-    let m : Map[Int, Int] = Map([])
+    let m : Map[Int32, Int32] = Map([])
     for i in 0..<map_bench_n {
       m.set(i * 1103515245, i)
     }
@@ -81,7 +81,7 @@ test "bench Map::set+remove n=50000" (it : @bench.T) {
 /// Insertion-ordered iteration, which is the reason `Map` keeps a list at
 /// all, so it is worth guarding against regressions here.
 test "bench Map::each n=50000" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<map_bench_n {
     m.set(i * 1103515245, i)
   }
@@ -93,7 +93,7 @@ test "bench Map::each n=50000" (it : @bench.T) {
 }
 
 ///|
-fn filter_bench_map() -> Map[String, Int] {
+fn filter_bench_map() -> Map[String, Int32] {
   Map([ for i in 0..<map_bench_n => ("key-number-\{i}-with-some-length", i) ])
 }
 

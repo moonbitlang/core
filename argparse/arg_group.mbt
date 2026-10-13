@@ -34,11 +34,11 @@ struct ArgGroup {
 #alias(new, deprecated="Use `ArgGroup()` instead")
 pub fn ArgGroup::ArgGroup(
   name : StringView,
-  required? : Bool = false,
-  multiple? : Bool = true,
-  args? : ArrayView[String] = [],
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
+  required~ : Bool = false,
+  multiple~ : Bool = true,
+  args~ : ArrayView[String] = [],
+  requires~ : ArrayView[String] = [],
+  conflicts_with~ : ArrayView[String] = [],
 ) -> ArgGroup {
   {
     name: name.to_owned(),

@@ -15,12 +15,12 @@
 ///|
 priv enum Tree {
   Empty
-  Node(l~ : Tree, lo~ : Rechar, hi~ : Rechar, r~ : Tree, w~ : Int)
+  Node(l~ : Tree, lo~ : Rechar, hi~ : Rechar, r~ : Tree, w~ : Int32)
 }
 
 ///|
 #inline
-fn nw(tree : Tree) -> Int {
+fn nw(tree : Tree) -> Int32 {
   match tree {
     Empty => 1
     Node(..) as n => n.w
@@ -29,7 +29,7 @@ fn nw(tree : Tree) -> Int {
 
 ///|
 #inline
-fn nnw(l : Tree, lo : Rechar, hi : Rechar, r : Tree, w : Int) -> Tree {
+fn nnw(l : Tree, lo : Rechar, hi : Rechar, r : Tree, w : Int32) -> Tree {
   Node(l~, lo~, hi~, r~, w~)
 }
 
@@ -106,7 +106,7 @@ fn cat(l : Tree, r : Tree) -> Tree {
 }
 
 ///|
-fn build(arr : ArrayView[(Rechar, Rechar)], lo : Int, hi : Int) -> Tree {
+fn build(arr : ArrayView[(Rechar, Rechar)], lo : Int32, hi : Int32) -> Tree {
   if lo > hi {
     Empty
   } else if lo == hi {

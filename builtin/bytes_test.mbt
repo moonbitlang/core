@@ -442,7 +442,7 @@ test "BytesView::lexical_compare/basic" {
 // the scalar tail. `\x80` vs `\x7f` pins unsigned byte order.
 test "BytesView::lexical_compare/long inputs differing early or in the tail" {
   let base = Bytes::makei(20, _ => b'\x7f')
-  let at = (i : Int) => {
+  let at = (i : Int32) => {
     Bytes::makei(20, j => if j == i { b'\x80' } else { b'\x7f' })
   }
   for i in [0, 1, 18] {
