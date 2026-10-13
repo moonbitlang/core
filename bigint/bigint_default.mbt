@@ -94,7 +94,19 @@ const RADIX_MASK : UInt64 = RADIX - 1
 
 ///|
 /// The ratio of the number of decimal digits to the number of bits.
-const DECIMAL_RATIO : Double = 0.302 // log10(2)
+///
+/// This is an upper bound of log10(2) ≈ 0.30103, so `to_string` never
+/// underestimates the number of decimal digits it needs. Do not use it to size
+/// a buffer that holds bits converted from decimal digits; that needs the
+/// opposite bound, `BITS_PER_DECIMAL_DIGIT`.
+const DECIMAL_RATIO : Double = 0.302
+
+///|
+/// An upper bound of log2(10) ≈ 3.32193, the number of bits per decimal digit.
+///
+/// A lower bound here (such as `1 / DECIMAL_RATIO` ≈ 3.31126) leaves
+/// `from_string_dec` too few limbs for long inputs, and the final carry is lost.
+const BITS_PER_DECIMAL_DIGIT : Double = 3.322
 
 ///|
 /// When to switch to Karatsuba multiplication
@@ -1292,6 +1304,22 @@ pub fn BigInt::from_string(input : String, radix~ : Int32 = 10) -> BigInt {
 }
 
 ///|
+/// Returns the number of limbs `from_string_dec` allocates for an input of
+/// `len` characters.
+///
+/// The input is less than 10^len, which needs at most
+/// ceil(len * log2(10)) <= floor(len * BITS_PER_DECIMAL_DIGIT) + 1 bits.
+fn decimal_limb_capacity(len : Int32) -> Int32 {
+  (
+    unchecked_double_to_int(len.to_double() * BITS_PER_DECIMAL_DIGIT) +
+    1 +
+    RADIX_BIT_LEN
+  ) /
+  RADIX_BIT_LEN +
+  1
+}
+
+///|
 fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   let len = input.length()
   if len == 0 {
@@ -1301,13 +1329,7 @@ fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   if sign == Negative && len == 1 {
     syntax_err()
   }
-  let mut b_len = (
-      unchecked_double_to_int(len.to_double() / DECIMAL_RATIO) +
-      1 +
-      RADIX_BIT_LEN
-    ) /
-    RADIX_BIT_LEN +
-    1
+  let mut b_len = decimal_limb_capacity(len)
   let b = FixedArray::make(b_len, 0U)
   for
     i in (match sign {
