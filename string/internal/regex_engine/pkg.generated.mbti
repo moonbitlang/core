@@ -17,7 +17,7 @@ pub fn capture(name? : String, @ast.Pattern) -> @ast.Pattern
 
 pub fn char(@rechar_set.RecharSet) -> @ast.Pattern
 
-pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern) -> Regex
+pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern, max_cache_words? : Int) -> Regex
 
 pub let empty : @ast.Pattern
 
@@ -29,19 +29,11 @@ pub let end_of_word : @ast.Pattern
 
 pub let epsilon : @ast.Pattern
 
-pub fn first(@ast.Pattern) -> @ast.Pattern
-
-pub fn longest(@ast.Pattern) -> @ast.Pattern
-
 pub let not_word_boundary : @ast.Pattern
-
-pub fn preference(@shared_types.Preference, @ast.Pattern) -> @ast.Pattern
 
 pub fn quantifier(@ast.Pattern, @ast.Quantifier) -> @ast.Pattern
 
 pub fn seq(ReadOnlyArray[@ast.Pattern]) -> @ast.Pattern
-
-pub fn shortest(@ast.Pattern) -> @ast.Pattern
 
 pub let start_of_input : @ast.Pattern
 
@@ -65,8 +57,6 @@ pub using @ast {type Assertion}
 pub using @shared_types {type Category}
 
 pub using @ast {type Pattern}
-
-pub using @shared_types {type Preference}
 
 pub using @shared_types {type Profile}
 

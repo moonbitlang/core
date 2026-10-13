@@ -18,7 +18,11 @@ fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "
 ///|
 #borrow(src)
 #intrinsic("%utf16.len_from_utf8")
-fn utf16_len_from_utf8(src : Bytes, src_offset : Int, src_length : Int) -> Int {
+fn utf16_len_from_utf8(
+  src : Bytes,
+  src_offset : Int32,
+  src_length : Int32,
+) -> Int32 {
   let end = src_offset + src_length
   for index = src_offset, len = 0; index < end; {
     let byte = src.unsafe_get(index).to_int()
@@ -41,11 +45,11 @@ fn utf16_len_from_utf8(src : Bytes, src_offset : Int, src_length : Int) -> Int {
 #intrinsic("%utf8.decode_into_utf16")
 fn utf8_decode_into_utf16(
   src : Bytes,
-  src_offset : Int,
-  src_length : Int,
+  src_offset : Int32,
+  src_length : Int32,
   dst : FixedArray[UInt16],
-  dst_offset : Int,
-) -> Int {
+  dst_offset : Int32,
+) -> Int32 {
   let view = src[src_offset:src_offset + src_length]
   for written = 0, bytes = view {
     match (written, bytes) {
@@ -53,70 +57,70 @@ fn utf8_decode_into_utf16(
       (
         written,
         [
-          _..=0x7F as b0,
-          _..=0x7F as b1,
-          _..=0x7F as b2,
-          _..=0x7F as b3,
-          _..=0x7F as b4,
-          _..=0x7F as b5,
-          _..=0x7F as b6,
-          _..=0x7F as b7,
+          _..<=0x7F as b0,
+          _..<=0x7F as b1,
+          _..<=0x7F as b2,
+          _..<=0x7F as b3,
+          _..<=0x7F as b4,
+          _..<=0x7F as b5,
+          _..<=0x7F as b6,
+          _..<=0x7F as b7,
           .. rest,
         ],
       ) => {
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(b0.to_int()))
-        dst.unsafe_set(dst_offset + written + 1, Int::to_uint16(b1.to_int()))
-        dst.unsafe_set(dst_offset + written + 2, Int::to_uint16(b2.to_int()))
-        dst.unsafe_set(dst_offset + written + 3, Int::to_uint16(b3.to_int()))
-        dst.unsafe_set(dst_offset + written + 4, Int::to_uint16(b4.to_int()))
-        dst.unsafe_set(dst_offset + written + 5, Int::to_uint16(b5.to_int()))
-        dst.unsafe_set(dst_offset + written + 6, Int::to_uint16(b6.to_int()))
-        dst.unsafe_set(dst_offset + written + 7, Int::to_uint16(b7.to_int()))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(b0.to_int()))
+        dst.unsafe_set(dst_offset + written + 1, Int32::to_uint16(b1.to_int()))
+        dst.unsafe_set(dst_offset + written + 2, Int32::to_uint16(b2.to_int()))
+        dst.unsafe_set(dst_offset + written + 3, Int32::to_uint16(b3.to_int()))
+        dst.unsafe_set(dst_offset + written + 4, Int32::to_uint16(b4.to_int()))
+        dst.unsafe_set(dst_offset + written + 5, Int32::to_uint16(b5.to_int()))
+        dst.unsafe_set(dst_offset + written + 6, Int32::to_uint16(b6.to_int()))
+        dst.unsafe_set(dst_offset + written + 7, Int32::to_uint16(b7.to_int()))
         continue written + 8, rest
       }
-      (written, [0..=0x7F as b, .. rest]) => {
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(b.to_int()))
+      (written, [0..<=0x7F as b, .. rest]) => {
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(b.to_int()))
         continue written + 1, rest
       }
-      (written, [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest]) => {
+      (written, [0xC2..<=0xDF as b0, 0x80..<=0xBF as b1, .. rest]) => {
         let ch = ((b0.to_int() & 0x1F) << 6) | (b1.to_int() & 0x3F)
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(ch))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(ch))
         continue written + 1, rest
       }
       (
         written,
-        [0xE0 as b0, 0xA0..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xE1..=0xEC as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xED as b0, 0x80..=0x9F as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xEE..=0xEF as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest],
+        [0xE0 as b0, 0xA0..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xE1..<=0xEC as b0, 0x80..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xED as b0, 0x80..<=0x9F as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xEE..<=0xEF as b0, 0x80..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest],
       ) => {
         let ch = ((b0.to_int() & 0x0F) << 12) |
           ((b1.to_int() & 0x3F) << 6) |
           (b2.to_int() & 0x3F)
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(ch))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(ch))
         continue written + 1, rest
       }
       (
         written,
         [
           0xF0 as b0,
-          0x90..=0xBF as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0x90..<=0xBF as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ]
         | [
-          0xF1..=0xF3 as b0,
-          0x80..=0xBF as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0xF1..<=0xF3 as b0,
+          0x80..<=0xBF as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ]
         | [
           0xF4 as b0,
-          0x80..=0x8F as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0x80..<=0x8F as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ],
       ) => {
@@ -127,11 +131,11 @@ fn utf8_decode_into_utf16(
         let ch = ch - 0x10000
         dst.unsafe_set(
           dst_offset + written,
-          Int::to_uint16((ch >> 10) + 0xD800),
+          Int32::to_uint16((ch >> 10) + 0xD800),
         )
         dst.unsafe_set(
           dst_offset + written + 1,
-          Int::to_uint16((ch & 0x3FF) + 0xDC00),
+          Int32::to_uint16((ch & 0x3FF) + 0xDC00),
         )
         continue written + 2, rest
       }
@@ -145,11 +149,11 @@ fn utf8_decode_into_utf16(
 #intrinsic("%utf8.decode_lossy_into_utf16")
 fn utf8_decode_lossy_into_utf16(
   src : Bytes,
-  src_offset : Int,
-  src_length : Int,
+  src_offset : Int32,
+  src_length : Int32,
   dst : FixedArray[UInt16],
-  dst_offset : Int,
-) -> Int {
+  dst_offset : Int32,
+) -> Int32 {
   let view = src[src_offset:src_offset + src_length]
   for written = 0, bytes = view {
     match (written, bytes) {
@@ -157,70 +161,70 @@ fn utf8_decode_lossy_into_utf16(
       (
         written,
         [
-          _..=0x7F as b0,
-          _..=0x7F as b1,
-          _..=0x7F as b2,
-          _..=0x7F as b3,
-          _..=0x7F as b4,
-          _..=0x7F as b5,
-          _..=0x7F as b6,
-          _..=0x7F as b7,
+          _..<=0x7F as b0,
+          _..<=0x7F as b1,
+          _..<=0x7F as b2,
+          _..<=0x7F as b3,
+          _..<=0x7F as b4,
+          _..<=0x7F as b5,
+          _..<=0x7F as b6,
+          _..<=0x7F as b7,
           .. rest,
         ],
       ) => {
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(b0.to_int()))
-        dst.unsafe_set(dst_offset + written + 1, Int::to_uint16(b1.to_int()))
-        dst.unsafe_set(dst_offset + written + 2, Int::to_uint16(b2.to_int()))
-        dst.unsafe_set(dst_offset + written + 3, Int::to_uint16(b3.to_int()))
-        dst.unsafe_set(dst_offset + written + 4, Int::to_uint16(b4.to_int()))
-        dst.unsafe_set(dst_offset + written + 5, Int::to_uint16(b5.to_int()))
-        dst.unsafe_set(dst_offset + written + 6, Int::to_uint16(b6.to_int()))
-        dst.unsafe_set(dst_offset + written + 7, Int::to_uint16(b7.to_int()))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(b0.to_int()))
+        dst.unsafe_set(dst_offset + written + 1, Int32::to_uint16(b1.to_int()))
+        dst.unsafe_set(dst_offset + written + 2, Int32::to_uint16(b2.to_int()))
+        dst.unsafe_set(dst_offset + written + 3, Int32::to_uint16(b3.to_int()))
+        dst.unsafe_set(dst_offset + written + 4, Int32::to_uint16(b4.to_int()))
+        dst.unsafe_set(dst_offset + written + 5, Int32::to_uint16(b5.to_int()))
+        dst.unsafe_set(dst_offset + written + 6, Int32::to_uint16(b6.to_int()))
+        dst.unsafe_set(dst_offset + written + 7, Int32::to_uint16(b7.to_int()))
         continue written + 8, rest
       }
-      (written, [0..=0x7F as b, .. rest]) => {
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(b.to_int()))
+      (written, [0..<=0x7F as b, .. rest]) => {
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(b.to_int()))
         continue written + 1, rest
       }
-      (written, [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest]) => {
+      (written, [0xC2..<=0xDF as b0, 0x80..<=0xBF as b1, .. rest]) => {
         let ch = ((b0.to_int() & 0x1F) << 6) | (b1.to_int() & 0x3F)
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(ch))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(ch))
         continue written + 1, rest
       }
       (
         written,
-        [0xE0 as b0, 0xA0..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xE1..=0xEC as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xED as b0, 0x80..=0x9F as b1, 0x80..=0xBF as b2, .. rest]
-        | [0xEE..=0xEF as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest],
+        [0xE0 as b0, 0xA0..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xE1..<=0xEC as b0, 0x80..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xED as b0, 0x80..<=0x9F as b1, 0x80..<=0xBF as b2, .. rest]
+        | [0xEE..<=0xEF as b0, 0x80..<=0xBF as b1, 0x80..<=0xBF as b2, .. rest],
       ) => {
         let ch = ((b0.to_int() & 0x0F) << 12) |
           ((b1.to_int() & 0x3F) << 6) |
           (b2.to_int() & 0x3F)
-        dst.unsafe_set(dst_offset + written, Int::to_uint16(ch))
+        dst.unsafe_set(dst_offset + written, Int32::to_uint16(ch))
         continue written + 1, rest
       }
       (
         written,
         [
           0xF0 as b0,
-          0x90..=0xBF as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0x90..<=0xBF as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ]
         | [
-          0xF1..=0xF3 as b0,
-          0x80..=0xBF as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0xF1..<=0xF3 as b0,
+          0x80..<=0xBF as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ]
         | [
           0xF4 as b0,
-          0x80..=0x8F as b1,
-          0x80..=0xBF as b2,
-          0x80..=0xBF as b3,
+          0x80..<=0x8F as b1,
+          0x80..<=0xBF as b2,
+          0x80..<=0xBF as b3,
           .. rest,
         ],
       ) => {
@@ -231,24 +235,24 @@ fn utf8_decode_lossy_into_utf16(
         let ch = ch - 0x10000
         dst.unsafe_set(
           dst_offset + written,
-          Int::to_uint16((ch >> 10) + 0xD800),
+          Int32::to_uint16((ch >> 10) + 0xD800),
         )
         dst.unsafe_set(
           dst_offset + written + 1,
-          Int::to_uint16((ch & 0x3FF) + 0xDC00),
+          Int32::to_uint16((ch & 0x3FF) + 0xDC00),
         )
         continue written + 2, rest
       }
-      (written, [0xE0, 0xA0..=0xBF, .. rest])
-      | (written, [0xE1..=0xEC, 0x80..=0xBF, .. rest])
-      | (written, [0xED, 0x80..=0x9F, .. rest])
-      | (written, [0xEE..=0xEF, 0x80..=0xBF, .. rest])
-      | (written, [0xF0, 0x90..=0xBF, 0x80..=0xBF, .. rest])
-      | (written, [0xF1..=0xF3, 0x80..=0xBF, 0x80..=0xBF, .. rest])
-      | (written, [0xF4, 0x80..=0x8F, 0x80..=0xBF, .. rest])
-      | (written, [0xF0, 0x90..=0xBF, .. rest])
-      | (written, [0xF1..=0xF3, 0x80..=0xBF, .. rest])
-      | (written, [0xF4, 0x80..=0x8F, .. rest]) => {
+      (written, [0xE0, 0xA0..<=0xBF, .. rest])
+      | (written, [0xE1..<=0xEC, 0x80..<=0xBF, .. rest])
+      | (written, [0xED, 0x80..<=0x9F, .. rest])
+      | (written, [0xEE..<=0xEF, 0x80..<=0xBF, .. rest])
+      | (written, [0xF0, 0x90..<=0xBF, 0x80..<=0xBF, .. rest])
+      | (written, [0xF1..<=0xF3, 0x80..<=0xBF, 0x80..<=0xBF, .. rest])
+      | (written, [0xF4, 0x80..<=0x8F, 0x80..<=0xBF, .. rest])
+      | (written, [0xF0, 0x90..<=0xBF, .. rest])
+      | (written, [0xF1..<=0xF3, 0x80..<=0xBF, .. rest])
+      | (written, [0xF4, 0x80..<=0x8F, .. rest]) => {
         dst.unsafe_set(dst_offset + written, 0xFFFD)
         continue written + 1, rest
       }
@@ -264,7 +268,7 @@ fn utf8_decode_lossy_into_utf16(
 /// Decode input bytes/text into structured output.
 pub fn decode(
   bytes : BytesView,
-  ignore_bom? : Bool = false,
+  ignore_bom~ : Bool = false,
 ) -> String raise Malformed {
   let bytes = drop_utf8_bom(bytes, ignore_bom)
   let input = bytes.data()
@@ -285,7 +289,7 @@ pub fn decode(
 /// References :
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G66453
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/#G40630
-pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
+pub fn decode_lossy(bytes : BytesView, ignore_bom~ : Bool = false) -> String {
   let bytes = drop_utf8_bom(bytes, ignore_bom)
   let input = bytes.data()
   let src_offset = bytes.start_offset()

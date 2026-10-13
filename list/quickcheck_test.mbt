@@ -20,7 +20,7 @@
 ///|
 test "quickcheck: rev is an involution and anti-distributes over concat" {
   @quickcheck.check(
-    (input : (@list.List[Int], @list.List[Int])) => {
+    (input : (@list.List[Int32], @list.List[Int32])) => {
       let (xs, ys) = input
       guard xs.rev().rev() == xs else { return false }
       guard (xs + ys).rev() == ys.rev() + xs.rev() else { return false }
@@ -35,9 +35,9 @@ test "quickcheck: rev is an involution and anti-distributes over concat" {
 ///|
 test "quickcheck: concat is a monoid with Empty as identity" {
   @quickcheck.check(
-    (input : (@list.List[Int], @list.List[Int], @list.List[Int])) => {
+    (input : (@list.List[Int32], @list.List[Int32], @list.List[Int32])) => {
       let (xs, ys, zs) = input
-      let empty : @list.List[Int] = List([])
+      let empty : @list.List[Int32] = List([])
       guard xs + ys + zs == xs + (ys + zs) else { return false }
       guard xs + empty == xs && empty + xs == xs else { return false }
       guard (xs + ys).length() == xs.length() + ys.length() else {
@@ -53,7 +53,7 @@ test "quickcheck: concat is a monoid with Empty as identity" {
 ///|
 test "quickcheck: take(n) ++ drop(n) partitions for any n, including out-of-range" {
   @quickcheck.check(
-    (input : (@list.List[Int], Int)) => {
+    (input : (@list.List[Int32], Int32)) => {
       let (xs, n) = input
       // `n` ranges over arbitrary Ints: negative (clamped to taking
       // nothing), zero, in range, and beyond the length (clamped to
@@ -70,8 +70,8 @@ test "quickcheck: take(n) ++ drop(n) partitions for any n, including out-of-rang
 ///|
 test "quickcheck: take_while(p) ++ drop_while(p) partitions and respects p" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
-      let p = (x : Int) => x % 3 != 0
+    (xs : @list.List[Int32]) => {
+      let p = (x : Int32) => x % 3 != 0
       let prefix = xs.take_while(p)
       let rest = xs.drop_while(p)
       guard prefix + rest == xs else { return false }
@@ -88,9 +88,9 @@ test "quickcheck: take_while(p) ++ drop_while(p) partitions and respects p" {
 ///|
 test "quickcheck: map preserves length, fuses under composition, matches Array map" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
-      let f = (x : Int) => x * 2 + 1
-      let g = (x : Int) => x - 7
+    (xs : @list.List[Int32]) => {
+      let f = (x : Int32) => x * 2 + 1
+      let g = (x : Int32) => x - 7
       guard xs.map(f).length() == xs.length() else { return false }
       guard xs.map(f).map(g) == xs.map(x => g(f(x))) else { return false }
       // rev_map is map through the mirror.
@@ -105,9 +105,9 @@ test "quickcheck: map preserves length, fuses under composition, matches Array m
 ///|
 test "quickcheck: fold agrees with an Array loop and relates to rev" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
+    (xs : @list.List[Int32]) => {
       // Non-commutative accumulator so order mistakes cannot cancel.
-      let step = (acc : String, x : Int) => acc + x.to_string() + ";"
+      let step = (acc : String, x : Int32) => acc + x.to_string() + ";"
       let mut expected = ""
       for x in xs.to_array() {
         expected = step(expected, x)
@@ -133,9 +133,9 @@ test "quickcheck: fold agrees with an Array loop and relates to rev" {
 ///|
 test "quickcheck: filter satisfies its predicate and filter_map fuses filter+map" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
-      let p = (x : Int) => x % 2 == 0
-      let f = (x : Int) => x / 2
+    (xs : @list.List[Int32]) => {
+      let p = (x : Int32) => x % 2 == 0
+      let f = (x : Int32) => x / 2
       guard xs.filter(p).all(p) else { return false }
       // Array reference for the kept contents, in order.
       guard xs.filter(p).to_array() == xs.to_array().filter(p) else {
@@ -152,7 +152,7 @@ test "quickcheck: filter satisfies its predicate and filter_map fuses filter+map
 ///|
 test "quickcheck: zip truncates to the shorter list and unzip undoes it" {
   @quickcheck.check(
-    (input : (@list.List[Int], @list.List[Int])) => {
+    (input : (@list.List[Int32], @list.List[Int32])) => {
       let (xs, ys) = input
       let zipped = @list.zip(xs, ys)
       let min_len = if xs.length() < ys.length() {
@@ -171,7 +171,7 @@ test "quickcheck: zip truncates to the shorter list and unzip undoes it" {
 ///|
 test "quickcheck: sort produces an ordered permutation matching Array sort" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
+    (xs : @list.List[Int32]) => {
       // Squeeze into 8 values so duplicate-heavy inputs are the norm.
       let xs = xs.map(x => x % 8)
       let sorted = xs.sort()
@@ -193,7 +193,7 @@ test "quickcheck: sort produces an ordered permutation matching Array sort" {
 ///|
 test "quickcheck: Array and Iter roundtrips are identities" {
   @quickcheck.check(
-    (input : (@list.List[Int], Array[Int])) => {
+    (input : (@list.List[Int32], Array[Int32])) => {
       let (xs, arr) = input
       guard @list.List(xs.to_array()) == xs else { return false }
       guard @list.List(arr).to_array() == arr else { return false }
@@ -209,9 +209,9 @@ test "quickcheck: Array and Iter roundtrips are identities" {
 ///|
 test "quickcheck: flat_map agrees with an Array reference and flatten" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
-      let f = (x : Int) => @list.List([x, x + 1, x * 2])
-      let expected : Array[Int] = []
+    (xs : @list.List[Int32]) => {
+      let f = (x : Int32) => @list.List([x, x + 1, x * 2])
+      let expected : Array[Int32] = []
       for x in xs.to_array() {
         expected.push(x)
         expected.push(x + 1)
@@ -228,10 +228,10 @@ test "quickcheck: flat_map agrees with an Array reference and flatten" {
 ///|
 test "quickcheck: intersperse matches an Array reference" {
   @quickcheck.check(
-    (xs : @list.List[Int]) => {
+    (xs : @list.List[Int32]) => {
       let sep = -1
       let result = xs.intersperse(sep)
-      let expected : Array[Int] = []
+      let expected : Array[Int32] = []
       for i, x in xs.to_array() {
         if i > 0 {
           expected.push(sep)
@@ -248,7 +248,7 @@ test "quickcheck: intersperse matches an Array reference" {
 ///|
 test "quickcheck: has_suffix agrees with the Array reference" {
   @quickcheck.check(
-    (input : (@list.List[Int], @list.List[Int], Int)) => {
+    (input : (@list.List[Int32], @list.List[Int32], Int32)) => {
       let (xs, ys, k) = input
       let a = xs.to_array()
       let b = ys.to_array()
@@ -268,13 +268,13 @@ test "quickcheck: has_suffix agrees with the Array reference" {
 ///|
 test "quickcheck: element queries agree with the Array reference" {
   @quickcheck.check(
-    (input : (@list.List[Int], Int)) => {
+    (input : (@list.List[Int32], Int32)) => {
       let (xs, i) = input
       let arr = xs.to_array()
       guard xs.head() == arr.get(0) else { return false }
       guard xs.last() == arr.get(arr.length() - 1) else { return false }
       guard xs.nth(i) == arr.get(i) else { return false }
-      let p = (x : Int) => x % 5 == 0
+      let p = (x : Int32) => x % 5 == 0
       guard xs.find(p) == arr.iter().find_first(p) else { return false }
       let mut arr_all = true
       let mut arr_any = false

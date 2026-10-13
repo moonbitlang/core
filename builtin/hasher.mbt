@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-const GPRIME1 : UInt = 0x9E3779B1
+const GPRIME1 : UInt32 = 0x9E3779B1
 
 ///|
-const GPRIMES2 : UInt = 0x85EBCA77
+const GPRIMES2 : UInt32 = 0x85EBCA77
 
 ///|
-const GPRIME3 : UInt = 0xC2B2AE3D
+const GPRIME3 : UInt32 = 0xC2B2AE3D
 
 ///|
-const GPRIME4 : UInt = 0x27D4EB2F
+const GPRIME4 : UInt32 = 0x27D4EB2F
 
 ///|
-const GPRIME5 : UInt = 0x165667B1
+const GPRIME5 : UInt32 = 0x165667B1
 
 ///|
 /// Represents a hasher that implements the xxHash32 algorithm. The hasher
@@ -47,7 +47,7 @@ const GPRIME5 : UInt = 0x165667B1
 /// }
 /// ```
 struct Hasher {
-  mut acc : UInt
+  mut acc : UInt32
 }
 
 ///|
@@ -78,14 +78,14 @@ struct Hasher {
 ///
 /// `Hasher::new` remains available as a deprecated alias.
 #alias(new, deprecated="Use `Hasher()` instead")
-pub fn Hasher::Hasher(seed? : Int = seed) -> Hasher {
+pub fn Hasher::Hasher(seed~ : Int32 = seed) -> Hasher {
   { acc: seed.reinterpret_as_uint() + GPRIME5, }
 }
 
 ///|
 // `builtin` cannot depend on `env`, so bind the runtime entropy source here.
 #cfg(any(target="native", target="llvm"))
-let seed : Int = {
+let seed : Int32 = {
   let bytes : FixedArray[Byte] = FixedArray::make(4, b'\x00')
   if moonbit_rt_get_random_for_hash_seed(bytes) == 0 {
     fixedarray_read_uint32_le(bytes, 0).reinterpret_as_int()
@@ -96,15 +96,15 @@ let seed : Int = {
 
 ///|
 #cfg(any(target="wasm", target="wasm-gc"))
-let seed : Int = 0
+let seed : Int32 = 0
 
 ///|
 #cfg(target="js")
-let seed : Int = random_seed()
+let seed : Int32 = random_seed()
 
 ///|
 #cfg(target="js")
-extern "js" fn random_seed() -> Int =
+extern "js" fn random_seed() -> Int32 =
   #|() => {
   #|  if (globalThis.crypto?.getRandomValues) {
   #|    const array = new Uint32Array(1);
@@ -120,7 +120,7 @@ extern "js" fn random_seed() -> Int =
 #borrow(bytes)
 extern "c" fn moonbit_rt_get_random_for_hash_seed(
   bytes : FixedArray[Byte],
-) -> Int = "moonbit_rt_get_random"
+) -> Int32 = "moonbit_rt_get_random"
 
 ///|
 /// Combines a hashable value with the current state of the hasher. This is
@@ -209,7 +209,7 @@ pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
+pub fn Hasher::combine_int(self : Hasher, value : Int32) -> Unit {
   self.combine_uint(value.reinterpret_as_uint())
 }
 
@@ -258,7 +258,7 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
+pub fn Hasher::combine_uint(self : Hasher, value : UInt32) -> Unit {
   self.acc += 4
   self.consume4(value)
 }
@@ -309,34 +309,6 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
   self.combine_int64(if value is 0 { 0L } else { value.reinterpret_as_int64() })
 }
-
-///|
-/// Combines a 32-bit floating-point value into the hasher by reinterpreting its
-/// bit pattern as a 32-bit integer. Positive and negative zero have the same
-/// hash, consistently with floating-point equality.
-///
-/// Parameters:
-///
-/// * `hasher` : The hasher object that maintains the internal state of the
-/// hashing operation.
-/// * `value` : The 32-bit floating-point value to be combined into the hash.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let hasher = Hasher(seed=0)
-///   hasher.combine(3.14F)
-///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
-/// }
-/// ```
-#deprecated
-pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  self.combine_uint(if value is 0 { 0U } else { value.reinterpret_as_uint() })
-}
-
-///|
-fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 
 ///|
 /// Combines a byte value into the hash state.
@@ -464,17 +436,17 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 ///   inspect(hasher.finalize(), content="1955036104")
 /// }
 /// ```
-pub fn Hasher::finalize(self : Hasher) -> Int {
+pub fn Hasher::finalize(self : Hasher) -> Int32 {
   finalize_acc(self.acc)
 }
 
 ///|
-fn finalize_acc(acc : UInt) -> Int {
+fn finalize_acc(acc : UInt32) -> Int32 {
   avalanche_acc(acc).reinterpret_as_int()
 }
 
 ///|
-fn avalanche_acc(acc : UInt) -> UInt {
+fn avalanche_acc(acc : UInt32) -> UInt32 {
   let mut acc = acc
   acc = acc ^ (acc >> 15)
   acc *= GPRIMES2
@@ -485,12 +457,12 @@ fn avalanche_acc(acc : UInt) -> UInt {
 }
 
 ///|
-fn Hasher::consume4(self : Hasher, input : UInt) -> Unit {
+fn Hasher::consume4(self : Hasher, input : UInt32) -> Unit {
   self.acc = consume4_acc(self.acc, input)
 }
 
 ///|
-fn consume4_acc(acc : UInt, input : UInt) -> UInt {
+fn consume4_acc(acc : UInt32, input : UInt32) -> UInt32 {
   rotl(acc + input * GPRIME3, 17) * GPRIME4
 }
 
@@ -500,7 +472,7 @@ fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
 }
 
 ///|
-fn rotl(x : UInt, r : Int) -> UInt {
+fn rotl(x : UInt32, r : Int32) -> UInt32 {
   (x << r) | (x >> (32 - r))
 }
 
@@ -537,7 +509,7 @@ pub impl Hash for String with fn hash_combine(self, hasher) {
 // String-keyed `HashMap`/`HashSet` probe paths — measured −450 k allocs
 // on a 10 k-element ×30-iter String-keyed hashmap bench. See
 // `Hash for Int with fn hash` for the broader rationale.
-pub impl Hash for String with fn hash(self : String) -> Int {
+pub impl Hash for String with fn hash(self : String) -> Int32 {
   let mut acc = seed.reinterpret_as_uint() + GPRIME5
   for i in 0..<self.length() {
     acc += 4U
@@ -561,7 +533,7 @@ pub impl Hash for StringView with fn hash_combine(
 ///|
 // Same inline-the-combine-loop trick as `Hash for String with fn hash`,
 // applied to the substring case.
-pub impl Hash for StringView with fn hash(self : StringView) -> Int {
+pub impl Hash for StringView with fn hash(self : StringView) -> Int32 {
   let str = self.str()
   let mut acc = seed.reinterpret_as_uint() + GPRIME5
   for i in self.start()..<self.end() {
@@ -591,7 +563,7 @@ pub impl Hash for StringView with fn hash(self : StringView) -> Int {
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub impl Hash for Int with fn hash_combine(self, hasher) {
+pub impl Hash for Int32 with fn hash_combine(self, hasher) {
   hasher.combine_int(self)
 }
 
@@ -603,7 +575,7 @@ pub impl Hash for Int with fn hash_combine(self, hasher) {
 // dominates `HashSet`/`HashMap` probe paths over `Int` keys
 // (~1 M extra allocs on a 10 k-element × 50-iter HashSet bench).
 // Inline the equivalent math so single-`Int` hashing is alloc-free.
-pub impl Hash for Int with fn hash(self : Int) -> Int {
+pub impl Hash for Int32 with fn hash(self : Int32) -> Int32 {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
   finalize_acc(consume4_acc(acc, self.reinterpret_as_uint()))
 }
@@ -628,7 +600,7 @@ pub impl Hash for Int with fn hash(self : Int) -> Int {
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub impl Hash for UInt with fn hash_combine(self, hasher) {
+pub impl Hash for UInt32 with fn hash_combine(self, hasher) {
   hasher.combine_uint(self)
 }
 
@@ -636,7 +608,7 @@ pub impl Hash for UInt with fn hash_combine(self, hasher) {
 // `Hash for UInt` shares the inline math with `Int` (same single
 // 32-bit combine + avalanche) — just skips the `reinterpret_as_uint`
 // hop. See the comment on `Hash for Int with fn hash`.
-pub impl Hash for UInt with fn hash(self : UInt) -> Int {
+pub impl Hash for UInt32 with fn hash(self : UInt32) -> Int32 {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
   finalize_acc(consume4_acc(acc, self))
 }
@@ -667,7 +639,7 @@ pub impl Hash for UInt64 with fn hash_combine(self, hasher) {
 // Inline 64-bit hash to skip the `Hasher()` heap alloc. Mirrors
 // `Hasher::combine_int64` (which combines two 32-bit halves) followed
 // by `finalize`. See the comment on `Hash for Int with fn hash`.
-pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
+pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int32 {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 8U
   let low = (self & 0xFFFF_FFFFUL).to_uint()
   let high = ((self >> 32) & 0xFFFF_FFFFUL).to_uint()
@@ -690,8 +662,8 @@ pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
 /// ```mbt check
 /// test {
 ///   let hasher = Hasher(seed=0)
-///   let some_value : Int? = Some(42)
-///   let none_value : Int? = None
+///   let some_value : Int32? = Some(42)
+///   let none_value : Int32? = None
 ///   hasher.combine(some_value)
 ///   inspect(hasher.finalize(), content="2103260413")
 ///   let hasher2 = Hasher(seed=0)
@@ -723,8 +695,8 @@ pub impl[X : Hash] Hash for X? with fn hash_combine(self, hasher) {
 /// ```mbt check
 /// test {
 ///   let hasher = Hasher(seed=0)
-///   let ok_result : Result[Int, String] = Ok(42)
-///   let err_result : Result[Int, String] = Err("error")
+///   let ok_result : Result[Int32, String] = Ok(42)
+///   let err_result : Result[Int32, String] = Err("error")
 ///   hasher.combine(ok_result)
 ///   inspect(hasher.finalize(), content="-1948635851")
 ///   let hasher = Hasher(seed=0)

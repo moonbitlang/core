@@ -18,7 +18,7 @@ impl[V : Eq] Eq for Node[V] with fn equal(self, other) {
 }
 
 ///|
-fn[V] height(node : Node[V]?) -> Int {
+fn[V] height(node : Node[V]?) -> Int32 {
   match node {
     Some({ height, .. }) | (None with height = 0) => height
   }

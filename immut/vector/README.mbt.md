@@ -26,7 +26,7 @@ Create an empty vector with `new()`, or construct one from an array or iterator.
 ```mbt check
 ///|
 test {
-  let v1 : @vector.Vector[Int] = @vector.new()
+  let v1 : @vector.Vector[Int32] = @vector.new()
   @test.assert_eq(v1.length(), 0)
   let v2 = @vector.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(v2.length(), 5)
@@ -87,7 +87,7 @@ test {
   let v3 = v2.pop().unwrap()
   @debug.assert_eq(v3.to_array(), [1, 2, 3])
   // pop on empty vector returns None
-  let empty : @vector.Vector[Int] = @vector.new()
+  let empty : @vector.Vector[Int32] = @vector.new()
   assert_true(empty.pop() == None)
 }
 ```
@@ -174,7 +174,7 @@ test {
   let v = @vector.from_array([1, 2, 3])
   @test.assert_eq(v.length(), 3)
   @test.assert_eq(v.is_empty(), false)
-  let empty : @vector.Vector[Int] = @vector.new()
+  let empty : @vector.Vector[Int32] = @vector.new()
   @test.assert_eq(empty.is_empty(), true)
 }
 ```

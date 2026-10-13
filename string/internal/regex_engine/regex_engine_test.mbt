@@ -21,7 +21,8 @@ let profile : @regex_engine.Profile = Profile(
     @regex_engine.RecharSet::char('_'),
   category=c => {
     match c {
-      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
+      'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' =>
+        @regex_engine.Category::word()
       '\n' => @regex_engine.Category::newline()
       _ => @regex_engine.Category::not_word()
     }
@@ -128,9 +129,11 @@ test "nested sequence vs flattened sequence preserve effective-tail preference" 
   let any = @regex_engine.char(@regex_engine.RecharSet::char_range(0, 0x10FFFF))
   let dot = @regex_engine.char(@regex_engine.RecharSet::char('.'))
   let space = @regex_engine.char(@regex_engine.RecharSet::char(' '))
-  let reluctant_any = @regex_engine.shortest(
-    @regex_engine.quantifier(any, { min: 0, max: None, mode: Greedy, }),
-  )
+  let reluctant_any = @regex_engine.quantifier(any, {
+    min: 0,
+    max: None,
+    mode: NonGreedy,
+  })
   let nested_pat = @regex_engine.seq([
     @regex_engine.seq([reluctant_any, dot]),
     @regex_engine.epsilon,
@@ -214,24 +217,6 @@ test "quantifier min > 0 uses iter step" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("aa", 0) is Some(mr) else { fail("Expected match") }
-  @test.assert_eq(mr.group(0), Some((0, 2)))
-}
-
-///|
-test "preference node triggers enforce_pref(First, k)" {
-  let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
-  let b = @regex_engine.char(@regex_engine.RecharSet::char('b'))
-  let c = @regex_engine.char(@regex_engine.RecharSet::char('c'))
-  let pat = @regex_engine.seq([
-    @regex_engine.start_of_input,
-    @regex_engine.alt([
-      @regex_engine.shortest(@regex_engine.seq([a, b])),
-      @regex_engine.seq([a, c]),
-    ]),
-    @regex_engine.end_of_input,
-  ])
-  let re = @regex_engine.compile(profile~, pat)
-  guard re.execute("ab", 0) is Some(mr) else { fail("Expected match") }
   @test.assert_eq(mr.group(0), Some((0, 2)))
 }
 

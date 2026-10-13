@@ -14,7 +14,7 @@
 
 ///|
 test "empty / is_empty / head / tail" {
-  let xs : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  let xs : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   inspect(xs.is_empty(), content="true")
   debug_inspect(xs.head(), content="None")
   debug_inspect(xs.tail(), content="None")
@@ -30,7 +30,7 @@ test "lazy_cons / head / tail" {
 
 ///|
 test "from_iter is re-traversable and memoizes pulls" {
-  let pulls : Ref[Int] = Ref(0)
+  let pulls : Ref[Int32] = Ref(0)
   let source = [1, 2, 3, 4]
   let underlying = source.iter()
   let counted = Iter::new(() => {
@@ -56,11 +56,11 @@ test "from_iter is re-traversable and memoizes pulls" {
 
 ///|
 test "infinite streams are safe to take a prefix from" {
-  fn repeat(value : Int) -> @lazy_list.LazyList[Int] {
+  fn repeat(value : Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(value, () => repeat(value))
   }
 
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -141,7 +141,7 @@ test "iter bridge is independent per call" {
 ///|
 test "iter does not over-force the tail" {
   // Pulling the head element must not run the tail thunk.
-  let pulls : Ref[Int] = Ref(0)
+  let pulls : Ref[Int32] = Ref(0)
   let xs = @lazy_list.lazy_cons(1, () => {
     pulls.val += 1
     @lazy_list.empty()
@@ -163,7 +163,7 @@ test "drop_while accepts a raising predicate" {
   // lazy combinators (map / filter / take_while / flat_map) cannot
   // accept raise? because they run the callback inside the memoized
   // tail thunks, which are non-raising by design.
-  fn pred(x : Int) -> Bool raise NegativeFound {
+  fn pred(x : Int32) -> Bool raise NegativeFound {
     if x < 0 {
       raise NegativeFound
     }
@@ -189,7 +189,7 @@ test "drop_while accepts a raising predicate" {
 test "zip is left-biased: does not force right tail when left ends first" {
   // After consuming the only pair, the right side's tail must not be
   // forced — `zip` detects end-of-stream from the left side first.
-  let right_pulls : Ref[Int] = Ref(0)
+  let right_pulls : Ref[Int32] = Ref(0)
   let short_left = @lazy_list.lazy_cons(1, () => @lazy_list.empty())
   let long_right = @lazy_list.lazy_cons(2, () => {
     right_pulls.val += 1
@@ -210,7 +210,7 @@ test "zip's left bias: right-shorter forces one extra left tail" {
   // After yielding (1, 2), zip forces the left tail to discover whether
   // there's a second pair — at that point it sees the right is empty
   // and stops. The left tail force is the "one extra".
-  let left_pulls : Ref[Int] = Ref(0)
+  let left_pulls : Ref[Int32] = Ref(0)
   let long_left = @lazy_list.lazy_cons(1, () => {
     left_pulls.val += 1
     @lazy_list.lazy_cons(3, () => @lazy_list.empty())
@@ -224,7 +224,7 @@ test "zip's left bias: right-shorter forces one extra left tail" {
 
 ///|
 test "lazy semantics: map does not force tail until observed" {
-  let pulls : Ref[Int] = Ref(0)
+  let pulls : Ref[Int32] = Ref(0)
   let xs = @lazy_list.from_iter([|1, 2, 3|]).map(x => {
     pulls.val += 1
     x * 2
@@ -246,7 +246,7 @@ test "Debug walks only the forced prefix" {
   let _ = strict.to_array()
   @debug.debug_inspect(strict, content="<LazyList: [1, 2, 3]>")
   // Infinite stream is safe — only forced cells contribute.
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -259,7 +259,7 @@ test "Debug walks only the forced prefix" {
   debug_inspect(buf, content="[0, 1, 2]")
   @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
   // Empty list has no prefix and no unforced marker.
-  let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  let empty : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   @debug.debug_inspect(empty, content="<LazyList: []>")
 }
 
@@ -271,8 +271,11 @@ test "Debug walks only the forced prefix" {
 /// `((([] ++ [from]) ++ [from + 1]) ++ ...) ++ [until - 1]` — every
 /// `concat` ends up inside the left argument of the next one, which is
 /// what the accumulator idiom `acc = acc.concat(...)` builds.
-fn left_nested_concat(from : Int, until : Int) -> @lazy_list.LazyList[Int] {
-  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+fn left_nested_concat(
+  from : Int32,
+  until : Int32,
+) -> @lazy_list.LazyList[Int32] {
+  let mut acc : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   for i in from..<until {
     acc = acc.concat(@lazy_list.from_iter([|i|]))
   }
@@ -281,8 +284,11 @@ fn left_nested_concat(from : Int, until : Int) -> @lazy_list.LazyList[Int] {
 
 ///|
 /// The mirror image: `[from] ++ ([from + 1] ++ (... ++ [until - 1]))`.
-fn right_nested_concat(from : Int, until : Int) -> @lazy_list.LazyList[Int] {
-  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+fn right_nested_concat(
+  from : Int32,
+  until : Int32,
+) -> @lazy_list.LazyList[Int32] {
+  let mut acc : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   for i = until - 1; i >= from; i = i - 1 {
     acc = @lazy_list.from_iter([|i|]).concat(acc)
   }
@@ -329,7 +335,7 @@ test "flat_map over a deeply nested concat is stack safe" {
 
 ///|
 test "concat leaves the right-hand side untouched until the left ends" {
-  let pulls : Ref[Int] = Ref(0)
+  let pulls : Ref[Int32] = Ref(0)
   let left = @lazy_list.from_iter([|1, 2|])
   let right = @lazy_list.lazy_cons(3, () => {
     pulls.val += 1
@@ -346,8 +352,8 @@ test "concat leaves the right-hand side untouched until the left ends" {
 
 ///|
 test "concat keeps both sides memoized across traversals" {
-  let pulls : Ref[Int] = Ref(0)
-  fn counted(source : Array[Int]) -> @lazy_list.LazyList[Int] {
+  let pulls : Ref[Int32] = Ref(0)
+  fn counted(source : Array[Int32]) -> @lazy_list.LazyList[Int32] {
     let underlying = source.iter()
     @lazy_list.from_iter(
       Iter::new(() => {
@@ -377,5 +383,5 @@ test "LazyList constructor copies the view" {
   arr[2] = 30
   debug_inspect(xs.to_array(), content="[2, 3, 4]")
   debug_inspect(xs.tail().map(t => t.to_array()), content="Some([3, 4])")
-  inspect(@lazy_list.LazyList(([] : Array[Int])).is_empty(), content="true")
+  inspect(@lazy_list.LazyList(([] : Array[Int32])).is_empty(), content="true")
 }

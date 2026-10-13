@@ -32,7 +32,7 @@ let float_ulp : Float = 1.0F / Float::from_int64(1L << 24)
 ///
 /// `@splitmix.new` remains available as a deprecated alias.
 #as_free_fn(new, deprecated="Use `RandomState()` instead")
-pub fn RandomState::RandomState(seed? : UInt64 = 37) -> RandomState {
+pub fn RandomState::RandomState(seed~ : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma), }
 }
 
@@ -94,7 +94,7 @@ pub fn RandomState::next_uint64(self : RandomState, limit? : UInt64) -> UInt64 {
 /// # Panics
 ///
 /// Panics if `limit` is explicitly set to zero.
-pub fn RandomState::next_uint(self : RandomState, limit? : UInt) -> UInt {
+pub fn RandomState::next_uint(self : RandomState, limit? : UInt32) -> UInt32 {
   match limit {
     None => self.next_uint64_raw().to_uint()
     Some(0U) => abort("RandomState::next_uint: limit must be positive")
@@ -110,20 +110,20 @@ pub fn RandomState::next_int64(self : RandomState) -> Int64 {
 
 ///|
 /// Get the next two random numbers as 32-bit unsigned integers.
-pub fn RandomState::next_two_uint(self : RandomState) -> (UInt, UInt) {
+pub fn RandomState::next_two_uint(self : RandomState) -> (UInt32, UInt32) {
   let g = self.next_uint64()
   ((g >> 32).to_uint(), g.to_uint())
 }
 
 ///|
 /// Get the next random number as a 32-bit signed integer.
-pub fn RandomState::next_int(self : RandomState) -> Int {
+pub fn RandomState::next_int(self : RandomState) -> Int32 {
   self.next_uint().reinterpret_as_int()
 }
 
 ///|
 /// Get the next random number as a positive 32-bit signed integer.
-pub fn RandomState::next_positive_int(self : RandomState) -> Int {
+pub fn RandomState::next_positive_int(self : RandomState) -> Int32 {
   let r = self.next_int()
   match r {
     -2147483648 => 2147483647
@@ -156,12 +156,12 @@ pub fn RandomState::split(self : RandomState) -> RandomState {
 }
 
 ///|
-fn shift_xor(n : Int, w : UInt64) -> UInt64 {
+fn shift_xor(n : Int32, w : UInt64) -> UInt64 {
   w ^ (w >> n)
 }
 
 ///|
-fn shift_xor_mul(n : Int, k : UInt64, w : UInt64) -> UInt64 {
+fn shift_xor_mul(n : Int32, k : UInt64, w : UInt64) -> UInt64 {
   shift_xor(n, w) * k
 }
 

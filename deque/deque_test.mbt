@@ -153,7 +153,7 @@ test "mapi" {
   inspect(dvp[0], content="3")
   inspect(dvp[1], content="5")
   inspect(dvp[2], content="7")
-  let dve = @deque.from_array(([] : FixedArray[Int]))
+  let dve = @deque.from_array(([] : FixedArray[Int32]))
   debug_inspect(
     dve.mapi((_idx, x) => x),
     content=(
@@ -245,7 +245,7 @@ test "get" {
 ///|
 test "from_array" {
   debug_inspect(
-    @deque.from_array(([] : Array[Int])),
+    @deque.from_array(([] : Array[Int32])),
     content=(
       #|<Deque: []>
     ),
@@ -261,7 +261,7 @@ test "from_array" {
 ///|
 test "from_json_tail_bug" {
   let json = @json.parse("[1, 2, 3]")
-  let dq : @deque.Deque[Int] = @json.from_json(json)
+  let dq : @deque.Deque[Int32] = @json.from_json(json)
   @test.assert_eq(dq.length(), 3)
   @test.assert_eq(dq.front(), Some(1))
   @test.assert_eq(dq[0], 1)
@@ -273,7 +273,7 @@ test "from_json_tail_bug" {
   dq.push_back(4)
   @test.assert_eq(dq.back(), Some(4))
   let json = @json.parse("[]")
-  let dq : @deque.Deque[Int] = @json.from_json(json)
+  let dq : @deque.Deque[Int32] = @json.from_json(json)
   @test.assert_eq(dq.back(), None)
   dq.push_back(1)
   @test.assert_eq(dq.back(), Some(1))
@@ -282,7 +282,7 @@ test "from_json_tail_bug" {
 ///|
 test "from_json rejects non-array" {
   let bad_json : Json = { "a": 1 }
-  try (@json.from_json(bad_json) : @deque.Deque[Int]) catch {
+  try (@json.from_json(bad_json) : @deque.Deque[Int32]) catch {
     _ => ()
   } noraise {
     _ => fail("expected Deque::from_json failure")
@@ -292,7 +292,7 @@ test "from_json rejects non-array" {
 ///|
 test "copy" {
   debug_inspect(
-    (Deque([]) : @deque.Deque[Int]).copy(),
+    (Deque([]) : @deque.Deque[Int32]).copy(),
     content=(
       #|<Deque: []>
     ),
@@ -375,7 +375,7 @@ test "map" {
   inspect(dvp[0], content="4")
   inspect(dvp[1], content="5")
   inspect(dvp[2], content="6")
-  let dve = @deque.from_array(([] : FixedArray[Int]))
+  let dve = @deque.from_array(([] : FixedArray[Int32]))
   debug_inspect(
     dve.map(x => x),
     content=(
@@ -395,7 +395,7 @@ fn expect_callback_failure(action : () -> Unit raise) -> Unit raise {
 }
 
 ///|
-fn fail_on_two(x : Int) -> Unit raise {
+fn fail_on_two(x : Int32) -> Unit raise {
   if x == 2 {
     raise Failure::Failure("callback failed")
   }
@@ -495,20 +495,20 @@ test "front_and_back" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(dv.back(), Some(5))
   @test.assert_eq(dv.front(), Some(1))
-  let dv : @deque.Deque[Int] = Deque([])
+  let dv : @deque.Deque[Int32] = Deque([])
   @test.assert_eq(dv.back(), None)
   @test.assert_eq(dv.front(), None)
 }
 
 ///|
 test "new_with_capacity" {
-  let d : @deque.Deque[Int] = Deque([], capacity=0)
+  let d : @deque.Deque[Int32] = Deque([], capacity=0)
   inspect(d.capacity(), content="0")
 }
 
 ///|
 test "new_with_capacity_non_zero" {
-  let d : @deque.Deque[Int] = Deque([], capacity=10)
+  let d : @deque.Deque[Int32] = Deque([], capacity=10)
   inspect(d.capacity(), content="10")
 }
 
@@ -590,7 +590,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let dq : @deque.Deque[Int] = @deque.from_iter([||])
+  let dq : @deque.Deque[Int32] = @deque.from_iter([||])
   debug_inspect(
     dq,
     content=(
@@ -601,7 +601,7 @@ test "from_iter empty iter" {
 
 ///|
 test "from_array with single element" {
-  let arr : ReadOnlyArray[Int] = [42]
+  let arr : ReadOnlyArray[Int32] = [42]
   let deque = @deque.from_array(arr)
   inspect(deque.length(), content="1")
   @test.assert_eq(deque.front(), Some(42))
@@ -774,7 +774,7 @@ test "deque push_back when empty" {
 ///|
 test "deque as_views" {
   // Test empty deque
-  let dq1 : @deque.Deque[Int] = Deque([])
+  let dq1 : @deque.Deque[Int32] = Deque([])
   @json.json_inspect(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
@@ -815,7 +815,7 @@ test "test_get" {
 
 ///|
 test "test_reserve_capacity" {
-  let tester : @deque.Deque[Int] = Deque([], capacity=1)
+  let tester : @deque.Deque[Int32] = Deque([], capacity=1)
   inspect(tester.capacity(), content="1")
   tester.reserve_capacity(2)
   inspect(tester.capacity(), content="2")
@@ -897,8 +897,8 @@ test "test_from_vec" {
 
 ///|
 test "test_from_array" {
-  let test_fn : (Int) -> Unit raise = (n : Int) => {
-    let array : FixedArray[Int] = FixedArray::make(n, 0)
+  let test_fn : (Int32) -> Unit raise = (n : Int32) => {
+    let array : FixedArray[Int32] = FixedArray::make(n, 0)
     for index in 0..<n {
       array[index] = index
     }
@@ -943,7 +943,7 @@ test "test_clone_from" {
 test "deque guard iter coverage improvement" {
   let dq = @deque.Deque([], capacity=15)
   // Use push_front only
-  fn test_n_via_push_front(n : Int) -> Unit raise {
+  fn test_n_via_push_front(n : Int32) -> Unit raise {
     for i in 0..<=n {
       dq.push_front(i)
     }
@@ -1001,7 +1001,7 @@ test "deque guard iter after push_front and push_back" {
 test "deque guard iter2 coverage improvement" {
   let dq = @deque.Deque([], capacity=15)
   // Use push_front only
-  fn test_n_via_push_front(n : Int) -> Unit raise {
+  fn test_n_via_push_front(n : Int32) -> Unit raise {
     for i in 0..<=n {
       dq.push_front(i)
     }
@@ -1034,7 +1034,7 @@ test "deque guard iter2 coverage improvement" {
 ///|
 test "deque truncate" {
   // Empty deque
-  let dq : @deque.Deque[Int] = Deque([])
+  let dq : @deque.Deque[Int32] = Deque([])
   dq.truncate(3)
   @json.json_inspect(dq, content=[])
 
@@ -1079,7 +1079,7 @@ test "deque retain" {
   let is_even = x => x % 2 == 0
 
   // Empty deque
-  let dq : @deque.Deque[Int] = Deque([])
+  let dq : @deque.Deque[Int32] = Deque([])
   dq.retain(is_even)
   @json.json_inspect(dq, content=[])
 
@@ -1176,7 +1176,7 @@ test "deque retain_map" {
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
-  let dq : @deque.Deque[Int] = Deque([])
+  let dq : @deque.Deque[Int32] = Deque([])
   dq.retain_map(inc_if_even)
   @json.json_inspect(dq, content=[])
 
@@ -1260,7 +1260,7 @@ test "deque retain_map clears full wrapped deque" {
 
 ///|
 test "@deque.to_array/empty" {
-  let dq : @deque.Deque[Int] = Deque([])
+  let dq : @deque.Deque[Int32] = Deque([])
   let arr = dq.to_array()
   @json.json_inspect(arr, content=[])
 }
@@ -1374,14 +1374,14 @@ test "rev_iter2 when wrapped around" {
 
 ///|
 test "flatten with empty deque" {
-  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([])
+  let dq : @deque.Deque[@deque.Deque[Int32]] = @deque.from_array([])
   debug_inspect(
     dq.flatten(),
     content=(
       #|<Deque: []>
     ),
   )
-  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([
+  let dq : @deque.Deque[@deque.Deque[Int32]] = @deque.from_array([
     @deque.from_array([]),
     @deque.from_array([]),
   ])
@@ -1391,7 +1391,7 @@ test "flatten with empty deque" {
       #|<Deque: []>
     ),
   )
-  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([
+  let dq : @deque.Deque[@deque.Deque[Int32]] = @deque.from_array([
     @deque.from_array([1, 2, 3]),
     @deque.from_array([]),
     @deque.from_array([4, 5, 6]),
@@ -1830,7 +1830,7 @@ test "rev_inplace" {
   @test.assert_eq(dq, @deque.from_array([3, 4]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = Deque([])
+  let empty : @deque.Deque[Int32] = Deque([])
   empty.rev_in_place()
   @test.assert_eq(empty, @deque.from_array([]))
 
@@ -1867,7 +1867,7 @@ test "rev" {
   @test.assert_eq(reversed_back, @deque.from_array([3, 4, 5]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = Deque([])
+  let empty : @deque.Deque[Int32] = Deque([])
   let empty_reversed = empty.rev()
   @test.assert_eq(empty, @deque.from_array([]))
   @test.assert_eq(empty_reversed, @deque.from_array([]))
@@ -1917,7 +1917,7 @@ test "shuffle maintains elements with deterministic rand" {
   let dq = original.copy()
 
   // Better deterministic "random" function for testing
-  fn rand(upper : Int) -> Int {
+  fn rand(upper : Int32) -> Int32 {
     (upper * 123 + 456) % (upper + 1) // More varied results
   }
 
@@ -2162,7 +2162,7 @@ test "append_growth_strategy" {
 /// Test large append to trigger buffer reallocation
 test "append_large_realloc" {
   let d1 = @deque.from_array([1])
-  let d2 : @deque.Deque[Int] = @deque.from_array([])
+  let d2 : @deque.Deque[Int32] = @deque.from_array([])
   for i in 0..<1000 {
     d2.push_back(i)
   }
@@ -2275,7 +2275,7 @@ test "blit_to_with_offsets" {
 /// Test blit_to into an empty deque (should grow automatically)
 test "blit_to_into_empty" {
   let src = @deque.from_array([1, 2, 3])
-  let dst : @deque.Deque[Int] = @deque.from_array([])
+  let dst : @deque.Deque[Int32] = @deque.from_array([])
   @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
   @test.assert_eq(dst.to_array(), [1, 2, 3])
   debug_inspect(
@@ -2404,7 +2404,7 @@ test "chunks_size_larger_than_length" {
 ///|
 /// Test chunks on empty deque
 test "chunks_empty" {
-  let d : @deque.Deque[Int] = @deque.from_array([])
+  let d : @deque.Deque[Int32] = @deque.from_array([])
   let chunks = d.chunks(3)
   @test.assert_eq(chunks.length(), 0)
 }
@@ -2453,7 +2453,7 @@ test "chunk_by_non_decreasing" {
 ///|
 /// Empty deque produces empty result
 test "chunk_by_empty" {
-  let d : @deque.Deque[Int] = @deque.from_array([])
+  let d : @deque.Deque[Int32] = @deque.from_array([])
   let chunks = d.chunk_by((x, y) => x <= y)
   debug_inspect(chunks.to_array(), content="[]")
 }
@@ -2533,7 +2533,7 @@ test "filter_all_true" {
 ///|
 /// Test filter on empty deque
 test "filter_empty" {
-  let d : @deque.Deque[Int] = @deque.from_array([])
+  let d : @deque.Deque[Int32] = @deque.from_array([])
   let res = d.filter(x => x > 0)
   @test.assert_eq(res.to_array(), [])
   debug_inspect(
@@ -3134,7 +3134,7 @@ test "deque release_unused covers the wrapped case" {
 ///|
 test "binary_search_by propagates comparator errors" {
   let dq = @deque.Deque([1, 3, 5, 7])
-  let r : Result[Int, Int] = dq.binary_search_by(x => x.compare(5))
+  let r : Result[Int32, Int32] = dq.binary_search_by(x => x.compare(5))
   debug_inspect(r, content="Ok(2)")
   let raised = try
     dq.binary_search_by(x => if x == 5 { fail("stop") } else { x.compare(5) })
@@ -3149,7 +3149,7 @@ test "binary_search_by propagates comparator errors" {
 
 ///|
 test "Default is the empty deque" {
-  let dq : @deque.Deque[Int] = Default::default()
+  let dq : @deque.Deque[Int32] = Default::default()
   inspect(dq.is_empty(), content="true")
   dq.push_back(1)
   inspect(dq.length(), content="1")

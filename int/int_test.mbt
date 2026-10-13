@@ -67,11 +67,11 @@ test "hash" {
 ///|
 test "abs function coverage" {
   // Test cases for abs function
-  inspect(Int::abs(5), content="5")
-  inspect(Int::abs(-5), content="5")
-  inspect(Int::abs(0), content="0")
-  assert_eq(Int::abs(@int.MIN_VALUE), @int.MIN_VALUE.abs())
-  assert_eq(Int::abs(@int.MAX_VALUE), @int.MAX_VALUE)
+  inspect(Int32::abs(5), content="5")
+  inspect(Int32::abs(-5), content="5")
+  inspect(Int32::abs(0), content="0")
+  assert_eq(Int32::abs(@int.MIN_VALUE), @int.MIN_VALUE.abs())
+  assert_eq(Int32::abs(@int.MAX_VALUE), @int.MAX_VALUE)
 }
 
 ///|

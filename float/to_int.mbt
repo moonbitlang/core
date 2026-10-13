@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
+fn Float::to_unchecked_int(self : Float) -> Int32 = "%f32.to_i32"
 
 ///|
 /// Converts a floating-point number to an integer, with proper handling of
@@ -40,7 +40,7 @@ fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
 ///   inspect(@float.neg_infinity.to_int(), content="-2147483648")
 /// }
 /// ```
-pub fn Float::to_int(self : Float) -> Int {
+pub fn Float::to_int(self : Float) -> Int32 {
   if self != self {
     0
   } else if self >= 2147483647 {

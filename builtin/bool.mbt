@@ -29,7 +29,7 @@
 ///   inspect(false.to_int(), content="0")
 /// }
 /// ```
-pub fn Bool::to_int(self : Bool) -> Int {
+pub fn Bool::to_int(self : Bool) -> Int32 {
   if self {
     1
   } else {
@@ -81,7 +81,7 @@ pub fn Bool::to_int64(self : Bool) -> Int64 {
 ///   inspect(false.to_uint(), content="0")
 /// }
 /// ```
-pub fn Bool::to_uint(self : Bool) -> UInt {
+pub fn Bool::to_uint(self : Bool) -> UInt32 {
   if self {
     1
   } else {
@@ -124,7 +124,7 @@ pub impl Hash for Bool with fn hash_combine(self, hasher) {
 // Forward to the inline `UInt` hash to skip the per-call
 // `Hasher()` allocation. See `Hash for Int with fn hash` in
 // `hasher.mbt` for the rationale.
-pub impl Hash for Bool with fn hash(self : Bool) -> Int {
+pub impl Hash for Bool with fn hash(self : Bool) -> Int32 {
   Hash::hash(if self { 1U } else { 0U })
 }
 
@@ -148,33 +148,6 @@ pub impl Hash for Bool with fn hash(self : Bool) -> Int {
 /// ```
 ///
 pub fn Bool::to_uint16(self : Bool) -> UInt16 {
-  if self {
-    1
-  } else {
-    0
-  }
-}
-
-///|
-/// Converts a boolean value to a 16-bit integer representation.
-///
-/// Parameters:
-///
-/// * `self` : The boolean value to be converted.
-///
-/// Returns a 16-bit integer, where `true` is converted to 1 and `false` is
-/// converted to 0.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(true.to_int16(), content="1")
-///   inspect(false.to_int16(), content="0")
-/// }
-/// ```
-///
-pub fn Bool::to_int16(self : Bool) -> Int16 {
   if self {
     1
   } else {

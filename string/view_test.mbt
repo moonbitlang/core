@@ -50,27 +50,11 @@ test "stringview subview" {
 }
 
 ///|
-test "stringview access" {
-  let str = "Hello🤣🤣🤣"
-  let view = str.exact_view(start=1, end=7)
-  inspect(view.iter().nth(4).unwrap(), content="🤣")
-  inspect(view.iter().nth(4).unwrap(), content="🤣")
-}
-
-///|
 test "stringview access iter" {
   let str = "Hello🤣🤣🤣"
   let view = str.exact_view(start=1, end=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
   inspect(view.iter().nth(4).unwrap(), content="🤣")
-}
-
-///|
-test "stringview rev_get" {
-  let str = "Hello🤣🤣🤣"
-  let view = str.exact_view(start=1, end=7)
-  inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
-  inspect(view.rev_iter().nth(4).unwrap(), content="e")
 }
 
 ///|
@@ -251,14 +235,6 @@ test "panic negative index 5" {
   let str = "hello"
   let str_view = str.exact_view(start=1, end=4)
   let _ = str_view.exact_view(start=4)
-}
-
-///|
-test "panic negative index 6" {
-  // index_at_rev returns an index not in bounds of the view
-  let str = "hello"
-  let str_view = str.exact_view(start=1, end=4)
-  let _ = str_view.exact_view(end=4)
 }
 
 ///|

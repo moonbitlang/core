@@ -172,14 +172,14 @@ test "HAMT::from_iter" {
 
 ///|
 test "HAMT::from_iter empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter([||])
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.from_iter([||])
   assert_eq(map.length(), 0)
 }
 
 ///|
 fn rebuild_from_array_by_add(
-  data : Array[(Int, Int)],
-) -> @hashmap.HashMap[Int, Int] {
+  data : Array[(Int32, Int32)],
+) -> @hashmap.HashMap[Int32, Int32] {
   for n = data.length(), map = @hashmap.new() {
     match n {
       0 => break map
@@ -193,8 +193,8 @@ fn rebuild_from_array_by_add(
 
 ///|
 fn rebuild_from_iter_by_add(
-  data : Array[(Int, Int)],
-) -> @hashmap.HashMap[Int, Int] {
+  data : Array[(Int32, Int32)],
+) -> @hashmap.HashMap[Int32, Int32] {
   for kv in data; map = @hashmap.new() {
     continue map.add(kv.0, kv.1)
   } nobreak {
@@ -262,7 +262,7 @@ test "to_array" {
 
 ///|
 test "HAMT::iter on empty map" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
   let iter = map.iter()
   @test.assert_eq(iter.next(), None)
 }
@@ -292,58 +292,61 @@ test "HAMT::iter on branch map" {
 ///|
 test "eq for boundary cases" {
   // Test with empty maps
-  let empty_map1 : @hashmap.HashMap[Int, Int] = @hashmap.new()
-  let empty_map2 : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let empty_map1 : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let empty_map2 : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
   inspect(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
-  let non_empty_map : @hashmap.HashMap[Int, Int] = HashMap([(1, 1)])
+  let non_empty_map : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1)])
   inspect(empty_map1 == non_empty_map, content="false")
   inspect(non_empty_map == empty_map1, content="false")
 
   // Test with maps of different sizes
-  let larger_map : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (2, 2)])
+  let larger_map : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (2, 2)])
   inspect(non_empty_map == larger_map, content="false")
 }
 
 ///|
 test "eq for random cases" {
   // Test with maps containing different keys
-  let map1 : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (2, 2)])
-  let map2 : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (3, 3)])
+  let map1 : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (2, 2)])
+  let map2 : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (3, 3)])
   inspect(map1 == map2, content="false")
 
   // Test with maps containing same keys but different values
-  let map3 : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (2, 3)])
+  let map3 : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (2, 3)])
   inspect(map1 == map3, content="false")
 
   // Test with maps containing same keys and values but in different order
-  let map4 : @hashmap.HashMap[Int, Int] = HashMap([(2, 2), (1, 1)])
+  let map4 : @hashmap.HashMap[Int32, Int32] = HashMap([(2, 2), (1, 1)])
   inspect(map1 == map4, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions
-  let map5 : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (11, 11)])
-  let map6 : @hashmap.HashMap[Int, Int] = HashMap([(1, 1), (11, 11)])
+  let map5 : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (11, 11)])
+  let map6 : @hashmap.HashMap[Int32, Int32] = HashMap([(1, 1), (11, 11)])
   inspect(map5 == map6, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions and different order
-  let map7 : @hashmap.HashMap[Int, Int] = HashMap([(11, 11), (1, 1)])
+  let map7 : @hashmap.HashMap[Int32, Int32] = HashMap([(11, 11), (1, 1)])
   inspect(map5 == map7, content="true")
 }
 
 ///|
 test "eq for random cases with different types" {
   // Test with maps containing different types
-  let map8 : @hashmap.HashMap[String, Int] = HashMap([("one", 1), ("two", 2)])
-  let map9 : @hashmap.HashMap[String, Int] = HashMap([("one", 1), ("two", 2)])
+  let map8 : @hashmap.HashMap[String, Int32] = HashMap([("one", 1), ("two", 2)])
+  let map9 : @hashmap.HashMap[String, Int32] = HashMap([("one", 1), ("two", 2)])
   inspect(map8 == map9, content="true")
 
   // Test with maps containing same keys but different values of different types
-  let map10 : @hashmap.HashMap[String, Int] = HashMap([("one", 1), ("two", 3)])
+  let map10 : @hashmap.HashMap[String, Int32] = HashMap([("one", 1), ("two", 3)])
   inspect(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
-  let map11 : @hashmap.HashMap[String, Int] = HashMap([("one", 1), ("three", 3)])
+  let map11 : @hashmap.HashMap[String, Int32] = HashMap([
+    ("one", 1),
+    ("three", 3),
+  ])
   inspect(map8 == map11, content="false")
 }
 
@@ -362,7 +365,7 @@ test "hash" {
 test "each on empty map" {
   let empty = @hashmap.new()
   let mut sum = 0
-  empty.each((k : Int, v : Int) => sum += k + v)
+  empty.each((k : Int32, v : Int32) => sum += k + v)
   inspect(sum, content="0")
 }
 
@@ -499,7 +502,7 @@ test "HAMT::map with overflow" {
 
 ///|
 test "HAMT::map_with_key empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
   let mapped = map.map((_k, v) => v)
   inspect(mapped.length(), content="0")
 }
@@ -558,7 +561,7 @@ impl Eq for MyString with fn equal(self, other) {
 }
 
 ///|
-struct SegKey(Int, Int)
+struct SegKey(Int32, Int32)
 
 ///|
 impl Hash for SegKey with fn hash(self) {
@@ -618,7 +621,7 @@ test "HAMT leaf bucket updates" {
 
 ///|
 test "empty filtering" {
-  let map : @hashmap.HashMap[Int, Int] = HashMap([])
+  let map : @hashmap.HashMap[Int32, Int32] = HashMap([])
   let _filtered = map.filter((_, v) => v > 2)
   inspect(map.length(), content="0")
 }
@@ -650,7 +653,7 @@ test "filter with collision - more than one left" {
 
 ///|
 test "HAMT::fold_with_key on empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
   let result = map.fold(init=0, (acc, _k, _v) => acc + 1)
   inspect(result, content="0")
 }
@@ -677,7 +680,7 @@ test "HAMT::remove_with_hash collision" {
 
 ///|
 test "HAMT::remove from empty map" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
   let map2 = map.remove(42)
   assert_eq(map2.length(), 0)
 }
@@ -1015,7 +1018,7 @@ test "HAMT::difference collision becomes empty" {
 test "HAMT::each" {
   let empty = @hashmap.new()
   let mut sum = 0
-  empty.each((k : Int, v : Int) => sum += k + v)
+  empty.each((k : Int32, v : Int32) => sum += k + v)
   inspect(sum, content="0")
   let leaf = @hashmap.singleton(1, 10)
   let mut sum_leaf = 0
@@ -1023,7 +1026,7 @@ test "HAMT::each" {
   inspect(sum_leaf, content="11")
   let collision = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
   let mut sum_collision = 0
-  collision.each((_k : MyString, v : Int) => sum_collision += v)
+  collision.each((_k : MyString, v : Int32) => sum_collision += v)
   inspect(sum_collision, content="3")
   let branch = @hashmap.HashMap([(1, 1), (2, 2), (3, 3), (4, 4)])
   let mut sum_branch = 0

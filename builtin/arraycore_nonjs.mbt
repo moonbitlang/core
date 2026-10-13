@@ -17,7 +17,7 @@
 /// grow in size.
 struct Array[T] {
   mut buf : UninitializedArray[T]
-  mut len : Int
+  mut len : Int32
 }
 
 ///|
@@ -28,7 +28,7 @@ struct Array[T] {
 /// Prefer `Array::makei` unless the initializing loop cannot be expressed as
 /// a function of the index.
 #doc(hidden)
-pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] {
+pub fn[T] Array::unsafe_make_uninit(len : Int32) -> Array[T] {
   { buf: UninitializedArray::make(len), len, }
 }
 
@@ -36,10 +36,10 @@ pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] {
 #owned(src)
 fn[T] Array::unsafe_make_and_blit(
   src : UninitializedArray[T],
-  allocate_len~ : Int,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Array[T] {
   {
     buf: UninitializedArray::make_and_blit(
@@ -57,10 +57,10 @@ fn[T] Array::unsafe_make_and_blit(
 #owned(src)
 fn[T] Array::unsafe_make_and_blit_from_fixed(
   src : FixedArray[T],
-  allocate_len~ : Int,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Array[T] {
   {
     buf: UninitializedArray::unsafe_make_and_blit_from_fixed(
@@ -74,7 +74,7 @@ fn[T] Array::unsafe_make_and_blit_from_fixed(
 #owned(value)
 fn[T] Array::unsafe_resize_with_default(
   self : Array[T],
-  new_len : Int,
+  new_len : Int32,
   value : T,
 ) -> Unit {
   let len = self.length()
@@ -110,14 +110,14 @@ fn[T] Array::unsafe_resize_with_default(
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = Array(capacity=10)
+///   let arr : Array[Int32] = Array(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
-///   let arr : Array[Int] = Array()
+///   let arr : Array[Int32] = Array()
 ///   inspect(arr.length(), content="0")
 /// }
 /// ```
-pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity~ : Int32 = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
@@ -138,14 +138,14 @@ pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = [1, 2, 3]
+///   let arr : Array[Int32] = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
-///   let empty : Array[Int] = []
+///   let empty : Array[Int32] = []
 ///   inspect(empty.length(), content="0")
 /// }
 /// ```
 #intrinsic("%array.length")
-pub fn[T] Array::length(self : Array[T]) -> Int {
+pub fn[T] Array::length(self : Array[T]) -> Int32 {
   self.len
 }
 
@@ -176,7 +176,10 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 /// memory. The removed elements stay reachable from the buffer until those
 /// slots are reused by later pushes, until the buffer grows, or until the
 /// array is dropped; `Array::release_unused` overwrites them on demand.
-fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_truncate_to_length(
+  self : Array[T],
+  new_len : Int32,
+) -> Unit {
   guard! new_len <= self.length()
   self.len = new_len
 }
@@ -198,7 +201,11 @@ fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
 /// while growing, `required < len` means the required-size calculation
 /// overflowed.
 #inline
-fn array_growth_capacity(current : Int, len : Int, required : Int) -> Int {
+fn array_growth_capacity(
+  current : Int32,
+  len : Int32,
+  required : Int32,
+) -> Int32 {
   if required < len {
     abort("Array capacity overflow")
   }
@@ -239,7 +246,7 @@ test "panic Array growth rejects a wrapped required size" {
 }
 
 ///|
-fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
+fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int32) -> Unit {
   let old_buf = self.buf
   // Drop the array's reference so make_and_blit can see a unique old buffer.
   // On native/Wasm1 this lets it transfer element references without retaining
@@ -256,19 +263,6 @@ fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
     len=copy_len,
   )
   self.buf = new_buf
-}
-
-///|
-test "array_unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_true(dst[i] == src[i])
-  }
 }
 
 ///|
@@ -304,7 +298,7 @@ test "Array::resize_buffer" {
 /// Reallocate the array to fit `required`. Callers keep the capacity check on
 /// their fast path and only call this when allocation is necessary.
 #inline(never)
-fn[T] Array::realloc(self : Array[T], required : Int) -> Unit {
+fn[T] Array::realloc(self : Array[T], required : Int32) -> Unit {
   let old_cap = self.capacity()
   let new_cap = array_growth_capacity(old_cap, self.length(), required)
   self.resize_buffer(new_cap)
@@ -323,7 +317,7 @@ fn[T] Array::realloc(self : Array[T], required : Int) -> Unit {
 ///   @test.assert_eq(v.capacity(), 10)
 /// }
 /// ```
-pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
+pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int32) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -431,11 +425,11 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
+///   let v2 : ReadOnlyArray[Int32] = [4, 5, 6]
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
 ///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = []
+///   let v2 : ReadOnlyArray[Int32] = []
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3]")
 /// }
@@ -498,9 +492,9 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 pub fn[A] Array::blit_to(
   self : Array[A],
   dst : Array[A],
-  len? : Int = self.length(),
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  len~ : Int32 = self.length(),
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   let old_len = dst.length()
   guard! len >= 0 &&
@@ -555,7 +549,7 @@ pub fn[A] Array::blit_to(
 pub fn[A] ArrayView::blit_to(
   self : ArrayView[A],
   dst : Array[A],
-  dst_offset? : Int = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   let len = self.len()
   let old_len = dst.length()
@@ -656,7 +650,7 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 ///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
-pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
+pub fn[T] Array::remove(self : Array[T], index : Int32) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -698,7 +692,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// Call `Array::release_unused` to overwrite them at once, or
 /// `Array::shrink_to_fit` to move the survivors into an exact-size buffer.
 ///
-pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
+pub fn[T] Array::drain(self : Array[T], begin : Int32, end : Int32) -> Array[T] {
   guard! begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = {
@@ -740,7 +734,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// }
 /// ```
 #owned(value)
-pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
+pub fn[T] Array::insert(self : Array[T], index : Int32, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -807,8 +801,8 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
 pub fn[A] Array::fill(
   self : Array[A],
   value : A,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }

@@ -22,7 +22,7 @@
 ///|
 /// Elements whose 32-bit hash keeps only the low three bits, so values
 /// agreeing on `n & 7` collide on the whole stored path.
-priv struct CollidingElem(Int) derive(Eq)
+priv struct CollidingElem(Int32) derive(Eq)
 
 ///|
 impl Hash for CollidingElem with fn hash(self) {
@@ -38,7 +38,7 @@ impl Hash for CollidingElem with fn hash_combine(self, hasher) {
 /// Elements whose hash lives only in the top path segment (bits 25..=29):
 /// all values share path segments 1-5, so they diverge — or fully collide —
 /// only at the maximum trie depth.
-priv struct DeepElem(Int) derive(Eq)
+priv struct DeepElem(Int32) derive(Eq)
 
 ///|
 impl Hash for DeepElem with fn hash(self) {

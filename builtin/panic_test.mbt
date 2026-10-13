@@ -24,7 +24,7 @@ test "panic array_op_get" {
 
 ///|
 test "panic array_set_out_of_bounds" {
-  let arr : FixedArray[Int] = [1, 2, 3]
+  let arr : FixedArray[Int32] = [1, 2, 3]
   arr[3] = 4 // This should panic
 }
 
@@ -227,5 +227,5 @@ test "panic set_utf16be_char with invalid code point" {
 
 ///|
 test "panic" {
-  let _ : Int = Option::None.unwrap()
+  let _ : Int32 = Option::None.unwrap()
 }

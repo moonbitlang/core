@@ -68,7 +68,7 @@ test "quickcheck: decode accepts any case mixture and round-trips" {
 ///|
 test "quickcheck: corrupting any position makes decode raise" {
   @quickcheck.check(
-    (input : (Bytes, UInt, UInt)) => {
+    (input : (Bytes, UInt32, UInt32)) => {
       let (bytes, pos0, char0) = input
       guard bytes.length() > 0 else { return true }
       let text = @hex.encode(bytes)

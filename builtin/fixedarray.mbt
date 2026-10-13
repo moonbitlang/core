@@ -27,14 +27,14 @@
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3]
+///   let arr : FixedArray[Int32] = [1, 2, 3]
 ///   debug_inspect(arr.get(1), content="Some(2)")
-///   let arr : FixedArray[Int] = [1, 2, 3]
+///   let arr : FixedArray[Int32] = [1, 2, 3]
 ///   debug_inspect(arr.get(3), content="None")
 /// }
 /// ```
 #intrinsic("%fixedarray.get_opt")
-pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
+pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int32) -> T? {
   let len = self.length()
   guard idx >= 0 && idx < len else { None }
   Some(self.unsafe_get(idx))
@@ -53,7 +53,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = ([] : FixedArray[_])
+///   let arr : FixedArray[Int32] = ([] : FixedArray[_])
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }
@@ -84,7 +84,7 @@ pub impl[X] Default for FixedArray[X] with fn default() {
 /// ```mbt check
 /// test {
 ///   // Fill entire array
-///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+///   let fa : FixedArray[Int32] = [0, 0, 0, 0, 0]
 ///   fa.fill(3)
 ///   debug_inspect(
 ///     fa,
@@ -94,7 +94,7 @@ pub impl[X] Default for FixedArray[X] with fn default() {
 ///   )
 ///
 ///   // Fill from index 1 to 3 (exclusive)
-///   let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
+///   let fa2 : FixedArray[Int32] = [0, 0, 0, 0, 0]
 ///   fa2.fill(9, start=1, end=3)
 ///   debug_inspect(
 ///     fa2,
@@ -118,8 +118,8 @@ pub impl[X] Default for FixedArray[X] with fn default() {
 pub fn[T] FixedArray::fill(
   self : FixedArray[T],
   value : T,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
@@ -140,9 +140,9 @@ pub fn[T] FixedArray::fill(
 #owned(value)
 fn[T] FixedArray::unchecked_fill(
   self : FixedArray[T],
-  start : Int,
+  start : Int32,
   value : T,
-  len : Int,
+  len : Int32,
 ) -> Unit {
   for i in start..<(start + len) {
     self[i] = value
@@ -162,7 +162,7 @@ fn[T] FixedArray::unchecked_fill(
 ///
 /// ```mbt check
 /// test {
-///   let empty : FixedArray[Int] = []
+///   let empty : FixedArray[Int32] = []
 ///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
 ///   inspect(non_empty.is_empty(), content="false")
@@ -179,7 +179,7 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let v : FixedArray[Int] = [3, 4, 5]
+///   let v : FixedArray[Int32] = [3, 4, 5]
 ///   let result = v.binary_search(3)
 ///   @test.assert_eq(result, Ok(0)) // The element 3 is found at index 0
 /// }
@@ -201,7 +201,7 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 pub fn[T : Compare] FixedArray::binary_search(
   self : FixedArray[T],
   value : T,
-) -> Result[Int, Int] {
+) -> Result[Int32, Int32] {
   self[:].binary_search(value)
 }
 
@@ -230,7 +230,7 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
+///   let arr : FixedArray[Int32] = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by(x => x.compare(3))
 ///   debug_inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by(x => x.compare(4))
@@ -247,8 +247,8 @@ pub fn[T : Compare] FixedArray::binary_search(
 /// found
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
-  cmp : (T) -> Int raise?,
-) -> Result[Int, Int] raise? {
+  cmp : (T) -> Int32 raise?,
+) -> Result[Int32, Int32] raise? {
   self[:].binary_search_by(cmp)
 }
 
@@ -327,7 +327,7 @@ test "each" {
 #locals(f)
 pub fn[T] FixedArray::eachi(
   self : FixedArray[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -437,7 +437,7 @@ test "rev_each" {
 #locals(f)
 pub fn[T] FixedArray::rev_eachi(
   self : FixedArray[T],
-  f : (Int, T) -> Unit raise?,
+  f : (Int32, T) -> Unit raise?,
 ) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
@@ -535,7 +535,7 @@ test "map" {
 #locals(f)
 pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
-  f : (Int, T) -> U raise?,
+  f : (Int32, T) -> U raise?,
 ) -> FixedArray[U] raise? {
   if self.is_empty() {
     return []
@@ -550,7 +550,7 @@ pub fn[T, U] FixedArray::mapi(
 
 ///|
 test "mapi" {
-  let empty : FixedArray[Int] = ([] : FixedArray[_]).mapi((i, x) => x + i)
+  let empty : FixedArray[Int32] = ([] : FixedArray[_]).mapi((i, x) => x + i)
   assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.mapi((i, x) => x * 2 + i)
@@ -589,8 +589,8 @@ test "mapi" {
 /// ```
 #locals(value)
 pub fn[T] FixedArray::makei(
-  length : Int,
-  value : (Int) -> T raise?,
+  length : Int32,
+  value : (Int32) -> T raise?,
 ) -> FixedArray[T] raise? {
   if length <= 0 {
     []
@@ -631,7 +631,7 @@ test "fixedarray_new_with_index" {
 ///
 /// ```mbt check
 /// test {
-///   let dynamic_array : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let dynamic_array : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
 ///   debug_inspect(
 ///     fixed_array,
@@ -735,7 +735,7 @@ test "rev_fold" {
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   for i, x in self; acc = init {
     continue f(i, acc, x)
@@ -773,7 +773,7 @@ test "fold_lefti" {
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?,
+  f : (Int32, B, A) -> B raise?,
 ) -> B raise? {
   for i in self.length()>..0; index = 0, acc = init {
     continue index + 1, f(index, acc, self.unsafe_get(i))
@@ -854,7 +854,7 @@ pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
 ///     arr.rev(),
 ///     content=(
@@ -887,7 +887,7 @@ pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
 ///|
 test "rev in place" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     arr.rev_in_place()
     assert_true(arr == [])
   }
@@ -914,7 +914,7 @@ test "rev in place" {
 ///|
 test "rev" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_true(arr.rev() == [])
   }
   {
@@ -945,7 +945,7 @@ test "rev" {
 ///   @test.assert_eq(arr, [2, 1, 3, 4, 5])
 /// }
 /// ```
-pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int, j : Int) -> Unit {
+pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int32, j : Int32) -> Unit {
   let temp = self[i]
   self[i] = self[j]
   self[j] = temp
@@ -954,7 +954,7 @@ pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int, j : Int) -> Unit {
 ///|
 test "swap" {
   {
-    let arr : FixedArray[Int] = [1]
+    let arr : FixedArray[Int32] = [1]
     arr.swap(0, 0)
     assert_true(arr == [1])
   }
@@ -979,7 +979,7 @@ test "swap" {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   assert_true(arr.all(ele => ele < 6))
 ///   assert_false(arr.all(ele => ele < 5))
 /// }
@@ -996,7 +996,7 @@ pub fn[T] FixedArray::all(
 ///|
 test "all" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_true(arr.all(ele => ele < 6))
     assert_true(arr.all(ele => ele < 5))
   }
@@ -1017,7 +1017,7 @@ test "all" {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   assert_true(arr.any(ele => ele < 6))
 ///   assert_true(arr.any(ele => ele < 5))
 /// }
@@ -1033,7 +1033,7 @@ pub fn[T] FixedArray::any(
 ///|
 test "any" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_false(arr.any(ele => ele < 6))
     assert_false(arr.any(ele => ele < 5))
   }
@@ -1050,7 +1050,7 @@ test "any" {
 ///|
 test "fill" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     arr.fill(3)
     assert_true(arr == [])
   }
@@ -1070,18 +1070,18 @@ test "fill" {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [3, 4, 5]
+///   let arr : FixedArray[Int32] = [3, 4, 5]
 ///   @test.assert_eq(arr.search(3), Some(0))
 /// }
 /// ```
-pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
+pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int32? {
   self[:].search(value)
 }
 
 ///|
 test "search" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_true(arr.search(3) == None)
     assert_true(arr.search(-1) == None)
   }
@@ -1103,7 +1103,7 @@ test "search" {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [3, 4, 5]
+///   let arr : FixedArray[Int32] = [3, 4, 5]
 ///   assert_true(arr.contains(3))
 /// }
 /// ```
@@ -1119,7 +1119,7 @@ pub fn[T : Eq] FixedArray::contains(self : FixedArray[T], value : T) -> Bool {
 ///|
 test "contains" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_false(arr.contains(3))
     assert_false(arr.contains(-1))
   }
@@ -1141,7 +1141,7 @@ test "contains" {
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = [3, 4, 5]
+///   let arr : FixedArray[Int32] = [3, 4, 5]
 ///   assert_true(arr.has_prefix([3, 4]))
 /// }
 /// ```
@@ -1156,7 +1156,7 @@ pub fn[T : Eq] FixedArray::has_prefix(
 ///|
 test "has_prefix" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_true(arr.has_prefix([]))
     assert_false(arr.has_prefix([1]))
   }
@@ -1184,7 +1184,7 @@ test "has_prefix" {
 /// # Example
 /// ```mbt check
 /// test {
-///   let v : FixedArray[Int] = [3, 4, 5]
+///   let v : FixedArray[Int32] = [3, 4, 5]
 ///   assert_true(v.has_suffix([5]))
 /// }
 /// ```
@@ -1199,7 +1199,7 @@ pub fn[T : Eq] FixedArray::has_suffix(
 ///|
 test "has_suffix" {
   {
-    let arr : FixedArray[Int] = []
+    let arr : FixedArray[Int32] = []
     assert_true(arr.has_suffix([]))
     assert_false(arr.has_suffix([1]))
   }
@@ -1243,9 +1243,9 @@ test "has_suffix" {
 ///
 /// ```mbt check
 /// test {
-///   let arr1 : FixedArray[Int] = [1, 2, 3]
-///   let arr2 : FixedArray[Int] = [1, 2, 3]
-///   let arr3 : FixedArray[Int] = [1, 2, 4]
+///   let arr1 : FixedArray[Int32] = [1, 2, 3]
+///   let arr2 : FixedArray[Int32] = [1, 2, 3]
+///   let arr3 : FixedArray[Int32] = [1, 2, 4]
 ///   inspect(arr1 == arr2, content="true")
 ///   inspect(arr1 == arr3, content="false")
 /// }
@@ -1275,7 +1275,7 @@ pub impl[T : Hash] Hash for FixedArray[T] with fn hash_combine(self, hasher) {
 ///|
 test "equal" {
   {
-    inspect(([] : FixedArray[Int]) == [], content="true")
+    inspect(([] : FixedArray[Int32]) == [], content="true")
     inspect(([] : FixedArray[_]) == [1], content="false")
     inspect(([1, 2] : FixedArray[_]) == [], content="false")
   }
@@ -1352,8 +1352,8 @@ pub impl[T : Compare] Compare for FixedArray[T] with fn compare(self, other) {
 ///
 /// ```mbt check
 /// test {
-///   let arr1 : FixedArray[Int] = [1, 2, 3]
-///   let arr2 : FixedArray[Int] = [4, 5, 6]
+///   let arr1 : FixedArray[Int32] = [1, 2, 3]
+///   let arr2 : FixedArray[Int32] = [4, 5, 6]
 ///   debug_inspect(
 ///     arr1 + arr2,
 ///     content=(
@@ -1377,7 +1377,7 @@ pub impl[T] Add for FixedArray[T] with fn add(self, other) {
 ///|
 test "add" {
   {
-    assert_true(([] : FixedArray[Int]) + [] == [])
+    assert_true(([] : FixedArray[Int32]) + [] == [])
     assert_true(([] : FixedArray[_]) + [1, 2, 3, 4, 5] == [1, 2, 3, 4, 5])
     assert_true(([1, 2, 3, 4, 5] : FixedArray[_]) + [] == [1, 2, 3, 4, 5])
   }
@@ -1459,9 +1459,9 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 ///
 /// ```mbt check
 /// test {
-///   let array : FixedArray[Int] = [1, 2, 3]
+///   let array : FixedArray[Int32] = [1, 2, 3]
 ///   debug_inspect(array.last(), content="Some(3)")
-///   let empty : FixedArray[Int] = []
+///   let empty : FixedArray[Int32] = []
 ///   debug_inspect(empty.last(), content="None")
 /// }
 /// ```
@@ -1520,7 +1520,7 @@ pub fn[A : ToStringView] FixedArray::join(
 
 ///|
 test "FixedArray::last/empty" {
-  let empty : FixedArray[Int] = []
+  let empty : FixedArray[Int32] = []
   assert_true(empty.last() == None)
 }
 
@@ -1534,19 +1534,19 @@ test "FixedArray::last/non_empty" {
 
 ///|
 test "FixedArray::last/empty_array" {
-  let empty_array : FixedArray[Int] = []
+  let empty_array : FixedArray[Int32] = []
   assert_true(FixedArray::last(empty_array) == None)
 }
 
 ///|
 test "FixedArray::last/single_element" {
-  let single_element_array : FixedArray[Int] = [42]
+  let single_element_array : FixedArray[Int32] = [42]
   assert_true(FixedArray::last(single_element_array) == Some(42))
 }
 
 ///|
 test "FixedArray::last/multiple_elements" {
-  let multiple_elements_array : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let multiple_elements_array : FixedArray[Int32] = [1, 2, 3, 4, 5]
   assert_true(FixedArray::last(multiple_elements_array) == Some(5))
 }
 
@@ -1573,7 +1573,7 @@ test "FixedArray::join" {
 /// ```mbt check
 /// test {
 ///   debug_inspect(
-///     ([1, 2, 3] : FixedArray[Int]).iter().collect(),
+///     ([1, 2, 3] : FixedArray[Int32]).iter().collect(),
 ///     content="[1, 2, 3]",
 ///   )
 /// }
@@ -1593,13 +1593,13 @@ pub fn[X] FixedArray::iter(self : FixedArray[X]) -> Iter[X] {
 /// ```mbt check
 /// test {
 ///   debug_inspect(
-///     ([10, 20] : FixedArray[Int]).iter2().to_array(),
+///     ([10, 20] : FixedArray[Int32]).iter2().to_array(),
 ///     content="[(0, 10), (1, 20)]",
 ///   )
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int, X] {
+pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int32, X] {
   self[:].iter2()
 }
 
@@ -1680,19 +1680,19 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 ///
 /// ```mbt check
 /// test {
-///   let a : FixedArray[Int] = [1, 2]
-///   let b : FixedArray[Int] = [1, 2, 3]
+///   let a : FixedArray[Int32] = [1, 2]
+///   let b : FixedArray[Int32] = [1, 2, 3]
 ///   inspect(a.lexical_compare(b), content="-1")
 ///   inspect(b.lexical_compare(a), content="1")
-///   let c : FixedArray[Int] = [1, 2, 3]
+///   let c : FixedArray[Int32] = [1, 2, 3]
 ///   inspect(b.lexical_compare(c), content="0")
-///   let d : FixedArray[Int] = [1, 2, 4]
+///   let d : FixedArray[Int32] = [1, 2, 4]
 ///   inspect(b.lexical_compare(d), content="-1")
 /// }
 /// ```
 pub fn[T : Compare] FixedArray::lexical_compare(
   self : FixedArray[T],
   other : FixedArray[T],
-) -> Int {
+) -> Int32 {
   self[:].lexical_compare(other)
 }

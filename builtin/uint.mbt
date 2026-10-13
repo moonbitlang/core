@@ -23,7 +23,18 @@
 ///   inspect(UInt(3), content="3")
 /// }
 /// ```
-pub fn UInt::UInt(self : UInt) -> UInt = "%identity"
+pub fn UInt32::UInt(self : UInt32) -> UInt32 = "%identity"
+
+///|
+pub impl Default for UInt32 with fn default() {
+  0
+}
+
+///|
+/// Convert to `int64`.
+pub fn UInt32::to_int64(self : UInt32) -> Int64 {
+  self.to_uint64().reinterpret_as_int64()
+}
 
 ///|
 /// Returns the smaller of two unsigned integers.
@@ -44,7 +55,7 @@ pub fn UInt::UInt(self : UInt) -> UInt = "%identity"
 ///   inspect(UInt(0).min(UInt(0)), content="0")
 /// }
 /// ```
-pub fn UInt::min(self : UInt, other : UInt) -> UInt {
+pub fn UInt32::min(self : UInt32, other : UInt32) -> UInt32 {
   if self < other {
     self
   } else {
@@ -71,7 +82,7 @@ pub fn UInt::min(self : UInt, other : UInt) -> UInt {
 ///   inspect(UInt(0).max(UInt(0)), content="0")
 /// }
 /// ```
-pub fn UInt::max(self : UInt, other : UInt) -> UInt {
+pub fn UInt32::max(self : UInt32, other : UInt32) -> UInt32 {
   if self > other {
     self
   } else {
@@ -100,7 +111,7 @@ pub fn UInt::max(self : UInt, other : UInt) -> UInt {
 ///   inspect(UInt(15).clamp(min=UInt(0), max=UInt(10)), content="10")
 /// }
 /// ```
-pub fn UInt::clamp(self : UInt, min~ : UInt, max~ : UInt) -> UInt {
+pub fn UInt32::clamp(self : UInt32, min~ : UInt32, max~ : UInt32) -> UInt32 {
   guard! min <= max
   if self < min {
     min

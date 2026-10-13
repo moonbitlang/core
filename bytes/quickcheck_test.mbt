@@ -14,7 +14,7 @@
 
 ///|
 /// Maps an arbitrary integer into `0..<m` (requires `m > 0`).
-fn imod(x : Int, m : Int) -> Int {
+fn imod(x : Int32, m : Int32) -> Int32 {
   let r = x % m
   if r < 0 {
     r + m
@@ -24,7 +24,7 @@ fn imod(x : Int, m : Int) -> Int {
 }
 
 ///|
-fn sign(x : Int) -> Int {
+fn sign(x : Int32) -> Int32 {
   if x < 0 {
     -1
   } else if x > 0 {
@@ -37,14 +37,14 @@ fn sign(x : Int) -> Int {
 ///|
 /// Maps two arbitrary integers to a valid `(start, end)` slice range for a
 /// sequence of length `len`, covering empty, full, and boundary slices.
-fn pick_range(len : Int, a : Int, b : Int) -> (Int, Int) {
+fn pick_range(len : Int32, a : Int32, b : Int32) -> (Int32, Int32) {
   let start = imod(a, len + 1)
   let end = start + imod(b, len - start + 1)
   (start, end)
 }
 
 ///|
-fn model_slice(arr : Array[Byte], start : Int, end : Int) -> Array[Byte] {
+fn model_slice(arr : Array[Byte], start : Int32, end : Int32) -> Array[Byte] {
   let out : Array[Byte] = []
   for i in start..<end {
     out.push(arr[i])
@@ -55,7 +55,7 @@ fn model_slice(arr : Array[Byte], start : Int, end : Int) -> Array[Byte] {
 ///|
 /// Shortlex order: shorter first, ties broken bytewise (the documented
 /// `Compare` order for `Bytes` and `BytesView`).
-fn model_shortlex(a : Array[Byte], b : Array[Byte]) -> Int {
+fn model_shortlex(a : Array[Byte], b : Array[Byte]) -> Int32 {
   guard a.length() == b.length() else { return sign(a.length() - b.length()) }
   for i in 0..<a.length() {
     let cmp = a[i].to_int() - b[i].to_int()
@@ -69,7 +69,7 @@ fn model_shortlex(a : Array[Byte], b : Array[Byte]) -> Int {
 ///|
 /// Pure lexicographic order by unsigned byte value, length as tiebreaker (the
 /// documented `lexical_compare` order).
-fn model_lex(a : Array[Byte], b : Array[Byte]) -> Int {
+fn model_lex(a : Array[Byte], b : Array[Byte]) -> Int32 {
   let min_len = if a.length() < b.length() { a.length() } else { b.length() }
   for i in 0..<min_len {
     let cmp = a[i].to_int() - b[i].to_int()
@@ -81,7 +81,7 @@ fn model_lex(a : Array[Byte], b : Array[Byte]) -> Int {
 }
 
 ///|
-fn matches_at(hay : Array[Byte], needle : Array[Byte], at : Int) -> Bool {
+fn matches_at(hay : Array[Byte], needle : Array[Byte], at : Int32) -> Bool {
   for i in 0..<needle.length() {
     if hay[at + i] != needle[i] {
       return false
@@ -91,7 +91,7 @@ fn matches_at(hay : Array[Byte], needle : Array[Byte], at : Int) -> Bool {
 }
 
 ///|
-fn naive_find(hay : Array[Byte], needle : Array[Byte]) -> Int? {
+fn naive_find(hay : Array[Byte], needle : Array[Byte]) -> Int32? {
   let last = hay.length() - needle.length()
   guard last >= 0 else { return None }
   for start in 0..<=last {
@@ -103,7 +103,7 @@ fn naive_find(hay : Array[Byte], needle : Array[Byte]) -> Int? {
 }
 
 ///|
-fn naive_rev_find(hay : Array[Byte], needle : Array[Byte]) -> Int? {
+fn naive_rev_find(hay : Array[Byte], needle : Array[Byte]) -> Int32? {
   let last = hay.length() - needle.length()
   guard last >= 0 else { return None }
   for start = last; start >= 0; {
@@ -151,7 +151,7 @@ test "quickcheck: concat is associative, empty is identity, contents concatenate
 
 ///|
 test "quickcheck: repeat matches the concatenation model" {
-  @quickcheck.check(count=200, (input : (Bytes, Int)) => {
+  @quickcheck.check(count=200, (input : (Bytes, Int32)) => {
     let (bs, k) = input
     let n = imod(k, 5)
     let model : Array[Byte] = []
@@ -164,7 +164,7 @@ test "quickcheck: repeat matches the concatenation model" {
 
 ///|
 test "quickcheck: views agree with array-model slices" {
-  @quickcheck.check(count=300, (input : (Bytes, Int, Int)) => {
+  @quickcheck.check(count=300, (input : (Bytes, Int32, Int32)) => {
     let (bs, a, b) = input
     let arr = bs.to_array()
     let len = arr.length()
@@ -208,7 +208,7 @@ test "quickcheck: views agree with array-model slices" {
 
 ///|
 test "quickcheck: view-of-view offsets compose" {
-  @quickcheck.check(count=300, (input : (Bytes, (Int, Int), (Int, Int))) => {
+  @quickcheck.check(count=300, (input : (Bytes, (Int32, Int32), (Int32, Int32))) => {
     let (bs, (a, b), (c, d)) = input
     let arr = bs.to_array()
     let (i, j) = pick_range(arr.length(), a, b)
@@ -266,7 +266,7 @@ test "quickcheck: compare is shortlex, lexical_compare is lexicographic, both un
 
 ///|
 test "quickcheck: equal bytes and equal views hash equally, at any offset" {
-  @quickcheck.check(count=300, (input : (Array[Byte], Int)) => {
+  @quickcheck.check(count=300, (input : (Array[Byte], Int32)) => {
     let (arr, p) = input
     let bs = Bytes::from_array(arr)
     let copy = Bytes::from_array(arr)
@@ -297,7 +297,9 @@ fn boundary_alphabet(x : Byte) -> Byte {
 
 ///|
 test "quickcheck: find/rev_find agree with a naive scan (bytes and views)" {
-  @quickcheck.check(count=300, (input : (Array[Byte], (Int, Int), (Int, Int))) => {
+  @quickcheck.check(count=300, (
+    input : (Array[Byte], (Int32, Int32), (Int32, Int32)),
+  ) => {
     let (raw, (a, b), (c, d)) = input
     let hay = raw.map(boundary_alphabet)
     let bs = Bytes::from_array(hay)
@@ -341,7 +343,7 @@ test "quickcheck: find/rev_find agree with a naive scan (bytes and views)" {
 
 ///|
 test "quickcheck: long needles (Rabin-Karp/long-scanner paths) agree with naive scan" {
-  @quickcheck.check(count=150, (input : (Array[Byte], (Int, Int))) => {
+  @quickcheck.check(count=150, (input : (Array[Byte], (Int32, Int32))) => {
     let (raw, (a, b)) = input
     // Two-symbol alphabet over a doubled buffer: long haystacks packed with
     // false candidates, driving the long-pattern and Rabin-Karp fallbacks.
@@ -369,7 +371,7 @@ test "quickcheck: long needles (Rabin-Karp/long-scanner paths) agree with naive 
 
 ///|
 test "quickcheck: prefix/suffix predicates and chops agree with the model" {
-  @quickcheck.check(count=300, (input : (Array[Byte], (Int, Int))) => {
+  @quickcheck.check(count=300, (input : (Array[Byte], (Int32, Int32))) => {
     let (raw, (a, b)) = input
     let arr = raw.map(boundary_alphabet)
     let bs = Bytes::from_array(arr)

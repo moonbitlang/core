@@ -48,7 +48,7 @@ test "reverse comparison" {
 ///|
 test "reverse with arrays" {
   // Create an array with reversed integers for descending sort
-  let arr : ReadOnlyArray[@cmp.Reverse[Int]] = [
+  let arr : ReadOnlyArray[@cmp.Reverse[Int32]] = [
     Reverse(3),
     Reverse(1),
     Reverse(4),
@@ -67,7 +67,7 @@ With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to comp
 ///|
 priv struct Person {
   name : String
-  age : Int
+  age : Int32
 } derive(Debug)
 
 ///|

@@ -16,12 +16,12 @@
 let view_bench_size = 100_000
 
 ///|
-fn make_view_bench_array() -> Array[Int] {
+fn make_view_bench_array() -> Array[Int32] {
   Array::makei(view_bench_size + 2, i => i % 1024)
 }
 
 ///|
-fn make_view_bench_fixedarray() -> FixedArray[Int] {
+fn make_view_bench_fixedarray() -> FixedArray[Int32] {
   FixedArray::makei(view_bench_size + 2, i => i % 1024)
 }
 

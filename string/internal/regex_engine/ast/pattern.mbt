@@ -19,8 +19,8 @@
 /// - `max`: optional maximum repetition count.
 /// - `mode`: greedy/non-greedy mode.
 pub(all) struct Quantifier {
-  min : Int
-  max : Int?
+  min : Int32
+  max : Int32?
   mode : @shared_types.QuantifierMode
 } derive(@debug.Debug)
 
@@ -55,7 +55,6 @@ pub enum PatternDesc {
   Sequence(ReadOnlyArray[Pattern])
   Alternation(ReadOnlyArray[Pattern])
   Quantifier(Quantifier, Pattern)
-  Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
 } derive(@debug.Debug)
@@ -68,7 +67,6 @@ pub fn Pattern::is_anchored(self : Pattern) -> Bool {
     Sequence(exprs) => exprs.any(e => e.is_anchored())
     Alternation(exprs) => exprs.all(e => e.is_anchored())
     Quantifier(q, expr) => q.min > 0 && expr.is_anchored()
-    Preference(_, expr) => expr.is_anchored()
     Capture(expr, ..) => expr.is_anchored()
     Assertion(StartOfInput) => true
     Assertion(_) => false
@@ -134,34 +132,6 @@ pub fn quantifier(expr : Pattern, q : Quantifier) -> Pattern {
   guard q.min >= 0 else { panic() }
   guard q.max is None || (q.max is Some(max) && max >= q.min) else { panic() }
   { desc: Quantifier(q, expr), nullable: expr.nullable || q.min == 0, }
-}
-
-///|
-/// Apply matching preference to a pattern.
-pub fn preference(pref : @shared_types.Preference, expr : Pattern) -> Pattern {
-  if expr.desc is Char(_) {
-    expr
-  } else {
-    { desc: Preference(pref, expr), nullable: expr.nullable, }
-  }
-}
-
-///|
-/// Prefer longest match when ambiguous.
-pub fn longest(expr : Pattern) -> Pattern {
-  preference(Longest, expr)
-}
-
-///|
-/// Prefer shortest match when ambiguous.
-pub fn shortest(expr : Pattern) -> Pattern {
-  preference(Shortest, expr)
-}
-
-///|
-/// Prefer first alternative when ambiguous.
-pub fn first(expr : Pattern) -> Pattern {
-  preference(First, expr)
 }
 
 ///|

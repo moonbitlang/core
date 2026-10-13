@@ -18,11 +18,11 @@ fn StringView::str(self : StringView) -> String = "%stringview.str"
 
 ///|
 /// Returns the starting UTF-16 code unit index into the string.
-fn StringView::start(self : StringView) -> Int = "%stringview.start"
+fn StringView::start(self : StringView) -> Int32 = "%stringview.start"
 
 ///|
 /// Returns the ending UTF-16 code unit index into the string (not included).
-fn StringView::end(self : StringView) -> Int = "%stringview.end"
+fn StringView::end(self : StringView) -> Int32 = "%stringview.end"
 
 ///|
 /// Builds the view `str[start:end]` without any checks.
@@ -33,7 +33,11 @@ fn StringView::end(self : StringView) -> Int = "%stringview.end"
 /// `end` falls between the two halves of a surrogate pair. For a well-formed
 /// `str`, a boundary at an end of a well-formed view, or next to a
 /// non-surrogate code unit, always qualifies.
-fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "%stringview.make"
+fn StringView::make_view(
+  str : String,
+  start : Int32,
+  end : Int32,
+) -> StringView = "%stringview.make"
 
 ///|
 /// Returns the UTF-16 code unit at the given index.
@@ -43,7 +47,7 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 #intrinsic("%stringview.get")
 #alias("_[_]")
 #alias(code_unit_at)
-pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
+pub fn StringView::at(self : StringView, index : Int32) -> UInt16 {
   guard index >= 0 && index < self.length() else {
     index_out_of_bounds(self.length(), index)
   }
@@ -55,7 +59,7 @@ pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
 #intrinsic("%stringview.length")
-pub fn StringView::length(self : StringView) -> Int {
+pub fn StringView::length(self : StringView) -> Int32 {
   self.end() - self.start()
 }
 
@@ -64,7 +68,7 @@ pub fn StringView::length(self : StringView) -> Int {
 /// a time. Each yielded suffix is itself a view into the original string.
 pub fn StringView::suffixes(
   self : StringView,
-  include_empty? : Bool = false,
+  include_empty~ : Bool = false,
 ) -> Iter[StringView] {
   let str = self.str()
   let end = self.end()
@@ -104,7 +108,7 @@ pub fn StringView::data(self : StringView) -> String {
 ///|
 /// Returns the starting offset (in UTF-16 code units) of this view into its
 /// underlying string.
-pub fn StringView::start_offset(self : StringView) -> Int {
+pub fn StringView::start_offset(self : StringView) -> Int32 {
   self.start()
 }
 
@@ -115,7 +119,7 @@ pub fn StringView::start_offset(self : StringView) -> Int {
 /// This method has O(1) complexity.
 #intrinsic("%stringview.unsafe_get")
 #internal(unsafe, "Undefined behavior if index is out of bounds.")
-pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
+pub fn StringView::unsafe_get(self : StringView, index : Int32) -> UInt16 {
   self.str().unsafe_get(self.start() + index)
 }
 
@@ -154,7 +158,10 @@ pub fn StringView::code_units(self : StringView) -> ArrayView[UInt16] {
 /// }
 /// ```
 #deprecated("Use `StringView::unsafe_get` instead")
-pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
+pub fn StringView::unsafe_charcode_at(
+  self : StringView,
+  index : Int32,
+) -> Int32 {
   self.str().unsafe_get(self.start() + index).to_int()
 }
 
@@ -163,7 +170,7 @@ pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn StringView::char_length(self : StringView) -> Int {
+pub fn StringView::char_length(self : StringView) -> Int32 {
   self.str().char_length(start_offset=self.start(), end_offset=self.end())
 }
 
@@ -229,7 +236,7 @@ pub fn StringView::iter(self : StringView) -> Iter[Char] {
 /// Returns an iterator over the Unicode characters in the string view,
 /// yielding pairs of (character index, character).
 #alias(iterator2, deprecated)
-pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
+pub fn StringView::iter2(self : StringView) -> Iter2[Int32, Char] {
   let start = self.start()
   let end = self.end()
   let mut index = start
@@ -452,7 +459,7 @@ pub impl Compare for StringView with fn compare(self, other) {
 pub fn StringView::lexical_compare(
   self : StringView,
   other : StringView,
-) -> Int {
+) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
@@ -528,7 +535,7 @@ fn ascii_fold_lower_u16(c : UInt16) -> UInt16 {
 pub fn StringView::compare_ignore_ascii_case(
   self : StringView,
   other : StringView,
-) -> Int {
+) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
@@ -629,8 +636,8 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 /// ```
 pub fn String::get_view(
   self : String,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView? {
   let len = self.length()
   let end = match end {
@@ -652,8 +659,8 @@ pub fn String::get_view(
 /// pair. The optional variant of `StringView::exact_view`.
 pub fn StringView::get_view(
   self : StringView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView? {
   let str_len = self.str().length()
   let abs_end = match end {
@@ -707,8 +714,8 @@ pub fn StringView::get_view(
 #alias("_[_:_]")
 pub fn String::clamped_view(
   self : String,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView {
   let len = self.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
@@ -757,8 +764,8 @@ pub fn String::clamped_view(
 #alias("_[_:_]")
 pub fn StringView::clamped_view(
   self : StringView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView {
   let len = self.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
@@ -810,7 +817,7 @@ pub fn StringView::clamped_view(
 ///   inspect(q2, content="")
 /// }
 /// ```
-pub fn String::split_at(self : String, at : Int) -> (StringView, StringView) {
+pub fn String::split_at(self : String, at : Int32) -> (StringView, StringView) {
   let len = self.length()
   let mut cut = if at < 0 { 0 } else if at > len { len } else { at }
   if cut > 0 &&
@@ -838,7 +845,7 @@ pub fn String::split_at(self : String, at : Int) -> (StringView, StringView) {
 /// ```
 pub fn StringView::split_at(
   self : StringView,
-  at : Int,
+  at : Int32,
 ) -> (StringView, StringView) {
   let len = self.length()
   let mut cut = if at < 0 { 0 } else if at > len { len } else { at }
@@ -898,8 +905,8 @@ pub fn StringView::split_at(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn String::exact_view(
   self : String,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView {
   let len = self.length()
   let end = match end {
@@ -957,8 +964,8 @@ pub fn String::exact_view(
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn StringView::exact_view(
   self : StringView,
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> StringView {
   let str_len = self.str().length()
 
@@ -988,7 +995,7 @@ pub fn StringView::exact_view(
 /// Test if the length of the view is equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn StringView::char_length_eq(self : StringView, len : Int) -> Bool {
+pub fn StringView::char_length_eq(self : StringView, len : Int32) -> Bool {
   self
   .str()
   .char_length_eq(len, start_offset=self.start(), end_offset=self.end())
@@ -998,7 +1005,7 @@ pub fn StringView::char_length_eq(self : StringView, len : Int) -> Bool {
 /// Test if the length of the view is greater than or equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn StringView::char_length_ge(self : StringView, len : Int) -> Bool {
+pub fn StringView::char_length_ge(self : StringView, len : Int32) -> Bool {
   self
   .str()
   .char_length_ge(len, start_offset=self.start(), end_offset=self.end())
@@ -1008,7 +1015,7 @@ pub fn StringView::char_length_ge(self : StringView, len : Int) -> Bool {
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
-pub fn StringView::offset_of_nth_char(self : StringView, i : Int) -> Int? {
+pub fn StringView::offset_of_nth_char(self : StringView, i : Int32) -> Int32? {
   if self
     .str()
     .offset_of_nth_char(i, start_offset=self.start(), end_offset=self.end())
@@ -1027,7 +1034,7 @@ pub impl Default for StringView with fn default() {
 
 ///|
 /// Create a new string by repeating the given character `value` `length` times.
-pub fn StringView::make(length : Int, value : Char) -> StringView {
+pub fn StringView::make(length : Int32, value : Char) -> StringView {
   String::make(length, value)
 }
 
@@ -1053,8 +1060,8 @@ pub impl Add for StringView with fn add(self, other) {
 // method without deprecation until compiler lowering changes.
 pub fn StringView::view(
   self : StringView,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> StringView {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
@@ -1081,8 +1088,8 @@ pub fn StringView::view(
 // method without deprecation until compiler lowering changes.
 pub fn String::view(
   self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> StringView {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&

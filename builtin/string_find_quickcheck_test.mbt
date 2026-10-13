@@ -49,7 +49,7 @@ test "quickcheck: find and rev_find agree with naive references" {
 ///|
 test "quickcheck: fallback-forcing inputs agree with naive references" {
   @quickcheck.check(
-    (input : (UInt, UInt, UInt, Array[Bool])) => {
+    (input : (UInt32, UInt32, UInt32, Array[Bool])) => {
       let (p0, q0, flip0, mix) = input
       // needle 'a'*p + 'b' + 'a'*q: anchors are 'a'/'a' (or 'a'/'b' when
       // q == 0), interior mostly 'a' — the adversarial family

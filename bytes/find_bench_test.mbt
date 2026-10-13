@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let find_bench_len : Int = 4096
+let find_bench_len : Int32 = 4096
 
 ///|
 fn make_find_single_hit_end() -> Bytes {

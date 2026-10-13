@@ -15,7 +15,7 @@
 ///|
 test "List constructor" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(ls, content="<List: [1, 2, 3, 4, 5]>")
   debug_inspect(el, content="<List: []>")
 }
@@ -80,7 +80,7 @@ test "iter2" {
 ///|
 test "map" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = List([])
+  let rs : @list.List[Int32] = List([])
   debug_inspect(ls.map(x => x * 2), content="<List: [2, 4, 6, 8, 10]>")
   debug_inspect(rs.map(x => x * 2), content="<List: []>")
 }
@@ -88,7 +88,7 @@ test "map" {
 ///|
 test "mapi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(ls.mapi((i, x) => i * x), content="<List: [0, 2, 6, 12, 20]>")
   debug_inspect(el.mapi((i, x) => i * x), content="<List: []>")
 }
@@ -96,7 +96,7 @@ test "mapi" {
 ///|
 test "rev_map" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = List([])
+  let rs : @list.List[Int32] = List([])
   debug_inspect(ls.rev_map(x => x * 2), content="<List: [10, 8, 6, 4, 2]>")
   debug_inspect(rs.rev_map(x => x * 2), content="<List: []>")
 }
@@ -104,7 +104,7 @@ test "rev_map" {
 ///|
 test "to_array" {
   let list = @list.List([1, 2, 3, 4, 5])
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   let array = list.to_array()
   let earray = empty.to_array()
   debug_inspect(array, content="[1, 2, 3, 4, 5]")
@@ -114,7 +114,7 @@ test "to_array" {
 ///|
 test "filter" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = List([])
+  let rs : @list.List[Int32] = List([])
   debug_inspect(ls.filter(x => x % 2 == 0), content="<List: [2, 4]>")
   debug_inspect(rs.filter(x => x % 2 == 0), content="<List: []>")
 }
@@ -141,7 +141,7 @@ test "unsafe_tail" {
 
 ///|
 test "panic unsafe_tail" {
-  let ls : @list.List[Int] = List([])
+  let ls : @list.List[Int32] = List([])
   debug_inspect(ls.unsafe_tail())
 }
 
@@ -154,7 +154,7 @@ test "head_exn" {
 ///|
 test "head" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(ls.head(), content="Some(1)")
   debug_inspect(el.head(), content="None")
 }
@@ -171,7 +171,7 @@ test "concat" {
   let rs = @list.List([6, 7, 8, 9, 10])
   debug_inspect(ls.concat(List([])), content="<List: [1, 2, 3, 4, 5]>")
   debug_inspect(
-    (List([]) : @list.List[Int]).concat(rs),
+    (List([]) : @list.List[Int32]).concat(rs),
     content="<List: [6, 7, 8, 9, 10]>",
   )
   debug_inspect(
@@ -206,7 +206,7 @@ test "rev" {
 ///|
 test "fold" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(el.fold((acc, x) => acc + x, init=0), content="0")
   debug_inspect(ls.fold((acc, x) => acc + x, init=0), content="15")
 }
@@ -232,7 +232,7 @@ test "rev_fold" {
 ///|
 test "foldi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(ls.foldi((i, acc, x) => acc + i * x, init=0), content="40")
   debug_inspect(el.foldi((i, acc, x) => acc + i * x, init=0), content="0")
 }
@@ -240,7 +240,7 @@ test "foldi" {
 ///|
 test "rev_foldi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(
     ls.rev().foldi((i, acc, x) => x * i + acc, init=0),
     content="20",
@@ -261,7 +261,7 @@ test "zip" {
 ///|
 test "flat_map" {
   let ls = @list.List([1, 2, 3])
-  let rs : @list.List[Int] = List([])
+  let rs : @list.List[Int32] = List([])
   debug_inspect(rs.flat_map(x => List([x, x * 2])), content="<List: []>")
   debug_inspect(
     ls.flat_map(x => List([x, x * 2])),
@@ -278,7 +278,7 @@ test "flat_map single element" {
 ///|
 test "filter_map" {
   let ls = @list.List([4, 2, 2, 6, 3, 1])
-  let rs : @list.List[Int] = List([])
+  let rs : @list.List[Int32] = List([])
   debug_inspect(
     ls.filter_map(x => if x >= 3 { Some(x) } else { None }),
     content="<List: [4, 6, 3]>",
@@ -339,14 +339,14 @@ test "unzip" {
 ///|
 test "flatten" {
   let ls = @list.List([@list.List([1, 2, 3]), List([4, 5, 6]), List([7, 8, 9])])
-  let el : @list.List[@list.List[Int]] = List([])
+  let el : @list.List[@list.List[Int32]] = List([])
   debug_inspect(ls.flatten(), content="<List: [1, 2, 3, 4, 5, 6, 7, 8, 9]>")
   debug_inspect(el.flatten(), content="<List: []>")
 }
 
 ///|
 test "flatten with empty head" {
-  let ls = @list.List([(List([]) : @list.List[Int]), List([1, 2])])
+  let ls = @list.List([(List([]) : @list.List[Int32]), List([1, 2])])
   debug_inspect(ls.flatten(), content="<List: [1, 2]>")
 }
 
@@ -371,7 +371,7 @@ test "minimum" {
 ///|
 test "sort" {
   let ls = @list.List([1, 123, 52, 3, 6, 0, -6, -76])
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(el.sort(), content="<List: []>")
   debug_inspect(ls.sort(), content="<List: [-76, -6, 0, 1, 3, 6, 52, 123]>")
 }
@@ -431,7 +431,7 @@ test "take" {
 ///|
 test "drop" {
   let ls = @list.List([1, 2, 3, 4, 5]).drop(3)
-  let el : @list.List[Int] = List([])
+  let el : @list.List[Int32] = List([])
   debug_inspect(ls, content="<List: [4, 5]>")
   debug_inspect(ls.drop(-10), content="<List: [4, 5]>")
   debug_inspect(ls.drop(10), content="<List: []>")
@@ -443,7 +443,7 @@ test "drop" {
 ///|
 test "take_while" {
   let ls = @list.List([0, 1, 2, 3, 4]).take_while(x => x < 3)
-  let el : @list.List[Int] = @list.List([]).take_while(_e => true)
+  let el : @list.List[Int32] = @list.List([]).take_while(_e => true)
   debug_inspect(ls, content="<List: [0, 1, 2]>")
   debug_inspect(el, content="<List: []>")
 }
@@ -451,7 +451,7 @@ test "take_while" {
 ///|
 test "drop_while" {
   let ls = @list.List([0, 1, 2, 3, 4]).drop_while(x => x < 3)
-  let el : @list.List[Int] = @list.List([]).drop_while(_e => true)
+  let el : @list.List[Int32] = @list.List([]).drop_while(_e => true)
   debug_inspect(ls, content="<List: [3, 4]>")
   debug_inspect(el, content="<List: []>")
 }
@@ -496,7 +496,7 @@ test "scan_right" {
 ///|
 test "lookup" {
   let ls = @list.List([(1, "a"), (2, "b"), (3, "c")])
-  let el : @list.List[(Int, Int)] = List([])
+  let el : @list.List[(Int32, Int32)] = List([])
   debug_inspect(el.lookup(1), content="None")
   debug_inspect(
     ls.lookup(3),
@@ -518,7 +518,7 @@ test "find" {
     content="None",
   )
   debug_inspect(
-    (List([]) : @list.List[Int]).find(element => element % 2 == 0),
+    (List([]) : @list.List[Int32]).find(element => element % 2 == 0),
     content="None",
   )
 }
@@ -534,7 +534,7 @@ test "findi" {
     content="None",
   )
   debug_inspect(
-    (List([]) : @list.List[Int]).findi((element, i) => {
+    (List([]) : @list.List[Int32]).findi((element, i) => {
       element % 2 == 0 && i == 3
     }),
     content="None",
@@ -615,7 +615,7 @@ test "has_suffix" {
 ///|
 test "intercalate" {
   let ls = @list.List([@list.List([1, 2, 3]), List([4, 5, 6]), List([7, 8, 9])])
-  let el : @list.List[@list.List[Int]] = List([])
+  let el : @list.List[@list.List[Int32]] = List([])
   debug_inspect(
     ls.intercalate(List([0])),
     content="<List: [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]>",
@@ -625,7 +625,7 @@ test "intercalate" {
 
 ///|
 test "default" {
-  let ls : @list.List[Int] = Default::default()
+  let ls : @list.List[Int32] = Default::default()
   debug_inspect(ls, content="<List: []>")
 }
 
@@ -656,7 +656,7 @@ test "List::output with non-empty list" {
 #warnings("-deprecated")
 test "List::output with empty list" {
   let buf = StringBuilder(size_hint=100)
-  let list : @list.List[Int] = List([])
+  let list : @list.List[Int32] = List([])
   Show::output(list, buf)
   debug_inspect(
     buf,
@@ -674,13 +674,13 @@ test "List::to_json with non-empty list" {
 
 ///|
 test "List::to_json with empty list" {
-  let list : @list.List[Int] = List([])
+  let list : @list.List[Int32] = List([])
   @json.json_inspect(ToJson::to_json(list), content=[])
 }
 
 ///|
 test "List from_json round-trip" {
-  for xs in (@quickcheck.samples(20) : Array[@list.List[Int]]) {
+  for xs in (@quickcheck.samples(20) : Array[@list.List[Int32]]) {
     @debug.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
@@ -690,9 +690,9 @@ test "to_json/from_json" {
   let list = @list.List([1, 2, 3, 4, 5])
   let json_expected : Json = [1, 2, 3, 4, 5]
   @json.json_inspect(list, content=json_expected)
-  let list2 : @list.List[Int] = @json.from_json(json_expected)
+  let list2 : @list.List[Int32] = @json.from_json(json_expected)
   @json.json_inspect(list2, content=json_expected)
-  let v : Result[@list.List[Int], @json.JsonDecodeError] = Ok(
+  let v : Result[@list.List[Int32], @json.JsonDecodeError] = Ok(
     @json.from_json({ "a": 1 }),
   ) catch {
     e => Err(e)
@@ -700,7 +700,7 @@ test "to_json/from_json" {
   @json.json_inspect(v, content={
     "Err": ["JsonDecodeError", ["", "@list.from_json: expected array"]],
   })
-  let v2 : @list.List[Int] = @json.from_json([1, 2, 3, 4])
+  let v2 : @list.List[Int32] = @json.from_json([1, 2, 3, 4])
   @json.json_inspect(v2, content=[1, 2, 3, 4])
 }
 
@@ -738,7 +738,7 @@ test "List::zip with lists of equal length" {
 ///|
 test "@list.zip with empty list" {
   debug_inspect(
-    @list.List([1]).zip((List([]) : @list.List[Int])),
+    @list.List([1]).zip((List([]) : @list.List[Int32])),
     content="<List: []>",
   )
 }
@@ -759,7 +759,7 @@ test "List::maximum with non-empty list" {
 
 ///|
 test "@list.maximum with empty list" {
-  debug_inspect((List([]) : @list.List[Int]).maximum(), content="None")
+  debug_inspect((List([]) : @list.List[Int32]).maximum(), content="None")
 }
 
 ///|
@@ -771,7 +771,7 @@ test "List::minimum with non-empty list" {
 
 ///|
 test "@list.minimum with empty list" {
-  debug_inspect((List([]) : @list.List[Int]).minimum(), content="None")
+  debug_inspect((List([]) : @list.List[Int32]).minimum(), content="None")
 }
 
 ///|
@@ -780,7 +780,7 @@ test "add" {
   debug_inspect(@list.List([]) + List([1]), content="<List: [1]>")
   debug_inspect(@list.List([1]) + List([1]), content="<List: [1, 1]>")
   debug_inspect(
-    (List([]) : @list.List[Int]) + (List([]) : @list.List[Int]),
+    (List([]) : @list.List[Int32]) + (List([]) : @list.List[Int32]),
     content="<List: []>",
   )
 }
@@ -802,7 +802,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @list.List[Int] = @list.from_iter([||])
+  let pq : @list.List[Int32] = @list.from_iter([||])
   debug_inspect(pq, content="<List: []>")
 }
 
@@ -813,7 +813,7 @@ test "hash" {
   debug_inspect(Hash::hash(l1) == Hash::hash(l2), content="true")
   let l3 = @list.List([5, 4, 3, 2, 1])
   debug_inspect(Hash::hash(l1) == Hash::hash(l3), content="false")
-  let l4 : @list.List[Int] = List([])
+  let l4 : @list.List[Int32] = List([])
   debug_inspect(Hash::hash(l1) == Hash::hash(l4), content="false")
   debug_inspect(Hash::hash(l4) == Hash::hash(l4), content="true")
 }
@@ -889,7 +889,7 @@ test "drop advanced cases" {
   debug_inspect(l.drop(10), content="<List: []>")
 
   // Drop from empty list
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   debug_inspect(empty.drop(3), content="<List: []>")
 
   // Drop 0
@@ -968,7 +968,7 @@ test "remove_at edge cases" {
   debug_inspect(l.remove_at(2), content="<List: [1, 2, 4, 5]>")
 
   // Remove from empty list
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   debug_inspect(empty.remove_at(0), content="<List: []>")
 
   // Remove multiple elements
@@ -1046,7 +1046,7 @@ test "intersperse with complex values" {
   debug_inspect(result.length(), content="5")
 
   // Empty list with intersperse
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   debug_inspect(empty.intersperse(0), content="<List: []>")
 
   // Single element list with intersperse
@@ -1105,7 +1105,7 @@ test "has_prefix and has_suffix complex cases" {
   assert_false(l.has_suffix(List([3, 4, 6])))
 
   // Test with empty list
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   assert_true(empty.has_prefix(List([])))
   assert_true(empty.has_suffix(List([])))
   assert_true(l.has_prefix(List([])))
@@ -1132,7 +1132,7 @@ test "compare" {
   let list1 = @list.List([1, 2, 3])
   let list2 = @list.List([1, 2, 4])
   let list3 = @list.List([1, 2])
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
 
   // Test lexicographic comparison
   debug_inspect(list1.compare(list2), content="-1") // list1 < list2
@@ -1166,20 +1166,20 @@ test "flat_map and filter_map skip empties" {
 
 ///|
 test "unzip empty" {
-  let (xs, ys) : (@list.List[Int], @list.List[String]) = @list.List([]).unzip()
+  let (xs, ys) : (@list.List[Int32], @list.List[String]) = @list.List([]).unzip()
   debug_inspect(xs, content="<List: []>")
   debug_inspect(ys, content="<List: []>")
 }
 
 ///|
 test "unfold none" {
-  let r : @list.List[Int] = @list.unfold(init=0, _ => None)
+  let r : @list.List[Int32] = @list.unfold(init=0, _ => None)
   debug_inspect(r, content="<List: []>")
 }
 
 ///|
 test "take and take_while edge cases" {
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   debug_inspect(empty.take(3), content="<List: []>")
   debug_inspect(
     @list.List([1, 2]).take_while(_ => true),
@@ -1192,20 +1192,14 @@ test "take and take_while edge cases" {
 test "remove empty and head" {
   let ls = @list.List([1, 2, 3])
   debug_inspect(ls.remove(1), content="<List: [2, 3]>")
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   debug_inspect(empty.remove(1), content="<List: []>")
-}
-
-///|
-test "List default trait" {
-  let ls : @list.List[Int] = Default::default()
-  debug_inspect(ls, content="<List: []>")
 }
 
 ///|
 test "has_suffix boundaries" {
   let l = @list.List([1, 2, 3, 4, 5])
-  let empty : @list.List[Int] = List([])
+  let empty : @list.List[Int32] = List([])
   // empty suffixes
   assert_true(l.has_suffix(empty))
   assert_true(empty.has_suffix(empty))

@@ -18,15 +18,15 @@ const HEX_UPPER : Bytes = b"0123456789ABCDEF"
 ///|
 /// The RFC 3986 unreserved set (section 2.3): the only bytes that `encode`
 /// emits literally.
-fn is_unreserved(code_unit : Int) -> Bool {
+fn is_unreserved(code_unit : Int32) -> Bool {
   match code_unit {
-    'A'..='Z' | 'a'..='z' | '0'..='9' | '-' | '.' | '_' | '~' => true
+    'A'..<='Z' | 'a'..<='z' | '0'..<='9' | '-' | '.' | '_' | '~' => true
     _ => false
   }
 }
 
 ///|
-fn write_escape(builder : StringBuilder, byte : Int) -> Unit {
+fn write_escape(builder : StringBuilder, byte : Int32) -> Unit {
   builder.write_char('%')
   builder.write_char(HEX_UPPER[(byte >> 4) & 0x0F].to_char())
   builder.write_char(HEX_UPPER[byte & 0x0F].to_char())

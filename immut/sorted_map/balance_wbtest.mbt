@@ -14,7 +14,7 @@
 
 ///|
 /// Number of nodes on the longest root-to-leaf path (0 for `Empty`).
-fn[K, V] height(t : SortedMap[K, V]) -> Int {
+fn[K, V] height(t : SortedMap[K, V]) -> Int32 {
   match t {
     Empty => 0
     Tree(_, l, r, ..) => {
@@ -57,7 +57,7 @@ fn[K : Compare, V] is_valid(t : SortedMap[K, V]) -> Bool {
 
 ///|
 test "merge of ascending singletons" {
-  let mut m : SortedMap[Int, Int] = new()
+  let mut m : SortedMap[Int32, Int32] = new()
   for i in 0..<2000 {
     m = m.merge(singleton(i, i))
   }
@@ -68,7 +68,7 @@ test "merge of ascending singletons" {
 
 ///|
 test "merge of descending singletons" {
-  let mut m : SortedMap[Int, Int] = new()
+  let mut m : SortedMap[Int32, Int32] = new()
   for i = 2000; i > 0; i = i - 1 {
     m = m.merge(singleton(i, i))
   }
@@ -81,9 +81,9 @@ test "merge of descending singletons" {
 /// Merge `m` with `other` and check the result is valid and holds the same
 /// entries as `m` updated with `other`'s entries one `add` at a time.
 fn check_merge(
-  m : SortedMap[Int, Int],
-  other : SortedMap[Int, Int],
-) -> SortedMap[Int, Int] raise {
+  m : SortedMap[Int32, Int32],
+  other : SortedMap[Int32, Int32],
+) -> SortedMap[Int32, Int32] raise {
   let merged = m.merge(other)
   assert_true(is_valid(merged))
   let mut expected = m
@@ -97,9 +97,9 @@ fn check_merge(
 ///|
 test "merge keeps the tree balanced" {
   // singletons merged in on either side, ascending and descending
-  let mut a : SortedMap[Int, Int] = new()
-  let mut b : SortedMap[Int, Int] = new()
-  let mut c : SortedMap[Int, Int] = new()
+  let mut a : SortedMap[Int32, Int32] = new()
+  let mut b : SortedMap[Int32, Int32] = new()
+  let mut c : SortedMap[Int32, Int32] = new()
   for i in 0..<500 {
     a = check_merge(a, singleton(i, i))
     b = check_merge(singleton(i, i), b)
@@ -107,14 +107,14 @@ test "merge keeps the tree balanced" {
   }
   // pseudo-random keys, with duplicates
   let mut seed = 12345U
-  let mut d : SortedMap[Int, Int] = new()
+  let mut d : SortedMap[Int32, Int32] = new()
   for i in 0..<500 {
     seed = seed * 1103515245U + 12345U
     let k = (seed >> 16).reinterpret_as_int() % 300
     d = check_merge(d, singleton(k, i))
   }
   // ascending batches, interleaved maps, and very uneven sizes
-  let mut e : SortedMap[Int, Int] = new()
+  let mut e : SortedMap[Int32, Int32] = new()
   for j in 0..<20 {
     e = check_merge(e, SortedMap(Array::makei(25, i => (j * 25 + i, i))))
   }
@@ -145,7 +145,7 @@ test "merge keeps the tree balanced" {
 ///|
 /// `(left size, right size)` of every node, in pre-order, whose subtrees
 /// break the size-balance condition checked by `is_balanced`.
-fn[K, V] unbalanced_nodes(t : SortedMap[K, V]) -> Array[(Int, Int)] {
+fn[K, V] unbalanced_nodes(t : SortedMap[K, V]) -> Array[(Int32, Int32)] {
   let acc = []
   fn go(t : SortedMap[K, V]) {
     guard t is Tree(_, l, r, ..) else { return }
@@ -190,8 +190,8 @@ test "filter rebuilds a balanced tree" {
 /// Filter `m` with `pred` and check the result is valid and holds exactly
 /// the entries of `m` that satisfy `pred`.
 fn check_filter(
-  m : SortedMap[Int, Int],
-  pred : (Int, Int) -> Bool,
+  m : SortedMap[Int32, Int32],
+  pred : (Int32, Int32) -> Bool,
 ) -> Unit raise {
   let filtered = m.filter(pred)
   assert_true(is_valid(filtered))

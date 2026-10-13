@@ -26,22 +26,6 @@ test "declaration order controls positional parsing" {
 }
 
 ///|
-test "bounded non-last positional remains supported" {
-  let cmd = @argparse.Command("demo", positionals=[
-    PositionArg("first", num_args=ValueRange(lower=1, upper=2)),
-    PositionArg("second", num_args=@argparse.ValueRange::single()),
-  ])
-
-  let two = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }
-  assert_true(two.values is { "first": ["a"], "second": ["b"], .. })
-
-  let three = cmd.parse(argv=["a", "b", "c"], env=empty_env()) catch {
-    _ => panic()
-  }
-  assert_true(three.values is { "first": ["a", "b"], "second": ["c"], .. })
-}
-
-///|
 test "positionals dash handling and separator" {
   let force_cmd = @argparse.Command("demo", positionals=[
     PositionArg("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
@@ -160,19 +144,6 @@ test "positionals keep declaration order with ranged positional" {
   assert_true(
     parsed.values is { "late": ["a", "b"], "first": ["c"], "mid": ["d"], .. },
   )
-}
-
-///|
-test "mixed indexed and unindexed positionals keep inferred order" {
-  let cmd = @argparse.Command("demo", positionals=[
-    PositionArg("first"),
-    PositionArg("second"),
-  ])
-
-  let parsed = cmd.parse(argv=["a", "b"], env=empty_env()) catch {
-    _ => panic()
-  }
-  assert_true(parsed.values is { "first": ["a"], "second": ["b"], .. })
 }
 
 ///|

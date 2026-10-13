@@ -14,7 +14,7 @@
 
 ///|
 test "tail push across multiple blocks" {
-  let mut values : @vector.Vector[Int] = @vector.new()
+  let mut values : @vector.Vector[Int32] = @vector.new()
   for i in 0..<100 {
     values = values.push(i)
   }
@@ -71,7 +71,7 @@ test "tail fold rev_fold and map stay consistent" {
 test "peek reads the tail tip" {
   let values = @vector.from_iter((0).until(40))
   assert_true(values.peek() == Some(39))
-  let empty : @vector.Vector[Int] = @vector.new()
+  let empty : @vector.Vector[Int32] = @vector.new()
   assert_true(empty.peek() == None)
 }
 

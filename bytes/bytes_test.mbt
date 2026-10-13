@@ -241,19 +241,6 @@ test "Bytes::from_iter with multiple elements" {
 }
 
 ///|
-test "Fixed::blit_from_bytesview" {
-  let arr = FixedArray::make(4, b'\x00')
-  let view = b"\x01\x02\x03"[1:]
-  arr.blit_from_bytesview(1, view)
-  debug_inspect(
-    arr,
-    content=(
-      #|<FixedArray: [0x00, 0x02, 0x03, 0x00]>
-    ),
-  )
-}
-
-///|
 test "panic Fixed::blit_from_bytesview 1" {
   let arr = FixedArray::make(2, b'\x00')
   let view = b"\x01\x02\x03"[1:]

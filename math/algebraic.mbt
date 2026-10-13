@@ -49,10 +49,10 @@
 /// }
 /// ```
 pub fn cbrtf(x : Float) -> Float {
-  let b1 : UInt = 709958130 // B1 = (127-127.0/3-0.03306235651)*2**23 */
-  let b2 : UInt = 642849266 // B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
-  let mut ui : UInt = x.reinterpret_as_uint()
-  let mut hx : UInt = ui & 0x7fffffff
+  let b1 : UInt32 = 709958130 // B1 = (127-127.0/3-0.03306235651)*2**23 */
+  let b2 : UInt32 = 642849266 // B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
+  let mut ui : UInt32 = x.reinterpret_as_uint()
+  let mut hx : UInt32 = ui & 0x7fffffff
   if hx >= 0x7f800000 {
     // cbrt(NaN,INF) is itx
     return x + x

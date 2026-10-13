@@ -13,25 +13,25 @@
 // limitations under the License.
 
 ///|
-fn u8_lane(value : V128, lane : Int) -> Byte {
+fn u8_lane(value : V128, lane : Int32) -> Byte {
   let word = if lane < 8 { lo(value) } else { hi(value) }
   ((word >> (lane % 8 * 8)) & 0xffUL).to_byte()
 }
 
 ///|
-fn u16_lane(value : V128, lane : Int) -> UInt16 {
+fn u16_lane(value : V128, lane : Int32) -> UInt16 {
   let word = if lane < 4 { lo(value) } else { hi(value) }
   ((word >> (lane % 4 * 16)) & 0xffffUL).to_uint16()
 }
 
 ///|
-fn u32_lane(value : V128, lane : Int) -> UInt {
+fn u32_lane(value : V128, lane : Int32) -> UInt32 {
   let word = if lane < 2 { lo(value) } else { hi(value) }
   ((word >> (lane % 2 * 32)) & 0xffffffffUL).to_uint()
 }
 
 ///|
-fn u64_lane(value : V128, lane : Int) -> UInt64 {
+fn u64_lane(value : V128, lane : Int32) -> UInt64 {
   if lane == 0 {
     lo(value)
   } else {
@@ -40,7 +40,7 @@ fn u64_lane(value : V128, lane : Int) -> UInt64 {
 }
 
 ///|
-fn pack_u8x16_by(f : (Int) -> Byte) -> V128 {
+fn pack_u8x16_by(f : (Int32) -> Byte) -> V128 {
   let mut lo_word = 0UL
   for i in 0..<8 {
     lo_word = lo_word | (f(i).to_uint64() << (i * 8))
@@ -53,7 +53,7 @@ fn pack_u8x16_by(f : (Int) -> Byte) -> V128 {
 }
 
 ///|
-fn pack_u16x8_by(f : (Int) -> UInt16) -> V128 {
+fn pack_u16x8_by(f : (Int32) -> UInt16) -> V128 {
   let mut lo_word = 0UL
   for i in 0..<4 {
     lo_word = lo_word | (f(i).to_uint64() << (i * 16))
@@ -66,7 +66,7 @@ fn pack_u16x8_by(f : (Int) -> UInt16) -> V128 {
 }
 
 ///|
-fn pack_u32x4_by(f : (Int) -> UInt) -> V128 {
+fn pack_u32x4_by(f : (Int32) -> UInt32) -> V128 {
   make(
     f(0).to_uint64() | (f(1).to_uint64() << 32),
     f(2).to_uint64() | (f(3).to_uint64() << 32),
@@ -74,7 +74,7 @@ fn pack_u32x4_by(f : (Int) -> UInt) -> V128 {
 }
 
 ///|
-fn pack_u64x2_by(f : (Int) -> UInt64) -> V128 {
+fn pack_u64x2_by(f : (Int32) -> UInt64) -> V128 {
   make(f(0), f(1))
 }
 
@@ -114,7 +114,7 @@ fn sign_extend_u32_to_u64(value : UInt64) -> UInt64 {
 }
 
 ///|
-fn i8_signed(value : Byte) -> Int {
+fn i8_signed(value : Byte) -> Int32 {
   let value = value.to_int()
   if value >= 128 {
     value - 256
@@ -124,7 +124,7 @@ fn i8_signed(value : Byte) -> Int {
 }
 
 ///|
-fn i16_signed(value : UInt16) -> Int {
+fn i16_signed(value : UInt16) -> Int32 {
   Int16::reinterpret_from_uint16(value).to_int()
 }
 
@@ -147,7 +147,7 @@ fn bool_to_u16_mask(value : Bool) -> UInt16 {
 }
 
 ///|
-fn bool_to_u32_mask(value : Bool) -> UInt {
+fn bool_to_u32_mask(value : Bool) -> UInt32 {
   if value {
     0xffffffff
   } else {

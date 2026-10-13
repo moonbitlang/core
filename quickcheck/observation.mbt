@@ -31,8 +31,8 @@ type Observations = Array[Observation]
 /// `labels` counts each case's sorted set of labels as one joint bucket.
 /// `classes` counts each named class independently.
 priv struct ObservationSummary {
-  labels : Map[@list.List[String], UInt]
-  classes : Map[String, UInt]
+  labels : Map[@list.List[String], UInt32]
+  classes : Map[String, UInt32]
 }
 
 ///|
@@ -123,7 +123,7 @@ fn ObservationSummary::add(
 
 ///|
 priv struct ObservationRow {
-  count : UInt
+  count : UInt32
   name : String
 } derive(Eq)
 
@@ -139,7 +139,7 @@ impl Compare for ObservationRow with fn compare(
 }
 
 ///|
-fn percentage(count : UInt, total : UInt) -> UInt {
+fn percentage(count : UInt32, total : UInt32) -> UInt32 {
   guard total > 0U else { return 0U }
   let total = total.to_uint64()
   ((count.to_uint64() * 100UL + total / 2UL) / total).to_uint()
@@ -150,8 +150,8 @@ fn write_observation_rows(
   builder : StringBuilder,
   heading : String,
   rows : Array[ObservationRow],
-  total : UInt,
-  count_width : Int,
+  total : UInt32,
+  count_width : Int32,
 ) -> Unit {
   guard !rows.is_empty() else { return }
   rows.sort_by(Compare::compare)
@@ -166,8 +166,8 @@ fn write_observation_rows(
 ///|
 fn ObservationSummary::report(
   self : ObservationSummary,
-  total : UInt,
-  prefix? : String = "",
+  total : UInt32,
+  prefix~ : String = "",
 ) -> String {
   guard !self.is_empty() else { return "" }
   let label_rows = [

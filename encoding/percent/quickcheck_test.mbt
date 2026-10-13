@@ -54,7 +54,7 @@ fn reference_encode(text : String) -> String {
     let n = byte.to_int()
     if n < 0x80 &&
       n.unsafe_to_char()
-      is ('A'..='Z' | 'a'..='z' | '0'..='9' | '-' | '.' | '_' | '~') {
+      is ('A'..<='Z' | 'a'..<='z' | '0'..<='9' | '-' | '.' | '_' | '~') {
       out.write_char(n.unsafe_to_char())
     } else {
       out.write_char('%')
@@ -73,7 +73,7 @@ fn reference_encode(text : String) -> String {
 priv struct Spiky(String) derive(@debug.Debug)
 
 ///|
-let spiky_alphabet : Array[Int] = [
+let spiky_alphabet : Array[Int32] = [
   'a', 'Z', '0', '-', '~', '%', '2', 'F', 'g', ' ', '+', 'é', '中', 0xFEFF, 0xFFFD,
   0xD800, 0xDBFF, 0xDC00, 0xDFFF, 0x1F319,
 ]

@@ -81,7 +81,7 @@ test "@hashset.remove" {
 
 ///|
 test "remove on empty set" {
-  let empty : @hashset.HashSet[Int] = @hashset.new()
+  let empty : @hashset.HashSet[Int32] = @hashset.new()
   debug_inspect(
     empty.remove(1),
     content=(
@@ -149,7 +149,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @hashset.HashSet[Int] = @hashset.from_iter([||])
+  let pq : @hashset.HashSet[Int32] = @hashset.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -159,7 +159,7 @@ test "from_iter empty iter" {
 }
 
 ///|
-fn rebuild_from_array_by_add(data : Array[Int]) -> @hashset.HashSet[Int] {
+fn rebuild_from_array_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
   for n = data.length(), set = @hashset.new() {
     match n {
       0 => break set
@@ -169,7 +169,7 @@ fn rebuild_from_array_by_add(data : Array[Int]) -> @hashset.HashSet[Int] {
 }
 
 ///|
-fn rebuild_from_iter_by_add(data : Array[Int]) -> @hashset.HashSet[Int] {
+fn rebuild_from_iter_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
   for value in data; set = @hashset.new() {
     continue set.add(value)
   } nobreak {
@@ -196,20 +196,20 @@ test "from_iter matches forward add with duplicates" {
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
-  s.each((_x : Int) => count += 1)
+  s.each((_x : Int32) => count += 1)
   inspect(count, content="0")
 }
 
 ///|
 test "from_array with empty array" {
-  let empty_array : Array[Int] = []
+  let empty_array : Array[Int32] = []
   let set = @hashset.HashSet(empty_array)
   inspect(set.is_empty(), content="true")
 }
 
 ///|
 test "from_array with non-empty array" {
-  let array : ReadOnlyArray[Int] = [1, 2, 3]
+  let array : ReadOnlyArray[Int32] = [1, 2, 3]
   let set = @hashset.HashSet(array)
   inspect(set.contains(1), content="true")
   inspect(set.contains(2), content="true")
@@ -304,7 +304,7 @@ impl Eq for MyString with fn equal(self, other) {
 }
 
 ///|
-struct SegKey(Int, Int)
+struct SegKey(Int32, Int32)
 
 ///|
 impl Hash for SegKey with fn hash(self) {
@@ -324,7 +324,7 @@ impl Eq for SegKey with fn equal(self, other) {
 }
 
 ///|
-struct SameKey(Int, String)
+struct SameKey(Int32, String)
 
 ///|
 impl Hash for SameKey with fn hash_combine(self, hasher) {

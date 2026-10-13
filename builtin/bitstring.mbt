@@ -15,13 +15,13 @@
 // offset and len are all in bits
 
 ///|
-fn UInt::extend_sign(self : UInt, len : Int) -> Int {
+fn UInt32::extend_sign(self : UInt32, len : Int32) -> Int32 {
   let b = 32 - len
   self.reinterpret_as_int() << b >> b
 }
 
 ///|
-fn UInt64::extend_sign(self : UInt64, len : Int) -> Int64 {
+fn UInt64::extend_sign(self : UInt64, len : Int32) -> Int64 {
   let b = 64 - len
   self.reinterpret_as_int64() << b >> b
 }
@@ -36,9 +36,9 @@ fn UInt64::extend_sign(self : UInt64, len : Int) -> Int64 {
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_bit(
   bs : ArrayView[Byte],
-  offset : Int,
-  _len : Int,
-) -> UInt {
+  offset : Int32,
+  _len : Int32,
+) -> UInt32 {
   let byte_index = offset >> 3
   let bit_shift = 7 - (offset & 7)
   let byte_val = bs.unsafe_get(byte_index).to_uint()
@@ -51,9 +51,9 @@ pub fn ArrayView::unsafe_extract_bit(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_bit_signed(
   bs : ArrayView[Byte],
-  offset : Int,
-  _len : Int,
-) -> Int {
+  offset : Int32,
+  _len : Int32,
+) -> Int32 {
   let byte_index = offset >> 3
   let bit_shift = 7 - (offset & 7)
   let byte_val = bs.unsafe_get(byte_index).to_int()
@@ -67,9 +67,9 @@ pub fn ArrayView::unsafe_extract_bit_signed(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_byte(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let byte_index = offset >> 3
   if (offset & 7) == 0 {
     // byte-aligned case
@@ -105,9 +105,9 @@ pub fn ArrayView::unsafe_extract_byte(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint_le(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   if (offset & 7) == 0 {
     if len == 32 {
       return bs.unsafe_extract_uint_le_aligned(offset >> 3)
@@ -124,9 +124,9 @@ pub fn ArrayView::unsafe_extract_uint_le(
 /// function so the aligned fast paths above stay small enough to inline.
 fn ArrayView::unsafe_extract_uint_le_slow(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
@@ -161,9 +161,9 @@ fn ArrayView::unsafe_extract_uint_le_slow(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint_be(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   if (offset & 7) == 0 {
     if len == 32 {
       return bs.unsafe_extract_uint_be_aligned(offset >> 3)
@@ -180,9 +180,9 @@ pub fn ArrayView::unsafe_extract_uint_be(
 /// function so the aligned fast paths above stay small enough to inline.
 fn ArrayView::unsafe_extract_uint_be_slow(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
@@ -224,8 +224,8 @@ fn ArrayView::unsafe_extract_uint_be_slow(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint64_le(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   if len == 64 && (offset & 7) == 0 {
     return bs.unsafe_extract_uint64_le_aligned(offset >> 3)
@@ -238,8 +238,8 @@ pub fn ArrayView::unsafe_extract_uint64_le(
 /// function so the aligned fast paths above stay small enough to inline.
 fn ArrayView::unsafe_extract_uint64_le_slow(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -299,8 +299,8 @@ fn ArrayView::unsafe_extract_uint64_le_slow(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint64_be(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   if len == 64 && (offset & 7) == 0 {
     return bs.unsafe_extract_uint64_be_aligned(offset >> 3)
@@ -313,8 +313,8 @@ pub fn ArrayView::unsafe_extract_uint64_be(
 /// function so the aligned fast paths above stay small enough to inline.
 fn ArrayView::unsafe_extract_uint64_be_slow(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -386,8 +386,8 @@ fn ArrayView::unsafe_extract_uint64_be_slow(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_bytesview(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> ArrayView[Byte] {
   let start = offset >> 3
   let end = start + (len >> 3)
@@ -400,9 +400,9 @@ pub fn ArrayView::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_byte_signed(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_byte(offset, len)
   unsigned.extend_sign(len)
 }
@@ -413,9 +413,9 @@ pub fn ArrayView::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int_le(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_uint_le(offset, len)
   unsigned.extend_sign(len)
 }
@@ -426,9 +426,9 @@ pub fn ArrayView::unsafe_extract_int_le(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int_be(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_uint_be(offset, len)
   unsigned.extend_sign(len)
 }
@@ -439,8 +439,8 @@ pub fn ArrayView::unsafe_extract_int_be(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int64_le(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   let unsigned = bs.unsafe_extract_uint64_le(offset, len)
   unsigned.extend_sign(len)
@@ -452,8 +452,8 @@ pub fn ArrayView::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int64_be(
   bs : ArrayView[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   let unsigned = bs.unsafe_extract_uint64_be(offset, len)
   unsigned.extend_sign(len)
@@ -470,9 +470,9 @@ pub fn ArrayView::unsafe_extract_int64_be(
 #doc(hidden)
 pub fn Array::unsafe_extract_bit(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_bit(offset, len)
 }
 
@@ -484,9 +484,9 @@ pub fn Array::unsafe_extract_bit(
 #doc(hidden)
 pub fn Array::unsafe_extract_bit_signed(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_bit_signed(offset, len)
 }
 
@@ -498,9 +498,9 @@ pub fn Array::unsafe_extract_bit_signed(
 #doc(hidden)
 pub fn Array::unsafe_extract_byte(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte(offset, len)
 }
 
@@ -512,9 +512,9 @@ pub fn Array::unsafe_extract_byte(
 #doc(hidden)
 pub fn Array::unsafe_extract_byte_signed(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed(offset, len)
 }
 
@@ -526,9 +526,9 @@ pub fn Array::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_le(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_le(offset, len)
 }
 
@@ -540,9 +540,9 @@ pub fn Array::unsafe_extract_uint_le(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_be(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be(offset, len)
 }
 
@@ -554,9 +554,9 @@ pub fn Array::unsafe_extract_uint_be(
 #doc(hidden)
 pub fn Array::unsafe_extract_int_le(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le(offset, len)
 }
 
@@ -568,9 +568,9 @@ pub fn Array::unsafe_extract_int_le(
 #doc(hidden)
 pub fn Array::unsafe_extract_int_be(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be(offset, len)
 }
 
@@ -582,8 +582,8 @@ pub fn Array::unsafe_extract_int_be(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_le(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_le(offset, len)
 }
@@ -596,8 +596,8 @@ pub fn Array::unsafe_extract_uint64_le(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_be(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be(offset, len)
 }
@@ -610,8 +610,8 @@ pub fn Array::unsafe_extract_uint64_be(
 #doc(hidden)
 pub fn Array::unsafe_extract_int64_le(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le(offset, len)
 }
@@ -624,8 +624,8 @@ pub fn Array::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn Array::unsafe_extract_int64_be(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be(offset, len)
 }
@@ -638,8 +638,8 @@ pub fn Array::unsafe_extract_int64_be(
 #doc(hidden)
 pub fn Array::unsafe_extract_bytesview(
   bs : Array[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> ArrayView[Byte] {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
@@ -654,9 +654,9 @@ pub fn Array::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_bit(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_bit(offset, len)
 }
 
@@ -666,9 +666,9 @@ pub fn FixedArray::unsafe_extract_bit(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_bit_signed(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_bit_signed(offset, len)
 }
 
@@ -678,9 +678,9 @@ pub fn FixedArray::unsafe_extract_bit_signed(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_byte(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte(offset, len)
 }
 
@@ -690,9 +690,9 @@ pub fn FixedArray::unsafe_extract_byte(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_byte_signed(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed(offset, len)
 }
 
@@ -702,9 +702,9 @@ pub fn FixedArray::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_le(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_le(offset, len)
 }
 
@@ -714,9 +714,9 @@ pub fn FixedArray::unsafe_extract_uint_le(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_be(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be(offset, len)
 }
 
@@ -726,9 +726,9 @@ pub fn FixedArray::unsafe_extract_uint_be(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int_le(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le(offset, len)
 }
 
@@ -738,9 +738,9 @@ pub fn FixedArray::unsafe_extract_int_le(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int_be(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be(offset, len)
 }
 
@@ -750,8 +750,8 @@ pub fn FixedArray::unsafe_extract_int_be(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_le(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_le(offset, len)
 }
@@ -762,8 +762,8 @@ pub fn FixedArray::unsafe_extract_uint64_le(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_be(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be(offset, len)
 }
@@ -774,8 +774,8 @@ pub fn FixedArray::unsafe_extract_uint64_be(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int64_le(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le(offset, len)
 }
@@ -786,8 +786,8 @@ pub fn FixedArray::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int64_be(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be(offset, len)
 }
@@ -798,8 +798,8 @@ pub fn FixedArray::unsafe_extract_int64_be(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_bytesview(
   bs : FixedArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> ArrayView[Byte] {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
@@ -814,9 +814,9 @@ pub fn FixedArray::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_bit(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_bit(offset, len)
 }
 
@@ -826,9 +826,9 @@ pub fn ReadOnlyArray::unsafe_extract_bit(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_bit_signed(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_bit_signed(offset, len)
 }
 
@@ -838,9 +838,9 @@ pub fn ReadOnlyArray::unsafe_extract_bit_signed(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_byte(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_byte(offset, len)
 }
 
@@ -850,9 +850,9 @@ pub fn ReadOnlyArray::unsafe_extract_byte(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_byte_signed(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_byte_signed(offset, len)
 }
 
@@ -862,9 +862,9 @@ pub fn ReadOnlyArray::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint_le(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_uint_le(offset, len)
 }
 
@@ -874,9 +874,9 @@ pub fn ReadOnlyArray::unsafe_extract_uint_le(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint_be(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_uint_be(offset, len)
 }
 
@@ -886,9 +886,9 @@ pub fn ReadOnlyArray::unsafe_extract_uint_be(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int_le(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_int_le(offset, len)
 }
 
@@ -898,9 +898,9 @@ pub fn ReadOnlyArray::unsafe_extract_int_le(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int_be(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_int_be(offset, len)
 }
 
@@ -910,8 +910,8 @@ pub fn ReadOnlyArray::unsafe_extract_int_be(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint64_le(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_uint64_le(offset, len)
 }
@@ -922,8 +922,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint64_le(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint64_be(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_uint64_be(offset, len)
 }
@@ -934,8 +934,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint64_be(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int64_le(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_int64_le(offset, len)
 }
@@ -946,8 +946,8 @@ pub fn ReadOnlyArray::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int64_be(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_int64_be(offset, len)
 }
@@ -958,8 +958,8 @@ pub fn ReadOnlyArray::unsafe_extract_int64_be(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_bytesview(
   bs : ReadOnlyArray[Byte],
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> ArrayView[Byte] {
   bs.unsafe_reinterpret_to_fixed_array().unsafe_extract_bytesview(offset, len)
 }
@@ -974,9 +974,9 @@ pub fn ReadOnlyArray::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_bit(
   bs : BytesView,
-  offset : Int,
-  _len : Int,
-) -> UInt {
+  offset : Int32,
+  _len : Int32,
+) -> UInt32 {
   let byte_index = offset >> 3
   let bit_shift = 7 - (offset & 7)
   let byte_val = bs.unsafe_get(byte_index).to_uint()
@@ -989,9 +989,9 @@ pub fn BytesView::unsafe_extract_bit(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_bit_signed(
   bs : BytesView,
-  offset : Int,
-  _len : Int,
-) -> Int {
+  offset : Int32,
+  _len : Int32,
+) -> Int32 {
   let byte_index = offset >> 3
   let bit_shift = 7 - (offset & 7)
   let byte_val = bs.unsafe_get(byte_index).to_int()
@@ -1005,9 +1005,9 @@ pub fn BytesView::unsafe_extract_bit_signed(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_byte(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let byte_index = offset >> 3
   if (offset & 7) == 0 {
     // byte-aligned case
@@ -1043,9 +1043,9 @@ pub fn BytesView::unsafe_extract_byte(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint_le(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   if (offset & 7) == 0 {
     if len == 32 {
       return bs.unsafe_extract_uint_le_aligned(offset >> 3)
@@ -1062,9 +1062,9 @@ pub fn BytesView::unsafe_extract_uint_le(
 /// function so the aligned fast paths above stay small enough to inline.
 fn BytesView::unsafe_extract_uint_le_slow(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
@@ -1099,9 +1099,9 @@ fn BytesView::unsafe_extract_uint_le_slow(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint_be(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   if (offset & 7) == 0 {
     if len == 32 {
       return bs.unsafe_extract_uint_be_aligned(offset >> 3)
@@ -1118,9 +1118,9 @@ pub fn BytesView::unsafe_extract_uint_be(
 /// function so the aligned fast paths above stay small enough to inline.
 fn BytesView::unsafe_extract_uint_be_slow(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
@@ -1162,8 +1162,8 @@ fn BytesView::unsafe_extract_uint_be_slow(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint64_le(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   if len == 64 && (offset & 7) == 0 {
     return bs.unsafe_extract_uint64_le_aligned(offset >> 3)
@@ -1176,8 +1176,8 @@ pub fn BytesView::unsafe_extract_uint64_le(
 /// function so the aligned fast paths above stay small enough to inline.
 fn BytesView::unsafe_extract_uint64_le_slow(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -1237,8 +1237,8 @@ fn BytesView::unsafe_extract_uint64_le_slow(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint64_be(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   if len == 64 && (offset & 7) == 0 {
     return bs.unsafe_extract_uint64_be_aligned(offset >> 3)
@@ -1251,8 +1251,8 @@ pub fn BytesView::unsafe_extract_uint64_be(
 /// function so the aligned fast paths above stay small enough to inline.
 fn BytesView::unsafe_extract_uint64_be_slow(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -1324,8 +1324,8 @@ fn BytesView::unsafe_extract_uint64_be_slow(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_bytesview(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> BytesView {
   BytesView::make(bs.bytes(), bs.start() + (offset >> 3), len >> 3)
 }
@@ -1336,9 +1336,9 @@ pub fn BytesView::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_byte_signed(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_byte(offset, len)
   unsigned.extend_sign(len)
 }
@@ -1349,9 +1349,9 @@ pub fn BytesView::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int_le(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_uint_le(offset, len)
   unsigned.extend_sign(len)
 }
@@ -1362,9 +1362,9 @@ pub fn BytesView::unsafe_extract_int_le(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int_be(
   bs : BytesView,
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   let unsigned = bs.unsafe_extract_uint_be(offset, len)
   unsigned.extend_sign(len)
 }
@@ -1375,8 +1375,8 @@ pub fn BytesView::unsafe_extract_int_be(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int64_le(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   let unsigned = bs.unsafe_extract_uint64_le(offset, len)
   unsigned.extend_sign(len)
@@ -1388,8 +1388,8 @@ pub fn BytesView::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int64_be(
   bs : BytesView,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   let unsigned = bs.unsafe_extract_uint64_be(offset, len)
   unsigned.extend_sign(len)
@@ -1403,7 +1403,11 @@ pub fn BytesView::unsafe_extract_int64_be(
 /// Forward to `BytesView::unsafe_extract_bit`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
+pub fn Bytes::unsafe_extract_bit(
+  bs : Bytes,
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_bit(offset, len)
 }
 
@@ -1413,9 +1417,9 @@ pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
 #doc(hidden)
 pub fn Bytes::unsafe_extract_bit_signed(
   bs : Bytes,
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_bit_signed(offset, len)
 }
 
@@ -1423,7 +1427,11 @@ pub fn Bytes::unsafe_extract_bit_signed(
 /// Forward to `BytesView::unsafe_extract_byte`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
+pub fn Bytes::unsafe_extract_byte(
+  bs : Bytes,
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte(offset, len)
 }
 
@@ -1433,9 +1441,9 @@ pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
 #doc(hidden)
 pub fn Bytes::unsafe_extract_byte_signed(
   bs : Bytes,
-  offset : Int,
-  len : Int,
-) -> Int {
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed(offset, len)
 }
 
@@ -1445,9 +1453,9 @@ pub fn Bytes::unsafe_extract_byte_signed(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_le(
   bs : Bytes,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_le(offset, len)
 }
 
@@ -1457,9 +1465,9 @@ pub fn Bytes::unsafe_extract_uint_le(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_be(
   bs : Bytes,
-  offset : Int,
-  len : Int,
-) -> UInt {
+  offset : Int32,
+  len : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be(offset, len)
 }
 
@@ -1467,7 +1475,11 @@ pub fn Bytes::unsafe_extract_uint_be(
 /// Forward to `BytesView::unsafe_extract_int_le`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn Bytes::unsafe_extract_int_le(bs : Bytes, offset : Int, len : Int) -> Int {
+pub fn Bytes::unsafe_extract_int_le(
+  bs : Bytes,
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le(offset, len)
 }
 
@@ -1475,7 +1487,11 @@ pub fn Bytes::unsafe_extract_int_le(bs : Bytes, offset : Int, len : Int) -> Int 
 /// Forward to `BytesView::unsafe_extract_int_be`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn Bytes::unsafe_extract_int_be(bs : Bytes, offset : Int, len : Int) -> Int {
+pub fn Bytes::unsafe_extract_int_be(
+  bs : Bytes,
+  offset : Int32,
+  len : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be(offset, len)
 }
 
@@ -1485,8 +1501,8 @@ pub fn Bytes::unsafe_extract_int_be(bs : Bytes, offset : Int, len : Int) -> Int 
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_le(
   bs : Bytes,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_le(offset, len)
 }
@@ -1497,8 +1513,8 @@ pub fn Bytes::unsafe_extract_uint64_le(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_be(
   bs : Bytes,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be(offset, len)
 }
@@ -1509,8 +1525,8 @@ pub fn Bytes::unsafe_extract_uint64_be(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int64_le(
   bs : Bytes,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le(offset, len)
 }
@@ -1521,8 +1537,8 @@ pub fn Bytes::unsafe_extract_int64_le(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int64_be(
   bs : Bytes,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be(offset, len)
 }
@@ -1533,8 +1549,8 @@ pub fn Bytes::unsafe_extract_int64_be(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_bytesview(
   bs : Bytes,
-  offset : Int,
-  len : Int,
+  offset : Int32,
+  len : Int32,
 ) -> BytesView {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
@@ -1561,8 +1577,8 @@ pub fn Bytes::unsafe_extract_bytesview(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_byte_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_get(byte_offset).to_uint()
 }
 
@@ -1571,8 +1587,8 @@ pub fn ArrayView::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_byte_signed_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_get(byte_offset).to_uint().extend_sign(8)
 }
 
@@ -1581,8 +1597,8 @@ pub fn ArrayView::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint16_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   fixedarray_read_uint16_le(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
@@ -1594,8 +1610,8 @@ pub fn ArrayView::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint16_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   fixedarray_read_uint16_be(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
@@ -1607,8 +1623,8 @@ pub fn ArrayView::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int16_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint16_le_aligned(byte_offset).extend_sign(16)
 }
 
@@ -1617,8 +1633,8 @@ pub fn ArrayView::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int16_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint16_be_aligned(byte_offset).extend_sign(16)
 }
 
@@ -1627,8 +1643,8 @@ pub fn ArrayView::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   fixedarray_read_uint32_le(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
@@ -1640,8 +1656,8 @@ pub fn ArrayView::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   fixedarray_read_uint32_be(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
@@ -1653,8 +1669,8 @@ pub fn ArrayView::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint_le_aligned(byte_offset).reinterpret_as_int()
 }
 
@@ -1663,8 +1679,8 @@ pub fn ArrayView::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint_be_aligned(byte_offset).reinterpret_as_int()
 }
 
@@ -1673,7 +1689,7 @@ pub fn ArrayView::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint64_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   fixedarray_read_uint64_le(
     buffer_to_fixedarray(bs.buf()),
@@ -1686,7 +1702,7 @@ pub fn ArrayView::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_uint64_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   fixedarray_read_uint64_be(
     buffer_to_fixedarray(bs.buf()),
@@ -1699,7 +1715,7 @@ pub fn ArrayView::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int64_le_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs.unsafe_extract_uint64_le_aligned(byte_offset).reinterpret_as_int64()
 }
@@ -1709,7 +1725,7 @@ pub fn ArrayView::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_int64_be_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs.unsafe_extract_uint64_be_aligned(byte_offset).reinterpret_as_int64()
 }
@@ -1723,8 +1739,8 @@ pub fn ArrayView::unsafe_extract_int64_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_byte_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_get(byte_offset).to_uint()
 }
 
@@ -1733,8 +1749,8 @@ pub fn BytesView::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_byte_signed_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_get(byte_offset).to_uint().extend_sign(8)
 }
 
@@ -1743,8 +1759,8 @@ pub fn BytesView::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint16_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_read_uint16_le(byte_offset).to_uint()
 }
 
@@ -1753,8 +1769,8 @@ pub fn BytesView::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint16_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_read_uint16_be(byte_offset).to_uint()
 }
 
@@ -1763,8 +1779,8 @@ pub fn BytesView::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int16_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint16_le_aligned(byte_offset).extend_sign(16)
 }
 
@@ -1773,8 +1789,8 @@ pub fn BytesView::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int16_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_extract_uint16_be_aligned(byte_offset).extend_sign(16)
 }
 
@@ -1783,8 +1799,8 @@ pub fn BytesView::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_read_uint32_le(byte_offset)
 }
 
@@ -1793,8 +1809,8 @@ pub fn BytesView::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_read_uint32_be(byte_offset)
 }
 
@@ -1803,8 +1819,8 @@ pub fn BytesView::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_read_uint32_le(byte_offset).reinterpret_as_int()
 }
 
@@ -1813,8 +1829,8 @@ pub fn BytesView::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs.unsafe_read_uint32_be(byte_offset).reinterpret_as_int()
 }
 
@@ -1823,7 +1839,7 @@ pub fn BytesView::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint64_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs.unsafe_read_uint64_le(byte_offset)
 }
@@ -1833,7 +1849,7 @@ pub fn BytesView::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_uint64_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs.unsafe_read_uint64_be(byte_offset)
 }
@@ -1843,7 +1859,7 @@ pub fn BytesView::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int64_le_aligned(
   bs : BytesView,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs.unsafe_read_uint64_le(byte_offset).reinterpret_as_int64()
 }
@@ -1853,7 +1869,7 @@ pub fn BytesView::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_int64_be_aligned(
   bs : BytesView,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs.unsafe_read_uint64_be(byte_offset).reinterpret_as_int64()
 }
@@ -1868,8 +1884,8 @@ pub fn BytesView::unsafe_extract_int64_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_byte_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte_aligned(byte_offset)
 }
 
@@ -1879,8 +1895,8 @@ pub fn Array::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_byte_signed_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed_aligned(byte_offset)
 }
 
@@ -1890,8 +1906,8 @@ pub fn Array::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint16_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_le_aligned(byte_offset)
 }
 
@@ -1901,8 +1917,8 @@ pub fn Array::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint16_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_be_aligned(byte_offset)
 }
 
@@ -1912,8 +1928,8 @@ pub fn Array::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int16_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_le_aligned(byte_offset)
 }
 
@@ -1923,8 +1939,8 @@ pub fn Array::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int16_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_be_aligned(byte_offset)
 }
 
@@ -1934,8 +1950,8 @@ pub fn Array::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_le_aligned(byte_offset)
 }
 
@@ -1945,8 +1961,8 @@ pub fn Array::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be_aligned(byte_offset)
 }
 
@@ -1956,8 +1972,8 @@ pub fn Array::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le_aligned(byte_offset)
 }
 
@@ -1967,8 +1983,8 @@ pub fn Array::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be_aligned(byte_offset)
 }
 
@@ -1978,7 +1994,7 @@ pub fn Array::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_le_aligned(byte_offset)
 }
@@ -1989,7 +2005,7 @@ pub fn Array::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be_aligned(byte_offset)
 }
@@ -2000,7 +2016,7 @@ pub fn Array::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int64_le_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le_aligned(byte_offset)
 }
@@ -2011,7 +2027,7 @@ pub fn Array::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_int64_be_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be_aligned(byte_offset)
 }
@@ -2026,8 +2042,8 @@ pub fn Array::unsafe_extract_int64_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_byte_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte_aligned(byte_offset)
 }
 
@@ -2037,8 +2053,8 @@ pub fn FixedArray::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_byte_signed_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed_aligned(byte_offset)
 }
 
@@ -2048,8 +2064,8 @@ pub fn FixedArray::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint16_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_le_aligned(byte_offset)
 }
 
@@ -2059,8 +2075,8 @@ pub fn FixedArray::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint16_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_be_aligned(byte_offset)
 }
 
@@ -2070,8 +2086,8 @@ pub fn FixedArray::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int16_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_le_aligned(byte_offset)
 }
 
@@ -2081,8 +2097,8 @@ pub fn FixedArray::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int16_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_be_aligned(byte_offset)
 }
 
@@ -2092,8 +2108,8 @@ pub fn FixedArray::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_le_aligned(byte_offset)
 }
 
@@ -2103,8 +2119,8 @@ pub fn FixedArray::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be_aligned(byte_offset)
 }
 
@@ -2114,8 +2130,8 @@ pub fn FixedArray::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le_aligned(byte_offset)
 }
 
@@ -2125,8 +2141,8 @@ pub fn FixedArray::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be_aligned(byte_offset)
 }
 
@@ -2136,7 +2152,7 @@ pub fn FixedArray::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_le_aligned(byte_offset)
 }
@@ -2147,7 +2163,7 @@ pub fn FixedArray::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be_aligned(byte_offset)
 }
@@ -2158,7 +2174,7 @@ pub fn FixedArray::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int64_le_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le_aligned(byte_offset)
 }
@@ -2169,7 +2185,7 @@ pub fn FixedArray::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_int64_be_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be_aligned(byte_offset)
 }
@@ -2184,8 +2200,8 @@ pub fn FixedArray::unsafe_extract_int64_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_byte_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_byte_aligned(byte_offset)
@@ -2197,8 +2213,8 @@ pub fn ReadOnlyArray::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_byte_signed_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_byte_signed_aligned(byte_offset)
@@ -2210,8 +2226,8 @@ pub fn ReadOnlyArray::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint16_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_uint16_le_aligned(byte_offset)
@@ -2223,8 +2239,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint16_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_uint16_be_aligned(byte_offset)
@@ -2236,8 +2252,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int16_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_int16_le_aligned(byte_offset)
@@ -2249,8 +2265,8 @@ pub fn ReadOnlyArray::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int16_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_int16_be_aligned(byte_offset)
@@ -2262,8 +2278,8 @@ pub fn ReadOnlyArray::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_uint_le_aligned(byte_offset)
@@ -2275,8 +2291,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_uint_be_aligned(byte_offset)
@@ -2288,8 +2304,8 @@ pub fn ReadOnlyArray::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_int_le_aligned(byte_offset)
@@ -2301,8 +2317,8 @@ pub fn ReadOnlyArray::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs
   .unsafe_reinterpret_to_fixed_array()
   .unsafe_extract_int_be_aligned(byte_offset)
@@ -2314,7 +2330,7 @@ pub fn ReadOnlyArray::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint64_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs
   .unsafe_reinterpret_to_fixed_array()
@@ -2327,7 +2343,7 @@ pub fn ReadOnlyArray::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_uint64_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs
   .unsafe_reinterpret_to_fixed_array()
@@ -2340,7 +2356,7 @@ pub fn ReadOnlyArray::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int64_le_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs
   .unsafe_reinterpret_to_fixed_array()
@@ -2353,7 +2369,7 @@ pub fn ReadOnlyArray::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_int64_be_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs
   .unsafe_reinterpret_to_fixed_array()
@@ -2370,8 +2386,8 @@ pub fn ReadOnlyArray::unsafe_extract_int64_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_byte_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_byte_aligned(byte_offset)
 }
 
@@ -2381,8 +2397,8 @@ pub fn Bytes::unsafe_extract_byte_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_byte_signed_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_byte_signed_aligned(byte_offset)
 }
 
@@ -2392,8 +2408,8 @@ pub fn Bytes::unsafe_extract_byte_signed_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint16_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_le_aligned(byte_offset)
 }
 
@@ -2403,8 +2419,8 @@ pub fn Bytes::unsafe_extract_uint16_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint16_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint16_be_aligned(byte_offset)
 }
 
@@ -2414,8 +2430,8 @@ pub fn Bytes::unsafe_extract_uint16_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int16_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_le_aligned(byte_offset)
 }
 
@@ -2425,8 +2441,8 @@ pub fn Bytes::unsafe_extract_int16_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int16_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int16_be_aligned(byte_offset)
 }
 
@@ -2436,8 +2452,8 @@ pub fn Bytes::unsafe_extract_int16_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs.unsafe_read_uint32_le(byte_offset)
 }
 
@@ -2447,8 +2463,8 @@ pub fn Bytes::unsafe_extract_uint_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> UInt {
+  byte_offset : Int32,
+) -> UInt32 {
   bs[:].unsafe_extract_uint_be_aligned(byte_offset)
 }
 
@@ -2458,8 +2474,8 @@ pub fn Bytes::unsafe_extract_uint_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_le_aligned(byte_offset)
 }
 
@@ -2469,8 +2485,8 @@ pub fn Bytes::unsafe_extract_int_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
-) -> Int {
+  byte_offset : Int32,
+) -> Int32 {
   bs[:].unsafe_extract_int_be_aligned(byte_offset)
 }
 
@@ -2480,7 +2496,7 @@ pub fn Bytes::unsafe_extract_int_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs.unsafe_read_uint64_le(byte_offset)
 }
@@ -2491,7 +2507,7 @@ pub fn Bytes::unsafe_extract_uint64_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> UInt64 {
   bs[:].unsafe_extract_uint64_be_aligned(byte_offset)
 }
@@ -2502,7 +2518,7 @@ pub fn Bytes::unsafe_extract_uint64_be_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int64_le_aligned(
   bs : Bytes,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_le_aligned(byte_offset)
 }
@@ -2513,7 +2529,7 @@ pub fn Bytes::unsafe_extract_int64_le_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_int64_be_aligned(
   bs : Bytes,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> Int64 {
   bs[:].unsafe_extract_int64_be_aligned(byte_offset)
 }

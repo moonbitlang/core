@@ -398,7 +398,7 @@ test "remove" {
     m3.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )
-  let e : SortedMap[Int, Int] = Empty
+  let e : SortedMap[Int32, Int32] = Empty
   inspect(e.remove(1).debug_tree(), content="_")
 }
 
@@ -486,7 +486,7 @@ test "singleton" {
 
 ///|
 test "empty" {
-  let m : SortedMap[Int, Int] = new()
+  let m : SortedMap[Int32, Int32] = new()
   inspect(m.debug_tree(), content="_")
 }
 

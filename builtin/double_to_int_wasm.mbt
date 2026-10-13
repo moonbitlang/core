@@ -40,4 +40,4 @@
 ///   inspect((-1.0 / 0.0).to_int(), content="-2147483648") // -Infinity
 /// }
 /// ```
-pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32_saturate"
+pub fn Double::to_int(self : Double) -> Int32 = "%f64_to_i32_saturate"

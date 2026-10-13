@@ -69,11 +69,11 @@ pub(open) trait BitXOr {
 ///|
 /// types implementing this trait can use the `<<` operator
 pub(open) trait Shl {
-  fn shl(Self, Int) -> Self
+  fn shl(Self, Int32) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `>>` operator
 pub(open) trait Shr {
-  fn shr(Self, Int) -> Self
+  fn shr(Self, Int32) -> Self
 }

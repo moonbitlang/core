@@ -56,7 +56,7 @@ pub fn[K : Compare, V] SortedMap::contains(
 /// Get the number of key-value pairs in the map.
 #alias(size, deprecated)
 #inline
-pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
+pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int32 {
   match self {
     Empty => 0
     Tree(_) as t => t.size
@@ -150,7 +150,7 @@ pub fn[K, V] SortedMap::each(
 /// Iterate over the key-value pairs with index.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
-  f : (Int, K, V) -> Unit,
+  f : (Int32, K, V) -> Unit,
 ) -> Unit {
   fn do_eachi(m : SortedMap[K, V], f, i) {
     match m {
@@ -279,7 +279,7 @@ let sorted_map_sort_build_threshold = 64
 priv struct SortEntry[K, V] {
   key : K
   value : V
-  index : Int
+  index : Int32
 }
 
 ///|
@@ -361,7 +361,7 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 // end < len), so the unchecked accessors stay in bounds.
 fn[K : Compare, V] sorted_map_compact_entries_in_place(
   entries : MutArrayView[SortEntry[K, V]],
-) -> Int {
+) -> Int32 {
   let len = entries.length()
   let mut write = 0
   for start = 0; start < len; {
@@ -388,7 +388,7 @@ fn[K : Compare, V] sorted_map_compact_entries_in_place(
 ///|
 fn[K : Compare, V] sorted_map_array_order(
   array : ArrayView[(K, V)],
-) -> (Int, Bool) {
+) -> (Int32, Bool) {
   let len = array.length()
   guard len > 1 else { return (1, false) }
   let mut order = 0
@@ -447,8 +447,8 @@ fn[K : Compare, V] sorted_map_compact_ordered_array(
 /// The ascending case of a monotonic array is exactly this construction.
 fn[K, V] sorted_map_from_ascending_array(
   array : ArrayView[(K, V)],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> SortedMap[K, V] {
   if start >= end {
     Empty
@@ -467,8 +467,8 @@ fn[K, V] sorted_map_from_ascending_array(
 /// but the smaller keys sit at the higher indices, so the halves are swapped.
 fn[K, V] sorted_map_from_descending_array(
   array : ArrayView[(K, V)],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> SortedMap[K, V] {
   if start >= end {
     Empty
@@ -487,8 +487,8 @@ fn[K, V] sorted_map_from_descending_array(
 /// directly so no `(K, V)` copy is materialized.
 fn[K, V] sorted_map_from_sorted_entries(
   entries : ArrayView[SortEntry[K, V]],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> SortedMap[K, V] {
   if start >= end {
     Empty

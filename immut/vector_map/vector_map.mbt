@@ -78,7 +78,7 @@ pub fn[K : Eq + Hash, V] VectorMap::from_iter(
 /// slot, every later one overwrites that slot's value in place.
 fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
   let entries : Array[(K, V)] = []
-  let mut index : @hashmap.HashMap[K, Int] = @hashmap.new()
+  let mut index : @hashmap.HashMap[K, Int32] = @hashmap.new()
   for kv in iter {
     let (key, value) = kv
     match index.get(key) {
@@ -102,7 +102,7 @@ fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
 /// The number of entries in the map. `O(1)` — the count is stored, unlike
 /// `@immut/hashmap.HashMap::length` which walks the whole trie.
 #alias(size, deprecated)
-pub fn[K, V] VectorMap::length(self : VectorMap[K, V]) -> Int {
+pub fn[K, V] VectorMap::length(self : VectorMap[K, V]) -> Int32 {
   self.size
 }
 

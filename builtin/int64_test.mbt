@@ -3663,7 +3663,7 @@ test "-9223372036854775808 << 65 = 0" {
 }
 
 ///|
-fn shr_as_uint64(x : Int64, y : Int) -> Int64 {
+fn shr_as_uint64(x : Int64, y : Int32) -> Int64 {
   (x.reinterpret_as_uint64() >> y).reinterpret_as_int64()
 }
 
@@ -4802,7 +4802,7 @@ test "compare(-9223372036854775808, -9223372036854775808) = 0" {
 }
 
 ///|
-fn test_compare_u(x : Int64, y : Int64) -> Int {
+fn test_compare_u(x : Int64, y : Int64) -> Int32 {
   x.reinterpret_as_uint64().compare(y.reinterpret_as_uint64())
 }
 

@@ -93,8 +93,8 @@ const LEX_STRING_ESCAPE_SIMD = false
 /// time on native and wasm).
 fn ParseContext::lex_string_long(
   ctx : ParseContext,
-  string_start : Int,
-  from : Int,
+  string_start : Int32,
+  from : Int32,
 ) -> String raise ParseError {
   let base = ctx.input.start_offset()
   let i = find_string_special_long(
@@ -122,7 +122,7 @@ fn ParseContext::lex_string_long(
 /// backslash, and `run_start..ctx.offset` is literal content not yet copied.
 fn ParseContext::lex_string_slow(
   ctx : ParseContext,
-  run_start : Int,
+  run_start : Int32,
 ) -> String raise ParseError {
   let buf = StringBuilder()
   // Keep the run cursor local. A closure capturing it would allocate a
@@ -166,7 +166,7 @@ fn ParseContext::lex_string_slow(
           // past the `u`, and `\` and `u` are one code unit each.
           let escape_start = ctx.offset - 2
           let c = ctx.lex_hex_digits(4)
-          if c is (0xD800..=0xDBFF) {
+          if c is (0xD800..<=0xDBFF) {
             // A leading-surrogate escape is only meaningful as the first
             // half of an escaped surrogate pair; combine it with the
             // immediately following trailing-surrogate escape into one
@@ -185,13 +185,13 @@ fn ParseContext::lex_string_slow(
               None => raise InvalidEof
             }
             let c2 = ctx.lex_hex_digits(4)
-            if c2 is (0xDC00..=0xDFFF) {
+            if c2 is (0xDC00..<=0xDFFF) {
               let combined = (c << 10) + c2 - 0x35fdc00
               buf.write_char(combined.unsafe_to_char())
             } else {
               ctx.unpaired_surrogate(escape_start)
             }
-          } else if c is (0xDC00..=0xDFFF) {
+          } else if c is (0xDC00..<=0xDFFF) {
             // A bare trailing-surrogate escape can never form a scalar
             // value.
             ctx.unpaired_surrogate(escape_start)
@@ -231,7 +231,11 @@ fn ParseContext::lex_string_slow(
 /// Scalar reference for `find_string_special_long`: the first index in
 /// `start..<end` of `str` holding `"`, `\` or a control character below
 /// U+0020, or `end` if there is none.
-fn find_string_special_scalar(str : String, start : Int, end : Int) -> Int {
+fn find_string_special_scalar(
+  str : String,
+  start : Int32,
+  end : Int32,
+) -> Int32 {
   for i in start..<end {
     let c = str.unsafe_get(i)
     if c == '"' || c == '\\' || c < ' ' {
@@ -244,7 +248,7 @@ fn find_string_special_scalar(str : String, start : Int, end : Int) -> Int {
 
 ///|
 #cfg(not(any(target="native", target="wasm")))
-fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
+fn find_string_special_long(str : String, start : Int32, end : Int32) -> Int32 {
   find_string_special_scalar(str, start, end)
 }
 
@@ -255,7 +259,7 @@ fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
 /// with `start <= pos` and `end - pos >= 8` (written as a difference so it
 /// cannot overflow near `Int::max_value`).
 #cfg(any(target="native", target="wasm"))
-fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
+fn find_string_special_long(str : String, start : Int32, end : Int32) -> Int32 {
   let control_limit = @v128.i16x8_splat(' ')
   let quote = @v128.i16x8_splat('"')
   let backslash = @v128.i16x8_splat('\\')
@@ -290,7 +294,7 @@ fn find_string_special_long(str : String, start : Int, end : Int) -> Int {
 /// character.
 fn[T] ParseContext::unpaired_surrogate(
   ctx : ParseContext,
-  escape_start : Int,
+  escape_start : Int32,
 ) -> T raise ParseError {
   ctx.invalid_char(shift=escape_start - ctx.offset)
 }
@@ -298,13 +302,13 @@ fn[T] ParseContext::unpaired_surrogate(
 ///|
 fn ParseContext::lex_hex_digits(
   ctx : ParseContext,
-  n : Int,
-) -> Int raise ParseError {
+  n : Int32,
+) -> Int32 raise ParseError {
   for _ in 0..<n; r = 0 {
     let d = match ctx.read_char() {
-      Some('0'..='9' as c) => c.to_int() - '0'
-      Some('A'..='F' as c) => c.to_int() - 'A' + 10
-      Some('a'..='f' as c) => c.to_int() - 'a' + 10
+      Some('0'..<='9' as c) => c.to_int() - '0'
+      Some('A'..<='F' as c) => c.to_int() - 'A' + 10
+      Some('a'..<='f' as c) => c.to_int() - 'a' + 10
       // `-1` would land inside the character when it is not in the BMP,
       // reporting a broken half at the wrong column.
       Some(c) => ctx.invalid_char(shift=-c.utf16_len())

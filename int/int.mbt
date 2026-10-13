@@ -33,34 +33,6 @@ pub let min_value = -2147483648
 ///|
 /// Return absolute value.
 #deprecated("Use Int::abs instead")
-pub fn abs(x : Int) -> Int {
-  Int::abs(x)
-}
-
-///|
-/// Converts the Int to a Bytes in big-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn Int::to_be_bytes(self : Int) -> Bytes {
-  let self = self.reinterpret_as_uint()
-  [
-    (self >> 24).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 8).to_byte(),
-    self.to_byte(),
-  ]
-}
-
-///|
-/// Converts the Int to a Bytes in little-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn Int::to_le_bytes(self : Int) -> Bytes {
-  let self = self.reinterpret_as_uint()
-  [
-    self.to_byte(),
-    (self >> 8).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 24).to_byte(),
-  ]
+pub fn abs(x : Int32) -> Int32 {
+  Int32::abs(x)
 }

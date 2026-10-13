@@ -44,7 +44,7 @@
 ///|
 /// Reads the code units of `bytes` in the given order, dropping a
 /// trailing odd byte (which the callers handle separately).
-fn units_of(bytes : BytesView, big_endian : Bool) -> Array[Int] {
+fn units_of(bytes : BytesView, big_endian : Bool) -> Array[Int32] {
   let out = []
   let mut index = 0
   while index + 1 < bytes.length() {
@@ -63,17 +63,17 @@ fn units_of(bytes : BytesView, big_endian : Bool) -> Array[Int] {
 }
 
 ///|
-fn is_high_surrogate(unit : Int) -> Bool {
+fn is_high_surrogate(unit : Int32) -> Bool {
   unit >= 0xD800 && unit <= 0xDBFF
 }
 
 ///|
-fn is_low_surrogate(unit : Int) -> Bool {
+fn is_low_surrogate(unit : Int32) -> Bool {
   unit >= 0xDC00 && unit <= 0xDFFF
 }
 
 ///|
-fn is_surrogate(unit : Int) -> Bool {
+fn is_surrogate(unit : Int32) -> Bool {
   unit >= 0xD800 && unit <= 0xDFFF
 }
 
@@ -84,7 +84,10 @@ fn is_surrogate(unit : Int) -> Bool {
 /// A well-formed UTF-16 sequence is a high surrogate followed by a low
 /// one, or any single non-surrogate unit. Everything else -- a lone
 /// surrogate of either kind, or a trailing odd byte -- is ill-formed.
-fn oracle_strict(bytes : BytesView, big_endian : Bool) -> (Array[Int]?, Int) {
+fn oracle_strict(
+  bytes : BytesView,
+  big_endian : Bool,
+) -> (Array[Int32]?, Int32) {
   let units = units_of(bytes, big_endian)
   let scalars = []
   let mut i = 0
@@ -112,7 +115,7 @@ fn oracle_strict(bytes : BytesView, big_endian : Bool) -> (Array[Int]?, Int) {
 ///|
 /// The scalars a lossy decoder must produce: one U+FFFD per ill-formed
 /// code unit, and one for a trailing odd byte.
-fn oracle_lossy(bytes : BytesView, big_endian : Bool) -> Array[Int] {
+fn oracle_lossy(bytes : BytesView, big_endian : Bool) -> Array[Int32] {
   let units = units_of(bytes, big_endian)
   let scalars = []
   let mut i = 0
@@ -138,8 +141,8 @@ fn oracle_lossy(bytes : BytesView, big_endian : Bool) -> Array[Int] {
 }
 
 ///|
-fn scalars_to_string(scalars : Array[Int]) -> String {
-  String::from_array(scalars.map(Int::unsafe_to_char))
+fn scalars_to_string(scalars : Array[Int32]) -> String {
+  String::from_array(scalars.map(Int32::unsafe_to_char))
 }
 
 ///|
@@ -147,7 +150,7 @@ fn scalars_to_string(scalars : Array[Int]) -> String {
 /// as `Malformed`.
 priv enum Outcome {
   Decoded(String)
-  Rejected(Int)
+  Rejected(Int32)
 }
 
 ///|
@@ -206,7 +209,7 @@ fn check(bytes : BytesView) -> Bool {
 /// The V128 pre-scan indexes from the view's start offset, so an odd
 /// offset shifts every sixteen-byte block relative to the code-unit
 /// grid. Decoding must not notice.
-fn check_at_offset(payload : Bytes, padding : Int) -> Bool {
+fn check_at_offset(payload : Bytes, padding : Int32) -> Bool {
   let prefix = Bytes::makei(padding, _ => b'\xAA')
   let padded = prefix + payload + b"\x55"
   check(padded[padding:padded.length() - 1])
@@ -220,14 +223,14 @@ fn check_at_offset(payload : Bytes, padding : Int) -> Bool {
 /// Code units on every boundary of the surrogate block, plus ordinary
 /// BMP values. A pre-scan whose range test is wrong by one is wrong on
 /// one of these.
-let edge_units : Array[Int] = [
+let edge_units : Array[Int32] = [
   0x0000, 0x0041, 0xD7FF, 0xD800, 0xD801, 0xDBFE, 0xDBFF, 0xDC00, 0xDC01, 0xDFFE,
   0xDFFF, 0xE000, 0xFEFF, 0xFFFD, 0xFFFF,
 ]
 
 ///|
 /// Maps an arbitrary `Int` into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -237,7 +240,7 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 }
 
 ///|
-fn push_unit(out : Array[Byte], unit : Int, big_endian : Bool) -> Unit {
+fn push_unit(out : Array[Byte], unit : Int32, big_endian : Bool) -> Unit {
   if big_endian {
     out.push((unit >> 8).to_byte())
     out.push((unit & 0xFF).to_byte())
@@ -257,7 +260,7 @@ fn push_unit(out : Array[Byte], unit : Int, big_endian : Bool) -> Unit {
 /// right: surrogates in isolation, well-formed pairs, long
 /// surrogate-free runs that reach the vectorized path, and a lone
 /// trailing byte that makes the length odd.
-fn build_bytes(chunks : Array[(Int, Int)]) -> Bytes {
+fn build_bytes(chunks : Array[(Int32, Int32)]) -> Bytes {
   let out = []
   for chunk in chunks {
     let (kind, value) = chunk
@@ -298,7 +301,7 @@ fn build_bytes(chunks : Array[(Int, Int)]) -> Bytes {
 ///|
 test "quickcheck: decode and decode_lossy match the code-unit oracle" {
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => check(build_bytes(chunks)),
+    (chunks : Array[(Int32, Int32)]) => check(build_bytes(chunks)),
     counterexample_context=chunks => hex(build_bytes(chunks)),
     count=2000,
   )
@@ -309,7 +312,7 @@ test "quickcheck: decoding does not depend on the view's offset" {
   // Two paddings, so the pre-scan's sixteen-byte blocks land on both
   // parities of the code-unit grid.
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let payload = build_bytes(chunks)
       check_at_offset(payload, 0) &&
       check_at_offset(payload, 1) &&
@@ -435,7 +438,7 @@ test "quickcheck: encode then decode is the identity, in both byte orders" {
 ///|
 test "quickcheck: decode then encode is the identity on accepted bytes" {
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let bytes = build_bytes(chunks)
       for big_endian in ([false, true] : Array[_]) {
         let endianness : @utf16.Endian = if big_endian { Big } else { Little }
@@ -457,7 +460,7 @@ test "quickcheck: decode then encode is the identity on accepted bytes" {
 ///|
 test "quickcheck: decode_lossy output is always well-formed" {
   @quickcheck.check(
-    (chunks : Array[(Int, Int)]) => {
+    (chunks : Array[(Int32, Int32)]) => {
       let bytes = build_bytes(chunks)
       for big_endian in ([false, true] : Array[_]) {
         let endianness : @utf16.Endian = if big_endian { Big } else { Little }

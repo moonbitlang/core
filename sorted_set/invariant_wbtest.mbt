@@ -34,10 +34,10 @@
 /// Recursively checks one node. `lower`/`upper` are exclusive bounds
 /// inherited from ancestors. Returns (recomputed_height, node_count).
 fn check_node(
-  node : Node[Int]?,
-  lower : Int?,
-  upper : Int?,
-) -> (Int, Int) raise {
+  node : Node[Int32]?,
+  lower : Int32?,
+  upper : Int32?,
+) -> (Int32, Int32) raise {
   match node {
     None => (0, 0)
     Some(n) => {
@@ -68,7 +68,7 @@ fn check_node(
 
 ///|
 /// Verifies every structural invariant of the whole set.
-fn check_invariants(set : SortedSet[Int]) -> Unit raise {
+fn check_invariants(set : SortedSet[Int32]) -> Unit raise {
   let (_, count) = check_node(set.root, None, None)
   if count != set.size {
     fail(
@@ -96,7 +96,7 @@ fn Rand::next(self : Rand) -> UInt64 {
 
 ///|
 /// Uniform-ish integer in [0, limit).
-fn Rand::below(self : Rand, limit : Int) -> Int {
+fn Rand::below(self : Rand, limit : Int32) -> Int32 {
   (self.next() & 0x7FFFFFFFUL).to_int() % limit
 }
 
@@ -107,13 +107,13 @@ fn Rand::below(self : Rand, limit : Int) -> Int {
 /// that the results stay valid under further mutation.
 fn set_ops_scenario(
   seed : UInt64,
-  size_a : Int,
-  size_b : Int,
-  key_space : Int,
+  size_a : Int32,
+  size_b : Int32,
+  key_space : Int32,
 ) -> Unit raise {
   let rng = Rand::{ state: seed, }
-  let a : SortedSet[Int] = new_sorted_set()
-  let b : SortedSet[Int] = new_sorted_set()
+  let a : SortedSet[Int32] = new_sorted_set()
+  let b : SortedSet[Int32] = new_sorted_set()
   for _ in 0..<size_a {
     a.add(rng.below(key_space))
   }
@@ -194,11 +194,11 @@ test "set operations keep invariants (extreme asymmetry, probe fallback)" {
 ///|
 test "set operations with self and empty keep invariants" {
   let rng = Rand::{ state: 77UL, }
-  let a : SortedSet[Int] = new_sorted_set()
+  let a : SortedSet[Int32] = new_sorted_set()
   for _ in 0..<150 {
     a.add(rng.below(500))
   }
-  let empty : SortedSet[Int] = new_sorted_set()
+  let empty : SortedSet[Int32] = new_sorted_set()
   for
     result in [
       a.difference(a),

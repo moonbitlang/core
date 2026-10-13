@@ -25,7 +25,7 @@ test "Bool hash function" {
 ///|
 priv struct TestHash {
   flag : Bool
-  x : Int
+  x : Int32
 } derive(Hash, Eq, Debug)
 
 ///|
@@ -55,6 +55,11 @@ test "bool convert" {
   inspect(false.to_uint64(), content="0")
   inspect(true.to_uint16(), content="1")
   inspect(false.to_uint16(), content="0")
+}
+
+///|
+#warnings("-deprecated")
+test "deprecated Bool::to_int16" {
   inspect(true.to_int16(), content="1")
   inspect(false.to_int16(), content="0")
 }

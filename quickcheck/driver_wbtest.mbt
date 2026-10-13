@@ -35,7 +35,7 @@ test "passed report aligns observation statistics" {
 
 ///|
 test "failure report includes aggregate statistics" {
-  let report : QuickCheckReport[Int] = Falsified(
+  let report : QuickCheckReport[Int32] = Falsified(
     counterexample=3,
     context=None,
     tests=106U,
@@ -65,7 +65,7 @@ test "failure report includes aggregate statistics" {
 test "failed cases do not run the observer" {
   let observed = []
   let _ = report(
-    (_ : Int) => false,
+    (_ : Int32) => false,
     observe=_ => {
       observed.push(())
       []
@@ -79,7 +79,7 @@ test "failed cases do not run the observer" {
 
 ///|
 test "failure report includes the counterexample context" {
-  let report : QuickCheckReport[Int] = Falsified(
+  let report : QuickCheckReport[Int32] = Falsified(
     counterexample=3,
     context=Some("rendered input <3>"),
     tests=106U,

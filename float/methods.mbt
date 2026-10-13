@@ -347,8 +347,8 @@ pub fn Float::signum(self : Float) -> Float {
 pub fn Float::is_close(
   self : Self,
   other : Self,
-  relative_tolerance? : Self = 1.0e-09,
-  absolute_tolerance? : Self = 0.0,
+  relative_tolerance~ : Self = 1.0e-09,
+  absolute_tolerance~ : Self = 0.0,
 ) -> Bool {
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")
@@ -471,7 +471,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///   inspect(f.reinterpret_as_int(), content="1065353216")
 /// }
 /// ```
-pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
+pub fn Float::reinterpret_as_int(self : Float) -> Int32 = "%f32.to_i32_reinterpret"
 
 ///|
 /// Performs unary negation on a 32-bit floating-point number. Returns the
@@ -724,7 +724,7 @@ pub impl Compare for Float with fn op_ge(x, y) = "%f32.ge"
 ///   inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
 /// }
 /// ```
-pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
+pub fn Float::reinterpret_as_uint(self : Float) -> UInt32 = "%f32.to_i32_reinterpret"
 
 ///|
 /// Reinterprets the bits of a 32-bit integer as a single-precision
@@ -749,7 +749,7 @@ pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpr
 /// }
 /// ```
 // TODO(upstream): no test entry found
-pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpret"
+pub fn Float::reinterpret_from_int(self : Int32) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
 /// Reinterprets the bits of an unsigned 32-bit integer as a single-precision
@@ -773,7 +773,7 @@ pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpr
 /// }
 /// ```
 // TODO(upstream): no test entry found
-pub fn Float::reinterpret_from_uint(self : UInt) -> Float = "%i32.to_f32_reinterpret"
+pub fn Float::reinterpret_from_uint(self : UInt32) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
 test "Float::reinterpret" {
@@ -803,7 +803,7 @@ test "Float::reinterpret" {
 ///   inspect(f.to_double(), content="42")
 /// }
 /// ```
-pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
+pub fn Float::from_int(self : Int32) -> Float = "%i32.to_f32"
 
 ///|
 /// Converts a byte value to a 32-bit floating-point number (IEEE 754
@@ -872,7 +872,7 @@ pub fn Float::from_double(self : Double) -> Float = "%f64.to_f32"
 ///   inspect(Float::from_uint(big).to_double(), content="16777216") // Last precisely representable integer
 /// }
 /// ```
-pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
+pub fn Float::from_uint(self : UInt32) -> Float = "%u32.to_f32"
 
 ///|
 /// Converts an unsigned 64-bit integer to a 32-bit floating-point number. Due to
@@ -906,7 +906,26 @@ pub fn Float::from_uint64(self : UInt64) -> Float = "%u64.to_f32"
 /// Convert `UInt64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_uint64(self : UInt64) -> Float {
-  Float::from_double(self.to_double())
+  Float::from_double(uint64_to_double_round_to_odd(self))
+}
+
+///|
+/// Converts `x` to `Double`, rounding to odd when it needs more than 53 bits.
+///
+/// Converting to `Double` with round-to-nearest and then to `Float` rounds
+/// twice and can be off by one ulp. Rounding to odd keeps a sticky bit
+/// instead, and since 53 >= 2 * 24 + 2, the later rounding to `Float` gives
+/// the correctly rounded result.
+#cfg(target="js")
+fn uint64_to_double_round_to_odd(x : UInt64) -> Double {
+  let n = 64 - x.clz()
+  if n <= 53 {
+    return x.to_double()
+  }
+  let k = n - 53
+  let sticky = if (x & ((1UL << k) - 1UL)) != 0UL { 1UL } else { 0UL }
+  // Both factors are exact in Double, and so is their product
+  ((x >> k) | sticky).to_double() * (1UL << k).to_double()
 }
 
 ///|
@@ -950,7 +969,12 @@ pub fn Float::from_int64(self : Int64) -> Float = "%i64.to_f32"
 /// Convert `Int64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_int64(self : Int64) -> Float {
-  Float::from_double(self.to_double())
+  if self < 0L {
+    // -Int64::min_value wraps to itself, whose UInt64 value is 2^63
+    -Float::from_uint64((-self).reinterpret_as_uint64())
+  } else {
+    Float::from_uint64(self.reinterpret_as_uint64())
+  }
 }
 
 ///|

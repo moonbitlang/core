@@ -14,100 +14,154 @@
 
 ///|
 test "tuple2 default" {
-  let t : (Int, Bool) = Default::default()
+  let t : (Int32, Bool) = Default::default()
   debug_inspect(t, content="(0, false)")
 }
 
 ///|
 test "tuple3 default" {
-  let t : (Int, Bool, Int) = Default::default()
+  let t : (Int32, Bool, Int32) = Default::default()
   debug_inspect(t, content="(0, false, 0)")
 }
 
 ///|
 test "tuple4 default" {
-  let t : (Int, Bool, Int, Int) = Default::default()
+  let t : (Int32, Bool, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, false, 0, 0)")
 }
 
 ///|
 test "tuple5 default" {
-  let t : (Int, Bool, Int, Int, Int) = Default::default()
+  let t : (Int32, Bool, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, false, 0, 0, 0)")
 }
 
 ///|
 test "tuple6 default" {
-  let t : (Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (Int32, Int32, Int32, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple7 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (Int32, Int32, Int32, Int32, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple8 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple9 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple10 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple11 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple12 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple13 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple14 default" {
-  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  let t : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|
 test "tuple15 default" {
   let t : (
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
   ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
@@ -115,22 +169,22 @@ test "tuple15 default" {
 ///|
 test "tuple16 default" {
   let t : (
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
   ) = Default::default()
   debug_inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }

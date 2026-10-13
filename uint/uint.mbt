@@ -14,62 +14,25 @@
 
 ///|
 /// Min value constant for this type.
-pub const MIN_VALUE : UInt = 0U
+pub const MIN_VALUE : UInt32 = 0U
 
 ///|
 /// Min value constant for this type.
 #deprecated("Use `MIN_VALUE` instead")
-pub let min_value : UInt = 0U
+pub let min_value : UInt32 = 0U
 
 ///|
 /// Max value constant for this type.
-pub const MAX_VALUE : UInt = 4294967295U
+pub const MAX_VALUE : UInt32 = 4294967295U
 
 ///|
 /// Max value constant for this type.
 #deprecated("Use `MAX_VALUE` instead")
-pub let max_value : UInt = 4294967295U
-
-///|
-/// Convert to `int64`.
-pub fn UInt::to_int64(self : UInt) -> Int64 {
-  self.to_uint64().reinterpret_as_int64()
-}
-
-///|
-pub impl Default for UInt with fn default() {
-  0
-}
+pub let max_value : UInt32 = 4294967295U
 
 ///|
 /// same as `UInt::default`
 #deprecated("Use `0U` or `Default::default()` instead")
-pub fn default() -> UInt {
+pub fn default() -> UInt32 {
   0
-}
-
-///|
-/// Converts the UInt to a Bytes in big-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
-  [
-    (self >> 24).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 8).to_byte(),
-    self.to_byte(),
-  ]
-}
-
-///|
-/// Converts the UInt to a Bytes in little-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn UInt::to_le_bytes(self : UInt) -> Bytes {
-  [
-    self.to_byte(),
-    (self >> 8).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 24).to_byte(),
-  ]
 }

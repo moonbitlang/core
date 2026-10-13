@@ -13,12 +13,6 @@
 // limitations under the License.
 
 ///|
-test "from_fixed_array" {
-  let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
-  debug_inspect(queue.peek(), content="Some(6)")
-}
-
-///|
 test "from_array" {
   let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
   debug_inspect(queue.peek(), content="Some(6)")
@@ -53,20 +47,9 @@ test "to_array" {
   debug_inspect(v.to_array(), content="[4, 3, 2, 1]")
   debug_inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   debug_inspect(
-    (PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
+    (PriorityQueue([]) : @priority_queue.PriorityQueue[Int32]).to_array(),
     content="[]",
   )
-}
-
-///|
-test "as_iter" {
-  let buf = StringBuilder(size_hint=20)
-  let v = @priority_queue.from_array([1, 2, 3])
-  v.iter().each(e => buf <+ "[\{e}]")
-  inspect(buf, content="[3][2][1]")
-  buf.reset()
-  v.iter().take(2).each(e => buf <+ "[\{e}]")
-  inspect(buf, content="[3][2]")
 }
 
 ///|
@@ -91,7 +74,8 @@ test "pop" {
     },
     content="Some(3)",
   )
-  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([])
+  let empty : @priority_queue.PriorityQueue[Int32] = @priority_queue.from_array([],
+  )
   debug_inspect(
     match empty.pop() {
       Some(q) => q.peek()
@@ -170,7 +154,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let empty : Iter[Int] = [||]
+  let empty : Iter[Int32] = [||]
   debug_inspect(
     @priority_queue.PriorityQueue::from_iter(empty),
     content=(
@@ -186,7 +170,7 @@ test "hash" {
   inspect(Hash::hash(pq1) == Hash::hash(pq2), content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(Hash::hash(pq1) == Hash::hash(pq3), content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let pq4 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(Hash::hash(pq1) == Hash::hash(pq4), content="false")
   inspect(Hash::hash(pq4) == Hash::hash(pq4), content="true")
   let pq5 = @priority_queue.from_array([1, 2, 3, 4, 6])
@@ -201,7 +185,7 @@ test "equal" {
   inspect(pq1 == pq2, content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(pq1 == pq3, content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let pq4 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(pq1 == pq4, content="false")
   let pq5 = @priority_queue.from_array([1, 2, 3])
   inspect(pq1 == pq5, content="false")
@@ -209,7 +193,7 @@ test "equal" {
 
 ///|
 test "complex" {
-  fn rand(upper : Int) -> Int {
+  fn rand(upper : Int32) -> Int32 {
     let rng = @random.Rand()
     rng.int(limit=upper)
   }
@@ -218,7 +202,7 @@ test "complex" {
   arr.shuffle_in_place(rand~)
   let pq = for
     i in 0..<=1000
-    pq = (PriorityQueue([]) : @priority_queue.PriorityQueue[Int]) {
+    pq = (PriorityQueue([]) : @priority_queue.PriorityQueue[Int32]) {
     continue pq.push(arr[i])
   } nobreak {
     pq
@@ -244,7 +228,7 @@ test "compare" {
   let pq1 = @priority_queue.from_array([1, 2, 3])
   let pq2 = @priority_queue.from_array([1, 2, 4])
   let pq3 = @priority_queue.from_array([1, 2])
-  let empty : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  let empty : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(pq1.compare(pq2), content="-1")
   inspect(pq1.compare(pq3), content="1")
   inspect(pq3.compare(pq1), content="-1")

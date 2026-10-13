@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn re_surrogate_pair(codepoint : Int) -> (Int, Int) {
+fn re_surrogate_pair(codepoint : Int32) -> (Int32, Int32) {
   let cp = codepoint - 0x10000
   let high = 0xD800 + ((cp >> 10) & 0x3FF)
   let low = 0xDC00 + (cp & 0x3FF)
@@ -72,7 +72,9 @@ fn re_lower_cset(cs : @re.RecharSet) -> @re.Pattern {
       }
     }
   }
-  @re.shortest(@re.alt(ReadOnlyArray::from_array(alts)))
+  // The BMP alternative comes first and the others all consume two code
+  // units, so the first alternative that matches is also the shortest.
+  @re.alt(ReadOnlyArray::from_array(alts))
 }
 
 ///|
@@ -82,7 +84,6 @@ fn re_lower_to_utf16(ast : @re.Pattern) -> @re.Pattern {
     Sequence(exprs) => @re.seq(exprs.map(e => re_lower_to_utf16(e)))
     Alternation(exprs) => @re.alt(exprs.map(e => re_lower_to_utf16(e)))
     Quantifier(q, expr) => @re.quantifier(re_lower_to_utf16(expr), q)
-    Preference(p, expr) => @re.preference(p, re_lower_to_utf16(expr))
     Capture(name~, expr) => @re.capture(name?, re_lower_to_utf16(expr))
     Assertion(a) => @re.assertion(a)
   }

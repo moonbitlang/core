@@ -22,11 +22,11 @@ pub suberror Malformed {
 } derive(@debug.Debug)
 
 ///|
-fn hex_value(code_unit : Int) -> Int {
+fn hex_value(code_unit : Int32) -> Int32 {
   match code_unit {
-    '0'..='9' => code_unit - '0'
-    'a'..='f' => code_unit - 'a' + 10
-    'A'..='F' => code_unit - 'A' + 10
+    '0'..<='9' => code_unit - '0'
+    'a'..<='f' => code_unit - 'a' + 10
+    'A'..<='F' => code_unit - 'A' + 10
     _ => -1
   }
 }

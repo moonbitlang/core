@@ -14,7 +14,7 @@
 
 ///|
 suberror IntError {
-  IntError(Int)
+  IntError(Int32)
 }
 
 ///|
@@ -171,12 +171,12 @@ test "protect2 & finally raise error" {
 // Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 priv suberror ErrWithToJson {
-  ErrWithToJson(Int)
+  ErrWithToJson(Int32)
 } derive(ToJson)
 
 ///|
 suberror ErrWithoutToJson {
-  ErrWithoutToJson(Int)
+  ErrWithoutToJson(Int32)
 }
 
 ///|

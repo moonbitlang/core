@@ -26,19 +26,11 @@ pub let end_of_word : Pattern
 
 pub let epsilon : Pattern
 
-pub fn first(Pattern) -> Pattern
-
-pub fn longest(Pattern) -> Pattern
-
 pub let not_word_boundary : Pattern
-
-pub fn preference(@shared_types.Preference, Pattern) -> Pattern
 
 pub fn quantifier(Pattern, Quantifier) -> Pattern
 
 pub fn seq(ReadOnlyArray[Pattern]) -> Pattern
-
-pub fn shortest(Pattern) -> Pattern
 
 pub let start_of_input : Pattern
 
@@ -71,7 +63,6 @@ pub enum PatternDesc {
   Sequence(ReadOnlyArray[Pattern])
   Alternation(ReadOnlyArray[Pattern])
   Quantifier(Quantifier, Pattern)
-  Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
 } derive(@debug.Debug)

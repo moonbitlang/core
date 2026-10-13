@@ -39,7 +39,7 @@ fn around(base : @bigint.BigInt, rs : @splitmix.RandomState) -> @bigint.BigInt {
 }
 
 ///|
-fn random_bigint(size : Int, rs : @splitmix.RandomState) -> @bigint.BigInt {
+fn random_bigint(size : Int32, rs : @splitmix.RandomState) -> @bigint.BigInt {
   let chunk_limit = size.clamp(min=0, max=31) + 1
   let chunk_count = for count in 1..<chunk_limit {
     guard rs.next_uint(limit=2U) == 0U else { break count }

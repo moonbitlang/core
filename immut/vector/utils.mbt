@@ -18,7 +18,7 @@
 ///|
 /// Set the value at the given index. This operation is O(n).
 #owned(v)
-fn[T] immutable_set(arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
+fn[T] immutable_set(arr : FixedArray[T], i : Int32, v : T) -> FixedArray[T] {
   let arr = arr.copy()
   arr[i] = v
   arr
@@ -64,8 +64,8 @@ fn[T] immutable_concat(
 ///|
 fn[T] immutable_slice(
   arr : FixedArray[T],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> FixedArray[T] {
   let len = end - start
   if len <= 0 {
@@ -77,20 +77,20 @@ fn[T] immutable_slice(
 
 ///|
 /// x >> y as unsigned integers, then reinterpret as signed integers.
-fn shr_as_uint(x : Int, y : Int) -> Int {
+fn shr_as_uint(x : Int32, y : Int32) -> Int32 {
   (x.reinterpret_as_uint() >> y).reinterpret_as_int()
 }
 
 ///|
 /// Given an index and a shift, return the index of the branch that contains the given index.
-fn radix_indexing(index : Int, shift : Int) -> Int {
+fn radix_indexing(index : Int32, shift : Int32) -> Int32 {
   shr_as_uint(index, shift) & BITMASK
 }
 
 ///|
 /// Get the index of the branch that contains the given index.
 /// For example, if the sizes are [0, 3, 6, 10] and the index is 5, the function should return 2.
-fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
+fn get_branch_index(sizes : FixedArray[Int32], index : Int32) -> Int32 {
   let lo = for lo = 0, hi = sizes.length(); LINEAR_THRESHOLD < hi - lo; {
     let mid = (lo + hi) / 2
     if sizes[mid] <= index {
@@ -110,7 +110,7 @@ fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
 
 ///|
 /// Copy the sizes array.
-fn copy_sizes(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
+fn copy_sizes(sizes : FixedArray[Int32]?) -> FixedArray[Int32]? {
   match sizes {
     Some(sizes) => Some(sizes.copy())
     None => None
@@ -118,7 +118,7 @@ fn copy_sizes(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
 }
 
 ///|
-fn min(a : Int, b : Int) -> Int {
+fn min(a : Int32, b : Int32) -> Int32 {
   if a < b {
     a
   } else {

@@ -14,7 +14,7 @@
 
 ///|
 test "panic reentrant force aborts" {
-  let slot : Array[@lazy.Lazy[Int]] = []
+  let slot : Array[@lazy.Lazy[Int32]] = []
   let cell = @lazy.Lazy(() => slot[0].force())
   slot.push(cell)
   ignore(cell.force())

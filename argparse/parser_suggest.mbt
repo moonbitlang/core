@@ -57,7 +57,7 @@ fn suggest_name(input : StringView, candidates : Array[String]) -> String? {
 }
 
 ///|
-fn suggestion_threshold(len : Int) -> Int {
+fn suggestion_threshold(len : Int32) -> Int32 {
   if len <= 4 {
     1
   } else if len <= 8 {

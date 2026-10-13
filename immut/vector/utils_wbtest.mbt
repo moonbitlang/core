@@ -14,9 +14,9 @@
 
 ///|
 enum Op {
-  PushEnd(Int)
-  Concat(Array[Int])
-  Set(Int, Int)
+  PushEnd(Int32)
+  Concat(Array[Int32])
+  Set(Int32, Int32)
 }
 
 ///|
@@ -27,7 +27,7 @@ enum Op {
 /// - `rng`: a random number generator
 /// - `times`: the number of operations to be generated
 /// - `max_lvl`: the maximum level of the tree
-fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
+fn random_test_gen(rng : Random, times : Int32, max_lvl : Int32) -> Array[Op] {
   // Hyperparameters
   let op_count = 3
   let max_len = branching_factor_power(max_lvl)
@@ -78,7 +78,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
 /// The `rs` array is a sequence of operations to be executed.
 fn execute_array_test(rs : Array[Op]) -> Unit raise {
   let mut t = new()
-  let a : Array[Int] = []
+  let a : Array[Int32] = []
   for op in rs {
     match op {
       PushEnd(v) => {
@@ -108,7 +108,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
 
 ///|
 /// Compute the power of the branching factor.
-fn branching_factor_power(a : Int) -> Int {
+fn branching_factor_power(a : Int32) -> Int32 {
   for _ in 0..<a; ret = 1 {
     continue ret * BRANCHING_FACTOR
   } nobreak {
@@ -120,7 +120,7 @@ fn branching_factor_power(a : Int) -> Int {
 /// Use this function to check if the reference array and the vector are equal.
 /// If we `inspect` the vector, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
-fn check_array_eq(a : Array[Int], t : Vector[Int]) -> Unit raise {
+fn check_array_eq(a : Array[Int32], t : Vector[Int32]) -> Unit raise {
   @test.assert_eq(a.length(), t.size)
   let len = t.size
   for i in 0..<len {
@@ -130,7 +130,7 @@ fn check_array_eq(a : Array[Int], t : Vector[Int]) -> Unit raise {
 
 ///|
 /// Generate a random reference array of length `n`.
-fn random_array(n : Int) -> Array[Int] {
+fn random_array(n : Int32) -> Array[Int32] {
   let rng = Random(Ref(0))
   Array::makei(n, i => rng.int(limit=i))
 }
@@ -139,7 +139,7 @@ fn random_array(n : Int) -> Array[Int] {
 struct Random(@ref.Ref[UInt64])
 
 ///|
-fn Random::int(self : Random, limit~ : Int) -> Int {
+fn Random::int(self : Random, limit~ : Int32) -> Int32 {
   let limit = if limit == 0 { 1L << 32 } else { limit.to_int64() }
   let a = 1UL << 48
   let c = 11UL

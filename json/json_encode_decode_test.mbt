@@ -15,7 +15,7 @@
 ///|
 /// Type `AllThree`.
 priv struct AllThree {
-  ints : Array[Int]
+  ints : Array[Int32]
   floats : Array[Double]
   strings : Array[String]
 } derive(Debug)

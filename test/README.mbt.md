@@ -24,7 +24,7 @@ Use `@test.assert_eq` and `@test.assert_not_eq` to compare values in tests:
 
 ```mbt check
 ///|
-priv struct User(Int) derive(Eq, @debug.Debug)
+priv struct User(Int32) derive(Eq, @debug.Debug)
 
 ///|
 test "equality assertions" {
@@ -153,7 +153,7 @@ Test that functions properly handle error conditions:
 ```mbt check
 ///|
 test "error handling" {
-  fn safe_divide(a : Int, b : Int) -> Int? {
+  fn safe_divide(a : Int32, b : Int32) -> Int32? {
     if b == 0 {
       None
     } else {
@@ -178,7 +178,7 @@ Test properties that should hold for various inputs:
 ```mbt check
 ///|
 test "property testing" {
-  fn is_even(n : Int) -> Bool {
+  fn is_even(n : Int32) -> Bool {
     n % 2 == 0
   }
 
@@ -234,11 +234,11 @@ Create helper functions for common test setup:
 ```mbt check
 ///|
 test "with setup helper" {
-  fn setup_test_data() -> Array[Int] {
+  fn setup_test_data() -> Array[Int32] {
     [10, 20, 30, 40, 50]
   }
 
-  fn cleanup_test_data(_data : Array[Int]) -> Unit {
+  fn cleanup_test_data(_data : Array[Int32]) -> Unit {
     // Cleanup logic here
   }
 

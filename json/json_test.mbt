@@ -14,7 +14,7 @@
 
 ///|
 priv struct NestedJsonValue {
-  w : Int
+  w : Int32
 } derive(@json.ToJson)
 
 ///|
@@ -480,7 +480,7 @@ test "stringify with indent" {
 
 ///|
 test "nested json" {
-  let u : Int = 3
+  let u : Int32 = 3
   let h = NestedJsonValue::{ w: 3, }
   let v : Json = {
     "nestedmap": {
@@ -625,7 +625,7 @@ fn[A : @json.FromJson] test_json_export(x : A) -> A {
 
 ///|
 test {
-  let _ : Int = test_json_export(42)
+  let _ : Int32 = test_json_export(42)
 }
 
 ///|

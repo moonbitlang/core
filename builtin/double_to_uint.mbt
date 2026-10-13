@@ -41,7 +41,7 @@
 ///   inspect((-1.0 / 0.0).to_uint(), content="0") // -Infinity
 /// }
 /// ```
-pub fn Double::to_uint(self : Double) -> UInt {
+pub fn Double::to_uint(self : Double) -> UInt32 {
   if self != self {
     0
   } else if self >= 4294967295.0 {
@@ -49,6 +49,6 @@ pub fn Double::to_uint(self : Double) -> UInt {
   } else if self <= 0 {
     0
   } else {
-    UInt::trunc_double(self)
+    UInt32::trunc_double(self)
   }
 }

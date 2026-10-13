@@ -58,12 +58,12 @@ test "shift" {
 
 ///|
 test "default" {
-  inspect((Default::default() : UInt), content="0")
+  inspect((Default::default() : UInt32), content="0")
 }
 
 ///|
 test "to_le_bytes" {
-  let x : UInt = 0x12345678U
+  let x : UInt32 = 0x12345678U
   // let bytes = x.to_le_bytes()
   let buf = Buffer()
   buf.write_uint_le(x)
@@ -72,11 +72,6 @@ test "to_le_bytes" {
   inspect(bytes[1].to_int(), content="86") // 0x56
   inspect(bytes[2].to_int(), content="52") // 0x34
   inspect(bytes[3].to_int(), content="18") // 0x12
-}
-
-///|
-test "test UInt::default" {
-  inspect((Default::default() : UInt), content="0")
 }
 
 ///|

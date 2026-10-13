@@ -20,9 +20,9 @@
 /// the `a` side is at least as long as the `b` side; the public wrappers
 /// swap first (the distance is symmetric).
 priv trait LevInput {
-  fn a_length(Self) -> Int
-  fn b_length(Self) -> Int
-  fn eq(Self, Int, Int) -> Bool
+  fn a_length(Self) -> Int32
+  fn b_length(Self) -> Int32
+  fn eq(Self, Int32, Int32) -> Bool
 }
 
 ///|
@@ -70,7 +70,7 @@ impl LevInput for StrPair with fn eq(self, i, j) {
 ///|
 /// Distance core: trim the common prefix and suffix via `eq`, then run two
 /// rolling rows over the (shorter) `b` side.
-fn[S : LevInput] lev_distance(s : S) -> Int {
+fn[S : LevInput] lev_distance(s : S) -> Int32 {
   let alen = s.a_length()
   let blen = s.b_length()
   let mut p = 0
@@ -119,7 +119,7 @@ fn[S : LevInput] lev_distance(s : S) -> Int {
 ///|
 /// Banded-search core; `max_distance` is non-negative and below the length
 /// of the (longer) `a` side after delegation.
-fn[S : LevInput] lev_within(s : S, max_distance : Int) -> Int? {
+fn[S : LevInput] lev_within(s : S, max_distance : Int32) -> Int32? {
   let alen = s.a_length()
   let blen = s.b_length()
   let mut p = 0
@@ -233,7 +233,7 @@ fn[S : LevInput] lev_within(s : S, max_distance : Int) -> Int? {
 ///   inspect(@edit_distance.edit_distance([], [1, 2]), content="2")
 /// }
 /// ```
-pub fn[T : Eq] edit_distance(a : ArrayView[T], b : ArrayView[T]) -> Int {
+pub fn[T : Eq] edit_distance(a : ArrayView[T], b : ArrayView[T]) -> Int32 {
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
   let s : ViewPair[T] = { a, b, }
   lev_distance(s)
@@ -274,8 +274,8 @@ pub fn[T : Eq] edit_distance(a : ArrayView[T], b : ArrayView[T]) -> Int {
 pub fn[T : Eq] edit_distance_within(
   a : ArrayView[T],
   b : ArrayView[T],
-  max_distance~ : Int,
-) -> Int? {
+  max_distance~ : Int32,
+) -> Int32? {
   if max_distance < 0 {
     return None
   }
@@ -309,7 +309,7 @@ pub fn[T : Eq] edit_distance_within(
 ///   inspect(@edit_distance.edit_distance_str("🙂", "🍎"), content="2")
 /// }
 /// ```
-pub fn edit_distance_str(a : StringView, b : StringView) -> Int {
+pub fn edit_distance_str(a : StringView, b : StringView) -> Int32 {
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
   let s : StrPair = { a, b, }
   lev_distance(s)
@@ -337,8 +337,8 @@ pub fn edit_distance_str(a : StringView, b : StringView) -> Int {
 pub fn edit_distance_str_within(
   a : StringView,
   b : StringView,
-  max_distance~ : Int,
-) -> Int? {
+  max_distance~ : Int32,
+) -> Int32? {
   if max_distance < 0 {
     return None
   }

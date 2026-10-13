@@ -39,28 +39,28 @@ struct ChaCha8 {
   ///   `UInt64` outputs, where output `k` lives at `buffer[k * 2]` (low)
   ///   and `buffer[k * 2 + 1]` (high). The two layouts coincide because
   ///   `16 rows * 4 lanes = 32 outputs * 2 halves = 64` words.
-  buffer : FixedArray[UInt]
+  buffer : FixedArray[UInt32]
   /// The current ChaCha key (256 bits) as `SEED_CHUNK_NUM * 2 = 8`
   /// little-endian 32-bit words. On every reseed (every 4 refills) the
   /// final 32 bytes of the previous keystream overwrite this field: the
   /// fast-key-erasure step.
-  seed : FixedArray[UInt]
+  seed : FixedArray[UInt32]
   /// Index of the next `UInt64` to return, counted in 64-bit units from
   /// the start of `buffer`. `next_uint64` refills before reading when
   /// `i >= n`, so every read has `i < n <= BUFFER_CHUNK_NUM`. The mask in
   /// the buffer index is valid because `BUFFER_CHUNK_NUM` is a power of 2.
-  mut i : UInt
+  mut i : UInt32
   /// Number of `UInt64`s in `buffer` that may be returned this cycle.
   /// Normally `BUFFER_CHUNK_NUM = 32`. On the refill immediately before a
   /// reseed it drops to `BUFFER_CHUNK_NUM - SEED_CHUNK_NUM = 28`, because
   /// the trailing 4 `UInt64`s are reserved as the next key and must not
   /// be exposed as output.
-  mut n : UInt
+  mut n : UInt32
   /// ChaCha block counter for the *next* call to `chacha_block`: the
   /// counter of the first of the 4 parallel lanes. Advances by
   /// `COUNTER_INC = 4` per refill and wraps to 0 on reaching
   /// `COUNTER_MAX = 16`, which is also the reseed trigger.
-  mut counter : UInt
+  mut counter : UInt32
 }
 
 ///|
@@ -162,7 +162,7 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 /// keeps it unboxed so that `qr` is effectively a pure register-level
 /// operation with no heap traffic.
 #valtype
-priv struct Quadruple(UInt, UInt, UInt, UInt)
+priv struct Quadruple(UInt32, UInt32, UInt32, UInt32)
 
 ///|
 /// Runs four parallel ChaCha8 blocks into `buf`, using `seed` as the key
@@ -181,9 +181,9 @@ priv struct Quadruple(UInt, UInt, UInt, UInt)
 /// This is intentional per the `chacha8rand` spec and is what makes the
 /// output differ from a plain ChaCha8 keystream.
 fn chacha_block(
-  seed : FixedArray[UInt],
-  buf : FixedArray[UInt],
-  counter : UInt,
+  seed : FixedArray[UInt32],
+  buf : FixedArray[UInt32],
+  counter : UInt32,
 ) -> Unit {
   fn qr(t : Quadruple) -> Quadruple {
     let Quadruple(a, b, c, d) = t
@@ -302,9 +302,9 @@ fn chacha_block(
 /// `"expand 32-byte k"` (`"expa" / "nd 3" / "2-by" / "te k"` in
 /// little-endian): the standard ChaCha sigma constants.
 fn setup(
-  seed : FixedArray[UInt],
-  b32 : FixedArray[UInt],
-  counter : UInt,
+  seed : FixedArray[UInt32],
+  b32 : FixedArray[UInt32],
+  counter : UInt32,
 ) -> Unit {
   b32[0 * 4 + 0] = 0x61707865
   b32[0 * 4 + 1] = 0x61707865
@@ -379,7 +379,10 @@ test "BUFFER_CHUNK_NUM is power of 2" {
 }
 
 ///|
-fn chacha8_values_at(seed : BytesView, positions : Array[Int]) -> Array[UInt64] {
+fn chacha8_values_at(
+  seed : BytesView,
+  positions : Array[Int32],
+) -> Array[UInt64] {
   let s = ChaCha8(seed)
   let values = [
     for _ in 0..<=positions[positions.length() - 1] => s.next_uint64()

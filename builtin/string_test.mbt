@@ -129,7 +129,7 @@ test "code_unit_at" {
   assert_true(s.code_unit_at(0) is 'H')
   assert_true(s.code_unit_at(7) is '世')
   assert_true(s.code_unit_at(8) is '界')
-  assert_true(s.code_unit_at(0) is ('A'..='Z'))
+  assert_true(s.code_unit_at(0) is ('A'..<='Z'))
   inspect(s.code_unit_at(0), content="72") // 'H'
   inspect(s.code_unit_at(7), content="19990") // '世'
   inspect(s.code_unit_at(8), content="30028") // '界'
@@ -325,9 +325,9 @@ test "to_array agrees with iter on surrogates" {
   let s = String::from_array([
     'a',
     '🌍',
-    Int::unsafe_to_char(0xD800),
+    Int32::unsafe_to_char(0xD800),
     'b',
-    Int::unsafe_to_char(0xDC00),
+    Int32::unsafe_to_char(0xDC00),
   ])
   debug_inspect(s.to_array() == s.iter().to_array(), content="true")
   debug_inspect(s[1:].to_array() == s[1:].iter().to_array(), content="true")

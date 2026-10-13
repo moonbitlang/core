@@ -31,7 +31,7 @@ test "ReadOnlyArray constructors" {
 
 ///|
 test "ReadOnlyArray access methods" {
-  let arr : ReadOnlyArray[Int] = [10, 20, 30]
+  let arr : ReadOnlyArray[Int32] = [10, 20, 30]
 
   // Test get
   debug_inspect(arr.get(1), content="Some(20)")
@@ -42,7 +42,7 @@ test "ReadOnlyArray access methods" {
 
   // Test is_empty
   inspect(arr.is_empty(), content="false")
-  let empty : ReadOnlyArray[Int] = []
+  let empty : ReadOnlyArray[Int32] = []
   inspect(empty.is_empty(), content="true")
 
   // Test last
@@ -52,7 +52,7 @@ test "ReadOnlyArray access methods" {
 
 ///|
 test "ReadOnlyArray functional methods" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
 
   // Test map
   let doubled = arr.map(x => x * 2)
@@ -71,7 +71,7 @@ test "ReadOnlyArray functional methods" {
 
 ///|
 test "ReadOnlyArray filter and filter_map" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   let evens = arr.filter(x => x % 2 == 0)
   inspect(evens.length(), content="2")
   inspect(evens[0], content="2")
@@ -84,19 +84,19 @@ test "ReadOnlyArray filter and filter_map" {
   inspect(mapped[1], content="40")
 
   // Empty input passes through.
-  let empty : ReadOnlyArray[Int] = []
+  let empty : ReadOnlyArray[Int32] = []
   inspect(empty.filter(_ => true).length(), content="0")
   inspect(empty.filter_map(x => Some(x)).length(), content="0")
 
   // No element passes / all dropped.
   inspect(arr.filter(_ => false).length(), content="0")
-  let none_out : ReadOnlyArray[Int] = arr.filter_map(_ => None)
+  let none_out : ReadOnlyArray[Int32] = arr.filter_map(_ => None)
   inspect(none_out.length(), content="0")
 }
 
 ///|
 test "ReadOnlyArray search methods" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3, 2, 4]
 
   // Test search
   debug_inspect(arr.search(2), content="Some(1)")
@@ -111,7 +111,7 @@ test "ReadOnlyArray search methods" {
   inspect(arr.contains(5), content="false")
 
   // Test all/any
-  let even_arr : ReadOnlyArray[Int] = [2, 4, 6]
+  let even_arr : ReadOnlyArray[Int32] = [2, 4, 6]
   inspect(even_arr.all(x => x % 2 == 0), content="true")
   inspect(arr.any(x => x % 2 == 0), content="true")
 }
@@ -119,11 +119,11 @@ test "ReadOnlyArray search methods" {
 ///|
 test "ReadOnlyArray trait implementations" {
   // Test Default
-  let empty : ReadOnlyArray[Int] = (Default::default() : ReadOnlyArray[_])
+  let empty : ReadOnlyArray[Int32] = (Default::default() : ReadOnlyArray[_])
   inspect(empty.length(), content="0")
 
   // Test Debug
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   debug_inspect(
     arr,
     content=(
@@ -143,21 +143,21 @@ test "ReadOnlyArray trait implementations" {
 ///|
 test "ReadOnlyArray equal" {
   // Test equal arrays
-  let arr1 : ReadOnlyArray[Int] = [1, 2, 3]
-  let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr1 : ReadOnlyArray[Int32] = [1, 2, 3]
+  let arr2 : ReadOnlyArray[Int32] = [1, 2, 3]
   inspect(arr1 == arr2, content="true")
 
   // Test unequal arrays with different values
-  let arr3 : ReadOnlyArray[Int] = [1, 3, 3]
+  let arr3 : ReadOnlyArray[Int32] = [1, 3, 3]
   inspect(arr1 == arr3, content="false")
 
   // Test arrays of different lengths
-  let arr4 : ReadOnlyArray[Int] = [1, 2]
+  let arr4 : ReadOnlyArray[Int32] = [1, 2]
   inspect(arr1 == arr4, content="false")
 
   // Test empty arrays
-  let empty1 : ReadOnlyArray[Int] = []
-  let empty2 : ReadOnlyArray[Int] = []
+  let empty1 : ReadOnlyArray[Int32] = []
+  let empty2 : ReadOnlyArray[Int32] = []
   inspect(empty1 == empty2, content="true")
 
   // Test empty vs non-empty
@@ -166,9 +166,9 @@ test "ReadOnlyArray equal" {
 
 ///|
 test "ReadOnlyArray compare" {
-  let arr1 : ReadOnlyArray[Int] = [1, 2, 3]
-  let arr2 : ReadOnlyArray[Int] = [1, 2, 4]
-  let arr3 : ReadOnlyArray[Int] = [1, 2]
+  let arr1 : ReadOnlyArray[Int32] = [1, 2, 3]
+  let arr2 : ReadOnlyArray[Int32] = [1, 2, 4]
+  let arr3 : ReadOnlyArray[Int32] = [1, 2]
 
   // Test lexicographic comparison
   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
@@ -182,8 +182,8 @@ test "ReadOnlyArray compare" {
   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 
   // Test empty arrays
-  let empty1 : ReadOnlyArray[Int] = []
-  let empty2 : ReadOnlyArray[Int] = []
+  let empty1 : ReadOnlyArray[Int32] = []
+  let empty2 : ReadOnlyArray[Int32] = []
   inspect(empty1.compare(empty2), content="0") // empty = empty
   inspect(empty1.compare(arr1), content="-1") // empty < non-empty
   inspect(arr1.compare(empty1), content="1") // non-empty > empty
@@ -191,7 +191,7 @@ test "ReadOnlyArray compare" {
 
 ///|
 test "ReadOnlyArray chunks and windows" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5, 6, 7]
   debug_inspect(
     arr.chunks(3),
     content=(
@@ -206,11 +206,11 @@ test "ReadOnlyArray chunks and windows" {
     ),
   )
   // Empty input gives no chunks.
-  let empty : ReadOnlyArray[Int] = []
+  let empty : ReadOnlyArray[Int32] = []
   debug_inspect(empty.chunks(3), content="[]")
 
   // Windows: length - size + 1 entries.
-  let small : ReadOnlyArray[Int] = [1, 2, 3, 4]
+  let small : ReadOnlyArray[Int32] = [1, 2, 3, 4]
   debug_inspect(
     small.windows(2),
     content=(
@@ -229,7 +229,7 @@ test "ReadOnlyArray chunks and windows" {
 
 ///|
 test "ReadOnlyArray chunk_by and suffixes" {
-  let arr : ReadOnlyArray[Int] = [1, 1, 2, 2, 2, 3, 1]
+  let arr : ReadOnlyArray[Int32] = [1, 1, 2, 2, 2, 3, 1]
   debug_inspect(
     arr.chunk_by((a, b) => a == b),
     content=(
@@ -243,11 +243,11 @@ test "ReadOnlyArray chunk_by and suffixes" {
   )
 
   // Empty input.
-  let empty : ReadOnlyArray[Int] = []
+  let empty : ReadOnlyArray[Int32] = []
   debug_inspect(empty.chunk_by((a, b) => a == b), content="[]")
 
   // Singleton: one chunk.
-  let single : ReadOnlyArray[Int] = [42]
+  let single : ReadOnlyArray[Int32] = [42]
   debug_inspect(
     single.chunk_by((a, b) => a == b),
     content=(
@@ -256,7 +256,7 @@ test "ReadOnlyArray chunk_by and suffixes" {
   )
 
   // suffixes.
-  let pair : ReadOnlyArray[Int] = [1, 2]
+  let pair : ReadOnlyArray[Int32] = [1, 2]
   debug_inspect(
     pair.suffixes().collect(),
     content=(
@@ -282,7 +282,7 @@ test "ReadOnlyArray chunk_by and suffixes" {
 
 ///|
 test "ReadOnlyArray strip_prefix and strip_suffix" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
   debug_inspect(
     arr.strip_prefix([1, 2]),
     content=(
@@ -309,10 +309,10 @@ test "ReadOnlyArray strip_prefix and strip_suffix" {
 
 ///|
 test "ReadOnlyArray iter and sub" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   debug_inspect(arr.iter().to_array(), content="[1, 2, 3]")
   debug_inspect(arr.rev_iter().to_array(), content="[3, 2, 1]")
-  let empty : ReadOnlyArray[Int] = []
+  let empty : ReadOnlyArray[Int32] = []
   debug_inspect(empty.rev_iter().to_array(), content="[]")
   debug_inspect(
     arr[1:],
@@ -324,7 +324,7 @@ test "ReadOnlyArray iter and sub" {
 
 ///|
 test "ReadOnlyArray json and hash" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   @json.json_inspect(arr, content=[1, 2, 3])
   let hasher = Hasher(seed=0)
   hasher.combine(arr)

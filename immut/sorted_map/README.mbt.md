@@ -12,7 +12,7 @@ key-value pair using `singleton()`.
 ```mbt check
 ///|
 test {
-  let map1 : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
   let map2 = @sorted_map.singleton("a", 1)
   @test.assert_eq(map1.length(), 0)
   @test.assert_eq(map2.length(), 1)
@@ -38,7 +38,7 @@ use `get()` to get the value associated with a key.
 ```mbt check
 ///|
 test {
-  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
   let map = map.add("a", 1)
   @test.assert_eq(map.get("a"), Some(1))
 }
@@ -87,7 +87,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 ```mbt check
 ///|
 test {
-  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
   @test.assert_eq(map.is_empty(), true)
 }
 ```

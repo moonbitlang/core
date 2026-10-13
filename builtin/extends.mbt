@@ -316,40 +316,40 @@ pub extend FixedArray with Eq::{equal}
 pub extend FixedArray with Hash::{hash}
 
 ///|
-pub extend Int with Add::{add}
+pub extend Int32 with Add::{add}
 
 ///|
-pub extend Int with BitAnd::{land}
+pub extend Int32 with BitAnd::{land}
 
 ///|
-pub extend Int with BitOr::{lor}
+pub extend Int32 with BitOr::{lor}
 
 ///|
-pub extend Int with BitXOr::{lxor}
+pub extend Int32 with BitXOr::{lxor}
 
 ///|
-pub extend Int with Compare::{compare}
+pub extend Int32 with Compare::{compare}
 
 ///|
-pub extend Int with Div::{div}
+pub extend Int32 with Div::{div}
 
 ///|
-pub extend Int with Eq::{equal}
+pub extend Int32 with Eq::{equal}
 
 ///|
-pub extend Int with Hash::{hash}
+pub extend Int32 with Hash::{hash}
 
 ///|
-pub extend Int with Mod::{mod}
+pub extend Int32 with Mod::{mod}
 
 ///|
-pub extend Int with Mul::{mul}
+pub extend Int32 with Mul::{mul}
 
 ///|
-pub extend Int with Neg::{neg}
+pub extend Int32 with Neg::{neg}
 
 ///|
-pub extend Int with Sub::{sub}
+pub extend Int32 with Sub::{sub}
 
 ///|
 pub extend Int64 with Add::{add}
@@ -621,37 +621,37 @@ pub extend Tuple9 with Compare::{compare}
 pub extend Tuple9 with Eq::{equal}
 
 ///|
-pub extend UInt with Add::{add}
+pub extend UInt32 with Add::{add}
 
 ///|
-pub extend UInt with BitAnd::{land}
+pub extend UInt32 with BitAnd::{land}
 
 ///|
-pub extend UInt with BitOr::{lor}
+pub extend UInt32 with BitOr::{lor}
 
 ///|
-pub extend UInt with BitXOr::{lxor}
+pub extend UInt32 with BitXOr::{lxor}
 
 ///|
-pub extend UInt with Compare::{compare}
+pub extend UInt32 with Compare::{compare}
 
 ///|
-pub extend UInt with Div::{div}
+pub extend UInt32 with Div::{div}
 
 ///|
-pub extend UInt with Eq::{equal}
+pub extend UInt32 with Eq::{equal}
 
 ///|
-pub extend UInt with Hash::{hash}
+pub extend UInt32 with Hash::{hash}
 
 ///|
-pub extend UInt with Mod::{mod}
+pub extend UInt32 with Mod::{mod}
 
 ///|
-pub extend UInt with Mul::{mul}
+pub extend UInt32 with Mul::{mul}
 
 ///|
-pub extend UInt with Sub::{sub}
+pub extend UInt32 with Sub::{sub}
 
 ///|
 pub extend UInt16 with Add::{add}
@@ -1028,32 +1028,32 @@ pub extend FixedArray with ToJson::{to_json}
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Int32 with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with Default::{default}
+pub extend Int32 with Default::{default}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with Eq::{not_equal}
+pub extend Int32 with Eq::{not_equal}
 
 ///|
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with Hash::{hash_combine}
+pub extend Int32 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with Show::{output}
+pub extend Int32 with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int with ToJson::{to_json}
+pub extend Int32 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1633,27 +1633,32 @@ pub extend Tuple9 with ToJson::{to_json}
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend UInt with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend UInt32 with Compare::{op_lt, op_le, op_ge, op_gt}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend UInt32 with Default::{default}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend UInt with Eq::{not_equal}
+pub extend UInt32 with Eq::{not_equal}
 
 ///|
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend UInt with Hash::{hash_combine}
+pub extend UInt32 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
-pub extend UInt with Show::{output}
+pub extend UInt32 with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
-pub extend UInt with ToJson::{to_json}
+pub extend UInt32 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)

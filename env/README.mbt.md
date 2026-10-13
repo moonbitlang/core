@@ -191,7 +191,7 @@ test "error handling" {
   inspect(safe_cwd.length() > 0, content="true")
   fn validate_args(
     args : Array[String],
-    min_count : Int,
+    min_count : Int32,
   ) -> Unit raise Failure {
     if args.length() < min_count {
       raise Failure("Insufficient arguments: expected at least \{min_count}")

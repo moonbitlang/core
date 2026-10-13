@@ -62,7 +62,7 @@ pub fn unset_env_var(key : String) -> Unit {
 /// Returns `Some(bytes)` when the platform can provide secure random bytes,
 /// and `None` when entropy is unsupported or the host reports a failure.
 /// For `n <= 0`, probes availability and returns `Some(b"")` on success.
-pub fn rand(n : Int) -> Bytes? {
+pub fn rand(n : Int32) -> Bytes? {
   if n <= 0 {
     let probe : FixedArray[Byte] = FixedArray::make(1, b'\x00')
     return if rand_internal(probe) { Some(b"") } else { None }

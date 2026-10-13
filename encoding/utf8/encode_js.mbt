@@ -15,8 +15,8 @@
 ///|
 extern "js" fn encode_utf8_js(
   src : String,
-  start : Int,
-  len : Int,
+  start : Int32,
+  len : Int32,
   bom : Bool,
 ) -> Bytes =
   #| (() => {
@@ -41,6 +41,6 @@ extern "js" fn encode_utf8_js(
 ///
 /// Unpaired surrogates are replaced with U+FFFD, matching `TextEncoder`.
 /// The other backends panic on them instead.
-pub fn encode(str : StringView, bom? : Bool = false) -> Bytes {
+pub fn encode(str : StringView, bom~ : Bool = false) -> Bytes {
   encode_utf8_js(str.data(), str.start_offset(), str.length(), bom)
 }

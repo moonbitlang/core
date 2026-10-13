@@ -61,7 +61,7 @@ There are three primitive constructors: `empty`, `lazy_cons`, and
 ```mbt check
 ///|
 test {
-  let xs : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  let xs : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   inspect(xs.is_empty(), content="true")
 }
 ```
@@ -74,11 +74,11 @@ two-line definitions on top of `lazy_cons`:
 ```mbt check
 ///|
 test {
-  fn repeat(value : Int) -> @lazy_list.LazyList[Int] {
+  fn repeat(value : Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(value, () => repeat(value))
   }
 
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -178,7 +178,7 @@ The transforms are lazy enough to work on infinite streams:
 ```mbt check
 ///|
 test {
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -222,7 +222,7 @@ through `@list.from_iter`:
 ///|
 test {
   let xs = @lazy_list.from_iter([|1, 2, 3|])
-  let strict : @list.List[Int] = @list.from_iter(xs.iter())
+  let strict : @list.List[Int32] = @list.from_iter(xs.iter())
   @debug.debug_inspect(strict, content="<List: [1, 2, 3]>")
 }
 ```
@@ -232,7 +232,7 @@ test {
 test {
   let xs = @lazy_list.from_iter([|1, 2, 3, 4|])
   inspect(xs.fold(init=0, (acc, x) => acc + x), content="10")
-  let total : Ref[Int] = Ref(0)
+  let total : Ref[Int32] = Ref(0)
   xs.each(x => total.val = total.val + x)
   inspect(total.val, content="10")
   debug_inspect(xs.to_array(), content="[1, 2, 3, 4]")
@@ -261,7 +261,7 @@ infinite streams — they render with `...` for the unforced tail.
 ```mbt check
 ///|
 test {
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -298,7 +298,7 @@ natural way to write one is also the hardest case:
 ```mbt check
 ///|
 test {
-  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  let mut acc : @lazy_list.LazyList[Int32] = @lazy_list.empty()
   for i in 0..<10000 {
     acc = acc.concat(@lazy_list.from_iter([|i|]))
   }
@@ -341,7 +341,7 @@ traversal, not just the ones that go through `concat`.
 ```mbt check
 ///|
 test {
-  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+  fn iterate(seed : Int32, f : (Int32) -> Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
   }
 
@@ -386,7 +386,7 @@ If you need a fallible transform, wrap the result yourself:
 ```mbt check
 ///|
 test {
-  fn maybe_double(x : Int) -> Result[Int, String] {
+  fn maybe_double(x : Int32) -> Result[Int32, String] {
     if x < 0 {
       Err("negative")
     } else {

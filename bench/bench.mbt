@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
+fn iter_n_microseconds(inner : () -> Unit, k : Int32) -> Double {
   let ts = monotonic_clock_start()
   for _ in 0..<k {
     inner()
@@ -23,7 +23,7 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 }
 
 ///|
-fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
+fn iter_count(name? : String, inner : () -> Unit, count : UInt32) -> Summary {
   guard! count > 0 && count <= 0x7FFFFFFFU
   let count = count.reinterpret_as_int()
   let threshold = 100000.0 // 100 ms
@@ -57,7 +57,7 @@ pub fn Bench::bench(
   self : Bench,
   name? : String,
   f : () -> Unit,
-  count? : UInt = 10,
+  count~ : UInt32 = 10,
 ) -> Unit {
   let summary = iter_count(name?, f, count)
   if !self.buffer.is_empty() {
@@ -74,7 +74,7 @@ pub fn Bench::bench(
 pub fn single_bench(
   name? : String,
   f : () -> Unit,
-  count? : UInt = 10,
+  count~ : UInt32 = 10,
 ) -> Summary {
   iter_count(name?, f, count)
 }

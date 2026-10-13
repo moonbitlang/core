@@ -15,7 +15,7 @@
 ///|
 /// Full observational agreement between a deque and its array model: length,
 /// emptiness, both ends, every index (checked and unchecked), and `to_array`.
-fn agrees_with_model(dq : @deque.Deque[Int], model : Array[Int]) -> Bool {
+fn agrees_with_model(dq : @deque.Deque[Int32], model : Array[Int32]) -> Bool {
   guard dq.length() == model.length() && dq.is_empty() == model.is_empty() else {
     return false
   }
@@ -38,11 +38,11 @@ fn agrees_with_model(dq : @deque.Deque[Int], model : Array[Int]) -> Bool {
 /// around the end of the ring buffer, exercising the circular index
 /// arithmetic that a freshly built deque never touches.
 fn wrapped_deque(
-  xs : Array[Int],
-  capacity~ : Int,
-  rot~ : Int,
-) -> @deque.Deque[Int] {
-  let dq : @deque.Deque[Int] = Deque([], capacity~)
+  xs : Array[Int32],
+  capacity~ : Int32,
+  rot~ : Int32,
+) -> @deque.Deque[Int32] {
+  let dq : @deque.Deque[Int32] = Deque([], capacity~)
   for i in 0..<rot {
     dq.push_back(i)
   }
@@ -57,9 +57,9 @@ fn wrapped_deque(
 
 ///|
 test "quickcheck: mutation sequences agree with an array model" {
-  @quickcheck.check((ops : Array[(Int, Int)]) => {
-    let dq : @deque.Deque[Int] = Deque([])
-    let model : Array[Int] = []
+  @quickcheck.check((ops : Array[(Int32, Int32)]) => {
+    let dq : @deque.Deque[Int32] = Deque([])
+    let model : Array[Int32] = []
     for op in ops {
       let v = op.1
       match op.0 & 7 {
@@ -135,7 +135,7 @@ test "quickcheck: mutation sequences agree with an array model" {
 ///|
 test "quickcheck: reads and iteration survive ring-buffer wraparound" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, r) = input
       guard !xs.is_empty() else { return true }
       let len = xs.length()
@@ -165,7 +165,7 @@ test "quickcheck: reads and iteration survive ring-buffer wraparound" {
 ///|
 test "quickcheck: capacity changes preserve wrapped contents" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, r) = input
       guard !xs.is_empty() else { return true }
       let len = xs.length()
@@ -202,7 +202,7 @@ test "quickcheck: capacity changes preserve wrapped contents" {
 ///|
 test "quickcheck: bulk operations on a wrapped deque match array semantics" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, r) = input
       guard !xs.is_empty() else { return true }
       let len = xs.length()
@@ -244,7 +244,7 @@ test "quickcheck: bulk operations on a wrapped deque match array semantics" {
 ///|
 test "quickcheck: binary_search on a sorted wrapped deque" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, r) = input
       guard !xs.is_empty() else { return true }
       let sorted = xs.copy()

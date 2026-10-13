@@ -29,7 +29,7 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
 
 ///|
 test "empty constructor" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   assert_true(m.size == 0)
   assert_true(m.capacity == 8)
   assert_true(m.head is None)
@@ -41,7 +41,7 @@ test "empty constructor" {
 
 ///|
 test "constructor capacity" {
-  let empty : Map[String, Int] = Map([], capacity=16)
+  let empty : Map[String, Int32] = Map([], capacity=16)
   assert_true(empty.capacity == 16)
   assert_true(empty.is_empty())
   let below_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=2)
@@ -54,7 +54,7 @@ test "constructor capacity" {
 
 ///|
 test "set" {
-  let m : Map[MyString, Int] = Map([])
+  let m : Map[MyString, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -71,7 +71,7 @@ test "set" {
 
 ///|
 test "get" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -86,7 +86,7 @@ test "get" {
 
 ///|
 test "at" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   assert_true(m["a"] == 1)
@@ -95,7 +95,7 @@ test "at" {
 
 ///|
 test "get_or_default" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -107,7 +107,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : Map[String, Array[Int]] = Map([])
+  let m : Map[String, Array[Int32]] = Map([])
   m.get_or_init("a", () => Array()).push(1)
   m.get_or_init("b", () => Array()).push(2)
   m.get_or_init("a", () => Array()).push(3)
@@ -118,7 +118,7 @@ test "get_or_init" {
 
 ///|
 test "get_or_init on push_back" {
-  let m : Map[MyString, Array[Int]] = Map([], capacity=4)
+  let m : Map[MyString, Array[Int32]] = Map([], capacity=4)
   inspect(m.grow_at, content="3")
   m.set("x", Array())
   m.set("xx", Array())
@@ -157,7 +157,7 @@ test "update_or_default applies f when present" {
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : Map[String, Int] = Map([])
+  let counts : Map[String, Int32] = Map([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
@@ -168,7 +168,7 @@ test "update_or_default counter pattern" {
 
 ///|
 test "update_or_default preserves insertion order" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.update_or_default("b", 1, x => x + 1)
   m.update_or_default("a", 1, x => x + 1)
   m.update_or_default("c", 1, x => x + 1)
@@ -180,7 +180,7 @@ test "update_or_default preserves insertion order" {
 
 ///|
 test "update_or_default triggers grow" {
-  let m : Map[Int, Int] = Map([], capacity=2)
+  let m : Map[Int32, Int32] = Map([], capacity=2)
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }
@@ -192,7 +192,7 @@ test "update_or_default triggers grow" {
 
 ///|
 test "Map::set" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m["a"] = 1
   m["b"] = 2
   assert_true(m.get("a") == Some(1))
@@ -201,7 +201,7 @@ test "Map::set" {
 
 ///|
 test "panic get" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m["c"] |> ignore
@@ -209,7 +209,7 @@ test "panic get" {
 
 ///|
 test "set_update" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   assert_true(m.get("a") == Some(1))
@@ -219,7 +219,7 @@ test "set_update" {
 
 ///|
 test "contains" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   assert_true(m.contains("a"))
   assert_false(m.contains("b"))
@@ -235,7 +235,7 @@ test "from_array" {
 
 ///|
 test "length" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   assert_true(m.is_empty())
   m.set("a", 1)
   assert_true(m.length() == 1)
@@ -243,7 +243,7 @@ test "length" {
 
 ///|
 test "size" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   assert_true(m.size == 0)
   m.set("a", 1)
   assert_true(m.size == 1)
@@ -251,7 +251,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   assert_true(m.is_empty())
   m.set("a", 1)
   assert_false(m.is_empty())
@@ -297,7 +297,7 @@ test "clear" {
 
 ///|
 test "grow" {
-  let m : Map[MyString, Int] = Map([])
+  let m : Map[MyString, Int32] = Map([])
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -387,7 +387,7 @@ test "linked list" {
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
   assert_true(map.to_array() == [(1, "one"), (2, "two"), (3, "three")])
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -407,7 +407,7 @@ test "set_existing_key" {
 
 ///|
 test "get_nonexistent_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -416,7 +416,7 @@ test "get_nonexistent_key" {
 
 ///|
 test "get_or_default_existing_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -425,7 +425,7 @@ test "get_or_default_existing_key" {
 
 ///|
 test "get_or_default_nonexistent_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -434,7 +434,7 @@ test "get_or_default_nonexistent_key" {
 
 ///|
 test "remove_existing_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -445,7 +445,7 @@ test "remove_existing_key" {
 
 ///|
 test "remove_nonexistent_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -455,7 +455,7 @@ test "remove_nonexistent_key" {
 
 ///|
 test "contains_existing_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -464,7 +464,7 @@ test "contains_existing_key" {
 
 ///|
 test "contains_nonexistent_key" {
-  let m : Map[String, Int] = Map([])
+  let m : Map[String, Int32] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -473,7 +473,7 @@ test "contains_nonexistent_key" {
 
 ///|
 test "equal_1" {
-  let m1 : Map[String, Int] = Map([])
+  let m1 : Map[String, Int32] = Map([])
   m1.set("a", 1)
   m1.set("b", 2)
   m1.set("c", 3)
@@ -517,7 +517,7 @@ test "to_string" {
 
 ///|
 test "hash collision" {
-  let m : Map[MyString, Int] = Map([])
+  let m : Map[MyString, Int32] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -526,7 +526,7 @@ test "hash collision" {
 
 ///|
 test "remove" {
-  let m : Map[MyString, Int] = Map([])
+  let m : Map[MyString, Int32] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -548,7 +548,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : Map[MyString, Int] = Map([])
+  let m : Map[MyString, Int32] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)

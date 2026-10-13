@@ -33,7 +33,7 @@ fn number_value_bits(text : String) -> UInt64? {
 ///|
 test "quickcheck: json number value is independent of its spelling" {
   @quickcheck.check(
-    (input : (UInt64, Int, Int, Bool)) => {
+    (input : (UInt64, Int32, Int32, Bool)) => {
       let (raw, shift_code, exp_code, negative) = input
       // The shift spreads mantissas across every magnitude; exponents
       // overshoot the double range on both sides so the overflow and

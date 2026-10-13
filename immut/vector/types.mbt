@@ -24,8 +24,8 @@
 struct Vector[A] {
   tree : Tree[A]
   tail : FixedArray[A]
-  size : Int
-  shift : Int
+  size : Int32
+  shift : Int32
 }
 
 ///|
@@ -52,6 +52,6 @@ struct Vector[A] {
 #unsafe_cycle_free
 priv enum Tree[A] {
   Empty
-  Node(FixedArray[Tree[A]], FixedArray[Int]?) // (Subtrees, Sizes of subtrees)
+  Node(FixedArray[Tree[A]], FixedArray[Int32]?) // (Subtrees, Sizes of subtrees)
   Leaf(FixedArray[A])
 } derive(Eq, @debug.Debug)

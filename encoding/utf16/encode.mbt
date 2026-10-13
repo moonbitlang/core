@@ -18,8 +18,8 @@
 /// Assuming the string is valid.
 pub fn encode(
   str : StringView,
-  bom? : Bool = false,
-  endianness? : Endian = Little,
+  bom~ : Bool = false,
+  endianness~ : Endian = Little,
 ) -> Bytes {
   if endianness is Little {
     if bom is true {

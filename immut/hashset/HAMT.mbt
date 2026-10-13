@@ -137,7 +137,7 @@ fn[A : Eq] Node::add_with_path(
 fn[A : Eq] BuildEntry::add_to_node(
   self : BuildEntry[A],
   node : Node[A]?,
-  depth : Int,
+  depth : Int32,
 ) -> Node[A] {
   let path = self.path.advance(depth)
   match node {
@@ -149,9 +149,9 @@ fn[A : Eq] BuildEntry::add_to_node(
 ///|
 fn[A : Eq] build_hashset_node_by_add(
   entries : Array[BuildEntry[A]],
-  start : Int,
-  end : Int,
-  depth : Int,
+  start : Int32,
+  end : Int32,
+  depth : Int32,
   reverse : Bool,
 ) -> Node[A] {
   if reverse {
@@ -176,9 +176,9 @@ fn[A : Eq] build_hashset_node_by_add(
 ///|
 fn[A : Eq] build_hashset_node_range(
   entries : Array[BuildEntry[A]],
-  start : Int,
-  end : Int,
-  depth : Int,
+  start : Int32,
+  end : Int32,
+  depth : Int32,
   reverse : Bool,
 ) -> Node[A] {
   if end - start == 1 {
@@ -387,7 +387,7 @@ fn[A : Eq] Node::remove_with_path(
 ///
 /// WARNING: this operation is `O(N)` in set size
 #alias(size, deprecated)
-pub fn[A] HashSet::length(self : HashSet[A]) -> Int {
+pub fn[A] HashSet::length(self : HashSet[A]) -> Int32 {
   fn node_size(node) {
     match node {
       Leaf(_, bucket) => 1 + bucket.length()

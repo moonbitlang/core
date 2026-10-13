@@ -46,24 +46,24 @@ pub enum LevenshteinEdit {
   ///
   /// `new_index` is the cursor position in `new` when this deletion applies;
   /// a deletion covers an empty range on the `new` side.
-  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
+  Delete(old_index~ : Int32, old_len~ : Int32, new_index~ : Int32)
   /// Insert `new_len` elements starting at `new_index` from `new`.
   ///
   /// `old_index` is the cursor position in `old` when this insertion applies;
   /// an insertion covers an empty range on the `old` side.
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Insert(old_index~ : Int32, new_index~ : Int32, new_len~ : Int32)
   /// Keep `len` equal elements starting at `old_index` in `old` and
   /// `new_index` in `new`.
-  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Equal(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
   /// Substitute `len` elements starting at `old_index` in `old` with the
   /// `len` elements starting at `new_index` in `new`, pairing them
   /// one-to-one; every pair is unequal.
-  Replace(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Replace(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
 } derive(Eq, @debug.Debug)
 
 ///|
 /// Length of the longest common prefix of `old` and `new`.
-fn[T : Eq] common_prefix_len(old : ArrayView[T], new : ArrayView[T]) -> Int {
+fn[T : Eq] common_prefix_len(old : ArrayView[T], new : ArrayView[T]) -> Int32 {
   let max = if old.length() < new.length() {
     old.length()
   } else {

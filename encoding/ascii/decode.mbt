@@ -29,7 +29,7 @@ fn suppress_unused_v128_import_on_js() -> Unit {
 }
 
 ///|
-fn finish_string(buffer : FixedArray[UInt16], len : Int) -> String {
+fn finish_string(buffer : FixedArray[UInt16], len : Int32) -> String {
   if len == buffer.length() {
     unsafe_fixedarray_uint16_to_string(buffer)
   } else {
@@ -46,7 +46,7 @@ fn decode_scalar(bytes : BytesView) -> String raise Malformed {
   let tlen = for tlen = 0, bs = bytes {
     match (tlen, bs) {
       (tlen, []) => break tlen
-      (tlen, [0..=0x7F as b, .. rest]) => {
+      (tlen, [0..<=0x7F as b, .. rest]) => {
         t.unsafe_set(tlen, b.to_uint16())
         continue tlen + 1, rest
       }
@@ -80,7 +80,7 @@ fn decode_v128(bytes : BytesView) -> String raise Malformed {
         )
         continue tail, result_offset + 32
       }
-      [0..=0x7F as byte, .. tail] => {
+      [0..<=0x7F as byte, .. tail] => {
         result.unsafe_set(result_offset, byte)
         result.unsafe_set(result_offset + 1, b'\x00')
         continue tail, result_offset + 2
@@ -123,7 +123,7 @@ pub fn decode_lossy(bytes : BytesView) -> String {
   let tlen = for tlen = 0, bs = bytes {
     match (tlen, bs) {
       (tlen, []) => break tlen
-      (tlen, [0..=0x7F as b, .. rest]) => {
+      (tlen, [0..<=0x7F as b, .. rest]) => {
         t.unsafe_set(tlen, b.to_uint16())
         continue tlen + 1, rest
       }

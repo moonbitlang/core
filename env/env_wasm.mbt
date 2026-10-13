@@ -48,7 +48,7 @@ fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_uns
 ///|
 /// Read one char from the string, returns -1 if the end of the string is reached.
 /// The number returned is the unicode codepoint of the character.
-fn string_read_char(handle : XStringReadHandle) -> Int = "__moonbit_fs_unstable" "string_read_char"
+fn string_read_char(handle : XStringReadHandle) -> Int32 = "__moonbit_fs_unstable" "string_read_char"
 
 ///|
 fn finish_read_string(handle : XStringReadHandle) = "__moonbit_fs_unstable" "finish_read_string"
@@ -188,7 +188,7 @@ fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
 #cfg(target="wasm")
 #unsafe_skip_stub_check
 #borrow(to_be_filled)
-fn wasi_random_get(to_be_filled : FixedArray[Byte], length : Int) -> Int = "wasi_snapshot_preview1" "random_get"
+fn wasi_random_get(to_be_filled : FixedArray[Byte], length : Int32) -> Int32 = "wasi_snapshot_preview1" "random_get"
 
 ///|
 #cfg(target="wasm-gc")

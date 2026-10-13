@@ -25,7 +25,7 @@
 ///|
 /// Avalanche the small integers QuickCheck generates across the full 32-bit
 /// range so lane values cover both halves of every lane width.
-fn mix(x : UInt, salt : UInt) -> UInt {
+fn mix(x : UInt32, salt : UInt32) -> UInt32 {
   let mut h = x ^ (salt * 0x9E3779B1)
   h = (h ^ (h >> 16)) * 0x85EBCA6B
   h = (h ^ (h >> 13)) * 0xC2B2AE35
@@ -33,14 +33,14 @@ fn mix(x : UInt, salt : UInt) -> UInt {
 }
 
 ///|
-fn seed_at(seeds : Array[UInt], index : Int, salt : UInt) -> UInt {
+fn seed_at(seeds : Array[UInt32], index : Int32, salt : UInt32) -> UInt32 {
   let base = if seeds.is_empty() { 0U } else { seeds[index % seeds.length()] }
   mix(base + index.reinterpret_as_uint(), salt)
 }
 
 ///|
 /// A byte biased toward the i8 sign boundary.
-fn pick_u8(r : UInt) -> Byte {
+fn pick_u8(r : UInt32) -> Byte {
   match (r >> 28).reinterpret_as_int() {
     0 => 0x00
     1 => 0x01
@@ -57,7 +57,7 @@ fn pick_u8(r : UInt) -> Byte {
 ///|
 /// A 16-bit lane value (in the low bits of a `UInt`) biased toward the i16
 /// sign boundary.
-fn pick_u16(r : UInt) -> UInt {
+fn pick_u16(r : UInt32) -> UInt32 {
   match (r >> 28).reinterpret_as_int() {
     0 => 0x0000
     1 => 0x0001
@@ -72,7 +72,7 @@ fn pick_u16(r : UInt) -> UInt {
 }
 
 ///|
-fn pick_u32(r : UInt) -> UInt {
+fn pick_u32(r : UInt32) -> UInt32 {
   match (r >> 28).reinterpret_as_int() {
     0 => 0x00000000
     1 => 0x00000001
@@ -87,7 +87,7 @@ fn pick_u32(r : UInt) -> UInt {
 }
 
 ///|
-fn pick_u64(r1 : UInt, r2 : UInt) -> UInt64 {
+fn pick_u64(r1 : UInt32, r2 : UInt32) -> UInt64 {
   match (r1 >> 28).reinterpret_as_int() {
     0 => 0UL
     1 => 1UL
@@ -102,22 +102,22 @@ fn pick_u64(r1 : UInt, r2 : UInt) -> UInt64 {
 }
 
 ///|
-fn lanes8_of(seeds : Array[UInt], salt : UInt) -> Array[Byte] {
+fn lanes8_of(seeds : Array[UInt32], salt : UInt32) -> Array[Byte] {
   Array::makei(16, i => pick_u8(seed_at(seeds, i, salt)))
 }
 
 ///|
-fn lanes16_of(seeds : Array[UInt], salt : UInt) -> Array[UInt] {
+fn lanes16_of(seeds : Array[UInt32], salt : UInt32) -> Array[UInt32] {
   Array::makei(8, i => pick_u16(seed_at(seeds, i, salt)))
 }
 
 ///|
-fn lanes32_of(seeds : Array[UInt], salt : UInt) -> Array[UInt] {
+fn lanes32_of(seeds : Array[UInt32], salt : UInt32) -> Array[UInt32] {
   Array::makei(4, i => pick_u32(seed_at(seeds, i, salt)))
 }
 
 ///|
-fn lanes64_of(seeds : Array[UInt], salt : UInt) -> Array[UInt64] {
+fn lanes64_of(seeds : Array[UInt32], salt : UInt32) -> Array[UInt64] {
   Array::makei(2, i => {
     pick_u64(seed_at(seeds, i * 2, salt), seed_at(seeds, i * 2 + 1, salt))
   })
@@ -146,7 +146,7 @@ fn v8(l : Array[Byte]) -> V128 {
 }
 
 ///|
-fn v16(l : Array[UInt]) -> V128 {
+fn v16(l : Array[UInt32]) -> V128 {
   @v128.i16x8_const(
     l[0].to_uint16(),
     l[1].to_uint16(),
@@ -160,7 +160,7 @@ fn v16(l : Array[UInt]) -> V128 {
 }
 
 ///|
-fn v32(l : Array[UInt]) -> V128 {
+fn v32(l : Array[UInt32]) -> V128 {
   @v128.i32x4_const(l[0], l[1], l[2], l[3])
 }
 
@@ -175,12 +175,12 @@ fn out8(v : V128) -> Array[Byte] {
 }
 
 ///|
-fn out16(v : V128) -> Array[UInt] {
+fn out16(v : V128) -> Array[UInt32] {
   Array::makei(8, i => @v128.i16x8_extract_lane_u(v, i))
 }
 
 ///|
-fn out32(v : V128) -> Array[UInt] {
+fn out32(v : V128) -> Array[UInt32] {
   Array::makei(4, i => @v128.i32x4_extract_lane(v, i))
 }
 
@@ -191,7 +191,7 @@ fn out64(v : V128) -> Array[UInt64] {
 
 ///|
 /// The signed value of a byte lane.
-fn s8(b : Byte) -> Int {
+fn s8(b : Byte) -> Int32 {
   let v = b.to_int()
   if v >= 128 {
     v - 256
@@ -202,7 +202,7 @@ fn s8(b : Byte) -> Int {
 
 ///|
 /// The signed value of a 16-bit lane held in a `UInt`.
-fn s16(x : UInt) -> Int {
+fn s16(x : UInt32) -> Int32 {
   let v = (x & 0xffff).reinterpret_as_int()
   if v >= 32768 {
     v - 65536
@@ -213,18 +213,18 @@ fn s16(x : UInt) -> Int {
 
 ///|
 /// Wrap an `Int` to a byte lane (two's complement).
-fn w8(v : Int) -> Byte {
+fn w8(v : Int32) -> Byte {
   (v & 0xff).to_byte()
 }
 
 ///|
 /// Wrap an `Int` to a 16-bit lane (two's complement).
-fn w16(v : Int) -> UInt {
+fn w16(v : Int32) -> UInt32 {
   (v & 0xffff).reinterpret_as_uint()
 }
 
 ///|
-fn clamp(v : Int, lower : Int, upper : Int) -> Int {
+fn clamp(v : Int32, lower : Int32, upper : Int32) -> Int32 {
   if v < lower {
     lower
   } else if v > upper {
@@ -244,7 +244,7 @@ fn m8(cond : Bool) -> Byte {
 }
 
 ///|
-fn m16(cond : Bool) -> UInt {
+fn m16(cond : Bool) -> UInt32 {
   if cond {
     0xffff
   } else {
@@ -253,7 +253,7 @@ fn m16(cond : Bool) -> UInt {
 }
 
 ///|
-fn m32(cond : Bool) -> UInt {
+fn m32(cond : Bool) -> UInt32 {
   if cond {
     0xffffffff
   } else {
@@ -272,7 +272,7 @@ fn m64(cond : Bool) -> UInt64 {
 
 ///|
 test "quickcheck: construct, splat, extract, replace roundtrip" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0x11)
     let va8 = v8(a8)
     // Lane order is little-endian within the two 64-bit words.
@@ -365,7 +365,7 @@ test "quickcheck: construct, splat, extract, replace roundtrip" {
 
 ///|
 test "quickcheck: i8x16 arithmetic matches scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes8_of(seeds, 0x1)
     let b = lanes8_of(seeds, 0x2)
     let va = v8(a)
@@ -448,16 +448,16 @@ test "quickcheck: i8x16 arithmetic matches scalar reference" {
 
 ///|
 test "quickcheck: i16x8 arithmetic matches scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes16_of(seeds, 0x3)
     let b = lanes16_of(seeds, 0x4)
     let va = v16(a)
     let vb = v16(b)
-    fn binop(got : V128, f : (UInt, UInt) -> UInt) -> Bool {
+    fn binop(got : V128, f : (UInt32, UInt32) -> UInt32) -> Bool {
       out16(got) == Array::makei(8, i => f(a[i], b[i]))
     }
 
-    fn unop(got : V128, f : (UInt) -> UInt) -> Bool {
+    fn unop(got : V128, f : (UInt32) -> UInt32) -> Bool {
       out16(got) == Array::makei(8, i => f(a[i]))
     }
 
@@ -536,16 +536,16 @@ test "quickcheck: i16x8 arithmetic matches scalar reference" {
 
 ///|
 test "quickcheck: i32x4 arithmetic matches scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes32_of(seeds, 0x5)
     let b = lanes32_of(seeds, 0x6)
     let va = v32(a)
     let vb = v32(b)
-    fn binop(got : V128, f : (UInt, UInt) -> UInt) -> Bool {
+    fn binop(got : V128, f : (UInt32, UInt32) -> UInt32) -> Bool {
       out32(got) == Array::makei(4, i => f(a[i], b[i]))
     }
 
-    fn unop(got : V128, f : (UInt) -> UInt) -> Bool {
+    fn unop(got : V128, f : (UInt32) -> UInt32) -> Bool {
       out32(got) == Array::makei(4, i => f(a[i]))
     }
 
@@ -605,7 +605,7 @@ test "quickcheck: i32x4 arithmetic matches scalar reference" {
 
 ///|
 test "quickcheck: i64x2 arithmetic matches scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes64_of(seeds, 0x7)
     let b = lanes64_of(seeds, 0x8)
     let va = v64(a)
@@ -650,7 +650,7 @@ test "quickcheck: i64x2 arithmetic matches scalar reference" {
 
 ///|
 test "quickcheck: integer comparisons produce all-ones or all-zeros masks" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0xa1)
     let b8 = lanes8_of(seeds, 0xa2)
     // Force some equal lanes so eq/le/ge boundaries are exercised.
@@ -704,7 +704,7 @@ test "quickcheck: integer comparisons produce all-ones or all-zeros masks" {
     }
     let va16 = v16(a16)
     let vb16 = v16(b16)
-    fn mask16(got : V128, f : (UInt, UInt) -> Bool) -> Bool {
+    fn mask16(got : V128, f : (UInt32, UInt32) -> Bool) -> Bool {
       out16(got) == Array::makei(8, i => m16(f(a16[i], b16[i])))
     }
 
@@ -747,7 +747,7 @@ test "quickcheck: integer comparisons produce all-ones or all-zeros masks" {
     }
     let va32 = v32(a32)
     let vb32 = v32(b32)
-    fn mask32(got : V128, f : (UInt, UInt) -> Bool) -> Bool {
+    fn mask32(got : V128, f : (UInt32, UInt32) -> Bool) -> Bool {
       out32(got) == Array::makei(4, i => m32(f(a32[i], b32[i])))
     }
 
@@ -834,7 +834,7 @@ test "quickcheck: integer comparisons produce all-ones or all-zeros masks" {
 
 ///|
 test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0xb1)
     let va8 = v8(a8)
     let mut any = false
@@ -901,7 +901,7 @@ test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
 
 ///|
 test "quickcheck: bitwise ops match the 64-bit word reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes64_of(seeds, 0xc1)
     let b = lanes64_of(seeds, 0xc2)
     let c = lanes64_of(seeds, 0xc3)
@@ -937,7 +937,7 @@ test "quickcheck: bitwise ops match the 64-bit word reference" {
 
 ///|
 test "quickcheck: shifts mask the shift count by the lane width" {
-  @quickcheck.check(count=200, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=200, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0xd1)
     let va8 = v8(a8)
     let a16 = lanes16_of(seeds, 0xd2)
@@ -1011,7 +1011,7 @@ test "quickcheck: shifts mask the shift count by the lane width" {
 
 ///|
 test "quickcheck: widening, narrowing and pairwise ops match scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0xe1)
     let b8 = lanes8_of(seeds, 0xe2)
     let va8 = v8(a8)
@@ -1232,7 +1232,7 @@ test "quickcheck: widening, narrowing and pairwise ops match scalar reference" {
 
 ///|
 test "quickcheck: swizzle, shuffle and lane selects" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a = lanes8_of(seeds, 0xf1)
     let b = lanes8_of(seeds, 0xf2)
     let va = v8(a)
@@ -1356,7 +1356,7 @@ test "quickcheck: swizzle, shuffle and lane selects" {
 
 ///|
 /// A 32-bit float bit pattern biased toward special values.
-fn pick_f32_bits(r : UInt) -> UInt {
+fn pick_f32_bits(r : UInt32) -> UInt32 {
   match (r >> 28).reinterpret_as_int() {
     0 => 0x00000000 // +0.0
     1 => 0x80000000 // -0.0
@@ -1376,7 +1376,7 @@ fn pick_f32_bits(r : UInt) -> UInt {
 
 ///|
 /// A 64-bit float bit pattern biased toward special values.
-fn pick_f64_bits(r1 : UInt, r2 : UInt) -> UInt64 {
+fn pick_f64_bits(r1 : UInt32, r2 : UInt32) -> UInt64 {
   match (r1 >> 28).reinterpret_as_int() {
     0 => 0x0000000000000000UL // +0.0
     1 => 0x8000000000000000UL // -0.0
@@ -1397,7 +1397,7 @@ fn pick_f64_bits(r1 : UInt, r2 : UInt) -> UInt64 {
 ///|
 /// Bitwise equality, except that any NaN matches any NaN: NaN payloads are
 /// not guaranteed to be preserved across every backend.
-fn f32_bits_ok(got_bits : UInt, expect : Float) -> Bool {
+fn f32_bits_ok(got_bits : UInt32, expect : Float) -> Bool {
   if expect.is_nan() {
     Float::reinterpret_from_uint(got_bits).is_nan()
   } else {
@@ -1511,7 +1511,7 @@ fn ref_f64_max(x : Double, y : Double) -> Double {
 
 ///|
 test "quickcheck: f32x4 ops match scalar Float reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let abits = Array::makei(4, i => pick_f32_bits(seed_at(seeds, i, 0x301)))
     let bbits = Array::makei(4, i => pick_f32_bits(seed_at(seeds, i, 0x302)))
     let va = v32(abits)
@@ -1615,7 +1615,7 @@ test "quickcheck: f32x4 ops match scalar Float reference" {
 
 ///|
 test "quickcheck: f64x2 ops match scalar Double reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let abits = Array::makei(2, i => {
       pick_f64_bits(
         seed_at(seeds, 2 * i, 0x311),
@@ -1728,7 +1728,7 @@ test "quickcheck: f64x2 ops match scalar Double reference" {
 
 ///|
 test "quickcheck: lane-type conversions match scalar reference" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a32 = lanes32_of(seeds, 0x321)
     let va32 = v32(a32)
     // i32 -> f32 (both signednesses; conversion may round).
@@ -1859,23 +1859,23 @@ test "quickcheck: lane-type conversions match scalar reference" {
 }
 
 ///|
-fn le16_at(buf : FixedArray[Byte], off : Int) -> UInt {
+fn le16_at(buf : FixedArray[Byte], off : Int32) -> UInt32 {
   buf[off].to_uint() | (buf[off + 1].to_uint() << 8)
 }
 
 ///|
-fn le32_at(buf : FixedArray[Byte], off : Int) -> UInt {
+fn le32_at(buf : FixedArray[Byte], off : Int32) -> UInt32 {
   le16_at(buf, off) | (le16_at(buf, off + 2) << 16)
 }
 
 ///|
-fn le64_at(buf : FixedArray[Byte], off : Int) -> UInt64 {
+fn le64_at(buf : FixedArray[Byte], off : Int32) -> UInt64 {
   le32_at(buf, off).to_uint64() | (le32_at(buf, off + 4).to_uint64() << 32)
 }
 
 ///|
 test "quickcheck: memory loads and stores are little-endian roundtrips" {
-  @quickcheck.check(count=250, (seeds : Array[UInt]) => {
+  @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let buf : FixedArray[Byte] = FixedArray::makei(48, i => {
       pick_u8(seed_at(seeds, i, 0x401))
     })

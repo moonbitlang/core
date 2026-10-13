@@ -19,8 +19,8 @@
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, Unit] = Ok(6)
-///   let y = x.map((v : Int) => v * 7)
+///   let x : Result[Int32, Unit] = Ok(6)
+///   let y = x.map((v : Int32) => v * 7)
 ///   @test.assert_eq(y, Ok(42))
 /// }
 /// ```
@@ -36,10 +36,10 @@ pub fn[T, E, U] Result::map(
 
 ///|
 test "map" {
-  let x : Result[Int, Unit] = Ok(6)
-  let y = x.map((v : Int) => v * 7)
-  let z : Result[Int, Int] = Err(3)
-  let w = z.map((v : Int) => v * 7)
+  let x : Result[Int32, Unit] = Ok(6)
+  let y = x.map((v : Int32) => v * 7)
+  let z : Result[Int32, Int32] = Err(3)
+  let w = z.map((v : Int32) => v * 7)
   assert_true(y == Ok(42))
   assert_true(w == Err(3))
 }
@@ -51,7 +51,7 @@ test "map" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, String] = Err("error")
+///   let x : Result[Int32, String] = Err("error")
 ///   let y = x.map_err((v : String) => v + "!")
 ///   @test.assert_eq(y, Err("error!"))
 /// }
@@ -68,10 +68,10 @@ pub fn[T, E, F] Result::map_err(
 
 ///|
 test "map_err" {
-  let x : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Err("error")
   let y = x.map_err((v : String) => v + "!")
-  let z : Result[Int, Int] = Ok(6)
-  let w = z.map_err((v : Int) => v + 6)
+  let z : Result[Int32, Int32] = Ok(6)
+  let w = z.map_err((v : Int32) => v + 6)
   assert_true(y == Err("error!"))
   assert_true(w == Ok(6))
 }
@@ -83,8 +83,8 @@ test "map_err" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, String] = Ok(3)
-///   let y : Result[Int, String] = Err("error")
+///   let x : Result[Int32, String] = Ok(3)
+///   let y : Result[Int32, String] = Err("error")
 ///   @test.assert_eq(x.unwrap_or(5), 3)
 ///   @test.assert_eq(y.unwrap_or(5), 5)
 /// }
@@ -98,8 +98,8 @@ pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
 
 ///|
 test "unwrap_or" {
-  let x : Result[Int, String] = Ok(3)
-  let y : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Ok(3)
+  let y : Result[Int32, String] = Err("error")
   assert_true(x.unwrap_or(5) == 3)
   assert_true(y.unwrap_or(5) == 5)
 }
@@ -113,8 +113,8 @@ test "unwrap_or" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, String] = Ok(3)
-///   let y : Result[Int, String] = Err("error")
+///   let x : Result[Int32, String] = Ok(3)
+///   let y : Result[Int32, String] = Err("error")
 ///   @test.assert_eq(x.unwrap_or_else(() => 5), 3)
 ///   @test.assert_eq(y.unwrap_or_else(() => 5), 5)
 /// }
@@ -132,8 +132,8 @@ pub fn[T, E] Result::unwrap_or_else(
 
 ///|
 test "unwrap_or_else" {
-  let x : Result[Int, String] = Ok(3)
-  let y : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Ok(3)
+  let y : Result[Int32, String] = Err("error")
   assert_true(x.unwrap_or_else(() => 5) == 3)
   assert_true(y.unwrap_or_else(() => 5) == 5)
 }
@@ -147,7 +147,7 @@ test "unwrap_or_else" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Result[Int, String], String] = Ok(Ok(6))
+///   let x : Result[Result[Int32, String], String] = Ok(Ok(6))
 ///   let y = x.flatten()
 ///   @test.assert_eq(y, Ok(6))
 /// }
@@ -161,9 +161,9 @@ pub fn[T, E] Result::flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
 
 ///|
 test "flatten" {
-  let x : Result[Result[Int, String], String] = Ok(Ok(6))
+  let x : Result[Result[Int32, String], String] = Ok(Ok(6))
   let y = x.flatten()
-  let z : Result[Result[Int, String], String] = Err("error")
+  let z : Result[Result[Int32, String], String] = Err("error")
   let w = z.flatten()
   assert_true(y == Ok(6))
   assert_true(w == Err("error"))
@@ -176,8 +176,8 @@ test "flatten" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, String] = Ok(6)
-///   let y = x.bind((v : Int) => Ok(v * 7))
+///   let x : Result[Int32, String] = Ok(6)
+///   let y = x.bind((v : Int32) => Ok(v * 7))
 ///   @test.assert_eq(y, Ok(42))
 /// }
 /// ```
@@ -193,8 +193,8 @@ pub fn[T, E, U] Result::bind(
 
 ///|
 test "bind" {
-  let x : Result[Int, String] = Ok(6)
-  let y = x.bind((v : Int) => Ok(v * 7))
+  let x : Result[Int32, String] = Ok(6)
+  let y = x.bind((v : Int32) => Ok(v * 7))
   assert_true(y == Ok(42))
 }
 
@@ -207,7 +207,7 @@ test "bind" {
 ///
 /// ```mbt check
 /// test {
-///   let x : Result[Int, String] = Ok(6)
+///   let x : Result[Int32, String] = Ok(6)
 ///   let y = x.to_option()
 ///   @test.assert_eq(y, Some(6))
 /// }
@@ -221,8 +221,8 @@ pub fn[T, E] Result::to_option(self : Result[T, E]) -> T? {
 
 ///|
 test "to_option" {
-  let x : Result[Int, String] = Ok(6)
-  let y : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Ok(6)
+  let y : Result[Int32, String] = Err("error")
   let z = x.to_option()
   let w = y.to_option()
   assert_true(z == Some(6))
@@ -233,7 +233,7 @@ test "to_option" {
 pub impl[T : Compare, E : Compare] Compare for Result[T, E] with fn compare(
   self : Result[T, E],
   other : Result[T, E],
-) -> Int {
+) -> Int32 {
   match (self, other) {
     (Ok(x), Ok(y)) => x.compare(y)
     (Ok(_), Err(_)) => -1
@@ -281,7 +281,7 @@ pub fn[T, E] Result::unwrap(self : Result[T, E]) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let err : Result[Int, String] = Err("error message")
+///   let err : Result[Int32, String] = Err("error message")
 ///   inspect(err.unwrap_err(), content="error message")
 /// }
 /// ```
@@ -321,8 +321,8 @@ pub fn[T : Default, E] Result::unwrap_or_default(self : Result[T, E]) -> T {
 
 ///|
 test "unwrap_or_default" {
-  let x : Result[Int, String] = Ok(3)
-  let y : Result[Int, String] = Err("error")
+  let x : Result[Int32, String] = Ok(3)
+  let y : Result[Int32, String] = Err("error")
   assert_true(x.unwrap_or_default() == 3)
   assert_true(y.unwrap_or_default() == 0)
 }
@@ -358,28 +358,28 @@ pub impl[T : Eq, E : Eq] Eq for Result[T, E] with fn equal(self, other) {
 
 ///|
 test "map/map_err/bind propagate callback errors" {
-  let ok : Result[Int, String] = Ok(1)
-  let err : Result[Int, String] = Err("e")
-  let r1 : Result[Result[Int, String], Error] = Ok(
+  let ok : Result[Int32, String] = Ok(1)
+  let err : Result[Int32, String] = Err("e")
+  let r1 : Result[Result[Int32, String], Error] = Ok(
     ok.map(x => if x == 1 { fail("map") } else { x }),
   ) catch {
     e => Err(e)
   }
   assert_true(r1 is Err(Failure(msg)) && msg.contains("map"))
-  let r2 : Result[Result[Int, String], Error] = Ok(
+  let r2 : Result[Result[Int32, String], Error] = Ok(
     err.map_err(_ => fail("map_err")),
   ) catch {
     e => Err(e)
   }
   assert_true(r2 is Err(Failure(msg)) && msg.contains("map_err"))
-  let r3 : Result[Result[Int, String], Error] = Ok(ok.bind(_ => fail("bind"))) catch {
+  let r3 : Result[Result[Int32, String], Error] = Ok(ok.bind(_ => fail("bind"))) catch {
     e => Err(e)
   }
   assert_true(r3 is Err(Failure(msg)) && msg.contains("bind"))
   // The callback is not invoked on the other variant.
-  assert_true(err.map(_ => (fail("unreachable") : Int)) == Err("e"))
+  assert_true(err.map(_ => (fail("unreachable") : Int32)) == Err("e"))
   assert_true(ok.map_err(_ => (fail("unreachable") : String)) == Ok(1))
   assert_true(
-    err.bind(_ => (fail("unreachable") : Result[Int, String])) == Err("e"),
+    err.bind(_ => (fail("unreachable") : Result[Int32, String])) == Err("e"),
   )
 }

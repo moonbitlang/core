@@ -102,7 +102,7 @@ test "unsafe vs safe" {
 ```mbt check
 ///|
 test "view conversion" {
-  fn process_text(text : StringView) -> Int {
+  fn process_text(text : StringView) -> Int32 {
     text.length()
   }
 

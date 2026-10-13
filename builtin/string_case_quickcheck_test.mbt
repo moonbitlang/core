@@ -23,7 +23,7 @@
 /// low byte is an ASCII letter (U+0161, U+FF41, U+8041, U+8061; the last two
 /// are also negative as signed 16-bit lanes), surrogate pairs and lone
 /// surrogates.
-fn case_code_unit(seed : Int) -> UInt16 {
+fn case_code_unit(seed : Int32) -> UInt16 {
   match seed & 0x1F {
     0 => 'a'
     1 => 'z'
@@ -57,7 +57,7 @@ fn case_code_units_to_string(units : Array[UInt16]) -> String {
 /// empty string from empty seeds), so the SIMD search and patch loops can be
 /// reached. The index is mixed into each seed because generated arrays often
 /// repeat small values.
-fn case_input(seeds : Array[Int]) -> String {
+fn case_input(seeds : Array[Int32]) -> String {
   let units : Array[UInt16] = []
   let n = if seeds.is_empty() {
     0
@@ -77,7 +77,7 @@ fn model_case_map(
   s : StringView,
   first : UInt16,
   last : UInt16,
-  delta : Int,
+  delta : Int32,
 ) -> String {
   let units : Array[UInt16] = []
   for u in s.code_units() {
@@ -104,7 +104,7 @@ fn model_to_lower(s : StringView) -> String {
 
 ///|
 test "quickcheck: to_upper and to_lower agree with the code-unit model" {
-  @quickcheck.check(count=300, (input : (Array[Int], Int, Int)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Int32, Int32)) => {
     let (seeds, lead, trail) = input
     let s = case_input(seeds)
     guard s.to_upper() == model_to_upper(s) else { return false }

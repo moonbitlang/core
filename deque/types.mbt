@@ -51,7 +51,7 @@ struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.
   mut buf : UninitializedArray[A]
   /// Number of elements currently in the deque.
-  mut len : Int
+  mut len : Int32
   /// Index of the first element (front), or zero when the buffer is empty.
-  mut head : Int
+  mut head : Int32
 }

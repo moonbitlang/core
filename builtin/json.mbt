@@ -244,7 +244,7 @@ pub impl ToJson for Byte with fn to_json(self : Byte) -> Json {
 }
 
 ///|
-pub impl ToJson for Int with fn to_json(self : Int) -> Json {
+pub impl ToJson for Int32 with fn to_json(self : Int32) -> Json {
   Json::number(self.to_double())
 }
 
@@ -254,7 +254,7 @@ pub impl ToJson for Int64 with fn to_json(self : Int64) -> Json {
 }
 
 ///|
-pub impl ToJson for UInt with fn to_json(self : UInt) -> Json {
+pub impl ToJson for UInt32 with fn to_json(self : UInt32) -> Json {
   Json::number(self.to_uint64().to_double())
 }
 

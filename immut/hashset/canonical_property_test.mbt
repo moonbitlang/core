@@ -30,7 +30,7 @@
 /// Elements whose hash lives only in path segment 3 (bits 10..=14): all
 /// elements share segments 1-2 and diverge — or fully collide — at
 /// mid-trie depth.
-priv struct MidDepthElem(Int) derive(Eq)
+priv struct MidDepthElem(Int32) derive(Eq)
 
 ///|
 impl Hash for MidDepthElem with fn hash(self) {
@@ -44,7 +44,7 @@ impl Hash for MidDepthElem with fn hash_combine(self, hasher) {
 
 ///|
 /// Elements that all share the one and only collision bucket.
-priv struct ZeroHashElem(Int) derive(Eq)
+priv struct ZeroHashElem(Int32) derive(Eq)
 
 ///|
 impl Hash for ZeroHashElem with fn hash(_) {
@@ -57,14 +57,14 @@ impl Hash for ZeroHashElem with fn hash_combine(_, hasher) {
 }
 
 ///|
-fn model_insert(model : Array[Int], key : Int) -> Unit {
+fn model_insert(model : Array[Int32], key : Int32) -> Unit {
   if !model.contains(key) {
     model.push(key)
   }
 }
 
 ///|
-fn model_delete(model : Array[Int], key : Int) -> Unit {
+fn model_delete(model : Array[Int32], key : Int32) -> Unit {
   for i, k in model {
     if k == key {
       let _ = model.remove(i)
@@ -79,11 +79,11 @@ fn model_delete(model : Array[Int], key : Int) -> Unit {
 /// every step. `un` projects an element back to the underlying `Int` (for
 /// iteration comparison against the model).
 fn[A : Eq + Hash] canonical_after_ops(
-  mk : (Int) -> A,
-  un : (A) -> Int,
-  ops : Array[Int],
+  mk : (Int32) -> A,
+  un : (A) -> Int32,
+  ops : Array[Int32],
 ) -> Bool {
-  let model : Array[Int] = []
+  let model : Array[Int32] = []
   let mut hs : @hashset.HashSet[A] = @hashset.new()
   for op in ops {
     let n = op & 0x7fffffff
@@ -100,7 +100,7 @@ fn[A : Eq + Hash] canonical_after_ops(
       op_code => {
         // A second set derived from a slice of the current content plus
         // one possibly-fresh element, built canonically via `from_iter`.
-        let other_model : Array[Int] = []
+        let other_model : Array[Int32] = []
         for k in model {
           if (k + key) % 3 != 0 {
             other_model.push(k)
@@ -176,35 +176,35 @@ fn[A : Eq + Hash] canonical_after_ops(
 
 ///|
 test "quickcheck: canonical after every op (distinct hashes)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => n, e => e, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (first-segment collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => CollidingElem(n), e => e.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (mid-depth collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => MidDepthElem(n), e => e.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (maximum-depth collisions)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => DeepElem(n), e => e.0, ops)
   })
 }
 
 ///|
 test "quickcheck: canonical after every op (single collision bucket)" {
-  @quickcheck.check((ops : Array[Int]) => {
+  @quickcheck.check((ops : Array[Int32]) => {
     canonical_after_ops(n => ZeroHashElem(n), e => e.0, ops)
   })
 }
@@ -212,8 +212,8 @@ test "quickcheck: canonical after every op (single collision bucket)" {
 ///|
 /// Build a set from an `add` stream over the 16-element universe.
 fn[A : Eq + Hash] build_set(
-  mk : (Int) -> A,
-  xs : Array[Int],
+  mk : (Int32) -> A,
+  xs : Array[Int32],
 ) -> @hashset.HashSet[A] {
   let mut s = @hashset.new()
   for x in xs {
@@ -227,8 +227,8 @@ fn[A : Eq + Hash] build_set(
 /// which canonicity makes a valid way to compare independently computed
 /// results.
 fn[A : Eq + Hash] set_laws(
-  mk : (Int) -> A,
-  input : (Array[Int], Array[Int], Array[Int]),
+  mk : (Int32) -> A,
+  input : (Array[Int32], Array[Int32], Array[Int32]),
 ) -> Bool {
   let (xs, ys, zs) = input
   let a = build_set(mk, xs)
@@ -255,14 +255,14 @@ fn[A : Eq + Hash] set_laws(
 
 ///|
 test "quickcheck: set-operation laws (distinct hashes)" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Array[Int32])) => {
     set_laws(n => n, input)
   })
 }
 
 ///|
 test "quickcheck: set-operation laws (maximum-depth collisions)" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Array[Int32])) => {
     set_laws(n => DeepElem(n), input)
   })
 }

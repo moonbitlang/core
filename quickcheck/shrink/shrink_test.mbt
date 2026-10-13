@@ -235,7 +235,7 @@ test "shrink uint64" {
 
 ///|
 test "shrink byte" {
-  let s = @shrink.Shrink::shrink(Int::to_byte(200)).collect()
+  let s = @shrink.Shrink::shrink(Int32::to_byte(200)).collect()
   debug_inspect(
     s,
     content=(
@@ -243,7 +243,7 @@ test "shrink byte" {
     ),
   )
   debug_inspect(
-    @shrink.Shrink::shrink(Int::to_byte(0)).collect(),
+    @shrink.Shrink::shrink(Int32::to_byte(0)).collect(),
     content=(
       #|[]
     ),

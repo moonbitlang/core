@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_make_string"
+fn unsafe_make_string(length : Int32, value : Char) -> String = "$moonbit.unsafe_make_string"
 
 ///|
 /// Create new string of `length`, where each character is `value`
@@ -23,7 +23,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///   @test.assert_eq(String::make(5, 'S'), "SSSSS")
 /// }
 /// ```
-pub fn String::make(length : Int, value : Char) -> String {
+pub fn String::make(length : Int32, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }
   if value.to_int() <= 0xFFFF {
     unsafe_make_string(length, value)
@@ -37,7 +37,7 @@ pub fn String::make(length : Int, value : Char) -> String {
 }
 
 ///|
-fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
+fn code_point_of_surrogate_pair(leading : Int32, trailing : Int32) -> Char {
   ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
 }
 
@@ -61,9 +61,9 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 #cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length(
   self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> Int {
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> Int32 {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
@@ -107,9 +107,9 @@ pub fn String::char_length(
 #cfg(any(target="native", target="wasm"))
 pub fn String::char_length(
   self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> Int {
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> Int32 {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
@@ -141,8 +141,8 @@ pub fn String::char_length(
 #intrinsic("%string.substring")
 pub fn String::unsafe_substring(
   str : String,
-  start~ : Int,
-  end~ : Int,
+  start~ : Int32,
+  end~ : Int32,
 ) -> String {
   if start == 0 && end == str.length() {
     return str
@@ -190,10 +190,10 @@ pub fn String::unsafe_substring(
 #intrinsic("%string.unsafe_range_equal")
 fn String::unsafe_range_equal(
   self : String,
-  self_off~ : Int,
+  self_off~ : Int32,
   other : String,
-  other_off~ : Int,
-  len~ : Int,
+  other_off~ : Int32,
+  len~ : Int32,
 ) -> Bool {
   if len >= 8 {
     return string_range_equal_simd(self, self_off, other, other_off, len)
@@ -212,10 +212,10 @@ fn String::unsafe_range_equal(
 #intrinsic("%string.unsafe_range_equal")
 fn String::unsafe_range_equal(
   self : String,
-  self_off~ : Int,
+  self_off~ : Int32,
   other : String,
-  other_off~ : Int,
-  len~ : Int,
+  other_off~ : Int32,
+  len~ : Int32,
 ) -> Bool {
   for i in 0..<len {
     guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
@@ -234,10 +234,10 @@ fn String::unsafe_range_equal(
 #cfg(target="wasm")
 fn string_range_equal_simd(
   left : String,
-  left_off : Int,
+  left_off : Int32,
   right : String,
-  right_off : Int,
-  len : Int,
+  right_off : Int32,
+  len : Int32,
 ) -> Bool {
   for i = 0; i + 8 <= len; i = i + 8 {
     let a = v128_load_i16x8(left, left_off + i)
@@ -266,7 +266,11 @@ fn string_range_equal_simd(
 /// Returns a new string containing the specified substring.
 ///
 #deprecated("Use `str[:]` or `str[:].to_string()` instead", skip_current_package=true)
-pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
+pub fn String::substring(
+  self : String,
+  start~ : Int32 = 0,
+  end? : Int32,
+) -> String {
   let len = self.length()
   let end = match end {
     Some(end) | (None with end = len) => end
@@ -280,7 +284,7 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
 /// original storage. Surrogate pairs stay intact while advancing.
 pub fn String::suffixes(
   self : String,
-  include_empty? : Bool = false,
+  include_empty~ : Bool = false,
 ) -> Iter[StringView] {
   self[:].suffixes(include_empty~)
 }
@@ -425,7 +429,7 @@ pub fn String::iter(self : String) -> Iter[Char] {
 ///|
 /// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
-pub fn String::iter2(self : String) -> Iter2[Int, Char] {
+pub fn String::iter2(self : String) -> Iter2[Int32, Char] {
   self.iter().iter2()
 }
 
@@ -512,10 +516,10 @@ pub fn String::rev_iter(self : String) -> Iter[Char] {
 /// Returns the index of the n-th (zero-indexed) character within the range [start, end).
 fn String::offset_of_nth_char_forward(
   self : String,
-  n : Int,
-  start_offset~ : Int,
-  end_offset~ : Int,
-) -> Int? {
+  n : Int32,
+  start_offset~ : Int32,
+  end_offset~ : Int32,
+) -> Int32? {
   guard start_offset >= 0 && start_offset <= end_offset else {
     abort("Invalid start index")
   }
@@ -548,10 +552,10 @@ fn String::offset_of_nth_char_forward(
 /// self[end] is counted as the 0-th character (though it might not exist if end = self.length()).
 fn String::offset_of_nth_char_backward(
   self : String,
-  n : Int,
-  start_offset~ : Int,
-  end_offset~ : Int,
-) -> Int? {
+  n : Int32,
+  start_offset~ : Int32,
+  end_offset~ : Int32,
+) -> Int32? {
   // Iterating backwards from the end of the string.
   // Invariant: utf16_offset always points to the previous character
   let (utf16_offset, char_count) = for utf16_offset = end_offset, char_count = 0; utf16_offset -
@@ -583,10 +587,10 @@ fn String::offset_of_nth_char_backward(
 /// This functions assumes that the string is valid UTF-16.
 pub fn String::offset_of_nth_char(
   self : String,
-  i : Int,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> Int? {
+  i : Int32,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> Int32? {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   if i >= 0 {
     // forward case
@@ -604,9 +608,9 @@ pub fn String::offset_of_nth_char(
 #cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length_eq(
   self : String,
-  len : Int,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  len : Int32,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
@@ -633,9 +637,9 @@ pub fn String::char_length_eq(
 #cfg(any(target="native", target="wasm"))
 pub fn String::char_length_eq(
   self : String,
-  len : Int,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  len : Int32,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   // The offsets are not validated, so only a range inside `self` takes the
@@ -677,9 +681,9 @@ pub fn String::char_length_eq(
 #cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length_ge(
   self : String,
-  len : Int,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  len : Int32,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
@@ -706,9 +710,9 @@ pub fn String::char_length_ge(
 #cfg(any(target="native", target="wasm"))
 pub fn String::char_length_ge(
   self : String,
-  len : Int,
-  start_offset? : Int = 0,
-  end_offset? : Int,
+  len : Int32,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   // The offsets are not validated, so only a range inside `self` takes the
@@ -773,7 +777,7 @@ pub fn String::char_length_ge(
 /// Since MoonBit strings are UTF-16 encoded (like Java), this comparison operates on
 /// UTF-16 code units, not Unicode code points. Surrogate pairs (used for characters
 /// outside the Basic Multilingual Plane) are compared as individual code units.
-pub fn String::lexical_compare(self : String, other : String) -> Int {
+pub fn String::lexical_compare(self : String, other : String) -> Int32 {
   self[:].lexical_compare(other)
 }
 
@@ -810,7 +814,10 @@ pub fn String::lexical_compare(self : String, other : String) -> Int {
 ///   inspect("Ä".compare_ignore_ascii_case("ä") != 0, content="true")
 /// }
 /// ```
-pub fn String::compare_ignore_ascii_case(self : String, other : String) -> Int {
+pub fn String::compare_ignore_ascii_case(
+  self : String,
+  other : String,
+) -> Int32 {
   self[:].compare_ignore_ascii_case(other)
 }
 

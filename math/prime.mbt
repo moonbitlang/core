@@ -209,7 +209,7 @@ let small_primes : ReadOnlyArray[@bigint.BigInt] = [
 pub fn is_probable_prime(
   number : @bigint.BigInt,
   rand : @random.Rand,
-  iters? : Int = DEFAULT_PRIME_TEST_ITERS,
+  iters~ : Int32 = DEFAULT_PRIME_TEST_ITERS,
 ) -> Bool {
   if iters <= 0 {
     abort("non-positive iters for probably prime")
@@ -250,7 +250,7 @@ pub fn is_probable_prime(
 ///   inspect(@math.is_probable_prime(prime, rand), content="true")
 /// }
 /// ```
-pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
+pub fn probable_prime(bits : Int32, rand : @random.Rand) -> @bigint.BigInt {
   guard bits >= 2 else { abort("probable_prime: bits must be at least two") }
   let high_bit = 1N << (bits - 1)
   for ;; {
@@ -265,10 +265,10 @@ pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
 fn trial_divisions(n : @bigint.BigInt) -> Bool {
   // calculate the number of trial divisions based on the bit length of the candidate
   let td = match n.bit_length() {
-    _..=512 => 64
-    512..=1024 => 128
-    1024..=2048 => 384
-    2048..=4096 => 1024
+    _..<=512 => 64
+    512..<=1024 => 128
+    1024..<=2048 => 384
+    2048..<=4096 => 1024
     _ => 2048
   }
   for i in 1..<td {
@@ -283,7 +283,7 @@ fn trial_divisions(n : @bigint.BigInt) -> Bool {
 /// Refer to FIPS 186-4 C.3.1 Miller-Rabin Probabilistic Primality Test
 fn miller_rabin_test(
   w : @bigint.BigInt,
-  iters : Int,
+  iters : Int32,
   rand : @random.Rand,
 ) -> Bool {
   if w <= 3N {

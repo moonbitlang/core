@@ -18,7 +18,7 @@ trait FromString {
 }
 
 ///|
-priv struct MyInt(Int) derive(Debug)
+priv struct MyInt(Int32) derive(Debug)
 
 // _ allow in names
 

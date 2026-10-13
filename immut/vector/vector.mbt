@@ -44,7 +44,7 @@ pub fn[A] Vector::singleton(value : A) -> Vector[A] {
 /// Create a persistent vector with a given length and value.
 #as_free_fn
 #owned(value)
-pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
+pub fn[A] Vector::make(len : Int32, value : A) -> Vector[A] {
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
@@ -65,7 +65,10 @@ pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
 ///|
 /// Create a persistent vector with a given length and a function to generate values.
 #as_free_fn
-pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
+pub fn[A] Vector::makei(
+  len : Int32,
+  f : (Int32) -> A raise?,
+) -> Vector[A] raise? {
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
@@ -180,12 +183,12 @@ pub fn[A] Vector::is_empty(self : Vector[A]) -> Bool {
 
 ///|
 /// Returns the number of elements in the vector.
-pub fn[A] Vector::length(self : Vector[A]) -> Int {
+pub fn[A] Vector::length(self : Vector[A]) -> Int32 {
   self.size
 }
 
 ///|
-fn[A] Vector::tail_offset(self : Vector[A]) -> Int {
+fn[A] Vector::tail_offset(self : Vector[A]) -> Int32 {
   self.size - self.tail.length()
 }
 
@@ -204,7 +207,7 @@ fn[A] Vector::tail_offset(self : Vector[A]) -> Int {
 /// }
 /// ```
 #alias("_[_]")
-pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
+pub fn[A] Vector::at(self : Vector[A], index : Int32) -> A {
   guard! index >= 0 && index < self.size
   let tail_offset = self.tail_offset()
   if index >= tail_offset {
@@ -236,7 +239,7 @@ pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
 ///   debug_inspect(v.get(3), content="None")
 /// }
 /// ```
-pub fn[A] Vector::get(self : Vector[A], index : Int) -> A? {
+pub fn[A] Vector::get(self : Vector[A], index : Int32) -> A? {
   guard 0 <= index && index < self.size else { None }
   Some(self[index])
 }
@@ -284,7 +287,7 @@ pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
 /// }
 /// ```
 #owned(value)
-pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
+pub fn[A] Vector::set(self : Vector[A], index : Int32, value : A) -> Vector[A] {
   guard! index >= 0 && index < self.size
   let tail_len = self.tail.length()
   if tail_len == 0 {
@@ -455,7 +458,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
 /// Split the vector into `[0, index)` and `[index, len)`.
 pub fn[A] Vector::split(
   self : Vector[A],
-  index : Int,
+  index : Int32,
 ) -> (Vector[A], Vector[A]) {
   guard 0 <= index && index <= self.size else { abort("Index out of bounds") }
   (self.slice_unchecked(0, index), self.slice_unchecked(index, self.size))
@@ -463,21 +466,25 @@ pub fn[A] Vector::split(
 
 ///|
 /// Return the first `count` elements.
-pub fn[A] Vector::take(self : Vector[A], count : Int) -> Vector[A] {
+pub fn[A] Vector::take(self : Vector[A], count : Int32) -> Vector[A] {
   let end = if count <= 0 { 0 } else { min(count, self.size) }
   self.slice_unchecked(0, end)
 }
 
 ///|
 /// Drop the first `count` elements.
-pub fn[A] Vector::drop(self : Vector[A], count : Int) -> Vector[A] {
+pub fn[A] Vector::drop(self : Vector[A], count : Int32) -> Vector[A] {
   let start = if count <= 0 { 0 } else { min(count, self.size) }
   self.slice_unchecked(start, self.size)
 }
 
 ///|
 /// Return the slice `[start, end)`.
-pub fn[A] Vector::slice(self : Vector[A], start : Int, end : Int) -> Vector[A] {
+pub fn[A] Vector::slice(
+  self : Vector[A],
+  start : Int32,
+  end : Int32,
+) -> Vector[A] {
   guard start <= end else { abort("start index greater than end index") }
   guard 0 <= start && end <= self.size else { abort("Index out of bounds") }
   self.slice_unchecked(start, end)
@@ -593,7 +600,7 @@ pub fn[A] Vector::each(self : Vector[A], f : (A) -> Unit raise?) -> Unit raise? 
 /// ```
 pub fn[A] Vector::eachi(
   self : Vector[A],
-  f : (Int, A) -> Unit raise?,
+  f : (Int32, A) -> Unit raise?,
 ) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
   let tail_offset = self.tail_offset()
@@ -819,7 +826,7 @@ pub impl[A : Compare] Compare for Vector[A] with fn compare(self, other) {
 /// `Array` growth: a collection operation aborts instead of returning a value
 /// whose stored length no longer describes its contents.
 #inline
-fn checked_size_add(size : Int, added : Int) -> Int {
+fn checked_size_add(size : Int32, added : Int32) -> Int32 {
   let required = size + added
   guard required >= size else { abort("Vector capacity overflow") }
   required
@@ -830,8 +837,8 @@ fn checked_size_add(size : Int, added : Int) -> Int {
 fn[A] make_t(
   tree : Tree[A],
   tail : FixedArray[A],
-  size : Int,
-  shift : Int,
+  size : Int32,
+  shift : Int32,
 ) -> Vector[A] {
   { tree, tail, size, shift, }
 }
@@ -849,7 +856,7 @@ fn[A] make_t(
 /// valid `Int`-sized vector may need a root with shift 30, whose element
 /// capacity is 2^35 and cannot itself be represented by `Int`; its leaf count
 /// and shift still can.
-fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], shift : Int) -> Tree[A] {
+fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], shift : Int32) -> Tree[A] {
   guard shift > 0 else { return Leaf(leaves[0]) }
   let child_shift = shift - NUM_BITS
   let leaves_per_child = 1 << child_shift
@@ -871,7 +878,7 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], shift : Int) -> Tree[A] {
 /// Return the smallest tree shift whose capacity can hold `leaf_count` leaves.
 /// Capacity is intentionally measured in leaves: unlike the corresponding
 /// element capacity, it remains representable for every valid Vector length.
-fn shift_of_leaf_count(leaf_count : Int) -> Int {
+fn shift_of_leaf_count(leaf_count : Int32) -> Int32 {
   guard leaf_count >= 0 else { abort("Vector capacity overflow") }
   for capacity = 1, shift = 0; capacity < leaf_count; {
     let next = capacity * BRANCHING_FACTOR
@@ -884,7 +891,7 @@ fn shift_of_leaf_count(leaf_count : Int) -> Int {
 
 ///|
 /// Convert a number of full leaves to an element count without wrapping.
-fn tree_len_of_leaf_count(leaf_count : Int) -> Int {
+fn tree_len_of_leaf_count(leaf_count : Int32) -> Int32 {
   guard leaf_count >= 0 else { abort("Vector capacity overflow") }
   let len = leaf_count * BRANCHING_FACTOR
   guard len / BRANCHING_FACTOR == leaf_count else {
@@ -894,7 +901,7 @@ fn tree_len_of_leaf_count(leaf_count : Int) -> Int {
 }
 
 ///|
-fn tail_len_of_size(size : Int) -> Int {
+fn tail_len_of_size(size : Int32) -> Int32 {
   if size <= BRANCHING_FACTOR {
     size
   } else {
@@ -923,7 +930,7 @@ fn tail_len_of_size(size : Int) -> Int {
 /// unreachable: `Vector::concat` only calls this when the two tails overflow
 /// `BRANCHING_FACTOR` together, so a 1-element left tail forces the right
 /// operand to be exactly one full chunk.
-fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
+fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int32) {
   if self.size == 0 {
     (Tree::empty(), 0)
   } else if self.tail.is_empty() {
@@ -940,8 +947,8 @@ fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
 ///|
 fn[A] Vector::slice_unchecked(
   self : Vector[A],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> Vector[A] {
   let len = end - start
   if len == 0 {

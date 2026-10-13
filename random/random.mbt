@@ -36,7 +36,7 @@ impl Source for @random_source.ChaCha8 with fn next(
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
 pub fn Rand::chacha8(
-  seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456",
+  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456",
 ) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
@@ -85,7 +85,7 @@ test "next" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
-pub fn Rand::int(self : Rand, limit? : Int = 0) -> Int {
+pub fn Rand::int(self : Rand, limit~ : Int32 = 0) -> Int32 {
   if limit < 0 {
     abort("Rand::int: invalid argument limit")
   }
@@ -104,7 +104,7 @@ pub fn Rand::int(self : Rand, limit? : Int = 0) -> Int {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
-pub fn Rand::int64(self : Rand, limit? : Int64 = 0) -> Int64 {
+pub fn Rand::int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
   if limit < 0 {
     abort("Rand::int64: invalid argument limit")
   }
@@ -125,7 +125,7 @@ pub fn Rand::int64(self : Rand, limit? : Int64 = 0) -> Int64 {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^32).
-pub fn Rand::uint(self : Rand, limit? : UInt = 0) -> UInt {
+pub fn Rand::uint(self : Rand, limit~ : UInt32 = 0) -> UInt32 {
   if limit == 0 {
     // Range: [0, 2^32)
     return self.next().to_uint()
@@ -151,7 +151,7 @@ test "uint" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///           When limit is 0, the range is [0, 2^64).
-pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
+pub fn Rand::uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
   if limit == 0 {
     // Range: [0, 2^64)
     return self.next()
@@ -209,8 +209,8 @@ test "UInt64" {
 /// dividing either bound by the selected gamma step would underflow.
 pub fn Rand::double(
   self : Rand,
-  min? : Double = 0.0,
-  max? : Double = 1.0,
+  min~ : Double = 0.0,
+  max~ : Double = 1.0,
 ) -> Double {
   if min == 0.0 && max == 1.0 {
     Double::convert_uint64(self.next() << 11 >> 11) /
@@ -248,8 +248,8 @@ test "double" {
 /// bound has magnitude below `4 * @float.min_positive`.
 pub fn Rand::float(
   self : Rand,
-  min? : Float = 0.0F,
-  max? : Float = 1.0F,
+  min~ : Float = 0.0F,
+  max~ : Float = 1.0F,
 ) -> Float {
   if min == 0.0F && max == 1.0F {
     Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
@@ -428,7 +428,7 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 ///   inspect(n.bit_length() <= 8, content="true")
 /// }
 /// ```
-pub fn Rand::bigint(self : Rand, bits : Int) -> @bigint.BigInt {
+pub fn Rand::bigint(self : Rand, bits : Int32) -> @bigint.BigInt {
   let mod = bits % 8
   let len = if mod == 0 { bits / 8 } else { bits / 8 + 1 }
   let bytes = Bytes::makei(len, i => {
@@ -516,8 +516,8 @@ test "umul128: handles zero correctly" {
 /// ```mbt check
 /// test {
 ///   let r = @random.Rand()
-///   let a : FixedArray[Int] = [1, 2, 3, 4, 5]
-///   r.shuffle(a.length(), (i : Int, j : Int) => {
+///   let a : FixedArray[Int32] = [1, 2, 3, 4, 5]
+///   r.shuffle(a.length(), (i : Int32, j : Int32) => {
 ///     let t = a[i]
 ///     a[i] = a[j]
 ///     a[j] = t
@@ -526,8 +526,8 @@ test "umul128: handles zero correctly" {
 /// ```
 pub fn Rand::shuffle(
   self : Rand,
-  limit : Int,
-  swap : (Int, Int) -> Unit,
+  limit : Int32,
+  swap : (Int32, Int32) -> Unit,
 ) -> Unit {
   if limit < 0 {
     abort("Rand::shuffle: invalid argument limit")
@@ -542,7 +542,7 @@ pub fn Rand::shuffle(
 test "shuffle" {
   let r = Rand::chacha8(seed=fixed_test_seed)
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), (i : Int, j : Int) => {
+  r.shuffle(a.length(), (i : Int32, j : Int32) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t

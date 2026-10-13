@@ -29,7 +29,7 @@ struct StringBuilder {
 /// Returns a new `StringBuilder` instance with the specified initial capacity.
 ///
 #alias(new, deprecated="Use `StringBuilder()` instead")
-pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
+pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 0) -> StringBuilder {
   ignore(size_hint)
   { val: "", }
 }

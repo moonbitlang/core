@@ -15,7 +15,8 @@
 ///|
 test "group_edit handles empty edits" {
   assert_true(
-    group_edits([], old=([] : ArrayView[Int]), new=([] : ArrayView[Int])) is [],
+    group_edits([], old=([] : ArrayView[Int32]), new=([] : ArrayView[Int32]))
+    is [],
   )
 }
 
@@ -28,8 +29,8 @@ test "group_edit splits long equal blocks into multiple hunks" {
   ]
   let groups = group_edits(
     edits,
-    old=([] : ArrayView[Int]),
-    new=([] : ArrayView[Int]),
+    old=([] : ArrayView[Int32]),
+    new=([] : ArrayView[Int32]),
   )
   @test.assert_eq(groups.length(), 2)
   assert_true(

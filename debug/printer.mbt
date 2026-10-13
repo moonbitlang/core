@@ -18,7 +18,7 @@
 /// This is an internal implementation detail of `pretty_print`.
 /// Users should rely on `render` / `pretty_print_delta`.
 priv struct Content {
-  size : Int
+  size : Int32
   lines : Array[String]
   needs_parens : Bool
 }
@@ -28,7 +28,7 @@ priv struct Content {
 ///
 /// This is an internal implementation detail of `pretty_print`.
 priv struct ContentParens {
-  size : Int
+  size : Int32
   lines : Array[String]
 }
 
@@ -53,13 +53,13 @@ fn verbatim(x : String) -> ContentParens {
 
 ///|
 /// Build a `ContentParens` from explicit size and lines.
-fn content_parens(size : Int, lines : Array[String]) -> ContentParens {
+fn content_parens(size : Int32, lines : Array[String]) -> ContentParens {
   { size, lines, }
 }
 
 ///|
 /// Render any `Show` value as a leaf content node.
-fn leaf(x : String, needs_parens? : Bool = false) -> Content {
+fn leaf(x : String, needs_parens~ : Bool = false) -> Content {
   { size: 1, lines: [x], needs_parens, }
 }
 
@@ -227,7 +227,7 @@ fn indent(prefix : String, r : ContentParens) -> ContentParens {
 
 ///|
 /// Indent every line by a fixed number of spaces.
-fn indent_spaces(n : Int, r : ContentParens) -> ContentParens {
+fn indent_spaces(n : Int32, r : ContentParens) -> ContentParens {
   indent(" ".repeat(n), r)
 }
 
@@ -251,7 +251,7 @@ fn indent_spaces(n : Int, r : ContentParens) -> ContentParens {
 fn bracket_seq_lines(
   open : String,
   close : String,
-  indent_by : Int,
+  indent_by : Int32,
   contents : Array[Array[String]],
 ) -> Array[String] {
   match contents {
@@ -432,8 +432,8 @@ fn print_content(r : ContentParens) -> String {
 /// This fixes cases where a structurally small tree expands to a very long single
 /// line (e.g. deeply nested `Cons(...)`).
 fn with_resizing(
-  _root_size : Int,
-  threshold : Int,
+  _root_size : Int32,
+  threshold : Int32,
   rendered_children : Content,
 ) -> Content {
   // `threshold=0` is used by tests/users to force multi-line output.

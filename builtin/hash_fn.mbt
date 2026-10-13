@@ -23,6 +23,6 @@
 ///   inspect(hash(42) == hash(42), content="true")
 /// }
 /// ```
-pub fn[T : Hash] hash(value : T) -> Int {
+pub fn[T : Hash] hash(value : T) -> Int32 {
   Hash::hash(value)
 }

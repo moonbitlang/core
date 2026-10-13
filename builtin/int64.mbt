@@ -41,7 +41,7 @@ pub fn Int64::Int64(self : Int64) -> Int64 = "%identity"
 ///   inspect(Int64::from_int(42), content="42")
 /// }
 /// ```
-pub fn Int64::from_int(i : Int) -> Int64 {
+pub fn Int64::from_int(i : Int32) -> Int64 {
   i.to_int64()
 }
 
@@ -168,7 +168,7 @@ pub impl Hash for Int64 with fn hash_combine(self, hasher) {
 // Avoid the per-call `Hasher()` heap allocation by forwarding to
 // the `UInt64` inline override in `hasher.mbt`. See `Hash for Int
 // with fn hash` for the rationale.
-pub impl Hash for Int64 with fn hash(self : Int64) -> Int {
+pub impl Hash for Int64 with fn hash(self : Int64) -> Int32 {
   Hash::hash(self.reinterpret_as_uint64())
 }
 
@@ -437,7 +437,7 @@ pub impl BitXOr for Int64 with fn lxor(self, other) = "%i64_lxor"
 ///
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
-pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
+pub fn Int64::lsl(self : Int64, other : Int32) -> Int64 = "%i64_shl"
 
 ///|
 /// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
@@ -462,7 +462,7 @@ pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
-pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
+pub fn Int64::shl(self : Int64, other : Int32) -> Int64 = "%i64_shl"
 
 ///|
 /// **DEPRECATED:** Use `UInt64` type and infix operator `>>` instead.
@@ -489,7 +489,7 @@ pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///
 #deprecated("Use UInt64 type and infix operator `>>` instead")
 #coverage.skip
-pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
+pub fn Int64::lsr(self : Int64, other : Int32) -> Int64 = "%u64.shr"
 
 ///|
 /// DEPRECATED: Use the infix operator `>>` instead.
@@ -517,7 +517,7 @@ pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 ///
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
+pub fn Int64::asr(self : Int64, other : Int32) -> Int64 = "%i64_shr"
 
 ///|
 /// Performs an arithmetic right shift operation on a 64-bit integer value,
@@ -543,7 +543,7 @@ pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
-pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
+pub fn Int64::shr(self : Int64, other : Int32) -> Int64 = "%i64_shr"
 
 ///|
 /// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
@@ -617,7 +617,7 @@ pub impl Shr for Int64 with fn shr(self, other) = "%i64_shr"
 ///   inspect(0L.ctz(), content="64") // All zeros
 /// }
 /// ```
-pub fn Int64::ctz(self : Int64) -> Int = "%i64_ctz"
+pub fn Int64::ctz(self : Int64) -> Int32 = "%i64_ctz"
 
 ///|
 /// Counts the number of leading zero bits in a 64-bit signed integer, starting
@@ -639,7 +639,7 @@ pub fn Int64::ctz(self : Int64) -> Int = "%i64_ctz"
 ///   inspect(b.clz(), content="64") // All bits are zero
 /// }
 /// ```
-pub fn Int64::clz(self : Int64) -> Int = "%i64_clz"
+pub fn Int64::clz(self : Int64) -> Int32 = "%i64_clz"
 
 ///|
 /// Returns the number of 1 bits ('population count') in the 64-bit integer's
@@ -667,7 +667,7 @@ pub fn Int64::clz(self : Int64) -> Int = "%i64_clz"
 ///   inspect(0L.popcnt(), content="0") // No bits set
 /// }
 /// ```
-pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
+pub fn Int64::popcnt(self : Int64) -> Int32 = "%i64_popcnt"
 
 ///|
 /// Tests if two 64-bit integers are equal.
@@ -792,7 +792,7 @@ pub impl Default for Int64 with fn default() = "%i64_default"
 ///   inspect(big.to_int(), content="-2147483648") // Truncated to Int.min_value
 /// }
 /// ```
-pub fn Int64::to_int(self : Int64) -> Int = "%i64_to_i32"
+pub fn Int64::to_int(self : Int64) -> Int32 = "%i64_to_i32"
 
 ///|
 /// Converts a 64-bit signed integer to a double-precision floating-point number.
@@ -931,12 +931,6 @@ pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 ///|
-/// Convert `Int64` to `Float` (deprecated alias).
-#deprecated("Use `Float::from_int64` instead")
-/// Convert to `float`.
-pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
-
-///|
 /// Converts an unsigned 32-bit integer to an unsigned 64-bit integer by
 /// zero-extending it. The resulting value preserves the original number's
 /// magnitude while using 64 bits to represent it.
@@ -958,7 +952,7 @@ pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
 ///   inspect(UInt64::extend_uint(max), content="4294967295")
 /// }
 /// ```
-pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
+pub fn UInt64::extend_uint(val : UInt32) -> UInt64 = "%u32.to_u64"
 
 ///|
 /// Converts a 32-bit signed integer to a 64-bit signed integer. All 32-bit
@@ -982,7 +976,7 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 ///   inspect(neg.to_int64(), content="-42")
 /// }
 /// ```
-pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
+pub fn Int32::to_int64(self : Int32) -> Int64 = "%i32_to_i64"
 
 ///|
 /// Converts an unsigned 16-bit integer to a signed 64-bit integer. The resulting
@@ -999,9 +993,9 @@ pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 ///
 /// ```mbt check
 /// test {
-///   let x = Int::to_uint16(42)
+///   let x = Int32::to_uint16(42)
 ///   inspect(x.to_int64(), content="42")
-///   let max = Int::to_uint16(65535) // maximum value of UInt16
+///   let max = Int32::to_uint16(65535) // maximum value of UInt16
 ///   inspect(max.to_int64(), content="65535")
 /// }
 /// ```
@@ -1274,7 +1268,7 @@ pub fn UInt64::to_uint16(self : UInt64) -> UInt16 {
 ///   inspect(small.to_uint(), content="42")
 /// }
 /// ```
-pub fn UInt64::to_uint(self : UInt64) -> UInt = "%u64.to_u32"
+pub fn UInt64::to_uint(self : UInt64) -> UInt32 = "%u64.to_u32"
 
 ///|
 /// Converts an unsigned 64-bit integer to a 32-bit signed integer. The
@@ -1300,7 +1294,7 @@ pub fn UInt64::to_uint(self : UInt64) -> UInt = "%u64.to_u32"
 ///   inspect(b.to_int(), content="-1") // truncated to 32 bits
 /// }
 /// ```
-pub fn UInt64::to_int(self : UInt64) -> Int = "%u64.to_i32"
+pub fn UInt64::to_int(self : UInt64) -> Int32 = "%u64.to_i32"
 
 ///|
 /// Converts an unsigned 64-bit integer to a double-precision floating-point
@@ -1649,7 +1643,7 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 ///
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
-pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+pub fn UInt64::lsl(self : UInt64, shift : Int32) -> UInt64 = "%u64.shl"
 
 ///|
 /// Performs a left shift operation on an unsigned 64-bit integer value, shifting
@@ -1675,7 +1669,7 @@ pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
-pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
+pub fn UInt64::shl(self : UInt64, shift : Int32) -> UInt64 = "%u64.shl"
 
 ///|
 /// Performs a logical right shift on an unsigned 64-bit integer by a specified
@@ -1699,7 +1693,7 @@ pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
-pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+pub fn UInt64::shr(self : UInt64, shift : Int32) -> UInt64 = "%u64.shr"
 
 ///|
 /// Performs a logical right shift operation on a 64-bit unsigned integer. Moves
@@ -1726,7 +1720,7 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
-pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+pub fn UInt64::lsr(self : UInt64, shift : Int32) -> UInt64 = "%u64.shr"
 
 ///|
 /// Performs a bitwise left shift operation on an unsigned 64-bit integer.
@@ -1799,7 +1793,7 @@ pub impl Shr for UInt64 with fn shr(self, shift) = "%u64.shr"
 ///   inspect(0x8000_0000_0000_0000UL.clz(), content="0")
 /// }
 /// ```
-pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
+pub fn UInt64::clz(self : UInt64) -> Int32 = "%u64.clz"
 
 ///|
 /// Counts the number of trailing zero bits in a 64-bit unsigned integer. The
@@ -1823,7 +1817,7 @@ pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
 ///   inspect(y.ctz(), content="64")
 /// }
 /// ```
-pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
+pub fn UInt64::ctz(self : UInt64) -> Int32 = "%u64.ctz"
 
 ///|
 /// Counts the number of bits set to 1 in the binary representation of an
@@ -1844,10 +1838,4 @@ pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 ///   inspect(n.popcnt(), content="14") // Has 14 bits set to 1
 /// }
 /// ```
-pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
-
-///|
-/// Convert `UInt64` to `Float` (deprecated alias).
-#deprecated("Use `Float::from_uint64` instead")
-/// Convert to `float`.
-pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"
+pub fn UInt64::popcnt(self : UInt64) -> Int32 = "%u64.popcnt"

@@ -25,7 +25,7 @@
 #doc(hidden)
 pub fn ArrayView::unsafe_extract_v128_aligned(
   bs : ArrayView[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   v128_load(buffer_to_fixedarray(bs.buf()), bs.start() + byte_offset)
 }
@@ -36,7 +36,7 @@ pub fn ArrayView::unsafe_extract_v128_aligned(
 #doc(hidden)
 pub fn BytesView::unsafe_extract_v128_aligned(
   bs : BytesView,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   v128_load(unsafe_from_bytes(bs.bytes()), bs.start() + byte_offset)
 }
@@ -48,7 +48,7 @@ pub fn BytesView::unsafe_extract_v128_aligned(
 #doc(hidden)
 pub fn Bytes::unsafe_extract_v128_aligned(
   bs : Bytes,
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   v128_load(unsafe_from_bytes(bs), byte_offset)
 }
@@ -59,7 +59,7 @@ pub fn Bytes::unsafe_extract_v128_aligned(
 #doc(hidden)
 pub fn Array::unsafe_extract_v128_aligned(
   bs : Array[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   bs[:].unsafe_extract_v128_aligned(byte_offset)
 }
@@ -70,7 +70,7 @@ pub fn Array::unsafe_extract_v128_aligned(
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_v128_aligned(
   bs : FixedArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   v128_load(bs, byte_offset)
 }
@@ -81,7 +81,7 @@ pub fn FixedArray::unsafe_extract_v128_aligned(
 #doc(hidden)
 pub fn ReadOnlyArray::unsafe_extract_v128_aligned(
   bs : ReadOnlyArray[Byte],
-  byte_offset : Int,
+  byte_offset : Int32,
 ) -> V128 {
   bs
   .unsafe_reinterpret_to_fixed_array()

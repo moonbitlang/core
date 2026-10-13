@@ -14,7 +14,7 @@
 
 ///|
 suberror ParserError {
-  ParserError(at~ : Int, hint~ : String)
+  ParserError(at~ : Int32, hint~ : String)
 } derive(@debug.Debug)
 
 ///|

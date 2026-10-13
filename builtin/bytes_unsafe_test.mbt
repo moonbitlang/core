@@ -215,7 +215,7 @@ test "round-trip test: write then read back" {
 ///|
 test "round-trip test: UInt32" {
   let buffer : FixedArray[Byte] = FixedArray::make(8, 0)
-  let original_32 : UInt = 0x12345678U
+  let original_32 : UInt32 = 0x12345678U
   FixedArray::unsafe_write_uint32_le(buffer, 0, original_32)
   FixedArray::unsafe_write_uint32_be(buffer, 4, original_32)
   let bytes_data = Bytes::from_array(buffer)

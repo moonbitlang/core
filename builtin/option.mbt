@@ -187,7 +187,7 @@ pub fn[T, U] Option::map_or_else(
 ///   let a = Option::Some(5)
 ///   let r1 = a.bind(x => Some(x * 2))
 ///   @test.assert_eq(r1, Some(10))
-///   let b : Int? = None
+///   let b : Int32? = None
 ///   let r2 = b.bind(x => Some(x * 2))
 ///   @test.assert_eq(r2, None)
 /// }

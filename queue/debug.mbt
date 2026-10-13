@@ -22,6 +22,6 @@ pub impl[A : @debug.Debug] @debug.Debug for Queue[A] with fn to_repr(self) {
 
 ///|
 test "Debug for Queue" {
-  let q : Queue[Int] = from_array([1, 2, 3])
+  let q : Queue[Int32] = from_array([1, 2, 3])
   @debug.debug_inspect(q, content="<Queue: [1, 2, 3]>")
 }

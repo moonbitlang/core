@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-fn hex2i(hex : StringView) -> Int {
+fn hex2i(hex : StringView) -> Int32 {
   for c in hex; value = 0 {
     let value = value * 16
     match c {
-      '0'..='9' => continue value + (c.to_int() - '0')
-      'a'..='f' => continue value + (c.to_int() - 'a' + 10)
-      'A'..='F' => continue value + (c.to_int() - 'A' + 10)
+      '0'..<='9' => continue value + (c.to_int() - '0')
+      'a'..<='f' => continue value + (c.to_int() - 'a' + 10)
+      'A'..<='F' => continue value + (c.to_int() - 'A' + 10)
       _ => panic()
     }
   } nobreak {
@@ -34,7 +34,6 @@ fn pattern_map_char(
 ) -> @re.Pattern {
   match pat.desc {
     Capture(name~, pat) => @re.capture(name?, pattern_map_char(pat, f))
-    Preference(pref, pat) => @re.preference(pref, pattern_map_char(pat, f))
     Quantifier(quant, pat) => @re.quantifier(pattern_map_char(pat, f), quant)
     Alternation(pats) => @re.alt(pats.map(p => pattern_map_char(p, f)))
     Sequence(pats) => @re.seq(pats.map(p => pattern_map_char(p, f)))

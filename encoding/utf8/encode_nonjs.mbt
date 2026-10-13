@@ -24,7 +24,11 @@ const UTF8_BOM_2 : Byte = b'\xBF'
 ///|
 #borrow(src)
 #intrinsic("%utf8.len_from_utf16")
-fn utf8_len_from_utf16(src : String, src_offset : Int, src_length : Int) -> Int {
+fn utf8_len_from_utf16(
+  src : String,
+  src_offset : Int32,
+  src_length : Int32,
+) -> Int32 {
   let end = src_offset + src_length
   for index = src_offset, len = 0; index < end; {
     let code = src.unsafe_get(index)
@@ -48,11 +52,11 @@ fn utf8_len_from_utf16(src : String, src_offset : Int, src_length : Int) -> Int 
 #intrinsic("%utf8.encode_from_utf16")
 fn utf8_encode_from_utf16(
   src : String,
-  src_offset : Int,
-  src_length : Int,
+  src_offset : Int32,
+  src_length : Int32,
   dst : FixedArray[Byte],
-  dst_offset : Int,
-) -> Int {
+  dst_offset : Int32,
+) -> Int32 {
   let end = src_offset + src_length
   for index = src_offset, written = 0; index < end; {
     let unit = src.unsafe_get(index)
@@ -113,7 +117,7 @@ fn utf8_encode_from_utf16(
 /// Encodes a string into a UTF-8 byte array.
 ///
 /// Panics if the string contains an invalid surrogate pair.
-pub fn encode(str : StringView, bom? : Bool = false) -> Bytes {
+pub fn encode(str : StringView, bom~ : Bool = false) -> Bytes {
   let src = str.data()
   let src_offset = str.start_offset()
   let src_length = str.length()

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type TestX = Map[String, Int]
+type TestX = Map[String, Int32]
 
 ///|
 test {
@@ -32,7 +32,7 @@ test {
 test {
   let u = Json::array([Json::number(1), Json("str")])
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(u) : Array[Int])),
+    () => ignore((@json.from_json(u) : Array[Int32])),
     "expected Array[Int] decode failure",
   )
   debug_inspect(
@@ -69,71 +69,121 @@ test {
 ///|
 test "tuple" {
   let u : Json = [1, 2]
-  let v : (Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2)")
   let u : Json = [1, 2, 3]
-  let v : (Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3)")
   let u : Json = [1, 2, 3, 4]
-  let v : (Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4)")
   let u : Json = [1, 2, 3, 4, 5]
-  let v : (Int, Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5)")
   let u : Json = [1, 2, 3, 4, 5, 6]
-  let v : (Int, Int, Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7]
-  let v : (Int, Int, Int, Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(
+    u,
+  )
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(u)
+  let v : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(
+    u,
+  )
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+  let v : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(
     u,
   )
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-    u,
-  )
+  let v : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-    u,
-  )
+  let v : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-    u,
-  )
+  let v : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-  let v : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-    u,
-  )
+  let v : (
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+  ) = @json.from_json(u)
   debug_inspect(v, content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)")
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   let v : (
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
   ) = @json.from_json(u)
   debug_inspect(
     v,
@@ -141,22 +191,22 @@ test "tuple" {
   )
   let u : Json = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
   let v : (
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
-    Int,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
+    Int32,
   ) = @json.from_json(u)
   debug_inspect(
     v,
@@ -167,75 +217,135 @@ test "tuple" {
 ///|
 test "tuple roundtrip" {
   let u = [1, 2]
-  debug_inspect((@json.from_json(Json(u)) : (Int, Int)), content="(1, 2)")
+  debug_inspect((@json.from_json(Json(u)) : (Int32, Int32)), content="(1, 2)")
   let u = [1, 2, 3]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int32, Int32, Int32)),
     content="(1, 2, 3)",
   )
   let u = [1, 2, 3, 4]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4)",
   )
   let u = [1, 2, 3, 4, 5]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5)",
   )
   let u = [1, 2, 3, 4, 5, 6]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int32, Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5, 6)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int)),
+    (
+      @json.from_json(Json(u)) :
+      (Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5, 6, 7)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int, Int)),
+    (
+      @json.from_json(Json(u)) :
+      (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5, 6, 7, 8)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   debug_inspect(
-    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    (
+      @json.from_json(Json(u)) :
+      (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   debug_inspect(
     (
       @json.from_json(Json(u)) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+      (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
   debug_inspect(
     (
       @json.from_json(Json(u)) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+      (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   debug_inspect(
     (
       @json.from_json(Json(u)) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+      (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
   debug_inspect(
     (
       @json.from_json(Json(u)) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+      (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
   debug_inspect(
     (
       @json.from_json(Json(u)) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+      (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -243,21 +353,21 @@ test "tuple roundtrip" {
     (
       @json.from_json(Json(u)) :
       (
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
       )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)",
   )
@@ -266,22 +376,22 @@ test "tuple roundtrip" {
     (
       @json.from_json(Json(u)) :
       (
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
       )),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)",
   )
@@ -291,7 +401,7 @@ test "tuple roundtrip" {
 test "tuple failure" {
   let u = [1, 2]
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json(u)) : (Int, Int, Int))),
+    () => ignore((@json.from_json(Json(u)) : (Int32, Int32, Int32))),
     "expected tuple size error",
   )
   inspect(
@@ -303,7 +413,9 @@ test "tuple failure" {
   let u = ((1, 2), (3, 4))
   let err = expect_json_decode_error(
     () => {
-      ignore((@json.from_json(@json.ToJson::to_json(u)) : ((Int, Int), Int)))
+      ignore(
+        (@json.from_json(@json.ToJson::to_json(u)) : ((Int32, Int32), Int32)),
+      )
     },
     "expected tuple element error",
   )
@@ -318,7 +430,7 @@ test "tuple failure" {
 ///|
 test "fixedarray" {
   let u = ([1, 2] : FixedArray[_])
-  let v : FixedArray[Int] = @json.from_json(Json(u))
+  let v : FixedArray[Int32] = @json.from_json(Json(u))
   debug_inspect(
     v,
     content=(
@@ -353,11 +465,11 @@ test "fixedarray" {
 
 ///|
 test "Option" {
-  let u : Json = Json((None : Int?))
-  let v : Int? = @json.from_json(u)
+  let u : Json = Json((None : Int32?))
+  let v : Int32? = @json.from_json(u)
   debug_inspect(v, content="None")
   let u = Json(Some(1))
-  let v : Int? = @json.from_json(u)
+  let v : Int32? = @json.from_json(u)
   debug_inspect(v, content="Some(1)")
   let nested : Json = Json((Some(None) : Unit??))
   let v : Unit?? = @json.from_json(nested)
@@ -369,11 +481,11 @@ test "Option" {
 
 ///|
 test "Result" {
-  let u : Json = Json((Ok(1) : Result[Int, String]))
-  let v : Result[Int, String] = @json.from_json(u)
+  let u : Json = Json((Ok(1) : Result[Int32, String]))
+  let v : Result[Int32, String] = @json.from_json(u)
   debug_inspect(v, content="Ok(1)")
-  let u = Json((Err("error") : Result[Int, String]))
-  let v : Result[Int, String] = @json.from_json(u)
+  let u = Json((Err("error") : Result[Int32, String]))
+  let v : Result[Int32, String] = @json.from_json(u)
   inspect(v.unwrap_err(), content="error")
 }
 
@@ -439,31 +551,31 @@ test "bool roundtrip" {
 ///|
 test "int roundtrip" {
   let u = Json(123)
-  let v : Int = @json.from_json(u)
+  let v : Int32 = @json.from_json(u)
   inspect(v, content="123")
   let u = Json(-123)
-  let v : Int = @json.from_json(u)
+  let v : Int32 = @json.from_json(u)
   inspect(v, content="-123")
 }
 
 ///|
 test "uint roundtrip" {
   let u = Json(123U)
-  let v : UInt = @json.from_json(u)
+  let v : UInt32 = @json.from_json(u)
   inspect(v, content="123")
   let u = Json(4294967295U)
-  let v : UInt = @json.from_json(u)
+  let v : UInt32 = @json.from_json(u)
   inspect(v, content="4294967295")
 }
 
 ///|
 test "uint" {
   // valid max
-  let v : UInt = @json.from_json(Json::number(4294967295))
+  let v : UInt32 = @json.from_json(Json::number(4294967295))
   inspect(v, content="4294967295")
   // negative should error
   let neg_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json::number(-1)) : UInt)),
+    () => ignore((@json.from_json(Json::number(-1)) : UInt32)),
     "expected UInt overflow",
   )
   debug_inspect(
@@ -474,7 +586,7 @@ test "uint" {
   )
   // overflow should error
   let ovf_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json::number(4294967296)) : UInt)),
+    () => ignore((@json.from_json(Json::number(4294967296)) : UInt32)),
     "expected UInt overflow",
   )
   debug_inspect(
@@ -490,7 +602,7 @@ test "Int from_json overflow should error" {
   let json = @json.parse("2147483648") // INT_MAX + 1 for 32-bit
   ignore(
     expect_json_decode_error(
-      () => ignore((@json.from_json(json) : Int)),
+      () => ignore((@json.from_json(json) : Int32)),
       "BUG: Int overflow not detected",
     ),
   )
@@ -501,7 +613,7 @@ test "Int from_json negative overflow should error" {
   let json = @json.parse("-2147483649") // INT_MIN - 1 for 32-bit
   ignore(
     expect_json_decode_error(
-      () => ignore((@json.from_json(json) : Int)),
+      () => ignore((@json.from_json(json) : Int32)),
       "BUG: Int negative overflow not detected",
     ),
   )
@@ -512,7 +624,7 @@ test "UInt from_json overflow should error" {
   let json = @json.parse("4294967296") // UINT_MAX + 1 for 32-bit
   ignore(
     expect_json_decode_error(
-      () => ignore((@json.from_json(json) : UInt)),
+      () => ignore((@json.from_json(json) : UInt32)),
       "BUG: UInt overflow not detected",
     ),
   )
@@ -679,7 +791,7 @@ test "Int64 from_json error handling" {
 test "UInt from_json error handling" {
   let json_string = Json("123")
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_string) : UInt)),
+    () => ignore((@json.from_json(json_string) : UInt32)),
     "expected UInt decode failure",
   )
   debug_inspect(
@@ -813,7 +925,7 @@ test "BigInt from_json error handling" {
 test "Array from_json error handling" {
   let json_string = Json("not an array")
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_string) : Array[Int])),
+    () => ignore((@json.from_json(json_string) : Array[Int32])),
     "expected Array decode failure",
   )
   debug_inspect(
@@ -828,7 +940,7 @@ test "Array from_json error handling" {
 test "FixedArray from_json error handling" {
   let json_string = Json("not an array")
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_string) : FixedArray[Int])),
+    () => ignore((@json.from_json(json_string) : FixedArray[Int32])),
     "expected FixedArray decode failure",
   )
   debug_inspect(
@@ -843,7 +955,7 @@ test "FixedArray from_json error handling" {
 test "Map from_json error handling" {
   let json_array = Json::array([])
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_array) : Map[String, Int])),
+    () => ignore((@json.from_json(json_array) : Map[String, Int32])),
     "expected Map decode failure",
   )
   debug_inspect(
@@ -858,7 +970,7 @@ test "Map from_json error handling" {
 test "Option from_json error handling" {
   let json_string = Json("not an option")
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_string) : Int?)),
+    () => ignore((@json.from_json(json_string) : Int32?)),
     "expected Option decode failure",
   )
   debug_inspect(
@@ -873,7 +985,7 @@ test "Option from_json error handling" {
 test "Result from_json error handling" {
   let json_string = Json("not a result")
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_string) : Result[Int, String])),
+    () => ignore((@json.from_json(json_string) : Result[Int32, String])),
     "expected Result decode failure",
   )
   debug_inspect(
@@ -884,7 +996,7 @@ test "Result from_json error handling" {
   )
   let json_empty_obj = Json::empty_object()
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_empty_obj) : Result[Int, String])),
+    () => ignore((@json.from_json(json_empty_obj) : Result[Int32, String])),
     "expected Result decode failure",
   )
   debug_inspect(
@@ -895,7 +1007,7 @@ test "Result from_json error handling" {
   )
   let json_invalid_obj = Json::object({ "Invalid": Json::number(1) })
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_invalid_obj) : Result[Int, String])),
+    () => ignore((@json.from_json(json_invalid_obj) : Result[Int32, String])),
     "expected Result decode failure",
   )
   debug_inspect(
@@ -1040,7 +1152,7 @@ test "Float from_json error handling" {
 ///|
 test "ArrayView::from_json" {
   let u = Json::array([Json::number(1), Json::number(2), Json::number(3)])
-  let v : ArrayView[Int] = @json.from_json(u)
+  let v : ArrayView[Int32] = @json.from_json(u)
   debug_inspect(
     v,
     content=(
@@ -1058,7 +1170,7 @@ test "from_json special cases" {
   let neg_inf_value : Double = @json.from_json(Json("-Infinity"))
   @json.json_inspect(neg_inf_value, content="-Infinity")
   let array_view_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json("oops")) : ArrayView[Int])),
+    () => ignore((@json.from_json(Json("oops")) : ArrayView[Int32])),
     "expected ArrayView::from_json error",
   )
   guard array_view_err
@@ -1095,42 +1207,52 @@ test "from_json special cases" {
 test "tuple size mismatch" {
   let wrong = Json([1])
   let err2 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int))),
+    () => ignore((@json.from_json(wrong) : (Int32, Int32))),
     "expected size 2 error",
   )
   guard err2 is JsonDecodeError((_, "expected tuple of size 2")) else {
     fail("expected size 2 error")
   }
   let err3 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int, Int))),
+    () => ignore((@json.from_json(wrong) : (Int32, Int32, Int32))),
     "expected size 3 error",
   )
   guard err3 is JsonDecodeError((_, "expected tuple of size 3")) else {
     fail("expected size 3 error")
   }
   let err4 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int))),
+    () => ignore((@json.from_json(wrong) : (Int32, Int32, Int32, Int32))),
     "expected size 4 error",
   )
   guard err4 is JsonDecodeError((_, "expected tuple of size 4")) else {
     fail("expected size 4 error")
   }
   let err5 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int))),
+    () => ignore((@json.from_json(wrong) : (Int32, Int32, Int32, Int32, Int32))),
     "expected size 5 error",
   )
   guard err5 is JsonDecodeError((_, "expected tuple of size 5")) else {
     fail("expected size 5 error")
   }
   let err6 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int))),
+    () => {
+      ignore(
+        (@json.from_json(wrong) : (Int32, Int32, Int32, Int32, Int32, Int32)),
+      )
+    },
     "expected size 6 error",
   )
   guard err6 is JsonDecodeError((_, "expected tuple of size 6")) else {
     fail("expected size 6 error")
   }
   let err7 = expect_json_decode_error(
-    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int, Int))),
+    () => {
+      ignore(
+        (
+          @json.from_json(wrong) :
+          (Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
+      )
+    },
     "expected size 7 error",
   )
   guard err7 is JsonDecodeError((_, "expected tuple of size 7")) else {
@@ -1139,7 +1261,9 @@ test "tuple size mismatch" {
   let err8 = expect_json_decode_error(
     () => {
       ignore(
-        (@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int, Int, Int)),
+        (
+          @json.from_json(wrong) :
+          (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32)),
       )
     },
     "expected size 8 error",
@@ -1149,7 +1273,7 @@ test "tuple size mismatch" {
   }
   let err9 = expect_json_decode_error(
     () => {
-      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+      let _ : (Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32) = @json.from_json(
         wrong,
       )
       ()
@@ -1161,9 +1285,18 @@ test "tuple size mismatch" {
   }
   let err10 = expect_json_decode_error(
     () => {
-      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-        wrong,
-      )
+      let _ : (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      ) = @json.from_json(wrong)
       ()
     },
     "expected size 10 error",
@@ -1173,9 +1306,19 @@ test "tuple size mismatch" {
   }
   let err11 = expect_json_decode_error(
     () => {
-      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-        wrong,
-      )
+      let _ : (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      ) = @json.from_json(wrong)
       ()
     },
     "expected size 11 error",
@@ -1185,9 +1328,20 @@ test "tuple size mismatch" {
   }
   let err12 = expect_json_decode_error(
     () => {
-      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-        wrong,
-      )
+      let _ : (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      ) = @json.from_json(wrong)
       ()
     },
     "expected size 12 error",
@@ -1197,9 +1351,21 @@ test "tuple size mismatch" {
   }
   let err13 = expect_json_decode_error(
     () => {
-      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
-        wrong,
-      )
+      let _ : (
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+      ) = @json.from_json(wrong)
       ()
     },
     "expected size 13 error",
@@ -1210,20 +1376,20 @@ test "tuple size mismatch" {
   let err14 = expect_json_decode_error(
     () => {
       let _ : (
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
       ) = @json.from_json(wrong)
       ()
     },
@@ -1235,21 +1401,21 @@ test "tuple size mismatch" {
   let err15 = expect_json_decode_error(
     () => {
       let _ : (
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
       ) = @json.from_json(wrong)
       ()
     },
@@ -1261,22 +1427,22 @@ test "tuple size mismatch" {
   let err16 = expect_json_decode_error(
     () => {
       let _ : (
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
-        Int,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
+        Int32,
       ) = @json.from_json(wrong)
       ()
     },

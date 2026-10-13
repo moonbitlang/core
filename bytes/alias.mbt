@@ -24,7 +24,7 @@ pub fn default() -> Bytes {
 /// Create from `fixedarray`.
 #deprecated("Use `Bytes::from_array` instead")
 #doc(hidden)
-pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
+pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int32) -> Bytes {
   Bytes::from_array(arr.exact_view(end=len.unwrap_or(arr.length())))
 }
 

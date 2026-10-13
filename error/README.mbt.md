@@ -9,7 +9,7 @@ MoonBit uses a structured error system with `raise` and `try` constructs:
 ```mbt check
 ///|
 test "basic error handling" {
-  fn divide(a : Int, b : Int) -> Int raise {
+  fn divide(a : Int32, b : Int32) -> Int32 raise {
     if b == 0 {
       raise Failure::Failure("Division by zero")
     } else {
@@ -88,7 +88,7 @@ The builtin package provides `Show` and `ToJson` implementations:
 // Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 priv suberror MyError {
-  MyError(Int)
+  MyError(Int32)
 } derive(ToJson)
 
 ///|
@@ -125,7 +125,7 @@ suberror FileError {
 
 ///|
 test "error propagation" {
-  fn parse_number(s : String) -> Int raise ParseError {
+  fn parse_number(s : String) -> Int32 raise ParseError {
     if s == "42" {
       42
     } else {
@@ -133,7 +133,7 @@ test "error propagation" {
     }
   }
 
-  fn read_and_parse(content : String) -> Int raise {
+  fn read_and_parse(content : String) -> Int32 raise {
     parse_number(content) catch {
       ParseError(msg) => raise FileError("Parse failed: " + msg)
     }
@@ -240,7 +240,7 @@ test "error composition" {
 2. **Provide meaningful messages**: Include context and actionable information in error messages
 3. **Handle errors at appropriate levels**: Don't catch errors too early; let them propagate to where they can be properly handled
 4. **Use `try!` for operations that should not fail**: This will panic if an error occurs, making failures visible during development
-5. **Use `try?` for recoverable errors**: This returns a `Result` type that can be pattern matched
+5. **Convert recoverable errors to `Result` explicitly**: Write `Ok(f()) catch { e => Err(e) }` to get a `Result` that can be pattern matched
 6. **Implement proper cleanup**: Use the `protect` pattern or similar constructs for resource management
 
 ## Performance Notes
