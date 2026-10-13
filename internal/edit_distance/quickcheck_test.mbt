@@ -132,7 +132,8 @@ fn narrow(values : ArrayView[Int32], alphabet : Int32) -> Array[Int32] {
 ///|
 /// Checks both entry points against the oracle for one pair, at every
 /// distance bound from `-1` (which must always be rejected) to one past
-/// the largest possible distance.
+/// the largest possible distance. Both argument orders are checked, so
+/// exhaustive sweeps only need to visit each unordered pair once.
 fn check_pair(a : Array[Int32], b : Array[Int32]) -> Bool {
   let expected = oracle(a, b)
   // the exact distance, and its symmetry
@@ -164,8 +165,8 @@ test "exhaustive: every pair of binary words up to length 6" {
   // where the `lo`/`hi` clamping and the row sealing are most likely to
   // be off by one.
   let words = all_words(2, 6)
-  for a in words {
-    for b in words {
+  for i, a in words {
+    for b in words[i:] {
       assert_true(check_pair(a, b))
     }
   }
@@ -176,8 +177,8 @@ test "exhaustive: every pair of ternary words up to length 4" {
   // A larger alphabet makes partial matches, and so substitutions,
   // much more common than in the binary sweep.
   let words = all_words(3, 4)
-  for a in words {
-    for b in words {
+  for i, a in words {
+    for b in words[i:] {
       assert_true(check_pair(a, b))
     }
   }

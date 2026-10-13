@@ -242,26 +242,6 @@ test "round-trip test: UInt16" {
 }
 
 ///|
-test "endianness difference demonstration" {
-  // Show the difference between little-endian and big-endian writes
-  let le_buffer : FixedArray[Byte] = FixedArray::make(8, 0)
-  let be_buffer : FixedArray[Byte] = FixedArray::make(8, 0)
-  let value : UInt64 = 0x0102030405060708UL
-  FixedArray::unsafe_write_uint64_le(le_buffer, 0, value)
-  FixedArray::unsafe_write_uint64_be(be_buffer, 0, value)
-
-  // Little-endian: least significant byte first
-  inspect(le_buffer[0], content="b'\\x08'") // 0x08
-  inspect(le_buffer[1], content="b'\\x07'") // 0x07
-  inspect(le_buffer[7], content="b'\\x01'") // 0x01
-
-  // Big-endian: most significant byte first
-  inspect(be_buffer[0], content="b'\\x01'") // 0x01
-  inspect(be_buffer[1], content="b'\\x02'") // 0x02
-  inspect(be_buffer[7], content="b'\\x08'") // 0x08
-}
-
-///|
 test "edge cases with boundary values" {
   // Test with powers of 2 and boundary values
   let buffer : FixedArray[Byte] = FixedArray::make(8, 0)

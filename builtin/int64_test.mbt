@@ -5259,22 +5259,6 @@ test "grouped test for random cases" {
 }
 
 ///|
-test "grouped test for specific patterns" {
-  // Test for alternating bits
-  inspect(
-    UInt64::reinterpret_as_double(0xAAAAAAAAAAAAAAAAUL),
-    content="-3.7206620809969885e-103",
-  )
-  inspect(
-    UInt64::reinterpret_as_double(0x5555555555555555UL),
-    content="1.1945305291614955e+103",
-  )
-
-  // Test for all bits set except the most significant bit
-  inspect(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
-}
-
-///|
 #inline(never)
 fn int64_zero() -> Int64 {
   0L

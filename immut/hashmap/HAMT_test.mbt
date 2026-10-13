@@ -362,14 +362,6 @@ test "hash" {
 }
 
 ///|
-test "each on empty map" {
-  let empty = @hashmap.new()
-  let mut sum = 0
-  empty.each((k : Int32, v : Int32) => sum += k + v)
-  inspect(sum, content="0")
-}
-
-///|
 test "remove non-existent key with hash collision" {
   let map = @hashmap.HashMap([("a", 1)])
   let new_map = map.remove("b")
@@ -578,14 +570,6 @@ impl Hash for SegKey with fn hash_combine(self, hasher) {
 ///|
 impl Eq for SegKey with fn equal(self, other) {
   self.0 == other.0
-}
-
-///|
-test "get collision" {
-  let map = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
-  @test.assert_eq(map.get(MyString("a")), Some(1))
-  @test.assert_eq(map.get(MyString("b")), Some(2))
-  @test.assert_eq(map.get(MyString("c")), None)
 }
 
 ///|

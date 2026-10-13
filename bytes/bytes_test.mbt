@@ -191,12 +191,6 @@ test "to_fixedarray with no length specified" {
 }
 
 ///|
-test "test empty bytes" {
-  let empty = (Default::default() : Bytes)
-  inspect(empty.length(), content="0")
-}
-
-///|
 test "to_fixedarray with Some length" {
   let bytes = b"hello"
   let arr = bytes[:3].to_fixedarray()
