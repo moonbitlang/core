@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn Regex::width(self : Regex) -> Int {
+fn Regex::width(self : Regex) -> Int32 {
   self.nsym + 1
 }
 
@@ -21,30 +21,30 @@ fn Regex::width(self : Regex) -> Int {
 /// Encode a state without threads that holds a match, as a negative table
 /// entry that stops the scan loop. Terminal states take every other entry
 /// below `DEAD`, transitions that move registers the entries in between.
-fn terminal(state : Int) -> Int {
+fn terminal(state : Int32) -> Int32 {
   DEAD - 1 - 2 * state
 }
 
 ///|
-fn terminal_state(entry : Int) -> Int {
+fn terminal_state(entry : Int32) -> Int32 {
   (DEAD - 1 - entry) / 2
 }
 
 ///|
 /// Encode a transition that moves registers, as a negative table entry that
 /// takes the scan loop off its fast path.
-fn moving(index : Int) -> Int {
+fn moving(index : Int32) -> Int32 {
   DEAD - 2 - 2 * index
 }
 
 ///|
-fn is_moving(entry : Int) -> Bool {
+fn is_moving(entry : Int32) -> Bool {
   entry < DEAD && ((DEAD - 1 - entry) & 1) == 1
 }
 
 ///|
 /// Move registers as `pairs` says: the value of each `from` goes to its `to`.
-fn Regex::move_registers(self : Regex, pairs : FixedArray[Int]) -> Unit {
+fn Regex::move_registers(self : Regex, pairs : FixedArray[Int32]) -> Unit {
   let count = pairs.length() / 2
   if self.move_values.length() < count {
     self.move_values = FixedArray::make(count, 0)
@@ -63,7 +63,7 @@ fn Regex::move_registers(self : Regex, pairs : FixedArray[Int]) -> Unit {
 /// Take a transition that moves registers, after the register of the
 /// transition itself has been written. Returns the table entry of the state
 /// entered.
-fn Regex::follow(self : Regex, entry : Int) -> Int {
+fn Regex::follow(self : Regex, entry : Int32) -> Int32 {
   let taken = self.moves[(DEAD - 2 - entry) / 2]
   self.move_registers(taken.pairs)
   taken.target
@@ -87,18 +87,22 @@ fn Regex::flush(self : Regex) -> Unit {
 
 ///|
 /// Words a new state with this key adds to the cache.
-fn Regex::cost(self : Regex, key : FixedArray[Int]) -> Int {
+fn Regex::cost(self : Regex, key : FixedArray[Int32]) -> Int32 {
   key.length() + 2 * self.width()
 }
 
 ///|
 /// Add a state that is known not to be cached yet and return its index.
-fn Regex::insert(self : Regex, key : FixedArray[Int], threads : Int) -> Int {
+fn Regex::insert(
+  self : Regex,
+  key : FixedArray[Int32],
+  threads : Int32,
+) -> Int32 {
   let width = self.width()
   let state = self.kernels.length()
   let needed = (state + 1) * width
   if needed > self.trans.length() {
-    let capacity = Int::max(needed, self.trans.length() * 2)
+    let capacity = Int32::max(needed, self.trans.length() * 2)
     self.trans = FixedArray::make_and_blit(
       self.trans,
       allocate_len=capacity,
@@ -128,14 +132,14 @@ fn Regex::insert(self : Regex, key : FixedArray[Int], threads : Int) -> Int {
 ///|
 /// Scratch space to number the registers of a key in order of appearance.
 priv struct Ranks {
-  rank : FixedArray[Int]
+  rank : FixedArray[Int32]
   /// `rank[r]` is valid when `stamp[r] == epoch`.
-  stamp : FixedArray[Int]
-  mut epoch : Int
+  stamp : FixedArray[Int32]
+  mut epoch : Int32
 }
 
 ///|
-fn Ranks::new(registers : Int) -> Ranks {
+fn Ranks::new(registers : Int32) -> Ranks {
   {
     rank: FixedArray::make(registers, 0),
     stamp: FixedArray::make(registers, 0),
@@ -147,7 +151,7 @@ fn Ranks::new(registers : Int) -> Ranks {
 /// Hash of a state key that does not depend on which registers it uses:
 /// every register is replaced by its rank in order of first appearance. Two
 /// states that are the same up to a renaming of registers hash alike.
-fn shape_hash(key : FixedArray[Int], threads : Int, ranks : Ranks) -> Int {
+fn shape_hash(key : FixedArray[Int32], threads : Int32, ranks : Ranks) -> Int32 {
   ranks.epoch += 1
   let epoch = ranks.epoch
   let hasher = Hasher()
@@ -177,9 +181,9 @@ fn shape_hash(key : FixedArray[Int], threads : Int, ranks : Ranks) -> Int {
 
 ///|
 fn add_shape(
-  shapes : @hashmap.HashMap[Int, Array[Int]],
-  hash : Int,
-  state : Int,
+  shapes : @hashmap.HashMap[Int32, Array[Int32]],
+  hash : Int32,
+  state : Int32,
 ) -> Unit {
   match shapes.get(hash) {
     Some(states) => states.push(state)
@@ -193,10 +197,10 @@ fn add_shape(
 /// register that plays its part in `state`, and `-1` for the others.
 fn Regex::renaming(
   self : Regex,
-  key : FixedArray[Int],
-  threads : Int,
-  state : Int,
-) -> FixedArray[Int]? {
+  key : FixedArray[Int32],
+  threads : Int32,
+  state : Int32,
+) -> FixedArray[Int32]? {
   let other = self.kernels[state]
   let theirs = other.key
   guard other.threads == threads && theirs.length() == key.length() else {
@@ -245,9 +249,9 @@ fn Regex::renaming(
 /// pays for it by moving the values to the registers that state reads.
 fn Regex::reuse(
   self : Regex,
-  key : FixedArray[Int],
-  threads : Int,
-) -> (Int, FixedArray[Int])? {
+  key : FixedArray[Int32],
+  threads : Int32,
+) -> (Int32, FixedArray[Int32])? {
   let shapes = match self.shapes {
     Some(shapes) => shapes
     None => {
@@ -265,7 +269,7 @@ fn Regex::reuse(
   // The oldest copy has the longest run of cached transitions ahead of it.
   for state in candidates {
     guard self.renaming(key, threads, state) is Some(forward) else { continue }
-    let pairs : Array[Int] = []
+    let pairs : Array[Int32] = []
     for register, target in forward {
       if target >= 0 && target != register {
         pairs.push(register)
@@ -279,13 +283,13 @@ fn Regex::reuse(
 
 ///|
 /// Row base of the start state under look-behind context `ctx`.
-fn Regex::start_base(self : Regex, ctx : Int) -> Int {
+fn Regex::start_base(self : Regex, ctx : Int32) -> Int32 {
   let base = self.start_bases[ctx]
   if base != UNKNOWN {
     return base
   }
   // One thread at the entry node that has set no tag yet.
-  let key : FixedArray[Int] = [ctx, 0, self.entry, 0]
+  let key : FixedArray[Int32] = [ctx, 0, self.entry, 0]
   let state = match self.state_ids.get(key) {
     Some(state) => state
     None => self.insert(key, 1)
@@ -297,13 +301,13 @@ fn Regex::start_base(self : Regex, ctx : Int) -> Int {
 
 ///|
 /// Largest generation stamp handed out before the marks are cleared.
-const EPOCH_LIMIT : Int = 0x7fffffff
+const EPOCH_LIMIT : Int32 = 0x7fffffff
 
 ///|
 /// A fresh generation stamp for the `visited` and `targeted` marks of one
 /// `build`. Before the counter can wrap onto a stamp that is still stored in
 /// the marks (including the initial `0`), the marks are cleared.
-fn Regex::next_epoch(self : Regex) -> Int {
+fn Regex::next_epoch(self : Regex) -> Int32 {
   if self.epoch >= EPOCH_LIMIT {
     self.visited.fill(0)
     self.targeted.fill(0)
@@ -338,7 +342,12 @@ fn Regex::next_epoch(self : Regex) -> Int {
 /// registers for as long as it lives. Every tag set by one transition has the
 /// same value, so a transition needs at most one fresh register, and taking
 /// it is a single store.
-fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
+fn Regex::build(
+  self : Regex,
+  base : Int32,
+  column : Int32,
+  pos : Int32,
+) -> Int32 {
   let nodes = self.nodes
   let width = self.width()
   let kernel = self.kernels[base / width]
@@ -347,10 +356,10 @@ fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
   let epoch = self.next_epoch()
   let visited = self.visited
   let targeted = self.targeted
-  let out_nodes : Array[Int] = []
-  let out_tags : Array[FixedArray[Int]] = []
-  let mut accept : FixedArray[Int]? = None
-  let stack : Array[(Int, FixedArray[Int])] = []
+  let out_nodes : Array[Int32] = []
+  let out_tags : Array[FixedArray[Int32]] = []
+  let mut accept : FixedArray[Int32]? = None
+  let stack : Array[(Int32, FixedArray[Int32])] = []
   let threads = kernel.threads
   let ctx = kernel.ctx()
   let mut offset = 2 + threads
@@ -429,7 +438,7 @@ fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
   if slot >= self.regs.length() {
     self.regs = FixedArray::make_and_blit(
       self.regs,
-      allocate_len=Int::max(slot + 1, self.regs.length() * 2),
+      allocate_len=Int32::max(slot + 1, self.regs.length() * 2),
       init=-1,
       len=self.regs.length(),
     )
@@ -456,7 +465,7 @@ fn Regex::build(self : Regex, base : Int, column : Int, pos : Int) -> Int {
     }
     at += 1 + tags.length()
   }
-  let encode = (state : Int) => {
+  let encode = (state : Int32) => {
     if count == 0 {
       terminal(state)
     } else {

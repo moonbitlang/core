@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn descending_sorted(xs : Array[Int]) -> Array[Int] {
+fn descending_sorted(xs : Array[Int32]) -> Array[Int32] {
   let sorted = xs.copy()
   sorted.sort()
   sorted.rev_in_place()
@@ -21,7 +21,7 @@ fn descending_sorted(xs : Array[Int]) -> Array[Int] {
 }
 
 ///|
-fn model_peek(model : Array[Int]) -> Int? {
+fn model_peek(model : Array[Int32]) -> Int32? {
   guard !model.is_empty() else { return None }
   let mut best = model[0]
   for x in model {
@@ -33,7 +33,7 @@ fn model_peek(model : Array[Int]) -> Int? {
 }
 
 ///|
-fn model_pop(model : Array[Int]) -> Int? {
+fn model_pop(model : Array[Int32]) -> Int32? {
   guard !model.is_empty() else { return None }
   let mut idx = 0
   for i, x in model {
@@ -50,9 +50,9 @@ fn model_pop(model : Array[Int]) -> Int? {
 /// the meld/merges (sift) machinery completely.
 test "quickcheck: draining from_array yields descending sorted order" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let queue = @priority_queue.from_array(xs)
-      let drained : Array[Int] = []
+      let drained : Array[Int32] = []
       while queue.pop() is Some(x) {
         drained.push(x)
       }
@@ -70,10 +70,10 @@ test "quickcheck: draining from_array yields descending sorted order" {
 /// with equal keys. Duplicates stress tie-handling in meld ordering.
 test "quickcheck: draining with heavy duplication stays sorted" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let dups = xs.map(x => x % 8)
       let queue = @priority_queue.from_array(dups)
-      let drained : Array[Int] = []
+      let drained : Array[Int32] = []
       while queue.pop() is Some(x) {
         drained.push(x)
       }
@@ -89,9 +89,9 @@ test "quickcheck: draining with heavy duplication stays sorted" {
 /// pop results, length and emptiness must agree with a plain-array model.
 test "quickcheck: interleaved push/pop agrees with an array model" {
   @quickcheck.check(
-    (ops : Array[(Int, Int)]) => {
-      let queue : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
-      let model : Array[Int] = []
+    (ops : Array[(Int32, Int32)]) => {
+      let queue : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
+      let model : Array[Int32] = []
       for op in ops {
         // A small value space deliberately generates many equal keys.
         let value = op.0 % 8
@@ -120,7 +120,7 @@ test "quickcheck: interleaved push/pop agrees with an array model" {
 /// without consuming the queue, and peek is exactly the head of that view.
 test "quickcheck: to_array/iter are descending views and peek is their head" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let queue = @priority_queue.from_iter(xs.iter())
       let expected = descending_sorted(xs)
       let head = if expected.is_empty() { None } else { Some(expected[0]) }
@@ -139,7 +139,7 @@ test "quickcheck: to_array/iter are descending views and peek is their head" {
 /// must not resurrect anything in the drained copy.
 test "quickcheck: copy is independent of the original" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
+    (xs : Array[Int32]) => {
       let original = @priority_queue.from_array(xs)
       let snapshot = original.to_array()
       let copied = original.copy()

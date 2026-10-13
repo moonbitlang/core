@@ -20,7 +20,7 @@
 
 ///|
 /// Build the reference array for the identity vector `0, 1, ..., n-1`.
-fn ident(n : Int) -> Array[Int] {
+fn ident(n : Int32) -> Array[Int32] {
   Array::makei(n, i => i)
 }
 

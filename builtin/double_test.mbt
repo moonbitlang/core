@@ -216,6 +216,6 @@ test "Double::min and Double::max with NaN" {
 ///|
 test "equal double signed zero values hash equally" {
   inspect(Hash::hash(0.0) == Hash::hash(-0.0), content="true")
-  let map : Map[Double, Int] = { 0.0: 42 }
+  let map : Map[Double, Int32] = { 0.0: 42 }
   inspect(map.get(-0.0) == Some(42), content="true")
 }

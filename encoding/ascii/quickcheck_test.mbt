@@ -20,7 +20,7 @@
 
 ///|
 /// A valid ASCII byte biased toward the range boundaries.
-fn valid_byte(seed : Int) -> Byte {
+fn valid_byte(seed : Int32) -> Byte {
   match seed & 0x7 {
     0 => b'\x00'
     1 => b'\x7F'
@@ -32,7 +32,7 @@ fn valid_byte(seed : Int) -> Byte {
 
 ///|
 /// Maps an arbitrary Int into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -58,7 +58,7 @@ fn model_decode_lossy(payload : Array[Byte]) -> String {
 /// Embeds `payload` between runs of invalid `0xFF` bytes and returns the view
 /// covering exactly `payload`, so any scan that reads beyond the view sees
 /// bytes that must not influence the result.
-fn poisoned_view(payload : Array[Byte], pad : Int) -> BytesView {
+fn poisoned_view(payload : Array[Byte], pad : Int32) -> BytesView {
   let full : Array[Byte] = []
   for _ in 0..<pad {
     full.push(b'\xFF')
@@ -72,7 +72,7 @@ fn poisoned_view(payload : Array[Byte], pad : Int) -> BytesView {
 
 ///|
 test "quickcheck: decode agrees with the byte model on valid payloads" {
-  @quickcheck.check(count=300, (input : (Array[Int], Int)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Int32)) => {
     let (seeds, pad_seed) = input
     let payload = seeds.map(valid_byte)
     let view = poisoned_view(payload, wrap_index(pad_seed, 17))
@@ -92,7 +92,7 @@ test "quickcheck: decode agrees with the byte model on valid payloads" {
 
 ///|
 test "quickcheck: Malformed points at the first invalid byte" {
-  @quickcheck.check(count=300, (input : (Array[Int], Int, Int)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Int32, Int32)) => {
     let (seeds, plant_seed, pad_seed) = input
     guard seeds.length() > 0 else { return true }
     let payload = seeds.map(valid_byte)

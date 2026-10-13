@@ -15,9 +15,9 @@
 ///|
 fn[T] fixed_quick_sort_by(
   arr : MutArrayView[T],
-  cmp : (T, T) -> Int,
+  cmp : (T, T) -> Int32,
   pred : T?,
-  limit : Int,
+  limit : Int32,
 ) -> Unit {
   let bubble_sort_len = 16
   for limit = limit, arr = arr, pred = pred, was_partitioned = true, balanced = true {
@@ -82,7 +82,7 @@ fn[T] fixed_quick_sort_by(
 /// Returns whether the array is sorted.
 fn[T] fixed_try_bubble_sort_by(
   arr : MutArrayView[T],
-  cmp : (T, T) -> Int,
+  cmp : (T, T) -> Int32,
 ) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
@@ -113,7 +113,10 @@ fn[T] fixed_try_bubble_sort_by(
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T] fixed_bubble_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] fixed_bubble_sort_by(
+  arr : MutArrayView[T],
+  cmp : (T, T) -> Int32,
+) -> Unit {
   for i in 1..<arr.length() {
     for j = i
         j > 0 && cmp(arr.unsafe_get(j - 1), arr.unsafe_get(j)) > 0
@@ -134,9 +137,9 @@ test "try_bubble_sort" {
 ///|
 fn[T] fixed_partition_by(
   arr : MutArrayView[T],
-  cmp : (T, T) -> Int,
-  pivot_index : Int,
-) -> (Int, Bool) {
+  cmp : (T, T) -> Int32,
+  pivot_index : Int32,
+) -> (Int32, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr.unsafe_get(arr.length() - 1)
   let (i, partitioned) = for
@@ -167,8 +170,8 @@ fn[T] fixed_partition_by(
 /// Returns the pivot index and whether the array is likely sorted.
 fn[T] fixed_choose_pivot_by(
   arr : MutArrayView[T],
-  cmp : (T, T) -> Int,
-) -> (Int, Bool) {
+  cmp : (T, T) -> Int32,
+) -> (Int32, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -177,13 +180,13 @@ fn[T] fixed_choose_pivot_by(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = (a : Int, b : Int) => {
+    let sort_2 = (a : Int32, b : Int32) => {
       if cmp(arr.unsafe_get(a), arr.unsafe_get(b)) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
     }
-    let sort_3 = (a : Int, b : Int, c : Int) => {
+    let sort_3 = (a : Int32, b : Int32, c : Int32) => {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
@@ -204,7 +207,7 @@ fn[T] fixed_choose_pivot_by(
 }
 
 ///|
-fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int32) -> Unit {
   let len = arr.length()
   for i in (len / 2)>..0 {
     fixed_sift_down_by(arr, i, cmp)
@@ -218,8 +221,8 @@ fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
 ///|
 fn[T] fixed_sift_down_by(
   arr : MutArrayView[T],
-  index : Int,
-  cmp : (T, T) -> Int,
+  index : Int32,
+  cmp : (T, T) -> Int32,
 ) -> Unit {
   let len = arr.length()
   for index = index, child = index * 2 + 1; child < len; {

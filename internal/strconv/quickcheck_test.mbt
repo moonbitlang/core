@@ -37,10 +37,10 @@ let alphabet : Array[Char] = [
 /// Bases worth trying: 0 (infer), every base with a prefix, the two
 /// endpoints of the valid range, a couple of ordinary ones, and three
 /// invalid ones.
-let bases : Array[Int] = [0, 2, 8, 10, 16, 36, 3, 7, 35, 1, 37, -1]
+let bases : Array[Int32] = [0, 2, 8, 10, 16, 36, 3, 7, 35, 1, 37, -1]
 
 ///|
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -50,7 +50,7 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 }
 
 ///|
-fn make_text(codes : ArrayView[Int]) -> String {
+fn make_text(codes : ArrayView[Int32]) -> String {
   String::from_array(
     Array::makei(codes.length(), i => {
       alphabet[wrap_index(codes[i], alphabet.length())]
@@ -60,7 +60,7 @@ fn make_text(codes : ArrayView[Int]) -> String {
 
 ///|
 /// The digit value of `c` in base 36, or `None` if it is not a digit.
-fn digit_value(c : Char) -> Int? {
+fn digit_value(c : Char) -> Int32? {
   let n = c.to_int()
   if n >= '0' && n <= '9' {
     Some(n - '0')
@@ -75,7 +75,7 @@ fn digit_value(c : Char) -> Int? {
 
 ///|
 /// The base a prefix introduces, if `chars[i..]` starts with one.
-fn prefix_base(chars : ArrayView[Char], i : Int) -> Int? {
+fn prefix_base(chars : ArrayView[Char], i : Int32) -> Int32? {
   if i + 1 >= chars.length() || chars[i] != '0' {
     return None
   }
@@ -94,9 +94,9 @@ fn prefix_base(chars : ArrayView[Char], i : Int) -> Int? {
 /// may lead the digits (only just after a prefix).
 fn scan_prefix(
   chars : ArrayView[Char],
-  base : Int,
+  base : Int32,
   signed : Bool,
-) -> (Bool, Int, Int, Bool)? {
+) -> (Bool, Int32, Int32, Bool)? {
   guard base == 0 || (base >= 2 && base <= 36) else { return None }
   guard chars.length() > 0 else { return None }
   let mut i = 0
@@ -118,10 +118,10 @@ fn scan_prefix(
 /// come first (it may, exactly when a prefix was just consumed).
 fn scan_digits(
   chars : ArrayView[Char],
-  start : Int,
-  base : Int,
+  start : Int32,
+  base : Int32,
   lead_underscore : Bool,
-) -> Array[Int]? {
+) -> Array[Int32]? {
   let digits = []
   let mut underscore_ok = lead_underscore
   let mut after_underscore = false
@@ -145,7 +145,11 @@ fn scan_digits(
 ///|
 /// Folds `digits` in `base`, or `None` if the magnitude exceeds `limit`.
 /// Exact: `acc * base + d <= limit` iff `acc <= (limit - d) / base`.
-fn fold_digits(digits : ArrayView[Int], base : Int, limit : UInt64) -> UInt64? {
+fn fold_digits(
+  digits : ArrayView[Int32],
+  base : Int32,
+  limit : UInt64,
+) -> UInt64? {
   let b = base.to_uint64()
   let mut acc = 0UL
   for d in digits {
@@ -158,7 +162,7 @@ fn fold_digits(digits : ArrayView[Int], base : Int, limit : UInt64) -> UInt64? {
 
 ///|
 /// Reference `parse_int64`. `None` means "must be rejected".
-fn oracle_int64(text : String, base : Int) -> Int64? {
+fn oracle_int64(text : String, base : Int32) -> Int64? {
   let chars = text.to_array()[:]
   guard scan_prefix(chars, base, true) is Some((neg, eff, start, lead)) else {
     return None
@@ -176,7 +180,7 @@ fn oracle_int64(text : String, base : Int) -> Int64? {
 
 ///|
 /// Reference `parse_uint64`. Signs are not part of the grammar here.
-fn oracle_uint64(text : String, base : Int) -> UInt64? {
+fn oracle_uint64(text : String, base : Int32) -> UInt64? {
   let chars = text.to_array()[:]
   guard scan_prefix(chars, base, false) is Some((_, eff, start, lead)) else {
     return None
@@ -188,28 +192,28 @@ fn oracle_uint64(text : String, base : Int) -> UInt64? {
 }
 
 ///|
-fn actual_int64(text : String, base : Int) -> Int64? {
+fn actual_int64(text : String, base : Int32) -> Int64? {
   Some(@strconv.parse_int64(text, base~)) catch {
     _ => None
   }
 }
 
 ///|
-fn actual_int(text : String, base : Int) -> Int? {
+fn actual_int(text : String, base : Int32) -> Int32? {
   Some(@strconv.parse_int(text, base~)) catch {
     _ => None
   }
 }
 
 ///|
-fn actual_uint64(text : String, base : Int) -> UInt64? {
+fn actual_uint64(text : String, base : Int32) -> UInt64? {
   Some(@strconv.parse_uint64(text, base~)) catch {
     _ => None
   }
 }
 
 ///|
-fn actual_uint(text : String, base : Int) -> UInt? {
+fn actual_uint(text : String, base : Int32) -> UInt32? {
   Some(@strconv.parse_uint(text, base~)) catch {
     _ => None
   }
@@ -236,7 +240,7 @@ let boundaries : Array[UInt64] = [
 ///|
 /// `choice` either keeps the generated magnitude or swaps in a boundary,
 /// so a run covers both the bulk of the space and its edges.
-fn pick_magnitude(raw : UInt64, choice : Int) -> UInt64 {
+fn pick_magnitude(raw : UInt64, choice : Int32) -> UInt64 {
   if choice % 2 == 0 {
     boundaries[wrap_index(choice / 2, boundaries.length())]
   } else {
@@ -248,7 +252,7 @@ fn pick_magnitude(raw : UInt64, choice : Int) -> UInt64 {
 /// Renders `magnitude` in `base`. `flags` selects the sign, whether a base
 /// prefix is emitted (only where one exists and agrees), the digit case,
 /// and which gaps between digits get an underscore.
-fn render(magnitude : UInt64, base : Int, flags : Int) -> String {
+fn render(magnitude : UInt64, base : Int32, flags : Int32) -> String {
   let digits = []
   let b = base.to_uint64()
   let mut n = magnitude
@@ -296,10 +300,10 @@ fn render(magnitude : UInt64, base : Int, flags : Int) -> String {
 ///|
 test "quickcheck: signed numerals at the type boundaries" {
   @quickcheck.check(
-    (input : (UInt64, Int, Int, Int)) => {
+    (input : (UInt64, Int32, Int32, Int32)) => {
       let (raw, choice, base_code, flags) = input
       let base = bases[wrap_index(base_code, bases.length())]
-      let render_base = if base is (2..=36) { base } else { 10 }
+      let render_base = if base is (2..<=36) { base } else { 10 }
       let text = render(pick_magnitude(raw, choice), render_base, flags)
       actual_int64(text, base) == oracle_int64(text, base) &&
       actual_int(text, base) ==
@@ -315,10 +319,10 @@ test "quickcheck: signed numerals at the type boundaries" {
 ///|
 test "quickcheck: unsigned numerals at the type boundaries" {
   @quickcheck.check(
-    (input : (UInt64, Int, Int, Int)) => {
+    (input : (UInt64, Int32, Int32, Int32)) => {
       let (raw, choice, base_code, flags) = input
       let base = bases[wrap_index(base_code, bases.length())]
-      let render_base = if base is (2..=36) { base } else { 10 }
+      let render_base = if base is (2..<=36) { base } else { 10 }
       let text = render(pick_magnitude(raw, choice), render_base, flags)
       actual_uint64(text, base) == oracle_uint64(text, base) &&
       actual_uint(text, base) ==
@@ -334,7 +338,7 @@ test "quickcheck: unsigned numerals at the type boundaries" {
 ///|
 test "quickcheck: parse_int64 agrees with the grammar" {
   @quickcheck.check(
-    (input : (Int, Array[Int])) => {
+    (input : (Int32, Array[Int32])) => {
       let (base_code, codes) = input
       let base = bases[wrap_index(base_code, bases.length())]
       let text = make_text(codes)
@@ -347,7 +351,7 @@ test "quickcheck: parse_int64 agrees with the grammar" {
 ///|
 test "quickcheck: parse_uint64 agrees with the grammar" {
   @quickcheck.check(
-    (input : (Int, Array[Int])) => {
+    (input : (Int32, Array[Int32])) => {
       let (base_code, codes) = input
       let base = bases[wrap_index(base_code, bases.length())]
       let text = make_text(codes)
@@ -360,7 +364,7 @@ test "quickcheck: parse_uint64 agrees with the grammar" {
 ///|
 test "quickcheck: parse_int is parse_int64 narrowed to 32 bits" {
   @quickcheck.check(
-    (input : (Int, Array[Int])) => {
+    (input : (Int32, Array[Int32])) => {
       let (base_code, codes) = input
       let base = bases[wrap_index(base_code, bases.length())]
       let text = make_text(codes)
@@ -377,7 +381,7 @@ test "quickcheck: parse_int is parse_int64 narrowed to 32 bits" {
 ///|
 test "quickcheck: parse_uint is parse_uint64 narrowed to 32 bits" {
   @quickcheck.check(
-    (input : (Int, Array[Int])) => {
+    (input : (Int32, Array[Int32])) => {
       let (base_code, codes) = input
       let base = bases[wrap_index(base_code, bases.length())]
       let text = make_text(codes)

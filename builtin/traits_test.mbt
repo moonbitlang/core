@@ -16,15 +16,15 @@
 test "write_iter with trailing" {
   let builder = StringBuilder()
   let logger : &Logger = builder
-  let arr : Array[Int] = [1, 2]
+  let arr : Array[Int32] = [1, 2]
   logger.write_iter(arr.iter(), prefix="[", suffix="]", sep=",", trailing=true)
   inspect(builder.to_string(), content="[1,2,]")
 }
 
 ///|
 priv struct Data {
-  x : Array[Int]
-  y : FixedArray[Int]
+  x : Array[Int32]
+  y : FixedArray[Int32]
 } derive(Hash, Eq, Debug)
 
 ///|
@@ -47,13 +47,13 @@ struct TestLogger {
 
 ///|
 priv struct Pair {
-  left : Int
-  right : Int
+  left : Int32
+  right : Int32
 } derive(Eq)
 
 ///|
 struct Wrapper {
-  value : Int
+  value : Int32
 }
 
 ///|

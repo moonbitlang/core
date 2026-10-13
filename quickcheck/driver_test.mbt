@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv struct SizedProbe(Int) derive(Debug)
+priv struct SizedProbe(Int32) derive(Debug)
 
 ///|
 impl @quickcheck.Arbitrary for SizedProbe with fn arbitrary(size, _) {
@@ -24,7 +24,7 @@ impl @quickcheck.Arbitrary for SizedProbe with fn arbitrary(size, _) {
 impl @shrink.Shrink for SizedProbe
 
 ///|
-priv struct ShrinkInput(Int) derive(Debug)
+priv struct ShrinkInput(Int32) derive(Debug)
 
 ///|
 impl @quickcheck.Arbitrary for ShrinkInput with fn arbitrary(_, _) {
@@ -41,7 +41,7 @@ impl @shrink.Shrink for ShrinkInput with fn shrink(input) {
 }
 
 ///|
-priv struct RepeatingInput(Int) derive(Debug, Arbitrary)
+priv struct RepeatingInput(Int32) derive(Debug, Arbitrary)
 
 ///|
 impl @shrink.Shrink for RepeatingInput with fn shrink(input) {
@@ -49,7 +49,7 @@ impl @shrink.Shrink for RepeatingInput with fn shrink(input) {
 }
 
 ///|
-priv struct DriftInput(Int) derive(Debug)
+priv struct DriftInput(Int32) derive(Debug)
 
 ///|
 impl @quickcheck.Arbitrary for DriftInput with fn arbitrary(_, _) {
@@ -66,7 +66,7 @@ impl @shrink.Shrink for DriftInput with fn shrink(input) {
 }
 
 ///|
-priv struct FilteredShrinkInput(Int) derive(Debug)
+priv struct FilteredShrinkInput(Int32) derive(Debug)
 
 ///|
 impl @quickcheck.Arbitrary for FilteredShrinkInput with fn arbitrary(_, _) {
@@ -90,7 +90,7 @@ priv suberror QcError {
 
 ///|
 test "report returns a structured passing report" {
-  let report = @quickcheck.report((x : Int) => x == x, count=2, seed=7)
+  let report = @quickcheck.report((x : Int32) => x == x, count=2, seed=7)
   debug_inspect(report, content="Passed(tests=2)")
 }
 
@@ -144,7 +144,7 @@ test "discarded cases do not contribute observations" {
 ///|
 test "report returns a structured falsification" {
   let report = @quickcheck.report(
-    (_ : Int) => false,
+    (_ : Int32) => false,
     count=1,
     max_size=0,
     max_shrinks=0,
@@ -167,7 +167,7 @@ test "report returns a structured falsification" {
 ///|
 test "report returns a structured raised error" {
   let report = @quickcheck.report(
-    (_ : Int) => raise InitialRaised,
+    (_ : Int32) => raise InitialRaised,
     count=1,
     max_size=0,
     max_shrinks=0,
@@ -190,7 +190,7 @@ test "report returns a structured raised error" {
 
 ///|
 test "check accepts a passing boolean property" {
-  @quickcheck.check((x : Int) => x == x, count=5, seed=0)
+  @quickcheck.check((x : Int32) => x == x, count=5, seed=0)
 }
 
 ///|
@@ -215,7 +215,7 @@ test "check runs the requested count with increasing sizes" {
 ///|
 test "discard ratio controls the give-up budget" {
   let report = @quickcheck.report(
-    (_ : Int) => true,
+    (_ : Int32) => true,
     filter=_ => false,
     count=4,
     discard_ratio=2,
@@ -410,7 +410,7 @@ test "report keeps raised errors separate from falsification" {
 test "report stops at the first failing case" {
   let mut calls = 0
   let result = @quickcheck.report(
-    (_ : Int) => {
+    (_ : Int32) => {
       calls = calls + 1
       calls < 4
     },
@@ -435,7 +435,7 @@ test "report stops at the first failing case" {
 ///|
 test "report returns Failure as a raised property" {
   let result = @quickcheck.report(
-    (_ : Int) => fail("property boom"),
+    (_ : Int32) => fail("property boom"),
     count=1,
     max_shrinks=0,
   )
@@ -473,7 +473,7 @@ test "report accepts InspectError while shrinking Raised" {
 ///|
 test "classes-only summary omits the empty labels field" {
   let report = @quickcheck.report(
-    (_ : Int) => true,
+    (_ : Int32) => true,
     observe=_ => [@quickcheck.classify(true, "observed")],
     count=3,
     max_size=2,
@@ -489,7 +489,7 @@ test "classes-only summary omits the empty labels field" {
 ///|
 test "context renders the shrunk counterexample" {
   let report = @quickcheck.report(
-    (x : Int) => x < 3,
+    (x : Int32) => x < 3,
     counterexample_context=x => "rendered input <\{x}>",
     count=100,
     max_shrinks=100,
@@ -513,7 +513,7 @@ test "context renders the shrunk counterexample" {
 ///|
 test "context is attached to raised failures too" {
   let report = @quickcheck.report(
-    (x : Int) => if x >= 3 { fail("boom") } else { true },
+    (x : Int32) => if x >= 3 { fail("boom") } else { true },
     counterexample_context=x => "rendered input <\{x}>",
     count=100,
     max_shrinks=100,
@@ -525,7 +525,7 @@ test "context is attached to raised failures too" {
       #|Raised(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  error=Failure("quickcheck/driver_test.mbt:516:30-516:42@moonbitlang/core FAILED: boom"),
+      #|  error=Failure("quickcheck/driver_test.mbt:516:32-516:44@moonbitlang/core FAILED: boom"),
       #|  tests=2,
       #|  size=1,
       #|  shrinks=30,

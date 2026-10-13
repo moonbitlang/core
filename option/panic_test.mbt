@@ -14,6 +14,6 @@
 
 ///|
 test "panic unwrap should panic on None" {
-  let none : Int? = None
+  let none : Int32? = None
   none.unwrap() |> ignore
 }

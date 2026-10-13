@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn source_priority(source : ValueSource?) -> Int {
+fn source_priority(source : ValueSource?) -> Int32 {
   match source {
     Some(Argv) => 3
     Some(Env) => 2

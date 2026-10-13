@@ -19,15 +19,15 @@
 
 ///|
 priv struct CovPoint {
-  x : Int
+  x : Int32
   y : Double
 } derive(Eq, @debug.Debug)
 
 ///|
 priv enum CovShape {
   Dot
-  Circle(radius~ : Int)
-  Line(Int, Int)
+  Circle(radius~ : Int32)
+  Line(Int32, Int32)
 } derive(Eq, @debug.Debug)
 
 ///|
@@ -75,8 +75,8 @@ test "assert_eq diff over records, enums and maps" {
   assert_true(reports_diff(l1, l2))
   let dot : CovShape = Dot
   assert_true(reports_diff(dot, c2))
-  let m1 : Map[String, Int] = { "a": 1, "b": 2 }
-  let m2 : Map[String, Int] = { "a": 1, "b": 9 }
+  let m1 : Map[String, Int32] = { "a": 1, "b": 2 }
+  let m2 : Map[String, Int32] = { "a": 1, "b": 9 }
   assert_true(reports_diff(m1, m2))
   // arrays of differing length, both directions
   assert_true(reports_diff([1, 2, 3], [1, 2, 3, 4]))
@@ -95,28 +95,28 @@ test "assert_eq diff over deeply nested structures collapses to one difference" 
 
 ///|
 test "render of empty, single and nested collections" {
-  let empty_arr : Array[Int] = []
+  let empty_arr : Array[Int32] = []
   inspect(
     @debug.to_string(empty_arr),
     content=(
       #|[]
     ),
   )
-  let empty_map : Map[String, Int] = Map([])
+  let empty_map : Map[String, Int32] = Map([])
   inspect(
     @debug.to_string(empty_map),
     content=(
       #|{}
     ),
   )
-  let one : Map[String, Int] = { "k": 1 }
+  let one : Map[String, Int32] = { "k": 1 }
   inspect(
     @debug.to_string(one),
     content=(
       #|{ "k": 1 }
     ),
   )
-  let empty_inner : Map[Int, Int] = Map([])
+  let empty_inner : Map[Int32, Int32] = Map([])
   inspect(
     @debug.to_string((empty_arr, empty_inner)),
     content=(
@@ -131,7 +131,7 @@ test "render of large structures breaks into multiple lines" {
   assert_true(@debug.to_string(big).contains("\n"))
   let nested = Array::makei(8, i => Array::makei(8, j => i * 8 + j))
   assert_true(@debug.to_string(nested).contains("\n"))
-  let big_map : Map[Int, Array[Int]] = Map([])
+  let big_map : Map[Int32, Array[Int32]] = Map([])
   for i in 0..<12 {
     big_map[i] = Array::makei(6, j => i * 6 + j)
   }
@@ -140,7 +140,7 @@ test "render of large structures breaks into multiple lines" {
 
 ///|
 test "render of opaque builtin types" {
-  let fa : FixedArray[Int] = [1, 2, 3]
+  let fa : FixedArray[Int32] = [1, 2, 3]
   inspect(
     @debug.to_string(fa),
     content=(
@@ -187,7 +187,7 @@ test "debug runs over representative values (smoke)" {
 
 ///|
 test "Debug instance for Iter renders an omitted body" {
-  let it : Iter[Int] = [|1, 2, 3|]
+  let it : Iter[Int32] = [|1, 2, 3|]
   inspect(
     @debug.to_string(it),
     content=(
@@ -200,7 +200,7 @@ test "Debug instance for Iter renders an omitted body" {
 test "assert_eq diff over opaque wrappers compares by tag" {
   // FixedArray renders as Opaque("FixedArray", ...); diffing two of them
   // exercises the Opaque-vs-Opaque label comparison.
-  let a : FixedArray[Int] = [1, 2, 3]
-  let b : FixedArray[Int] = [1, 9, 3]
+  let a : FixedArray[Int32] = [1, 2, 3]
+  let b : FixedArray[Int32] = [1, 9, 3]
   assert_true(reports_diff(a, b))
 }

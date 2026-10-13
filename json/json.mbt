@@ -58,7 +58,7 @@ pub fn Json::as_array(self : Json) -> Array[Json]? {
 ///|
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
 #deprecated("Suggestion: `if json is Array(array) { array.get(index) } else { None }`")
-pub fn Json::item(self : Json, index : Int) -> Json? {
+pub fn Json::item(self : Json, index : Int32) -> Json? {
   if self is Array(arr) {
     arr.get(index)
   } else {
@@ -90,8 +90,8 @@ pub fn Json::value(self : Json, key : String) -> Json? {
 fn write_indent(
   buf : StringBuilder,
   cache : Array[String],
-  level : Int,
-  indent : Int,
+  level : Int32,
+  indent : Int32,
 ) -> Unit {
   // Each level is the previous one plus a single indentation unit. Building a
   // level is still O(indent * level) — concatenation copies `last` — but it
@@ -115,7 +115,7 @@ fn write_indent(
 ///|
 /// Internal stack frame used by iterative stringify to avoid recursion
 priv enum WriteFrame {
-  Array(Array[Json], mut i~ : Int) // (arr, index)
+  Array(Array[Json], mut i~ : Int32) // (arr, index)
   Object(Iter[(String, Json)], mut first~ : Bool) // (kvs, first)
 }
 
@@ -281,8 +281,8 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// ```
 pub fn Json::stringify(
   self : Json,
-  escape_slash? : Bool = false,
-  indent? : Int = 0,
+  escape_slash~ : Bool = false,
+  indent~ : Int32 = 0,
   replacer? : Replacer,
 ) -> String {
   let buf = StringBuilder(size_hint=0)
@@ -406,8 +406,8 @@ pub fn Json::stringify(
 fn need_escape_scalar(
   str : String,
   escape_slash : Bool,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> Bool {
   for i in start..<end {
     if needs_escape_unit(str.unsafe_get(i), escape_slash) {

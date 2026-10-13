@@ -49,7 +49,7 @@ Functions that return `Unit` are typically called for their side effects:
 ///|
 test "side effect patterns" {
   let numbers = [1, 2, 3, 4, 5]
-  fn println(_ : Int) {
+  fn println(_ : Int32) {
 
   }
   // Processing for side effects (printing, logging, etc.)

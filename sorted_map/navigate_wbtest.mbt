@@ -15,7 +15,10 @@
 ///|
 /// Checks every navigation query against a sorted array of the map's
 /// entries, over all keys.
-fn check_navigation(map : SortedMap[Int, Int], key_space : Int) -> Unit raise {
+fn check_navigation(
+  map : SortedMap[Int32, Int32],
+  key_space : Int32,
+) -> Unit raise {
   let sorted = map.to_array()
   @test.assert_eq(map.first(), sorted.get(0))
   @test.assert_eq(map.last(), sorted.last())
@@ -42,7 +45,7 @@ test "navigation agrees with a sorted-array model" {
   let rng = Rand::{ state: 0x5EED_1234UL, }
   for round in 0..<12 {
     let key_space = 4 + round * 3
-    let map : SortedMap[Int, Int] = new_sorted_map()
+    let map : SortedMap[Int32, Int32] = new_sorted_map()
     check_navigation(map, key_space)
     for _ in 0..<(key_space * 2) {
       let k = rng.below(key_space)
@@ -60,15 +63,15 @@ test "navigation agrees with a sorted-array model" {
 test "pop_first and pop_last keep invariants and agree with the model" {
   let rng = Rand::{ state: 0xC0FFEEUL, }
   for _ in 0..<8 {
-    let map : SortedMap[Int, Int] = new_sorted_map()
-    let model : Map[Int, Int] = Map([])
+    let map : SortedMap[Int32, Int32] = new_sorted_map()
+    let model : Map[Int32, Int32] = Map([])
     for _ in 0..<400 {
       let k = rng.below(200)
       match rng.below(6) {
         0 => {
           let expected = model
             .keys()
-            .fold(init=None, (acc : Int?, k) => {
+            .fold(init=None, (acc : Int32?, k) => {
               match acc {
                 Some(m) if m <= k => acc
                 _ => Some(k)
@@ -83,7 +86,7 @@ test "pop_first and pop_last keep invariants and agree with the model" {
         1 => {
           let expected = model
             .keys()
-            .fold(init=None, (acc : Int?, k) => {
+            .fold(init=None, (acc : Int32?, k) => {
               match acc {
                 Some(m) if m >= k => acc
                 _ => Some(k)

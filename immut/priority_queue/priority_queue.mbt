@@ -91,8 +91,8 @@ fn[A : Compare] heapify(heap : MutArrayView[A]) -> Unit {
 /// repeatedly swapping it with its larger child.
 fn[A : Compare] sift_down(
   heap : MutArrayView[A],
-  start : Int,
-  len : Int,
+  start : Int32,
+  len : Int32,
 ) -> Unit {
   for root = start {
     let left = root * 2 + 1
@@ -116,8 +116,8 @@ fn[A : Compare] sift_down(
 /// preserving the `index -> (2*index+1, 2*index+2)` child mapping.
 fn[A] priority_queue_node_from_heap(
   heap : MutArrayView[A],
-  index : Int,
-  len : Int,
+  index : Int32,
+  len : Int32,
 ) -> Node[A] {
   if index >= len {
     Empty
@@ -180,11 +180,11 @@ pub fn[A : Compare] PriorityQueue::from_iter(
 }
 
 ///|
-priv struct Path(Int)
+priv struct Path(Int32)
 
 ///|
 /// require: size >= 2
-fn path(size : Int) -> Path {
+fn path(size : Int32) -> Path {
   for x = size, y = 0 {
     match (x, y) {
       (1, y) => break Path(y)
@@ -386,7 +386,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 ///   @test.assert_eq(queue.push(1).length(), 1)
 /// }
 /// ```
-pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
+pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int32 {
   self.size
 }
 

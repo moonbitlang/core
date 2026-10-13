@@ -16,10 +16,10 @@
 // Convert view-relative bounds to backing-string offsets before scanning.
 fn find_code_unit_from_view(
   target : StringView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   let target_start = target.start_offset()
   let found = find_code_unit_from_string(
     target.data(),
@@ -39,10 +39,10 @@ fn find_code_unit_from_view(
 // scanning.
 fn rev_find_code_unit_from_view(
   target : StringView,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   let target_start = target.start_offset()
   let found = rev_find_code_unit_from_string(
     target.data(),
@@ -62,10 +62,10 @@ fn rev_find_code_unit_from_view(
 #inline
 fn find_code_unit_scalar(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   for pos in start..<end {
     if data.unsafe_get(pos) == code {
       break pos
@@ -80,10 +80,10 @@ fn find_code_unit_scalar(
 #inline
 fn rev_find_code_unit_scalar(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   for pos = end - 1; pos >= start; {
     if data.unsafe_get(pos) == code {
       break pos
@@ -98,10 +98,10 @@ fn rev_find_code_unit_scalar(
 #cfg(not(any(target="native", target="wasm")))
 fn find_code_unit_from_string(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   find_code_unit_scalar(data, start, end, code)
 }
 
@@ -109,10 +109,10 @@ fn find_code_unit_from_string(
 #cfg(not(any(target="native", target="wasm")))
 fn rev_find_code_unit_from_string(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   rev_find_code_unit_scalar(data, start, end, code)
 }
 
@@ -122,10 +122,10 @@ fn rev_find_code_unit_from_string(
 #cfg(any(target="native", target="wasm"))
 fn find_code_unit_from_string(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   guard start < end else { return -1 }
   if data.unsafe_get(start) == code {
     return start
@@ -149,10 +149,10 @@ fn find_code_unit_from_string(
 #cfg(any(target="native", target="wasm"))
 fn rev_find_code_unit_from_string(
   data : String,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   code : UInt16,
-) -> Int {
+) -> Int32 {
   guard start < end else { return -1 }
   if data.unsafe_get(end - 1) == code {
     return end - 1
@@ -177,7 +177,7 @@ fn rev_find_code_unit_from_string(
 // Finds a multi-code-unit pattern by scanning candidate positions where both
 // the first and last code units match, then checking only the middle range.
 // The caller must ensure `2 <= pattern.length() <= target.length()`.
-fn find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
+fn find_by_two_anchors(target : StringView, pattern : StringView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let target_start = target.start_offset()
@@ -223,7 +223,7 @@ fn find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
 // Finds the last multi-code-unit pattern occurrence using the same two-anchor
 // prefilter as the forward search. Candidate positions are scanned backwards.
 // The caller must ensure `2 <= pattern.length() <= target.length()`.
-fn rev_find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
+fn rev_find_by_two_anchors(target : StringView, pattern : StringView) -> Int32? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let target_start = target.start_offset()
@@ -278,7 +278,7 @@ fn rev_find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
 // verification work at O(pattern), so find/rev_find stay
 // O(target + pattern) even on adversarial inputs.
 #inline
-fn two_anchor_should_fallback(failures : Int, scanned : Int) -> Bool {
+fn two_anchor_should_fallback(failures : Int32, scanned : Int32) -> Bool {
   failures > 64 || failures > 4 + scanned / 8
 }
 
@@ -287,7 +287,7 @@ fn two_anchor_should_fallback(failures : Int, scanned : Int) -> Bool {
 // length of the longest proper prefix of `pattern[0..=i]` that is also a
 // suffix of it. Only built after the two-anchor filter cuts over, so the
 // O(pattern) allocation is paid exclusively on pathological inputs.
-fn kmp_failure_table(pattern : StringView) -> FixedArray[Int] {
+fn kmp_failure_table(pattern : StringView) -> FixedArray[Int32] {
   let m = pattern.length()
   let table = FixedArray::make(m, 0)
   let mut k = 0
@@ -313,8 +313,8 @@ fn kmp_failure_table(pattern : StringView) -> FixedArray[Int] {
 fn find_pattern_kmp_from(
   target : StringView,
   pattern : StringView,
-  start : Int,
-) -> Int? {
+  start : Int32,
+) -> Int32? {
   let n = target.length()
   let m = pattern.length()
   let table = kmp_failure_table(pattern)
@@ -346,8 +346,8 @@ fn find_pattern_kmp_from(
 fn rev_find_pattern_kmp_before(
   target : StringView,
   pattern : StringView,
-  candidate_end : Int,
-) -> Int? {
+  candidate_end : Int32,
+) -> Int32? {
   guard candidate_end > 0 else { return None }
   let m = pattern.length()
   let table = kmp_failure_table(pattern)
@@ -403,10 +403,10 @@ test "kmp fallbacks handle periodic and overlapping patterns" {
 #inline
 fn string_ranges_equal(
   left : String,
-  left_start : Int,
+  left_start : Int32,
   right : String,
-  right_start : Int,
-  length : Int,
+  right_start : Int32,
+  length : Int32,
 ) -> Bool {
   for i in 0..<length {
     if left.unsafe_get(left_start + i) != right.unsafe_get(right_start + i) {
@@ -421,12 +421,12 @@ fn string_ranges_equal(
 #inline
 fn find_two_anchor_candidate_scalar(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   for pos in start..<candidate_end {
     if data.unsafe_get(pos) == first &&
       data.unsafe_get(pos + last_offset) == last {
@@ -442,12 +442,12 @@ fn find_two_anchor_candidate_scalar(
 #inline
 fn rev_find_two_anchor_candidate_scalar(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   for pos = candidate_end - 1; pos >= start; {
     if data.unsafe_get(pos) == first &&
       data.unsafe_get(pos + last_offset) == last {
@@ -463,12 +463,12 @@ fn rev_find_two_anchor_candidate_scalar(
 #cfg(not(any(target="native", target="wasm")))
 fn find_two_anchor_candidate_from_string(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   find_two_anchor_candidate_scalar(
     data, start, candidate_end, first, last_offset, last,
   )
@@ -478,12 +478,12 @@ fn find_two_anchor_candidate_from_string(
 #cfg(not(any(target="native", target="wasm")))
 fn rev_find_two_anchor_candidate_from_string(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   rev_find_two_anchor_candidate_scalar(
     data, start, candidate_end, first, last_offset, last,
   )
@@ -495,12 +495,12 @@ fn rev_find_two_anchor_candidate_from_string(
 #cfg(any(target="native", target="wasm"))
 fn find_two_anchor_candidate_from_string(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   guard start < candidate_end else { return -1 }
   if data.unsafe_get(start) == first &&
     data.unsafe_get(start + last_offset) == last {
@@ -532,12 +532,12 @@ fn find_two_anchor_candidate_from_string(
 #cfg(any(target="native", target="wasm"))
 fn rev_find_two_anchor_candidate_from_string(
   data : String,
-  start : Int,
-  candidate_end : Int,
+  start : Int32,
+  candidate_end : Int32,
   first : UInt16,
-  last_offset : Int,
+  last_offset : Int32,
   last : UInt16,
-) -> Int {
+) -> Int32 {
   guard start < candidate_end else { return -1 }
   let final_candidate = candidate_end - 1
   if data.unsafe_get(final_candidate) == first &&

@@ -15,7 +15,7 @@ You can create an `Option` value using the `Some` and `None` constructors, remem
 ```mbt check
 ///|
 test {
-  let some : Int? = Some(42)
+  let some : Int32? = Some(42)
   let none : String? = None
   debug_inspect(some, content="Some(42)")
   debug_inspect(none, content="None")
@@ -43,7 +43,7 @@ Or using the `unwrap` method, which will panic if the result is `None` and retur
 ```mbt check
 ///|
 test {
-  let some : Int? = Some(42)
+  let some : Int32? = Some(42)
   let value = some.unwrap() // 42
   @test.assert_eq(value, 42)
 }
@@ -54,7 +54,7 @@ A safer alternative to `unwrap` is the `unwrap_or` method, which returns the val
 ```mbt check
 ///|
 test {
-  let none : Int? = None
+  let none : Int32? = None
   let value = none.unwrap_or(0) // 0
   @test.assert_eq(value, 0)
 }
@@ -65,7 +65,7 @@ There is also the `unwrap_or_else` method, which returns the value if it is `Som
 ```mbt check
 ///|
 test {
-  let none : Int? = None
+  let none : Int32? = None
   let value = none.unwrap_or_else(() => 0) // 0
   @test.assert_eq(value, 0)
 }
@@ -78,8 +78,8 @@ You can transform the value of an `Option` using the `map` method. It applies th
 ```mbt check
 ///|
 test {
-  let some : Int? = Some(42)
-  let new_some = some.map((value : Int) => value + 1) // Some(43)
+  let some : Int32? = Some(42)
+  let new_some = some.map((value : Int32) => value + 1) // Some(43)
   assert_true(new_some == Some(43))
 }
 ```
@@ -89,9 +89,9 @@ There is a `filter` method that applies a predicate to the value if it is `Some`
 ```mbt check
 ///|
 test {
-  let some : Int? = Some(42)
-  let new_some = some.filter((value : Int) => value > 40) // Some(42)
-  let none = some.filter((value : Int) => value > 50) // None
+  let some : Int32? = Some(42)
+  let new_some = some.filter((value : Int32) => value > 40) // Some(42)
+  let none = some.filter((value : Int32) => value > 50) // None
   assert_true(new_some == Some(42))
   assert_true(none == None)
 }
@@ -104,8 +104,8 @@ You can chain multiple operations that return `Option` using the `bind` method, 
 ```mbt check
 ///|
 test {
-  let some : Int? = Some(42)
-  let new_some = some.bind((value : Int) => Some(value + 1)) // Some(43)
+  let some : Int32? = Some(42)
+  let new_some = some.bind((value : Int32) => Some(value + 1)) // Some(43)
   assert_true(new_some == Some(43))
 }
 ```
@@ -115,10 +115,10 @@ Sometimes we want to reduce the nested `Option` values into a single `Option`, y
 ```mbt check
 ///|
 test {
-  let some : Int?? = Some(Some(42))
+  let some : Int32?? = Some(Some(42))
   let new_some = some.bind(fn(x) { x }) // Some(42)
   assert_true(new_some == Some(42))
-  let none : Int?? = Some(None)
+  let none : Int32?? = Some(None)
   let new_none = none.bind(fn(x) { x }) // None
   assert_true(new_none == None)
 }

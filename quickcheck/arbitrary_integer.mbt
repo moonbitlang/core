@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn decimal_power_count(bits : Int, signed : Bool) -> UInt {
+fn decimal_power_count(bits : Int32, signed : Bool) -> UInt32 {
   match (bits, signed) {
     (16, _) => 5U
     (32, _) => 10U
@@ -63,7 +63,7 @@ fn boundary_delta(base : UInt64, rs : @splitmix.RandomState) -> UInt64 {
 
 ///|
 fn binary_boundary_bits(
-  bits : Int,
+  bits : Int32,
   signed : Bool,
   rs : @splitmix.RandomState,
 ) -> UInt64 {
@@ -77,7 +77,7 @@ fn binary_boundary_bits(
 
 ///|
 fn decimal_boundary_bits(
-  bits : Int,
+  bits : Int32,
   signed : Bool,
   rs : @splitmix.RandomState,
 ) -> UInt64 {
@@ -93,7 +93,7 @@ fn decimal_boundary_bits(
 
 ///|
 fn extreme_integer_bits(
-  bits : Int,
+  bits : Int32,
   mask : UInt64,
   signed : Bool,
   rs : @splitmix.RandomState,
@@ -121,7 +121,7 @@ fn extreme_integer_bits(
 /// 40% full-width, 20% canonical, 20% binary boundaries,
 /// 10% decimal boundaries, and 10% type extrema.
 fn gen_integer_bits(
-  bits : Int,
+  bits : Int32,
   signed : Bool,
   rs : @splitmix.RandomState,
 ) -> UInt64 {
@@ -152,12 +152,12 @@ pub impl Arbitrary for UInt16 with fn arbitrary(_, rs) {
 }
 
 ///|
-pub impl Arbitrary for Int with fn arbitrary(_, rs) {
+pub impl Arbitrary for Int32 with fn arbitrary(_, rs) {
   gen_integer_bits(32, true, rs).to_uint().reinterpret_as_int()
 }
 
 ///|
-pub impl Arbitrary for UInt with fn arbitrary(_, rs) {
+pub impl Arbitrary for UInt32 with fn arbitrary(_, rs) {
   gen_integer_bits(32, false, rs).to_uint()
 }
 

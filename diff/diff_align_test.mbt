@@ -34,7 +34,7 @@ priv struct Tok {
 }
 
 ///|
-fn weight(k : TokKind) -> Int {
+fn weight(k : TokKind) -> Int32 {
   match k {
     Word | Str | Marker => 20
     Punct => 6
@@ -135,7 +135,7 @@ fn tokenize_line(line : String) -> Array[Tok] {
 }
 
 ///|
-fn tok_mass(ts : ArrayView[Tok]) -> Int {
+fn tok_mass(ts : ArrayView[Tok]) -> Int32 {
   let mut m = 0
   for t in ts {
     m += weight(t.kind)
@@ -148,7 +148,7 @@ fn tok_mass(ts : ArrayView[Tok]) -> Int {
 /// weight: cheaper than delete+insert (2x) so renames align, but expensive
 /// enough that two lines with nothing in common score ~0.25, well below the
 /// pairing threshold.
-fn subst_cost(a : Tok, b : Tok) -> Int? {
+fn subst_cost(a : Tok, b : Tok) -> Int32? {
   if a.kind == b.kind {
     if a.text == b.text {
       Some(0)
@@ -162,7 +162,7 @@ fn subst_cost(a : Tok, b : Tok) -> Int? {
 
 ///|
 /// Weighted token edit distance, rolling rows (scoring only).
-fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
+fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int32 {
   let n = b.length()
   let mut prev = Array::makei(n + 1, j => if j == 0 { 0 } else { 0 })
   let mut j0 = 0
@@ -192,7 +192,7 @@ fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
 
 ///|
 /// Similarity in permille: 1000 * (mass - dist) / mass over both sides.
-fn sim_pm(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
+fn sim_pm(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int32 {
   let m = tok_mass(a) + tok_mass(b)
   if m == 0 {
     // zero semantic mass (empty or filler-only lines): there is no evidence
@@ -211,7 +211,7 @@ fn sim_pm(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
 }
 
 ///|
-const THETA : Int = 400 // pairing threshold, permille
+const THETA : Int32 = 400 // pairing threshold, permille
 
 ///|
 /// Monotone block alignment maximizing the total positive margin
@@ -221,7 +221,7 @@ const THETA : Int = 400 // pairing threshold, permille
 fn align(
   olds : Array[Array[Tok]],
   news : Array[Array[Tok]],
-) -> Array[(Int?, Int?)] {
+) -> Array[(Int32?, Int32?)] {
   let m = olds.length()
   let n = news.length()
   let dp = Array::makei(m + 1, _ => Array::make(n + 1, 0))
@@ -247,7 +247,7 @@ fn align(
       bp[i][j] = way
     }
   }
-  let out : Array[(Int?, Int?)] = []
+  let out : Array[(Int32?, Int32?)] = []
   let mut i = m
   let mut j = n
   while i > 0 || j > 0 {
@@ -407,7 +407,7 @@ test "tokenizer: markers, strings, raw lines, comments, faithfulness" {
 
 ///|
 test "similarity: comments help but cannot veto; unrelated stays unpaired" {
-  fn sim(a : String, b : String) -> Int {
+  fn sim(a : String, b : String) -> Int32 {
     sim_pm(tokenize_line(a), tokenize_line(b))
   }
   // similar pure-comment edits pair
@@ -501,7 +501,7 @@ test "pair_ops reconstruction property" {
 
 ///|
 test "zero-mass lines pair only when identical" {
-  fn sim(a : String, b : String) -> Int {
+  fn sim(a : String, b : String) -> Int32 {
     sim_pm(tokenize_line(a), tokenize_line(b))
   }
   inspect(sim("//", "") == 0, content="true")

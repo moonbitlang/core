@@ -36,7 +36,7 @@ test "bench BytesView uint_le aligned len=32" (it : @bench.T) {
   let view = bitstring_extract_bench_bytes()[:]
   let last = bitstring_extract_bench_size - 4
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 4 {
       acc = acc ^ view.unsafe_extract_uint_le(byte_offset * 8, 32)
     }
@@ -49,7 +49,7 @@ test "bench BytesView uint_be aligned len=32" (it : @bench.T) {
   let view = bitstring_extract_bench_bytes()[:]
   let last = bitstring_extract_bench_size - 4
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 4 {
       acc = acc ^ view.unsafe_extract_uint_be(byte_offset * 8, 32)
     }
@@ -63,7 +63,7 @@ test "bench ArrayView uint_le aligned len=32" (it : @bench.T) {
   let view = arr[:]
   let last = bitstring_extract_bench_size - 4
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 4 {
       acc = acc ^ view.unsafe_extract_uint_le(byte_offset * 8, 32)
     }
@@ -77,7 +77,7 @@ test "bench ArrayView uint_be aligned len=32" (it : @bench.T) {
   let view = arr[:]
   let last = bitstring_extract_bench_size - 4
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 4 {
       acc = acc ^ view.unsafe_extract_uint_be(byte_offset * 8, 32)
     }
@@ -144,7 +144,7 @@ test "bench BytesView uint_le unaligned len=32" (it : @bench.T) {
   let view = bitstring_extract_bench_bytes()[:]
   let last = bitstring_extract_bench_size - 5
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 4 {
       acc = acc ^ view.unsafe_extract_uint_le(byte_offset * 8 + 4, 32)
     }
@@ -170,7 +170,7 @@ test "bench BytesView uint_le aligned len=16" (it : @bench.T) {
   let view = bitstring_extract_bench_bytes()[:]
   let last = bitstring_extract_bench_size - 2
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 2 {
       acc = acc ^ view.unsafe_extract_uint_le(byte_offset * 8, 16)
     }
@@ -183,7 +183,7 @@ test "bench BytesView uint_le aligned len=24" (it : @bench.T) {
   let view = bitstring_extract_bench_bytes()[:]
   let last = bitstring_extract_bench_size - 3
   it.bench(fn() {
-    let mut acc : UInt = 0
+    let mut acc : UInt32 = 0
     for byte_offset = 0; byte_offset <= last; byte_offset = byte_offset + 3 {
       acc = acc ^ view.unsafe_extract_uint_le(byte_offset * 8, 24)
     }

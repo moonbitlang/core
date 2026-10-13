@@ -14,11 +14,11 @@
 
 ///|
 fn make_map(
-  start : Int,
-  end : Int,
-  step? : Int = 1,
-) -> @sorted_map.SortedMap[Int, Int] {
-  let mut m : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
+  start : Int32,
+  end : Int32,
+  step~ : Int32 = 1,
+) -> @sorted_map.SortedMap[Int32, Int32] {
+  let mut m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
   for i = start; i < end; i = i + step {
     m = m.add(i, i)
   }

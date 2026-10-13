@@ -31,7 +31,7 @@ test "remove3" {
 
 ///|
 test "remove on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   map.remove(1)
   inspect(map.length(), content="0")
 }
@@ -95,7 +95,7 @@ test "equal" {
 
 ///|
 test "is_empty" {
-  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   inspect(map.is_empty(), content="true")
   map[1] = "a"
   inspect(map.is_empty(), content="false")
@@ -195,7 +195,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter([||])
+  let pq : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -263,20 +263,20 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   @json.json_inspect(@json.to_json(map), content=Json::empty_object())
 }
 
 ///|
 test "default" {
-  let map : @sorted_map.SortedMap[Int, Int] = Default::default()
+  let map : @sorted_map.SortedMap[Int32, Int32] = Default::default()
   inspect(map.length(), content="0")
 }
 
 ///|
 test "from_json" {
   for
-    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
+    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int32]]) {
     @debug.assert_eq(xs, @json.from_json(@json.to_json(xs)))
   }
 }
@@ -284,7 +284,7 @@ test "from_json" {
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = 1
-  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]) catch {
+  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int32]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")
@@ -294,7 +294,9 @@ test "from_json rejects non-object" {
 ///|
 test "json roundtrip verification" {
   let original : Json = { "key1": 42, "key2": 100, "key3": -5 }
-  let restored : @sorted_map.SortedMap[String, Int] = @json.from_json(original)
+  let restored : @sorted_map.SortedMap[String, Int32] = @json.from_json(
+    original,
+  )
   @json.json_inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
 }
 
@@ -314,7 +316,7 @@ test "@sorted_map.merge" {
 
 ///|
 test "@sorted_map.merge empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -339,7 +341,7 @@ test "@sorted_map.merge_in_place" {
 
 ///|
 test "@sorted_map.merge_in_place empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   map1.merge_in_place(map2)
   debug_inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -405,7 +407,7 @@ test "update_or_default applies f when present" {
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : @sorted_map.SortedMap[String, Int] = SortedMap([])
+  let counts : @sorted_map.SortedMap[String, Int32] = SortedMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
@@ -453,7 +455,7 @@ test "range with out-of-bounds keys" {
 
 ///|
 test "range on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   debug_inspect(
     map.range(1, 5).to_array(),
     content=(

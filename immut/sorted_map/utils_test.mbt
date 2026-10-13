@@ -156,13 +156,13 @@ test "iter" {
 
 ///|
 test "get with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
   @test.assert_eq(map.get(3), None)
 }
 
 ///|
 test "panic get with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
   map[3] |> ignore
 }
 
@@ -181,21 +181,21 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
   @json.json_inspect(Json(map), content=Json::empty_object())
 }
 
 ///|
 test "from_json" {
   for
-    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
+    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int32]]) {
     @test.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
 
 ///|
 test "default" {
-  let map : @sorted_map.SortedMap[Int, Int] = Default::default()
+  let map : @sorted_map.SortedMap[Int32, Int32] = Default::default()
   inspect(map.length(), content="0")
 }
 
@@ -226,13 +226,13 @@ test "rev_values returns values in descending key order" {
 
 ///|
 test "rev_keys on empty map" {
-  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
   debug_inspect(map.rev_keys().collect(), content="[]")
 }
 
 ///|
 test "rev_values on empty map" {
-  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
   debug_inspect(map.rev_values().collect(), content="[]")
 }
 
@@ -280,7 +280,8 @@ test "rev_keys is reverse of keys" {
 
 ///|
 test "rev_keys is reverse of keys (quickcheck)" {
-  for xs in (@quickcheck.samples(50) : Array[@sorted_map.SortedMap[Int, Int]]) {
+  for
+    xs in (@quickcheck.samples(50) : Array[@sorted_map.SortedMap[Int32, Int32]]) {
     let forward = xs.keys_as_iter().collect()
     let reverse = xs.rev_keys().collect()
     @test.assert_eq(reverse, forward.rev())
@@ -338,7 +339,7 @@ test "rev_values with complex tree" {
 
 ///|
 test "range on empty map" {
-  let empty : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let empty : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
   let count = for _, _ in empty.range(low=1, high=5); count = 0 {
     continue count + 1
   } nobreak {
@@ -511,14 +512,14 @@ test "range with non-existent boundaries" {
 ///|
 test "from_json via @json.from_json" {
   let json : Json = { "a": 1, "b": 2 }
-  let map : @sorted_map.SortedMap[String, Int] = @json.from_json(json)
+  let map : @sorted_map.SortedMap[String, Int32] = @json.from_json(json)
   @json.json_inspect(Json(map), content={ "a": 1, "b": 2 })
 }
 
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = [1, 2, 3]
-  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]) catch {
+  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int32]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")

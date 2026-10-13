@@ -22,6 +22,6 @@ pub impl[A : @debug.Debug] @debug.Debug for Vector[A] with fn to_repr(self) {
 
 ///|
 test "Debug for Vector" {
-  let xs : Vector[Int] = from_array([1, 2, 3])
+  let xs : Vector[Int32] = from_array([1, 2, 3])
   @debug.debug_inspect(xs, content="<Vector: [1, 2, 3]>")
 }

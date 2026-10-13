@@ -99,7 +99,7 @@ pub impl Default for BigInt with fn default() {
 /// }
 /// ```
 ///
-pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
+pub fn BigInt::equal_int(self : BigInt, other : Int32) -> Bool {
   can_convert_to_int(self) && self.to_int() == other
 }
 
@@ -139,7 +139,7 @@ pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
 ///
 /// This is a convenience helper mirroring `equal_int`/`equal_int64` and avoids
 /// forcing callers to construct a temporary `BigInt` manually.
-pub fn BigInt::equal_uint(self : BigInt, other : UInt) -> Bool {
+pub fn BigInt::equal_uint(self : BigInt, other : UInt32) -> Bool {
   if is_neg(self) || self.bit_length() > 32 {
     false
   } else {
@@ -185,12 +185,12 @@ pub fn BigInt::equal_uint64(self : BigInt, other : UInt64) -> Bool {
 /// }
 /// ```
 ///
-pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {
+pub fn BigInt::compare_int(self : BigInt, other : Int32) -> Int32 {
   guard can_convert_to_int(self) else {
     return if is_neg(self) { -1 } else { 1 }
   }
   let self = self.to_int()
-  Int::compare(self, other)
+  Int32::compare(self, other)
 }
 
 ///|
@@ -217,7 +217,7 @@ pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {
 ///   inspect(big.compare_int64(100L), content="-1") // 42 < 100
 /// }
 /// ```
-pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int {
+pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int32 {
   guard can_convert_to_int64(self) else {
     return if is_neg(self) { -1 } else { 1 }
   }
@@ -227,19 +227,19 @@ pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int {
 
 ///|
 /// Compares a `BigInt` with a `UInt` and returns their relative order.
-pub fn BigInt::compare_uint(self : BigInt, other : UInt) -> Int {
+pub fn BigInt::compare_uint(self : BigInt, other : UInt32) -> Int32 {
   if is_neg(self) {
     -1
   } else if self.bit_length() > 32 {
     1
   } else {
-    UInt::compare(self.to_uint(), other)
+    UInt32::compare(self.to_uint(), other)
   }
 }
 
 ///|
 /// Compares a `BigInt` with a `UInt64` and returns their relative order.
-pub fn BigInt::compare_uint64(self : BigInt, other : UInt64) -> Int {
+pub fn BigInt::compare_uint64(self : BigInt, other : UInt64) -> Int32 {
   if is_neg(self) {
     -1
   } else if self.bit_length() > 64 {
@@ -315,7 +315,7 @@ pub impl Hash for BigInt with fn hash_combine(self, hasher) {
 }
 
 ///|
-fn BigInt::signum(self : Self) -> Int {
+fn BigInt::signum(self : Self) -> Int32 {
   if self.is_zero() {
     0
   } else if is_neg(self) {
@@ -383,18 +383,18 @@ pub impl @debug.Debug for BigInt with fn to_repr(self) {
 }
 
 ///|
-fn digit_from_char(x : UInt16) -> Int? {
+fn digit_from_char(x : UInt16) -> Int32? {
   match x {
-    '0'..='9' => Some(x.to_int() - '0')
-    'A'..='Z' => Some(x.to_int() + (10 - 'A'))
-    'a'..='z' => Some(x.to_int() + (10 - 'a'))
+    '0'..<='9' => Some(x.to_int() - '0')
+    'A'..<='Z' => Some(x.to_int() + (10 - 'A'))
+    'a'..<='z' => Some(x.to_int() + (10 - 'a'))
     _ => None
   }
 }
 
 ///|
 #cfg(not(target="js"))
-fn char_from_digit(d : Int) -> Char {
+fn char_from_digit(d : Int32) -> Char {
   if d < 10 {
     (d + '0').unsafe_to_char()
   } else {
@@ -403,7 +403,7 @@ fn char_from_digit(d : Int) -> Char {
 }
 
 ///|
-fn pow2_shift(radix : Int) -> Int? {
+fn pow2_shift(radix : Int32) -> Int32? {
   if radix >= 2 && (radix & (radix - 1)) == 0 {
     Some(radix.ctz())
   } else {

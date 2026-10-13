@@ -14,18 +14,18 @@
 
 ///|
 /// Transition table entry: the transition has not been built yet.
-const UNKNOWN : Int = -1
+const UNKNOWN : Int32 = -1
 
 ///|
 /// Transition table entry: no thread survives and nothing was accepted.
 /// Entries below `DEAD` denote a terminal state or a transition that moves
 /// registers, see `terminal` and `moving`.
-const DEAD : Int = -2
+const DEAD : Int32 = -2
 
 ///|
 /// Register of a tag while a transition is being built: the tag is set by
 /// this very transition and still needs a register.
-const CURRENT : Int = -1
+const CURRENT : Int32 = -1
 
 ///|
 /// Default budget for the lazy DFA cache, in machine words (table entries
@@ -39,7 +39,7 @@ const CURRENT : Int = -1
 /// after a drop is always kept, even when it is larger than the budget on
 /// its own. The register moves of transitions into a state that stands in
 /// for another are kept on top of this, up to the same number of words.
-const MAX_CACHE_WORDS : Int = 1 << 24
+const MAX_CACHE_WORDS : Int32 = 1 << 24
 
 ///|
 /// The kernel of a lazy DFA state: the NFA nodes reached right after
@@ -58,12 +58,12 @@ const MAX_CACHE_WORDS : Int = 1 << 24
 ///   It plays the role of the `Accept` node in the compiler's DFA states and
 ///   has the lowest priority.
 priv struct Kernel {
-  key : FixedArray[Int]
-  threads : Int
+  key : FixedArray[Int32]
+  threads : Int32
 }
 
 ///|
-fn Kernel::ctx(self : Kernel) -> Int {
+fn Kernel::ctx(self : Kernel) -> Int32 {
   self.key[0]
 }
 
@@ -73,7 +73,7 @@ fn Kernel::accepted(self : Kernel) -> Bool {
 }
 
 ///|
-fn Kernel::node(self : Kernel, thread : Int) -> Int {
+fn Kernel::node(self : Kernel, thread : Int32) -> Int32 {
   self.key[2 + thread]
 }
 
@@ -81,7 +81,7 @@ fn Kernel::node(self : Kernel, thread : Int) -> Int {
 /// The `(tag, register)` pairs of the row that starts at `offset` in `key`.
 /// Rows have different lengths, so they are read in order starting at
 /// `2 + threads`; the next row starts `1 + length` words further.
-fn Kernel::row(self : Kernel, offset : Int) -> FixedArray[Int] {
+fn Kernel::row(self : Kernel, offset : Int32) -> FixedArray[Int32] {
   let len = 2 * self.key[offset]
   let row = FixedArray::make(len, 0)
   self.key.blit_to(row, len~, src_offset=offset + 1)
@@ -91,7 +91,7 @@ fn Kernel::row(self : Kernel, offset : Int) -> FixedArray[Int] {
 ///|
 /// `row` with `tag` set by the transition being built. Rows are shared
 /// between threads while a transition is built, so `row` is never written.
-fn set_current(row : FixedArray[Int], tag : Int) -> FixedArray[Int] {
+fn set_current(row : FixedArray[Int32], tag : Int32) -> FixedArray[Int32] {
   let len = row.length()
   let mut i = 0
   while i < len && row[i] < tag {
@@ -118,10 +118,10 @@ fn set_current(row : FixedArray[Int], tag : Int) -> FixedArray[Int] {
 priv struct Move {
   /// `(from, to)` pairs: the value of register `from` goes to register `to`.
   /// All values are read before any is written.
-  pairs : FixedArray[Int]
+  pairs : FixedArray[Int32]
   /// Table entry of the state entered: a row base or an encoded terminal
   /// state.
-  target : Int
+  target : Int32
 }
 
 ///|
@@ -131,47 +131,47 @@ struct Regex {
   groups : ReadOnlyArray[String?]
   table : @symbol_map.Table
   nodes : FixedArray[Node]
-  entry : Int
-  ntags : Int
+  entry : Int32
+  ntags : Int32
   /// Number of input symbols. Column `nsym` of a table row is end of input.
-  nsym : Int
+  nsym : Int32
   /// Look-behind context after consuming each symbol.
-  sym_ctx : FixedArray[Int]
+  sym_ctx : FixedArray[Int32]
   /// Look-ahead category of each column, including end of input.
   col_cat : FixedArray[Category]
   /// Look-behind context when there is no previous character.
-  ctx_start : Int
+  ctx_start : Int32
   // Lazy DFA cache.
-  state_ids : @hashmap.HashMap[FixedArray[Int], Int]
+  state_ids : @hashmap.HashMap[FixedArray[Int32], Int32]
   kernels : Array[Kernel]
   /// Indexed by `state * (nsym + 1) + column`; holds the next row base,
   /// `UNKNOWN`, `DEAD`, an encoded terminal state or an encoded index into
   /// `moves`.
-  mut trans : FixedArray[Int]
+  mut trans : FixedArray[Int32]
   /// Parallel to `trans`: the register that receives the current position
   /// when the transition is taken. Register `0` is a sink that is never read,
   /// so the scan loop can write unconditionally.
-  mut slots : FixedArray[Int]
+  mut slots : FixedArray[Int32]
   /// Row base of the start state for each look-behind context.
-  start_bases : FixedArray[Int]
+  start_bases : FixedArray[Int32]
   /// Register written by the transition most recently built by `build`.
-  mut built_slot : Int
+  mut built_slot : Int32
   /// Words currently held by the cache, and its budget.
-  mut cache_words : Int
-  max_cache_words : Int
+  mut cache_words : Int32
+  max_cache_words : Int32
   /// The cached states by `shape_hash`, in the order they were added. Only
   /// needed once the cache is full, so it is built then, see `reuse`.
-  mut shapes : @hashmap.HashMap[Int, Array[Int]]?
+  mut shapes : @hashmap.HashMap[Int32, Array[Int32]]?
   /// Transitions that move registers, the words they hold, and scratch space
   /// to read all values of a move before writing any.
   moves : Array[Move]
-  mut move_words : Int
-  mut move_values : FixedArray[Int]
+  mut move_words : Int32
+  mut move_values : FixedArray[Int32]
   // Scratch space reused across `execute` calls.
-  mut regs : FixedArray[Int]
-  visited : FixedArray[Int]
-  targeted : FixedArray[Int]
-  mut epoch : Int
+  mut regs : FixedArray[Int32]
+  visited : FixedArray[Int32]
+  targeted : FixedArray[Int32]
+  mut epoch : Int32
 }
 
 ///|
@@ -192,7 +192,7 @@ pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
 pub fn compile(
   profile~ : Profile,
   ast : Pattern,
-  max_cache_words? : Int = MAX_CACHE_WORDS,
+  max_cache_words~ : Int32 = MAX_CACHE_WORDS,
 ) -> Regex {
   let symbol_map = @symbol_map.new()
   symbolize(profile~, symbol_map~, ast)
@@ -212,7 +212,7 @@ pub fn compile(
     search
   }
   let after_cats = builder.after_cats
-  fn ctx_of(cat : Category) -> Int {
+  fn ctx_of(cat : Category) -> Int32 {
     for i = 0, ctx = 0; i < after_cats.length(); {
       continue i + 1,
         if cat.intersects(after_cats[i]) {

@@ -48,7 +48,7 @@ fn ParseContext::lex_string_slow_reference(
 ) -> String raise ParseError {
   let buf = StringBuilder()
   let mut start = ctx.offset
-  fn flush(end : Int) {
+  fn flush(end : Int32) {
     if start > 0 && end > start {
       buf.write_view(ctx.input[start:end])
     }
@@ -74,7 +74,7 @@ fn ParseContext::lex_string_slow_reference(
           Some('u') => {
             let escape_start = ctx.offset - 2
             let c = ctx.lex_hex_digits(4)
-            if c is (0xD800..=0xDBFF) {
+            if c is (0xD800..<=0xDBFF) {
               match ctx.read_char() {
                 Some('\\') => ()
                 Some(_) => ctx.unpaired_surrogate(escape_start)
@@ -86,13 +86,13 @@ fn ParseContext::lex_string_slow_reference(
                 None => raise InvalidEof
               }
               let c2 = ctx.lex_hex_digits(4)
-              if c2 is (0xDC00..=0xDFFF) {
+              if c2 is (0xDC00..<=0xDFFF) {
                 let combined = (c << 10) + c2 - 0x35fdc00
                 buf.write_char(combined.unsafe_to_char())
               } else {
                 ctx.unpaired_surrogate(escape_start)
               }
-            } else if c is (0xDC00..=0xDFFF) {
+            } else if c is (0xDC00..<=0xDFFF) {
               ctx.unpaired_surrogate(escape_start)
             } else {
               buf.write_char(c.unsafe_to_char())
@@ -125,7 +125,7 @@ fn ParseContext::lex_string_slow_reference(
 fn lex_string_outcome(
   input : StringView,
   reference~ : Bool,
-) -> (Result[String, ParseError], Int) {
+) -> (Result[String, ParseError], Int32) {
   let ctx = ParseContext::make(input)
   ctx.offset = 1
   let result = Ok(
@@ -253,7 +253,7 @@ test "lex_string: surrogate pairs at every position" {
 /// Builds a string body from `seeds`: long literal runs mixed with escapes
 /// (valid and invalid), raw control characters,
 /// quotes, surrogate pairs and near-miss units.
-fn lex_string_body(seeds : Array[Int]) -> String {
+fn lex_string_body(seeds : Array[Int32]) -> String {
   let buf = StringBuilder()
   for seed in seeds {
     let payload = (seed >> 5) & 0x7FFF
@@ -277,7 +277,7 @@ fn lex_string_body(seeds : Array[Int]) -> String {
       16 => buf.write_string("\\uD800x")
       17 => buf.write_string("\\u12")
       _ => {
-        let c = (('a' : Int) + payload % 26).unsafe_to_char()
+        let c = (('a' : Int32) + payload % 26).unsafe_to_char()
         for _ in 0..<(payload % 70) {
           buf.write_char(c)
         }
@@ -289,7 +289,7 @@ fn lex_string_body(seeds : Array[Int]) -> String {
 
 ///|
 test "quickcheck: lex_string agrees with the reference lexer" {
-  @quickcheck.check(count=500, (seeds : Array[Int]) => {
+  @quickcheck.check(count=500, (seeds : Array[Int32]) => {
     let body = lex_string_body(seeds)
     let whole = "\"" + body
     guard lex_string_outcome(whole, reference=false) ==

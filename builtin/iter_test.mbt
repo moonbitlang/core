@@ -55,7 +55,7 @@ test "count_if" {
   @test.assert_eq(iter.count_if(x => x % 2 == 0), 3)
   let iter = test_from_array([1, 2, 3])
   @test.assert_eq(iter.count_if(x => x > 99), 0)
-  let iter : Iter[Int] = [||]
+  let iter : Iter[Int32] = [||]
   @test.assert_eq(iter.count_if(_ => true), 0)
 }
 
@@ -315,12 +315,12 @@ test "size_hint" {
   debug_inspect([|1, 2, 3|].concat([|4, 5|]).size_hint(), content="Some(5)")
   debug_inspect([|1, 2|].zip([|3, 4, 5|]).size_hint(), content="Some(2)")
   debug_inspect([|1, 2, 3|].zip([|4, 5|]).size_hint(), content="Some(2)")
-  let empty_left : Iter[Int] = [||]
+  let empty_left : Iter[Int32] = [||]
   debug_inspect(
     empty_left.zip(Iter::new(() => Some(1))).size_hint(),
     content="Some(0)",
   )
-  let empty_right : Iter[Int] = [||]
+  let empty_right : Iter[Int32] = [||]
   debug_inspect(
     Iter::new(() => Some(1)).zip(empty_right).size_hint(),
     content="Some(0)",
@@ -347,8 +347,8 @@ test "size_hint" {
     content="None",
   )
   debug_inspect([|1, 2, 3|].take_while(x => x < 3).size_hint(), content="None")
-  let unknown : Iter[Int] = Iter::new(() => None)
-  let known_empty : Iter[Int] = Iter::new(() => None, size_hint=0)
+  let unknown : Iter[Int32] = Iter::new(() => None)
+  let known_empty : Iter[Int32] = Iter::new(() => None, size_hint=0)
   debug_inspect(unknown.size_hint(), content="None")
   debug_inspect(known_empty.size_hint(), content="Some(0)")
   let mut i = 0
@@ -365,10 +365,10 @@ test "size_hint" {
   )
   debug_inspect(too_small.collect(), content="[1, 2, 3]")
   debug_inspect(too_small.size_hint(), content="Some(0)")
-  let too_large : Iter[Int] = Iter::new(() => None, size_hint=3)
+  let too_large : Iter[Int32] = Iter::new(() => None, size_hint=3)
   debug_inspect(too_large.next(), content="None")
   debug_inspect(too_large.size_hint(), content="Some(0)")
-  let negative_hint : Iter[Int] = Iter::new(() => None, size_hint=-1)
+  let negative_hint : Iter[Int32] = Iter::new(() => None, size_hint=-1)
   debug_inspect(negative_hint.size_hint(), content="Some(0)")
 }
 
@@ -805,12 +805,12 @@ test "all" {
 
 ///|
 enum Tree {
-  Leaf(Int)
-  Node(Tree, Int, Tree)
+  Leaf(Int32)
+  Node(Tree, Int32, Tree)
 }
 
 ///|
-fn Tree::iter(self : Tree) -> Iter[Int] {
+fn Tree::iter(self : Tree) -> Iter[Int32] {
   let parents = []
   let mut head = Some(self)
   Iter::new(fn() {
@@ -858,7 +858,7 @@ test "Iter::intersperse" {
     ),
   )
   debug_inspect(
-    ([||] : Iter[Int]).intersperse(0).to_array(),
+    ([||] : Iter[Int32]).intersperse(0).to_array(),
     content=(
       #|[]
     ),
@@ -875,14 +875,14 @@ test "Iter::intersperse" {
 test "Iter::last" {
   debug_inspect([|1, 2, 3|].last(), content="Some(3)")
   debug_inspect([|1|].last(), content="Some(1)")
-  debug_inspect(([||] : Iter[Int]).last(), content="None")
+  debug_inspect(([||] : Iter[Int32]).last(), content="None")
 }
 
 ///|
 test "Iter::head" {
   debug_inspect([|1, 2, 3|].head(), content="Some(1)")
   debug_inspect([|1|].head(), content="Some(1)")
-  debug_inspect(([||] : Iter[Int]).head(), content="None")
+  debug_inspect(([||] : Iter[Int32]).head(), content="None")
 }
 
 ///|
@@ -931,7 +931,7 @@ test "next function - basic functionality" {
 
 ///|
 test "next function - empty iter" {
-  let iter : Iter[Int] = [||]
+  let iter : Iter[Int32] = [||]
   debug_inspect(iter.next(), content="None")
 }
 
@@ -1009,7 +1009,7 @@ test "@builtin.Iter::maximum" {
   // Single element
   debug_inspect([|42|].maximum(), content="Some(42)")
   // Empty iter should return None
-  let empty_iter : Iter[Int] = [||]
+  let empty_iter : Iter[Int32] = [||]
   debug_inspect(empty_iter.maximum(), content="None")
 }
 
@@ -1024,7 +1024,7 @@ test "@builtin.Iter::minimum" {
   debug_inspect(single.minimum(), content="Some(42)")
 
   // Test with empty sequence
-  let empty : Iter[Int] = [||]
+  let empty : Iter[Int32] = [||]
   debug_inspect(empty.minimum(), content="None")
 }
 
@@ -1189,7 +1189,7 @@ test "Float::until negative step" {
 
 ///|
 test "iter2" {
-  let iter : Iter[Int] = [||]
+  let iter : Iter[Int32] = [||]
   for _, _ in iter.iter2() {
     assert_true(false)
   }
@@ -1218,23 +1218,23 @@ test "Iter::iter2" {
 test "Iter::to_json and any on empty" {
   let iter = [|1, 2, 3|]
   @json.json_inspect(@json.ToJson::to_json(iter), content=[1, 2, 3])
-  let empty : Iter[Int] = [||]
+  let empty : Iter[Int32] = [||]
   inspect(empty.any(_ => true), content="false")
 }
 
 ///|
 test "Iter::map_while empty and last" {
-  let empty : Iter[Int] = [||]
+  let empty : Iter[Int32] = [||]
   debug_inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
   debug_inspect([|1, 2, 3|].last(), content="Some(3)")
-  let empty_last : Iter[Int] = [||]
+  let empty_last : Iter[Int32] = [||]
   debug_inspect(empty_last.last(), content="None")
 }
 
 ///|
 test "Iter::maximum" {
   debug_inspect([|1, 3, 2|].maximum(), content="Some(3)")
-  let empty : Iter[Int] = [||]
+  let empty : Iter[Int32] = [||]
   debug_inspect(empty.maximum(), content="None")
 }
 
@@ -1285,7 +1285,7 @@ fn raises_at(f : () -> Unit raise) -> String {
 test "eager Iter consumers propagate callback errors" {
   let xs = [1, 2, 3, 4]
   let seen = []
-  let stop_at_3 = (x : Int) => {
+  let stop_at_3 = (x : Int32) => {
     seen.push(x)
     if x == 3 {
       fail("stop")

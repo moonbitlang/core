@@ -42,8 +42,8 @@ test "shrink option" {
 
 ///|
 test "shrink result" {
-  let b : Result[Bool, Int] = Err(100)
-  let x : Result[Bool, Int] = Ok(true)
+  let b : Result[Bool, Int32] = Err(100)
+  let x : Result[Bool, Int32] = Ok(true)
   debug_inspect(
     @shrink.Shrink::shrink(b).collect(),
     content=(
@@ -95,7 +95,7 @@ test "shrink array" {
 
 ///|
 test "shrink fixed array" {
-  let input : FixedArray[Int] = [2, 1]
+  let input : FixedArray[Int32] = [2, 1]
   debug_inspect(
     @shrink.Shrink::shrink(input).collect(),
     content=(
@@ -132,7 +132,7 @@ test "shrink array view" {
 
 ///|
 test "shrink readonly array" {
-  let input : ReadOnlyArray[Int] = ReadOnlyArray::from_array([2, 1])
+  let input : ReadOnlyArray[Int32] = ReadOnlyArray::from_array([2, 1])
   let candidates = @shrink.Shrink::shrink(input)
     .map(candidate => candidate[:].to_owned())
     .collect()

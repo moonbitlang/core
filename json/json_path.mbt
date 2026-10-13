@@ -24,12 +24,12 @@
 enum JsonPath {
   Root
   Key(JsonPath, mut key~ : String)
-  Index(JsonPath, mut index~ : Int)
+  Index(JsonPath, mut index~ : Int32)
 } derive(Eq, @debug.Debug)
 
 ///|
 /// Appends an array index to the JSON path.
-pub fn JsonPath::add_index(self : JsonPath, index : Int) -> JsonPath {
+pub fn JsonPath::add_index(self : JsonPath, index : Int32) -> JsonPath {
   Index(self, index~)
 }
 

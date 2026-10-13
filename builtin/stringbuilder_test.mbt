@@ -161,7 +161,7 @@ test "UTF-16 ASCII case conversions preserve offset view ranges" {
       for i in 0..<len {
         let code = view[i].to_int()
         upper.write_char(
-          Int::unsafe_to_char(
+          Int32::unsafe_to_char(
             if code >= 97 && code <= 122 {
               code - 32
             } else {
@@ -170,7 +170,7 @@ test "UTF-16 ASCII case conversions preserve offset view ranges" {
           ),
         )
         lower.write_char(
-          Int::unsafe_to_char(
+          Int32::unsafe_to_char(
             if code >= 65 && code <= 90 {
               code + 32
             } else {

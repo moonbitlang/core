@@ -62,7 +62,7 @@ pub fn valid(input : StringView) -> Bool {
 #label_migration(max_nesting_depth, fill=false)
 pub fn parse(
   input : StringView,
-  max_nesting_depth? : Int = 1024,
+  max_nesting_depth~ : Int32 = 1024,
 ) -> Json raise ParseError {
   let ctx = ParseContext::make(input)
   let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
@@ -77,7 +77,7 @@ pub fn parse(
 ///|
 fn ParseContext::parse_value(
   ctx : ParseContext,
-  remaining_available_depth~ : Int,
+  remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
   let tok = ctx.lex_value(allow_rbracket=false)
   ctx.parse_value2(tok, remaining_available_depth~)
@@ -87,7 +87,7 @@ fn ParseContext::parse_value(
 fn ParseContext::parse_value2(
   ctx : ParseContext,
   tok : Token,
-  remaining_available_depth~ : Int,
+  remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
   match tok {
     Null => null
@@ -104,7 +104,7 @@ fn ParseContext::parse_value2(
 ///|
 fn ParseContext::parse_object(
   ctx : ParseContext,
-  remaining_available_depth~ : Int,
+  remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
   if remaining_available_depth <= 0 {
     raise DepthLimitExceeded
@@ -133,7 +133,7 @@ fn ParseContext::parse_object(
 ///|
 fn ParseContext::parse_array(
   ctx : ParseContext,
-  remaining_available_depth~ : Int,
+  remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
   if remaining_available_depth <= 0 {
     raise DepthLimitExceeded

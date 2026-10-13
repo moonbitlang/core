@@ -16,13 +16,13 @@
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
-struct CoverageCounter(FixedArray[UInt])
+struct CoverageCounter(FixedArray[UInt32])
 
 ///|
 /// Create a new coverage counter with the given size.
 ///
 #coverage.skip
-pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
+pub fn CoverageCounter::new(size : Int32) -> CoverageCounter {
   CoverageCounter(FixedArray::make(size, 0))
 }
 
@@ -32,7 +32,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 /// is the length supplied to `new`. This hot path uses unchecked array access.
 ///
 #coverage.skip
-pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
+pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int32) -> Unit {
   let CoverageCounter(self) = self
   self.unsafe_set(idx, self.unsafe_get(idx) + 1)
 }

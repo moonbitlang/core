@@ -20,7 +20,7 @@ priv enum Expr {
   Sub(Expr, Expr)
   Mul(Expr, Expr)
   Div(Expr, Expr)
-  Lit(Int)
+  Lit(Int32)
   Var(String)
 } derive(Debug, @json.ToJson, Eq)
 

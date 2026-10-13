@@ -160,8 +160,8 @@ test "interleaved unique elements" {
 
 ///|
 test "numeric sequences" {
-  let old : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
-  let new : ReadOnlyArray[Int] = [2, 3, 4, 7, 8, 9]
+  let old : ReadOnlyArray[Int32] = [1, 3, 5, 7, 9]
+  let new : ReadOnlyArray[Int32] = [2, 3, 4, 7, 8, 9]
   @json.json_inspect(unique_lcs(old~, new~), content=[[1, 1], [3, 3], [4, 5]])
 }
 

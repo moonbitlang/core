@@ -9,7 +9,7 @@ Reach for it over `@immut/hashmap` when the order in which entries were added is
 ```mbt check
 ///|
 test "create" {
-  let empty : @vector_map.VectorMap[String, Int] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
   inspect(empty.is_empty(), content="true")
   let one = @vector_map.singleton("a", 1)
   inspect(one.length(), content="1")
@@ -160,7 +160,7 @@ JSON is an array of `[key, value]` pairs rather than an object, so that the orde
 test "json" {
   let m = @vector_map.VectorMap([(30, "c"), (10, "a")])
   json_inspect(m, content=[[30, "c"], [10, "a"]])
-  let back : @vector_map.VectorMap[Int, String] = @json.from_json(Json(m))
+  let back : @vector_map.VectorMap[Int32, String] = @json.from_json(Json(m))
   inspect(back == m, content="true")
 }
 ```

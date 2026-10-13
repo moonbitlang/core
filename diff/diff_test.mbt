@@ -43,7 +43,7 @@ fn[T] hunks_to_string(
 
 ///|
 priv struct User {
-  id : Int
+  id : Int32
   name : String
 } derive(Hash, Eq)
 
@@ -56,7 +56,7 @@ fn show_user(u : User) -> String {
 priv enum Token {
   Start
   Stop
-  Num(Int)
+  Num(Int32)
   Word(String)
 } derive(Hash, Eq)
 
@@ -453,9 +453,9 @@ test "patience diff prefers unique anchors" {
 /// they deterministically choose — including the non-minimal results produced
 /// when `cutoff` is exceeded.
 fn check_reconstruct(
-  d : @diff.Diff[Int],
-  old : ArrayView[Int],
-  new : ArrayView[Int],
+  d : @diff.Diff[Int32],
+  old : ArrayView[Int32],
+  new : ArrayView[Int32],
 ) -> Unit raise {
   let rebuilt = Array()
   let mut oi = 0
@@ -499,7 +499,7 @@ fn check_reconstruct(
 test "property: edit scripts reconstruct new from old" {
   // Exhaustive over all pairs of {0,1}-sequences of length 0..4, both
   // algorithms, with the default cutoff and a tiny one (heuristic path).
-  let seqs : Array[Array[Int]] = []
+  let seqs : Array[Array[Int32]] = []
   for len in 0..<5 {
     for bits in 0..<(1 << len) {
       let a = Array(capacity=len)

@@ -27,7 +27,7 @@
 
 ///|
 /// Build a hex string (possibly with leading zeros) from a seed stream.
-fn hex_of(seeds : ArrayView[Int]) -> String {
+fn hex_of(seeds : ArrayView[Int32]) -> String {
   let digits = "0123456789abcdef"
   let sb = StringBuilder()
   for s in seeds {
@@ -38,7 +38,7 @@ fn hex_of(seeds : ArrayView[Int]) -> String {
 
 ///|
 /// A value built through the exactly-allocating hex path.
-fn via_hex(seeds : ArrayView[Int], negative : Bool) -> @bigint.BigInt {
+fn via_hex(seeds : ArrayView[Int32], negative : Bool) -> @bigint.BigInt {
   let magnitude = @bigint.BigInt::from_string(hex_of(seeds), radix=16)
   if negative {
     -magnitude
@@ -56,7 +56,7 @@ fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt {
 ///|
 /// The same value rebuilt through zero-padded big-endian octets — the
 /// fixed-width buffer shape crypto-style callers pass.
-fn via_octets(v : @bigint.BigInt, pad : Int) -> @bigint.BigInt {
+fn via_octets(v : @bigint.BigInt, pad : Int32) -> @bigint.BigInt {
   let magnitude = if v < 0N { -v } else { v }
   let octets = magnitude.to_octets()
   let padded = magnitude.to_octets(length=octets.length() + pad)
@@ -146,7 +146,7 @@ test "quickcheck: Int64 oracle for every operation" {
 
 ///|
 test "quickcheck: every operation is construction-path invariant" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Bool, Bool)) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Bool, Bool)) => {
     let (xs, ys, xneg, yneg) = input
     guard xs.length() > 0 && ys.length() > 0 else { return true }
     let a1 = via_hex(xs, xneg)
@@ -181,7 +181,7 @@ test "quickcheck: every operation is construction-path invariant" {
     // deterministic shift amounts crossing every limb boundary — the
     // generated xs[0] is structurally always zero (element i is drawn
     // with size i), so shift counts must not come from the generator
-    for n in ([0, 1, 31, 32, 33, 63, 64, 100] : Array[Int]) {
+    for n in ([0, 1, 31, 32, 33, 63, 64, 100] : Array[Int32]) {
       guard a1 << n == a2 << n else { return false }
       guard a1 >> n == a2 >> n else { return false }
     }
@@ -195,7 +195,7 @@ test "quickcheck: every operation is construction-path invariant" {
 
 ///|
 test "quickcheck: algebraic and two's-complement laws" {
-  @quickcheck.check((input : (Array[Int], Array[Int], Array[Int], Bool)) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32], Array[Int32], Bool)) => {
     let (xs, ys, zs, neg) = input
     guard xs.length() > 0 && ys.length() > 0 && zs.length() > 0 else {
       return true
@@ -252,12 +252,12 @@ test "quickcheck: algebraic and two's-complement laws" {
     // shifts: compose, cancel, and floor decomposition — deterministic
     // amounts crossing limb boundaries (the generated heads are
     // structurally always zero, so shift counts must not come from them)
-    for m in ([0, 1, 31, 32, 33] : Array[Int]) {
-      for n in ([0, 1, 31, 32, 33, 64] : Array[Int]) {
+    for m in ([0, 1, 31, 32, 33] : Array[Int32]) {
+      for n in ([0, 1, 31, 32, 33, 64] : Array[Int32]) {
         guard a << m << n == a << (m + n) else { return false }
       }
     }
-    for n in ([0, 1, 5, 31, 32, 33, 63, 64, 100] : Array[Int]) {
+    for n in ([0, 1, 5, 31, 32, 33, 63, 64, 100] : Array[Int32]) {
       guard a << n >> n == a else { return false }
       let mask = (1N << n) - 1N
       guard (a >> n << n) + (a & mask) == a else { return false }

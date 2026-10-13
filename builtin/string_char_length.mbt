@@ -43,10 +43,10 @@ const CHAR_LENGTH_SIMD_THRESHOLD = 16
 #cfg(any(target="native", target="wasm"))
 fn string_char_length_scalar(
   str : String,
-  index : Int,
-  end : Int,
-  count : Int,
-) -> Int {
+  index : Int32,
+  end : Int32,
+  count : Int32,
+) -> Int32 {
   for index = index, count = count
       index < end
       index = index + 1, count = count + 1 {
@@ -75,10 +75,10 @@ fn string_char_length_scalar(
 #cfg(any(target="native", target="wasm"))
 fn string_char_length_cmp_scalar(
   str : String,
-  len : Int,
-  index : Int,
-  end : Int,
-  count : Int,
+  len : Int32,
+  index : Int32,
+  end : Int32,
+  count : Int32,
   exact~ : Bool,
 ) -> Bool {
   for index = index, count = count
@@ -115,7 +115,7 @@ fn string_char_length_cmp_scalar(
 // are compared as differences so that no sum can overflow. The caller must
 // ensure `0 <= start <= end <= str.length()`.
 #cfg(any(target="native", target="wasm"))
-fn string_char_length_simd(str : String, start : Int, end : Int) -> Int {
+fn string_char_length_simd(str : String, start : Int32, end : Int32) -> Int32 {
   let leading_base = i16x8_splat(0xD800)
   let trailing_base = i16x8_splat(0xDC00)
   let surrogate_span = i16x8_splat(0x3FF)
@@ -157,9 +157,9 @@ fn string_char_length_simd(str : String, start : Int, end : Int) -> Int {
 #cfg(any(target="native", target="wasm"))
 fn string_char_length_cmp_simd(
   str : String,
-  len : Int,
-  start : Int,
-  end : Int,
+  len : Int32,
+  start : Int32,
+  end : Int32,
   exact~ : Bool,
 ) -> Bool {
   let leading_base = i16x8_splat(0xD800)

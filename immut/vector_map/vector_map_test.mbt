@@ -14,7 +14,7 @@
 
 ///|
 test "construction" {
-  let empty : @vector_map.VectorMap[String, Int] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
   inspect(empty.length(), content="0")
   inspect(empty.is_empty(), content="true")
   let single = @vector_map.singleton("a", 1)
@@ -93,7 +93,7 @@ test "lookup" {
 
 ///|
 test "panic at on a missing key" {
-  let m : @vector_map.VectorMap[String, Int] = @vector_map.new()
+  let m : @vector_map.VectorMap[String, Int32] = @vector_map.new()
   ignore(m["missing"])
 }
 
@@ -280,7 +280,7 @@ test "equality is order sensitive" {
   // when it is on the right, so a length check that fired one way round would
   // leave `Eq` asymmetric.
   let a_only = @vector_map.singleton("a", 1)
-  let empty : @vector_map.VectorMap[String, Int] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
   assert_false(ab == a_only)
   assert_false(a_only == ab)
   assert_false(ab == empty)
@@ -309,7 +309,7 @@ test "equality ignores how the holes fell" {
 }
 
 ///|
-fn[K : Hash, V : Hash] hash_of(map : @vector_map.VectorMap[K, V]) -> Int {
+fn[K : Hash, V : Hash] hash_of(map : @vector_map.VectorMap[K, V]) -> Int32 {
   let hasher = Hasher()
   hasher.combine(map)
   hasher.finalize()
@@ -338,7 +338,7 @@ test "every part of an entry feeds the hash" {
     hash_of(ab) == hash_of(@vector_map.singleton("a", 1)),
     content="false",
   )
-  let empty : @vector_map.VectorMap[String, Int] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
   inspect(hash_of(ab) == hash_of(empty), content="false")
 }
 
@@ -370,7 +370,7 @@ test "Debug for VectorMap" {
 test "json round trip keeps the order and the key type" {
   let m = @vector_map.VectorMap([(30, "c"), (10, "a"), (20, "b")])
   json_inspect(m, content=[[30, "c"], [10, "a"], [20, "b"]])
-  let back : @vector_map.VectorMap[Int, String] = @json.from_json(Json(m))
+  let back : @vector_map.VectorMap[Int32, String] = @json.from_json(Json(m))
   assert_true(back == m)
 }
 
@@ -378,7 +378,9 @@ test "json round trip keeps the order and the key type" {
 test "json decoding rejects malformed input, pointing at it" {
   // An object cannot carry an order, so it is refused outright.
   let bad : Json = { "a": 1 }
-  try (@json.from_json(bad) : @vector_map.VectorMap[Int, Int]) |> ignore catch {
+  try
+    (@json.from_json(bad) : @vector_map.VectorMap[Int32, Int32]) |> ignore
+  catch {
     JsonDecodeError((path, msg)) => {
       inspect(
         path,
@@ -395,7 +397,7 @@ test "json decoding rejects malformed input, pointing at it" {
   // root — the path is what makes a decode failure diagnosable.
   let ragged : Json = [[0, 0], [1]]
   try
-    (@json.from_json(ragged) : @vector_map.VectorMap[Int, Int]) |> ignore
+    (@json.from_json(ragged) : @vector_map.VectorMap[Int32, Int32]) |> ignore
   catch {
     JsonDecodeError((path, msg)) => {
       inspect(
@@ -417,7 +419,7 @@ test "json decoding rejects malformed input, pointing at it" {
   // need pinning.
   let bad_key : Json = [[0, 0], ["not an int", 1]]
   try
-    (@json.from_json(bad_key) : @vector_map.VectorMap[Int, Int]) |> ignore
+    (@json.from_json(bad_key) : @vector_map.VectorMap[Int32, Int32]) |> ignore
   catch {
     JsonDecodeError((path, _)) =>
       inspect(
@@ -432,7 +434,7 @@ test "json decoding rejects malformed input, pointing at it" {
   // A value of the wrong type is reported inside the pair.
   let mistyped : Json = [[0, "not an int"]]
   try
-    (@json.from_json(mistyped) : @vector_map.VectorMap[Int, Int]) |> ignore
+    (@json.from_json(mistyped) : @vector_map.VectorMap[Int32, Int32]) |> ignore
   catch {
     JsonDecodeError((path, _)) =>
       inspect(
@@ -451,7 +453,7 @@ test "json decoding applies the same duplicate-key rule as construction" {
   // Decoding goes through the same builder as `VectorMap([...])`, so a repeated
   // key keeps its first position and its last value rather than appearing twice.
   let dup : Json = [[1, "a"], [2, "b"], [1, "z"]]
-  let m : @vector_map.VectorMap[Int, String] = @json.from_json(dup)
+  let m : @vector_map.VectorMap[Int32, String] = @json.from_json(dup)
   debug_inspect(
     m.to_array(),
     content=(
@@ -502,7 +504,7 @@ test "removals past the compaction threshold keep every promise" {
 /// unobservable — repeating an identical `String` proves nothing.
 priv struct TaggedKey {
   name : String
-  tag : Int
+  tag : Int32
 }
 
 ///|

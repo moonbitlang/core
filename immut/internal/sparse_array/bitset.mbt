@@ -14,26 +14,26 @@
 
 ///|
 /// a simple bit set to store a set of integers less than 32
-pub struct Bitset(UInt) derive(Eq)
+pub struct Bitset(UInt32) derive(Eq)
 
 ///|
 let empty_bitset : Bitset = Bitset(0)
 
 ///|
 /// Check if the given index is present in the bitset.
-fn Bitset::has(self : Bitset, idx : Int) -> Bool {
+fn Bitset::has(self : Bitset, idx : Int32) -> Bool {
   (self.0 & (1U << idx)) != 0
 }
 
 ///|
 /// Get the index of the bit in the bitset.
-fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
+fn Bitset::index_of(self : Bitset, idx : Int32) -> Int32 {
   (self.0 & ((1U << idx) - 1)).popcnt()
 }
 
 ///|
 /// Function `first_idx`.
-pub fn Bitset::first_idx(self : Bitset) -> Int {
+pub fn Bitset::first_idx(self : Bitset) -> Int32 {
   self.0.ctz()
 }
 
@@ -51,20 +51,20 @@ fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
 
 ///|
 /// Add a new index to the bitset.
-fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::add(self : Bitset, idx : Int32) -> Bitset {
   Bitset(self.0 | (1U << idx))
 }
 
 ///|
 /// Remove an index from the bitset.
-fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::remove(self : Bitset, idx : Int32) -> Bitset {
   Bitset(self.0 ^ (1U << idx))
 }
 
 ///|
 /// Calculate the size of a bitset
 #alias(size, deprecated)
-fn Bitset::length(self : Bitset) -> Int {
+fn Bitset::length(self : Bitset) -> Int32 {
   let Bitset(self) = self
   self.popcnt()
 }

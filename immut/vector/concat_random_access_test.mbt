@@ -74,7 +74,7 @@ test "concat random access matches iteration for many chunkings (issue #3721)" {
 /// index, so it stayed correct throughout.
 test "concat of a push-built vector keeps random access (issue #4086)" {
   for left_len in [1056, 1057, 2080] {
-    let mut left : @vector.Vector[Int] = @vector.new()
+    let mut left : @vector.Vector[Int32] = @vector.new()
     for i in 0..<left_len {
       left = left.push(i)
     }

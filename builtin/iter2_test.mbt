@@ -23,7 +23,7 @@ test "iter2_to_iter" {
 
 ///|
 test "iter2 identity function should return its input" {
-  let m : @builtin.Map[String, Int] = Map([])
+  let m : @builtin.Map[String, Int32] = Map([])
   m.set("x", 1)
   m.set("y", 2)
   let iter2 = m.iter2()

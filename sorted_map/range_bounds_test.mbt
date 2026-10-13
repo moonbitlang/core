@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn bound_of(kind : Int, key : Int) -> @cmp.Bound[Int] {
+fn bound_of(kind : Int32, key : Int32) -> @cmp.Bound[Int32] {
   match kind.abs() % 3 {
     0 => Included(key)
     1 => Excluded(key)
@@ -23,7 +23,9 @@ fn bound_of(kind : Int, key : Int) -> @cmp.Bound[Int] {
 
 ///|
 test "quickcheck: range_bounds matches filtering the sorted entries" {
-  @quickcheck.check((input : (Array[(Int, Int)], (Int, Int), (Int, Int))) => {
+  @quickcheck.check((
+    input : (Array[(Int32, Int32)], (Int32, Int32), (Int32, Int32)),
+  ) => {
     let (entries, (lk, lo), (hk, hi)) = input
     let map = @sorted_map.from_array(entries)
     let lower = bound_of(lk, lo)

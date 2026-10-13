@@ -22,7 +22,7 @@
 /// the hot accessors small enough to inline (and the surrounding loop to
 /// vectorize) while preserving the exact diagnostic message.
 #inline(never)
-fn[T] index_out_of_bounds(len : Int, index : Int) -> T {
+fn[T] index_out_of_bounds(len : Int32, index : Int32) -> T {
   abort(
     "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
   )
@@ -33,7 +33,7 @@ fn[T] index_out_of_bounds(len : Int, index : Int) -> T {
 /// `Array::swap`). Kept `#inline(never)` for the same reason: keep the cold
 /// formatting out of the small hot accessor body so it stays inlineable.
 #inline(never)
-fn[T] index_out_of_bounds2(len : Int, i : Int, j : Int) -> T {
+fn[T] index_out_of_bounds2(len : Int32, i : Int32, j : Int32) -> T {
   abort(
     "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
   )
@@ -44,7 +44,7 @@ fn[T] index_out_of_bounds2(len : Int, i : Int, j : Int) -> T {
 ///
 /// Shared by the `clamped_view` family, whose contract is to never abort:
 /// offsets outside the container are pulled to the nearest end instead.
-fn clamp_offset(offset : Int, len : Int) -> Int {
+fn clamp_offset(offset : Int32, len : Int32) -> Int32 {
   if offset < 0 {
     0
   } else if offset > len {

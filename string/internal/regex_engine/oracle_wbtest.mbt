@@ -18,16 +18,16 @@
 /// set per input position. It has no DFA states, registers, cache or
 /// transition table, so it checks all of those independently. It is also a
 /// valid oracle for repetitions of nullable bodies.
-fn pike(re : Regex, input : StringView, start : Int) -> Array[Int]? {
+fn pike(re : Regex, input : StringView, start : Int32) -> Array[Int32]? {
   let mut seeds = [(re.entry, Array::make(re.ntags, -1))]
-  let mut candidate : Array[Int]? = None
+  let mut candidate : Array[Int32]? = None
   for pos = start; pos <= input.length(); pos = pos + 1 {
     let seen = Array::make(re.nodes.length(), false)
-    let stack : Array[(Int, Array[Int])] = []
+    let stack : Array[(Int32, Array[Int32])] = []
     for i = seeds.length() - 1; i >= 0; i = i - 1 {
       stack.push(seeds[i])
     }
-    let ready : Array[(RecharSet, Int, Array[Int])] = []
+    let ready : Array[(RecharSet, Int32, Array[Int32])] = []
     let column = if pos == input.length() {
       re.nsym
     } else {
@@ -86,17 +86,17 @@ fn pike(re : Regex, input : StringView, start : Int) -> Array[Int]? {
 
 ///|
 priv struct OracleRng {
-  mut seed : UInt
+  mut seed : UInt32
 }
 
 ///|
-fn OracleRng::pick(self : OracleRng, n : Int) -> Int {
+fn OracleRng::pick(self : OracleRng, n : Int32) -> Int32 {
   self.seed = self.seed * 1664525U + 1013904223U
   ((self.seed >> 8) % n.reinterpret_as_uint()).reinterpret_as_int()
 }
 
 ///|
-fn oracle_pattern(rng : OracleRng, depth : Int) -> Pattern {
+fn oracle_pattern(rng : OracleRng, depth : Int32) -> Pattern {
   let a = char(RecharSet::char('a'))
   let b = char(RecharSet::char('b'))
   let atoms : ReadOnlyArray[Pattern] = [
@@ -157,10 +157,10 @@ fn oracle_profile() -> Profile {
     ],
     category=c => {
       match c {
-        'a'..='z' => Category::word()
+        'a'..<='z' => Category::word()
         '\n' => Category::newline() + Category::not_word()
-        0xD800..=0xDBFF => Category::not_word_start()
-        0xDC00..=0xDFFF => Category::not_word_end()
+        0xD800..<=0xDBFF => Category::not_word_start()
+        0xDC00..<=0xDFFF => Category::not_word_end()
         _ => Category::not_word()
       }
     },

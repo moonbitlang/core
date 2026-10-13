@@ -14,10 +14,10 @@
 
 ///|
 test "panic split_max with empty tree" {
-  (Empty : SortedMap[Int, Int]).split_max() |> ignore
+  (Empty : SortedMap[Int32, Int32]).split_max() |> ignore
 }
 
 ///|
 test "panic split_min with empty tree" {
-  (Empty : SortedMap[Int, Int]).split_min() |> ignore
+  (Empty : SortedMap[Int32, Int32]).split_min() |> ignore
 }

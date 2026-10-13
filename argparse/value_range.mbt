@@ -18,8 +18,8 @@
 // or a manual `Show` implementation, then remove `-deprecated_syntax` here.
 #warnings("-deprecated_syntax-deprecated")
 pub struct ValueRange {
-  priv lower : Int
-  priv upper : Int?
+  priv lower : Int32
+  priv upper : Int32?
 } derive(Eq, Show, @debug.Debug)
 
 ///|
@@ -31,7 +31,7 @@ pub struct ValueRange {
 /// - `ValueRange(lower=0)` means `0..`.
 /// - `ValueRange(lower=1, upper=3)` means `1..=3`.
 #alias(new, deprecated="Use `ValueRange()` instead")
-pub fn ValueRange::ValueRange(lower? : Int = 0, upper? : Int) -> ValueRange {
+pub fn ValueRange::ValueRange(lower~ : Int32 = 0, upper? : Int32) -> ValueRange {
   { lower, upper, }
 }
 

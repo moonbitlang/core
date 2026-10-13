@@ -19,11 +19,11 @@ priv struct Node[K, V] {
   mut value : V
   mut left : Node[K, V]?
   mut right : Node[K, V]?
-  mut height : Int
+  mut height : Int32
 }
 
 ///|
 struct SortedMap[K, V] {
   mut root : Node[K, V]?
-  mut size : Int
+  mut size : Int32
 }

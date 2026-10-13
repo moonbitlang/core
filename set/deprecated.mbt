@@ -18,6 +18,6 @@
 /// Deprecated: use `Set([], capacity=...)` instead.
 #deprecated("Use `Set([], capacity=...)` instead")
 #as_free_fn(deprecated="Use `Set([], capacity=...)` instead")
-pub fn[K] Set::new(capacity? : Int = default_init_capacity) -> Set[K] {
+pub fn[K] Set::new(capacity~ : Int32 = default_init_capacity) -> Set[K] {
   new_set(capacity)
 }

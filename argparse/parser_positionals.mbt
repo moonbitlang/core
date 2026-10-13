@@ -96,7 +96,7 @@ fn should_parse_as_positional(
 ///|
 fn is_negative_number(arg : String) -> Bool {
   match arg {
-    ['-', '0'..='9', .. rest] => rest.all(c => c is ('0'..='9'))
+    ['-', '0'..<='9', .. rest] => rest.all(c => c is ('0'..<='9'))
     _ => false
   }
 }

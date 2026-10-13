@@ -30,7 +30,7 @@
 /// ```mbt check
 /// test {
 ///   let strict = true
-///   let lower : @cmp.Bound[Int] = if strict { Excluded(3) } else { Included(3) }
+///   let lower : @cmp.Bound[Int32] = if strict { Excluded(3) } else { Included(3) }
 ///   @debug.debug_inspect(lower, content="Excluded(3)")
 /// }
 /// ```
@@ -42,9 +42,9 @@ pub(all) enum Bound[T] {
 
 ///|
 test "Bound equality and hashing" {
-  let a : Bound[Int] = Included(1)
+  let a : Bound[Int32] = Included(1)
   assert_true(a == Included(1))
   assert_true(a != Excluded(1))
-  assert_true(Unbounded == (Unbounded : Bound[Int]))
+  assert_true(Unbounded == (Unbounded : Bound[Int32]))
   assert_true(a.hash() == Bound::Included(1).hash())
 }

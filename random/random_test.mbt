@@ -48,9 +48,9 @@ test "explicit unit intervals preserve the original paths" {
 fn histogram(
   sample : () -> UInt64,
   first_bits : UInt64,
-  bins : Int,
-  count : Int,
-) -> Array[Int] raise {
+  bins : Int32,
+  count : Int32,
+) -> Array[Int32] raise {
   let histogram = Array::make(bins, 0)
   for _ in 0..<count {
     let bits = sample()
@@ -310,7 +310,7 @@ test "prng" {
   @test.assert_eq(r.int64(limit=10), 8)
   @test.assert_eq(r.uint64(), 3951155890335085418)
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), (i : Int, j : Int) => {
+  r.shuffle(a.length(), (i : Int32, j : Int32) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t
@@ -328,7 +328,7 @@ test "Rand() with generator" {
 ///|
 priv struct ScriptedSource {
   values : FixedArray[UInt64]
-  mut index : Int
+  mut index : Int32
 }
 
 ///|
@@ -377,8 +377,8 @@ test "panic random with invalid seed length" {
 ///|
 test "panic negative limit in shuffle" {
   let r = @random.Rand()
-  let arr : FixedArray[Int] = [1, 2, 3]
-  r.shuffle(-1, (i : Int, j : Int) => {
+  let arr : FixedArray[Int32] = [1, 2, 3]
+  r.shuffle(-1, (i : Int32, j : Int32) => {
     let t = arr[i]
     arr[i] = arr[j]
     arr[j] = t

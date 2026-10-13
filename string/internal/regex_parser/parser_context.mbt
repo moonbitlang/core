@@ -22,7 +22,7 @@ pub(all) enum Mode {
 ///|
 priv struct ParserContext {
   profile : @re.Profile
-  base : Int
+  base : Int32
   ignore_case : Bool
   mode : Mode
 }
@@ -30,7 +30,7 @@ priv struct ParserContext {
 ///|
 fn ParserContext::new(
   profile~ : @re.Profile,
-  base~ : Int,
+  base~ : Int32,
   mode~ : Mode,
 ) -> ParserContext {
   { profile, base, ignore_case: false, mode, }
@@ -41,7 +41,7 @@ fn ParserContext::error_at(
   self : ParserContext,
   view : StringView,
   hint : String,
-  offset? : Int = 0,
+  offset~ : Int32 = 0,
 ) -> ParserError {
   ParserError(at=view.start_offset() - self.base + offset, hint~)
 }

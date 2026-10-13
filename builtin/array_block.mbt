@@ -49,10 +49,10 @@
 #doc(hidden)
 pub fn[A] Array::unsafe_blit(
   dst : Array[A],
-  dst_offset : Int,
+  dst_offset : Int32,
   src : Array[A],
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit {
   FixedArray::unsafe_blit(
     dst.buffer().0,
@@ -93,10 +93,10 @@ pub fn[A] Array::unsafe_blit(
 /// ```
 pub fn[A] Array::unsafe_blit_fixed(
   dst : Array[A],
-  dst_offset : Int,
+  dst_offset : Int32,
   src : FixedArray[A],
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit {
   UninitializedArray::unsafe_blit_fixed(
     dst.buffer(),

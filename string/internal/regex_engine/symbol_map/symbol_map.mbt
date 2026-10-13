@@ -51,10 +51,10 @@ pub fn SymbolMap::finalize(
   guard lb >= 0 else { panic() }
   let repr = []
   // Contiguous, ascending `(lo, hi, symbol)` runs covering `[0, ub]`.
-  let runs : Array[(Int, Int, Int)] = []
+  let runs : Array[(Int32, Int32, Int32)] = []
   self.each_intervals(0, ub, (lo, hi) => {
     let symbol = repr.length()
-    repr.push(Int::max(lo, lb))
+    repr.push(Int32::max(lo, lb))
     runs.push((lo, hi, symbol))
   })
   let nblocks = (ub >> 8) + 1
@@ -67,7 +67,7 @@ pub fn SymbolMap::finalize(
   // the `Table::map` fast path).
   for b in 0..<nblocks {
     let start = b << 8
-    let stop = Int::min(start + 255, ub)
+    let stop = Int32::min(start + 255, ub)
     while runs[run].1 < start {
       run += 1
     }
@@ -100,7 +100,7 @@ pub fn SymbolMap::finalize(
       index,
       blocks: FixedArray::from_array(blocks),
       ub,
-      fast_limit: Int::min(256, ub + 1),
+      fast_limit: Int32::min(256, ub + 1),
     },
     ReadOnlyArray::from_array(repr),
   )

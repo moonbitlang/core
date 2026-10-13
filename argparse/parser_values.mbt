@@ -69,7 +69,7 @@ fn assign_positionals(
 }
 
 ///|
-fn positional_min_required(arg : Arg) -> Int {
+fn positional_min_required(arg : Arg) -> Int32 {
   let (min, _) = arg_min_max(arg)
   if min > 0 {
     min
@@ -79,7 +79,7 @@ fn positional_min_required(arg : Arg) -> Int {
 }
 
 ///|
-fn remaining_positional_min(positionals : Array[Arg], start : Int) -> Int {
+fn remaining_positional_min(positionals : Array[Arg], start : Int32) -> Int32 {
   for idx = start, total = 0; idx < positionals.length(); {
     continue idx + 1, total + positional_min_required(positionals[idx])
   } nobreak {
@@ -266,7 +266,7 @@ fn parse_bool(value : String) -> Bool raise ArgParseError {
 }
 
 ///|
-fn parse_count(value : String) -> Int raise ArgParseError {
+fn parse_count(value : String) -> Int32 raise ArgParseError {
   try @string.parse_int(value) catch {
     _ =>
       raise InvalidValue(

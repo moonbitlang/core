@@ -27,7 +27,7 @@ test "diff: arrays collapse when all children differ" {
 
 ///|
 test "diff: empty containers stay Same" {
-  let empty : Array[Int] = []
+  let empty : Array[Int32] = []
   let delta = diff_repr(Debug::to_repr(empty), Debug::to_repr(empty))
   guard delta is Same(Array([]), []) else {
     fail("expected Same(Array([]), [])")

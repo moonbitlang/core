@@ -19,7 +19,11 @@
 // paths must agree with the specified bit semantics everywhere.
 
 ///|
-fn extract_ref_le(read : (Int, Int) -> UInt, offset : Int, len : Int) -> UInt64 {
+fn extract_ref_le(
+  read : (Int32, Int32) -> UInt32,
+  offset : Int32,
+  len : Int32,
+) -> UInt64 {
   let n = (len + 7) / 8
   let mut acc : UInt64 = 0
   for k in 0..<n {
@@ -30,7 +34,11 @@ fn extract_ref_le(read : (Int, Int) -> UInt, offset : Int, len : Int) -> UInt64 
 }
 
 ///|
-fn extract_ref_be(read : (Int, Int) -> UInt, offset : Int, len : Int) -> UInt64 {
+fn extract_ref_be(
+  read : (Int32, Int32) -> UInt32,
+  offset : Int32,
+  len : Int32,
+) -> UInt64 {
   let n = (len + 7) / 8
   let mut acc : UInt64 = 0
   for k in 0..<n {
@@ -50,10 +58,10 @@ test "generic uint extraction agrees with the byte-composition reference" {
   let av = arr[:]
   let bv2 = bytes[3:]
   let av2 = arr[3:]
-  let bv_read = (o : Int, l : Int) => bv.unsafe_extract_byte(o, l)
-  let av_read = (o : Int, l : Int) => av.unsafe_extract_byte(o, l)
-  let bv2_read = (o : Int, l : Int) => bv2.unsafe_extract_byte(o, l)
-  let av2_read = (o : Int, l : Int) => av2.unsafe_extract_byte(o, l)
+  let bv_read = (o : Int32, l : Int32) => bv.unsafe_extract_byte(o, l)
+  let av_read = (o : Int32, l : Int32) => av.unsafe_extract_byte(o, l)
+  let bv2_read = (o : Int32, l : Int32) => bv2.unsafe_extract_byte(o, l)
+  let av2_read = (o : Int32, l : Int32) => av2.unsafe_extract_byte(o, l)
   for offset in 0..<=16 {
     for len in 9..<=32 {
       assert_eq(

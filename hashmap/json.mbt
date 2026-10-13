@@ -36,7 +36,7 @@ pub impl[K : Show, V : @json.ToJson] @json.ToJson for HashMap[K, V] with fn to_j
 ///
 /// ```mbt check
 /// test {
-///   let m : @hashmap.HashMap[String, Int] = @json.from_json({ "a": 1, "b": 2 })
+///   let m : @hashmap.HashMap[String, Int32] = @json.from_json({ "a": 1, "b": 2 })
 ///   debug_inspect(m.get("a"), content="Some(1)")
 ///   debug_inspect(m.get("b"), content="Some(2)")
 /// }

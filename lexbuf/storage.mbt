@@ -19,14 +19,14 @@
 /// Captured ranges are joined once, on demand.
 priv struct LexbufStorage {
   mut chunks : Array[String]
-  mut chunk_starts : Array[Int]
-  mut lookup_chunk : Int
-  mut buffer_start : Int
-  mut buffer_end : Int
+  mut chunk_starts : Array[Int32]
+  mut lookup_chunk : Int32
+  mut buffer_start : Int32
+  mut buffer_end : Int32
 }
 
 ///|
-const LEXBUF_MERGED_CHUNK_LIMIT : Int = 64
+const LEXBUF_MERGED_CHUNK_LIMIT : Int32 = 64
 
 ///|
 fn LexbufStorage::LexbufStorage() -> LexbufStorage {
@@ -65,8 +65,8 @@ fn LexbufStorage::append(self : LexbufStorage, chunk : String) -> Unit {
 ///|
 fn LexbufStorage::chunk_contains(
   self : LexbufStorage,
-  index : Int,
-  position : Int,
+  index : Int32,
+  position : Int32,
 ) -> Bool {
   if index < 0 || index >= self.chunks.length() {
     return false
@@ -76,7 +76,7 @@ fn LexbufStorage::chunk_contains(
 }
 
 ///|
-fn LexbufStorage::find_chunk(self : LexbufStorage, position : Int) -> Int {
+fn LexbufStorage::find_chunk(self : LexbufStorage, position : Int32) -> Int32 {
   let cached = self.lookup_chunk
   if self.chunk_contains(cached, position) {
     return cached
@@ -110,8 +110,8 @@ fn LexbufStorage::find_chunk(self : LexbufStorage, position : Int) -> Int {
 ///|
 fn LexbufStorage::unsafe_code_unit_at(
   self : LexbufStorage,
-  position : Int,
-) -> Int {
+  position : Int32,
+) -> Int32 {
   let index = self.find_chunk(position)
   let chunk = self.chunks.unsafe_get(index)
   chunk.unsafe_get(position - self.chunk_starts.unsafe_get(index)).to_int()
@@ -120,8 +120,8 @@ fn LexbufStorage::unsafe_code_unit_at(
 ///|
 fn LexbufStorage::get_stringview(
   self : LexbufStorage,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> StringView {
   if start == end {
     return ""
@@ -156,7 +156,10 @@ fn LexbufStorage::get_stringview(
 }
 
 ///|
-fn LexbufStorage::discard_before(self : LexbufStorage, position : Int) -> Unit {
+fn LexbufStorage::discard_before(
+  self : LexbufStorage,
+  position : Int32,
+) -> Unit {
   guard self.buffer_start <= position && position <= self.buffer_end else {
     abort("LexbufStorage: invalid retention state")
   }
@@ -176,7 +179,7 @@ fn LexbufStorage::discard_before(self : LexbufStorage, position : Int) -> Unit {
     self.chunk_starts.clear()
   } else if first > 0 {
     let chunks : Array[String] = []
-    let chunk_starts : Array[Int] = []
+    let chunk_starts : Array[Int32] = []
     for index in first..<length {
       chunks.push(self.chunks.unsafe_get(index))
       chunk_starts.push(self.chunk_starts.unsafe_get(index))

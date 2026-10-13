@@ -57,6 +57,6 @@ priv struct Node[A] {
 
 ///|
 struct PriorityQueue[A] {
-  mut len : Int
+  mut len : Int32
   mut top : Node[A]?
 }

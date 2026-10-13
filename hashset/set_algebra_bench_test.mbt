@@ -13,12 +13,15 @@
 // limitations under the License.
 
 ///|
-fn set_algebra_bench_strings(lo : Int, hi : Int) -> @hashset.HashSet[String] {
+fn set_algebra_bench_strings(
+  lo : Int32,
+  hi : Int32,
+) -> @hashset.HashSet[String] {
   @hashset.from_array(Array::makei(hi - lo, i => "key_number_\{lo + i}_suffix"))
 }
 
 ///|
-fn set_algebra_bench_ints(lo : Int, hi : Int) -> @hashset.HashSet[Int] {
+fn set_algebra_bench_ints(lo : Int32, hi : Int32) -> @hashset.HashSet[Int32] {
   @hashset.from_array(Array::makei(hi - lo, i => lo + i))
 }
 

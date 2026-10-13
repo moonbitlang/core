@@ -222,7 +222,7 @@ test "Int16::equal" {
 
 ///|
 test "Int16::shl" {
-  let shl = (a : Int16, b : Int) => a << b
+  let shl = (a : Int16, b : Int32) => a << b
   inspect(shl(0, 0), content="0")
   inspect(shl(1, 0), content="1")
   inspect(shl(1, 1), content="2")
@@ -281,7 +281,7 @@ test "Int16::shl" {
 
 ///|
 test "Int16::shr" {
-  let shr = (a : Int16, b : Int) => a >> b
+  let shr = (a : Int16, b : Int32) => a >> b
   inspect(shr(0, 0), content="0")
   inspect(shr(1, 0), content="1")
   inspect(shr(2, 1), content="1")

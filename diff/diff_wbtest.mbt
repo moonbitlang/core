@@ -14,7 +14,7 @@
 
 ///|
 fn print_edits(
-  cutoff? : Int,
+  cutoff? : Int32,
   old : ArrayView[String],
   new : ArrayView[String],
 ) -> String {

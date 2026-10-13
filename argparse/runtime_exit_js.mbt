@@ -14,7 +14,7 @@
 
 ///|
 #cfg(target="js")
-extern "js" fn runtime_js_try_exit(code : Int) -> Bool =
+extern "js" fn runtime_js_try_exit(code : Int32) -> Bool =
   #| function(code) {
   #|   if (typeof process !== "undefined" && typeof process.exit === "function") {
   #|     process.exit(code);

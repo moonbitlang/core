@@ -134,25 +134,25 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 /// ```
 #deprecated("Use `@math.pow` instead")
 pub fn Double::pow(self : Double, other : Double) -> Double {
-  fn set_low_word(d : Double, v : UInt) -> Double {
+  fn set_low_word(d : Double, v : UInt32) -> Double {
     let bits : UInt64 = d.reinterpret_as_uint64()
     let bits = bits & 0xFFFF_FFFF_0000_0000
     let bits = bits | v.to_uint64()
     bits.reinterpret_as_double()
   }
 
-  fn set_high_word(d : Double, v : UInt) -> Double {
+  fn set_high_word(d : Double, v : UInt32) -> Double {
     let bits : UInt64 = d.reinterpret_as_uint64()
     let bits = bits & 0x0000_0000_FFFF_FFFF
     let bits = bits | (v.to_uint64() << 32)
     bits.reinterpret_as_double()
   }
 
-  fn get_high_word(x : Double) -> UInt {
+  fn get_high_word(x : Double) -> UInt32 {
     (x.reinterpret_as_uint64() >> 32).to_uint()
   }
 
-  fn get_low_word(x : Double) -> UInt {
+  fn get_low_word(x : Double) -> UInt32 {
     x.reinterpret_as_uint64().to_uint()
   }
 
@@ -176,11 +176,11 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
   let mut v : Double = 0.0
   let mut w : Double = 0.0
   // int i, j, k, yisint, n
-  let mut i : Int = 0
-  let mut j : Int = 0
-  let mut k : Int = 0
-  let mut yisint : Int = 0
-  let mut n : Int = 0
+  let mut i : Int32 = 0
+  let mut j : Int32 = 0
+  let mut k : Int32 = 0
+  let mut yisint : Int32 = 0
+  let mut n : Int32 = 0
   // int hx, hy, ix, iy;
   // unsigned lx, ly;
   //
@@ -188,12 +188,12 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
   // EXTRACT_WORDS(hy, ly, y);
   // ix = hx & 0x7fffffff;
   // iy = hy & 0x7fffffff;
-  let hx : Int = (x.reinterpret_as_uint64() >> 32).to_int()
-  let lx : UInt = (x.reinterpret_as_uint64() & 0xFFFFFFFF).to_uint()
-  let hy : Int = (y.reinterpret_as_uint64() >> 32).to_int()
-  let ly : UInt = (y.reinterpret_as_uint64() & 0xFFFFFFFF).to_uint()
-  let mut ix : Int = hx & 0x7FFFFFFF
-  let iy : Int = hy & 0x7FFFFFFF
+  let hx : Int32 = (x.reinterpret_as_uint64() >> 32).to_int()
+  let lx : UInt32 = (x.reinterpret_as_uint64() & 0xFFFFFFFF).to_uint()
+  let hy : Int32 = (y.reinterpret_as_uint64() >> 32).to_int()
+  let ly : UInt32 = (y.reinterpret_as_uint64() & 0xFFFFFFFF).to_uint()
+  let mut ix : Int32 = hx & 0x7FFFFFFF
+  let iy : Int32 = hy & 0x7FFFFFFF
   // y==zero: x**0 = 1
   if (iy.reinterpret_as_uint() | ly) == 0 {
     return ONE

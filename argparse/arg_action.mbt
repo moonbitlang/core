@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
+fn arg_min_max_for_validate(arg : Arg) -> (Int32, Int32?) raise ArgBuildError {
   if arg.info is PositionalInfo(num_args=Some(range), ..) {
     if range.lower < 0 {
       raise Unsupported("min values must be >= 0")
@@ -36,7 +36,7 @@ fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
 }
 
 ///|
-fn arg_min_max(arg : Arg) -> (Int, Int?) {
+fn arg_min_max(arg : Arg) -> (Int32, Int32?) {
   match arg.info {
     PositionalInfo(num_args=Some(range), ..) => (range.lower, range.upper)
     _ => (0, None)

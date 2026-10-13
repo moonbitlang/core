@@ -11,8 +11,8 @@ You can create a `Result` value using the `Ok` and `Err` constructors, remember 
 ```mbt check
 ///|
 test {
-  let _result : Result[Int, String] = Ok(42)
-  let _error : Result[Int, String] = Err("Error message")
+  let _result : Result[Int32, String] = Ok(42)
+  let _error : Result[Int32, String] = Err("Error message")
 }
 ```
 
@@ -21,7 +21,7 @@ The `Ok` and `Err` constructors work for any combination of value and error type
 ///|
 test {
   let _result : Result[String, Unit] = Ok("yes")
-  let _error : Result[Int, String] = Err("error")
+  let _error : Result[Int32, String] = Err("error")
 }
 ```
 
@@ -30,7 +30,7 @@ You can check the variant of a `Result` using the `is Ok(_)` and `is Err(_)` pat
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Ok(42)
+  let result : Result[Int32, String] = Ok(42)
   let is_ok = result is Ok(_)
   @test.assert_eq(is_ok, true)
   let is_err = result is Err(_)
@@ -43,7 +43,7 @@ You can extract the value from a `Result` using the `match` expression (Pattern 
 ```mbt check
 ///|
 test {
-  let result : Result[Int, Unit] = Ok(33)
+  let result : Result[Int32, Unit] = Ok(33)
   let val = match result {
     Ok(value) => value
     Err(_) => -1
@@ -56,7 +56,7 @@ Or using the `unwrap` method, which will panic if the result is `Err` and return
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Ok(42)
+  let result : Result[Int32, String] = Ok(42)
   let value = result.unwrap()
   @test.assert_eq(value, 42)
 }
@@ -66,7 +66,7 @@ A safe alternative is the `unwrap_or` method, which returns the value if the res
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Err("error")
+  let result : Result[Int32, String] = Err("error")
   let value = result.unwrap_or(0)
   @test.assert_eq(value, 0)
 }
@@ -76,7 +76,7 @@ There is a lazy version of `unwrap_or` called `unwrap_or_else`, which takes a fu
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Err("error")
+  let result : Result[Int32, String] = Err("error")
   let value = result.unwrap_or_else(() => 0)
   @test.assert_eq(value, 0)
 }
@@ -88,7 +88,7 @@ and remains unchanged if it is `Err`.
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Ok(42)
+  let result : Result[Int32, String] = Ok(42)
   let new_result = result.map(x => x + 1)
   @debug.assert_eq(new_result, Ok(43))
 }
@@ -98,7 +98,7 @@ A dual method to `map` is `map_err`, which applies a function to the error value
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Err("error")
+  let result : Result[Int32, String] = Err("error")
   let new_result = result.map_err(x => x + "!")
   @debug.assert_eq(new_result, Err("error!"))
 }
@@ -108,10 +108,10 @@ You can turn a `Result[T, E]` into a `Option[T]` by using the method `to_option`
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Ok(42)
+  let result : Result[Int32, String] = Ok(42)
   let option = result.to_option()
   assert_true(option == Some(42))
-  let result1 : Result[Int, String] = Err("error")
+  let result1 : Result[Int32, String] = Err("error")
   let option1 = result1.to_option()
   assert_true(option1 == None)
 }
@@ -122,7 +122,7 @@ Moonbit provides monadic operations for `Result`, such as `flatten` and `bind`, 
 ```mbt check
 ///|
 test {
-  let result : Result[Result[Int, String], String] = Ok(Ok(42))
+  let result : Result[Result[Int32, String], String] = Ok(Ok(42))
   let flattened = result.flatten()
   @debug.assert_eq(flattened, Ok(42))
 }
@@ -132,7 +132,7 @@ The `bind` method is similar to `map`, but the function passed to it should retu
 ```mbt check
 ///|
 test {
-  let result : Result[Int, String] = Ok(42)
+  let result : Result[Int32, String] = Ok(42)
   let new_result = result.bind(x => Ok(x + 1))
   @debug.assert_eq(new_result, Ok(43))
 }

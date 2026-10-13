@@ -14,7 +14,7 @@
 
 ///|
 #cfg(any(target="native", target="llvm"))
-extern "c" fn runtime_native_exit(code : Int) = "exit"
+extern "c" fn runtime_native_exit(code : Int32) = "exit"
 
 ///|
 #cfg(any(target="native", target="llvm"))

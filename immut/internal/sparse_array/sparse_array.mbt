@@ -30,13 +30,13 @@ pub fn[X] empty() -> SparseArray[X] {
 ///|
 /// Create a singleton value.
 #owned(value)
-pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
+pub fn[X] singleton(idx : Int32, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value], }
 }
 
 ///|
 /// Get value with `get` access semantics.
-pub fn[X] SparseArray::get(self : SparseArray[X], idx : Int) -> X? {
+pub fn[X] SparseArray::get(self : SparseArray[X], idx : Int32) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -45,7 +45,7 @@ pub fn[X] SparseArray::get(self : SparseArray[X], idx : Int) -> X? {
 }
 
 ///|
-fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int) -> X {
+fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int32) -> X {
   self.data[self.elem_info.index_of(idx)]
 }
 
@@ -53,9 +53,9 @@ fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int) -> X {
 /// Create a two-element value.
 #owned(value1, value2)
 pub fn[X] doubleton(
-  idx1 : Int,
+  idx1 : Int32,
   value1 : X,
-  idx2 : Int,
+  idx2 : Int32,
   value2 : X,
 ) -> SparseArray[X] {
   {
@@ -75,7 +75,7 @@ pub fn[X] doubleton(
 /// length as `data`.
 #owned(data)
 pub fn[X] from_sorted_fixed_array(
-  indices : FixedArray[Int],
+  indices : FixedArray[Int32],
   data : FixedArray[X],
 ) -> SparseArray[X] {
   let mut elem_info = empty_bitset
@@ -91,7 +91,7 @@ pub fn[X] from_sorted_fixed_array(
 #owned(value)
 pub fn[X] SparseArray::add(
   self : SparseArray[X],
-  idx : Int,
+  idx : Int32,
   value : X,
 ) -> SparseArray[X] {
   let old_data = self.data
@@ -120,7 +120,7 @@ pub fn[X] SparseArray::add(
 /// `idx` must be in `self`
 pub fn[X] SparseArray::remove(
   self : SparseArray[X],
-  idx : Int,
+  idx : Int32,
 ) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
@@ -168,7 +168,7 @@ pub fn[X] SparseArray::union(
 ///|
 fn[A] FixedArray::copy_prefix(
   self : FixedArray[A],
-  len~ : Int,
+  len~ : Int32,
 ) -> FixedArray[A] {
   FixedArray::make_and_blit(self, allocate_len=len, init=self[0], len~)
 }
@@ -286,7 +286,7 @@ pub fn[X] SparseArray::filter(
 #owned(value)
 pub fn[X] SparseArray::replace(
   self : SparseArray[X],
-  idx : Int,
+  idx : Int32,
   value : X,
 ) -> SparseArray[X] {
   let new_data = self.data.copy()
@@ -297,7 +297,7 @@ pub fn[X] SparseArray::replace(
 ///|
 /// Return the size of a sparse array
 #alias(size, deprecated)
-pub fn[X] SparseArray::length(self : SparseArray[X]) -> Int {
+pub fn[X] SparseArray::length(self : SparseArray[X]) -> Int32 {
   self.data.length()
 }
 

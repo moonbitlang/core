@@ -20,8 +20,8 @@
 /// asked for the elements to be released. See `Deque::release_unused`.
 fn[A] fill_slots(
   buf : UninitializedArray[A],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   value : A,
 ) -> Unit {
   for i in start..<end {
@@ -30,14 +30,14 @@ fn[A] fill_slots(
 }
 
 ///|
-fn[A] new_deque(capacity : Int) -> Deque[A] {
+fn[A] new_deque(capacity : Int32) -> Deque[A] {
   { buf: UninitializedArray::make(capacity), len: 0, head: 0, }
 }
 
 ///|
 /// Computes the tail index (index of last element) on demand.
 /// Only valid when len > 0.
-fn[A] Deque::tail_index(self : Deque[A]) -> Int {
+fn[A] Deque::tail_index(self : Deque[A]) -> Int32 {
   wrap_index(self.head + self.len - 1, self.buf.length())
 }
 
@@ -46,7 +46,7 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// whenever the buffer is non-empty, and every offset added to it is below
 /// `cap`, so a single subtraction brings the sum back into range.
 #inline
-fn wrap_index(i : Int, cap : Int) -> Int {
+fn wrap_index(i : Int32, cap : Int32) -> Int32 {
   if i >= cap {
     i - cap
   } else {
@@ -154,8 +154,8 @@ pub impl[A] Add for Deque[A] with fn add(self, other) {
 ///|
 /// Test add (operator +) with empty deques creates valid empty deque.
 test "add_empty" {
-  let empty1 : Deque[Int] = new_deque(0)
-  let empty2 : Deque[Int] = new_deque(0)
+  let empty1 : Deque[Int32] = new_deque(0)
+  let empty2 : Deque[Int32] = new_deque(0)
   let result = empty1 + empty2
   inspect(result.len, content="0")
   inspect(result.is_empty(), content="true")
@@ -176,7 +176,7 @@ test "add_empty" {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   let dq = @deque.Deque(arr)
 ///   @debug.debug_inspect(
 ///     dq,
@@ -190,7 +190,7 @@ test "add_empty" {
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int) -> Deque[A] {
+pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int32) -> Deque[A] {
   let len = arr.length()
   let capacity = match capacity {
     Some(capacity) => capacity.max(len)
@@ -206,7 +206,7 @@ pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int) -> Deque[A] {
 ///|
 /// Test from_array with empty array creates valid empty deque.
 test "from_array_empty" {
-  let dq : Deque[Int] = from_array([])
+  let dq : Deque[Int32] = from_array([])
   inspect(dq.len, content="0")
   inspect(dq.is_empty(), content="true")
 }
@@ -282,9 +282,9 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
 pub fn[A] Deque::blit_to(
   self : Deque[A],
   dst : Deque[A],
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   guard! len >= 0 &&
     dst_offset >= 0 &&
@@ -441,7 +441,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
 /// }
 /// ```
 #owned(value)
-pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
+pub fn[A] Deque::insert(self : Deque[A], index : Int32, value : A) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -519,7 +519,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
+pub fn[A] Deque::remove(self : Deque[A], index : Int32) -> A {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is \{self.length()} but the index is \{index}",
@@ -567,7 +567,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
 ///   inspect(dq.length(), content="4")
 /// }
 /// ```
-pub fn[A] Deque::length(self : Deque[A]) -> Int {
+pub fn[A] Deque::length(self : Deque[A]) -> Int32 {
   self.len
 }
 
@@ -591,7 +591,7 @@ pub fn[A] Deque::length(self : Deque[A]) -> Int {
 ///   inspect(dq.capacity(), content="10")
 /// }
 /// ```
-pub fn[A] Deque::capacity(self : Deque[A]) -> Int {
+pub fn[A] Deque::capacity(self : Deque[A]) -> Int32 {
   self.buf.length()
 }
 
@@ -809,7 +809,7 @@ pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
 /// }
 /// ```
 #alias("_[_]")
-pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
+pub fn[A] Deque::at(self : Deque[A], index : Int32) -> A {
   if index < 0 || index >= self.len {
     index_out_of_bounds(self.len, index)
   }
@@ -835,7 +835,7 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
 /// ```
 #alias("_[_]=_")
 #owned(value)
-pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
+pub fn[A] Deque::set(self : Deque[A], index : Int32, value : A) -> Unit {
   if index < 0 || index >= self.len {
     index_out_of_bounds(self.len, index)
   }
@@ -888,7 +888,7 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
 fn[A] Deque::unsafe_blit_to(
   self : Deque[A],
   dst : UninitializedArray[A],
-  dst_offset : Int,
+  dst_offset : Int32,
 ) -> Unit {
   guard self.len != 0 else { return }
   let (front, back) = self.as_views()
@@ -904,8 +904,8 @@ fn[A] Deque::unsafe_blit_to(
 ///|
 fn[A] Deque::unsafe_make_and_blit_to(
   self : Deque[A],
-  allocate_len : Int,
-  dst_offset : Int,
+  allocate_len : Int32,
+  dst_offset : Int32,
 ) -> UninitializedArray[A] {
   guard self.len != 0 else { return UninitializedArray::make(allocate_len) }
   let (front, back) = self.as_views()
@@ -993,7 +993,7 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit raise?) -> Unit raise? {
 #locals(f)
 pub fn[A] Deque::eachi(
   self : Deque[A],
-  f : (Int, A) -> Unit raise?,
+  f : (Int32, A) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -1037,7 +1037,7 @@ pub fn[A] Deque::rev_each(
 #locals(f)
 pub fn[A] Deque::rev_eachi(
   self : Deque[A],
-  f : (Int, A) -> Unit raise?,
+  f : (Int32, A) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self.rev_iter2() {
     f(i, v)
@@ -1115,7 +1115,7 @@ pub fn[A, U] Deque::map(
 #locals(f)
 pub fn[A, U] Deque::mapi(
   self : Deque[A],
-  f : (Int, A) -> U raise?,
+  f : (Int32, A) -> U raise?,
 ) -> Deque[U] raise? {
   let cap = self.buf.length()
   if self.len == 0 {
@@ -1166,7 +1166,7 @@ pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
 ///   @debug.debug_inspect(dq.search(4), content="None")
 /// }
 /// ```
-pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
+pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int32? {
   let cap = self.buf.length()
   for i in 0..<self.len {
     let idx = (self.head + i) % cap
@@ -1300,7 +1300,7 @@ pub fn[A] Deque::filter(
 ///   inspect(dv.capacity(), content="10")
 /// }
 /// ```
-pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
+pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int32) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -1421,7 +1421,7 @@ pub fn[A] Deque::release_unused(self : Deque[A], placeholder~ : A) -> Unit {
 /// once the buffer grows, or once the deque is dropped. Call
 /// `Deque::release_unused` to overwrite them at once, or `Deque::shrink_to_fit`
 /// to move the survivors into an exact-size buffer.
-pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
+pub fn[A] Deque::truncate(self : Deque[A], len : Int32) -> Unit {
   guard len >= 0 && len < self.len else { return }
   // The surviving elements keep their slots, so there is nothing to move: only
   // the length changes. An emptied deque restarts at offset zero, as
@@ -1615,7 +1615,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
+pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
   let mut index = 0
   let len = self.len
   Iter2::new(
@@ -1689,7 +1689,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// }
 /// ```
 #alias(rev_iterator2, deprecated)
-pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
+pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int32, A] {
   let len = self.len
   let mut rev_index = len
   Iter2::new(
@@ -1847,7 +1847,7 @@ pub impl[A : @json.ToJson] @json.ToJson for Deque[A] with fn to_json(
 /// ```mbt check
 /// test {
 ///   let json = @json.parse("[1, 2, 3]")
-///   let dq : @deque.Deque[Int] = @json.from_json(json)
+///   let dq : @deque.Deque[Int32] = @json.from_json(json)
 ///   @debug.debug_inspect(
 ///     dq,
 ///     content=(
@@ -1895,7 +1895,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
 ///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 2], [3, 4], [5]]",
 ///   )
-///   let d : @deque.Deque[Int] = @deque.from_array([])
+///   let d : @deque.Deque[Int32] = @deque.from_array([])
 ///   inspect(d.chunks(3).length(), content="0")
 /// }
 /// ```
@@ -1903,7 +1903,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
 /// Panics if:
 /// 
 /// * `size` is not positive
-pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
+pub fn[A] Deque::chunks(self : Deque[A], size : Int32) -> Deque[Deque[A]] {
   guard! size > 0
   let chunks = from_array([])
   for i = 0; i < self.length(); {
@@ -1952,7 +1952,7 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
 ///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
 ///   )
-///   let empty : @deque.Deque[Int] = @deque.from_array([])
+///   let empty : @deque.Deque[Int32] = @deque.from_array([])
 ///   @debug.debug_inspect(
 ///     empty.chunk_by((x, y) => x <= y).to_array(),
 ///     content="[]",
@@ -2077,7 +2077,11 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 /// buffer grows, or the deque is dropped. Call `Deque::release_unused` to
 /// overwrite them at once, or `Deque::shrink_to_fit` to move the survivors
 /// into an exact-size buffer.
-pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
+pub fn[A] Deque::drain(
+  self : Deque[A],
+  start~ : Int32,
+  len? : Int32,
+) -> Deque[A] {
   // Validate start
   guard start >= 0 && start <= self.len else {
     abort(
@@ -2297,8 +2301,8 @@ test "weird behavior after drain" {
 #locals(cmp)
 pub fn[A] Deque::binary_search_by(
   self : Deque[A],
-  cmp : (A) -> Int raise?,
-) -> Result[Int, Int] raise? {
+  cmp : (A) -> Int32 raise?,
+) -> Result[Int32, Int32] raise? {
   let len = self.len
 
   // Functional loop with two evolving bounds `i` (inclusive) and `j` (exclusive).
@@ -2329,7 +2333,7 @@ pub fn[A] Deque::binary_search_by(
 
 ///|
 /// Safe element access with bounds checking
-pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
+pub fn[A] Deque::get(self : Deque[A], index : Int32) -> A? {
   if index >= 0 && index < self.len {
     let physical_index = wrap_index(self.head + index, self.buf.length())
     Some(self.buf[physical_index])
@@ -2371,7 +2375,7 @@ pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
 pub fn[A : Compare] Deque::binary_search(
   self : Deque[A],
   value : A,
-) -> Result[Int, Int] {
+) -> Result[Int32, Int32] {
   self.binary_search_by(x => x.compare(value))
 }
 
@@ -2439,7 +2443,7 @@ pub impl[A : Compare] Compare for Deque[A] with fn compare(self, other) {
 ///       #|<Deque: [5, 4, 3, 2, 1]>
 ///     ),
 ///   )
-///   let dq : @deque.Deque[Int] = Deque([])
+///   let dq : @deque.Deque[Int32] = Deque([])
 ///   dq.rev_in_place()
 ///   @debug.debug_inspect(
 ///     dq,
@@ -2514,7 +2518,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 #locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
-  rand~ : (Int) -> Int,
+  rand~ : (Int32) -> Int32,
 ) -> Unit {
   let n = self.len
   let buf_length = self.buf.length()
@@ -2538,7 +2542,7 @@ pub fn[A] Deque::shuffle_in_place(
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
-pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
+pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int32) -> Int32) -> Deque[A] {
   // Create a copy of the original deque
   let new_deque = self.copy()
   // Shuffle the copy in place

@@ -114,7 +114,10 @@ pub fn MatchResult::content(self : MatchResult) -> StringView {
 ///|
 /// Returns a capture group; group `0` is the entire match.
 /// Returns `None` for an out-of-range index or a group that did not participate.
-pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? {
+pub fn MatchResult::group(
+  self : MatchResult,
+  group_index : Int32,
+) -> StringView? {
   match self.result.group(group_index) {
     None => None
     Some((start, end)) => Some(self.input[start:end])
@@ -233,9 +236,9 @@ pub fn Regex::string(str : StringView) -> Regex {
 /// ```
 pub fn Regex::repeat(
   self : Regex,
-  min? : Int = 0,
-  max? : Int,
-  greedy? : Bool = true,
+  min~ : Int32 = 0,
+  max? : Int32,
+  greedy~ : Bool = true,
 ) -> Regex {
   guard min >= 0 && min <= MAX_REPEAT_QUANTIFIER else { panic() }
   guard max is None ||
@@ -351,7 +354,7 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 pub fn Regex::execute(
   self : Regex,
   input : StringView,
-  last_index? : Int = 0,
+  last_index~ : Int32 = 0,
 ) -> MatchResult? {
   match self.re().execute(input, last_index) {
     None => None

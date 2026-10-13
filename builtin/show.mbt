@@ -32,8 +32,8 @@ pub impl Show for Bool with fn to_string(self) {
 }
 
 ///|
-pub impl Show for Int with fn to_string(self) {
-  Int::to_string(self)
+pub impl Show for Int32 with fn to_string(self) {
+  Int32::to_string(self)
 }
 
 ///|
@@ -42,8 +42,8 @@ pub impl Show for Int64 with fn to_string(self) {
 }
 
 ///|
-pub impl Show for UInt with fn to_string(self) {
-  UInt::to_string(self)
+pub impl Show for UInt32 with fn to_string(self) {
+  UInt32::to_string(self)
 }
 
 ///|
@@ -107,7 +107,7 @@ test "to_hex_digit" {
 ///   inspect("Hello \n".escape(quote=false), content="Hello \\n")
 /// }
 /// ```
-pub fn String::escape(self : String, quote? : Bool = true) -> String {
+pub fn String::escape(self : String, quote~ : Bool = true) -> String {
   let buf = StringBuilder()
   self[:].escape_to(buf, quote~)
   buf.to_string()
@@ -133,7 +133,7 @@ pub fn String::escape(self : String, quote? : Bool = true) -> String {
 /// ```
 pub fn StringView::escape(
   self : StringView,
-  quote? : Bool = true,
+  quote~ : Bool = true,
 ) -> StringView {
   let buf = StringBuilder()
   self.escape_to(buf, quote~)
@@ -146,13 +146,13 @@ pub fn StringView::escape(
 fn StringView::escape_to(
   self : StringView,
   logger : &Logger,
-  quote? : Bool = true,
+  quote~ : Bool = true,
 ) -> Unit {
   if quote {
     logger.write_char('"')
   }
   let len = self.length()
-  fn flush_segment(seg : Int, i : Int) {
+  fn flush_segment(seg : Int32, i : Int32) {
     if i > seg {
       logger.write_view(self[seg:i])
     }
@@ -219,7 +219,7 @@ fn StringView::escape_to(
 fn StringView::escape_to(
   self : StringView,
   logger : &Logger,
-  quote? : Bool = true,
+  quote~ : Bool = true,
 ) -> Unit {
   if quote {
     logger.write_char('"')
@@ -262,7 +262,7 @@ fn StringView::escape_to(
 // run of consecutive escapes does not pay for a vector scan per escape.
 #cfg(any(target="native", target="wasm"))
 #inline
-fn find_escape_code_unit(data : String, pos : Int, end : Int) -> Int {
+fn find_escape_code_unit(data : String, pos : Int32, end : Int32) -> Int32 {
   if end - pos < 16 {
     find_escape_code_unit_scalar(data, pos, end)
   } else if code_unit_needs_escape(data.unsafe_get(pos)) {
@@ -281,7 +281,11 @@ fn code_unit_needs_escape(code : UInt16) -> Bool {
 
 ///|
 #cfg(any(target="native", target="wasm"))
-fn find_escape_code_unit_scalar(data : String, pos : Int, end : Int) -> Int {
+fn find_escape_code_unit_scalar(
+  data : String,
+  pos : Int32,
+  end : Int32,
+) -> Int32 {
   for i in pos..<end {
     if code_unit_needs_escape(data.unsafe_get(i)) {
       return i
@@ -295,7 +299,7 @@ fn find_escape_code_unit_scalar(data : String, pos : Int, end : Int) -> Int {
 // time, then the remaining tail one code unit at a time. Has the same
 // contract as `find_escape_code_unit`.
 #cfg(any(target="native", target="wasm"))
-fn find_escape_code_unit_simd(data : String, pos : Int, end : Int) -> Int {
+fn find_escape_code_unit_simd(data : String, pos : Int32, end : Int32) -> Int32 {
   let quote = i16x8_splat('"')
   let backslash = i16x8_splat('\\')
   let control_max = i16x8_splat(0x1F)

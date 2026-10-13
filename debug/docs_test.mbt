@@ -19,8 +19,8 @@ enum Tag {
 
 ///|
 struct Example {
-  answer : Int
-  xs : Array[Int]
+  answer : Int32
+  xs : Array[Int32]
   tag : Tag
 }
 
@@ -115,10 +115,10 @@ test "docs: custom type pretty_print" {
 
 ///|
 struct WeirdKeys {
-  snake_case_ok : Int
-  with_space : Int
-  k_dash_v : Int
-  camel_case : Int
+  snake_case_ok : Int32
+  with_space : Int32
+  k_dash_v : Int32
+  camel_case : Int32
 }
 
 ///|
@@ -150,7 +150,7 @@ test "docs: record keys are quoted when needed" {
 
 ///|
 struct Numbers {
-  xs : Array[Int]
+  xs : Array[Int32]
 }
 
 ///|
@@ -203,7 +203,7 @@ test "docs: nested record expands" {
 
 ///|
 enum Shape {
-  Point(x~ : Int, y~ : Int)
+  Point(x~ : Int32, y~ : Int32)
   Line(Shape, Shape)
 }
 
@@ -253,7 +253,7 @@ test "docs: nested enums + arrays expand consistently" {
 
 ///|
 struct DictExample {
-  entries : Array[(String, Int)]
+  entries : Array[(String, Int32)]
 }
 
 ///|
@@ -281,7 +281,7 @@ test "docs: dict prints as k: v pairs" {
 ///|
 struct OpaqueExample {
   label : String
-  xs : Array[Int]
+  xs : Array[Int32]
 }
 
 ///|

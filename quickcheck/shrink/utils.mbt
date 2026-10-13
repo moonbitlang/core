@@ -30,7 +30,7 @@ fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
 /// leaves a whole block, in ascending order.
 ///
 /// `n` must be `xs.length()`.
-fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
+fn[T] removes_array(k : Int32, n : Int32, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
   let mut start = 0
   Iter::new(
@@ -49,7 +49,11 @@ fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
 /// descend: the block nearest the end is removed first.
 ///
 /// `n` must be `xs.length()`.
-fn[T] removes_list(k : Int, n : Int, xs : @list.List[T]) -> Iter[@list.List[T]] {
+fn[T] removes_list(
+  k : Int32,
+  n : Int32,
+  xs : @list.List[T],
+) -> Iter[@list.List[T]] {
   guard k <= n else { [||] }
   let mut start = (n - k) / k * k
   Iter::new(

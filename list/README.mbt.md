@@ -49,7 +49,7 @@ You can create an empty list or a list from an array.
 ```mbt check
 ///|
 test {
-  let empty_list : @list.List[Int] = List([])
+  let empty_list : @list.List[Int32] = List([])
   assert_true(empty_list.is_empty())
   let list = @list.List([1, 2, 3, 4, 5])
   @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
@@ -91,7 +91,7 @@ Determine if the list is empty.
 ```mbt check
 ///|
 test {
-  let empty_list : @list.List[Int] = List([])
+  let empty_list : @list.List[Int32] = List([])
   @test.assert_eq(empty_list.is_empty(), true)
 }
 ```
@@ -467,7 +467,7 @@ When accessing elements that might not exist, use pattern matching for safety:
 
 ```mbt check
 ///|
-fn safe_head(list : @list.List[Int]) -> Int {
+fn safe_head(list : @list.List[Int32]) -> Int32 {
   match list.head() {
     Some(value) => value
     None => 0 // Default value
@@ -478,7 +478,7 @@ fn safe_head(list : @list.List[Int]) -> Int {
 test {
   let list = @list.List([1, 2, 3])
   @test.assert_eq(safe_head(list), 1)
-  let empty_list : @list.List[Int] = List([])
+  let empty_list : @list.List[Int32] = List([])
   @test.assert_eq(safe_head(empty_list), 0)
 }
 ```

@@ -18,8 +18,8 @@
 pub struct AsyncLexbuf {
   priv source : async () -> String?
   priv storage : LexbufStorage
-  priv mut cursor : Int
-  priv mut retained_from : Int
+  priv mut cursor : Int32
+  priv mut retained_from : Int32
   priv mut eof : Bool
 }
 
@@ -41,7 +41,7 @@ pub fn AsyncLexbuf::from_fn(source : async () -> String?) -> AsyncLexbuf {
 /// The cursor must stay in the buffered range. Generated `lexscan` code calls
 /// this when starting a scan and when recording or comparing scan positions.
 #doc(hidden)
-pub fn AsyncLexbuf::__get_cursor(self : AsyncLexbuf) -> Int {
+pub fn AsyncLexbuf::__get_cursor(self : AsyncLexbuf) -> Int32 {
   self.cursor
 }
 
@@ -50,7 +50,7 @@ pub fn AsyncLexbuf::__get_cursor(self : AsyncLexbuf) -> Int {
 /// The cursor must not exceed this offset. Generated `lexscan` code calls this
 /// before reading a code unit and before deciding whether to refill.
 #doc(hidden)
-pub fn AsyncLexbuf::__buffer_end(self : AsyncLexbuf) -> Int {
+pub fn AsyncLexbuf::__buffer_end(self : AsyncLexbuf) -> Int32 {
   self.storage.buffer_end
 }
 
@@ -70,8 +70,8 @@ pub fn AsyncLexbuf::__eof_reached(self : AsyncLexbuf) -> Bool {
 #doc(hidden)
 pub fn AsyncLexbuf::__unsafe_code_unit_at(
   self : AsyncLexbuf,
-  position : Int,
-) -> Int {
+  position : Int32,
+) -> Int32 {
   debug_assert(() => {
     position >= self.storage.buffer_start && position < self.__buffer_end()
   })
@@ -83,7 +83,7 @@ pub fn AsyncLexbuf::__unsafe_code_unit_at(
 /// `count` must be non-negative and the new cursor must not pass
 /// `__buffer_end`. Generated `lexscan` code calls this after consuming input.
 #doc(hidden)
-pub fn AsyncLexbuf::__advance(self : AsyncLexbuf, count : Int) -> Unit {
+pub fn AsyncLexbuf::__advance(self : AsyncLexbuf, count : Int32) -> Unit {
   debug_assert(() => count >= 0 && self.cursor + count <= self.__buffer_end())
   self.cursor += count
 }
@@ -107,8 +107,8 @@ pub fn AsyncLexbuf::__retain_from_cursor(self : AsyncLexbuf) -> Unit {
 #doc(hidden)
 pub fn AsyncLexbuf::__get_stringview(
   self : AsyncLexbuf,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> StringView {
   guard self.retained_from >= 0 &&
     self.retained_from <= start &&
@@ -125,7 +125,7 @@ pub fn AsyncLexbuf::__get_stringview(
 /// Retention must be active and `position` must be buffered and no later than
 /// the current cursor. Generated `lexscan` code calls this after selecting a case.
 #doc(hidden)
-pub fn AsyncLexbuf::__commit_to(self : AsyncLexbuf, position : Int) -> Unit {
+pub fn AsyncLexbuf::__commit_to(self : AsyncLexbuf, position : Int32) -> Unit {
   guard self.retained_from >= 0 &&
     self.storage.buffer_start <= position &&
     position <= self.cursor else {

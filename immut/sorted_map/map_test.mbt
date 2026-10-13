@@ -14,7 +14,7 @@
 
 ///|
 priv struct SameRankKey {
-  rank : Int
+  rank : Int32
   label : String
 }
 
@@ -62,7 +62,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
+  let m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
   inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
   inspect(m.is_empty(), content="false")
@@ -260,7 +260,7 @@ test "equal" {
 
 ///|
 test "compare" {
-  let xss : Array[@sorted_map.SortedMap[Int, Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_map.SortedMap[Int32, Int32]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       @test.assert_eq(
@@ -340,7 +340,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter([||])
+  let pq : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -407,7 +407,7 @@ test "@immut/sorted_map.merge" {
 
 ///|
 test "@immut/sorted_map.merge empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
   let map2 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")

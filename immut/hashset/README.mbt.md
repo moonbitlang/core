@@ -10,7 +10,7 @@ Create immutable sets using various methods:
 ///|
 test "creating immutable sets" {
   // Empty set
-  let empty : @hashset.HashSet[Int] = @hashset.new()
+  let empty : @hashset.HashSet[Int32] = @hashset.new()
   inspect(empty.length(), content="0")
   inspect(empty.is_empty(), content="true")
 
@@ -115,7 +115,7 @@ This holds even for elements whose hashes collide:
 ```mbt check
 ///|
 /// Every element hashes to the same value: all of them share one bucket.
-priv struct OneBucketElem(Int) derive(Eq)
+priv struct OneBucketElem(Int32) derive(Eq)
 
 ///|
 impl Hash for OneBucketElem with fn hash(_) {
@@ -355,7 +355,9 @@ Immutable sets are particularly useful for:
 ```mbt check
 ///|
 test "functional programming style" {
-  fn process_numbers(numbers : @hashset.HashSet[Int]) -> @hashset.HashSet[Int] {
+  fn process_numbers(
+    numbers : @hashset.HashSet[Int32],
+  ) -> @hashset.HashSet[Int32] {
     @hashset.from_iter(numbers.iter().filter(x => x > 0).map(x => x * x))
   }
 

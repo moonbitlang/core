@@ -29,22 +29,22 @@ pub enum Edit {
   ///
   /// `new_index` is the cursor position in `new` when this deletion applies;
   /// a deletion covers an empty range on the `new` side.
-  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
+  Delete(old_index~ : Int32, old_len~ : Int32, new_index~ : Int32)
   /// Insert `new_len` elements starting at `new_index` from `new`.
   ///
   /// `old_index` is the cursor position in `old` when this insertion applies;
   /// an insertion covers an empty range on the `old` side.
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Insert(old_index~ : Int32, new_index~ : Int32, new_len~ : Int32)
   /// Keep `len` equal elements starting at `old_index` in `old` and `new_index`
   /// in `new`.
-  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Equal(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
 } derive(Eq, @debug.Debug)
 
 ///|
 /// Return the half-open range `[start, end)` covered by this edit in `old`.
 ///
 /// Insertions consume no elements from `old`, so they map to an empty range.
-fn Edit::old_range(self : Edit) -> (Int, Int) {
+fn Edit::old_range(self : Edit) -> (Int32, Int32) {
   match self {
     Insert(old_index~, ..) => (old_index, old_index)
     Delete(old_index~, old_len~, ..) => (old_index, old_index + old_len)
@@ -56,7 +56,7 @@ fn Edit::old_range(self : Edit) -> (Int, Int) {
 /// Return the half-open range `[start, end)` covered by this edit in `new`.
 ///
 /// Deletions consume no elements from `new`, so they map to an empty range.
-fn Edit::new_range(self : Edit) -> (Int, Int) {
+fn Edit::new_range(self : Edit) -> (Int32, Int32) {
   match self {
     Insert(new_index~, new_len~, ..) => (new_index, new_index + new_len)
     Delete(new_index~, ..) => (new_index, new_index)
@@ -87,7 +87,7 @@ fn[T] Edit::view_from(
 /// you can build things like unified diffs.
 fn[T] group_edits(
   edits : Array[Edit],
-  context? : Int = 3,
+  context~ : Int32 = 3,
   old~ : ArrayView[T],
   new~ : ArrayView[T],
 ) -> Array[Hunk[T]] {
@@ -146,7 +146,7 @@ fn[T] group_edits(
 }
 
 ///|
-fn Int::saturating_sub(self : Int, subtrahend : Int) -> Int {
+fn Int32::saturating_sub(self : Int32, subtrahend : Int32) -> Int32 {
   if self < subtrahend {
     0
   } else {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn make_int_array_json(count : Int) -> String {
+fn make_int_array_json(count : Int32) -> String {
   let buf = StringBuilder(size_hint=count * 7)
   buf.write_char('[')
   for i in 0..<count {
@@ -27,7 +27,7 @@ fn make_int_array_json(count : Int) -> String {
 }
 
 ///|
-fn make_float_array_json(count : Int) -> String {
+fn make_float_array_json(count : Int32) -> String {
   let buf = StringBuilder(size_hint=count * 12)
   buf.write_char('[')
   for i in 0..<count {
@@ -47,7 +47,7 @@ let long_mantissa_json_numbers : FixedArray[String] = [
 ]
 
 ///|
-fn make_long_mantissa_array_json(count : Int) -> String {
+fn make_long_mantissa_array_json(count : Int32) -> String {
   let buf = StringBuilder(size_hint=count * 22)
   buf.write_char('[')
   for i in 0..<count {

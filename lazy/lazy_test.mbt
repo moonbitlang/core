@@ -81,7 +81,7 @@ test "peek on a ready cell returns Some without running" {
 
 ///|
 test "Debug renders forced and unforced cells safely" {
-  let unforced : @lazy.Lazy[Int] = Lazy(() => abort("must not run"))
+  let unforced : @lazy.Lazy[Int32] = Lazy(() => abort("must not run"))
   @debug.debug_inspect(unforced, content="<Lazy: ...>")
   let forced = @lazy.Lazy::ready(42)
   @debug.debug_inspect(forced, content="<Lazy: 42>")
@@ -99,7 +99,7 @@ test "Debug renders the in-progress Forcing state" {
   // The thunk signature is non-raising, so we capture the rendered
   // string and assert outside.
   let observed : Ref[String] = Ref("")
-  let holder : Array[@lazy.Lazy[Int]] = []
+  let holder : Array[@lazy.Lazy[Int32]] = []
   let cell = @lazy.Lazy(() => {
     observed.val = Repr(holder[0]).to_string()
     42
@@ -113,7 +113,7 @@ test "Debug renders the in-progress Forcing state" {
 ///|
 test "Result-as-data bridge for fallible thunks" {
   let mut runs = 0
-  let cell : @lazy.Lazy[Result[Int, Error]] = Lazy(() => {
+  let cell : @lazy.Lazy[Result[Int32, Error]] = Lazy(() => {
     runs += 1
     Ok(
       {

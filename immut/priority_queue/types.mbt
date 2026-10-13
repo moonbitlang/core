@@ -15,7 +15,7 @@
 ///|
 struct PriorityQueue[A] {
   node : Node[A]
-  size : Int
+  size : Int32
 }
 
 ///|

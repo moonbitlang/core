@@ -15,7 +15,7 @@
 ///|
 /// A trivially-correct insertion sort used as the specification for the
 /// production sorts. Returns a sorted copy; the input is left untouched.
-fn insertion_oracle(xs : Array[Int]) -> Array[Int] {
+fn insertion_oracle(xs : Array[Int32]) -> Array[Int32] {
   let out = xs.copy()
   for i in 1..<out.length() {
     for j = i; j > 0 && out[j - 1] > out[j]; j = j - 1 {
@@ -29,7 +29,7 @@ fn insertion_oracle(xs : Array[Int]) -> Array[Int] {
 /// Insertion sort under the total lexicographic tuple order. Because the
 /// second component below is always a unique input index, two arrays hold the
 /// same multiset of tagged pairs iff their `pair_oracle` images are equal.
-fn pair_oracle(xs : Array[(Int, Int)]) -> Array[(Int, Int)] {
+fn pair_oracle(xs : Array[(Int32, Int32)]) -> Array[(Int32, Int32)] {
   let out = xs.copy()
   for i in 1..<out.length() {
     for j = i; j > 0 && out[j - 1] > out[j]; j = j - 1 {
@@ -42,7 +42,7 @@ fn pair_oracle(xs : Array[(Int, Int)]) -> Array[(Int, Int)] {
 ///|
 /// A cheap deterministic value stream so that generated scalar seeds can be
 /// expanded into whole adversarial arrays.
-fn pseudo(r : Int, i : Int) -> Int {
+fn pseudo(r : Int32, i : Int32) -> Int32 {
   (r + i * 1103515245) & 0x3fffffff
 }
 
@@ -51,7 +51,7 @@ fn pseudo(r : Int, i : Int) -> Int {
 /// and an offset `MutArrayView::sort` must each produce exactly the
 /// insertion-sort oracle's output (ordered and the same multiset), and the
 /// view sort must not touch its neighbours.
-fn sort_agrees_with_oracle(xs : Array[Int]) -> Bool {
+fn sort_agrees_with_oracle(xs : Array[Int32]) -> Bool {
   let n = xs.length()
   let expected = insertion_oracle(xs)
   let arr = xs.copy()
@@ -78,8 +78,8 @@ fn sort_agrees_with_oracle(xs : Array[Int]) -> Bool {
 /// the algorithm into a different branch (insertion cutoff, likely-sorted
 /// bubble pass, median-of-medians pivots, duplicate skipping, reversal
 /// detection, unbalanced partitions).
-fn adversarial_patterns(n : Int, r : Int) -> Array[Array[Int]] {
-  let patterns : Array[Array[Int]] = []
+fn adversarial_patterns(n : Int32, r : Int32) -> Array[Array[Int32]] {
+  let patterns : Array[Array[Int32]] = []
   // Already sorted: must take the try_bubble_sort fast path and stay correct.
   patterns.push(Array::makei(n, i => i))
   // Reverse sorted: triggers the descending-run detection / reversal.
@@ -137,7 +137,7 @@ fn adversarial_patterns(n : Int, r : Int) -> Array[Array[Int]] {
 ///|
 test "quickcheck: sort matches an insertion-sort oracle on random arrays" {
   @quickcheck.check(
-    (xs : Array[Int]) => sort_agrees_with_oracle(xs),
+    (xs : Array[Int32]) => sort_agrees_with_oracle(xs),
     count=300,
     max_size=250,
   )
@@ -148,7 +148,7 @@ test "quickcheck: sort survives adversarial distributions for hybrid quicksort" 
   // Sizes 0..=199 straddle the insertion-sort cutoff (16) and the
   // median-of-medians threshold (50) of the production quicksort.
   @quickcheck.check(
-    (input : (Int, Int)) => {
+    (input : (Int32, Int32)) => {
       let (a, b) = input
       let n = (a & 0x3fffffff) % 200
       let r = b & 0x3fffffff
@@ -175,8 +175,8 @@ test "sort adversarial distributions at recursion-stressing size" {
 ///|
 test "quickcheck: sort_by on a single tuple field is ordered and a permutation" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let tagged : Array[(Int, Int)] = []
+    (xs : Array[Int32]) => {
+      let tagged : Array[(Int32, Int32)] = []
       for i, x in xs {
         // A small key space forces ties; the index tag makes every element
         // distinguishable so the permutation check is exact.
@@ -200,8 +200,8 @@ test "quickcheck: sort_by on a single tuple field is ordered and a permutation" 
 ///|
 test "quickcheck: sort_by_key is ordered under the key and a permutation" {
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let tagged : Array[(Int, Int)] = []
+    (xs : Array[Int32]) => {
+      let tagged : Array[(Int32, Int32)] = []
       for i, x in xs {
         tagged.push((x % 8, i))
       }
@@ -231,8 +231,8 @@ test "quickcheck: sort_by under an antisymmetry-violating comparator still permu
   // maximally unbalanced partitions, driving the recursion limit to zero and
   // forcing the heap-sort fallback on larger inputs.
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let tagged : Array[(Int, Int)] = []
+    (xs : Array[Int32]) => {
+      let tagged : Array[(Int32, Int32)] = []
       for i, x in xs {
         tagged.push((x % 2, i))
       }
@@ -249,8 +249,8 @@ test "quickcheck: sort_by under an antisymmetry-violating comparator still permu
 /// An element whose ordering deliberately ignores its identity tag, so that a
 /// stable sort's handling of equal elements is observable.
 priv struct Tagged {
-  key : Int
-  idx : Int
+  key : Int32
+  idx : Int32
 }
 
 ///|
@@ -267,7 +267,7 @@ impl Compare for Tagged with fn compare(self, other) {
 /// stable_sort specification: keys ascending, equal keys keep input order,
 /// and the result is exactly a permutation of the input (each original index
 /// appears once, still carrying its original key).
-fn stable_sort_spec(keys : Array[Int]) -> Bool {
+fn stable_sort_spec(keys : Array[Int32]) -> Bool {
   let n = keys.length()
   let arr : FixedArray[Tagged] = FixedArray::makei(n, i => {
     key: keys[i],
@@ -308,7 +308,7 @@ fn stable_sort_spec(keys : Array[Int]) -> Bool {
 test "quickcheck: stable_sort is sorted, stable, and a permutation" {
   @quickcheck.check(
     (
-      xs : Array[Int],
+      xs : Array[Int32],
       // A tiny key space maximises ties, which is where stability lives.
     ) => stable_sort_spec(xs.map(x => x % 5)),
     count=250,
@@ -323,8 +323,8 @@ test "quickcheck: stable_sort merges run-structured input correctly" {
   // lengths. Build exactly that shape: alternating ascending / descending
   // runs whose lengths come from the generated data.
   @quickcheck.check(
-    (xs : Array[Int]) => {
-      let keys : Array[Int] = []
+    (xs : Array[Int32]) => {
+      let keys : Array[Int32] = []
       let mut up = true
       for x in xs {
         let len = 2 + (x & 0x3fffffff) % 30
@@ -349,7 +349,7 @@ test "quickcheck: stable_sort merges run-structured input correctly" {
 ///|
 /// Linear-scan reference for binary search on a sorted array: the leftmost
 /// index holding `v`, or the leftmost valid insertion point.
-fn search_spec(arr : Array[Int], v : Int) -> Result[Int, Int] {
+fn search_spec(arr : Array[Int32], v : Int32) -> Result[Int32, Int32] {
   for i in 0..<arr.length() {
     if arr[i] >= v {
       return if arr[i] == v { Ok(i) } else { Err(i) }
@@ -361,7 +361,7 @@ fn search_spec(arr : Array[Int], v : Int) -> Result[Int, Int] {
 ///|
 test "quickcheck: binary_search agrees with a linear-scan reference" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (raw, p) = input
       // Duplicates are likely in a small value range, so the leftmost-match
       // guarantee is actually exercised.
@@ -388,7 +388,7 @@ test "quickcheck: binary_search agrees with a linear-scan reference" {
 ///|
 test "quickcheck: rev, split_at, chunks and windows reassemble the array" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (xs, k0) = input
       let k = k0 & 0x3fffffff
       let n = xs.length()
@@ -405,7 +405,7 @@ test "quickcheck: rev, split_at, chunks and windows reassemble the array" {
       }
       let size = 1 + k % (n + 2)
       let chunks = xs.chunks(size)
-      let rebuilt : Array[Int] = []
+      let rebuilt : Array[Int32] = []
       for i, chunk in chunks {
         let expected_len = if i == chunks.length() - 1 {
           n - i * size

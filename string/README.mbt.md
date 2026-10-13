@@ -269,11 +269,11 @@ ordinary parsing. All parsing APIs raise on invalid input.
 ```mbt check
 ///|
 test "from_str" {
-  let i : Int = @string.from_str("42")
+  let i : Int32 = @string.from_str("42")
   inspect(i, content="42")
-  let negative : Int = @string.from_str("-17")
+  let negative : Int32 = @string.from_str("-17")
   inspect(negative, content="-17")
-  let u : UInt = @string.from_str("42")
+  let u : UInt32 = @string.from_str("42")
   inspect(u, content="42")
   let i64 : Int64 = @string.from_str("9999999999")
   inspect(i64, content="9999999999")

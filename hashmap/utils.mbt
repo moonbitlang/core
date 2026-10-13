@@ -189,7 +189,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 /// }
 /// ```
 #alias(size, deprecated)
-pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
   self.size
 }
 
@@ -208,11 +208,11 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[Int, String] = HashMap([], capacity=16)
+///   let map : @hashmap.HashMap[Int32, String] = HashMap([], capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// }
 /// ```
-pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int32 {
   self.capacity
 }
 
@@ -230,7 +230,7 @@ pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = HashMap([])
+///   let map : @hashmap.HashMap[String, Int32] = HashMap([])
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")
@@ -296,7 +296,7 @@ pub fn[K, V] HashMap::each(
 #locals(f)
 pub fn[K, V] HashMap::eachi(
   self : HashMap[K, V],
-  f : (Int, K, V) -> Unit raise?,
+  f : (Int32, K, V) -> Unit raise?,
 ) -> Unit raise? {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
@@ -504,7 +504,7 @@ pub fn[K, V] HashMap::filter(
 ///|
 test "retain" {
   // seed = 1827982181
-  let hashmap : HashMap[String, Int] = {
+  let hashmap : HashMap[String, Int32] = {
     capacity: 8,
     capacity_mask: 7,
     size: 4,

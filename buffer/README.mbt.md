@@ -106,7 +106,7 @@ test {
   )
   // 16-bit unsigned
   let buf2 = @buffer.Buffer()
-  buf2.write_uint16_be(Int::to_uint16(0x00AB))
+  buf2.write_uint16_be(Int32::to_uint16(0x00AB))
   inspect(
     buf2.to_bytes(),
     content=(

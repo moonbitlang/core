@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn scalbn(x : Double, exp : Int) -> Double {
+fn scalbn(x : Double, exp : Int32) -> Double {
   let mut n = exp
   let mut y : Double = x
   if n > 1023 {

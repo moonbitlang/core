@@ -102,7 +102,7 @@ test "fixed-size array" {
 ///|
 test "char_range stays within bounds" {
   for value in @quickcheck.char_range('a', 'z').samples(count=64) {
-    guard value is ('a'..='z') else {
+    guard value is ('a'..<='z') else {
       fail("char_range generated an out-of-range character")
     }
   }
@@ -177,7 +177,7 @@ test "zip_with and zip_with3 combine generator outputs" {
 ///|
 test "spawn composes with generator combinators" {
   let entries = (@quickcheck.spawn() : @quickcheck.Generator[String])
-    .zip((@quickcheck.spawn() : @quickcheck.Generator[Int]))
+    .zip((@quickcheck.spawn() : @quickcheck.Generator[Int32]))
     .samples(count=3, size=4, seed=37)
   debug_inspect(
     entries,

@@ -22,7 +22,7 @@
 /// Characters a haystack is built from: mostly ASCII (including every member
 /// of the generated sets and both sides of the 0x20 boundary), plus non-ASCII
 /// BMP and non-BMP characters so surrogate pairs appear.
-fn haystack_char(seed : Int) -> Char {
+fn haystack_char(seed : Int32) -> Char {
   match seed & 0xF {
     0 => ' '
     1 => '\t'
@@ -44,7 +44,7 @@ fn haystack_char(seed : Int) -> Char {
 ///|
 /// Set members: mostly ASCII delimiters; occasionally non-ASCII, which sends
 /// the whole set down the fallback path.
-fn set_char(seed : Int) -> Char {
+fn set_char(seed : Int32) -> Char {
   match seed & 0xF {
     0 => ' '
     1 => '\t'
@@ -126,7 +126,7 @@ fn embedded_view(
 
 ///|
 test "quickcheck: contains_any agrees with the character model" {
-  @quickcheck.check(count=300, (input : (Array[Int], Array[Int])) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Array[Int32])) => {
     let (hay_seeds, set_seeds) = input
     let hay = chars_to_string(hay_seeds.map(haystack_char))
     let set = chars_to_string(set_seeds.map(set_char))
@@ -142,7 +142,7 @@ test "quickcheck: contains_any agrees with the character model" {
 
 ///|
 test "quickcheck: trims agree with the character model" {
-  @quickcheck.check(count=300, (input : (Array[Int], Array[Int])) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Array[Int32])) => {
     let (hay_seeds, set_seeds) = input
     let hay = chars_to_string(hay_seeds.map(haystack_char))
     let set = chars_to_string(set_seeds.map(set_char))

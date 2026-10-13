@@ -40,10 +40,10 @@
 #coverage.skip
 pub fn[A] FixedArray::unsafe_blit(
   dst : FixedArray[A],
-  dst_offset : Int,
+  dst_offset : Int32,
   src : FixedArray[A],
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit {
   if physical_equal(dst, src) && dst_offset < src_offset {
     for i in 0..<len {
@@ -64,10 +64,10 @@ pub fn[A] FixedArray::unsafe_blit(
 #coverage.skip
 fn[T] UninitializedArray::unsafe_blit_fixed(
   dst : UninitializedArray[T],
-  dst_offset : Int,
+  dst_offset : Int32,
   src : FixedArray[T],
-  src_offset : Int,
-  len : Int,
+  src_offset : Int32,
+  len : Int32,
 ) -> Unit {
   for i in len>..0 {
     dst[dst_offset + i] = src[src_offset + i]
@@ -80,11 +80,11 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
 #owned(src, init)
 fn[T] FixedArray::unsafe_make_and_blit(
   src : FixedArray[T],
-  allocate_len : Int,
+  allocate_len : Int32,
   init : T,
-  src_offset : Int,
-  dst_offset : Int,
-  blit_len : Int,
+  src_offset : Int32,
+  dst_offset : Int32,
+  blit_len : Int32,
 ) -> FixedArray[T] {
   let dst = FixedArray::make(allocate_len, init)
   FixedArray::unsafe_blit(dst, dst_offset, src, src_offset, blit_len)
@@ -97,11 +97,11 @@ fn[T] FixedArray::unsafe_make_and_blit(
 #owned(src, init)
 pub fn[T] FixedArray::make_and_blit(
   src : FixedArray[T],
-  allocate_len~ : Int,
+  allocate_len~ : Int32,
   init~ : T,
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> FixedArray[T] {
   guard allocate_len >= 0 &&
     len >= 0 &&
@@ -155,9 +155,9 @@ pub fn[T] FixedArray::make_and_blit(
 pub fn[A] FixedArray::blit_to(
   self : FixedArray[A],
   dst : FixedArray[A],
-  len~ : Int,
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
 ) -> Unit {
   guard dst_offset >= 0 &&
     src_offset >= 0 &&

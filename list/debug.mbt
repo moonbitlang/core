@@ -22,6 +22,6 @@ pub impl[A : @debug.Debug] @debug.Debug for List[A] with fn to_repr(self) {
 
 ///|
 test "Debug for List" {
-  let xs : List[Int] = List([1, 2, 3])
+  let xs : List[Int32] = List([1, 2, 3])
   @debug.debug_inspect(xs, content="<List: [1, 2, 3]>")
 }

@@ -21,7 +21,7 @@
 ///|
 struct SortedSet[V] {
   mut root : Node[V]?
-  mut size : Int
+  mut size : Int32
 }
 
 ///|
@@ -30,5 +30,5 @@ priv struct Node[V] {
   mut value : V
   mut left : Node[V]?
   mut right : Node[V]?
-  mut height : Int
+  mut height : Int32
 } derive(@debug.Debug)

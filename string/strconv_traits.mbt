@@ -31,7 +31,7 @@ pub impl FromStr for Bool with fn from_str(str) {
 }
 
 ///|
-pub impl FromStr for Int with fn from_str(str) {
+pub impl FromStr for Int32 with fn from_str(str) {
   parse_int(str)
 }
 
@@ -41,7 +41,7 @@ pub impl FromStr for Int64 with fn from_str(str) {
 }
 
 ///|
-pub impl FromStr for UInt with fn from_str(str) {
+pub impl FromStr for UInt32 with fn from_str(str) {
   parse_uint(str)
 }
 
@@ -64,11 +64,11 @@ pub impl FromStr for @bigint.BigInt with fn from_str(str) {
 test "parse" {
   let b : Bool = from_str("true")
   inspect(b, content="true")
-  let i : Int = from_str("12345")
+  let i : Int32 = from_str("12345")
   inspect(i, content="12345")
   let i64 : Int64 = from_str("9223372036854775807")
   @test.assert_eq(i64, 9223372036854775807L)
-  let ui : UInt = from_str("4294967295")
+  let ui : UInt32 = from_str("4294967295")
   inspect(ui, content="4294967295")
   let ui64 : UInt64 = from_str("18446744073709551615")
   @test.assert_eq(ui64, 18446744073709551615UL)

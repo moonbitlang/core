@@ -14,13 +14,13 @@
 
 ///|
 test "unwrap should return value on Some" {
-  let some : Int? = Some(42)
+  let some : Int32? = Some(42)
   assert_eq(some.unwrap(), 42)
 }
 
 ///|
 test "Option::default should return None" {
-  let x : Int? = None
+  let x : Int32? = None
   assert_true(x == None)
 }
 
@@ -37,7 +37,7 @@ test "Option::default should return None for Bool" {
 }
 
 ///|
-fn test_option_arg(x? : Int, y? : Int) -> Int {
+fn test_option_arg(x? : Int32, y? : Int32) -> Int32 {
   let x = x.unwrap_or(3)
   let y = y.unwrap_or(4)
   x + y
@@ -55,7 +55,7 @@ test {
 test "filter with predicate" {
   let some_even = Some(4)
   let some_odd = Some(3)
-  let none : Int? = None
+  let none : Int32? = None
   assert_true(some_even.filter(x => x % 2 == 0) == Some(4))
   assert_true(some_odd.filter(x => x % 2 == 0) == None)
   assert_true(none.filter(x => x % 2 == 0) == None)
@@ -63,14 +63,14 @@ test "filter with predicate" {
 
 ///|
 test "bind chaining" {
-  let safe_divide = (x : Int) => if x == 0 { None } else { Some(100 / x) }
+  let safe_divide = (x : Int32) => if x == 0 { None } else { Some(100 / x) }
   let some_value = Some(4)
   let result = some_value.bind(x => safe_divide(x))
   assert_true(result == Some(25))
   let zero_value = Some(0)
   let result2 = zero_value.bind(x => safe_divide(x))
   assert_true(result2 == None)
-  let none_value : Int? = None
+  let none_value : Int32? = None
   let result3 = none_value.bind(x => safe_divide(x))
   assert_true(result3 == None)
 }
@@ -78,24 +78,24 @@ test "bind chaining" {
 ///|
 test "unwrap_or with default value" {
   let x = Some(2)
-  let y : Int? = None
+  let y : Int32? = None
   assert_eq(x.unwrap_or(100), 2)
   assert_eq(y.unwrap_or(100), 100)
-  let none1 : Int? = None
+  let none1 : Int32? = None
   assert_eq(none1.unwrap_or(42), 42)
 }
 
 ///|
 test "some equals to Some" {
-  let x : Int? = Some(5)
-  let y : Int? = Some(5)
+  let x : Int32? = Some(5)
+  let y : Int32? = Some(5)
   assert_true(x == y)
 }
 
 ///|
 test "map" {
   let a = Some(5)
-  let b : Int? = None
+  let b : Int32? = None
   assert_true(a.map(x => x * 2) == Some(10))
   assert_true(b.map(x => x * 2) == None)
 }
@@ -120,23 +120,23 @@ test "map_or_else" {
 ///|
 test "bind" {
   let a = Option::Some(5)
-  let b : Int? = None
+  let b : Int32? = None
   assert_true(a.bind(x => Some(x * 2)) == Some(10))
   assert_true(b.bind(x => Some(x * 2)) == None)
 }
 
 ///|
 test "flatten" {
-  let a : Int?? = Some(Some(42))
+  let a : Int32?? = Some(Some(42))
   assert_true(a.bind(x => x) == Some(42))
-  let b : Int?? = Some(None)
+  let b : Int32?? = Some(None)
   assert_true(b.bind(x => x) == None)
 }
 
 ///|
 test "is_empty" {
   let x = Option::Some(3)
-  let y : Int? = None
+  let y : Int32? = None
   assert_false(x is None)
   assert_true(y is None)
 }
@@ -152,7 +152,7 @@ test "filter" {
 test "unwrap_or" {
   let x = Option::Some(3)
   assert_eq(x.unwrap_or(5), 3)
-  assert_eq((None : Int?).unwrap_or(5), 5)
+  assert_eq((None : Int32?).unwrap_or(5), 5)
 }
 
 ///|
@@ -166,7 +166,7 @@ test "or else" {
 test "or default" {
   let x = Option::Some(3)
   assert_eq(x.unwrap_or_default(), 3)
-  assert_eq((None : Int?).unwrap_or_default(), 0)
+  assert_eq((None : Int32?).unwrap_or_default(), 0)
 }
 
 ///|
@@ -195,7 +195,7 @@ test "iter" {
     ),
   )
   exb.reset()
-  let y : Int? = None
+  let y : Int32? = None
   y.iter().each(x => exb <+ "\{x}\n")
   inspect(exb, content="")
 }
@@ -218,8 +218,8 @@ test "or error" {
 
 ///|
 test "optional interpolation" {
-  let some_value : Int? = Some(10)
-  let none_value : Int? = None
+  let some_value : Int32? = Some(10)
+  let none_value : Int32? = None
   @json.json_inspect([1, 2, 3, ..some_value, ..none_value, 4, 5], content=[
     1, 2, 3, 10, 4, 5,
   ])

@@ -24,7 +24,7 @@ let zero = 0N
 /// Returns an error if the input is malformed or the base is invalid.
 #internal(internal, "use `@string.parse_bigint` instead")
 #doc(hidden)
-pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
+pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
   if base < 2 || base > 36 {
     base_err()
   }
@@ -32,14 +32,14 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
     syntax_err()
   }
   match str.unsafe_get(str.length() - 1) {
-    '0'..='9' | 'A'..='Z' | 'a'..='z' => ()
+    '0'..<='9' | 'A'..<='Z' | 'a'..<='z' => ()
     _ => syntax_err()
   }
   if base == 10 {
     match str {
       ['0', 'x' | 'X' | 'o' | 'O' | 'b' | 'B', ..]
       | ['-', '0', 'x' | 'X' | 'o' | 'O' | 'b' | 'B', ..] => syntax_err()
-      ['0'..='9', ..] | ['-', '0'..='9', ..] => ()
+      ['0'..<='9', ..] | ['-', '0'..<='9', ..] => ()
       _ => syntax_err()
     }
   }
@@ -64,9 +64,9 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
 ///|
 extern "js" fn BigInt::js_parse_string(
   str : String,
-  start : Int,
-  end : Int,
-  base : Int,
+  start : Int32,
+  end : Int32,
+  base : Int32,
   some : (BigInt) -> BigInt?,
   none : BigInt?,
 ) -> BigInt? =
@@ -90,7 +90,7 @@ extern "js" fn BigInt::js_parse_string(
 /// Converts a string representation in the specified radix to a BigInt value.
 ///
 /// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
-pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
+pub fn BigInt::from_string(str : String, radix~ : Int32 = 10) -> BigInt {
   parse_bigint(str, base=radix) catch {
     Failure(msg) => abort(msg)
     _ => abort("invalid syntax")
@@ -98,7 +98,7 @@ pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
 }
 
 ///|
-fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
+fn BigInt::from_string_radix(str : StringView, radix : Int32) -> BigInt raise {
   let len = str.length()
   let sign = if str.unsafe_get(0) == '-' { -1 } else { 1 }
   let start = if sign == -1 { 1 } else { 0 }
@@ -156,7 +156,7 @@ fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
 ///   inspect(zero.to_string(), content="0")
 /// }
 /// ```
-pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
+pub fn BigInt::to_string(self : BigInt, radix~ : Int32 = 10) -> String {
   if radix < 2 || radix > 36 {
     abort("radix must be between 2 and 36")
   }
@@ -164,7 +164,10 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
 }
 
 ///|
-extern "js" fn BigInt::js_to_string_radix(self : BigInt, radix : Int) -> String =
+extern "js" fn BigInt::js_to_string_radix(
+  self : BigInt,
+  radix : Int32,
+) -> String =
   #|(x, radix) => x.toString(radix)
 
 ///|
@@ -187,7 +190,7 @@ extern "js" fn hex2(b : Byte) -> String =
 ///
 /// An empty byte sequence yields zero for any `signum`, matching the behavior
 /// of Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
-pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(octets : BytesView, signum~ : Int32 = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
   }
@@ -222,7 +225,7 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
 ///
 /// Throws a panic if the input number is negative, or if `length` is zero or
 /// negative.
-pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
+pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
@@ -272,7 +275,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-extern "js" fn BigInt::compare_js(self : BigInt, other : BigInt) -> Int =
+extern "js" fn BigInt::compare_js(self : BigInt, other : BigInt) -> Int32 =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
@@ -297,7 +300,7 @@ pub impl Eq for BigInt with fn equal(self, other) {
 /// * `x` : The 32-bit signed integer to be converted.
 ///
 /// Returns a `BigInt` equivalent to the input integer.
-pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =
+pub extern "js" fn BigInt::from_int(x : Int32) -> BigInt =
   #|(x) => BigInt(x)
 
 ///|
@@ -308,7 +311,7 @@ pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =
 /// * `x` : The unsigned 32-bit integer to be converted.
 ///
 /// Returns a `BigInt` representing the same numerical value as the input.
-pub extern "js" fn BigInt::from_uint(x : UInt) -> BigInt =
+pub extern "js" fn BigInt::from_uint(x : UInt32) -> BigInt =
   #|(x) => BigInt(x >>> 0)
 
 ///|
@@ -462,7 +465,7 @@ extern "js" fn BigInt::to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
-pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with fn shl(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -470,7 +473,7 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with fn shr(self : BigInt, n : Int32) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -478,11 +481,11 @@ pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-extern "js" fn BigInt::js_shl(self : BigInt, other : Int) -> BigInt =
+extern "js" fn BigInt::js_shl(self : BigInt, other : Int32) -> BigInt =
   #|(x, y) => x << BigInt(y)
 
 ///|
-extern "js" fn BigInt::js_shr(self : BigInt, other : Int) -> BigInt =
+extern "js" fn BigInt::js_shr(self : BigInt, other : Int32) -> BigInt =
   #|(x, y) => x >> BigInt(y)
 
 ///|
@@ -585,7 +588,7 @@ pub impl BitXOr for BigInt with fn lxor(self, other) {
 ///   inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
-pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
+pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt32 =
   #|(x) => Number(BigInt.asUintN(32, x)) | 0
 
 ///|
@@ -606,7 +609,7 @@ pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
 ///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// }
 /// ```
-pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
+pub extern "js" fn BigInt::to_int(self : BigInt) -> Int32 =
   #|(x) => Number(BigInt.asIntN(32, x))
 
 ///|
@@ -681,7 +684,7 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 ///   inspect(zero.bit_length(), content="0")
 /// }
 /// ```
-pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
+pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int32 =
   #|(n) => {
   #|  if (n >= 0) {
   #|    return n === 0n ? 0 : n.toString(2).length;
@@ -706,7 +709,7 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
 ///   inspect(0N.ctz(), content="0")
 /// }
 /// ```
-pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
+pub extern "js" fn BigInt::ctz(self : BigInt) -> Int32 =
   #|(n) => {
   #|  if (n === 0n) return 0;
   #|  let absN = n < 0n ? -n : n;
@@ -731,7 +734,7 @@ extern "js" fn is_neg(x : BigInt) -> Bool =
   #|(x) => x < 0n
 
 ///|
-fn BigInt::limbs(self : Self) -> Array[UInt] {
+fn BigInt::limbs(self : Self) -> Array[UInt32] {
   guard !self.is_zero() else { [0] }
   let result = []
   for n = self * BigInt::from_int(self.signum()); n > 0; n = n >> 32 {

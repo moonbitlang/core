@@ -14,25 +14,25 @@
 
 ///|
 /// Min value constant for this type.
-pub const MIN_VALUE : UInt = 0U
+pub const MIN_VALUE : UInt32 = 0U
 
 ///|
 /// Min value constant for this type.
 #deprecated("Use `MIN_VALUE` instead")
-pub let min_value : UInt = 0U
+pub let min_value : UInt32 = 0U
 
 ///|
 /// Max value constant for this type.
-pub const MAX_VALUE : UInt = 4294967295U
+pub const MAX_VALUE : UInt32 = 4294967295U
 
 ///|
 /// Max value constant for this type.
 #deprecated("Use `MAX_VALUE` instead")
-pub let max_value : UInt = 4294967295U
+pub let max_value : UInt32 = 4294967295U
 
 ///|
 /// same as `UInt::default`
 #deprecated("Use `0U` or `Default::default()` instead")
-pub fn default() -> UInt {
+pub fn default() -> UInt32 {
   0
 }

@@ -14,7 +14,7 @@
 
 ///|
 test "quickcheck: iteration is sorted and duplicate-free" {
-  @quickcheck.check((xs : Array[Int]) => {
+  @quickcheck.check((xs : Array[Int32]) => {
     let set = @sorted_set.from_array(xs)
     let actual = set.to_array()
     for i in 1..<actual.length() {
@@ -28,7 +28,7 @@ test "quickcheck: iteration is sorted and duplicate-free" {
 
 ///|
 test "quickcheck: difference matches the filter model" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)
@@ -40,7 +40,7 @@ test "quickcheck: difference matches the filter model" {
 
 ///|
 test "quickcheck: intersection matches the filter model" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)
@@ -52,7 +52,7 @@ test "quickcheck: intersection matches the filter model" {
 
 ///|
 test "quickcheck: symmetric_difference matches the filter model" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)
@@ -69,7 +69,7 @@ test "quickcheck: strongly asymmetric sizes match the filter model" {
   // Forces the O(n log m) probe fallback in difference/intersection
   // (taken when one side is under 1/16 of the other) and checks it against
   // the same filter model as the split-based path.
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let k = if xs.length() < 10 { xs.length() } else { 10 }
     let small = @sorted_set.from_array(xs[0:k])
@@ -98,7 +98,7 @@ test "quickcheck: strongly asymmetric sizes match the filter model" {
 
 ///|
 test "quickcheck: set algebra laws relate the operations" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)
@@ -117,9 +117,9 @@ test "quickcheck: set algebra laws relate the operations" {
 
 ///|
 test "quickcheck: operations with self and empty are identities" {
-  @quickcheck.check((xs : Array[Int]) => {
+  @quickcheck.check((xs : Array[Int32]) => {
     let a = @sorted_set.from_array(xs)
-    let empty : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
+    let empty : @sorted_set.SortedSet[Int32] = @sorted_set.from_array([])
     a.difference(a).is_empty() &&
     a.intersection(a) == a &&
     a.symmetric_difference(a).is_empty() &&
@@ -133,7 +133,7 @@ test "quickcheck: operations with self and empty are identities" {
 
 ///|
 test "quickcheck: results do not share nodes with the inputs" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)
@@ -177,7 +177,7 @@ test "quickcheck: results do not share nodes with the inputs" {
 
 ///|
 test "quickcheck: set operations obey membership laws" {
-  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+  @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let a = @sorted_set.from_array(xs)
     let b = @sorted_set.from_array(ys)

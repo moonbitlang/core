@@ -31,20 +31,20 @@ pub fn decode_utf8(bytes : Bytes) -> String {
   for x = bytes[:] {
     match x {
       // 1-byte sequence (ASCII): 0xxxxxxx
-      [0x00..=0x7F as b, .. next] => {
+      [0x00..<=0x7F as b, .. next] => {
         buf.write_char(b.to_char())
         continue next
       }
 
       // 2-byte sequence: 110xxxxx 10xxxxxx
-      [0xC0..=0xDF as b1, 0x80..=0xBF as b2, .. next] => {
+      [0xC0..<=0xDF as b1, 0x80..<=0xBF as b2, .. next] => {
         let code_point = ((b1.to_int() & 0x1F) << 6) | (b2.to_int() & 0x3F)
         buf.write_char(code_point.unsafe_to_char())
         continue next
       }
 
       // 3-byte sequence: 1110xxxx 10xxxxxx 10xxxxxx
-      [0xE0..=0xEF as b1, 0x80..=0xBF as b2, 0x80..=0xBF as b3, .. next] => {
+      [0xE0..<=0xEF as b1, 0x80..<=0xBF as b2, 0x80..<=0xBF as b3, .. next] => {
         let code_point = ((b1.to_int() & 0x0F) << 12) |
           ((b2.to_int() & 0x3F) << 6) |
           (b3.to_int() & 0x3F)
@@ -54,10 +54,10 @@ pub fn decode_utf8(bytes : Bytes) -> String {
 
       // 4-byte sequence: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
       [
-        0xF0..=0xF7 as b1,
-        0x80..=0xBF as b2,
-        0x80..=0xBF as b3,
-        0x80..=0xBF as b4,
+        0xF0..<=0xF7 as b1,
+        0x80..<=0xBF as b2,
+        0x80..<=0xBF as b3,
+        0x80..<=0xBF as b4,
         .. next,
       ] => {
         let code_point = ((b1.to_int() & 0x07) << 18) |

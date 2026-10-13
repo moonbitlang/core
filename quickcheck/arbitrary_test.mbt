@@ -14,8 +14,8 @@
 
 ///|
 priv struct H {
-  x : Int
-  y : Int
+  x : Int32
+  y : Int32
 } derive(@quickcheck.Arbitrary, Debug)
 
 ///|
@@ -32,8 +32,8 @@ test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size 
   let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
   let int16s : Array[Int16] = scalar_samples_at_zero(seeds)
   let uint16s : Array[UInt16] = scalar_samples_at_zero(seeds)
-  let ints : Array[Int] = scalar_samples_at_zero(seeds)
-  let uints : Array[UInt] = scalar_samples_at_zero(seeds)
+  let ints : Array[Int32] = scalar_samples_at_zero(seeds)
+  let uints : Array[UInt32] = scalar_samples_at_zero(seeds)
   let int64s : Array[Int64] = scalar_samples_at_zero(seeds)
   let uint64s : Array[UInt64] = scalar_samples_at_zero(seeds)
   debug_inspect(int16s, content="[-3191, -1, 2047, -10000, 32766]")
@@ -121,7 +121,7 @@ test "gen with default parameters" {
 
 ///|
 test "iter arbitrary" {
-  let samples : Array[Iter[Int]] = @quickcheck.samples(20)
+  let samples : Array[Iter[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     samples[9].to_array(),
     content=(
@@ -162,7 +162,7 @@ test "arbitrary float" {
 ///|
 test "arbitrary_iter_break" {
   let rs = (Default::default() : @splitmix.RandomState)
-  let iter : Iter[Int] = @quickcheck.gen(size=4, state=rs)
+  let iter : Iter[Int32] = @quickcheck.gen(size=4, state=rs)
   // An Iter with a length greater than 0 is required here
   let mut i = 0
   for _ in iter {
@@ -194,9 +194,9 @@ test "arbitrary size branches" {
   let rs2 = (Default::default() : @splitmix.RandomState)
   let _ : UInt64 = @quickcheck.Arbitrary::arbitrary(4, rs2)
   let rs3 = (Default::default() : @splitmix.RandomState)
-  let result : Result[Int, Int] = for
+  let result : Result[Int32, Int32] = for
     _ in 0..<64
-    result = (Ok(0) : Result[Int, Int]) {
+    result = (Ok(0) : Result[Int32, Int32]) {
     let result = @quickcheck.Arbitrary::arbitrary(1, rs3)
     if result is Err(_) {
       break result
@@ -207,5 +207,5 @@ test "arbitrary size branches" {
   }
   guard result is Err(_) else { fail("expected Err from Result arbitrary") }
   let rs4 = (Default::default() : @splitmix.RandomState)
-  let _ : FixedArray[Int] = @quickcheck.Arbitrary::arbitrary(3, rs4)
+  let _ : FixedArray[Int32] = @quickcheck.Arbitrary::arbitrary(3, rs4)
 }

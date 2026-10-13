@@ -61,7 +61,7 @@ test "ArrayView::start_offset" {
 
 ///|
 test "panic FixedArray view invalid range" {
-  let arr : FixedArray[Int] = [1, 2, 3]
+  let arr : FixedArray[Int32] = [1, 2, 3]
   let _ = arr.exact_view(start=2, end=1)
 }
 
@@ -276,7 +276,7 @@ test "fixedarray_sub" {
 
 ///|
 test "ArrayView::suffixes" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr : ReadOnlyArray[Int32] = [1, 2, 3]
   let suffixes = arr[:].suffixes().collect()
   @json.json_inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
   let suffixes_with_empty = arr[:].suffixes(include_empty=true).collect()
@@ -360,15 +360,15 @@ test "lexical_compare" {
   // Test equal arrays
   inspect([1, 2, 3][:].lexical_compare([1, 2, 3]), content="0")
   inspect(
-    ([] : Array[Int])[0:0].lexical_compare(([] : Array[Int])[0:0]),
+    ([] : Array[Int32])[0:0].lexical_compare(([] : Array[Int32])[0:0]),
     content="0",
   )
 
   // Test shorter is less when prefix matches
   inspect([1, 2][:].lexical_compare([1, 2, 3]), content="-1")
   inspect([1, 2, 3][:].lexical_compare([1, 2]), content="1")
-  inspect(([] : Array[Int])[0:0].lexical_compare([1]), content="-1")
-  inspect([1][:].lexical_compare(([] : Array[Int])[0:0]), content="1")
+  inspect(([] : Array[Int32])[0:0].lexical_compare([1]), content="-1")
+  inspect([1][:].lexical_compare(([] : Array[Int32])[0:0]), content="1")
 
   // Test element-wise comparison (differs from shortlex)
   inspect([1, 2, 3][:].lexical_compare([1, 2, 4]), content="-1")
@@ -453,7 +453,7 @@ test "arrayview_map" {
   inspect(mapped.length(), content="2")
   inspect(mapped[0], content="4")
   inspect(mapped[1], content="6")
-  @json.json_inspect(([1] : Array[Int])[1:].map(x => x), content=[])
+  @json.json_inspect(([1] : Array[Int32])[1:].map(x => x), content=[])
 }
 
 ///|
@@ -463,7 +463,7 @@ test "arrayview_mapi" {
   inspect(mapped.length(), content="2")
   inspect(mapped[0], content="2")
   inspect(mapped[1], content="4")
-  debug_inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
+  debug_inspect(([1] : Array[Int32])[1:].mapi((_idx, x) => x), content="[]")
 }
 
 ///|
@@ -487,7 +487,7 @@ test "arrayview_to_owned" {
 
 ///|
 test "arrayview_arbitrary" {
-  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
+  let arr : Array[ArrayView[Int32]] = @quickcheck.samples(20)
   debug_inspect(
     arr[5:9],
     content=(
@@ -541,7 +541,7 @@ test "arrayview_arbitrary" {
 
 ///|
 test "arrayview_hash" {
-  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
+  let arr : Array[ArrayView[Int32]] = @quickcheck.samples(20)
   let h1 = Hasher(seed=0)
   h1.combine(arr[5:9])
   inspect(
@@ -562,7 +562,7 @@ test "arrayview_hash" {
 
 ///|
 test "arrayview hash invariant" {
-  let arr : Array[Array[Int]] = @quickcheck.samples(20)
+  let arr : Array[Array[Int32]] = @quickcheck.samples(20)
   for v in arr {
     let view = v[:]
     @test.assert_eq(hash(v), hash(view))
@@ -659,8 +659,8 @@ test "ArrayView::op_add empty right" {
 
 ///|
 test "ArrayView::op_add both empty" {
-  let a : ArrayView[Int] = [1, 2, 3][0:0]
-  let b : ArrayView[Int] = [4, 5][1:1]
+  let a : ArrayView[Int32] = [1, 2, 3][0:0]
+  let b : ArrayView[Int32] = [4, 5][1:1]
   let result = a + b
   debug_inspect(
     result,
@@ -798,7 +798,7 @@ test "ArrayView::rev_each sliced view" {
 
 ///|
 test "ArrayView::rev_each empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   let out = []
   v.rev_each(x => out.push(x))
   debug_inspect(out, content="[]")
@@ -831,7 +831,7 @@ test "ArrayView::rev_eachi sliced view index starts at 0" {
 
 ///|
 test "ArrayView::rev_eachi empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   let out = []
   v.rev_eachi((i, x) => out.push((i, x)))
   debug_inspect(out, content="[]")
@@ -853,7 +853,7 @@ test "ArrayView::count sliced view" {
 
 ///|
 test "ArrayView::count empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   inspect(v.count(1), content="0")
 }
 
@@ -872,7 +872,7 @@ test "ArrayView::count_if sliced view" {
 
 ///|
 test "ArrayView::count_if empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   inspect(v.count_if(_ => true), content="0")
 }
 
@@ -915,7 +915,7 @@ test "ArrayView::search_by no match" {
 
 ///|
 test "ArrayView::search_by empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   debug_inspect(v.search_by(_ => true), content="None")
 }
 
@@ -951,7 +951,7 @@ test "ArrayView::rev sliced view" {
 
 ///|
 test "ArrayView::rev empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   debug_inspect(v.rev(), content="[]")
   assert_true(v.rev().is_empty())
 }
@@ -977,7 +977,7 @@ test "ArrayView::rev does not mutate source" {
 
 ///|
 test "ArrayView::rev result is independent" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4]
   let v = arr[:]
   let r = v.rev()
   arr[0] = 99
@@ -1017,7 +1017,7 @@ test "ArrayView::filter_map sliced view" {
 
 ///|
 test "ArrayView::filter_map empty view" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   let r = v.filter_map(x => Some(x))
   debug_inspect(r, content="[]")
   assert_true(r.is_empty())
@@ -1026,7 +1026,7 @@ test "ArrayView::filter_map empty view" {
 ///|
 test "ArrayView::filter_map all none" {
   let v = [1, 2, 3][:]
-  let r : Array[Int] = v.filter_map(_ => None)
+  let r : Array[Int32] = v.filter_map(_ => None)
   debug_inspect(r, content="[]")
 }
 
@@ -1092,7 +1092,7 @@ test "ArrayView::chunks size larger than view" {
 
 ///|
 test "ArrayView::chunks empty view" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   debug_inspect(v.chunks(3), content="[]")
 }
 
@@ -1109,7 +1109,7 @@ test "ArrayView::chunks on sliced view" {
 
 ///|
 test "ArrayView::chunks shares backing" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4]
   let parts = arr[:].chunks(2)
   arr[0] = 99
   arr[3] = 88
@@ -1139,7 +1139,7 @@ test "ArrayView::chunk_by basic" {
 
 ///|
 test "ArrayView::chunk_by empty" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   debug_inspect(v.chunk_by((a, b) => a == b), content="[]")
 }
 
@@ -1210,7 +1210,7 @@ test "ArrayView::windows size larger than view" {
 
 ///|
 test "ArrayView::windows empty view" {
-  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
   debug_inspect(v.windows(1), content="[]")
 }
 
@@ -1227,7 +1227,7 @@ test "ArrayView::windows on sliced view" {
 
 ///|
 test "ArrayView::windows shares backing" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4]
   let ws = arr[:].windows(2)
   arr[1] = 99
   debug_inspect(
@@ -1271,7 +1271,7 @@ test "ArrayView::strip_prefix on sliced view" {
 
 ///|
 test "ArrayView::strip_prefix shares backing" {
-  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
   guard! arr[:].strip_prefix([1, 2]) is Some(rest)
   arr[2] = 99
   debug_inspect(

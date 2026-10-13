@@ -58,7 +58,7 @@ test "hit located after the cutover point is found" {
 // One decoy block per repetition: for the periodic needle used below
 // (anchors 'a' and 'b', length 82), each block contributes exactly one
 // position whose anchors match but whose interior verification fails.
-fn decoy_blocks(count : Int) -> String {
+fn decoy_blocks(count : Int32) -> String {
   (String::make(81, 'a') + "b").repeat(count)
 }
 
@@ -94,7 +94,7 @@ test "reverse cutover then kmp keeps the rightmost overlapping hit" {
 }
 
 ///|
-fn naive_find(haystack : String, needle : String) -> Int? {
+fn naive_find(haystack : String, needle : String) -> Int32? {
   let n = haystack.length()
   let m = needle.length()
   for start in 0..<=(n - m) {
@@ -114,7 +114,7 @@ fn naive_find(haystack : String, needle : String) -> Int? {
 }
 
 ///|
-fn naive_rev_find(haystack : String, needle : String) -> Int? {
+fn naive_rev_find(haystack : String, needle : String) -> Int32? {
   let n = haystack.length()
   let m = needle.length()
   for start = n - m; start >= 0; {

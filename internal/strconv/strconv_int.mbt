@@ -30,8 +30,8 @@ const INT64_MAX = 0x7fffffffffffffffL
 /// The boolean flag `allow_underscore` is used to check validity of underscores.
 fn check_and_consume_base(
   view : StringView,
-  base : Int,
-) -> (Int, StringView, Bool) raise {
+  base : Int32,
+) -> (Int32, StringView, Bool) raise {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
@@ -46,7 +46,7 @@ fn check_and_consume_base(
       ['0', 'x' | 'X', .. rest] if base == 16 => (16, rest, true)
       ['0', 'o' | 'O', .. rest] if base == 8 => (8, rest, true)
       ['0', 'b' | 'B', .. rest] if base == 2 => (2, rest, true)
-      _ => if base is (2..=36) { (base, view, false) } else { base_err() }
+      _ => if base is (2..<=36) { (base, view, false) } else { base_err() }
     }
   }
 }
@@ -91,7 +91,7 @@ test {
 /// }
 /// ```
 ///
-pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
+pub fn parse_int64(str : StringView, base~ : Int32 = 0) -> Int64 raise {
   guard str != "" else { syntax_err() }
   let (neg, rest) = match str {
     ['+', .. rest] => (false, rest)
@@ -105,8 +105,8 @@ pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
   let has_digit = rest
-    is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
-    | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
+    is (['0'..<='9' | 'a'..<='z' | 'A'..<='Z', ..]
+    | ['_', '0'..<='9' | 'a'..<='z' | 'A'..<='Z', ..])
   guard has_digit else { syntax_err() }
   // convert
   for rest = rest, acc = 0L, allow_underscore = allow_underscore {
@@ -119,9 +119,9 @@ pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
       ([c, .. rest], acc, _) => {
         let c = c.to_int()
         let d = match c {
-          '0'..='9' => c - '0'
-          'a'..='z' => c + (10 - 'a')
-          'A'..='Z' => c + (10 - 'A')
+          '0'..<='9' => c - '0'
+          'a'..<='z' => c + (10 - 'a')
+          'A'..<='Z' => c + (10 - 'A')
           _ => syntax_err()
         }
         guard d < num_base else { syntax_err() }
@@ -145,7 +145,7 @@ pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise {
+pub fn parse_int(str : StringView, base~ : Int32 = 0) -> Int32 raise {
   let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err()
@@ -190,9 +190,9 @@ fn check_underscore(str : StringView) -> Bool {
       // Valid underscore: the following character must be a digit.
       (['_', .. rest], true, _) => continue rest, false, true
       // Decimal digits allow an underscore after them.
-      (['0'..='9', .. rest], _, _) => continue rest, true, false
+      (['0'..<='9', .. rest], _, _) => continue rest, true, false
       // 'e' and 'E' are valid hex digits, but not decimal digits.
-      (['a'..='f' | 'A'..='F', .. rest], _, _) if hex =>
+      (['a'..<='f' | 'A'..<='F', .. rest], _, _) if hex =>
         continue rest, true, false
       // Common decimal separators/signs reset underscore allowance.
       (['.' | 'e' | 'E' | '+' | '-', ..], _, true) => break false
@@ -207,7 +207,7 @@ fn check_underscore(str : StringView) -> Bool {
 }
 
 ///|
-fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
+fn overflow_threshold(base : Int32, neg : Bool) -> Int64 {
   if !neg {
     if base == 10 {
       INT64_MAX / 10L + 1L

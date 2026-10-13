@@ -254,14 +254,14 @@ test "Float constructor syntax" {
 ///|
 test "equal signed zero values hash equally" {
   inspect(Hash::hash(0.0F) == Hash::hash(-0.0F), content="true")
-  let map : Map[Float, Int] = { 0.0F: 42 }
+  let map : Map[Float, Int32] = { 0.0F: 42 }
   inspect(map.get(-0.0F) == Some(42), content="true")
 }
 
 ///|
 /// Reference conversion with a single round-to-nearest-even, using integer
 /// arithmetic only. Returns the bits of the `Float`.
-fn ref_uint64_to_float_bits(x : UInt64) -> UInt {
+fn ref_uint64_to_float_bits(x : UInt64) -> UInt32 {
   if x == 0UL {
     return 0
   }

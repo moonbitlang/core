@@ -14,7 +14,7 @@
 
 ///|
 /// Textbook full-matrix Levenshtein DP, used as the reference oracle.
-fn reference_levenshtein(a : Array[Char], b : Array[Char]) -> Int {
+fn reference_levenshtein(a : Array[Char], b : Array[Char]) -> Int32 {
   let m = a.length()
   let n = b.length()
   let dp = Array::makei(m + 1, _ => Array::makei(n + 1, j => j))
@@ -48,7 +48,7 @@ fn check_script(
   old : Array[Char],
   new : Array[Char],
   edits : Array[@diff.LevenshteinEdit],
-) -> Int raise {
+) -> Int32 raise {
   let mut oi = 0
   let mut ni = 0
   let mut cost = 0
@@ -121,7 +121,7 @@ fn check_script(
 /// compared against an oracle that cannot construct `LevenshteinEdit`.
 fn to_tuples(
   edits : Array[@diff.LevenshteinEdit],
-) -> Array[(Int, Int, Int, Int)] {
+) -> Array[(Int32, Int32, Int32, Int32)] {
   edits.map(e => {
     match e {
       Equal(old_index~, new_index~, len~) => (0, old_index, new_index, len)
@@ -142,7 +142,7 @@ fn to_tuples(
 fn reference_canonical(
   a : Array[Char],
   b : Array[Char],
-) -> Array[(Int, Int, Int, Int)] {
+) -> Array[(Int32, Int32, Int32, Int32)] {
   let m = a.length()
   let n = b.length()
   let d = Array::makei(m + 1, _ => Array::make(n + 1, 0))
@@ -164,8 +164,8 @@ fn reference_canonical(
       d[i][j] = best
     }
   }
-  let out : Array[(Int, Int, Int, Int)] = []
-  fn emit(kind : Int, oi : Int, ni : Int) {
+  let out : Array[(Int32, Int32, Int32, Int32)] = []
+  fn emit(kind : Int32, oi : Int32, ni : Int32) {
     if out.length() > 0 {
       let (k, o, w, len) = out[out.length() - 1]
       if k == kind {
@@ -251,7 +251,7 @@ test "edit_distance_str: differential against the generic implementation" {
 
 ///|
 /// All strings over `alphabet` of length `0..=max_len`.
-fn gen_strings(alphabet : Array[Char], max_len : Int) -> Array[Array[Char]] {
+fn gen_strings(alphabet : Array[Char], max_len : Int32) -> Array[Array[Char]] {
   let out : Array[Array[Char]] = [[]]
   let mut layer : Array[Array[Char]] = [[]]
   for _ in 0..<max_len {
@@ -284,8 +284,8 @@ test "edit_distance: distance basics" {
     @diff.edit_distance(([] : Array[Char]), ([] : Array[Char])),
     content="0",
   )
-  inspect(@diff.edit_distance(([] : Array[Int]), [1, 2]), content="2")
-  inspect(@diff.edit_distance([1, 2], ([] : Array[Int])), content="2")
+  inspect(@diff.edit_distance(([] : Array[Int32]), [1, 2]), content="2")
+  inspect(@diff.edit_distance([1, 2], ([] : Array[Int32])), content="2")
   inspect(
     @diff.edit_distance("same".to_array(), "same".to_array()),
     content="0",

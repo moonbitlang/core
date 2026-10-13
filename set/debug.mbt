@@ -22,6 +22,6 @@ pub impl[K : @debug.Debug] @debug.Debug for Set[K] with fn to_repr(self) {
 
 ///|
 test "Debug for Set" {
-  let s : Set[Int] = from_array([1, 2, 3])
+  let s : Set[Int32] = from_array([1, 2, 3])
   @debug.debug_inspect(s, content="<Set: [1, 2, 3]>")
 }

@@ -41,7 +41,7 @@ priv enum Direction {
 /// `from + k * step`, so rounding error does not accumulate. Their two
 /// loops differ only in how element `k` is computed.
 trait Step: Add + Compare {
-  fn direction(Self) -> Int
+  fn direction(Self) -> Int32
   fn step_one() -> Self
   fn enumerate(from : Self, to : Self, step : Self, inclusive : Bool) -> Iter[
     Self,
@@ -104,7 +104,7 @@ fn[T : Compare] progresses(dir : Direction, i : T, next : T) -> Bool {
 const COUNTER_LIMIT : Double = 9007199254740992.0
 
 ///|
-pub impl Step for Int with fn direction(self) {
+pub impl Step for Int32 with fn direction(self) {
   if self > 0 {
     1
   } else if self < 0 {
@@ -115,7 +115,7 @@ pub impl Step for Int with fn direction(self) {
 }
 
 ///|
-pub impl Step for Int with fn step_one() {
+pub impl Step for Int32 with fn step_one() {
   1
 }
 
@@ -136,7 +136,7 @@ pub impl Step for Int64 with fn step_one() {
 }
 
 ///|
-pub impl Step for UInt with fn direction(self) {
+pub impl Step for UInt32 with fn direction(self) {
   if self > 0U {
     1
   } else {
@@ -145,7 +145,7 @@ pub impl Step for UInt with fn direction(self) {
 }
 
 ///|
-pub impl Step for UInt with fn step_one() {
+pub impl Step for UInt32 with fn step_one() {
   1U
 }
 
@@ -400,8 +400,8 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 pub fn[T : Step] iter(
   from~ : T,
   to~ : T,
-  step? : T = T::step_one(),
-  inclusive? : Bool = false,
+  step~ : T = T::step_one(),
+  inclusive~ : Bool = false,
 ) -> Iter[T] {
   T::enumerate(from, to, step, inclusive)
 }

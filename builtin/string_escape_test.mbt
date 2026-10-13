@@ -27,18 +27,18 @@
 /// Builds a string from UTF-16 code units. Callers pass well-formed sequences;
 /// each surrogate pair is decoded into one supplementary `Char`, since
 /// `unsafe_to_char` must not be given a surrogate half.
-fn escape_units_to_string(units : ArrayView[Int]) -> String {
+fn escape_units_to_string(units : ArrayView[Int32]) -> String {
   let buf = StringBuilder(size_hint=units.length())
   for i = 0; i < units.length(); {
     let u = units[i]
-    if u is (0xD800..=0xDBFF) &&
+    if u is (0xD800..<=0xDBFF) &&
       i + 1 < units.length() &&
-      units[i + 1] is (0xDC00..=0xDFFF) {
+      units[i + 1] is (0xDC00..<=0xDFFF) {
       let scalar = 0x10000 + ((u - 0xD800) << 10) + (units[i + 1] - 0xDC00)
       buf.write_char(scalar.unsafe_to_char())
       continue i + 2
     }
-    guard !(u is (0xD800..=0xDFFF)) else { abort("ill-formed test input") }
+    guard !(u is (0xD800..<=0xDFFF)) else { abort("ill-formed test input") }
     buf.write_char(u.unsafe_to_char())
     continue i + 1
   }
@@ -46,7 +46,7 @@ fn escape_units_to_string(units : ArrayView[Int]) -> String {
 }
 
 ///|
-fn escape_string_units(s : StringView) -> Array[Int] {
+fn escape_string_units(s : StringView) -> Array[Int32] {
   let units = []
   for i in 0..<s.length() {
     units.push(s.unsafe_get(i).to_int())
@@ -55,7 +55,7 @@ fn escape_string_units(s : StringView) -> Array[Int] {
 }
 
 ///|
-fn escape_push_ascii(out : Array[Int], s : String) -> Unit {
+fn escape_push_ascii(out : Array[Int32], s : String) -> Unit {
   for i in 0..<s.length() {
     out.push(s.unsafe_get(i).to_int())
   }
@@ -63,8 +63,8 @@ fn escape_push_ascii(out : Array[Int], s : String) -> Unit {
 
 ///|
 /// Reference model of the escape rules, one code unit at a time.
-fn escape_model(units : ArrayView[Int], quote : Bool) -> Array[Int] {
-  let out : Array[Int] = []
+fn escape_model(units : ArrayView[Int32], quote : Bool) -> Array[Int32] {
+  let out : Array[Int32] = []
   if quote {
     out.push(0x22)
   }
@@ -97,9 +97,9 @@ fn escape_model(units : ArrayView[Int], quote : Bool) -> Array[Int] {
 /// on `units`, and on a view of `units` embedded between `prefix` and
 /// `suffix`.
 fn escape_check(
-  units : Array[Int],
-  prefix : Array[Int],
-  suffix : Array[Int],
+  units : Array[Int32],
+  prefix : Array[Int32],
+  suffix : Array[Int32],
 ) -> Unit raise {
   let s = escape_units_to_string(units)
   let full = escape_units_to_string([..prefix, ..units, ..suffix])
@@ -120,7 +120,7 @@ fn escape_check(
 /// a sample of the `\u{hex}` ones, plus unescaped neighbours of escaped values
 /// (`0x20`, `0x21`, `0x23`, `0x5B`, `0x5D`, `0x7F`). The test
 /// "every code unit below 0x80" covers the remaining control characters.
-let escape_probe_units : Array[Int] = [
+let escape_probe_units : Array[Int32] = [
   0x22, 0x5C, 0x0A, 0x0D, 0x08, 0x09, 0x00, 0x01, 0x07, 0x0B, 0x0C, 0x1B, 0x1F, 0x20,
   0x21, 0x23, 0x5B, 0x5D, 0x7F,
 ]
@@ -239,7 +239,7 @@ test "escape: long strings" {
 ///|
 /// Pushes the code units for a seed: escaped units, near misses, non-ASCII BMP,
 /// or a whole surrogate pair, so the result stays well-formed UTF-16.
-fn escape_push_seed_units(units : Array[Int], seed : Int) -> Unit {
+fn escape_push_seed_units(units : Array[Int32], seed : Int32) -> Unit {
   match seed & 0xF {
     0 => units.push(0x22)
     1 => units.push(0x5C)
@@ -264,7 +264,7 @@ fn escape_push_seed_units(units : Array[Int], seed : Int) -> Unit {
 
 ///|
 test "quickcheck: escape agrees with the per-code-unit model" {
-  @quickcheck.check(count=300, (input : (Array[Int], Int, Int)) => {
+  @quickcheck.check(count=300, (input : (Array[Int32], Int32, Int32)) => {
     let (seeds, pre, post) = input
     // Each seed yields at least four code units, so most inputs reach the vector loop.
     let units = []

@@ -47,7 +47,10 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// }
 /// ```
 #locals(value)
-pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? {
+pub fn Bytes::makei(
+  length : Int32,
+  value : (Int32) -> Byte raise?,
+) -> Bytes raise? {
   if length <= 0 {
     return []
   }
@@ -63,8 +66,8 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? 
 #owned(bytes)
 fn unsafe_sub_string(
   bytes : Bytes,
-  byte_offset : Int,
-  byte_length : Int,
+  byte_offset : Int32,
+  byte_length : Int32,
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 ///|
@@ -76,8 +79,8 @@ fn unsafe_sub_string(
 /// it simply copy the bytes into a new String.
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
-  offset? : Int = 0,
-  length? : Int,
+  offset~ : Int32 = 0,
+  length? : Int32,
 ) -> String {
   let len = self.length()
   let length = if length is Some(l) { l } else { len - offset }
@@ -124,10 +127,10 @@ pub fn Bytes::to_unchecked_string(
 /// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
-  bytes_offset : Int,
+  bytes_offset : Int32,
   str : String,
-  str_offset : Int,
-  length : Int,
+  str_offset : Int32,
+  length : Int32,
 ) -> Unit {
   let len1 = self.length()
   let len2 = str.length()
@@ -155,10 +158,10 @@ fn unsafe_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
 /// into byte sequence `self`, starting at `bytes_offset`.
 pub fn FixedArray::blit_from_bytes(
   self : FixedArray[Byte],
-  bytes_offset : Int,
+  bytes_offset : Int32,
   src : Bytes,
-  src_offset : Int,
-  length : Int,
+  src_offset : Int32,
+  length : Int32,
 ) -> Unit {
   let len1 = self.length()
   let len2 = src.length()
@@ -208,7 +211,7 @@ pub fn FixedArray::blit_from_bytes(
 /// ```
 pub fn FixedArray::blit_from_bytesview(
   self : FixedArray[Byte],
-  bytes_offset : Int,
+  bytes_offset : Int32,
   src : BytesView,
 ) -> Unit {
   FixedArray::blit_from_bytes(
@@ -249,9 +252,9 @@ pub fn FixedArray::blit_from_bytesview(
 /// ```
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : Char,
-) -> Int {
+) -> Int32 {
   let code = value.to_uint()
   match code {
     _..<0x80 => {
@@ -287,9 +290,9 @@ pub fn FixedArray::set_utf8_char(
 /// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16le_char(
   self : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : Char,
-) -> Int {
+) -> Int32 {
   let code = value.to_uint()
   if code < 0x10000 {
     self[offset] = (code & 0xFF).to_byte()
@@ -316,9 +319,9 @@ pub fn FixedArray::set_utf16le_char(
 /// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16be_char(
   self : FixedArray[Byte],
-  offset : Int,
+  offset : Int32,
   value : Char,
-) -> Int {
+) -> Int32 {
   let code = value.to_uint()
   if code < 0x10000 {
     self[offset] = (code >> 8).to_byte()
@@ -485,7 +488,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 /// 
 /// Panics if the length is invalid
 #deprecated("Use Bytes::from_array instead")
-pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
+pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int32) -> Bytes {
   let len = match len {
     None => arr.length()
     Some(x) => {
@@ -535,7 +538,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 /// 
 /// Panics if the length is invalid
 #label_migration(len, fill=false)
-pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
+pub fn Bytes::to_fixedarray(self : Bytes, len? : Int32) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
     Some(x) => {
@@ -714,7 +717,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 /// }
 /// ```
 #alias(iterator2, deprecated)
-pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
+pub fn Bytes::iter2(self : Bytes) -> Iter2[Int32, Byte] {
   let mut i = 0
   let len = self.length()
   Iter::new(
@@ -790,7 +793,7 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 /// }
 /// ```
 #intrinsic("%bytes.get_opt")
-pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
+pub fn Bytes::get(self : Bytes, index : Int32) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
 }
@@ -854,7 +857,7 @@ pub impl Hash for Bytes with fn hash_combine(self, hasher) {
 // `Hash::hash_combine` result. JavaScript already optimizes the default path
 // better than this explicit loop.
 #cfg(not(target="js"))
-pub impl Hash for Bytes with fn hash(self : Bytes) -> Int {
+pub impl Hash for Bytes with fn hash(self : Bytes) -> Int32 {
   let mut acc = seed.reinterpret_as_uint() + GPRIME5
   let (cur, remain) = for cur = 0, remain = self.length(); remain >= 4; {
     acc += 4U
@@ -899,7 +902,7 @@ pub impl Hash for Bytes with fn hash(self : Bytes) -> Int {
 ///   )
 /// }
 /// ```
-pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
+pub fn Bytes::repeat(self : Self, count : Int32) -> Bytes {
   if count < 0 {
     abort("negative repeat count")
   }
@@ -948,6 +951,6 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
 ///   inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02\x04"), content="-1")
 /// }
 /// ```
-pub fn Bytes::lexical_compare(self : Bytes, other : Bytes) -> Int {
+pub fn Bytes::lexical_compare(self : Bytes, other : Bytes) -> Int32 {
   self[:].lexical_compare(other)
 }

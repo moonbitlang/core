@@ -97,16 +97,16 @@ pub struct FlagArg {
 pub fn FlagArg::FlagArg(
   name : StringView,
   short? : Char,
-  long? : StringView = name,
+  long~ : StringView = name,
   about? : StringView,
-  action? : FlagAction = SetTrue,
+  action~ : FlagAction = SetTrue,
   env? : StringView,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  negatable? : Bool = false,
-  hidden? : Bool = false,
+  requires~ : ArrayView[String] = [],
+  conflicts_with~ : ArrayView[String] = [],
+  required~ : Bool = false,
+  global~ : Bool = false,
+  negatable~ : Bool = false,
+  hidden~ : Bool = false,
 ) -> FlagArg {
   let name = name.to_owned()
   let long = if long == "" { None } else { Some(long.to_owned()) }
@@ -150,17 +150,17 @@ pub struct OptionArg {
 pub fn OptionArg::OptionArg(
   name : StringView,
   short? : Char,
-  long? : StringView = name,
+  long~ : StringView = name,
   about? : StringView,
-  action? : OptionAction = Set,
+  action~ : OptionAction = Set,
   env? : StringView,
   default_values? : ArrayView[String],
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  hidden? : Bool = false,
+  allow_hyphen_values~ : Bool = false,
+  requires~ : ArrayView[String] = [],
+  conflicts_with~ : ArrayView[String] = [],
+  required~ : Bool = false,
+  global~ : Bool = false,
+  hidden~ : Bool = false,
 ) -> OptionArg {
   let name = name.to_owned()
   let long = if long == "" { None } else { Some(long.to_owned()) }
@@ -213,11 +213,11 @@ pub fn PositionArg::PositionArg(
   env? : StringView,
   default_values? : ArrayView[String],
   num_args? : ValueRange,
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  global? : Bool = false,
-  hidden? : Bool = false,
+  allow_hyphen_values~ : Bool = false,
+  requires~ : ArrayView[String] = [],
+  conflicts_with~ : ArrayView[String] = [],
+  global~ : Bool = false,
+  hidden~ : Bool = false,
 ) -> PositionArg {
   let name = name.to_owned()
   let about = about.map(v => v.to_owned())

@@ -35,7 +35,7 @@ fn[A] cons(head : A, tail : LazyList[A]) -> LazyList[A] {
 ///
 /// ```mbt check
 /// test {
-///   let xs : @lazy_list.LazyList[Int] = @lazy_list.empty()
+///   let xs : @lazy_list.LazyList[Int32] = @lazy_list.empty()
 ///   inspect(xs.is_empty(), content="true")
 /// }
 /// ```
@@ -57,7 +57,7 @@ pub fn[A] LazyList::empty() -> LazyList[A] {
 ///   let xs = @lazy_list.LazyList([1, 2, 3])
 ///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
 ///   debug_inspect(xs.head(), content="Some(1)")
-///   inspect(@lazy_list.LazyList(([] : Array[Int])).is_empty(), content="true")
+///   inspect(@lazy_list.LazyList(([] : Array[Int32])).is_empty(), content="true")
 /// }
 /// ```
 pub fn[A] LazyList::LazyList(arr : ArrayView[A]) -> LazyList[A] {
@@ -77,7 +77,7 @@ pub fn[A] LazyList::LazyList(arr : ArrayView[A]) -> LazyList[A] {
 ///
 /// ```mbt check
 /// test {
-///   fn nat_from(n : Int) -> @lazy_list.LazyList[Int] {
+///   fn nat_from(n : Int32) -> @lazy_list.LazyList[Int32] {
 ///     @lazy_list.lazy_cons(n, () => nat_from(n + 1))
 ///   }
 ///   let xs = nat_from(0).take(4).to_array()
@@ -184,7 +184,7 @@ pub fn[A] LazyList::filter(
 /// Returns the first `n` elements as a lazy list. If `n <= 0`, returns
 /// the empty list. Safe to call on infinite lists. Forces exactly the
 /// cells of the prefix — no look-ahead.
-pub fn[A] LazyList::take(self : LazyList[A], n : Int) -> LazyList[A] {
+pub fn[A] LazyList::take(self : LazyList[A], n : Int32) -> LazyList[A] {
   if n <= 0 {
     return LazyList::empty()
   }
@@ -201,7 +201,7 @@ pub fn[A] LazyList::take(self : LazyList[A], n : Int) -> LazyList[A] {
 
 ///|
 /// Drops the first `n` elements. Forces up to `n` cells of the source.
-pub fn[A] LazyList::drop(self : LazyList[A], n : Int) -> LazyList[A] {
+pub fn[A] LazyList::drop(self : LazyList[A], n : Int32) -> LazyList[A] {
   let mut cur = self
   let mut k = n
   while k > 0 && cur.cell is Cons(_, tail~) {

@@ -30,15 +30,15 @@ struct Summary {
   median_abs_dev_pct : Double
   quartiles : (Double, Double, Double)
   iqr : Double
-  batch_size : Int
-  runs : Int
+  batch_size : Int32
+  runs : Int32
 } derive(@json.ToJson, @debug.Debug)
 
 ///|
 fn Summary::new(
   name? : String,
   sorted_data~ : Array[Double],
-  batch_size : Int,
+  batch_size : Int32,
 ) -> Summary {
   let sum = sum(sorted_data)
   let min = min(sorted_data~)

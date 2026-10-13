@@ -16,12 +16,12 @@
 let sorted_map_build_bench_size = 10_000
 
 ///|
-fn make_sorted_map_ordered_pairs() -> Array[(Int, Int)] {
+fn make_sorted_map_ordered_pairs() -> Array[(Int32, Int32)] {
   Array::makei(sorted_map_build_bench_size, i => (i, i))
 }
 
 ///|
-fn make_sorted_map_reverse_pairs() -> Array[(Int, Int)] {
+fn make_sorted_map_reverse_pairs() -> Array[(Int32, Int32)] {
   Array::makei(sorted_map_build_bench_size, i => {
     let k = sorted_map_build_bench_size - i - 1
     (k, k)
@@ -29,7 +29,7 @@ fn make_sorted_map_reverse_pairs() -> Array[(Int, Int)] {
 }
 
 ///|
-fn make_sorted_map_almost_ordered_pairs() -> Array[(Int, Int)] {
+fn make_sorted_map_almost_ordered_pairs() -> Array[(Int32, Int32)] {
   Array::makei(sorted_map_build_bench_size, i => {
     let k = if i == sorted_map_build_bench_size - 2 {
       sorted_map_build_bench_size - 1
@@ -43,7 +43,7 @@ fn make_sorted_map_almost_ordered_pairs() -> Array[(Int, Int)] {
 }
 
 ///|
-fn make_sorted_map_random_pairs() -> Array[(Int, Int)] {
+fn make_sorted_map_random_pairs() -> Array[(Int32, Int32)] {
   Array::makei(sorted_map_build_bench_size, i => {
     let k = (i * 1103515245 + 12345) & 0x7fffffff
     (k, k)

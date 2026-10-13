@@ -24,7 +24,7 @@ You can create an empty SortedMap or a SortedMap from other containers.
 ```mbt check
 ///|
 test {
-  let _map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let _map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   let _map2 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
 }
 ```
@@ -143,7 +143,7 @@ Check if the map is empty.
 ```mbt check
 ///|
 test {
-  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
+  let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   @test.assert_eq(map.is_empty(), true)
 }
 ```
@@ -219,7 +219,7 @@ ordering. To change the ordering, rebuild the map with new keys.
 ```mbt check
 ///|
 priv struct IndexKey {
-  cols : Array[Int]
+  cols : Array[Int32]
   descending : Array[Bool] // shared by every key in the map
 }
 
@@ -312,7 +312,7 @@ test {
   @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
-  let empty_range : Array[(Int, String)] = []
+  let empty_range : Array[(Int32, String)] = []
   map.range(10, 5).each((k, v) => empty_range.push((k, v)))
   @debug.assert_eq(empty_range, [])
 }
@@ -337,7 +337,7 @@ test {
   @debug.assert_eq(below.to_array(), [3, 2, 1])
   // choose the bound kind at runtime, e.g. for `x > 2` versus `x >= 2`
   let strict = true
-  let lower : @cmp.Bound[Int] = if strict { Excluded(2) } else { Included(2) }
+  let lower : @cmp.Bound[Int32] = if strict { Excluded(2) } else { Included(2) }
   let tail = map.range_bounds(lower, Unbounded).iter().map(p => p.0)
   @debug.assert_eq(tail.to_array(), [3, 4])
 }
@@ -465,7 +465,10 @@ When working with keys that might not exist, prefer using pattern matching for s
 
 ```mbt check
 ///|
-fn get_score(scores : @sorted_map.SortedMap[Int, Int], student_id : Int) -> Int {
+fn get_score(
+  scores : @sorted_map.SortedMap[Int32, Int32],
+  student_id : Int32,
+) -> Int32 {
   match scores.get(student_id) {
     Some(score) => score
     None =>

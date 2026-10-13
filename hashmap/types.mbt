@@ -14,8 +14,8 @@
 
 ///|
 priv struct Entry[K, V] {
-  mut psl : Int
-  hash : Int
+  mut psl : Int32
+  hash : Int32
   key : K
   mut value : V
 } derive(@debug.Debug)
@@ -42,11 +42,11 @@ priv struct Entry[K, V] {
 /// ```
 struct HashMap[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
-  mut capacity : Int
-  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
+  mut capacity : Int32
+  mut capacity_mask : Int32 // capacity_mask = capacity - 1, used to find idx
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
-  mut size : Int // active key-value pairs count
+  mut size : Int32 // active key-value pairs count
   // mut grow_at : Int // threshold that triggers grow
 }
 

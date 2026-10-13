@@ -18,7 +18,7 @@
 
 ///|
 /// An `n`-unit view at offset 1; `diff_at` in `0..<n` changes that unit.
-fn range_equal_bench_view(n : Int, diff_at? : Int = -1) -> StringView {
+fn range_equal_bench_view(n : Int32, diff_at~ : Int32 = -1) -> StringView {
   let builder = StringBuilder(size_hint=(n + 2) * 2)
   builder.write_char('<')
   for i in 0..<n {
@@ -30,7 +30,7 @@ fn range_equal_bench_view(n : Int, diff_at? : Int = -1) -> StringView {
 
 ///|
 /// An `n`-byte view at offset 1; `diff_at` in `0..<n` changes that byte.
-fn range_equal_bench_bytes_view(n : Int, diff_at? : Int = -1) -> BytesView {
+fn range_equal_bench_bytes_view(n : Int32, diff_at~ : Int32 = -1) -> BytesView {
   let arr = Array::make(n + 2, b'a')
   if diff_at >= 0 {
     arr[diff_at + 1] = b'!'
@@ -39,14 +39,22 @@ fn range_equal_bench_bytes_view(n : Int, diff_at? : Int = -1) -> BytesView {
 }
 
 ///|
-fn bench_string_view_equal(it : @bench.T, n : Int, diff_at? : Int = -1) -> Unit {
+fn bench_string_view_equal(
+  it : @bench.T,
+  n : Int32,
+  diff_at~ : Int32 = -1,
+) -> Unit {
   let left = range_equal_bench_view(n)
   let right = range_equal_bench_view(n, diff_at~)
   it.bench(fn() { it.keep(left == right) })
 }
 
 ///|
-fn bench_bytes_view_equal(it : @bench.T, n : Int, diff_at? : Int = -1) -> Unit {
+fn bench_bytes_view_equal(
+  it : @bench.T,
+  n : Int32,
+  diff_at~ : Int32 = -1,
+) -> Unit {
   let left = range_equal_bench_bytes_view(n)
   let right = range_equal_bench_bytes_view(n, diff_at~)
   it.bench(fn() { it.keep(left == right) })

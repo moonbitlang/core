@@ -47,8 +47,8 @@
 /// Cell `i`'s head is available without running any thunk; reaching
 /// cell `i + 1` runs exactly one. So "forced `n` cells deep" means
 /// `counter.val == n`.
-fn nats(counter : Ref[Int]) -> @lazy_list.LazyList[Int] {
-  fn from(i : Int) -> @lazy_list.LazyList[Int] {
+fn nats(counter : Ref[Int32]) -> @lazy_list.LazyList[Int32] {
+  fn from(i : Int32) -> @lazy_list.LazyList[Int32] {
     @lazy_list.lazy_cons(i, () => {
       counter.val += 1
       from(i + 1)
@@ -62,8 +62,8 @@ fn nats(counter : Ref[Int]) -> @lazy_list.LazyList[Int] {
 /// The finite list `0 ..< length`, counting tail thunks as they run.
 /// Reaching the end runs one thunk per element, the last of which
 /// yields `Empty`.
-fn finite(length : Int, counter : Ref[Int]) -> @lazy_list.LazyList[Int] {
-  fn from(i : Int) -> @lazy_list.LazyList[Int] {
+fn finite(length : Int32, counter : Ref[Int32]) -> @lazy_list.LazyList[Int32] {
+  fn from(i : Int32) -> @lazy_list.LazyList[Int32] {
     if i >= length {
       @lazy_list.empty()
     } else {
@@ -79,7 +79,7 @@ fn finite(length : Int, counter : Ref[Int]) -> @lazy_list.LazyList[Int] {
 
 ///|
 /// Maps an arbitrary `Int` into `0..<modulus` without discarding cases.
-fn wrap_index(value : Int, modulus : Int) -> Int {
+fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
   let r = value % modulus
   if r < 0 {
     r + modulus
@@ -97,21 +97,21 @@ fn wrap_index(value : Int, modulus : Int) -> Int {
 /// parameters the combinator needs, already wrapped into a sensible
 /// range by `decode_op`.
 priv enum Op {
-  Map(Int)
-  Filter(Int, Int)
-  Take(Int)
-  Drop(Int)
-  TakeWhile(Int)
-  DropWhile(Int)
-  Concat(Array[Int])
-  FlatMap(Int)
-  Zip(Array[Int])
+  Map(Int32)
+  Filter(Int32, Int32)
+  Take(Int32)
+  Drop(Int32)
+  TakeWhile(Int32)
+  DropWhile(Int32)
+  Concat(Array[Int32])
+  FlatMap(Int32)
+  Zip(Array[Int32])
 } derive(@debug.Debug)
 
 ///|
 /// Turns an arbitrary `(Int, Int)` into an `Op`. Every combination is
 /// meaningful, so the generator never has to discard a case.
-fn decode_op(tag : Int, value : Int) -> Op {
+fn decode_op(tag : Int32, value : Int32) -> Op {
   let side = Array::makei(wrap_index(value, 5), i => value + i * 7)
   match wrap_index(tag, 9) {
     0 => Map(value % 100)
@@ -132,13 +132,13 @@ fn decode_op(tag : Int, value : Int) -> Op {
 /// The predicate `Filter` and the `*While` ops share, kept in one place
 /// so the model and the lazy list cannot drift apart on the predicate
 /// itself — only on how it is applied.
-fn keep(x : Int, modulus : Int, residue : Int) -> Bool {
+fn keep(x : Int32, modulus : Int32, residue : Int32) -> Bool {
   wrap_index(x, modulus) == residue
 }
 
 ///|
 /// `FlatMap(k)`'s expansion of a single element.
-fn expand(x : Int, k : Int) -> Array[Int] {
+fn expand(x : Int32, k : Int32) -> Array[Int32] {
   match k {
     0 => []
     1 => [x]
@@ -149,13 +149,13 @@ fn expand(x : Int, k : Int) -> Array[Int] {
 ///|
 /// How `Zip` recombines a pair into an `Int`, so pipelines stay
 /// monomorphic and can be chained to any depth.
-fn combine(a : Int, b : Int) -> Int {
+fn combine(a : Int32, b : Int32) -> Int32 {
   a * 31 + b
 }
 
 ///|
 /// The model: each `Op` as the obvious strict `Array` computation.
-fn apply_model(xs : Array[Int], op : Op) -> Array[Int] {
+fn apply_model(xs : Array[Int32], op : Op) -> Array[Int32] {
   match op {
     Map(k) => xs.map(x => x + k)
     Filter(m, r) => xs.filter(x => keep(x, m, r))
@@ -207,9 +207,9 @@ fn apply_model(xs : Array[Int], op : Op) -> Array[Int] {
 ///|
 /// The same `Op`, applied to a `LazyList`.
 fn apply_lazy(
-  xs : @lazy_list.LazyList[Int],
+  xs : @lazy_list.LazyList[Int32],
   op : Op,
-) -> @lazy_list.LazyList[Int] {
+) -> @lazy_list.LazyList[Int32] {
   match op {
     Map(k) => xs.map(x => x + k)
     Filter(m, r) => xs.filter(x => keep(x, m, r))
@@ -233,7 +233,7 @@ fn apply_lazy(
 ///|
 test "quickcheck: a pipeline of combinators agrees with the Array model" {
   @quickcheck.check(
-    (input : (Array[Int], Array[(Int, Int)])) => {
+    (input : (Array[Int32], Array[(Int32, Int32)])) => {
       let (source, steps) = input
       let mut lazy_result = @lazy_list.from_iter(source.iter())
       let mut model = source
@@ -255,7 +255,7 @@ test "quickcheck: a pipeline of combinators agrees with the Array model" {
 ///|
 test "quickcheck: the queries agree with the model" {
   @quickcheck.check(
-    (source : Array[Int]) => {
+    (source : Array[Int32]) => {
       let xs = @lazy_list.from_iter(source.iter())
       xs.is_empty() == source.is_empty() &&
       xs.head() == source.get(0) &&
@@ -274,7 +274,7 @@ test "quickcheck: the queries agree with the model" {
 ///|
 test "quickcheck: each visits every element in order, exactly once" {
   @quickcheck.check(
-    (source : Array[Int]) => {
+    (source : Array[Int32]) => {
       let seen = []
       @lazy_list.from_iter(source.iter()).each(x => seen.push(x))
       seen == source
@@ -290,11 +290,11 @@ test "quickcheck: each visits every element in order, exactly once" {
 ///|
 test "quickcheck: functor and monad laws" {
   @quickcheck.check(
-    (input : (Array[Int], Int, Int)) => {
+    (input : (Array[Int32], Int32, Int32)) => {
       let (source, j, k) = input
       let xs = () => @lazy_list.from_iter(source.iter())
-      let f = (x : Int) => x + j
-      let g = (x : Int) => x * k
+      let f = (x : Int32) => x + j
+      let g = (x : Int32) => x * k
       // map id == id, and map is composition-preserving
       xs().map(x => x).to_array() == source &&
       xs().map(f).map(g).to_array() == xs().map(x => g(f(x))).to_array() &&
@@ -303,7 +303,7 @@ test "quickcheck: functor and monad laws" {
       xs().flat_map(x => @lazy_list.from_iter([|f(x)|])).to_array() ==
       xs().map(f).to_array() &&
       // ...and with the empty list it annihilates
-      xs().flat_map(_ => @lazy_list.empty()).to_array() == ([] : Array[Int])
+      xs().flat_map(_ => @lazy_list.empty()).to_array() == ([] : Array[Int32])
     },
     count=1000,
   )
@@ -312,12 +312,12 @@ test "quickcheck: functor and monad laws" {
 ///|
 test "quickcheck: concat is a monoid, and splits at take/drop" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int], Array[Int], Int)) => {
+    (input : (Array[Int32], Array[Int32], Array[Int32], Int32)) => {
       let (a, b, c, n) = input
       let la = () => @lazy_list.from_iter(a.iter())
       let lb = () => @lazy_list.from_iter(b.iter())
       let lc = () => @lazy_list.from_iter(c.iter())
-      let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
+      let empty : @lazy_list.LazyList[Int32] = @lazy_list.empty()
       // associativity
       la().concat(lb()).concat(lc()).to_array() ==
       la().concat(lb().concat(lc())).to_array() &&
@@ -339,10 +339,10 @@ test "quickcheck: concat is a monoid, and splits at take/drop" {
 ///|
 test "quickcheck: take_while and drop_while partition at the same point" {
   @quickcheck.check(
-    (input : (Array[Int], Int)) => {
+    (input : (Array[Int32], Int32)) => {
       let (source, k) = input
       let xs = () => @lazy_list.from_iter(source.iter())
-      let pred = (x : Int) => x < k
+      let pred = (x : Int32) => x < k
       let front = xs().take_while(pred).to_array()
       let back = xs().drop_while(pred).to_array()
       front + back == source &&
@@ -357,11 +357,11 @@ test "quickcheck: take_while and drop_while partition at the same point" {
 ///|
 test "quickcheck: filter is idempotent and commutes with itself" {
   @quickcheck.check(
-    (input : (Array[Int], Int, Int)) => {
+    (input : (Array[Int32], Int32, Int32)) => {
       let (source, j, k) = input
       let xs = () => @lazy_list.from_iter(source.iter())
-      let p = (x : Int) => wrap_index(x, 2 + wrap_index(j, 5)) == 0
-      let q = (x : Int) => wrap_index(x, 2 + wrap_index(k, 7)) == 1
+      let p = (x : Int32) => wrap_index(x, 2 + wrap_index(j, 5)) == 0
+      let q = (x : Int32) => wrap_index(x, 2 + wrap_index(k, 7)) == 1
       xs().filter(p).filter(p).to_array() == xs().filter(p).to_array() &&
       xs().filter(p).filter(q).to_array() == xs().filter(q).filter(p).to_array() &&
       xs().filter(p).filter(q).to_array() ==
@@ -374,7 +374,7 @@ test "quickcheck: filter is idempotent and commutes with itself" {
 ///|
 test "quickcheck: zip stops at the shorter side and preserves both projections" {
   @quickcheck.check(
-    (input : (Array[Int], Array[Int])) => {
+    (input : (Array[Int32], Array[Int32])) => {
       let (a, b) = input
       let zipped = @lazy_list.from_iter(a.iter())
         .zip(@lazy_list.from_iter(b.iter()))
@@ -398,7 +398,7 @@ test "quickcheck: take forces the prefix and never looks ahead" {
   // infinite list must terminate, which it can only do by leaving the
   // n-th cell's tail unforced — so the count is `n - 1`, not `n`.
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = wrap_index(value, 40)
       let forced = Ref(0)
       let taken = nats(forced).take(n).to_array()
@@ -412,7 +412,7 @@ test "quickcheck: take forces the prefix and never looks ahead" {
 ///|
 test "quickcheck: drop forces exactly n cells" {
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = wrap_index(value, 40)
       let forced = Ref(0)
       let rest = nats(forced).drop(n)
@@ -425,7 +425,7 @@ test "quickcheck: drop forces exactly n cells" {
 ///|
 test "quickcheck: take_while stops at the first failure and no further" {
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = wrap_index(value, 40)
       let forced = Ref(0)
       let taken = nats(forced).take_while(x => x < n).to_array()
@@ -440,7 +440,7 @@ test "quickcheck: take_while stops at the first failure and no further" {
 ///|
 test "quickcheck: filter forces only up to the next match" {
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let m = 1 + wrap_index(value, 30)
       let forced = Ref(0)
       // The first element satisfying `x % m == m - 1` is `m - 1`, so
@@ -479,7 +479,7 @@ test "queries and map force nothing on their own" {
 ///|
 test "quickcheck: map applies its function once per cell reached" {
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = 1 + wrap_index(value, 30)
       let forced = Ref(0)
       let applied = Ref(0)
@@ -501,7 +501,7 @@ test "quickcheck: map applies its function once per cell reached" {
 ///|
 test "quickcheck: tails are memoized, so re-traversal is free" {
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let length = wrap_index(value, 30)
       let forced = Ref(0)
       let xs = finite(length, forced)
@@ -523,7 +523,7 @@ test "quickcheck: tails are memoized, so re-traversal is free" {
 ///|
 test "quickcheck: concat leaves its right-hand side untouched" {
   @quickcheck.check(
-    (input : (Int, Int)) => {
+    (input : (Int32, Int32)) => {
       let length = wrap_index(input.0, 20)
       let prefix = wrap_index(input.1, 20)
       let left_forced = Ref(0)
@@ -559,7 +559,7 @@ test "quickcheck: zip is left-biased" {
   // a left side that ends first leaves the right untouched, while a
   // right side that ends first costs one extra left cell.
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = 1 + wrap_index(value, 20)
       let left_forced = Ref(0)
       let right_forced = Ref(0)
@@ -579,7 +579,7 @@ test "quickcheck: flat_map skips runs of empty inner lists without recursing" {
   // mappings off the stack; a recursive implementation would overflow
   // well before the end of this list.
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let threshold = 1 + wrap_index(value, 2000)
       let source = @lazy_list.from_iter(Array::makei(20000, i => i).iter())
       let mapped = source.flat_map(x => {
@@ -610,8 +610,8 @@ test "quickcheck: flat_map skips runs of empty inner lists without recursing" {
 /// not the stack-safety case: the trees it draws nest far more shallowly
 /// than the 50000-deep combs in `lazy_list_test.mbt`, which are what pin
 /// that down.
-fn shaped_concat(depth : Int, seed : Int) -> @lazy_list.LazyList[Int] {
-  let stack : Array[@lazy_list.LazyList[Int]] = []
+fn shaped_concat(depth : Int32, seed : Int32) -> @lazy_list.LazyList[Int32] {
+  let stack : Array[@lazy_list.LazyList[Int32]] = []
   let mut bits = seed
   fn next_bit() -> Bool {
     // A plain LCG: the shape only has to vary, not be well distributed.
@@ -643,7 +643,7 @@ fn shaped_concat(depth : Int, seed : Int) -> @lazy_list.LazyList[Int] {
 ///|
 test "quickcheck: a chain of concats forces at generated nesting shapes" {
   @quickcheck.check(
-    (seed : Int) => {
+    (seed : Int32) => {
       let depth = 20000
       let xs = shaped_concat(depth, seed)
       // Reaching the second element is what walks the whole nesting: it
@@ -666,7 +666,7 @@ test "quickcheck: appending while consuming keeps the order" {
   // order; the quadratic variant still produces it, and shows up only
   // as runtime.
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let steps = 20000
       let start = wrap_index(value, 100)
       let mut cur = @lazy_list.from_iter(Array::makei(steps + 1, i => i).iter())
@@ -694,7 +694,7 @@ test "quickcheck: the lazy combinators stay total on an infinite list" {
   // even one cell hangs here rather than failing, which is exactly why
   // the counts above are pinned exactly.
   @quickcheck.check(
-    (value : Int) => {
+    (value : Int32) => {
       let n = wrap_index(value, 25)
       let counter = Ref(0)
       let expected = Array::makei(n, i => i)

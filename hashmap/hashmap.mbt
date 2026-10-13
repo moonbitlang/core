@@ -29,7 +29,7 @@
 let default_init_capacity = 8
 
 ///|
-fn[K, V] new_hashmap(capacity : Int) -> HashMap[K, V] {
+fn[K, V] new_hashmap(capacity : Int32) -> HashMap[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -40,7 +40,7 @@ fn[K, V] new_hashmap(capacity : Int) -> HashMap[K, V] {
 }
 
 ///|
-fn capacity_for_length(length : Int) -> Int {
+fn capacity_for_length(length : Int32) -> Int32 {
   (length * 2).next_power_of_two()
 }
 
@@ -62,7 +62,11 @@ fn capacity_for_length(length : Int) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[(Int, String)] = [(1, "one"), (2, "two"), (1, "ONE")]
+///   let arr : ReadOnlyArray[(Int32, String)] = [
+///     (1, "one"),
+///     (2, "two"),
+///     (1, "ONE"),
+///   ]
 ///   let map = @hashmap.HashMap(arr)
 ///   debug_inspect(map.get(1), content="Some(\"ONE\")")
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
@@ -74,7 +78,7 @@ fn capacity_for_length(length : Int) -> Int {
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
-  capacity? : Int,
+  capacity? : Int32,
 ) -> HashMap[K, V] {
   let length = arr.length()
   let capacity = match capacity {
@@ -106,7 +110,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = HashMap([])
+///   let map : @hashmap.HashMap[String, Int32] = HashMap([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -129,7 +133,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
   self : HashMap[K, V],
   key : K,
   value : V,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   // Only grow when actually inserting a new entry, not when updating existing
   // SAFETY: masked probe index; see the note at the top of this file.
@@ -176,7 +180,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
 #owned(entry)
 fn[K, V] HashMap::push_away(
   self : HashMap[K, V],
-  idx : Int,
+  idx : Int32,
   entry : Entry[K, V],
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
@@ -365,7 +369,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = HashMap([])
+///   let map : @hashmap.HashMap[String, Int32] = HashMap([])
 ///   let value = map.get_or_init("key", () => 42)
 ///   inspect(value, content="42")
 ///   debug_inspect(map.get("key"), content="Some(42)")
@@ -426,7 +430,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = HashMap([("a", 1), ("b", 2)])
+///   let map : @hashmap.HashMap[String, Int32] = HashMap([("a", 1), ("b", 2)])
 ///
 ///   // Update existing value
 ///   map.update("a", fn(v) {
@@ -500,7 +504,7 @@ pub fn[K : Hash + Eq, V] HashMap::update(
 ///
 /// ```mbt check
 /// test {
-///   let counts : @hashmap.HashMap[String, Int] = HashMap([])
+///   let counts : @hashmap.HashMap[String, Int32] = HashMap([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)
@@ -711,7 +715,7 @@ pub fn[K : Hash + Eq, V] HashMap::remove(self : HashMap[K, V], key : K) -> Unit 
 fn[K : Eq, V] HashMap::remove_with_hash(
   self : HashMap[K, V],
   key : K,
-  hash : Int,
+  hash : Int32,
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
@@ -768,7 +772,7 @@ pub fn[K : Hash + Eq, V] HashMap::remove_and_get(
 }
 
 ///|
-fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
+fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int32) -> Unit {
   // SAFETY: the initial `cur` is in bounds by any of the four routes its
   // callers take -- `update`, `remove_with_hash` and `remove_and_get` pass a
   // masked probe index, and `retain` (in utils.mbt) reaches here only after
@@ -984,7 +988,7 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
 
 ///|
 test "set" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -997,7 +1001,7 @@ test "set" {
 
 ///|
 test "remove" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -1010,7 +1014,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -1020,7 +1024,7 @@ test "remove_unexist_key" {
 
 ///|
 test "clear" {
-  let m : HashMap[MyString, Int] = from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m : HashMap[MyString, Int32] = from_array([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
@@ -1031,7 +1035,7 @@ test "clear" {
 
 ///|
 test "grow" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -1062,7 +1066,7 @@ test "grow" {
 
 ///|
 test "_[_]" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("b", 1)
   m.set("cc", 2)
@@ -1073,7 +1077,7 @@ test "_[_]" {
 
 ///|
 test "get_or_init" {
-  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
+  let m : HashMap[MyString, Int32] = new_hashmap(default_init_capacity)
   inspect(m.get_or_init("a", () => 1), content="1")
   @debug.debug_inspect(m.get("a"), content="Some(1)")
   inspect(m.get_or_init("a", () => 2), content="1")

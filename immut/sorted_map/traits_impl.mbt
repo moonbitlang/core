@@ -36,7 +36,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) -> Bo
 pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with fn compare(
   self,
   other,
-) -> Int {
+) -> Int32 {
   guard self.length() == other.length() else {
     return self.length() - other.length()
   }

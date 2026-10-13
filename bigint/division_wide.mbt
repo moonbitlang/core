@@ -29,7 +29,7 @@ const DIV_RECURSIVE_THRESHOLD = 64
 /// wide. With at most two quotient-limb passes, Knuth D is linear in the large
 /// divisor and avoids recursive splitting, multiplication, and allocation.
 /// Requires `dividend_len >= divisor_len`.
-fn use_recursive_division(dividend_len : Int, divisor_len : Int) -> Bool {
+fn use_recursive_division(dividend_len : Int32, divisor_len : Int32) -> Bool {
   divisor_len >= DIV_RECURSIVE_THRESHOLD && dividend_len - divisor_len > 1
 }
 
@@ -125,7 +125,7 @@ fn div_mod_recursive_steps(u : BigInt, v : BigInt) -> (BigInt, BigInt) {
 fn div_recursive_step(
   window : BigInt,
   divisor : BigInt,
-  block : Int,
+  block : Int32,
 ) -> (BigInt, BigInt) {
   let split = block - 1
   let high = window.high_mag(split)
@@ -152,19 +152,19 @@ fn div_recursive_step(
 
 ///|
 /// The low `count` limbs of a positive magnitude.
-fn BigInt::low_mag(self : BigInt, count : Int) -> BigInt {
+fn BigInt::low_mag(self : BigInt, count : Int32) -> BigInt {
   slice_mag(self.limbs, 0, minimum_int(count, self.len))
 }
 
 ///|
 /// The magnitude above the low `count` limbs.
-fn BigInt::high_mag(self : BigInt, count : Int) -> BigInt {
+fn BigInt::high_mag(self : BigInt, count : Int32) -> BigInt {
   slice_mag(self.limbs, count, self.len - count)
 }
 
 ///|
 /// Shift a positive magnitude by whole limbs without allocating a spare limb.
-fn BigInt::shl_mag_limbs(self : BigInt, count : Int) -> BigInt {
+fn BigInt::shl_mag_limbs(self : BigInt, count : Int32) -> BigInt {
   if self.is_zero() || count == 0 {
     return self
   }
@@ -175,7 +175,7 @@ fn BigInt::shl_mag_limbs(self : BigInt, count : Int) -> BigInt {
 
 ///|
 /// Form `high * 2^(64*split) + low`; `low` must fit below `split`.
-fn join_mag(low : BigInt, high : BigInt, split : Int) -> BigInt {
+fn join_mag(low : BigInt, high : BigInt, split : Int32) -> BigInt {
   let len = maximum_int(low.len, split + high.len)
   let limbs = make(len)
   if !low.is_zero() {

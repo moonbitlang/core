@@ -26,7 +26,7 @@
 ///|
 /// Keys whose 32-bit hash keeps only the low three bits, so keys that agree
 /// on `n & 7` collide on the full hash while `Eq` still distinguishes them.
-priv struct CollidingKey(Int) derive(Eq)
+priv struct CollidingKey(Int32) derive(Eq)
 
 ///|
 impl Hash for CollidingKey with fn hash(self) {
@@ -40,7 +40,7 @@ impl Hash for CollidingKey with fn hash_combine(self, hasher) {
 
 ///|
 test "removing a colliding key restores the canonical structure" {
-  let original : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let original : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   )
@@ -53,13 +53,13 @@ test "removing a colliding key restores the canonical structure" {
 test "filter down to one key yields the canonical map" {
   // No hash collisions involved: `filter` must collapse the branch that
   // shrank to a single entry, exactly like `remove` does.
-  let original : @hashmap.HashMap[Int, Int] = @hashmap.singleton(0, 0)
+  let original : @hashmap.HashMap[Int32, Int32] = @hashmap.singleton(0, 0)
   assert_true(original.add(1, 1).filter((k, _) => k == 0) == original)
 }
 
 ///|
 test "filter dropping a colliding key yields the canonical map" {
-  let original : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let original : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   )
@@ -71,12 +71,12 @@ test "filter dropping a colliding key yields the canonical map" {
 
 ///|
 test "difference removing a colliding key yields the canonical map" {
-  let original : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let original : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   )
   let both = original.add(CollidingKey(24), 1)
-  let only_other : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let only_other : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(24),
     1,
   )
@@ -86,7 +86,7 @@ test "difference removing a colliding key yields the canonical map" {
 ///|
 test "chained removals from a collision bucket collapse in any order" {
   // 0, 8, and 24 all hash to bucket 0, forming a three-entry collision node.
-  let base : @hashmap.HashMap[CollidingKey, Int] = @hashmap.new()
+  let base : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.new()
   let all = base
     .add(CollidingKey(0), 0)
     .add(CollidingKey(8), 1)
@@ -107,7 +107,7 @@ test "chained removals from a collision bucket collapse in any order" {
 /// Keys whose hash lives only in the top path segment (bits 25..=29): all
 /// keys share path segments 1-5, so they diverge — or fully collide — only
 /// at the maximum trie depth.
-priv struct DeepKey(Int) derive(Eq)
+priv struct DeepKey(Int32) derive(Eq)
 
 ///|
 impl Hash for DeepKey with fn hash(self) {
@@ -121,11 +121,11 @@ impl Hash for DeepKey with fn hash_combine(self, hasher) {
 
 ///|
 test "insertion order cannot affect the structure at maximum depth" {
-  let one_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
     .add(DeepKey(0), 0)
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
-  let other_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
     .add(DeepKey(2), 2)
     .add(DeepKey(1), 1)
     .add(DeepKey(0), 0)
@@ -139,7 +139,7 @@ test "removing a maximum-depth sibling leaves the canonical structure" {
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
     .remove(DeepKey(1))
-  let fresh : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let fresh : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
     .add(DeepKey(0), 0)
     .add(DeepKey(2), 2)
   assert_true(removed == fresh)
@@ -150,12 +150,12 @@ test "full-hash collision arriving at a maximum-depth Flat stays canonical" {
   // 2 and 6 collide on the full hash. Adding 0 and 1 first forces the
   // maximum-depth branch into existence, so DeepKey(2) is stored there as
   // a single entry with a fully consumed path when DeepKey(6) arrives.
-  let one_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
     .add(DeepKey(0), 0)
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
     .add(DeepKey(6), 6)
-  let other_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
     .add(DeepKey(2), 2)
     .add(DeepKey(6), 6)
     .add(DeepKey(0), 0)
@@ -172,17 +172,17 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   // and a sized `from_iter` take the range-partitioning bulk builder,
   // whose bottom-level handoff must produce the same canonical shapes as
   // plain `add` — here four maximum-depth collision buckets of 20 keys.
-  let pairs : Array[(DeepKey, Int)] = []
+  let pairs : Array[(DeepKey, Int32)] = []
   for i in 0..<80 {
     pairs.push((DeepKey(i), i))
   }
-  let bulk : @hashmap.HashMap[DeepKey, Int] = HashMap(pairs)
+  let bulk : @hashmap.HashMap[DeepKey, Int32] = HashMap(pairs)
   let via_iter = @hashmap.from_iter(pairs.iter())
-  let mut added : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let mut added : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
   for kv in pairs {
     added = added.add(kv.0, kv.1)
   }
-  let mut reversed : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  let mut reversed : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
   for i in 0..<pairs.length() {
     let kv = pairs[pairs.length() - 1 - i]
     reversed = reversed.add(kv.0, kv.1)
@@ -197,15 +197,15 @@ test "bulk construction agrees with incremental adds at maximum depth" {
 test "intersection dropping a colliding key yields the canonical map" {
   // Pins the `intersection`/`intersection_with` call sites that collapse
   // shrunken branches (values come from the right-hand side).
-  let left : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let left : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   ).add(CollidingKey(24), 1)
-  let right : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let right : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   ).add(CollidingKey(8), 2)
-  let expected : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+  let expected : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
   )

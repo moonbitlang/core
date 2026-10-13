@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn StringView::next_char_index(self : StringView, index : Int) -> Int {
+fn StringView::next_char_index(self : StringView, index : Int32) -> Int32 {
   if index < self.length() && self.unsafe_get(index).is_leading_surrogate() {
     index + 2
   } else {
@@ -48,7 +48,7 @@ pub fn Regex::replace_by(
   regex : Regex,
   str : StringView,
   replacer : (MatchResult) -> StringView,
-  limit? : Int,
+  limit? : Int32,
 ) -> StringView {
   // Delay buffer creation until we find the first match to avoid
   // unnecessary allocation when the regex doesn't match at all.

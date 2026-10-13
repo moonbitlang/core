@@ -36,5 +36,5 @@
 /// ```
 enum SortedMap[K, V] {
   Empty
-  Tree(K, value~ : V, size~ : Int, SortedMap[K, V], SortedMap[K, V])
+  Tree(K, value~ : V, size~ : Int32, SortedMap[K, V], SortedMap[K, V])
 }

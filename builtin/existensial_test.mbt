@@ -19,7 +19,7 @@ suberror StringError {
 
 ///|
 suberror IntError {
-  IntError(Int)
+  IntError(Int32)
 }
 
 ///|

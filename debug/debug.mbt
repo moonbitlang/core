@@ -20,7 +20,7 @@ pub(open) trait Debug {
 }
 
 ///|
-pub impl Debug for Int with fn to_repr(self) {
+pub impl Debug for Int32 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
@@ -40,7 +40,7 @@ pub impl Debug for UInt16 with fn to_repr(self) {
 }
 
 ///|
-pub impl Debug for UInt with fn to_repr(self) {
+pub impl Debug for UInt32 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
@@ -297,16 +297,16 @@ test "core builtin Debug implementations" {
       #|<StringView: "abc">
     ),
   )
-  let av : ArrayView[Int] = [1, 2, 3][1:3]
+  let av : ArrayView[Int32] = [1, 2, 3][1:3]
   debug_inspect(av, content="<ArrayView: [2, 3]>")
-  let fa : FixedArray[Int] = [1, 2, 3]
+  let fa : FixedArray[Int32] = [1, 2, 3]
   debug_inspect(fa, content="<FixedArray: [1, 2, 3]>")
-  let ro : ReadOnlyArray[Int] = [1, 2, 3]
+  let ro : ReadOnlyArray[Int32] = [1, 2, 3]
   debug_inspect(ro, content="<ReadOnlyArray: [1, 2, 3]>")
-  let mv : MutArrayView[Int] = [1, 2, 3].mut_view(start=1, end=3)
+  let mv : MutArrayView[Int32] = [1, 2, 3].mut_view(start=1, end=3)
   debug_inspect(mv, content="<MutArrayView: [2, 3]>")
-  debug_inspect((Ok(1) : Result[Int, String]), content="Ok(1)")
-  debug_inspect((Err("e") : Result[Int, String]), content="Err(\"e\")")
+  debug_inspect((Ok(1) : Result[Int32, String]), content="Ok(1)")
+  debug_inspect((Err("e") : Result[Int32, String]), content="Err(\"e\")")
 }
 
 ///|

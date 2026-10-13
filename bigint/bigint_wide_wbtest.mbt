@@ -123,7 +123,7 @@ test "mul_single_limb boundaries" {
 
 ///|
 test "multiplication around the wide Karatsuba threshold" {
-  let cases : Array[(Int, Int)] = [
+  let cases : Array[(Int32, Int32)] = [
     (63, 63), // schoolbook on both sides of the last pre-threshold case
     (63, 64), // asymmetric input still dispatches on the shorter operand
     (64, 64), // first exact Karatsuba case

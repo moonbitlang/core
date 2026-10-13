@@ -30,7 +30,7 @@ let from_json_bench_object : Json = Json(
 ///|
 test "bench from_json Array[Array[Int]] 500x50" (it : @bench.T) {
   it.bench(fn() {
-    let v : Array[Array[Int]] = @json.from_json(from_json_bench_nested) catch {
+    let v : Array[Array[Int32]] = @json.from_json(from_json_bench_nested) catch {
       _ => []
     }
     it.keep(v)
@@ -50,7 +50,7 @@ test "bench from_json Array[Double] n=10000" (it : @bench.T) {
 ///|
 test "bench from_json Map[String, Int] n=1000" (it : @bench.T) {
   it.bench(fn() {
-    let v : Map[String, Int] = @json.from_json(from_json_bench_object) catch {
+    let v : Map[String, Int32] = @json.from_json(from_json_bench_object) catch {
       _ => {}
     }
     it.keep(v)

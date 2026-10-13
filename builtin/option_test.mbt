@@ -23,20 +23,20 @@ test {
 
 ///|
 test "to_string for Option None" {
-  let x : Int? = None
+  let x : Int32? = None
   debug_inspect(x, content="None")
 }
 
 ///|
 test "to_string for Option Some" {
-  let x : Int? = Some(42)
+  let x : Int32? = Some(42)
   debug_inspect(x, content="Some(42)")
 }
 
 ///|
 test "unwrap_or variants" {
-  let some : Int? = Some(10)
-  let none : Int? = None
+  let some : Int32? = Some(10)
+  let none : Int32? = None
   inspect(some.unwrap_or(5), content="10")
   inspect(none.unwrap_or(5), content="5")
   inspect(some.unwrap_or_else(() => 7), content="10")
@@ -48,22 +48,22 @@ test "unwrap_or variants" {
 test "compare default iter" {
   inspect(Some(1).compare(Some(2)), content="-1")
   inspect(Some(2).compare(Some(1)), content="1")
-  inspect((None : Int?).compare(Some(1)), content="-1")
-  inspect((None : Int?).compare(None), content="0")
-  let default_opt : Int? = Default::default()
+  inspect((None : Int32?).compare(Some(1)), content="-1")
+  inspect((None : Int32?).compare(None), content="0")
+  let default_opt : Int32? = Default::default()
   debug_inspect(default_opt, content="None")
   let iter_values = []
-  (Some(3) : Int?).iter().each(x => iter_values.push(x))
+  (Some(3) : Int32?).iter().each(x => iter_values.push(x))
   debug_inspect(iter_values, content="[3]")
   let iter_empty = []
-  (None : Int?).iter().each(x => iter_empty.push(x))
+  (None : Int32?).iter().each(x => iter_empty.push(x))
   debug_inspect(iter_empty, content="[]")
 }
 
 ///|
 test "map_or and filter" {
-  let some : Int? = Some(3)
-  let none : Int? = None
+  let some : Int32? = Some(3)
+  let none : Int32? = None
   inspect(some.map_or(10, x => x * 2), content="6")
   inspect(none.map_or(10, x => x * 2), content="10")
   inspect(some.map_or_else(() => 7, x => x * 2), content="6")
@@ -89,13 +89,13 @@ test "unwrap_or_error" {
 
 ///|
 test "unwrap_or_default Some" {
-  let some : Int? = Some(5)
+  let some : Int32? = Some(5)
   inspect(some.unwrap_or_default(), content="5")
 }
 
 ///|
 test "Option compare Some vs None" {
-  let some : Int? = Some(1)
-  let none : Int? = None
+  let some : Int32? = Some(1)
+  let none : Int32? = None
   inspect(some.compare(none), content="1")
 }

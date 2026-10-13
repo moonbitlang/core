@@ -37,7 +37,7 @@ test "panic StringBuilder growth rejects a wrapped required size" {
 
 ///|
 test "UTF-16 blit preserves copy boundaries and raw code units" {
-  let pattern : Array[Int] = [
+  let pattern : Array[Int32] = [
     0, 0x61, 0xff, 0x100, 0x4e2d, 0xd83d, 0xde00, 0xd800, 0xffff,
   ]
   for len in 0..<66 {

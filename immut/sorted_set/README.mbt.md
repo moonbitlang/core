@@ -13,7 +13,7 @@ You can create an empty ImmutableSet with a value separately through the followi
 ```mbt check
 ///|
 test {
-  let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let _set1 : @sorted_set.SortedSet[Int32] = @sorted_set.new()
   let _set2 = @sorted_set.singleton(1)
   let _set4 = @sorted_set.SortedSet([1])
   let _set5 = @sorted_set.SortedSet([1])
@@ -199,7 +199,7 @@ test {
 ```mbt check
 ///|
 test {
-  let set1 : @sorted_set.SortedSet[Int] = SortedSet([])
+  let set1 : @sorted_set.SortedSet[Int32] = SortedSet([])
   @test.assert_eq(set1.is_empty(), true)
   let set2 = @sorted_set.SortedSet([1])
   @test.assert_eq(set2.is_empty(), false)
