@@ -179,6 +179,13 @@ fn Parser::character_class(
       (
         rest,
         if neg {
+          // Fold before taking the complement: `(?i:[^a])` excludes `A` too.
+          // Folding the complement afterwards would put `a` back.
+          let char_set = if ctx.ignore_case {
+            ignore_case(char_set)
+          } else {
+            char_set
+          }
           ctx.profile.valid - char_set
         } else {
           char_set & ctx.profile.valid
