@@ -16,13 +16,23 @@
 test "RandomState::next" {
   let state = @splitmix.RandomState()
   let _ = state.next()
-  inspect(state.next_uint(), content="1118850684")
+  inspect(
+    state.next_uint(),
+    content=(
+      #|2537841416
+    ),
+  )
 }
 
 ///|
 test "next_two_uint should return two 32-bit unsigned integers" {
   let state = @splitmix.RandomState()
-  debug_inspect(state.next_two_uint(), content="(520772969, 1037978766)")
+  debug_inspect(
+    state.next_two_uint(),
+    content=(
+      #|(278417593, 2319484945)
+    ),
+  )
 }
 
 ///|
@@ -49,22 +59,38 @@ test "next_float" {
 
 ///|
 test "mix_gamma else branch seed" {
-  let state = @splitmix.RandomState(seed=930507UL)
-  inspect(state.next_uint(), content="3773570134")
+  let state = @splitmix.RandomState(seed=12UL)
+  inspect(
+    state.next_uint(),
+    content=(
+      #|134979002
+    ),
+  )
 }
 
 ///|
 test "next_uint64 with a limit skips masked values outside the bound" {
-  let state = @splitmix.RandomState(seed=7UL)
+  // The first two masked candidates are 3 (rejected) and 2 (accepted).
+  let state = @splitmix.RandomState(seed=2UL)
   let value = state.next_uint64(limit=3UL)
-  debug_inspect((value, state.next_uint64()), content="(2, 622236291405445593)")
+  debug_inspect(
+    (value, state.next_uint64()),
+    content=(
+      #|(2, 560996353185190935)
+    ),
+  )
 }
 
 ///|
 test "next_uint with a limit skips masked values outside the bound" {
-  let state = @splitmix.RandomState(seed=7UL)
+  let state = @splitmix.RandomState(seed=2UL)
   let value = state.next_uint(limit=3U)
-  debug_inspect((value, state.next_uint64()), content="(2, 622236291405445593)")
+  debug_inspect(
+    (value, state.next_uint64()),
+    content=(
+      #|(2, 560996353185190935)
+    ),
+  )
 }
 
 ///|
@@ -75,7 +101,9 @@ test "next_uint64 handles unit and power-of-two limits" {
   let power_value = power.next_uint64(limit=8UL)
   debug_inspect(
     (unit_value, unit.next_uint64(), power_value, power.next_uint64()),
-    content="(0, 9482272708574442377, 1, 9482272708574442377)",
+    content=(
+      #|(0, 8251698951335059867, 5, 8251698951335059867)
+    ),
   )
 }
 
