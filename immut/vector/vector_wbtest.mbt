@@ -180,12 +180,6 @@ test "get" {
 }
 
 ///|
-test "concat-two-full-tree" {
-  let bf = branching_factor_power(4)
-  execute_array_test(gen_concat_seq_from_len_array([bf, bf]))
-}
-
-///|
 test "concat-full-tree-and-a-leaf" {
   let bf = branching_factor_power(4)
   execute_array_test(gen_concat_seq_from_len_array([bf, 1]))
@@ -205,6 +199,7 @@ test "concat-two-leaf" {
 ///|
 test "concat-multiple-full-tree" {
   let bf = branching_factor_power(4)
+  // Every concat checks all elements, including the intermediate two-tree state.
   execute_array_test(gen_concat_seq(3, _i => bf))
 }
 

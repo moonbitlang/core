@@ -20,20 +20,6 @@ test "UInt16::to_int" {
 }
 
 ///|
-test "UInt16::from_int" {
-  inspect(Int32::to_uint16(0), content="0")
-  inspect(Int32::to_uint16(123), content="123")
-  inspect(Int32::to_uint16(65535), content="65535")
-  inspect(Int32::to_uint16(-1), content="65535")
-  inspect(Int32::to_uint16(-123), content="65413")
-  inspect(Int32::to_uint16(65536), content="0")
-  inspect(Int32::to_uint16(65537), content="1")
-  inspect(Int32::to_uint16(131071), content="65535")
-  inspect(Int32::to_uint16(-65536), content="0")
-  inspect(Int32::to_uint16(-65537), content="65535")
-}
-
-///|
 test "UInt16::to_byte" {
   inspect(UInt16::to_byte(0), content="b'\\x00'")
   inspect(UInt16::to_byte(123), content="b'\\x7B'")
@@ -55,7 +41,7 @@ test "UInt16::to_int64" {
 }
 
 ///|
-test "UInt16::from_int64" {
+test "Int32::to_uint16" {
   inspect(Int32::to_uint16(0), content="0")
   inspect(Int32::to_uint16(123), content="123")
   inspect(Int32::to_uint16(65535), content="65535")

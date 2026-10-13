@@ -26,17 +26,6 @@ test "copy empty" {
 }
 
 ///|
-test "from_fixed_array_2" {
-  let q : @queue.Queue[Int32] = @queue.from_array([])
-  debug_inspect(
-    q,
-    content=(
-      #|<Queue: []>
-    ),
-  )
-}
-
-///|
 test "from_array_1" {
   let queue = @queue.from_array([1, 2, 3, 4])
   let queue2 = @queue.from_array([1])

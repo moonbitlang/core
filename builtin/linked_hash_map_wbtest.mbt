@@ -406,33 +406,6 @@ test "set_existing_key" {
 }
 
 ///|
-test "get_nonexistent_key" {
-  let m : Map[String, Int32] = Map([])
-  m.set("a", 1)
-  m.set("b", 2)
-  m.set("c", 3)
-  assert_true(m.get("d") == None)
-}
-
-///|
-test "get_or_default_existing_key" {
-  let m : Map[String, Int32] = Map([])
-  m.set("a", 1)
-  m.set("b", 2)
-  m.set("c", 3)
-  assert_true(m.get_or_default("a", 42) == 1)
-}
-
-///|
-test "get_or_default_nonexistent_key" {
-  let m : Map[String, Int32] = Map([])
-  m.set("a", 1)
-  m.set("b", 2)
-  m.set("c", 3)
-  assert_true(m.get_or_default("d", 42) == 42)
-}
-
-///|
 test "remove_existing_key" {
   let m : Map[String, Int32] = Map([])
   m.set("a", 1)
