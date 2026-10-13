@@ -140,3 +140,23 @@ test "one regex can serve interleaved searches" {
   }
   inspect(seen.join(" "), content="a:1/zz=9 bb:22/zz=9 ccc:333/zz=9")
 }
+
+///|
+/// A negated class inside `(?i:...)` folds case before it is complemented:
+/// `(?i:[^a-c])` matches none of `a`, `A`, `b`, `B`, `c`, `C`. It used to
+/// match all of them, because folding the complement put them back.
+test "a negated class in a case-insensitive group" {
+  let folded = @string.Regex("^(?i:[^a-c])$")
+  assert_true(folded.execute("a") is None)
+  assert_true(folded.execute("B") is None)
+  assert_true(folded.execute("d") is Some(_))
+  assert_true(folded.execute("D") is Some(_))
+  // Outside the group nothing is folded.
+  let plain = @string.Regex("^[^a-c]$")
+  assert_true(plain.execute("a") is None)
+  assert_true(plain.execute("A") is Some(_))
+  // A class that is not negated is unchanged.
+  let positive = @string.Regex("^(?i:[a-c])$")
+  assert_true(positive.execute("B") is Some(_))
+  assert_true(positive.execute("d") is None)
+}
