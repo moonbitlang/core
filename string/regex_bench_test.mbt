@@ -88,3 +88,18 @@ test "bench regex large pattern" (it : @bench.T) {
     }
   })
 }
+
+///|
+test "bench regex periodic literal n=3000" (it : @bench.T) {
+  let literal = "ab".repeat(3000)
+  let pattern = literal + "c"
+  let no_match = literal + literal
+  let with_match = "ab" + literal + "c"
+  it.bench(() => {
+    // A fresh regex measures state construction on every sample. A periodic
+    // literal keeps one thread alive per period, producing large state keys.
+    let re = @string.Regex::string(pattern)
+    it.keep(re.execute(no_match))
+    it.keep(re.execute(with_match))
+  })
+}
