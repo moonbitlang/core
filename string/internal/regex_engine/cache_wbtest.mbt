@@ -49,6 +49,34 @@ test "states of a wide capturing alternation stay small" {
 }
 
 ///|
+/// A small budget exercises the cache pressure of a much longer periodic
+/// literal without making the correctness test a scaling benchmark.
+test "periodic literal matching survives cache pressure" {
+  let literal = "ab".repeat(30)
+  let pattern = seq(
+    ReadOnlyArray::from_array(
+      (literal + "c").to_array().map(b => char(RecharSet::char(b.to_int()))),
+    ),
+  )
+  let re = compile(profile=oracle_profile(), pattern, max_cache_words=500)
+  assert_true(re.execute("ab", 0) is None)
+  let start = re.kernels[0].key
+  assert_true(re.execute(literal + literal, 0) is None)
+  assert_true(re.cache_words <= re.max_cache_words)
+  assert_true(re.move_words <= re.max_cache_words)
+  // Growing states force a flush; steady-state threads then reuse a cached
+  // state with renamed registers. Verify that both paths were exercised.
+  assert_true(!physical_equal(start, re.kernels[0].key))
+  assert_true(!re.moves.is_empty())
+  guard re.execute("ab" + literal + "c", 0) is Some(m) else {
+    fail("expected a match")
+  }
+  @test.assert_eq(m.group(0), Some((2, 2 + literal.length() + 1)))
+  assert_true(re.cache_words <= re.max_cache_words)
+  assert_true(re.move_words <= re.max_cache_words)
+}
+
+///|
 /// `(a{20})(a{20})(a{20})b`: on a run of `a`s there is one thread per start
 /// position, each with its own registers, so the same sixty threads come
 /// back with their registers renamed and the states only repeat exactly
