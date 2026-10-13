@@ -117,13 +117,19 @@ test "wide alternations" {
 }
 
 ///|
-/// A periodic literal keeps one thread alive per period, so every DFA state
-/// is large and distinct. The cache budget keeps memory flat regardless.
-test "many simultaneous threads stay within the cache budget" {
-  let literal = "ab".repeat(3000)
+/// Overlapping starts must not hide a match after an unsuccessful search.
+/// Cache pressure is checked with a small budget in the engine tests; the
+/// larger workload lives in `regex_bench_test.mbt`.
+test "periodic literals keep the correct match after a failed search" {
+  let literal = "ab".repeat(30)
   let re = @string.Regex::string(literal + "c")
   assert_true(re.execute(literal + literal) is None)
-  assert_true(re.execute("ab" + literal + "c") is Some(m) && m.before() == "ab")
+  guard re.execute("ab" + literal + "c") is Some(m) else {
+    fail("expected a match")
+  }
+  inspect(m.before(), content="ab")
+  assert_true(m.content() == literal + "c")
+  inspect(m.after(), content="")
 }
 
 ///|
