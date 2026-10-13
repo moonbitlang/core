@@ -14,7 +14,7 @@ test "random state creation" {
   debug_inspect(
     rng1,
     content=(
-      #|{ seed: 6185074585042305769, gamma: 16934044424796929712 }
+      #|{ seed: 6185074585042305769, gamma: 14387688016129665287 }
     ),
   )
 
@@ -23,7 +23,7 @@ test "random state creation" {
   debug_inspect(
     rng2,
     content=(
-      #|{ seed: 1716623506685013753, gamma: 14663218685290508263 }
+      #|{ seed: 1716623506685013753, gamma: 2454886589211414945 }
     ),
   )
 
@@ -32,7 +32,7 @@ test "random state creation" {
   debug_inspect(
     rng3,
     content=(
-      #|{ seed: 1716623506685013753, gamma: 14663218685290508263 }
+      #|{ seed: 1716623506685013753, gamma: 2454886589211414945 }
     ),
   )
 }
@@ -52,7 +52,7 @@ test "random number generation" {
   debug_inspect(
     int_val,
     content=(
-      #|-1716621765
+      #|-1002642896
     ),
   )
 
@@ -65,7 +65,7 @@ test "random number generation" {
   debug_inspect(
     uint_val,
     content=(
-      #|40636561
+      #|2624610399
     ),
   )
 
@@ -74,7 +74,7 @@ test "random number generation" {
   debug_inspect(
     int64_val,
     content=(
-      #|640680877524568329
+      #|2726445820918627087
     ),
   )
 
@@ -83,7 +83,7 @@ test "random number generation" {
   debug_inspect(
     uint64_val,
     content=(
-      #|11629490981681548516
+      #|4609004260007739600
     ),
   )
 }
@@ -107,7 +107,7 @@ test "bounded unsigned generation" {
       rng.next_uint(limit=16U),
     ),
     content=(
-      #|(0, 1, 9)
+      #|(0, 0, 2)
     ),
   )
 }
@@ -155,13 +155,13 @@ test "advanced operations" {
   debug_inspect(
     uint1,
     content=(
-      #|3306273023
+      #|2074210434
     ),
   )
   debug_inspect(
     uint2,
     content=(
-      #|472035372
+      #|4054148801
     ),
   )
 
@@ -174,13 +174,13 @@ test "advanced operations" {
   debug_inspect(
     original_val,
     content=(
-      #|2115132817
+      #|180515813
     ),
   )
   debug_inspect(
     split_val,
     content=(
-      #|400628363
+      #|1720568970
     ),
   )
 }
@@ -203,7 +203,7 @@ test "state management" {
   debug_inspect(
     after_advance,
     content=(
-      #|817660368
+      #|-312115490
     ),
   )
 

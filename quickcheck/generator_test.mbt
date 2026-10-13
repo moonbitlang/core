@@ -67,26 +67,26 @@ test "elements selects only supplied values" {
     @quickcheck.elements(["red", "green", "blue"]).samples(count=20),
     content=(
       #|[
-      #|  "red",
-      #|  "red",
-      #|  "red",
       #|  "green",
       #|  "blue",
       #|  "red",
+      #|  "green",
+      #|  "red",
+      #|  "green",
+      #|  "red",
+      #|  "green",
+      #|  "green",
+      #|  "red",
+      #|  "green",
       #|  "red",
       #|  "red",
       #|  "blue",
       #|  "green",
-      #|  "blue",
+      #|  "green",
+      #|  "green",
       #|  "blue",
       #|  "red",
-      #|  "red",
       #|  "blue",
-      #|  "green",
-      #|  "green",
-      #|  "green",
-      #|  "green",
-      #|  "green",
       #|]
     ),
   )
@@ -143,7 +143,7 @@ test "zip pairs two generators" {
   debug_inspect(
     pairs,
     content=(
-      #|[(0, 'f'), (2, 'b'), (5, 'b'), (6, 'b')]
+      #|[(7, 'b'), (7, 'e'), (5, 'd'), (3, 'd')]
     ),
   )
 }
@@ -156,7 +156,7 @@ test "zip_with and zip_with3 combine generator outputs" {
   debug_inspect(
     sums,
     content=(
-      #|[9, 7, 8, 7, 10, 15]
+      #|[8, 9, 6, 8, 5, 6]
     ),
   )
   let dates = @quickcheck.int_range(2000, 2002)
@@ -169,7 +169,7 @@ test "zip_with and zip_with3 combine generator outputs" {
   debug_inspect(
     dates,
     content=(
-      #|["2000-7-6", "2000-10-4", "2001-5-5"]
+      #|["2001-10-6", "2001-6-12", "2001-1-25"]
     ),
   )
 }
@@ -182,7 +182,11 @@ test "spawn composes with generator combinators" {
   debug_inspect(
     entries,
     content=(
-      #|[("", 2), ("Z\b", 1000), ("", 2097152)]
+      #|[
+      #|  (")󈇚\u{03}", -841733569),
+      #|  ("2\u{03}\b", -1019217858),
+      #|  ("L9", -1240909043),
+      #|]
     ),
   )
 }
