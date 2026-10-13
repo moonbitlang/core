@@ -43,6 +43,7 @@ fn Parser::class_atom(
     (re"^\\n", after=rest) => (rest, Char('\n'))
     (re"^\\r", after=rest) => (rest, Char('\r'))
     (re"^\\t", after=rest) => (rest, Char('\t'))
+    (re"^\\v", after=rest) => (rest, Char('\u{0b}'))
     (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
@@ -72,6 +73,9 @@ fn Parser::class_atom(
     (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"\-:&]" as c), after=rest) =>
       (rest, Char(c.to_int()))
+    // Any other escape is an error, as it is outside a class. It used to be
+    // read as a backslash followed by the next character.
+    (re"^\\", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\[:ascii:\]", after=rest) => (rest, Class(posix_cset_ascii))
     (re"^\[:upper:\]", after=rest) => (rest, Class(posix_cset_upper))
     (re"^\[:lower:\]", after=rest) => (rest, Class(posix_cset_lower))
@@ -91,7 +95,8 @@ fn Parser::class_atom(
       }
       (rest, Char(c.to_int()))
     }
-    _ => panic()
+    // Only the end of the pattern gets here, as in `[a-`.
+    _ => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
   }
 }
 
