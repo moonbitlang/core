@@ -56,6 +56,9 @@ pub fn[K : Compare, V] SortedMap::range_bounds(
           } else if !satisfies_upper(node.key, upper) {
             // The node and its right subtree are above the range.
             continue node.left
+          } else if node.left is None {
+            next_node = node.right
+            break Some((node.key, node.value))
           } else {
             stack.push(node)
             continue node.left
@@ -105,6 +108,9 @@ pub fn[K : Compare, V] SortedMap::rev_range_bounds(
           } else if !satisfies_lower(node.key, lower) {
             // The node and its left subtree are below the range.
             continue node.right
+          } else if node.right is None {
+            next_node = node.left
+            break Some((node.key, node.value))
           } else {
             stack.push(node)
             continue node.right

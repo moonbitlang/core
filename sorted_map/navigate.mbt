@@ -219,10 +219,14 @@ fn[K, V] rev_nodes(map : SortedMap[K, V]) -> Iter[Node[K, V]] {
     fn() {
       for x = next_node {
         match x {
-          Some(node) => {
-            stack.push(node)
-            continue node.right
-          }
+          Some(node) =>
+            if node.right is None {
+              next_node = node.left
+              break Some(node)
+            } else {
+              stack.push(node)
+              continue node.right
+            }
           None =>
             match stack.pop() {
               Some(node) => {
