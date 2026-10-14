@@ -114,6 +114,8 @@ test "construction retains the first equal key and last value" {
       [0, 0, 1, 1, 2],
       [2, 1, 1, 0, 0],
       [1, 0, 2, 1],
+      [0, 1, 2, 3, 4, 2, 5, 0],
+      [4, 3, 2, 1, 0, 2, 5, 4],
     ] {
     let counter = BuildCounter::{ calls: 0, }
     let entries = keys.mapi((i, rank) => {
@@ -167,6 +169,12 @@ test "NaN and signed zero preserve insertion fallback behavior" {
       [1.0, nan, 2.0],
       [2.0, 1.0, nan],
       [-0.0, 0.0, 1.0],
+      [0.0, 1.0, 2.0, 3.0, 4.0, nan],
+      [4.0, 3.0, 2.0, 1.0, 0.0, nan],
+      [0.0, 1.0, 2.0, 3.0, 4.0, 2.0, nan, 6.0],
+      [4.0, 3.0, 2.0, 1.0, 0.0, 2.0, nan, 6.0],
+      [-2.0, -1.0, -0.0, 0.0, 1.0],
+      [2.0, 1.0, 0.0, -0.0, -1.0],
     ] {
     let entries = keys.mapi((i, key) => (key, i))
     let expected : SortedMap[Double, Int32] = new_sorted_map()
@@ -176,8 +184,84 @@ test "NaN and signed zero preserve insertion fallback behavior" {
     let actual = SortedMap(entries)
     @test.assert_eq(actual.length(), expected.length())
     @test.assert_eq(actual.values().to_array(), expected.values().to_array())
-    for key in [-0.0, 0.0, 1.0, 2.0] {
+    @test.assert_eq(
+      actual.keys().map(key => key.reinterpret_as_int64()).to_array(),
+      expected.keys().map(key => key.reinterpret_as_int64()).to_array(),
+    )
+    for key in [nan, -0.0, 0.0, 1.0, 2.0] {
       @test.assert_eq(actual.get(key), expected.get(key))
     }
+  }
+}
+
+///|
+test "long ordered prefixes retain linear construction work" {
+  let size = 1024
+  for descending in [false, true] {
+    for duplicate in [false, true] {
+      let counter = BuildCounter::{ calls: 0, }
+      let entries = Array::makei(size, i => {
+        let rank = if descending { size - 1 - i } else { i }
+        (BuildKey::{ rank, tag: i, counter, }, i)
+      })
+      let rank = if duplicate {
+        size / 2
+      } else if descending {
+        size
+      } else {
+        -1
+      }
+      entries.push(({ rank, tag: size, counter, }, size))
+      let map = SortedMap(entries)
+      @test.assert_eq(map.length(), if duplicate { size } else { size + 1 })
+      @test.assert_eq(counter.calls <= 2 * entries.length(), true)
+      @test.assert_eq(map.get({ rank, tag: -1, counter, }), Some(size))
+    }
+  }
+}
+
+///|
+test "ordered prefixes and mixed suffixes preserve AVL invariants" {
+  for size in [1, 2, 3, 4, 7, 8, 31, 32, 33, 127] {
+    for descending in [false, true] {
+      let entries = Array::makei(size, i => {
+        let rank = if descending { size - 1 - i } else { i }
+        (rank * 2, rank)
+      })
+      let rng = Rand::{ state: 4367UL, }
+      for i in 0..<128 {
+        entries.push((rng.below(4 * size) - size, -i))
+      }
+      let expected = new_sorted_map()
+      for (key, value) in entries {
+        expected.set(key, value)
+      }
+      let actual = SortedMap(entries)
+      @test.assert_eq(actual.to_array(), expected.to_array())
+      check_invariants(actual)
+      for key in -size..<(3 * size) {
+        actual.remove(key)
+        expected.remove(key)
+        check_invariants(actual)
+        @test.assert_eq(actual.to_array(), expected.to_array())
+      }
+    }
+  }
+}
+
+///|
+test "ordered prefixes respect slices and reversed comparison" {
+  for keys in [[0, 1, 2, 3, 4, 2, -1], [4, 3, 2, 1, 0, 2, 5]] {
+    let entries = keys.mapi((i, key) => (@cmp.Reverse(key), i))
+    entries.insert(0, (Reverse(99), -1))
+    entries.push((Reverse(-99), -1))
+    let view = entries[1:entries.length() - 1]
+    let expected = new_sorted_map()
+    for (key, value) in view {
+      expected.set(key, value)
+    }
+    let actual = SortedMap(view)
+    entries[2] = (Reverse(999), 999)
+    @test.assert_eq(actual.to_array(), expected.to_array())
   }
 }

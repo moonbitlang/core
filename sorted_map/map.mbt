@@ -32,6 +32,8 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 ///|
 /// Creates a sorted map from an array of key-value pairs.
 /// Takes O(n) for strictly ascending or descending keys, otherwise O(n log n).
+/// A strictly ordered prefix is built in O(k), then the remaining entries are
+/// inserted normally. Non-reflexive keys, such as NaN, use full insertion.
 ///
 /// # Example
 /// ```mbt check
@@ -47,48 +49,51 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  let order = sorted_map_entries_order(entries)
-  if order != 0 {
-    return {
-      root: sorted_map_build_ordered(entries, 0, entries.length(), order == 1),
-      size: entries.length(),
-    }
+  let (prefix_len, ascending) = sorted_map_ordered_prefix(entries)
+  let prefix = entries[:prefix_len]
+  let map = {
+    root: sorted_map_build_ordered(prefix, 0, prefix_len, ascending),
+    size: prefix_len,
   }
-  let map = new_sorted_map()
-  for e in entries {
-    map.set(e.0, e.1)
+  for (key, value) in entries[prefix_len:] {
+    // Unordered keys such as NaN make lookups depend on tree shape. Rebuild
+    // by insertion to preserve that behavior, even after inserting a suffix.
+    if key != key {
+      let fallback = new_sorted_map()
+      for (key, value) in entries {
+        fallback.set(key, value)
+      }
+      return fallback
+    }
+    map.set(key, value)
   }
   map
 }
 
 ///|
-// Non-strict inputs keep the original insertion behavior, including duplicate
-// keys and unordered float comparisons. Returns 1, -1, or 0 for the order.
-fn[K : Compare, V] sorted_map_entries_order(
+// Return the length and direction of the strictly ordered prefix. The first
+// duplicate or ordering violation belongs to the suffix inserted with set.
+fn[K : Compare, V] sorted_map_ordered_prefix(
   entries : ArrayView[(K, V)],
-) -> Int32 {
+) -> (Int32, Bool) {
   let len = entries.length()
   if len < 2 {
-    return 1
+    return (len, true)
   }
   let ascending = entries[0].0 < entries[1].0
   if !ascending && !(entries[1].0 < entries[0].0) {
-    return 0
+    return (1, true)
   }
   for i in 2..<len {
     let previous = entries[i - 1].0
     let current = entries[i].0
     if ascending {
-      guard previous < current else { return 0 }
+      guard previous < current else { return (i, ascending) }
     } else {
-      guard current < previous else { return 0 }
+      guard current < previous else { return (i, ascending) }
     }
   }
-  if ascending {
-    1
-  } else {
-    -1
-  }
+  (len, ascending)
 }
 
 ///|
