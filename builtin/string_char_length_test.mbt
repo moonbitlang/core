@@ -130,8 +130,8 @@ fn check_char_length_range(s : String, start : Int32, end : Int32) -> Bool {
 }
 
 ///|
-/// Special units planted into an ASCII/CJK background. Each entry is the unit
-/// sequence to plant.
+/// Special UTF-16 unit sequences placed before, between, or after ASCII/CJK
+/// padding.
 let char_length_plants : Array[Array[Int32]] = [
   [0xD83D, 0xDE00], // surrogate pair
   [0xD800, 0xDC00], // lowest pair
@@ -146,18 +146,27 @@ let char_length_plants : Array[Array[Int32]] = [
 ]
 
 ///|
-test "char_length: special units planted at every position" {
-  for background in [0x61, 0x4E2D] {
-    for plant in char_length_plants {
-      for pos in 0..<44 {
-        let units = Array::make(48, background)
-        for k, u in plant {
-          units[pos + k] = u
-        }
-        let s = char_length_units(units)
-        for start in 0..<=9 {
+test "char_length: every slice with special units at the start, middle, or end" {
+  for padding_char in ["a", "中"] {
+    // With starts 0..7, 32 units leave at least 25 units before the pattern:
+    // the 16-character SIMD cutoff plus a nine-character early-exit margin.
+    let padding = padding_char.repeat(32)
+    for plant_index, plant in char_length_plants {
+      let special = char_length_units(plant)
+      for
+        (placement, s) in [
+          ("start", special + padding),
+          ("middle", padding + special + padding),
+          ("end", padding + special),
+        ] {
+        // Sweep every slice, including cuts through pairs, empty ranges,
+        // scalar ranges, and partial SIMD blocks.
+        for start in 0..<=s.length() {
           for end in start..<=s.length() {
-            assert_true(check_char_length_range(s, start, end), msg="\{pos}")
+            assert_true(
+              check_char_length_range(s, start, end),
+              msg="pattern \{plant_index}, \{placement}, [\{start}:\{end}]",
+            )
           }
         }
       }
@@ -375,4 +384,24 @@ test "panic char_length_ge invalid pair at the len-th character" {
 test "panic StringView char_length invalid pair" {
   let s = "a".repeat(20) + char_length_units([0xD800, 0x61]) + "b".repeat(30)
   ignore(s[1:40].char_length())
+}
+
+///|
+test "panic char_length rejects the first unit above the trailing surrogate range" {
+  // 0xE000 is valid on its own, but cannot complete a surrogate pair.
+  // Keep the invalid pair in a full SIMD block, away from the scalar tail.
+  let s = "a".repeat(16) + char_length_units([0xD800, 0xE000]) + "b".repeat(8)
+  ignore(s.char_length())
+}
+
+///|
+test "panic char_length_eq rejects the first unit above the trailing surrogate range" {
+  let s = "a".repeat(16) + char_length_units([0xD800, 0xE000]) + "b".repeat(8)
+  ignore(s.char_length_eq(24))
+}
+
+///|
+test "panic char_length_ge rejects the first unit above the trailing surrogate range" {
+  let s = "a".repeat(16) + char_length_units([0xD800, 0xE000]) + "b".repeat(8)
+  ignore(s.char_length_ge(24))
 }
