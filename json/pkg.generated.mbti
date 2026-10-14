@@ -9,7 +9,6 @@ import {
 // Values
 pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
-#alias(inspect, deprecated)
 #callsite(autofill(args_loc, loc))
 pub fn json_inspect(&@builtin.ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
