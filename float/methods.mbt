@@ -482,7 +482,7 @@ pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 // Bootstrap: json depends on this package, so use the builtin trait here.
 #warnings("-deprecated")
 pub impl @builtin.ToJson for Float with fn to_json(self : Float) -> Json {
-  Json::number(self.to_double())
+  @builtin.ToJson::to_json(self.to_double())
 }
 
 ///|
