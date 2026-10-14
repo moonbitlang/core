@@ -49,7 +49,7 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  let (prefix_len, ascending) = sorted_map_ordered_prefix(entries)
+  let { length: prefix_len, ascending, } = sorted_map_ordered_prefix(entries)
   let prefix = entries[:prefix_len]
   let map = {
     root: sorted_map_build_ordered(prefix, 0, prefix_len, ascending),
@@ -71,29 +71,36 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 }
 
 ///|
+#valtype
+priv struct OrderedPrefix {
+  length : Int32
+  ascending : Bool
+}
+
+///|
 // Return the length and direction of the strictly ordered prefix. The first
 // duplicate or ordering violation belongs to the suffix inserted with set.
 fn[K : Compare, V] sorted_map_ordered_prefix(
   entries : ArrayView[(K, V)],
-) -> (Int32, Bool) {
+) -> OrderedPrefix {
   let len = entries.length()
   if len < 2 {
-    return (len, true)
+    return { length: len, ascending: true, }
   }
   let ascending = entries[0].0 < entries[1].0
   if !ascending && !(entries[1].0 < entries[0].0) {
-    return (1, true)
+    return { length: 1, ascending: true, }
   }
   for i in 2..<len {
     let previous = entries[i - 1].0
     let current = entries[i].0
     if ascending {
-      guard previous < current else { return (i, ascending) }
+      guard previous < current else { return { length: i, ascending, } }
     } else {
-      guard current < previous else { return (i, ascending) }
+      guard current < previous else { return { length: i, ascending, } }
     }
   }
-  (len, ascending)
+  { length: len, ascending, }
 }
 
 ///|
