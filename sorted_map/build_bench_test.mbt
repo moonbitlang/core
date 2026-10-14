@@ -37,6 +37,42 @@ test "bench SortedMap build shuffled n=100000" (it : @bench.T) {
 }
 
 ///|
+test "bench SortedMap build ascending prefix then duplicate n=100000" (
+  it : @bench.T,
+) {
+  let entries = Array::makei(100000, i => (i, i))
+  entries.push((50000, -1))
+  it.bench(() => it.keep(@sorted_map.SortedMap(entries)))
+}
+
+///|
+test "bench SortedMap build descending prefix then duplicate n=100000" (
+  it : @bench.T,
+) {
+  let entries = Array::makei(100000, i => (99999 - i, i))
+  entries.push((50000, -1))
+  it.bench(() => it.keep(@sorted_map.SortedMap(entries)))
+}
+
+///|
+test "bench SortedMap build ascending prefix then reversal n=100000" (
+  it : @bench.T,
+) {
+  let entries = Array::makei(100000, i => (i, i))
+  entries.push((-1, -1))
+  it.bench(() => it.keep(@sorted_map.SortedMap(entries)))
+}
+
+///|
+test "bench SortedMap build descending prefix then reversal n=100000" (
+  it : @bench.T,
+) {
+  let entries = Array::makei(100000, i => (99999 - i, i))
+  entries.push((100000, -1))
+  it.bench(() => it.keep(@sorted_map.SortedMap(entries)))
+}
+
+///|
 test "bench SortedMap merge disjoint n=10000+10000" (it : @bench.T) {
   let left = @sorted_map.SortedMap(Array::makei(10000, i => (i, i)))
   let right = @sorted_map.SortedMap(Array::makei(10000, i => (10000 + i, -i)))
