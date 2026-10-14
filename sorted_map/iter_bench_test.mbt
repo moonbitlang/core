@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn iter_bench_map() -> @sorted_map.SortedMap[Int, Int] {
+fn iter_bench_map() -> @sorted_map.SortedMap[Int32, Int32] {
   @sorted_map.from_array(Array::makei(16384, i => (i, i)))
 }
 
@@ -45,7 +45,7 @@ test "bench sorted_map iter take n=8" (it : @bench.T) {
 
 ///|
 test "bench sorted_map empty iter" (it : @bench.T) {
-  let map : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_array([])
+  let map : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.from_array([])
   it.bench(fn() { it.keep(map.iter().next()) })
 }
 
