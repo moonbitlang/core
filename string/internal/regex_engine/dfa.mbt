@@ -99,36 +99,56 @@ fn Regex::intern(
   key : FixedArray[Int32],
   threads : Int32,
 ) -> Int32 {
-  self.state_ids.get_or_init(key, () => {
-    let width = self.width()
-    let state = self.kernels.length()
-    let needed = (state + 1) * width
-    if needed > self.trans.length() {
-      let capacity = Int32::max(needed, self.trans.length() * 2)
-      self.trans = FixedArray::make_and_blit(
-        self.trans,
-        allocate_len=capacity,
-        init=UNKNOWN,
-        len=self.trans.length(),
-      )
-      self.slots = FixedArray::make_and_blit(
-        self.slots,
-        allocate_len=capacity,
-        init=0,
-        len=self.slots.length(),
-      )
-    }
-    self.kernels.push({ key, threads, })
-    self.cache_words += self.cost(key)
-    if self.shapes is Some(shapes) {
-      add_shape(
-        shapes,
-        shape_hash(key, threads, Ranks::new(self.regs.length())),
-        state,
-      )
-    }
-    state
-  })
+  self.state_ids.get_or_init(key, () => self.allocate_state(key, threads))
+}
+
+///|
+/// Add a state that is known not to be cached yet and return its index.
+fn Regex::insert(
+  self : Regex,
+  key : FixedArray[Int32],
+  threads : Int32,
+) -> Int32 {
+  let state = self.allocate_state(key, threads)
+  self.state_ids.set(key, state)
+  state
+}
+
+///|
+/// Allocate a state's storage without inserting its key into `state_ids`.
+fn Regex::allocate_state(
+  self : Regex,
+  key : FixedArray[Int32],
+  threads : Int32,
+) -> Int32 {
+  let width = self.width()
+  let state = self.kernels.length()
+  let needed = (state + 1) * width
+  if needed > self.trans.length() {
+    let capacity = Int32::max(needed, self.trans.length() * 2)
+    self.trans = FixedArray::make_and_blit(
+      self.trans,
+      allocate_len=capacity,
+      init=UNKNOWN,
+      len=self.trans.length(),
+    )
+    self.slots = FixedArray::make_and_blit(
+      self.slots,
+      allocate_len=capacity,
+      init=0,
+      len=self.slots.length(),
+    )
+  }
+  self.kernels.push({ key, threads, })
+  self.cache_words += self.cost(key)
+  if self.shapes is Some(shapes) {
+    add_shape(
+      shapes,
+      shape_hash(key, threads, Ranks::new(self.regs.length())),
+      state,
+    )
+  }
+  state
 }
 
 ///|
@@ -507,7 +527,7 @@ fn Regex::build(
         // The source row disappears with the cache, so the transition is
         // returned without being recorded.
         self.flush()
-        encode(self.intern(key, count))
+        encode(self.insert(key, count))
       }
   }
 }
