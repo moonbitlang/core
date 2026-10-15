@@ -14,14 +14,14 @@
 
 ///|
 priv struct IntersectionCalls {
-  mut calls : Int
-  mut comparisons : Int
+  mut calls : Int32
+  mut comparisons : Int32
 }
 
 ///|
 priv struct IntersectionKey {
-  rank : Int
-  label : Int
+  rank : Int32
+  label : Int32
   collisions : Bool
   counter : IntersectionCalls
 }
@@ -150,4 +150,42 @@ test "intersection handles a sparse backing table" {
   expected.sort()
   actual.sort()
   @test.assert_eq(actual, expected)
+}
+
+///|
+test "intersection breaks capacity ties by live size" {
+  let counter = IntersectionCalls::{ calls: 0, comparisons: 0, }
+  let dense = HashSet(
+    Array::makei(128, rank => IntersectionKey::{
+      rank,
+      label: 1,
+      collisions: true,
+      counter,
+    }),
+  )
+  let sparse = HashSet(
+    Array::makei(128, rank => IntersectionKey::{
+      rank,
+      label: 2,
+      collisions: true,
+      counter,
+    }),
+  )
+  for key in sparse.to_array() {
+    if key.rank >= 8 {
+      sparse.remove(key)
+    }
+  }
+  inspect(dense.capacity == sparse.capacity, content="true")
+  for (left, right, label) in [(dense, sparse, 1), (sparse, dense, 2)] {
+    counter.calls = 0
+    counter.comparisons = 0
+    let result = left.intersection(right)
+    @test.assert_eq(result.length(), 8)
+    @test.assert_eq(counter.calls, 0)
+    // Eight lookups and result insertions need at most 128 comparisons;
+    // scanning the dense table instead needs over 1,000 comparisons.
+    @test.assert_eq(counter.comparisons <= 128, true)
+    @test.assert_eq(result.iter().all(key => key.label == label), true)
+  }
 }

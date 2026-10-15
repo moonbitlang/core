@@ -52,7 +52,7 @@ test "bench intersection Int small tables half overlap 8/8" (it : @bench.T) {
 ///|
 test "bench intersection Int empty right 100000/0" (it : @bench.T) {
   let left = @hashset.HashSet(Array::makei(100000, i => i))
-  let right = @hashset.HashSet(([] : Array[Int]))
+  let right = @hashset.HashSet(([] : Array[Int32]))
   it.bench(() => it.keep(left.intersection(right)))
 }
 

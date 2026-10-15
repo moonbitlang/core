@@ -192,7 +192,7 @@ fn[K : Eq] HashSet::contains_with_hash(
 fn[K : Eq] HashSet::find_entry_with_hash(
   self : HashSet[K],
   key : K,
-  hash : Int,
+  hash : Int32,
 ) -> Entry[K]? {
   for distance = 0, index = hash & self.capacity_mask {
     // SAFETY: the initial index and each following index are masked.
@@ -480,8 +480,9 @@ pub fn[K : Eq] HashSet::intersection(
     return m
   }
   // Iteration visits the entire backing table, including empty slots left by
-  // removals, so choose by capacity rather than the live element count.
-  if self.capacity <= other.capacity {
+  // removals, so choose by capacity, breaking ties by live size to reduce lookups.
+  if self.capacity < other.capacity ||
+    (self.capacity == other.capacity && self.size <= other.size) {
     for entry in self.entries {
       if entry is Some({ key, hash, .. }) && other.contains_with_hash(key, hash) {
         m.add_with_hash(key, hash)
