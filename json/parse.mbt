@@ -34,10 +34,18 @@ pub fn valid(input : StringView) -> Bool {
 /// Keys are compared after decoding escapes. The error contains the decoded
 /// key and the position of the opening quote of its second occurrence.
 ///
+/// Set `preserve_number_repr=true` to retain the original text of every number
+/// in its `repr`, including integers and negative zero. `stringify` uses this
+/// text verbatim. This requires additional string storage and does not change
+/// the parsed `Double` value or the rules used by `from_json`. By default,
+/// only numbers that need the existing precision/range fallback retain `repr`.
+///
 /// ```mbt check
 /// test {
 ///   let value = @json.parse("{\"key\":1}", reject_duplicate_keys=true)
 ///   inspect(value.stringify(), content="{\"key\":1}")
+///   let number = @json.parse("1.00e+0", preserve_number_repr=true)
+///   inspect(number.stringify(), content="1.00e+0")
 /// }
 /// ```
 ///
@@ -75,8 +83,13 @@ pub fn parse(
   input : StringView,
   max_nesting_depth~ : Int32 = 1024,
   reject_duplicate_keys~ : Bool = false,
+  preserve_number_repr~ : Bool = false,
 ) -> Json raise ParseError {
-  let ctx = ParseContext::make(input, reject_duplicate_keys~)
+  let ctx = ParseContext::make(
+    input,
+    reject_duplicate_keys~,
+    preserve_number_repr~,
+  )
   let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
