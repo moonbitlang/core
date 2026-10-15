@@ -27,6 +27,20 @@ fn build_long_index(
 }
 
 ///|
+/// Resolve a long option name of the form `no-<long>` to the negatable flag
+/// whose `--no-<long>` spelling it is.
+fn lookup_negated_flag(
+  long_index : Map[String, Arg],
+  name : StringView,
+) -> Arg? {
+  guard name is [.. "no-", .. target] else { return None }
+  match long_index.get_from_string(target) {
+    Some({ info: FlagInfo(negatable=true, ..), .. } as spec) => Some(spec)
+    _ => None
+  }
+}
+
+///|
 fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] {
   Map(
     [
