@@ -92,7 +92,7 @@ pub fn asin(x : Double) -> Double {
   let qs4 = 7.70381505559019352791e-02
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
   let absx = x.abs()
-  if absx >= 1.0 {
+  if absx.ieee_ge(1.0) {
     if absx == 1.0 {
       return x * pio2_hi + x * pio2_lo
     } else {
@@ -120,7 +120,7 @@ pub fn asin(x : Double) -> Double {
   if ix >= 0x3FEF3333 {
     let w = p / q
     let t = pio2_hi - (2.0 * (s + s * w) - pio2_lo)
-    return if x > 0.0 { t } else { -t }
+    return if x.ieee_gt(0.0) { t } else { -t }
   } else {
     let mut w = s
     w = set_low_word(w, 0)
@@ -129,7 +129,7 @@ pub fn asin(x : Double) -> Double {
     let p = 2.0 * s * r - (pio2_lo - 2.0 * c)
     let q = pio4_hi - 2.0 * w
     let t = pio4_hi - (p - q)
-    return if x > 0.0 { t } else { -t }
+    return if x.ieee_gt(0.0) { t } else { -t }
   }
 }
 
@@ -174,7 +174,7 @@ pub fn acos(x : Double) -> Double {
   let qs4 : Double = 7.70381505559019352791e-02
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
   let absx = x.abs()
-  if absx >= 1.0 {
+  if absx.ieee_ge(1.0) {
     if absx == 1.0 {
       if x > 0 {
         return 0.0

@@ -42,7 +42,7 @@
 /// }
 /// ```
 pub fn Double::to_uint(self : Double) -> UInt32 {
-  if self != self {
+  if self.is_nan() {
     0
   } else if self >= 4294967295.0 {
     4294967295U

@@ -38,6 +38,12 @@ pub fn Float::from_int64(Int64) -> Float
 pub fn Float::from_uint(UInt) -> Float
 pub fn Float::from_uint64(UInt64) -> Float
 pub fn Float::hash(Float) -> Int
+pub fn Float::ieee_equal(Float, Float) -> Bool
+pub fn Float::ieee_ge(Float, Float) -> Bool
+pub fn Float::ieee_gt(Float, Float) -> Bool
+pub fn Float::ieee_le(Float, Float) -> Bool
+pub fn Float::ieee_lt(Float, Float) -> Bool
+pub fn Float::ieee_not_equal(Float, Float) -> Bool
 pub fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool

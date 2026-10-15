@@ -152,8 +152,7 @@ pub fn[K : Compare, V] SortedMap::rev_range(
 
 ///|
 /// Bounds are checked with `Compare::compare`, the same ordering the map uses
-/// for insertion and lookup. For keys such as `Double`, the relational
-/// operators disagree with `compare` on NaN, so they must not be used here.
+/// for insertion and lookup, including when a custom key overrides operators.
 fn[K : Compare] satisfies_lower(key : K, lower : @cmp.Bound[K]) -> Bool {
   match lower {
     Included(bound) => key.compare(bound) >= 0

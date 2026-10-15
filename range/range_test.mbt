@@ -374,7 +374,7 @@ test "iter Double NaN step matches Double::until: yields [from] only when inclus
 test "iter Double NaN end never matches inclusive" {
   let nan = 0.0 / 0.0
   // NaN as `to` with a finite forward step must not infinite-loop;
-  // it terminates because `i == NaN` is always false.
+  // NaN bounds are explicitly rejected before iteration.
   debug_inspect(
     @range.iter(from=0.0, to=nan, step=1.0, inclusive=true).to_array(),
     content=(

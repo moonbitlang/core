@@ -1153,9 +1153,9 @@ pub impl Div for Double with fn div(self, other) = "%f64_div"
 pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 
 ///|
-/// Compares two double-precision floating-point numbers for equality following
-/// IEEE 754 rules. Returns `true` if both numbers are equal. `NaN` is not equal
-/// to any value, including itself, so `nan == nan` evaluates to `false`.
+/// Compares two double-precision floating-point numbers for equality.
+/// All NaNs are equal, and positive and negative zero are equal.
+/// Use `ieee_equal` for numerical equality where NaN is unordered.
 ///
 /// Parameters:
 ///
@@ -1174,14 +1174,16 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 ///   let nan = 0.0 / 0.0 // NaN
-///   inspect(nan == nan, content="false") // NaN != NaN
+///   inspect(nan == nan, content="true")
 /// }
 /// ```
-pub impl Eq for Double with fn equal(self : Double, other : Double) -> Bool = "%f64_eq"
+pub impl Eq for Double with fn equal(self : Double, other : Double) -> Bool {
+  self.ieee_equal(other) || (self.is_nan() && other.is_nan())
+}
 
 ///|
-/// Compares two double-precision floating-point numbers for inequality following
-/// IEEE 754 rules. Returns `true` if the numbers are not equal.
+/// Tests the negation of floating-point equality. All NaNs are equal,
+/// and positive and negative zero are equal.
 ///
 /// Parameters:
 ///
@@ -1200,22 +1202,26 @@ pub impl Eq for Double with fn equal(self : Double, other : Double) -> Bool = "%
 ///   inspect(a != b, content="false")
 ///   inspect(a != c, content="true")
 ///   let nan = 0.0 / 0.0 // NaN
-///   inspect(nan != nan, content="true") // NaN != NaN is true
+///   inspect(nan != nan, content="false")
 /// }
 /// ```
-pub impl Eq for Double with fn not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
+pub impl Eq for Double with fn not_equal(self : Double, other : Double) -> Bool {
+  !Eq::equal(self, other)
+}
 
 ///|
 /// Deprecated inequality helper; use `a != b`.
 /// Operator helper `op_neq`.
 #deprecated("Use `a != b` instead")
 #doc(hidden)
-pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
+pub fn Double::op_neq(self : Double, other : Double) -> Bool {
+  Eq::not_equal(self, other)
+}
 
 ///|
 /// Compares two double-precision floating-point numbers and returns their
-/// relative order. Follows IEEE 754 rules for floating-point comparisons,
-/// including handling of special values like NaN.
+/// relative order. All NaNs are equal and ordered after positive infinity.
+/// Positive and negative zero are equal. Arithmetic is unchanged.
 ///
 /// Parameters:
 ///
@@ -1228,8 +1234,7 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 /// * A negative value if `self` is less than `other`
 /// * Zero if `self` equals `other`
 /// * A positive value if `self` is greater than `other`
-/// * If either value is NaN, returns an implementation-defined value that is
-/// consistent with total ordering
+/// * All NaNs compare equal, regardless of sign or payload
 ///
 /// Example:
 ///
@@ -1242,19 +1247,32 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Double with fn compare(self, other) = "%f64_compare"
+pub impl Compare for Double with fn compare(self, other) {
+  self.ieee_gt(other).to_int() -
+  self.ieee_lt(other).to_int() +
+  self.is_nan().to_int() -
+  other.is_nan().to_int()
+}
 
 ///|
-pub impl Compare for Double with fn op_lt(x, y) = "%f64.lt"
+pub impl Compare for Double with fn op_lt(x, y) {
+  !(x.ieee_ge(y) || x.is_nan())
+}
 
 ///|
-pub impl Compare for Double with fn op_le(x, y) = "%f64.le"
+pub impl Compare for Double with fn op_le(x, y) {
+  x.ieee_le(y) || y.is_nan()
+}
 
 ///|
-pub impl Compare for Double with fn op_gt(x, y) = "%f64.gt"
+pub impl Compare for Double with fn op_gt(x, y) {
+  !(x.ieee_le(y) || y.is_nan())
+}
 
 ///|
-pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
+pub impl Compare for Double with fn op_ge(x, y) {
+  x.ieee_ge(y) || x.is_nan()
+}
 
 ///|
 /// Returns the default value for double-precision floating-point numbers (0.0).

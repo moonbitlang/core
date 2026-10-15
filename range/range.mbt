@@ -165,9 +165,9 @@ pub impl Step for UInt64 with fn step_one() {
 
 ///|
 pub impl Step for Float with fn direction(self) {
-  if self > Float(0.0) {
+  if self.ieee_gt(Float(0.0)) {
     1
-  } else if self < Float(0.0) {
+  } else if self.ieee_lt(Float(0.0)) {
     -1
   } else {
     0
@@ -185,6 +185,9 @@ pub impl Step for Float with fn step_one() {
 /// soon as an element fails to move strictly past the previous one, and
 /// there are fewer than 2^32 `Float`s.
 pub impl Step for Float with fn enumerate(from, to, step, inclusive) {
+  if from.is_nan() || to.is_nan() {
+    return [||]
+  }
   let from_d = from.to_double()
   let step_d = step.to_double()
   let dir = direction_of(step)
@@ -199,7 +202,7 @@ pub impl Step for Float with fn enumerate(from, to, step, inclusive) {
     let value = i
     let next = Float::from_double(from_d + k * step_d)
     k = k + 1.0
-    if progresses(dir, i, next) {
+    if !next.is_nan() && progresses(dir, i, next) {
       i = next
     } else {
       done = true
@@ -210,9 +213,9 @@ pub impl Step for Float with fn enumerate(from, to, step, inclusive) {
 
 ///|
 pub impl Step for Double with fn direction(self) {
-  if self > 0.0 {
+  if self.ieee_gt(0.0) {
     1
-  } else if self < 0.0 {
+  } else if self.ieee_lt(0.0) {
     -1
   } else {
     0
@@ -241,6 +244,9 @@ pub impl Step for Double with fn step_one() {
 /// From element 2^53 on, the counter `k` saturates, so this falls back to
 /// repeated addition; the progress check still guarantees termination.
 pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
+  if from.is_nan() || to.is_nan() {
+    return [||]
+  }
   let dir = direction_of(step)
   let mut i = from
   // index of the element after `i`, a `Double` so that it stays a plain
@@ -263,7 +269,7 @@ pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
       }
     }
     k = k + 1.0
-    if progresses(dir, i, next) {
+    if !next.is_nan() && progresses(dir, i, next) {
       i = next
     } else {
       done = true
@@ -367,9 +373,8 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 /// yields three elements). The elements are therefore always strictly
 /// monotonic.
 ///
-/// The inclusive end check uses `==` (so a `NaN` `to` never matches),
-/// which keeps the iterator from looping when the comparison ordering
-/// is unordered.
+/// Floating ranges reject NaN endpoints and stop before a NaN next element.
+/// The inclusive end check uses `==` for the remaining numerical values.
 ///
 /// The function is named `iter` rather than `range` so that a future
 /// first-class `Range[T]` struct can take the `Range`/`range` names

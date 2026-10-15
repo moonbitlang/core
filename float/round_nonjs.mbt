@@ -38,7 +38,7 @@ pub fn Float::round(self : Float) -> Float {
   // `(self + 0.5).floor()` alone drops the sign of zero, crosses the half
   // boundary for `nextDown(0.5)`, and perturbs odd integers of magnitude in
   // `[2^23, 2^24)`.
-  if self == 0.0 || self != self || self.abs() >= 8388608.0 {
+  if self == 0.0 || self.is_nan() || self.abs() >= 8388608.0 {
     return self
   }
   if self > 0.0 {

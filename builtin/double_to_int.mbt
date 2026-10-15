@@ -41,7 +41,7 @@
 /// }
 /// ```
 pub fn Double::to_int(self : Double) -> Int32 {
-  if self != self {
+  if self.is_nan() {
     0
   } else if self >= 2147483647 {
     2147483647

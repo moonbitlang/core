@@ -789,6 +789,12 @@ pub fn Double::equal(Double, Double) -> Bool
 pub fn Double::floor(Double) -> Double
 pub fn Double::from_int(Int) -> Double
 pub fn Double::hash(Double) -> Int
+pub fn Double::ieee_equal(Double, Double) -> Bool
+pub fn Double::ieee_ge(Double, Double) -> Bool
+pub fn Double::ieee_gt(Double, Double) -> Bool
+pub fn Double::ieee_le(Double, Double) -> Bool
+pub fn Double::ieee_lt(Double, Double) -> Bool
+pub fn Double::ieee_not_equal(Double, Double) -> Bool
 pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
 pub fn Double::is_inf(Double) -> Bool
 pub fn Double::is_nan(Double) -> Bool

@@ -123,10 +123,10 @@ pub fn Double::max(self : Double, other : Double) -> Double {
 /// }
 /// ```
 pub fn Double::clamp(self : Double, min~ : Double, max~ : Double) -> Double {
-  guard! min <= max
-  if self < min {
+  guard! min.ieee_le(max)
+  if self.ieee_lt(min) {
     min
-  } else if self > max {
+  } else if self.ieee_gt(max) {
     max
   } else {
     self
@@ -165,9 +165,9 @@ pub fn Double::lerp(self : Double, target~ : Double, t~ : Double) -> Double {
 /// - If the double is negative, returns -1.0.
 /// - Otherwise, returns the double itself (0.0, -0.0 and NaN).
 pub fn Double::signum(self : Double) -> Double {
-  if self < 0.0 {
+  if self.ieee_lt(0.0) {
     -1.0
-  } else if self > 0.0 {
+  } else if self.ieee_gt(0.0) {
     1.0
   } else {
     self // handles 0.0, -0.0, NaN
@@ -194,8 +194,7 @@ pub fn Double::signum(self : Double) -> Double {
 /// }
 /// ```
 pub fn Double::is_nan(self : Double) -> Bool {
-  // only NaNs satisfy f != f.
-  self != self
+  self.ieee_not_equal(self)
 }
 
 ///|
@@ -219,7 +218,7 @@ pub fn Double::is_nan(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_inf(self : Double) -> Bool {
-  self > double_max_value || self < double_min_value
+  self.ieee_gt(double_max_value) || self.ieee_lt(double_min_value)
 }
 
 ///|
@@ -241,7 +240,7 @@ pub fn Double::is_inf(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_pos_inf(self : Double) -> Bool {
-  self > double_max_value
+  self.ieee_gt(double_max_value)
 }
 
 ///|
@@ -263,7 +262,7 @@ pub fn Double::is_pos_inf(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_neg_inf(self : Double) -> Bool {
-  self < double_min_value
+  self.ieee_lt(double_min_value)
 }
 
 ///|
@@ -343,7 +342,7 @@ pub fn Double::is_close(
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")
   }
-  if self == other {
+  if self.ieee_equal(other) {
     return true
   }
   if self.is_inf() || other.is_inf() {
@@ -351,10 +350,10 @@ pub fn Double::is_close(
   }
   let diff = (other - self).abs()
   return (
-      diff <= (relative_tolerance * other).abs() ||
-      diff <= (relative_tolerance * self).abs()
+      diff.ieee_le((relative_tolerance * other).abs()) ||
+      diff.ieee_le((relative_tolerance * self).abs())
     ) ||
-    diff <= absolute_tolerance
+    diff.ieee_le(absolute_tolerance)
 }
 
 ///|

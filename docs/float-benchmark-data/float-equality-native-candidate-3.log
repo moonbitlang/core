@@ -1,0 +1,9 @@
+[moonbitlang/core] bench builtin/float_order_bench_test.mbt:127 ("equality successful and mixed paths") ok
+name                   time (mean ± σ)         range (min … max)
+Double eq equal-finite    1.54 µs ±   3.97 ns     1.53 µs …   1.54 µs  in 10 ×  65122 runs
+Float eq equal-finite     1.53 µs ±   1.56 ns     1.53 µs …   1.54 µs  in 10 ×  64934 runs
+Double eq paired-nan      1.54 µs ±   4.03 ns     1.53 µs …   1.55 µs  in 10 ×  64697 runs
+Float eq paired-nan       1.54 µs ±   4.24 ns     1.53 µs …   1.55 µs  in 10 ×  65186 runs
+Double eq mixed           1.54 µs ±   1.98 ns     1.53 µs …   1.54 µs  in 10 ×  65248 runs
+Float eq mixed            1.54 µs ±   2.88 ns     1.53 µs …   1.54 µs  in 10 ×  65136 runs
+Total tests: 1, passed: 1, failed: 0.

@@ -44,7 +44,7 @@ fn Double::to_unchecked_int64(self : Double) -> Int64 = "%f64_to_i64"
 /// }
 /// ```
 pub fn Double::to_int64(self : Double) -> Int64 {
-  if self != self {
+  if self.is_nan() {
     0
   } else if self >= 9223372036854775807 {
     9223372036854775807L
@@ -85,7 +85,7 @@ pub fn Double::to_int64(self : Double) -> Int64 {
 /// }
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 {
-  if self != self {
+  if self.is_nan() {
     0
   } else if self >= 18446744073709551616.0 {
     18446744073709551615UL

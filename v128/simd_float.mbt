@@ -190,7 +190,7 @@ fn f64_max(value : Double, other : Double) -> Double {
 /// Wasm `pmin(z1, z2)` is `z2 < z1 ? z2 : z1`: the first operand wins on
 /// ties and NaN.
 fn f32_pmin(value : Float, other : Float) -> Float {
-  if other < value {
+  if other.ieee_lt(value) {
     other
   } else {
     value
@@ -199,7 +199,7 @@ fn f32_pmin(value : Float, other : Float) -> Float {
 
 ///|
 fn f32_pmax(value : Float, other : Float) -> Float {
-  if value < other {
+  if value.ieee_lt(other) {
     other
   } else {
     value
@@ -208,7 +208,7 @@ fn f32_pmax(value : Float, other : Float) -> Float {
 
 ///|
 fn f64_pmin(value : Double, other : Double) -> Double {
-  if other < value {
+  if other.ieee_lt(value) {
     other
   } else {
     value
@@ -217,7 +217,7 @@ fn f64_pmin(value : Double, other : Double) -> Double {
 
 ///|
 fn f64_pmax(value : Double, other : Double) -> Double {
-  if value < other {
+  if value.ieee_lt(other) {
     other
   } else {
     value
@@ -427,7 +427,7 @@ pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_eq(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x == y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_equal(y) })
 }
 
 ///|
@@ -436,7 +436,7 @@ pub fn f32x4_eq(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_ne(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x != y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_not_equal(y) })
 }
 
 ///|
@@ -445,7 +445,7 @@ pub fn f32x4_ne(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_lt(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x < y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_lt(y) })
 }
 
 ///|
@@ -454,7 +454,7 @@ pub fn f32x4_lt(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_le(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x <= y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_le(y) })
 }
 
 ///|
@@ -463,7 +463,7 @@ pub fn f32x4_le(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_gt(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x > y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_gt(y) })
 }
 
 ///|
@@ -472,7 +472,7 @@ pub fn f32x4_gt(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_ge(value : V128, other : V128) -> V128 {
-  f32x4_compare(value, other, fn(x, y) { x >= y })
+  f32x4_compare(value, other, fn(x, y) { x.ieee_ge(y) })
 }
 
 ///|
@@ -726,7 +726,7 @@ pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_eq(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x == y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_equal(y) })
 }
 
 ///|
@@ -735,7 +735,7 @@ pub fn f64x2_eq(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_ne(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x != y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_not_equal(y) })
 }
 
 ///|
@@ -744,7 +744,7 @@ pub fn f64x2_ne(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_lt(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x < y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_lt(y) })
 }
 
 ///|
@@ -753,7 +753,7 @@ pub fn f64x2_lt(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_le(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x <= y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_le(y) })
 }
 
 ///|
@@ -762,7 +762,7 @@ pub fn f64x2_le(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_gt(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x > y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_gt(y) })
 }
 
 ///|
@@ -771,7 +771,7 @@ pub fn f64x2_gt(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_ge(value : V128, other : V128) -> V128 {
-  f64x2_compare(value, other, fn(x, y) { x >= y })
+  f64x2_compare(value, other, fn(x, y) { x.ieee_ge(y) })
 }
 
 ///|

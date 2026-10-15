@@ -1221,13 +1221,28 @@ test "has_suffix boundaries" {
 }
 
 ///|
-test "has_suffix window comparison is element-wise" {
-  // List `==` short-circuits on physical equality, but the suffix window
-  // comparison is element-wise, so a NaN-carrying list is not even its own
-  // suffix — matching the previous rev-based implementation and
-  // has_prefix's behavior.
+test "NaN lists are their own prefix and suffix" {
+  // NaN equality is reflexive, including through element-wise comparisons.
   let nan = 0.0 / 0.0
   let xs = @list.List([nan])
+  assert_true(xs == xs)
+  assert_true(xs.has_suffix(xs))
+  assert_true(xs.has_prefix(xs))
+}
+
+///|
+priv enum NonReflexiveSuffixKey {
+  Value
+}
+
+///|
+impl Eq for NonReflexiveSuffixKey with fn equal(_, _) {
+  false
+}
+
+///|
+test "has_suffix window comparison is element-wise" {
+  let xs = @list.List([NonReflexiveSuffixKey::Value])
   assert_true(xs == xs)
   assert_false(xs.has_suffix(xs))
   assert_false(xs.has_prefix(xs))

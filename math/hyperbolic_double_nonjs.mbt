@@ -367,7 +367,7 @@ pub fn acosh(x : Double) -> Double {
 pub fn atanh(x : Double) -> Double {
   let hx : Int32 = get_high_word(x).reinterpret_as_int()
   let ix = hx & 0x7fffffff
-  if x.abs() > 1.0 {
+  if x.abs().ieee_gt(1.0) {
     return @double.not_a_number
   }
   if x == 1.0 {
