@@ -119,8 +119,7 @@ pub fn[K : Compare, V] SortedMap::remove(
 }
 
 ///|
-/// Filter key-value pairs that satisfy the predicate.
-/// Subtrees with no removed entries are reused.
+/// Returns a map containing only the key-value pairs that satisfy the predicate.
 #alias(filter_with_key, deprecated)
 pub fn[K, V] SortedMap::filter(
   self : SortedMap[K, V],
