@@ -110,7 +110,7 @@ test "range bounds follow Compare ordering for NaN keys" {
   map.set(nan, 2)
   map.set(-1.0, 3)
   inspect(map.length(), content="3")
-  inspect(map.get(nan), content="Some(2)")
+  inspect(map.get(nan).unwrap(), content="2")
   inspect(
     map.keys().map(x => x.to_string()).to_array().join(","),
     content="-1,1,NaN",

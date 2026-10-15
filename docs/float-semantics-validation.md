@@ -26,6 +26,12 @@ that had the same development version string.
   suite, OCaml formatting, and Semgrep (35 rules, zero findings).
 - Core interfaces add only the six explicit IEEE predicates per width.
 
+The public PR's stable-toolchain CI uses compiler `943464bfa`, which lacks the
+companion change and rejects the binary32 comparison constant regression.
+That CI requires the paired compiler before it can validate this core. Its
+first run also exposed a deprecated inspection helper in the new sorted-map
+assertion; that assertion now inspects the retrieved scalar value.
+
 Tests cover both widths, quiet/signaling and signed NaN encodings, signed zeros,
 subnormals, finite extremes, infinities, deterministic random bit patterns,
 Eq/Compare/Hash laws, direct/generic/derived/first-class calls, constants,
