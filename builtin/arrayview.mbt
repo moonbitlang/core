@@ -1615,7 +1615,10 @@ pub fn[A, B] ArrayView::filter_map(
 }
 
 ///|
-/// Copy the view elements into a newly allocated `Array`.
+/// Create an independent `Array` containing the view elements.
+///
+/// On native and linear-memory Wasm, exclusively owned storage can be reused
+/// when the view covers the entire backing buffer.
 ///
 /// # Example
 /// ```mbt check
@@ -1625,6 +1628,33 @@ pub fn[A, B] ArrayView::filter_map(
 ///   @test.assert_eq(arr, [3, 4])
 /// }
 /// ```
+#cfg(any(target="native", target="wasm"))
+#alias(to_array, deprecated)
+#owned(self)
+pub fn[T] ArrayView::to_owned(self : ArrayView[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    { buf: self.copy_or_reuse_buffer(), len, }
+  }
+}
+
+///|
+/// Create an independent `Array` containing the view elements.
+///
+/// On native and linear-memory Wasm, exclusively owned storage can be reused
+/// when the view covers the entire backing buffer.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5, 6][2:4]
+///   let arr = view.to_owned()
+///   @test.assert_eq(arr, [3, 4])
+/// }
+/// ```
+#cfg(not(any(target="native", target="wasm")))
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(self : ArrayView[T]) -> Array[T] {
   let len = self.length()
