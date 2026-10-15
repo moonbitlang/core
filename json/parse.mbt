@@ -29,6 +29,18 @@ pub fn valid(input : StringView) -> Bool {
 ///|
 /// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
 ///
+/// By default, duplicate object keys keep the last value. Set
+/// `reject_duplicate_keys=true` to raise `DuplicateKey` instead, in any object.
+/// Keys are compared after decoding escapes. The error contains the decoded
+/// key and the position of the opening quote of its second occurrence.
+///
+/// ```mbt check
+/// test {
+///   let value = @json.parse("{\"key\":1}", reject_duplicate_keys=true)
+///   inspect(value.stringify(), content="{\"key\":1}")
+/// }
+/// ```
+///
 /// ## What strings may contain
 ///
 /// Every string in the result is well-formed Unicode: each `\uXXXX` escape
@@ -63,8 +75,9 @@ pub fn valid(input : StringView) -> Bool {
 pub fn parse(
   input : StringView,
   max_nesting_depth~ : Int32 = 1024,
+  reject_duplicate_keys~ : Bool = false,
 ) -> Json raise ParseError {
-  let ctx = ParseContext::make(input)
+  let ctx = ParseContext::make(input, reject_duplicate_keys~)
   let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
@@ -113,8 +126,11 @@ fn ParseContext::parse_object(
   let map = Map([])
   for x = ctx.lex_property_name() {
     match x {
-      RBrace => break Json::object(map)
-      String(name) => {
+      (RBrace, _) => break Json::object(map)
+      (String(name), offset) => {
+        if ctx.reject_duplicate_keys && map.contains(name) {
+          raise DuplicateKey(offset_to_position(ctx.input, offset), name)
+        }
         ctx.lex_after_property_name()
         map[name] = ctx.parse_value(
           remaining_available_depth=child_remaining_available_depth,

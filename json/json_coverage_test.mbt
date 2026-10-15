@@ -33,6 +33,7 @@ fn parse_raises(s : String, max_nesting_depth~ : Int32 = 1024) -> Bool {
     | InvalidEof
     | InvalidNumber(_, _)
     | InvalidIdentEscape(_)
+    | DuplicateKey(_, _)
     | DepthLimitExceeded => true
   }
 }

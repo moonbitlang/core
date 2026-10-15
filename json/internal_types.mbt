@@ -17,11 +17,15 @@ priv struct ParseContext {
   mut offset : Int32
   input : StringView
   end_offset : Int32
+  reject_duplicate_keys : Bool
 }
 
 ///|
-fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length(), }
+fn ParseContext::make(
+  input : StringView,
+  reject_duplicate_keys~ : Bool = false,
+) -> ParseContext {
+  { offset: 0, input, end_offset: input.length(), reject_duplicate_keys, }
 }
 
 ///|

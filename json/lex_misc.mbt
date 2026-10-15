@@ -214,13 +214,14 @@ fn ParseContext::lex_after_object_value(
 /// otherwise raise an error.
 fn ParseContext::lex_property_name(
   ctx : ParseContext,
-) -> Token raise ParseError {
+) -> (Token, Int32) raise ParseError {
   ctx.lex_skip_whitespace()
+  let offset = ctx.offset
   match ctx.read_char() {
-    Some('}') => RBrace
+    Some('}') => (RBrace, offset)
     Some('"') => {
       let s = ctx.lex_string()
-      String(s)
+      (String(s), offset)
     }
     Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
@@ -233,12 +234,13 @@ fn ParseContext::lex_property_name(
 /// since it is in comma context, `}` is not allowed.
 fn ParseContext::lex_property_name2(
   ctx : ParseContext,
-) -> Token raise ParseError {
+) -> (Token, Int32) raise ParseError {
   ctx.lex_skip_whitespace()
+  let offset = ctx.offset
   match ctx.read_char() {
     Some('"') => {
       let s = ctx.lex_string()
-      String(s)
+      (String(s), offset)
     }
     Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
