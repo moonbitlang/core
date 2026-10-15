@@ -71,7 +71,6 @@ pub fn valid(input : StringView) -> Bool {
 /// here. Rust's serde_json rejects it too when parsing into `String` or
 /// `Value`, though its byte-oriented mode admits WTF-8; Go's `encoding/json`
 /// substitutes U+FFFD, while its experimental v2 parser is stricter.
-#label_migration(max_nesting_depth, fill=false)
 pub fn parse(
   input : StringView,
   max_nesting_depth~ : Int32 = 1024,

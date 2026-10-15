@@ -21,9 +21,8 @@
 /// `ParseError` variants rather than a catch-all, so an unexpected error type
 /// would fail to compile instead of being silently swallowed.
 ///
-/// `max_nesting_depth` is (deprecated) plumbing used only to exercise the
+/// `max_nesting_depth` is used only to exercise the
 /// depth-limit guard cheaply; see the depth-limit test for why.
-#warnings("-deprecated")
 fn parse_raises(s : String, max_nesting_depth~ : Int32 = 1024) -> Bool {
   try {
     @json.parse(s, max_nesting_depth~) |> ignore

@@ -347,9 +347,8 @@ test "parse stays total on mutated JSON text" {
 }
 
 ///|
-/// `max_nesting_depth` is (deprecated) plumbing used only to exercise the
+/// `max_nesting_depth` is used only to exercise the
 /// depth-limit guard cheaply at randomized boundaries.
-#warnings("-deprecated")
 fn parse_outcome_with_limit(text : String, limit : Int32) -> String {
   try {
     ignore(@json.parse(text, max_nesting_depth=limit))
