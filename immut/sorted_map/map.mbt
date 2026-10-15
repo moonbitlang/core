@@ -127,10 +127,11 @@ pub fn[K, V] SortedMap::filter(
 ) -> SortedMap[K, V] raise? {
   match self {
     Empty => Empty
-    Tree(k, value=v, l, r, ..) =>
-      if pred(k, v) {
-        let kept_l = l.filter(pred)
-        let kept_r = r.filter(pred)
+    Tree(k, value=v, l, r, ..) => {
+      let keep = pred(k, v)
+      let kept_l = l.filter(pred)
+      let kept_r = r.filter(pred)
+      if keep {
         // Filtering only removes entries, so an unchanged size means every
         // key and value in this subtree was retained.
         if kept_l.length() + kept_r.length() + 1 == self.length() {
@@ -139,14 +140,13 @@ pub fn[K, V] SortedMap::filter(
           join(kept_l, k, v, kept_r)
         }
       } else {
-        let kept_l = l.filter(pred)
-        let kept_r = r.filter(pred)
         match (kept_l, kept_r) {
           (Empty, right) => right
           (left, Empty) => left
           (left, right) => concat(left, right)
         }
       }
+    }
   }
 }
 
