@@ -66,7 +66,7 @@ test "bench Bytes::makei from ArrayView n=262144 sliced" (it : @bench.T) {
 // Fresh inputs are created inside the timed closure and consumed at their last
 // use. These measure allocation/fill plus conversion; shared inputs below keep
 // the copying fallback in the measurement.
-fn bench_bytes_from_array_ownership(it : @bench.T, size : Int) -> Unit {
+fn bench_bytes_from_array_ownership(it : @bench.T, size : Int32) -> Unit {
   it.bench(name="fresh FixedArray", () => {
     let arr = FixedArray::make(size, b'a')
     it.keep(Bytes::from_array(arr))
