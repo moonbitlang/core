@@ -385,34 +385,40 @@ fn Regex::build(
   for i in 0..<threads {
     let tags = kernel.row(offset)
     offset += 1 + tags.length()
-    stack.push((kernel.node(i), tags))
-    while stack.pop() is Some((node, tags)) {
-      guard visited[node] != epoch else { continue }
-      visited[node] = epoch
-      match nodes[node] {
-        Tag(tag, next) => stack.push((next, set_current(tags, tag)))
-        After(bit, next) =>
-          if (ctx & (1 << bit)) != 0 {
-            stack.push((next, tags))
+    // Follow the first path directly; only alternatives need stack entries.
+    for node = kernel.node(i), tags = tags {
+      if visited[node] != epoch {
+        visited[node] = epoch
+        match nodes[node] {
+          Tag(tag, next) => continue next, set_current(tags, tag)
+          After(bit, next) => if (ctx & (1 << bit)) != 0 { continue next, tags }
+          Before(expected, next) =>
+            if cat.intersects(expected) {
+              continue next, tags
+            }
+          Union(alts) => {
+            for j = alts.length() - 1; j > 0; j = j - 1 {
+              stack.push((alts[j], tags))
+            }
+            if alts.length() > 0 {
+              continue alts[0], tags
+            }
           }
-        Before(expected, next) =>
-          if cat.intersects(expected) {
-            stack.push((next, tags))
+          Char(set, next) =>
+            if !at_end && targeted[next] != epoch && set.contains(column) {
+              targeted[next] = epoch
+              out_nodes.push(next)
+              out_tags.push(tags)
+            }
+          Accept => {
+            accept = Some(tags)
+            break
           }
-        Union(alts) =>
-          for j = alts.length() - 1; j >= 0; j = j - 1 {
-            stack.push((alts[j], tags))
-          }
-        Char(set, next) =>
-          if !at_end && targeted[next] != epoch && set.contains(column) {
-            targeted[next] = epoch
-            out_nodes.push(next)
-            out_tags.push(tags)
-          }
-        Accept => {
-          accept = Some(tags)
-          break
         }
+      }
+      match stack.pop() {
+        Some((next, tags)) => continue next, tags
+        None => break
       }
     }
     if accept is Some(_) {
