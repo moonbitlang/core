@@ -28,6 +28,8 @@ pub(all) suberror ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
+  /// A repeated decoded object key, positioned at its second opening quote.
+  DuplicateKey(Position, String)
   DepthLimitExceeded
 } derive(Eq, ToJson, @debug.Debug)
 
@@ -38,6 +40,9 @@ pub impl Show for ParseError with fn output(self, logger) {
       logger <+
         $|Invalid character \{c.escape()} at line \{line}, column \{column}
     InvalidEof => logger <+ "Unexpected end of file"
+    DuplicateKey({ line, column, }, key) =>
+      logger <+
+        $|Duplicate key \{key.escape()} at line \{line}, column \{column}
     InvalidNumber({ line, column, }, s) =>
       logger <+
         $|Invalid number \{s} at line \{line}, column \{column}

@@ -13,7 +13,7 @@ pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeErro
 pub fn json_inspect(&@builtin.ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
 #label_migration(max_nesting_depth, fill=false)
-pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
+pub fn parse(StringView, max_nesting_depth? : Int, reject_duplicate_keys? : Bool) -> Json raise ParseError
 
 pub fn[T : @builtin.ToJson] to_json(T) -> Json
 
@@ -31,6 +31,7 @@ pub(all) suberror ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
+  DuplicateKey(Position, String)
   DepthLimitExceeded
 } derive(Eq, @builtin.ToJson, @debug.Debug)
 pub fn ParseError::equal(Self, Self) -> Bool
