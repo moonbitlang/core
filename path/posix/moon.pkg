@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+warnings = "-6-3-1-9-15"
