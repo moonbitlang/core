@@ -18,14 +18,22 @@ priv struct ParseContext {
   input : StringView
   end_offset : Int32
   reject_duplicate_keys : Bool
+  preserve_number_repr : Bool
 }
 
 ///|
 fn ParseContext::make(
   input : StringView,
   reject_duplicate_keys~ : Bool = false,
+  preserve_number_repr~ : Bool = false,
 ) -> ParseContext {
-  { offset: 0, input, end_offset: input.length(), reject_duplicate_keys, }
+  {
+    offset: 0,
+    input,
+    end_offset: input.length(),
+    reject_duplicate_keys,
+    preserve_number_repr,
+  }
 }
 
 ///|

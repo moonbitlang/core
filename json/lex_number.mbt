@@ -208,8 +208,9 @@ fn ParseContext::scan_json_number(
 // stack-allocated on the native target, so returning it does not heap-allocate
 // the way the previous `(Double, StringView?)` tuple did (one box per parsed
 // number).
-// `repr` is `Some` only for the rare out-of-range values that fall back to a
-// string-preserving representation; it is `None` in the common case.
+// By default, `repr` is `Some` only for the rare out-of-range values that fall
+// back to a string-preserving representation. With `preserve_number_repr`,
+// `lex_number_end` retains the text of every number.
 // Field order matters: the reference field (`repr`) must precede the `Double`
 // (`value`). With `value` first, the Wasm backend currently mis-compiles the
 // destructuring in `lex_value` (`i32.wrap_i64 expected i64, found f64`), so keep
@@ -378,6 +379,25 @@ fn ParseContext::lex_zero(
 
 ///|
 fn ParseContext::lex_number_end(
+  ctx : ParseContext,
+  start : Int32,
+  end : Int32,
+) -> LexedNumber {
+  let number = ctx.lex_number_value(start, end)
+  if ctx.preserve_number_repr {
+    // Use raw slicing like the fallback below: malformed input can end inside
+    // a surrogate pair and must report a parse error rather than abort.
+    {
+      value: number.value,
+      repr: Some(ctx.input.view(start_offset=start, end_offset=end)),
+    }
+  } else {
+    number
+  }
+}
+
+///|
+fn ParseContext::lex_number_value(
   ctx : ParseContext,
   start : Int32,
   end : Int32,
