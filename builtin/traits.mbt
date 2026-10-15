@@ -31,6 +31,14 @@ impl Eq with fn not_equal(x, y) {
 /// - zero, if the two arguments are equal
 /// - negative, if the first argument is smaller
 /// - positive, if the first argument is greater
+///
+/// `compare` must define a total ordering of comparison-equivalence classes.
+/// Comparison equality may differ from `Eq`: for `Double` and `Float`, all NaNs
+/// compare equal and precede non-NaNs, and signed zeros compare equal, while
+/// equality and relational operators retain IEEE 754 semantics. This distinction
+/// also applies to composite types whose comparison delegates to these types.
+/// Generic sorting and ordered collections must use `compare`, rather than
+/// equality or relational operators, to determine ordering and equivalent keys.
 pub(open) trait Compare: Eq {
   fn compare(Self, Self) -> Int32
   fn op_lt(Self, Self) -> Bool = _

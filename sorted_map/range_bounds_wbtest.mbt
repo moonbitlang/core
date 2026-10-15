@@ -103,8 +103,8 @@ fn double_keys(it : Iter2[Double, Int32]) -> Array[String] {
 ///|
 test "range bounds follow Compare ordering for NaN keys" {
   // Double's relational operators are false for NaN, while `compare` (which
-  // `range`, `get` and the nearest-key queries use) treats NaN as equal to
-  // every value. Bounded ranges must follow `compare`, like `range` does.
+  // `range`, `get` and the nearest-key queries use) orders NaN before numbers.
+  // Bounded ranges must follow `compare`, like `range` does.
   let nan = 0.0 / 0.0
   let map : SortedMap[Double, Int32] = new_sorted_map()
   map.set(1.0, 1)

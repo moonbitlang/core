@@ -591,8 +591,26 @@ test "a sub-precision step terminates instead of spinning" {
 ///|
 test "a NaN endpoint yields nothing rather than looping" {
   let nan = Double(0.0) / 0.0
-  // `Compare` on Double reports 0 against NaN, so the range check fails
-  // immediately; the inclusive check uses `==`, which NaN also fails.
+  for inclusive in [false, true] {
+    for step in [-1.0, 1.0] {
+      for (from, to) in [(nan, 10.0), (0.0, nan), (nan, nan)] {
+        assert_eq(@range.iter(from~, to~, step~, inclusive~).take(3).count(), 0)
+        assert_eq(
+          @range.iter(
+            from=Float::from_double(from),
+            to=Float::from_double(to),
+            step=Float::from_double(step),
+            inclusive~,
+          )
+          .take(3)
+          .count(),
+          0,
+        )
+      }
+    }
+  }
+  // Numeric comparisons reject NaN endpoints even though `compare` places
+  // NaNs before numbers. The inclusive check uses `==`, which NaN also fails.
   inspect(
     @range.iter(from=0.0, to=nan).to_array().length(),
     content=(

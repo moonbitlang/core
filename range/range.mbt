@@ -81,20 +81,23 @@ fn[T : Step] direction_of(step : T) -> Direction {
 
 ///|
 /// Whether `i` is strictly on the near side of `to`.
+/// Ranges use numeric comparisons, not the NaN-first collection ordering:
+/// a NaN endpoint must never admit an element.
 fn[T : Compare] in_range(dir : Direction, i : T, to : T) -> Bool {
   match dir {
-    Forward => Compare::compare(i, to) < 0
-    Backward => Compare::compare(i, to) > 0
+    Forward => i < to
+    Backward => i > to
     Still => false
   }
 }
 
 ///|
 /// Whether `next` lies strictly beyond `i` in the step's direction.
+/// An arithmetic result of NaN is not progress in either direction.
 fn[T : Compare] progresses(dir : Direction, i : T, next : T) -> Bool {
   match dir {
-    Forward => Compare::compare(next, i) > 0
-    Backward => Compare::compare(next, i) < 0
+    Forward => next > i
+    Backward => next < i
     Still => false
   }
 }
@@ -367,9 +370,9 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 /// yields three elements). The elements are therefore always strictly
 /// monotonic.
 ///
-/// The inclusive end check uses `==` (so a `NaN` `to` never matches),
-/// which keeps the iterator from looping when the comparison ordering
-/// is unordered.
+/// Bounds and progress use numeric relational operators, and the inclusive
+/// end check uses `==`. A NaN endpoint therefore yields an empty iterator,
+/// and a NaN arithmetic result terminates iteration.
 ///
 /// The function is named `iter` rather than `range` so that a future
 /// first-class `Range[T]` struct can take the `Range`/`range` names

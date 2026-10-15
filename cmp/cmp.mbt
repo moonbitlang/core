@@ -63,7 +63,7 @@ pub impl[T : Compare] Compare for Reverse[T] with fn compare(a, b) {
 /// }
 /// ```
 pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
-  if f(x) > f(y) {
+  if f(x).compare(f(y)) > 0 {
     x
   } else {
     y
@@ -85,7 +85,7 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// }
 /// ```
 pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
-  if f(x) > f(y) {
+  if f(x).compare(f(y)) > 0 {
     y
   } else {
     x
@@ -110,7 +110,7 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// }
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
-  if x > y {
+  if x.compare(y) > 0 {
     x
   } else {
     y
@@ -135,7 +135,7 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 /// }
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
-  if x > y {
+  if x.compare(y) > 0 {
     y
   } else {
     x
@@ -163,7 +163,7 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 /// }
 /// ```
 pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
-  if x > y {
+  if x.compare(y) > 0 {
     (y, x)
   } else {
     (x, y)
@@ -194,7 +194,7 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 /// }
 /// ```
 pub fn[T, K : Compare] minmax_by_key(x : T, y : T, f : (T) -> K) -> (T, T) {
-  if f(x) > f(y) {
+  if f(x).compare(f(y)) > 0 {
     (y, x)
   } else {
     (x, y)

@@ -1032,7 +1032,7 @@ pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
   while self.next() is Some(x) {
-    if x > res {
+    if x.compare(res) > 0 {
       res = x
     }
   }
@@ -1045,7 +1045,7 @@ pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
   while self.next() is Some(x) {
-    if x < res {
+    if x.compare(res) < 0 {
       res = x
     }
   }
