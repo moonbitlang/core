@@ -31,3 +31,10 @@ fn[T] ArrayView::copy_or_reuse_buffer(
   }
   UninitializedArray::unsafe_make_and_blit(buf, len, start, 0, len)
 }
+
+///|
+// Only valid when every slot is initialized, as guaranteed by the helper above.
+#cfg(any(target="native", target="wasm"))
+fn[T] UninitializedArray::unsafe_to_fixed_array(
+  self : UninitializedArray[T],
+) -> FixedArray[T] = "%identity"
