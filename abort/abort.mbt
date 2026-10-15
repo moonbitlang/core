@@ -23,7 +23,7 @@
 ///
 /// Returns a value of type `T`. However, this function never actually returns a
 /// value as it always causes a panic.
-#cfg(not(target="native"))
+#cfg(not(any(target="native", target="js")))
 pub fn[T] abort(msg : String) -> T {
   let _ = msg
   panic_impl()
@@ -49,6 +49,30 @@ pub fn[T] abort(msg : String) -> T {
   println(msg)
   panic_impl()
 }
+
+///|
+/// Aborts the program with an error message. Always causes a panic, regardless
+/// of the message provided.
+///
+/// Parameters:
+///
+/// * `message` : A string containing the error message to be displayed when
+/// aborting.
+///
+/// Returns a value of type `T`. However, this function never actually returns a
+/// value as it always causes a panic.
+#cfg(target="js")
+pub fn[T] abort(msg : String) -> T {
+  panic_with_msg(msg)
+  // This line is unreachable, but it still needs to exist to satisfy the
+  // return type and force the compiler to generate $PanicError.
+  panic_impl()
+}
+
+///|
+#cfg(target="js")
+extern "js" fn panic_with_msg(msg : String) -> Unit =
+  #|(msg) => { throw new $PanicError(msg); }
 
 ///|
 fn[T] panic_impl() -> T = "%panic"
