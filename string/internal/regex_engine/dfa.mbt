@@ -92,41 +92,43 @@ fn Regex::cost(self : Regex, key : FixedArray[Int32]) -> Int32 {
 }
 
 ///|
-/// Add a state that is known not to be cached yet and return its index.
-fn Regex::insert(
+/// Return the cached state for `key`, adding it when absent. The lookup and
+/// insertion share one hash of the potentially large key.
+fn Regex::intern(
   self : Regex,
   key : FixedArray[Int32],
   threads : Int32,
 ) -> Int32 {
-  let width = self.width()
-  let state = self.kernels.length()
-  let needed = (state + 1) * width
-  if needed > self.trans.length() {
-    let capacity = Int32::max(needed, self.trans.length() * 2)
-    self.trans = FixedArray::make_and_blit(
-      self.trans,
-      allocate_len=capacity,
-      init=UNKNOWN,
-      len=self.trans.length(),
-    )
-    self.slots = FixedArray::make_and_blit(
-      self.slots,
-      allocate_len=capacity,
-      init=0,
-      len=self.slots.length(),
-    )
-  }
-  self.kernels.push({ key, threads, })
-  self.state_ids.set(key, state)
-  self.cache_words += self.cost(key)
-  if self.shapes is Some(shapes) {
-    add_shape(
-      shapes,
-      shape_hash(key, threads, Ranks::new(self.regs.length())),
-      state,
-    )
-  }
-  state
+  self.state_ids.get_or_init(key, () => {
+    let width = self.width()
+    let state = self.kernels.length()
+    let needed = (state + 1) * width
+    if needed > self.trans.length() {
+      let capacity = Int32::max(needed, self.trans.length() * 2)
+      self.trans = FixedArray::make_and_blit(
+        self.trans,
+        allocate_len=capacity,
+        init=UNKNOWN,
+        len=self.trans.length(),
+      )
+      self.slots = FixedArray::make_and_blit(
+        self.slots,
+        allocate_len=capacity,
+        init=0,
+        len=self.slots.length(),
+      )
+    }
+    self.kernels.push({ key, threads, })
+    self.cache_words += self.cost(key)
+    if self.shapes is Some(shapes) {
+      add_shape(
+        shapes,
+        shape_hash(key, threads, Ranks::new(self.regs.length())),
+        state,
+      )
+    }
+    state
+  })
 }
 
 ///|
@@ -290,10 +292,7 @@ fn Regex::start_base(self : Regex, ctx : Int32) -> Int32 {
   }
   // One thread at the entry node that has set no tag yet.
   let key : FixedArray[Int32] = [ctx, 0, self.entry, 0]
-  let state = match self.state_ids.get(key) {
-    Some(state) => state
-    None => self.insert(key, 1)
-  }
+  let state = self.intern(key, 1)
   let base = state * self.width()
   self.start_bases[ctx] = base
   base
@@ -472,6 +471,14 @@ fn Regex::build(
       state * width
     }
   }
+  // When a new state would fit, lookup and insertion can share one hash.
+  // Otherwise an exact cached state must still be checked before reuse/flush.
+  if self.cache_words + self.cost(key) <= self.max_cache_words {
+    let entry = encode(self.intern(key, count))
+    self.trans[base + column] = entry
+    self.slots[base + column] = slot
+    return entry
+  }
   match self.state_ids.get(key) {
     Some(state) => {
       let entry = encode(state)
@@ -480,12 +487,7 @@ fn Regex::build(
       entry
     }
     None =>
-      if self.cache_words + self.cost(key) <= self.max_cache_words {
-        let entry = encode(self.insert(key, count))
-        self.trans[base + column] = entry
-        self.slots[base + column] = slot
-        entry
-      } else if self.reuse(key, count) is Some((state, pairs)) {
+      if self.reuse(key, count) is Some((state, pairs)) {
         let entry = encode(state)
         // The move reads the register this transition writes, so that is
         // written first. The caller writes `built_slot` once more; send that
@@ -505,7 +507,7 @@ fn Regex::build(
         // The source row disappears with the cache, so the transition is
         // returned without being recorded.
         self.flush()
-        encode(self.insert(key, count))
+        encode(self.intern(key, count))
       }
   }
 }
