@@ -51,6 +51,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int32) -> T {
 ///   inspect(immut_array[0], content="1")
 /// }
 /// ```
+#owned(array)
 pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
   unsafe_reinterpret_from_fixed_array(FixedArray::from_array(array))
 }

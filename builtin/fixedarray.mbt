@@ -625,7 +625,9 @@ test "fixedarray_new_with_index" {
 /// * `array` : A dynamic array containing elements of type `T` that will be
 /// converted to a fixed array.
 ///
-/// Returns a new fixed array containing the same elements as the input array.
+/// Returns an independent fixed array containing the same elements as the input.
+/// On native and linear-memory Wasm, exclusively owned storage can be reused
+/// when the view covers the entire backing buffer.
 ///
 /// Example:
 ///
@@ -641,6 +643,40 @@ test "fixedarray_new_with_index" {
 ///   )
 /// }
 /// ```
+#cfg(any(target="native", target="wasm"))
+#owned(array)
+pub fn[T] FixedArray::from_array(array : ArrayView[T]) -> FixedArray[T] {
+  array.copy_or_reuse_buffer().unsafe_to_fixed_array()
+}
+
+///|
+/// Creates a new fixed-size array from a dynamic array. The resulting fixed
+/// array will have the same length and elements as the input array.
+///
+/// Parameters:
+///
+/// * `array` : A dynamic array containing elements of type `T` that will be
+/// converted to a fixed array.
+///
+/// Returns an independent fixed array containing the same elements as the input.
+/// On native and linear-memory Wasm, exclusively owned storage can be reused
+/// when the view covers the entire backing buffer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let dynamic_array : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
+///   let fixed_array = FixedArray::from_array(dynamic_array)
+///   debug_inspect(
+///     fixed_array,
+///     content=(
+///       #|<FixedArray: [1, 2, 3, 4, 5]>
+///     ),
+///   )
+/// }
+/// ```
+#cfg(not(any(target="native", target="wasm")))
 pub fn[T] FixedArray::from_array(array : ArrayView[T]) -> FixedArray[T] {
   FixedArray::makei(array.length(), i => array.unsafe_get(i))
 }
