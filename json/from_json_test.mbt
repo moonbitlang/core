@@ -1065,6 +1065,48 @@ test "float roundtrip" {
 }
 
 ///|
+test "Float special values survive JSON encoding and parsing" {
+  let values : ReadOnlyArray[Float] = [0.0 / 0.0, 1.0 / 0.0, -1.0 / 0.0]
+  inspect(
+    values.map(value => Json(value).stringify()).join(" "),
+    content="\"NaN\" \"Infinity\" \"-Infinity\"",
+  )
+  for value in values {
+    let encoded = Json(value)
+    let direct : Float = @json.from_json(encoded)
+    let parsed : Float = @json.from_json(@json.parse(encoded.stringify()))
+    if value.is_nan() {
+      assert_true(direct.is_nan())
+      assert_true(parsed.is_nan())
+    } else {
+      assert_eq(direct, value)
+      assert_eq(parsed, value)
+    }
+  }
+}
+
+///|
+test "Float JSON encoding preserves finite widened values" {
+  let bits : ReadOnlyArray[UInt32] = [
+    0U, 0x80000000U, 0x3DCCCCCDU, 1U, 0x7F7FFFFFU, 0xFF7FFFFFU,
+  ]
+  for bits in bits {
+    let value = Float::reinterpret_from_uint(bits)
+    let encoded = Json(value)
+    match encoded {
+      Number(number, repr=None) =>
+        assert_eq(
+          number.reinterpret_as_uint64(),
+          value.to_double().reinterpret_as_uint64(),
+        )
+      _ => fail("expected a JSON number without a custom representation")
+    }
+    let decoded : Float = @json.from_json(encoded)
+    assert_eq(decoded.reinterpret_as_uint(), bits)
+  }
+}
+
+///|
 test "float special values" {
   // Test NaN
   let u = Json("NaN")
