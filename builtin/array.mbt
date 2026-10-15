@@ -18,7 +18,8 @@
 /// Parameters:
 ///
 /// * `arr` : The fixed-size array to convert. The elements of this array will be
-/// copied to the new array.
+/// copied to the new array, or its storage reused if exclusively owned on
+/// native and linear-memory Wasm.
 ///
 /// Returns a new dynamic array containing all elements from the input fixed-size
 /// array.
@@ -32,6 +33,39 @@
 ///   debug_inspect(dynamic, content="[42, 42, 42]")
 /// }
 /// ```
+#cfg(any(target="native", target="wasm"))
+#owned(arr)
+pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
+  let len = arr.length()
+  if unsafe_is_unique_ref(arr) {
+    { buf: arr[:].buf(), len, }
+  } else {
+    Array::unsafe_make_and_blit_from_fixed(arr, allocate_len=len, len~)
+  }
+}
+
+///|
+/// Creates a new dynamic array from a fixed-size array.
+///
+/// Parameters:
+///
+/// * `arr` : The fixed-size array to convert. The elements of this array will be
+/// copied to the new array, or its storage reused if exclusively owned on
+/// native and linear-memory Wasm.
+///
+/// Returns a new dynamic array containing all elements from the input fixed-size
+/// array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let fixed = FixedArray::make(3, 42)
+///   let dynamic = Array::from_fixed_array(fixed)
+///   debug_inspect(dynamic, content="[42, 42, 42]")
+/// }
+/// ```
+#cfg(not(any(target="native", target="wasm")))
 #owned(arr)
 pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
