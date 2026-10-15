@@ -956,6 +956,7 @@ pub fn Float::from_uint(self : UInt32) -> Float = "%u32.to_f32"
 /// Example:
 ///
 /// ```mbt check
+/// #cfg(not(target="js"))
 /// test {
 ///   let n = 42UL
 ///   inspect(Float::from_uint64(n).to_double(), content="42")
@@ -1019,6 +1020,7 @@ test "Float::from_uint64" {
 /// Example:
 ///
 /// ```mbt check
+/// #cfg(not(target="js"))
 /// test {
 ///   let n = 42L
 ///   let f = Float::from_int64(n)
