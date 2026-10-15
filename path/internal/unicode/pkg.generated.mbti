@@ -1,0 +1,13 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/path/internal/unicode"
+
+// Values
+pub fn to_lowercase(Char) -> Char
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
