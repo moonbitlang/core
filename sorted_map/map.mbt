@@ -33,7 +33,7 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 /// Creates a sorted map from an array of key-value pairs.
 /// Takes O(n) for strictly ascending or descending keys, otherwise O(n log n).
 /// A strictly ordered prefix is built in O(k), then the remaining entries are
-/// inserted normally. Non-reflexive keys, such as NaN, use full insertion.
+/// inserted normally. Keys are ordered and matched using `Compare::compare`.
 ///
 /// # Example
 /// ```mbt check
@@ -56,15 +56,6 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
     size: prefix_len,
   }
   for (key, value) in entries[prefix_len:] {
-    // Unordered keys such as NaN make lookups depend on tree shape. Rebuild
-    // by insertion to preserve that behavior, even after inserting a suffix.
-    if key != key {
-      let fallback = new_sorted_map()
-      for (key, value) in entries {
-        fallback.set(key, value)
-      }
-      return fallback
-    }
     map.set(key, value)
   }
   map
@@ -87,17 +78,22 @@ fn[K : Compare, V] sorted_map_ordered_prefix(
   if len < 2 {
     return { length: len, ascending: true, }
   }
-  let ascending = entries[0].0 < entries[1].0
-  if !ascending && !(entries[1].0 < entries[0].0) {
+  let first_cmp = entries[0].0.compare(entries[1].0)
+  let ascending = first_cmp < 0
+  if first_cmp == 0 {
     return { length: 1, ascending: true, }
   }
   for i in 2..<len {
     let previous = entries[i - 1].0
     let current = entries[i].0
     if ascending {
-      guard previous < current else { return { length: i, ascending, } }
+      guard previous.compare(current) < 0 else {
+        return { length: i, ascending, }
+      }
     } else {
-      guard current < previous else { return { length: i, ascending, } }
+      guard current.compare(previous) < 0 else {
+        return { length: i, ascending, }
+      }
     }
   }
   { length: len, ascending, }
@@ -729,12 +725,12 @@ fn[K : Compare, V] add_node(
   match root {
     None => (Some(new_node(key, value)), true)
     Some(n) =>
-      if key == n.key {
+      if key.compare(n.key) == 0 {
         n.value = value
         (Some(n), false)
       } else {
         let (l, r) = (n.left, n.right)
-        if key < n.key {
+        if key.compare(n.key) < 0 {
           let (nl, inserted) = add_node(l, key, value)
           n.left = nl
           (Some(balance(n)), inserted)
@@ -757,12 +753,12 @@ fn[K : Compare, V] update_or_default_node(
   match root {
     None => (Some(new_node(key, default)), true)
     Some(n) =>
-      if key == n.key {
+      if key.compare(n.key) == 0 {
         n.value = f(n.value)
         (Some(n), false)
       } else {
         let (l, r) = (n.left, n.right)
-        if key < n.key {
+        if key.compare(n.key) < 0 {
           let (nl, inserted) = update_or_default_node(l, key, default, f)
           n.left = nl
           (Some(balance(n)), inserted)
@@ -780,7 +776,7 @@ fn[K : Compare, V] delete_node(
   root : Node[K, V],
   key : K,
 ) -> (Node[K, V]?, Bool) {
-  if key == root.key {
+  if key.compare(root.key) == 0 {
     let (l, r) = (root.left, root.right)
     let n = match (l, r) {
       (Some(_), Some(nr)) => {
@@ -791,7 +787,7 @@ fn[K : Compare, V] delete_node(
       (Some(_), None) | (None, None) => l
     }
     (n, true)
-  } else if key < root.key {
+  } else if key.compare(root.key) < 0 {
     match root.left {
       None => (Some(root), false)
       Some(l) => {

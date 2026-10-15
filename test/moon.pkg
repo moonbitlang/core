@@ -2,3 +2,16 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
+
+import {
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/double",
+  "moonbitlang/core/float",
+  "moonbitlang/core/list",
+  "moonbitlang/core/sorted_map",
+  "moonbitlang/core/sorted_set",
+  "moonbitlang/core/priority_queue",
+  "moonbitlang/core/immut/sorted_map" @imap,
+  "moonbitlang/core/immut/sorted_set" @iset,
+  "moonbitlang/core/immut/priority_queue" @ipq,
+} for "test"

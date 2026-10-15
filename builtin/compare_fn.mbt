@@ -19,6 +19,8 @@
 /// This is the free-function form of the `Compare::compare` trait method,
 /// symmetric with `hash`. Being a plain function, it can also be passed as a
 /// function value, e.g. `array.sort_by(compare)`.
+/// For floating-point values, all NaNs compare equal and precede non-NaNs,
+/// and signed zeros compare equal. Comparison equality can differ from `==`.
 ///
 /// ```mbt check
 /// test {

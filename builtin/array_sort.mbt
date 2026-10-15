@@ -127,7 +127,7 @@ pub fn[T, K : Compare] MutArrayView::sort_by_key(
 /// ```
 pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
   for i in 1..<self.length() {
-    if self[i - 1] > self[i] {
+    if self[i - 1].compare(self[i]) > 0 {
       break false
     }
   } nobreak {

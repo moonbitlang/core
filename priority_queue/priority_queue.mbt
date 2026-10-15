@@ -159,7 +159,7 @@ pub fn[K : Compare] PriorityQueue::from_iter(
 ///|
 #owned(x, y)
 fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
-  if x.content > y.content {
+  if x.content.compare(y.content) > 0 {
     y.sibling = x.child
     x.child = Some(y)
     x

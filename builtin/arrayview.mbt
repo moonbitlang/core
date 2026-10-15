@@ -1356,6 +1356,7 @@ pub fn[T : Eq] ArrayView::strip_suffix(
 
 ///|
 /// Performs a binary search on a sorted array view.
+/// Ordering and matches use `Compare::compare`, including for NaNs.
 ///
 /// # Example
 /// ```mbt check
@@ -1372,13 +1373,13 @@ pub fn[T : Compare] ArrayView::binary_search(
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    if self.unsafe_get(h) < value {
+    if self.unsafe_get(h).compare(value) < 0 {
       continue h + 1, j
     } else {
       continue i, h
     }
   } nobreak {
-    if i < len && self.unsafe_get(i) == value {
+    if i < len && self.unsafe_get(i).compare(value) == 0 {
       Ok(i)
     } else {
       Err(i)

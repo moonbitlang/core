@@ -1214,8 +1214,10 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
 /// Compares two double-precision floating-point numbers and returns their
-/// relative order. Follows IEEE 754 rules for floating-point comparisons,
-/// including handling of special values like NaN.
+/// relative order. All NaNs compare equal and precede every non-NaN value.
+/// Negative and positive zero compare equal. Unlike `compare`, equality and
+/// relational operators follow IEEE 754 rules, so NaN is unequal to itself
+/// and unordered by `<`, `<=`, `>`, and `>=`.
 ///
 /// Parameters:
 ///
@@ -1228,8 +1230,7 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 /// * A negative value if `self` is less than `other`
 /// * Zero if `self` equals `other`
 /// * A positive value if `self` is greater than `other`
-/// * If either value is NaN, returns an implementation-defined value that is
-/// consistent with total ordering
+/// * NaNs compare equal to each other and less than every non-NaN value
 ///
 /// Example:
 ///
@@ -1242,7 +1243,23 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Double with fn compare(self, other) = "%f64_compare"
+pub impl Compare for Double with fn compare(self, other) {
+  if self < other {
+    -1
+  } else if self > other {
+    1
+  } else if self == other {
+    0
+  } else if self.is_nan() {
+    if other.is_nan() {
+      0
+    } else {
+      -1
+    }
+  } else {
+    1
+  }
+}
 
 ///|
 pub impl Compare for Double with fn op_lt(x, y) = "%f64.lt"

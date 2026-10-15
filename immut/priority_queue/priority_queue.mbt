@@ -98,12 +98,15 @@ fn[A : Compare] sift_down(
     let left = root * 2 + 1
     guard left < len else { break }
     let right = left + 1
-    let child = if right < len && heap.unsafe_get(right) > heap.unsafe_get(left) {
+    let child = if right < len &&
+      heap.unsafe_get(right).compare(heap.unsafe_get(left)) > 0 {
       right
     } else {
       left
     }
-    guard heap.unsafe_get(root) < heap.unsafe_get(child) else { break }
+    guard heap.unsafe_get(root).compare(heap.unsafe_get(child)) < 0 else {
+      break
+    }
     let root_value = heap.unsafe_get(root)
     heap.unsafe_set(root, heap.unsafe_get(child))
     heap.unsafe_set(child, root_value)
@@ -254,15 +257,15 @@ fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
     Branch(_, left=l, right=r) =>
       match (l, r) {
         (Leaf(l_top), Empty) =>
-          if value >= l_top {
+          if value.compare(l_top) >= 0 {
             Branch(value, left=l, right=Empty)
           } else {
             Branch(l_top, left=Leaf(value), right=Empty)
           }
         (Branch(l_top, ..) | Leaf(l_top), Branch(r_top, ..) | Leaf(r_top)) =>
-          if value >= l_top && value >= r_top {
+          if value.compare(l_top) >= 0 && value.compare(r_top) >= 0 {
             Branch(value, left=l, right=r)
-          } else if l_top >= r_top {
+          } else if l_top.compare(r_top) >= 0 {
             Branch(l_top, left=l.change_and_down(value), right=r)
           } else {
             Branch(r_top, left=l, right=r.change_and_down(value))
@@ -329,11 +332,19 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
   match self {
     Empty => Leaf(value)
     Leaf(a) => {
-      let (high, low) = if a > value { (a, value) } else { (value, a) }
+      let (high, low) = if a.compare(value) > 0 {
+        (a, value)
+      } else {
+        (value, a)
+      }
       Branch(high, left=Leaf(low), right=Empty)
     }
     Branch(a, left=l, right=r) => {
-      let (high, low) = if a > value { (a, value) } else { (value, a) }
+      let (high, low) = if a.compare(value) > 0 {
+        (a, value)
+      } else {
+        (value, a)
+      }
       if path.is_left() {
         Branch(high, left=l.push(low, path.next()), right=r)
       } else {

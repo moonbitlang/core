@@ -64,7 +64,9 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
 ///|
 fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr.unsafe_get(j) < arr.unsafe_get(j - 1); j = j - 1 {
+    for j = i
+        j > 0 && arr.unsafe_get(j).compare(arr.unsafe_get(j - 1)) < 0
+        j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -84,7 +86,7 @@ fn[T : Compare] merge(arr : MutArrayView[T], mid : Int32) -> Unit {
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {
-    if arr.unsafe_get(p1) > buf[p2] {
+    if arr.unsafe_get(p1).compare(buf[p2]) > 0 {
       arr.unsafe_set(p, arr.unsafe_get(p1))
       continue p1 - 1, p2, p - 1
     } else {
@@ -114,10 +116,10 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int32, Bool) {
   if len < 2 {
     return (len, false)
   }
-  let assume_reverse = arr.unsafe_get(1) < arr.unsafe_get(0)
+  let assume_reverse = arr.unsafe_get(1).compare(arr.unsafe_get(0)) < 0
   if assume_reverse {
     let end = for idx in 2..<len {
-      if arr.unsafe_get(idx) < arr.unsafe_get(idx - 1) {
+      if arr.unsafe_get(idx).compare(arr.unsafe_get(idx - 1)) < 0 {
         continue
       }
       break idx
@@ -127,7 +129,7 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int32, Bool) {
     (end, true)
   } else {
     let end = for idx in 2..<len {
-      if arr.unsafe_get(idx) >= arr.unsafe_get(idx - 1) {
+      if arr.unsafe_get(idx).compare(arr.unsafe_get(idx - 1)) >= 0 {
         continue
       }
       break idx
@@ -273,8 +275,8 @@ fn[T : Compare] fixed_quick_sort(
     if pred is Some(p) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if p == arr.unsafe_get(pivot) {
-        let i = for i = pivot; i < len && p == arr.unsafe_get(i); {
+      if p.compare(arr.unsafe_get(pivot)) == 0 {
+        let i = for i = pivot; i < len && p.compare(arr.unsafe_get(i)) == 0; {
           continue i + 1
         } nobreak {
           i
@@ -318,7 +320,7 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
     let sorted = for j = i, sorted = true; j > 0 &&
-                    arr.unsafe_get(j - 1) > arr.unsafe_get(j); {
+                    arr.unsafe_get(j - 1).compare(arr.unsafe_get(j)) > 0; {
       arr.swap(j, j - 1)
       continue j - 1, false
     } nobreak {
@@ -345,7 +347,9 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
 /// It always sorts the whole array. The time complexity is O(n^2) in the worst case.
 fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr.unsafe_get(j - 1) > arr.unsafe_get(j); j = j - 1 {
+    for j = i
+        j > 0 && arr.unsafe_get(j - 1).compare(arr.unsafe_get(j)) > 0
+        j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -369,7 +373,7 @@ fn[T : Compare] fixed_partition(
   let (i, partitioned) = for
     j in 0..<(arr.length() - 1)
     i = 0, partitioned = true {
-    if arr.unsafe_get(j) < pivot {
+    if arr.unsafe_get(j).compare(pivot) < 0 {
       if i != j {
         arr.swap(i, j)
         continue i + 1, false
@@ -402,7 +406,7 @@ fn[T : Compare] fixed_choose_pivot(arr : MutArrayView[T]) -> (Int32, Bool) {
     let a = len / 4 * 1
     let c = len / 4 * 3
     let sort_2 = (a : Int32, b : Int32) => {
-      if arr.unsafe_get(a) > arr.unsafe_get(b) {
+      if arr.unsafe_get(a).compare(arr.unsafe_get(b)) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
@@ -444,12 +448,12 @@ fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int32) -> Unit {
   let len = arr.length()
   for index = index, child = index * 2 + 1; child < len; {
     let child = if child + 1 < len &&
-      arr.unsafe_get(child) < arr.unsafe_get(child + 1) {
+      arr.unsafe_get(child).compare(arr.unsafe_get(child + 1)) < 0 {
       child + 1
     } else {
       child
     }
-    if arr.unsafe_get(index) >= arr.unsafe_get(child) {
+    if arr.unsafe_get(index).compare(arr.unsafe_get(child)) >= 0 {
       return
     }
     arr.swap(index, child)

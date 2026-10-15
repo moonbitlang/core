@@ -732,6 +732,9 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 
 ///|
 /// Compares two 32-bit floating-point numbers and returns their relative order.
+/// All NaNs compare equal and precede every non-NaN value. Negative and positive
+/// zero compare equal. Equality and relational operators retain IEEE 754
+/// semantics: NaN is unequal to itself and unordered by `<`, `<=`, `>`, and `>=`.
 ///
 /// Parameters:
 ///
@@ -755,7 +758,23 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Float with fn compare(self, other) = "%f32.compare"
+pub impl Compare for Float with fn compare(self, other) {
+  if self < other {
+    -1
+  } else if self > other {
+    1
+  } else if self == other {
+    0
+  } else if self.is_nan() {
+    if other.is_nan() {
+      0
+    } else {
+      -1
+    }
+  } else {
+    1
+  }
+}
 
 ///|
 pub impl Compare for Float with fn op_lt(x, y) = "%f32.lt"

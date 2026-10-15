@@ -21,7 +21,7 @@ pub let pi = 0x3.243F6A8885A308CA8A54
 /// Return the maximum element/value.
 #deprecated("Use @cmp.maximum instead")
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
-  if x > y {
+  if x.compare(y) > 0 {
     x
   } else {
     y
@@ -32,7 +32,7 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 /// Return the minimum element/value.
 #deprecated("Use @cmp.minimum instead")
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
-  if x > y {
+  if x.compare(y) > 0 {
     y
   } else {
     x

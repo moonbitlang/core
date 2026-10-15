@@ -161,7 +161,7 @@ test "ordered construction honors reversed key comparison" {
 }
 
 ///|
-test "NaN and signed zero preserve insertion fallback behavior" {
+test "NaN and signed zero bulk construction agrees with insertion" {
   let nan = 0.0 / 0.0
   for
     keys in [

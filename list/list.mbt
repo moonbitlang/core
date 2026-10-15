@@ -1090,7 +1090,7 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
     match rest {
       Empty => break Some(curr_max)
       More(item, tail~) =>
-        continue tail, if item > curr_max { item } else { curr_max }
+        continue tail, if item.compare(curr_max) > 0 { item } else { curr_max }
     }
   }
 }
@@ -1142,7 +1142,7 @@ pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
     match rest {
       Empty => break Some(curr_min)
       More(item, tail~) =>
-        continue tail, if item < curr_min { item } else { curr_min }
+        continue tail, if item.compare(curr_min) < 0 { item } else { curr_min }
     }
   }
 }
