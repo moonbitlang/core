@@ -1653,6 +1653,7 @@ pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int32, X] {
 /// Example:
 ///
 /// ```mbt check
+/// #cfg(not(target="js"))
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
@@ -1685,6 +1686,7 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 /// Example:
 ///
 /// ```mbt check
+/// #cfg(target="js")
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()

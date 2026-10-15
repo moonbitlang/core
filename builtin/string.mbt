@@ -51,6 +51,7 @@ fn code_point_of_surrogate_pair(leading : Int32, trailing : Int32) -> Char {
 /// # Examples
 ///
 /// ```mbt check
+/// #cfg(not(any(target="native", target="wasm")))
 /// test {
 ///   let s = "Hello🤣"
 ///   inspect(s.char_length(), content="6") // 6 actual characters
@@ -97,6 +98,7 @@ pub fn String::char_length(
 /// # Examples
 ///
 /// ```mbt check
+/// #cfg(any(target="native", target="wasm"))
 /// test {
 ///   let s = "Hello🤣"
 ///   inspect(s.char_length(), content="6") // 6 actual characters

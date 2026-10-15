@@ -256,6 +256,7 @@ pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 /// Example:
 ///
 /// ```mbt check
+/// #cfg(not(target="js"))
 /// test {
 ///   let big = 100000L
 ///   inspect(Int16::from_int64(big), content="-31072") // 100000 doesn't fit in Int16, gets truncated
