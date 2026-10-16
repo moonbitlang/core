@@ -11,6 +11,10 @@
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
 - Added ordered navigation to `@sorted_map.SortedMap`: `first`, `last`, `pop_first`, `pop_last`, the nearest-key queries `first_ge`, `first_gt`, `last_le` and `last_lt`, and reverse iteration with `rev_iter`, `rev_iter2`, `rev_keys` and `rev_values`.
 
+#### Removed
+
+- **BREAKING**: Removed the deprecated `Logger` implementation for `Buffer` and its promoted text-writing methods (#2692). Use `StringBuilder` for logger APIs or explicit Buffer encoders; `write_string_utf16le` and `write_char_utf16le` preserve the former UTF-16LE encoding.
+
 #### Fixed
 
 - Compiling very long regex literals (for example `Regex::string` of 100k characters) no longer overflows the stack on the JS and Wasm backends (#4266).
