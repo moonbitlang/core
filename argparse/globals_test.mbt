@@ -635,8 +635,8 @@ fn nested_global_levels(
 fn nested_global_table(
   name : String,
   rows : Array[Array[String]],
-  flags? : Array[@argparse.FlagArg] = [],
-  options? : Array[@argparse.OptionArg] = [],
+  flags~ : Array[@argparse.FlagArg] = [],
+  options~ : Array[@argparse.OptionArg] = [],
 ) -> String {
   let one_level = @argparse.Command("root", flags~, options~, subcommands=[
     Command("mid"),
