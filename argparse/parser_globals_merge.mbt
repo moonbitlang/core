@@ -39,20 +39,6 @@ fn prefer_child_source(
 }
 
 ///|
-fn strongest_source(
-  parent_source : ValueSource?,
-  child_source : ValueSource?,
-) -> ValueSource? {
-  if prefer_child_source(parent_source, child_source) {
-    child_source
-  } else if parent_source is Some(_) {
-    parent_source
-  } else {
-    child_source
-  }
-}
-
-///|
 fn merge_global_value_from_child(
   parent : Matches,
   child : Matches,
@@ -126,32 +112,17 @@ fn merge_global_flag_from_child(
     let has_parent = parent.flags.get(name) is Some(_)
     let parent_source = parent.flag_sources.get(name)
     let child_source = child.flag_sources.get(name)
-    let both_argv = parent_source is Some(Argv) && child_source is Some(Argv)
-    if both_argv {
-      let parent_count = parent.counts.get(name).unwrap_or(0)
+    // An argv count inherited from the parent is seeded into the child (see
+    // `seed_child_globals_from_parent`), which keeps counting from it and
+    // resets it on `--no-<flag>`, so the child's count is already the total.
+    let choose_child = !has_parent ||
+      prefer_child_source(parent_source, child_source)
+    if choose_child {
       let child_count = child.counts.get(name).unwrap_or(0)
-      if child_count == 0 && !v {
-        // `--no-<flag>` after a subcommand should reset an earlier argv count.
-        parent.counts[name] = 0
-        parent.flags[name] = false
-      } else {
-        let total = parent_count + child_count
-        parent.counts[name] = total
-        parent.flags[name] = total > 0
-      }
-      if strongest_source(parent_source, child_source) is Some(src) {
+      parent.counts[name] = child_count
+      parent.flags[name] = child_count > 0
+      if child_source is Some(src) {
         parent.flag_sources[name] = src
-      }
-    } else {
-      let choose_child = !has_parent ||
-        prefer_child_source(parent_source, child_source)
-      if choose_child {
-        let child_count = child.counts.get(name).unwrap_or(0)
-        parent.counts[name] = child_count
-        parent.flags[name] = child_count > 0
-        if child_source is Some(src) {
-          parent.flag_sources[name] = src
-        }
       }
     }
   } else {
@@ -196,8 +167,8 @@ fn seed_child_globals_from_parent(
       seed.flags[name] = v
       seed.flag_sources[name] = Argv
       if arg.info is FlagInfo(action=Count, ..) {
-        // Presence marker only: count is rebuilt from child argv tokens.
-        seed.counts[name] = 0
+        // Seed the running count: the child adds its own occurrences to it.
+        seed.counts[name] = parent.counts.get(name).unwrap_or(0)
       }
     }
   }
