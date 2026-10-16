@@ -413,7 +413,14 @@ pub fn[K, V, A] HashMap::fold(
 }
 
 ///|
-/// Maps over the key-value pairs in the map
+/// Maps over the key-value pairs in the map.
+///
+/// For one map, `f` runs in the same order as `each`, `iter`, and `fold`.
+/// That order is not part of the insertion-order contract: it can change
+/// after an insertion and is not promised across implementations. A
+/// collision bucket is visited after its leaf key, from the head of the
+/// bucket. If `f` raises, no later pair in that order is visited. A
+/// non-raising `f` makes this call non-raising too.
 #alias(map_with_key, deprecated)
 pub fn[K, V, A] HashMap::map(
   self : HashMap[K, V],
@@ -421,8 +428,13 @@ pub fn[K, V, A] HashMap::map(
 ) -> HashMap[K, A] raise? {
   fn go(m : Node[K, V]) -> Node[K, A] raise? {
     match m {
-      Leaf(k, v, bucket) =>
-        Leaf(k, f(k, v), bucket.map(kv => (kv.0, f(kv.0, kv.1))))
+      // The leaf key, then the bucket. Writing the key call before
+      // `bucket.map` keeps this identical to `each` and `fold` without
+      // depending on constructor-argument order.
+      Leaf(k, v, bucket) => {
+        let value = f(k, v)
+        Leaf(k, value, bucket.map(kv => (kv.0, f(kv.0, kv.1))))
+      }
       Flat(k, v, path) => Flat(k, f(k, v), path)
       Branch(children) => Branch(children.map(go))
     }
