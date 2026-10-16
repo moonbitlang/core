@@ -43,31 +43,3 @@
 /// }
 /// ```
 pub fn cbrt(x : Double) -> Double = "Math" "cbrt"
-
-///|
-/// Calculates the square root of the sum of the squares of its arguments.
-///
-/// Parameters:
-///
-/// * `x` : The number to be used as the first argument.
-/// * `y` : The number to be used as the second argument.
-///
-/// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(@math.hypot(3.0, 4.0), content="5")
-///   inspect(@math.hypot(5.0, 12.0), content="13")
-///   inspect(@math.hypot(8.0, 15.0), content="17")
-///   inspect(@math.hypot(7.0, 24.0), content="25")
-///   inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
-///   inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
-///   inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.infinity), content="Infinity")
-///   inspect(@math.hypot(@double.neg_infinity, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
-/// }
-/// ```
-pub fn hypot(x : Double, y : Double) -> Double = "Math" "hypot"
