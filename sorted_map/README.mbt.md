@@ -2,6 +2,11 @@
 
 A mutable map backed by an AVL tree that maintains keys in sorted order.
 
+Floating elements and keys used by ordinary comparison-based operations must
+not be NaN, including floating components of derived/composite keys. Signed
+zeros, infinities, and subnormals are supported. This is an input precondition,
+not an automatic NaN check; see the `Eq` and `Compare` trait contracts.
+
 ## Overview
 
 SortedMap is an ordered map implementation that keeps entries sorted by keys. It provides efficient lookup, insertion, and deletion operations, with stable traversal order based on key comparison.

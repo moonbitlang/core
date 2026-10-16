@@ -2,6 +2,27 @@
 
 This package provides the double-precision floating-point constants (infinity, NaN and the value limits) together with the rounding helpers `floor`, `ceil`, `round` and `trunc`. Trigonometric, exponential and logarithmic functions live in `@math`.
 
+## Equality, comparison, and hashing
+
+`==` and `!=` use IEEE equality: `-0.0 == +0.0`, and a NaN is unequal to
+all values, including itself. `<`, `<=`, `>` and `>=` are false whenever either
+operand is NaN. These rules also apply through generic and first-class calls.
+
+Ordinary `compare` agrees with equality and numerical order on non-NaN values,
+including signed zeros, infinities, and subnormals. It is not a total ordering
+for NaNs. Ordinary sorting, sortedness checks, binary search, and collection
+keys require non-NaN values; the restriction also applies to floating components
+of derived/composite keys. Violating this precondition gives no guarantee of
+correct sorting, searching, or key lookup, but does not change the specified
+IEEE results of primitive operators or introduce undefined behavior.
+
+Both signed zeros hash equally. Other encodings, including NaN signs and
+payloads, need no hash normalization. Equality and hashing do not change stored
+bits or arithmetic: reciprocals of the two zeros still have opposite signs.
+
+An explicit, opt-in total comparator is separate from the ordinary traits and
+is deferred. It must not replace ordinary operators or generic comparison paths.
+
 ## Constants and Special Values
 
 The package provides several important constants and special floating-point values:

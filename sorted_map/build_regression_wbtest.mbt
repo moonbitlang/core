@@ -161,18 +161,19 @@ test "ordered construction honors reversed key comparison" {
 }
 
 ///|
-test "NaN and signed zero preserve insertion fallback behavior" {
-  let nan = 0.0 / 0.0
+test "signed zeros and numerical extremes preserve insertion behavior" {
+  let infinity = 1.0 / 0.0
+  let subnormal = 1L.reinterpret_as_double()
   for
     keys in [
-      [nan, 1.0, 2.0],
-      [1.0, nan, 2.0],
-      [2.0, 1.0, nan],
+      [-infinity, 1.0, 2.0],
+      [1.0, subnormal, 2.0],
+      [2.0, 1.0, -subnormal],
       [-0.0, 0.0, 1.0],
-      [0.0, 1.0, 2.0, 3.0, 4.0, nan],
-      [4.0, 3.0, 2.0, 1.0, 0.0, nan],
-      [0.0, 1.0, 2.0, 3.0, 4.0, 2.0, nan, 6.0],
-      [4.0, 3.0, 2.0, 1.0, 0.0, 2.0, nan, 6.0],
+      [0.0, 1.0, 2.0, 3.0, 4.0, infinity],
+      [4.0, 3.0, 2.0, 1.0, 0.0, infinity],
+      [0.0, 1.0, 2.0, 3.0, 4.0, 2.0, infinity, 6.0],
+      [4.0, 3.0, 2.0, 1.0, 0.0, 2.0, infinity, 6.0],
       [-2.0, -1.0, -0.0, 0.0, 1.0],
       [2.0, 1.0, 0.0, -0.0, -1.0],
     ] {
@@ -188,7 +189,7 @@ test "NaN and signed zero preserve insertion fallback behavior" {
       actual.keys().map(key => key.reinterpret_as_int64()).to_array(),
       expected.keys().map(key => key.reinterpret_as_int64()).to_array(),
     )
-    for key in [nan, -0.0, 0.0, 1.0, 2.0] {
+    for key in [infinity, -0.0, 0.0, 1.0, 2.0] {
       @test.assert_eq(actual.get(key), expected.get(key))
     }
   }

@@ -101,16 +101,15 @@ fn double_keys(it : Iter2[Double, Int32]) -> Array[String] {
 }
 
 ///|
-test "range bounds follow Compare ordering for NaN keys" {
-  // Double's relational operators are false for NaN, while `compare` (which
-  // `range`, `get` and the nearest-key queries use) treats NaN as equal to
-  // every value. Bounded ranges must follow `compare`, like `range` does.
-  let nan = 0.0 / 0.0
+test "range bounds agree for signed zeros and finite keys" {
   let map : SortedMap[Double, Int32] = new_sorted_map()
   map.set(1.0, 1)
-  map.set(nan, 2)
+  map.set(-0.0, 2)
   map.set(-1.0, 3)
-  for bounds in [(nan, nan), (-1.0, nan), (nan, 1.0), (-1.0, 1.0)] {
+  map.set(0.0, 4)
+  @test.assert_eq(map.length(), 3)
+  @test.assert_eq(map.get(-0.0), Some(4))
+  for bounds in [(-0.0, 0.0), (-1.0, -0.0), (0.0, 1.0), (-1.0, 1.0)] {
     let (low, high) = bounds
     let expected = double_keys(map.range(low, high))
     @test.assert_eq(
