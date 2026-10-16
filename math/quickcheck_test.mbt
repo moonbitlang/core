@@ -383,8 +383,8 @@ test "quickcheck: expm1 agrees with exp - 1 away from zero" {
 ///|
 test "quickcheck: hypot matches naive sqrt(a^2 + b^2) in the safe range" {
   // With exponents in [-150, 150] the naive formula neither overflows nor
-  // underflows and is itself ~1.5 ulp accurate; hypot is allowed ~2-3 ulps,
-  // so 4e-15 relative (~18 ulps) separates rounding noise from real defects.
+  // underflows and is itself ~1.5 ulp accurate, so this is a consistency
+  // check rather than a precise oracle for hypot's rounding error.
   // hypot must also ignore argument signs exactly.
   @quickcheck.check(
     (p : (Double, Double, Double, Double)) => {

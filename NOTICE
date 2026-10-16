@@ -3,6 +3,8 @@ International Digital Economy Academy (https://www.idea.edu.cn/).
 
 File double/exp.mbt, double/pow_nonjs.mbt is adapted from v8 (https://v8.dev), which is adapted from fdlibm (http://www.netlib.org/fdlibm).
 
+File `math/hypot.mbt` is adapted from fdlibm `e_hypot.c`.
+
 License from fdlibm:
 Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 Developed at SunSoft, a Sun Microsystems, Inc. business.
@@ -91,13 +93,18 @@ File `float/exp.mbt`, `float/log.mbt`, `double/mod_nonjs.mbt` and `double/scalbn
 - `double/scalbn.mbt` is adapted from `src/math/scalbn.c`.
 - `math/hyperbolic.mbt` is adapted from `src/math/sinh.c`, `src/math/cosh.c`,
 `src/math/tanh.c`, `src/math/asinh.c`, `src/math/acosh.c`, and `src/math/atanh.c`.
+- The scaling in `math/hypot.mbt` is adapted from `src/math/hypot.c`.
 
 `float/log.mbt` and `float/exp.mbt` files are Copyright (c) 2017-2018 Arm Limited and licensed under the MIT
 license.
 
+`math/hypot.mbt` includes code Copyright (c) 2005-2020 Rich Felker, et al.,
+licensed under the MIT license.
+
 Here is a copy of MIT license:
 
 Copyright (c) 2017-2018 Arm Limited.
+Copyright (c) 2005-2020 Rich Felker, et al.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the “Software”), to deal in
