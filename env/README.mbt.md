@@ -1,6 +1,6 @@
 # Env Package Documentation
 
-This package provides utilities for interacting with the runtime environment, including access to command line arguments, current time, and working directory information.
+This package provides utilities for interacting with the runtime environment, including access to command line arguments, current time, working directory information, and program termination.
 
 ## Command Line Arguments
 
@@ -27,6 +27,15 @@ test "command line arguments" {
   let result = process_args(arguments)
   inspect(result.length() > 0, content="true")
 }
+```
+
+## Program Exit
+
+Exit the program immediately with a given exit code. Use `0` for success and a
+nonzero code for failure. On JavaScript, this requires Node's `process.exit`.
+
+```mbt nocheck
+@env.exit(0)
 ```
 
 ## Current Time

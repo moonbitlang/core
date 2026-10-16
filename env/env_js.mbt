@@ -13,6 +13,12 @@
 // limitations under the License.
 
 ///|
+extern "js" fn exit_internal(code : Int32) -> Unit =
+  #| function(code) {
+  #|   process.exit(code);
+  #| }
+
+///|
 fn get_cli_args_internal() -> Array[String] {
   Array::from_fixed_array(get_cli_args_ffi())
 }

@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+extern "c" fn exit_internal(code : Int32) -> Unit = "exit"
+
+///|
 extern "C" fn get_cli_args_ffi() -> FixedArray[@os_string.OsString] = "moonbit_rt_get_cli_args"
 
 ///|

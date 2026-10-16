@@ -22,6 +22,12 @@ pub fn args() -> Array[String] {
 }
 
 ///|
+/// Exits the program immediately with the given exit code.
+pub fn exit(code : Int32) -> Unit {
+  exit_internal(code)
+}
+
+///|
 /// Get the current time in milliseconds since the Unix epoch.
 pub fn now() -> UInt64 {
   now_internal()
