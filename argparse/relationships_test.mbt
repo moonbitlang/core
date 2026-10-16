@@ -347,7 +347,7 @@ test "required group with only hidden members reports a plain message" {
 fn parse_outcome(
   cmd : @argparse.Command,
   argv : Array[String],
-  env? : Map[String, String] = Map([]),
+  env~ : Map[String, String] = Map([]),
 ) -> String {
   try cmd.parse(argv~, env~) catch {
     err => err.to_string().split("\n").next().unwrap_or("").to_owned()
