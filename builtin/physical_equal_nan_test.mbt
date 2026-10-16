@@ -30,8 +30,8 @@
 test "physical_equal is not reflexive on Double NaN" {
   let nan = @double.not_a_number
   inspect(physical_equal(nan, nan), content="false")
-  // For reference, the value comparison it agrees with:
-  inspect(nan == nan, content="false")
+  // Value equality follows the language's reflexive NaN policy.
+  inspect(nan == nan, content="true")
 }
 
 ///|
@@ -39,7 +39,7 @@ test "physical_equal is not reflexive on Double NaN" {
 test "physical_equal is not reflexive on Float NaN" {
   let nan = @float.not_a_number
   inspect(physical_equal(nan, nan), content="false")
-  inspect(nan == nan, content="false")
+  inspect(nan == nan, content="true")
 }
 
 ///|

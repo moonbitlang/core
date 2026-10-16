@@ -8,6 +8,7 @@ moonbit-coverage-*.txt
 _coverage
 bisect.coverage
 *.log
+!docs/float-benchmark-data/*.log
 
 .DS_Store
 .ai/

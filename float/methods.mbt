@@ -109,7 +109,15 @@ pub impl Default for Float with fn default() {
 /// }
 /// ```
 pub impl Hash for Float with fn hash_combine(self, hasher) {
-  hasher.combine_uint(if self is 0 { 0U } else { self.reinterpret_as_uint() })
+  hasher.combine_uint(
+    if self.is_nan() {
+      0x7fc00000U
+    } else if self is 0 {
+      0U
+    } else {
+      self.reinterpret_as_uint()
+    },
+  )
 }
 
 ///|
@@ -219,7 +227,7 @@ pub fn Float::is_inf(self : Float) -> Bool {
 /// }
 /// ```
 pub fn Float::is_pos_inf(self : Float) -> Bool {
-  self > max_value
+  self.ieee_gt(max_value)
 }
 
 ///|
@@ -241,7 +249,7 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 /// }
 /// ```
 pub fn Float::is_neg_inf(self : Float) -> Bool {
-  self < min_value
+  self.ieee_lt(min_value)
 }
 
 ///|
@@ -263,7 +271,7 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 /// }
 /// ```
 pub fn Float::is_nan(self : Float) -> Bool {
-  self != self
+  self.ieee_not_equal(self)
 }
 
 ///|
@@ -319,10 +327,10 @@ pub fn Float::max(self : Float, other : Float) -> Float {
 /// }
 /// ```
 pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
-  guard! min <= max
-  if self < min {
+  guard! min.ieee_le(max)
+  if self.ieee_lt(min) {
     min
-  } else if self > max {
+  } else if self.ieee_gt(max) {
     max
   } else {
     self
@@ -361,9 +369,9 @@ pub fn Float::lerp(self : Float, target~ : Float, t~ : Float) -> Float {
 /// - If the float is negative, returns -1.0.
 /// - Otherwise, returns the float itself (0.0, -0.0 and NaN).
 pub fn Float::signum(self : Float) -> Float {
-  if self < 0.0 {
+  if self.ieee_lt(0.0) {
     -1.0
-  } else if self > 0.0 {
+  } else if self.ieee_gt(0.0) {
     1.0
   } else {
     self
@@ -410,7 +418,7 @@ pub fn Float::is_close(
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")
   }
-  if self == other {
+  if self.ieee_equal(other) {
     return true
   }
   if self.is_inf() || other.is_inf() {
@@ -418,10 +426,10 @@ pub fn Float::is_close(
   }
   let diff = (other - self).abs()
   return (
-      diff <= (relative_tolerance * other).abs() ||
-      diff <= (relative_tolerance * self).abs()
+      diff.ieee_le((relative_tolerance * other).abs()) ||
+      diff.ieee_le((relative_tolerance * self).abs())
     ) ||
-    diff <= absolute_tolerance
+    diff.ieee_le(absolute_tolerance)
 }
 
 ///|
@@ -673,9 +681,9 @@ pub impl Mul for Float with fn mul(self, other) = "%f32.mul"
 pub impl Div for Float with fn div(self, other) = "%f32.div"
 
 ///|
-/// Tests two floating-point numbers for equality. Follows IEEE 754 equality
-/// comparison rules, where NaN values are not equal to any value, including
-/// themselves.
+/// Tests two floating-point numbers for equality. All NaNs are equal,
+/// and positive and negative zero are equal. Use `ieee_equal` for
+/// numerical equality where NaN is unordered.
 ///
 /// Parameters:
 ///
@@ -693,15 +701,16 @@ pub impl Div for Float with fn div(self, other) = "%f32.div"
 ///   let y = 3.14
 ///   let z = 0.0 / 0.0 // NaN
 ///   inspect(x == y, content="true")
-///   inspect(z == z, content="false") // NaN is not equal to itself
+///   inspect(z == z, content="true")
 /// }
 /// ```
-pub impl Eq for Float with fn equal(self : Float, other : Float) -> Bool = "%f32.eq"
+pub impl Eq for Float with fn equal(self : Float, other : Float) -> Bool {
+  self.ieee_equal(other) || (self.is_nan() && other.is_nan())
+}
 
 ///|
-/// Tests two floating-point numbers for inequality. Follows IEEE 754 inequality
-/// comparison rules, where NaN values are not equal to any value, including
-/// themselves.
+/// Tests the negation of floating-point equality. All NaNs are equal,
+/// and positive and negative zero are equal.
 ///
 /// Parameters:
 ///
@@ -719,19 +728,25 @@ pub impl Eq for Float with fn equal(self : Float, other : Float) -> Bool = "%f32
 ///   let y = 3.14
 ///   let z = 0.0 / 0.0 // NaN
 ///   inspect(x != y, content="false")
-///   inspect(z != z, content="true") // NaN is not equal to itself
+///   inspect(z != z, content="false")
 /// }
 /// ```
-pub impl Eq for Float with fn not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
+pub impl Eq for Float with fn not_equal(self : Float, other : Float) -> Bool {
+  !Eq::equal(self, other)
+}
 
 ///|
 /// Operator helper `op_neq`.
 #deprecated("Use `a != b` instead")
 #doc(hidden)
-pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
+pub fn Float::op_neq(self : Float, other : Float) -> Bool {
+  Eq::not_equal(self, other)
+}
 
 ///|
 /// Compares two 32-bit floating-point numbers and returns their relative order.
+/// All NaNs are equal and ordered after positive infinity. Positive and
+/// negative zero are equal. Arithmetic is unchanged.
 ///
 /// Parameters:
 ///
@@ -755,19 +770,32 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Float with fn compare(self, other) = "%f32.compare"
+pub impl Compare for Float with fn compare(self, other) {
+  self.ieee_gt(other).to_int() -
+  self.ieee_lt(other).to_int() +
+  self.is_nan().to_int() -
+  other.is_nan().to_int()
+}
 
 ///|
-pub impl Compare for Float with fn op_lt(x, y) = "%f32.lt"
+pub impl Compare for Float with fn op_lt(x, y) {
+  !(x.ieee_ge(y) || x.is_nan())
+}
 
 ///|
-pub impl Compare for Float with fn op_le(x, y) = "%f32.le"
+pub impl Compare for Float with fn op_le(x, y) {
+  x.ieee_le(y) || y.is_nan()
+}
 
 ///|
-pub impl Compare for Float with fn op_gt(x, y) = "%f32.gt"
+pub impl Compare for Float with fn op_gt(x, y) {
+  !(x.ieee_le(y) || y.is_nan())
+}
 
 ///|
-pub impl Compare for Float with fn op_ge(x, y) = "%f32.ge"
+pub impl Compare for Float with fn op_ge(x, y) {
+  x.ieee_ge(y) || x.is_nan()
+}
 
 ///|
 /// Reinterprets the bits of a 32-bit floating-point number as an unsigned 32-bit

@@ -59,13 +59,14 @@ pub fn Float::until(
   let mut curr_value = Some(self)
   Iter::new(() => {
     guard curr_value is Some(i) else { None }
-    guard (step > 0.0 && i < end) ||
-      (step < 0.0 && i > end) ||
-      (inclusive && i == end) else {
+    guard (step.ieee_gt(0.0) && i.ieee_lt(end)) ||
+      (step.ieee_lt(0.0) && i.ieee_gt(end)) ||
+      (inclusive && i.ieee_equal(end)) else {
       None
     }
     let next = i + step
-    if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+    if (step.ieee_gt(0.0) && next.ieee_ge(i)) ||
+      (step.ieee_lt(0.0) && next.ieee_le(i)) {
       curr_value = Some(next)
     } else {
       // overflow

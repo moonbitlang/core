@@ -1709,8 +1709,8 @@ pub fn[A : Eq] List::has_suffix(self : List[A], suffix : List[A]) -> Bool {
   // `suffix.length()` nodes from the end — the only window where the suffix
   // can match — and an element-wise comparison of that equal-length window
   // decides. List `==` is deliberately not used for the window: its
-  // physical-equality shortcut would declare a NaN-carrying list a suffix
-  // of itself, changing the observable element-wise behavior.
+  // physical-equality shortcut could change the observable element-wise
+  // behavior for a custom non-reflexive Eq implementation.
   for lead = self, probe = suffix {
     match (lead, probe) {
       (_, Empty) =>

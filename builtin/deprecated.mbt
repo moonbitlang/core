@@ -161,7 +161,28 @@ pub fn Double::until(
   step~ : Double = 1.0,
   inclusive~ : Bool = false,
 ) -> Iter[Double] {
-  until_impl(self, end, step, inclusive)
+  if step == 0.0 {
+    return [||]
+  }
+  let mut i = self
+  let mut done = false
+  Iter::new(() => {
+    guard !done else { None }
+    guard (step.ieee_gt(0.0) && i.ieee_lt(end)) ||
+      (step.ieee_lt(0.0) && i.ieee_gt(end)) ||
+      (inclusive && i.ieee_equal(end)) else {
+      None
+    }
+    let value = i
+    let next = i + step
+    if (step.ieee_gt(0.0) && next.ieee_ge(i)) ||
+      (step.ieee_lt(0.0) && next.ieee_le(i)) {
+      i = next
+    } else {
+      done = true
+    }
+    Some(value)
+  })
 }
 
 ///|

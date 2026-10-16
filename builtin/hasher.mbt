@@ -289,7 +289,8 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 ///|
 /// Combines a double-precision floating-point number into the hasher's internal
 /// state by reinterpreting its bits as a 64-bit integer. Positive and negative
-/// zero have the same hash, consistently with floating-point equality.
+/// zero have the same hash, and all NaN encodings have the same hash,
+/// consistently with floating-point equality. The value itself is not changed.
 ///
 /// Parameters:
 ///
@@ -307,7 +308,15 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
-  self.combine_int64(if value is 0 { 0L } else { value.reinterpret_as_int64() })
+  self.combine_int64(
+    if value.is_nan() {
+      0x7ff8000000000000L
+    } else if value is 0 {
+      0L
+    } else {
+      value.reinterpret_as_int64()
+    },
+  )
 }
 
 ///|

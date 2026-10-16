@@ -265,7 +265,7 @@ pub impl ToJson for UInt64 with fn to_json(self : UInt64) -> Json {
 
 ///|
 pub impl ToJson for Double with fn to_json(self : Double) -> Json {
-  if self != self {
+  if self.is_nan() {
     Json::string("NaN")
   } else if self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() {
     Json::string("Infinity")

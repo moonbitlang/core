@@ -1569,10 +1569,22 @@ test "quickcheck: f32x4 ops match scalar Float reference" {
     guard binop(@v128.f32x4_div(va, vb), (x, y) => x / y) else { return false }
     guard binop(@v128.f32x4_min(va, vb), ref_f32_min) else { return false }
     guard binop(@v128.f32x4_max(va, vb), ref_f32_max) else { return false }
-    guard binop(@v128.f32x4_pmin(va, vb), (x, y) => if y < x { y } else { x }) else {
+    guard binop(@v128.f32x4_pmin(va, vb), (x, y) => {
+      if y.ieee_lt(x) {
+        y
+      } else {
+        x
+      }
+    }) else {
       return false
     }
-    guard binop(@v128.f32x4_pmax(va, vb), (x, y) => if x < y { y } else { x }) else {
+    guard binop(@v128.f32x4_pmax(va, vb), (x, y) => {
+      if x.ieee_lt(y) {
+        y
+      } else {
+        x
+      }
+    }) else {
       return false
     }
     guard unop(@v128.f32x4_abs(va), x => x.abs()) else { return false }
@@ -1583,12 +1595,14 @@ test "quickcheck: f32x4 ops match scalar Float reference" {
     guard unop(@v128.f32x4_trunc(va), x => x.trunc()) else { return false }
     guard unop(@v128.f32x4_nearest(va), ref_nearest_f32) else { return false }
     // Comparisons (NaN compares false except through ne).
-    guard cmpop(@v128.f32x4_eq(va, vb), (x, y) => x == y) else { return false }
-    guard cmpop(@v128.f32x4_ne(va, vb), (x, y) => x != y) else { return false }
-    guard cmpop(@v128.f32x4_lt(va, vb), (x, y) => x < y) else { return false }
-    guard cmpop(@v128.f32x4_le(va, vb), (x, y) => x <= y) else { return false }
-    guard cmpop(@v128.f32x4_gt(va, vb), (x, y) => x > y) else { return false }
-    guard cmpop(@v128.f32x4_ge(va, vb), (x, y) => x >= y) else { return false }
+    guard cmpop(@v128.f32x4_eq(va, vb), Float::ieee_equal) else { return false }
+    guard cmpop(@v128.f32x4_ne(va, vb), Float::ieee_not_equal) else {
+      return false
+    }
+    guard cmpop(@v128.f32x4_lt(va, vb), Float::ieee_lt) else { return false }
+    guard cmpop(@v128.f32x4_le(va, vb), Float::ieee_le) else { return false }
+    guard cmpop(@v128.f32x4_gt(va, vb), Float::ieee_gt) else { return false }
+    guard cmpop(@v128.f32x4_ge(va, vb), Float::ieee_ge) else { return false }
     // Relaxed fused multiply-add: use small integers so that fused and
     // unfused lowerings give bit-identical results.
     let sa = Array::makei(4, i => {
@@ -1683,10 +1697,22 @@ test "quickcheck: f64x2 ops match scalar Double reference" {
     guard binop(@v128.f64x2_div(va, vb), (x, y) => x / y) else { return false }
     guard binop(@v128.f64x2_min(va, vb), ref_f64_min) else { return false }
     guard binop(@v128.f64x2_max(va, vb), ref_f64_max) else { return false }
-    guard binop(@v128.f64x2_pmin(va, vb), (x, y) => if y < x { y } else { x }) else {
+    guard binop(@v128.f64x2_pmin(va, vb), (x, y) => {
+      if y.ieee_lt(x) {
+        y
+      } else {
+        x
+      }
+    }) else {
       return false
     }
-    guard binop(@v128.f64x2_pmax(va, vb), (x, y) => if x < y { y } else { x }) else {
+    guard binop(@v128.f64x2_pmax(va, vb), (x, y) => {
+      if x.ieee_lt(y) {
+        y
+      } else {
+        x
+      }
+    }) else {
       return false
     }
     guard unop(@v128.f64x2_abs(va), x => x.abs()) else { return false }
@@ -1697,12 +1723,16 @@ test "quickcheck: f64x2 ops match scalar Double reference" {
     guard unop(@v128.f64x2_trunc(va), x => x.trunc()) else { return false }
     guard unop(@v128.f64x2_nearest(va), ref_nearest) else { return false }
     // Comparisons
-    guard cmpop(@v128.f64x2_eq(va, vb), (x, y) => x == y) else { return false }
-    guard cmpop(@v128.f64x2_ne(va, vb), (x, y) => x != y) else { return false }
-    guard cmpop(@v128.f64x2_lt(va, vb), (x, y) => x < y) else { return false }
-    guard cmpop(@v128.f64x2_le(va, vb), (x, y) => x <= y) else { return false }
-    guard cmpop(@v128.f64x2_gt(va, vb), (x, y) => x > y) else { return false }
-    guard cmpop(@v128.f64x2_ge(va, vb), (x, y) => x >= y) else { return false }
+    guard cmpop(@v128.f64x2_eq(va, vb), Double::ieee_equal) else {
+      return false
+    }
+    guard cmpop(@v128.f64x2_ne(va, vb), Double::ieee_not_equal) else {
+      return false
+    }
+    guard cmpop(@v128.f64x2_lt(va, vb), Double::ieee_lt) else { return false }
+    guard cmpop(@v128.f64x2_le(va, vb), Double::ieee_le) else { return false }
+    guard cmpop(@v128.f64x2_gt(va, vb), Double::ieee_gt) else { return false }
+    guard cmpop(@v128.f64x2_ge(va, vb), Double::ieee_ge) else { return false }
     // Relaxed fused multiply-add with exactly representable small integers.
     let sa = Array::makei(2, i => {
       ((seed_at(seeds, i, 0x313) % 33).reinterpret_as_int() - 16).to_double()

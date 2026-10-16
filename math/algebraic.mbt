@@ -120,8 +120,8 @@ pub fn hypotf(x : Float, y : Float) -> Float {
   if x.is_inf() || y.is_inf() {
     return @float.infinity
   }
-  let (x, y) = if y > x { (y, x) } else { (x, y) }
-  if x * epsilon >= y {
+  let (x, y) = if y.ieee_gt(x) { (y, x) } else { (x, y) }
+  if (x * epsilon).ieee_ge(y) {
     return x
   }
   let rat = y / x

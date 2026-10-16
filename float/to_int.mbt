@@ -41,7 +41,7 @@ fn Float::to_unchecked_int(self : Float) -> Int32 = "%f32.to_i32"
 /// }
 /// ```
 pub fn Float::to_int(self : Float) -> Int32 {
-  if self != self {
+  if self.is_nan() {
     0
   } else if self >= 2147483647 {
     2147483647

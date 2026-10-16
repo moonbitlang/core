@@ -1,0 +1,26 @@
+[moonbitlang/core] bench builtin/float_order_bench_test.mbt:28 ("Double comparison and hash kernels") ok
+name                       time (mean ± σ)         range (min … max)
+Double eq finite              6.07 µs ±  13.96 ns     6.05 µs …   6.10 µs  in 10 ×  16515 runs
+Double lt finite              5.17 µs ±  13.01 ns     5.15 µs …   5.19 µs  in 10 ×  19375 runs
+Double compare finite         9.95 µs ±  91.77 ns     9.87 µs …  10.11 µs  in 10 ×  10041 runs
+Double hash finite          113.44 µs ± 353.94 ns   112.98 µs … 114.01 µs  in 10 ×    882 runs
+Double eq nan-1-in-16         8.15 µs ±  13.78 ns     8.13 µs …   8.17 µs  in 10 ×  12245 runs
+Double lt nan-1-in-16         7.10 µs ±  50.77 ns     7.03 µs …   7.16 µs  in 10 ×  14199 runs
+Double compare nan-1-in-16   12.08 µs ±  23.86 ns    12.06 µs …  12.15 µs  in 10 ×   7978 runs
+Double hash nan-1-in-16     111.50 µs ± 767.33 ns   110.78 µs … 113.35 µs  in 10 ×    889 runs
+[moonbitlang/core] bench builtin/float_order_bench_test.mbt:65 ("Float comparison and hash kernels") ok
+name                      time (mean ± σ)         range (min … max)
+Float eq finite              6.06 µs ±  50.19 ns     6.03 µs …   6.20 µs  in 10 ×  16281 runs
+Float lt finite              5.16 µs ±  31.48 ns     5.13 µs …   5.21 µs  in 10 ×  19371 runs
+Float compare finite        10.16 µs ± 103.13 ns     9.99 µs …  10.29 µs  in 10 ×   9873 runs
+Float hash finite            5.96 µs ±  11.86 ns     5.95 µs …   5.98 µs  in 10 ×  16800 runs
+Float eq nan-1-in-16         8.21 µs ±  98.99 ns     8.13 µs …   8.39 µs  in 10 ×  12270 runs
+Float lt nan-1-in-16         7.01 µs ±  43.41 ns     6.95 µs …   7.09 µs  in 10 ×  14356 runs
+Float compare nan-1-in-16   12.10 µs ±  30.51 ns    12.07 µs …  12.17 µs  in 10 ×   8271 runs
+Float hash nan-1-in-16       6.04 µs ±  15.68 ns     6.02 µs …   6.08 µs  in 10 ×  16520 runs
+[moonbitlang/core] bench builtin/float_order_bench_test.mbt:102 ("finite Double collection workloads and arithmetic control") ok
+name                      time (mean ± σ)         range (min … max)
+Double sort finite          92.22 µs ± 461.96 ns    91.70 µs …  92.93 µs  in 10 ×   1072 runs
+Double map lookup finite   210.85 µs ±   1.14 µs   209.24 µs … 212.83 µs  in 10 ×    479 runs
+Double arithmetic control    2.65 µs ±  11.94 ns     2.63 µs …   2.67 µs  in 10 ×  37416 runs
+Total tests: 3, passed: 3, failed: 0.
