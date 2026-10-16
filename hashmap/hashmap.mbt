@@ -854,7 +854,15 @@ pub impl[K, V] Default for HashMap[K, V] with fn default() {
 /// Applies a function to each key-value pair in the map and
 /// returns a new map with the results, using the original keys.
 ///
-/// `f` may raise; the error propagates and `self` is left unchanged.
+/// For one unchanged map, `f` runs in the same order as `each` and `iter`:
+/// ascending occupied-slot index. That is not insertion order, and it can
+/// change after growth, deletion, or reinsertion. This map has no `fold`.
+/// The result occupies the same slots, so iterating it yields the mapped
+/// values in that same callback order.
+///
+/// `f` may raise; the error propagates, no later slot is visited, and
+/// `self` is left unchanged. A non-raising `f` makes this call non-raising
+/// too.
 pub fn[K, V, V2] HashMap::map(
   self : HashMap[K, V],
   f : (K, V) -> V2 raise?,
