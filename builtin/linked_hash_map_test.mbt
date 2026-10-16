@@ -184,6 +184,11 @@ test "Map::map" {
     k + v
   })
   debug_inspect(v, content="{}")
+  let singleton = { "only": 3 }.map((_, v) => v + 1)
+  inspect(singleton["only"], content="4")
+  singleton["next"] = 5
+  singleton.remove("only")
+  debug_inspect(singleton.to_array(), content="[(\"next\", 5)]")
 }
 
 ///|
@@ -781,28 +786,65 @@ test "filter propagates errors" {
 }
 
 ///|
-test "map propagates errors and leaves the source unchanged" {
+test "map propagates the first error in insertion order" {
   let m = { "a": 1, "b": 2, "c": 3 }
-  // Raise on the second call, after part of the result has been built.
-  let mut calls = 0
-  let raised = try {
+  let visited = []
+  try
     ignore(
-      m.map((_, v) => {
-        calls += 1
-        if calls == 2 {
-          raise Failure("no")
+      m.map((k, v) => {
+        visited.push(k)
+        if k != "a" {
+          raise Failure(k)
         }
         v * 10
       }),
     )
-    false
-  } catch {
-    _ => true
+  catch {
+    Failure(key) => inspect(key, content="b")
+  } noraise {
+    _ => fail("expected a callback error")
   }
-  assert_true(raised)
-  assert_eq(calls, 2)
+  debug_inspect(visited, content="[\"a\", \"b\"]")
   assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
   assert_eq(map_times_ten(m).to_array(), [("a", 10), ("b", 20), ("c", 30)])
+}
+
+///|
+test "Map::map callbacks follow insertion order after collisions and removal" {
+  let m : Map[LKey, Int] = Map([])
+  for i in 0..<20 {
+    m[LKey(i, 0)] = i
+  }
+  m.remove(LKey(0, 0))
+  m.remove(LKey(10, 0))
+  m.remove(LKey(19, 0))
+  m[LKey(0, 0)] = 100
+  let visited = []
+  let mapped = m.map((_, v) => {
+    visited.push(v)
+    visited.length()
+  })
+  debug_inspect(
+    visited,
+    content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 100]",
+  )
+  for i, (k, _) in m.to_array() {
+    assert_eq(mapped[k], i + 1)
+  }
+  assert_eq(
+    mapped.keys().map(k => k.0).to_array(),
+    m.keys().map(k => k.0).to_array(),
+  )
+  // Exercise both the copied links and hash-table slots.
+  mapped.remove(LKey(1, 0))
+  mapped.remove(LKey(9, 0))
+  mapped.remove(LKey(0, 0))
+  mapped[LKey(21, 0)] = 21
+  debug_inspect(
+    mapped.values().to_array(),
+    content="[2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 21]",
+  )
+  inspect(m.length(), content="18")
 }
 
 ///|
