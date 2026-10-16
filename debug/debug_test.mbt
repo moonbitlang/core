@@ -13,6 +13,10 @@
 // limitations under the License.
 
 ///|
+#warnings("-unqualified_local_using")
+using @builtin {inspect}
+
+///|
 test "inspect" {
   @debug.debug_inspect(
     Some("msg"),
