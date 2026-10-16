@@ -234,30 +234,6 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 }
 
 ///|
-/// Writes a UTF-16LE encoded string into the buffer. The buffer will
-/// automatically grow if needed to accommodate the string.
-///
-/// Parameters:
-///
-/// * `buffer` : The buffer to write to.
-/// * `string` : The string to be written.
-/// This Logger impl currently writes UTF-16LE bytes for compatibility. After a
-/// breaking-change window, Buffer may implement Logger again with UTF-8
-/// semantics.
-#deprecated("Buffer's current Logger impl writes UTF-16LE bytes; use StringBuilder or explicit Buffer encoders. A future breaking release may restore it with UTF-8 semantics.", skip_current_package=true)
-pub impl Logger for Buffer
-
-///|
-pub impl Logger for Buffer with fn write_string(self, value) {
-  let required = self.len + value.length() * 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
-  }
-  self.data.blit_from_string(self.len, value, 0, value.length())
-  self.len += value.length() * 2
-}
-
-///|
 /// Writes an unsigned 64-bit integer into the buffer in big-endian format (most
 /// significant byte first).
 ///
@@ -764,7 +740,7 @@ pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
 /// * `value` : Any value that implements the `Show` trait. The value will be
 /// converted to a string using its `to_string` method before being written to
 /// the buffer.
-#deprecated("Buffer::write_object writes UTF-16LE bytes; use write_utf8 or explicit Buffer encoders. A future breaking release may restore it with UTF-8 semantics.", skip_current_package=true)
+#deprecated("Buffer::write_object writes UTF-16LE bytes; use write_utf8 or explicit Buffer encoders.", skip_current_package=true)
 pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
   self.write_string_utf16le(value.to_string())
 }
@@ -1075,41 +1051,6 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
     continue j + 2
   }
   buf.len += len * 2
-}
-
-///|
-/// Parameters:
-///
-/// * `self` : The buffer to write to.
-/// * `value` : The string view to be written, encoded as UTF-16LE bytes.
-pub impl Logger for Buffer with fn write_view(self : Buffer, value : StringView) -> Unit {
-  let required = self.len + value.length() * 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
-  }
-  self.data.blit_from_string(
-    self.len,
-    value.data(),
-    value.start_offset(),
-    value.length(),
-  )
-  self.len += value.length() * 2
-}
-
-///|
-/// Writes a UTF-16LE encoded character into the buffer. Automatically grows the
-/// buffer if necessary.
-///
-/// Parameters:
-///
-/// * `buffer` : The buffer to write to.
-/// * `char` : The character to be written.
-pub impl Logger for Buffer with fn write_char(self : Buffer, value : Char) -> Unit {
-  if self.data.length() - self.len < 4 {
-    self.grow(self.len + 4)
-  }
-  let inc = self.data.set_utf16le_char(self.len, value)
-  self.len += inc
 }
 
 ///|

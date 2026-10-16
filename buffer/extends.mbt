@@ -20,18 +20,6 @@ pub extend Buffer with Show::{to_string}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated
-#warnings("-deprecated")
-pub extend Buffer with Logger::{
-  write_view,
-  write_string,
-  write_string_interpolation,
-  write_char,
-  write,
-  write_substring,
-}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Buffer with Show::{output}

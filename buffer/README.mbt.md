@@ -173,7 +173,9 @@ test {
 
 ## Writing Show Objects
 
-Write any type that implements `Show` as UTF-8 bytes via `write_utf8()`. The current `write_object()` and `Logger` implementation for `Buffer` write UTF-16LE bytes and are deprecated; a future breaking release may restore them with UTF-8 semantics.
+Write any type that implements `Show` as UTF-8 bytes via `write_utf8()`. The deprecated `write_object()` method writes UTF-16LE bytes.
+
+`Buffer` no longer implements `Logger`. Use `StringBuilder` when an API needs a logger, then encode its output with `write_string_utf8`, `write_string_utf16le`, or `write_string_utf16be`. To preserve the old Buffer logger's byte encoding, use the UTF-16LE writers. Replace direct `write_string`/`write_view` calls with `write_string_utf16le`, and `write_char` with `write_char_utf16le`.
 
 ```mbt check
 ///|
