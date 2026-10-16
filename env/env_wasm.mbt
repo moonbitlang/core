@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+#cfg(target="wasm")
+#unsafe_skip_stub_check
+fn exit_internal(code : Int32) -> Unit = "moonbitlang/async" "runtime/exit"
+
+///|
+#cfg(target="wasm-gc")
+fn exit_internal(code : Int32) -> Unit = "__moonbit_sys_unstable" "exit"
+
+///|
 #external
 priv type XStringReadHandle
 
