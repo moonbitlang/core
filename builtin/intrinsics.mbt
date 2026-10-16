@@ -1214,8 +1214,14 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
 /// Compares two double-precision floating-point numbers and returns their
-/// relative order. Follows IEEE 754 rules for floating-point comparisons,
-/// including handling of special values like NaN.
+/// relative numerical order for non-NaN inputs. Both signed zeros compare as
+/// zero; infinities and subnormals follow numerical order.
+///
+/// This is the ordinary comparison path, not a total ordering. NaN inputs do
+/// not have an ordering or equality guarantee from this method. Do not use
+/// NaNs in ordinary sorting, searching, or collection keys that require the
+/// `Compare` laws, including floating components of derived/composite keys.
+/// Direct `==`, `!=`, `<`, `<=`, `>` and `>=` retain IEEE behavior for NaNs.
 ///
 /// Parameters:
 ///
@@ -1228,8 +1234,6 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 /// * A negative value if `self` is less than `other`
 /// * Zero if `self` equals `other`
 /// * A positive value if `self` is greater than `other`
-/// * If either value is NaN, returns an implementation-defined value that is
-/// consistent with total ordering
 ///
 /// Example:
 ///

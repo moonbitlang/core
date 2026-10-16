@@ -4,6 +4,11 @@ A mutable hash set based on a Robin Hood hash table.
 
 # Usage
 
+Floating elements and keys used by ordinary comparison-based operations must
+not be NaN, including floating components of derived/composite keys. Signed
+zeros, infinities, and subnormals are supported. This is an input precondition,
+not an automatic NaN check; see the `Eq` and `Compare` trait contracts.
+
 ## Create
 
 You can create an empty set using `HashSet([])` or construct it from entries using `HashSet([...])`.

@@ -4,6 +4,11 @@ A mutable set backed by an AVL tree that maintains elements in sorted order.
 
 # Usage
 
+Floating elements and keys used by ordinary comparison-based operations must
+not be NaN, including floating components of derived/composite keys. Signed
+zeros, infinities, and subnormals are supported. This is an input precondition,
+not an automatic NaN check; see the `Eq` and `Compare` trait contracts.
+
 ## Create
 
 You can create an empty SortedSet or a SortedSet from other containers.

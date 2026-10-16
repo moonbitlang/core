@@ -13,7 +13,13 @@
 // limitations under the License.
 
 ///|
-/// Trait for types whose elements can test for equality
+/// Trait for types whose elements can test for equality.
+///
+/// `Double` and `Float` use IEEE equality: signed zeros are equal, and NaN is
+/// unequal to every value, including itself. Algorithms and collection keys
+/// requiring reflexive equality must exclude NaNs, including NaN components
+/// of derived/composite values. Primitive operators still retain their IEEE
+/// results on NaNs; this precondition does not introduce undefined behavior.
 pub(open) trait Eq {
   fn equal(Self, Self) -> Bool
   fn not_equal(Self, Self) -> Bool = _
@@ -25,7 +31,15 @@ impl Eq with fn not_equal(x, y) {
 }
 
 ///|
-/// Trait for types whose elements are ordered
+/// Trait for types whose elements are ordered.
+///
+/// On the supported input domain, `compare`, equality, and relational
+/// operators must agree. For `Double` and `Float`, this domain excludes NaNs
+/// and includes both signed zeros, infinities, and subnormals. The same
+/// restriction applies to floating components of derived/composite keys.
+/// Sorting, sortedness checks, binary search, and ordered collections rely on
+/// these laws; they do not validate inputs for NaNs or provide a total NaN
+/// ordering. Signed zeros compare as equal.
 ///
 /// The return value of [compare] is:
 /// - zero, if the two arguments are equal
@@ -66,7 +80,9 @@ impl Compare with fn op_ge(x, y) {
 /// The `hash_combine` method is used to combine the hash of the current value with another hash value,
 /// typically used to hash composite types.
 /// 
-/// When two values are equal according to the `Eq` trait, they should produce the same hash value.
+/// When two values are equal according to the `Eq` trait, they must produce the same hash value.
+/// In particular, floating signed zeros hash equally. IEEE NaNs are not equal,
+/// so their signs and payloads do not need to be canonicalized for hashing.
 /// 
 /// The `hash` method does not need to be implemented if `hash_combine` is implemented,
 /// When implemented separately, `hash` **does not need** to produce a hash value that is consistent with `hash_combine`.

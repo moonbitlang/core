@@ -33,7 +33,8 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 /// Creates a sorted map from an array of key-value pairs.
 /// Takes O(n) for strictly ascending or descending keys, otherwise O(n log n).
 /// A strictly ordered prefix is built in O(k), then the remaining entries are
-/// inserted normally. Non-reflexive keys, such as NaN, use full insertion.
+/// inserted normally. Keys must satisfy the `Compare` laws: floating keys and
+/// floating components of derived/composite keys must not be NaN.
 ///
 /// # Example
 /// ```mbt check
@@ -56,15 +57,6 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
     size: prefix_len,
   }
   for (key, value) in entries[prefix_len:] {
-    // Unordered keys such as NaN make lookups depend on tree shape. Rebuild
-    // by insertion to preserve that behavior, even after inserting a suffix.
-    if key != key {
-      let fallback = new_sorted_map()
-      for (key, value) in entries {
-        fallback.set(key, value)
-      }
-      return fallback
-    }
     map.set(key, value)
   }
   map

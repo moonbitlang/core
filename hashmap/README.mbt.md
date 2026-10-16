@@ -2,6 +2,11 @@
 
 A mutable hash map based on a Robin Hood hash table.
 
+Floating elements and keys used by ordinary comparison-based operations must
+not be NaN, including floating components of derived/composite keys. Signed
+zeros, infinities, and subnormals are supported. This is an input precondition,
+not an automatic NaN check; see the `Eq` and `Compare` trait contracts.
+
 ## How It Works
 
 Entries live in one flat power-of-two array of `{psl, hash, key, value}`

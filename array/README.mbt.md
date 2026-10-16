@@ -2,6 +2,11 @@
 
 This package provides array manipulation utilities for MoonBit, including fixed-size arrays (`FixedArray`), dynamic arrays (`Array`), and array views (`ArrayView`/`View`).
 
+Floating elements and keys used by ordinary comparison-based operations must
+not be NaN, including floating components of derived/composite keys. Signed
+zeros, infinities, and subnormals are supported. This is an input precondition,
+not an automatic NaN check; see the `Eq` and `Compare` trait contracts.
+
 ## Creating Arrays
 
 There are several ways to create arrays in MoonBit:

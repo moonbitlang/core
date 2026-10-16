@@ -109,7 +109,9 @@ pub impl Default for Float with fn default() {
 /// }
 /// ```
 pub impl Hash for Float with fn hash_combine(self, hasher) {
-  hasher.combine_uint(if self is 0 { 0U } else { self.reinterpret_as_uint() })
+  // IEEE equality equates both zeros; NaN encodings need no normalization.
+  let bits = self.reinterpret_as_uint()
+  hasher.combine_uint(if bits == 0x8000_0000U { 0U } else { bits })
 }
 
 ///|
@@ -731,7 +733,15 @@ pub impl Eq for Float with fn not_equal(self : Float, other : Float) -> Bool = "
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 
 ///|
-/// Compares two 32-bit floating-point numbers and returns their relative order.
+/// Compares two 32-bit floating-point numbers in numerical order for non-NaN
+/// inputs. Both signed zeros compare as zero; infinities and subnormals follow
+/// numerical order.
+///
+/// This is the ordinary comparison path, not a total ordering. NaN inputs do
+/// not have an ordering or equality guarantee from this method. Do not use
+/// NaNs in ordinary sorting, searching, or collection keys that require the
+/// `Compare` laws, including floating components of derived/composite keys.
+/// Direct `==`, `!=`, `<`, `<=`, `>` and `>=` retain IEEE behavior for NaNs.
 ///
 /// Parameters:
 ///
