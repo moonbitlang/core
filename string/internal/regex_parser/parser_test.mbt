@@ -1574,4 +1574,21 @@ test "parse/duplicate_group_names" {
       #|Ok(())
     ),
   )
+  // Many distinct names, each looked up once.
+  let many = StringBuilder()
+  for i in 0..<10000 {
+    many.write_string("(?<n\{i}>a)")
+  }
+  debug_inspect(
+    result(many.to_string()),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result(many.to_string() + "(?<n9999>a)"),
+    content=(
+      #|Err(ParserError(at=108893, hint="Duplicate capture group name"))
+    ),
+  )
 }
