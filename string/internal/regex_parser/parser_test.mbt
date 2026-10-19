@@ -1640,3 +1640,65 @@ test "parse/dash_after_range_or_posix_class" {
     ),
   )
 }
+
+///|
+test "parse/bare_posix_class_shapes" {
+  let result = fn(pattern : String) {
+    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+      e => Err(e)
+    } noraise {
+      _ => Ok(())
+    }
+  }
+  // A class whose content starts and ends with a colon.
+  debug_inspect(
+    result("[:a-z:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:ab1:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:a\\]:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[^:a-z:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  // No character between the colons, an escaped colon, or a colon that
+  // ends a range.
+  debug_inspect(
+    result("[::]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[^::]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:a\\:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:!-:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+}
