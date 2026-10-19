@@ -71,6 +71,39 @@ pub using @builtin {
 }
 
 ///|
+pub using @builtin {
+  type Unit,
+  type Bool,
+  type Byte,
+  type Char,
+  type Int,
+  type Int32,
+  type Int64,
+  type UInt,
+  type UInt32,
+  type UInt16,
+  type UInt64,
+  type Double,
+  type String,
+  type V128,
+  type Bytes,
+  type StringView,
+  type BytesView,
+  type FixedArray,
+  type ReadOnlyArray,
+  type Error,
+  type FuncRef,
+  type Option,
+  type Result,
+}
+
+///|
+pub using @int16 {type Int16}
+
+///|
+pub using @float {type Float}
+
+///|
 #deprecated("Use !expr instead")
 #warnings("-deprecated")
 pub using @builtin {not}

@@ -100,13 +100,13 @@ pub impl FromJson for Float
 pub impl FromJson for Double
 pub impl FromJson for String
 pub impl[T : FromJson] FromJson for T?
-pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
 pub impl[X : FromJson] FromJson for FixedArray[X]
 pub impl FromJson for Bytes
 pub impl[X : FromJson] FromJson for Array[X]
 pub impl[X : FromJson] FromJson for ArrayView[X]
 pub impl FromJson for Json
 pub impl[V : FromJson] FromJson for Map[String, V]
+pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
 pub impl[A : FromJson, B : FromJson] FromJson for (A, B)
 pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
 pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)

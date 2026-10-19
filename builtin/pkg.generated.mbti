@@ -59,6 +59,837 @@ pub(all) suberror SnapshotError {
 }
 
 // Types and methods
+pub type Unit
+pub fn Unit::compare(Unit, Unit) -> Int32
+pub fn Unit::equal(Unit, Unit) -> Bool
+pub fn Unit::hash(Unit) -> Int32
+pub fn Unit::to_string(Unit) -> String
+pub impl Compare for Unit
+pub impl Default for Unit
+pub impl Eq for Unit
+pub impl Hash for Unit
+pub impl Show for Unit
+pub impl ToJson for Unit
+
+pub type Bool
+pub fn Bool::compare(Bool, Bool) -> Int32
+pub fn Bool::equal(Bool, Bool) -> Bool
+pub fn Bool::hash(Bool) -> Int32
+#deprecated
+pub fn Bool::op_compare(Bool, Bool) -> Int32
+pub fn Bool::to_int(Bool) -> Int32
+pub fn Bool::to_int64(Bool) -> Int64
+pub fn Bool::to_string(Bool) -> String
+pub fn Bool::to_uint(Bool) -> UInt32
+pub fn Bool::to_uint16(Bool) -> UInt16
+pub fn Bool::to_uint64(Bool) -> UInt64
+pub impl Compare for Bool
+pub impl Default for Bool
+pub impl Eq for Bool
+pub impl Hash for Bool
+pub impl Show for Bool
+pub impl ToJson for Bool
+
+pub type Byte
+pub fn Byte::Byte(Byte) -> Byte
+pub fn Byte::add(Byte, Byte) -> Byte
+pub fn Byte::compare(Byte, Byte) -> Int32
+pub fn Byte::default() -> Byte
+pub fn Byte::div(Byte, Byte) -> Byte
+pub fn Byte::equal(Byte, Byte) -> Bool
+pub fn Byte::hash(Byte) -> Int32
+pub fn Byte::land(Byte, Byte) -> Byte
+pub fn Byte::lnot(Byte) -> Byte
+pub fn Byte::lor(Byte, Byte) -> Byte
+#deprecated
+pub fn Byte::lsl(Byte, Int32) -> Byte
+#deprecated
+pub fn Byte::lsr(Byte, Int32) -> Byte
+pub fn Byte::lxor(Byte, Byte) -> Byte
+pub fn Byte::mod(Byte, Byte) -> Byte
+pub fn Byte::mul(Byte, Byte) -> Byte
+pub fn Byte::popcnt(Byte) -> Int32
+pub fn Byte::shl(Byte, Int32) -> Byte
+pub fn Byte::shr(Byte, Int32) -> Byte
+pub fn Byte::sub(Byte, Byte) -> Byte
+pub fn Byte::to_char(Byte) -> Char
+pub fn Byte::to_double(Byte) -> Double
+pub fn Byte::to_hex(Byte) -> String
+pub fn Byte::to_int(Byte) -> Int32
+pub fn Byte::to_int64(Byte) -> Int64
+pub fn Byte::to_string(Byte) -> String
+pub fn Byte::to_uint(Byte) -> UInt32
+pub fn Byte::to_uint16(Byte) -> UInt16
+pub fn Byte::to_uint64(Byte) -> UInt64
+pub impl Add for Byte
+pub impl BitAnd for Byte
+pub impl BitOr for Byte
+pub impl BitXOr for Byte
+pub impl Compare for Byte
+pub impl Default for Byte
+pub impl Div for Byte
+pub impl Eq for Byte
+pub impl Hash for Byte
+pub impl Mod for Byte
+pub impl Mul for Byte
+pub impl Shl for Byte
+pub impl Show for Byte
+pub impl Shr for Byte
+pub impl Sub for Byte
+pub impl ToJson for Byte
+
+pub type Char
+pub fn Char::compare(Char, Char) -> Int32
+pub fn Char::equal(Char, Char) -> Bool
+pub fn Char::escape(Char, quote? : Bool) -> String
+#deprecated
+pub fn Char::from_int(Int32) -> Char
+pub fn Char::hash(Char) -> Int32
+pub fn Char::is_ascii(Char) -> Bool
+pub fn Char::is_ascii_alphabetic(Char) -> Bool
+pub fn Char::is_ascii_control(Char) -> Bool
+pub fn Char::is_ascii_digit(Char) -> Bool
+pub fn Char::is_ascii_graphic(Char) -> Bool
+pub fn Char::is_ascii_hexdigit(Char) -> Bool
+pub fn Char::is_ascii_lowercase(Char) -> Bool
+pub fn Char::is_ascii_octdigit(Char) -> Bool
+pub fn Char::is_ascii_punctuation(Char) -> Bool
+pub fn Char::is_ascii_uppercase(Char) -> Bool
+pub fn Char::is_ascii_whitespace(Char) -> Bool
+pub fn Char::is_bmp(Char) -> Bool
+pub fn Char::is_control(Char) -> Bool
+pub fn Char::is_digit(Char, UInt32) -> Bool
+pub fn Char::is_numeric(Char) -> Bool
+pub fn Char::is_printable(Char) -> Bool
+pub fn Char::is_whitespace(Char) -> Bool
+pub fn Char::to_ascii_lowercase(Char) -> Char
+pub fn Char::to_ascii_uppercase(Char) -> Char
+pub fn Char::to_int(Char) -> Int32
+pub fn Char::to_string(Char) -> String
+pub fn Char::to_uint(Char) -> UInt32
+#alias(length, deprecated)
+pub fn Char::utf16_len(Char) -> Int32
+pub impl Compare for Char
+pub impl Default for Char
+pub impl Eq for Char
+pub impl Hash for Char
+pub impl Show for Char
+pub impl ToJson for Char
+
+#alias(Int32)
+pub type Int
+pub fn Int32::Int(Int32) -> Int32
+pub fn Int32::abs(Int32) -> Int32
+pub fn Int32::add(Int32, Int32) -> Int32
+#deprecated
+pub fn Int32::asr(Int32, Int32) -> Int32
+pub fn Int32::clamp(Int32, min~ : Int32, max~ : Int32) -> Int32
+pub fn Int32::clz(Int32) -> Int32
+pub fn Int32::compare(Int32, Int32) -> Int32
+pub fn Int32::ctz(Int32) -> Int32
+pub fn Int32::div(Int32, Int32) -> Int32
+pub fn Int32::equal(Int32, Int32) -> Bool
+pub fn Int32::hash(Int32) -> Int32
+pub fn Int32::is_leading_surrogate(Int32) -> Bool
+pub fn Int32::is_neg(Int32) -> Bool
+pub fn Int32::is_non_neg(Int32) -> Bool
+pub fn Int32::is_non_pos(Int32) -> Bool
+pub fn Int32::is_pos(Int32) -> Bool
+pub fn Int32::is_surrogate(Int32) -> Bool
+pub fn Int32::is_trailing_surrogate(Int32) -> Bool
+pub fn Int32::land(Int32, Int32) -> Int32
+pub fn Int32::lnot(Int32) -> Int32
+pub fn Int32::lor(Int32, Int32) -> Int32
+#deprecated
+pub fn Int32::lsl(Int32, Int32) -> Int32
+#deprecated
+pub fn Int32::lsr(Int32, Int32) -> Int32
+pub fn Int32::lxor(Int32, Int32) -> Int32
+pub fn Int32::max(Int32, Int32) -> Int32
+pub fn Int32::min(Int32, Int32) -> Int32
+pub fn Int32::mod(Int32, Int32) -> Int32
+pub fn Int32::mul(Int32, Int32) -> Int32
+pub fn Int32::neg(Int32) -> Int32
+pub fn Int32::next_power_of_two(Int32) -> Int32
+pub fn Int32::popcnt(Int32) -> Int32
+pub fn Int32::reinterpret_as_uint(Int32) -> UInt32
+#deprecated
+pub fn Int32::shl(Int32, Int32) -> Int32
+#deprecated
+pub fn Int32::shr(Int32, Int32) -> Int32
+pub fn Int32::sub(Int32, Int32) -> Int32
+pub fn Int32::to_byte(Int32) -> Byte
+pub fn Int32::to_char(Int32) -> Char?
+pub fn Int32::to_double(Int32) -> Double
+pub fn Int32::to_int64(Int32) -> Int64
+pub fn Int32::to_string(Int32, radix? : Int32) -> String
+#deprecated
+pub fn Int32::to_uint(Int32) -> UInt32
+pub fn Int32::to_uint16(Int32) -> UInt16
+pub fn Int32::to_uint64(Int32) -> UInt64
+pub fn Int32::until(Int32, Int32, step? : Int32, inclusive? : Bool) -> Iter[Int32]
+pub impl Add for Int32
+pub impl BitAnd for Int32
+pub impl BitOr for Int32
+pub impl BitXOr for Int32
+pub impl Compare for Int32
+pub impl Default for Int32
+pub impl Div for Int32
+pub impl Eq for Int32
+pub impl Hash for Int32
+pub impl Mod for Int32
+pub impl Mul for Int32
+pub impl Neg for Int32
+pub impl Shl for Int32
+pub impl Show for Int32
+pub impl Shr for Int32
+pub impl Sub for Int32
+pub impl ToJson for Int32
+
+pub type Int64
+pub fn Int64::Int64(Int64) -> Int64
+pub fn Int64::abs(Int64) -> Int64
+pub fn Int64::add(Int64, Int64) -> Int64
+#deprecated
+pub fn Int64::asr(Int64, Int32) -> Int64
+pub fn Int64::clamp(Int64, min~ : Int64, max~ : Int64) -> Int64
+pub fn Int64::clz(Int64) -> Int32
+pub fn Int64::compare(Int64, Int64) -> Int32
+pub fn Int64::ctz(Int64) -> Int32
+pub fn Int64::div(Int64, Int64) -> Int64
+pub fn Int64::equal(Int64, Int64) -> Bool
+pub fn Int64::from_int(Int32) -> Int64
+pub fn Int64::hash(Int64) -> Int32
+pub fn Int64::land(Int64, Int64) -> Int64
+pub fn Int64::lnot(Int64) -> Int64
+pub fn Int64::lor(Int64, Int64) -> Int64
+#deprecated
+pub fn Int64::lsl(Int64, Int32) -> Int64
+#deprecated
+pub fn Int64::lsr(Int64, Int32) -> Int64
+pub fn Int64::lxor(Int64, Int64) -> Int64
+pub fn Int64::max(Int64, Int64) -> Int64
+pub fn Int64::min(Int64, Int64) -> Int64
+pub fn Int64::mod(Int64, Int64) -> Int64
+pub fn Int64::mul(Int64, Int64) -> Int64
+pub fn Int64::neg(Int64) -> Int64
+pub fn Int64::popcnt(Int64) -> Int32
+pub fn Int64::reinterpret_as_double(Int64) -> Double
+pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
+#deprecated
+pub fn Int64::shl(Int64, Int32) -> Int64
+#deprecated
+pub fn Int64::shr(Int64, Int32) -> Int64
+pub fn Int64::sub(Int64, Int64) -> Int64
+pub fn Int64::to_byte(Int64) -> Byte
+pub fn Int64::to_double(Int64) -> Double
+pub fn Int64::to_int(Int64) -> Int32
+pub fn Int64::to_string(Int64, radix? : Int32) -> String
+pub fn Int64::to_uint16(Int64) -> UInt16
+#deprecated
+pub fn Int64::to_uint64(Int64) -> UInt64
+pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
+pub impl Add for Int64
+pub impl BitAnd for Int64
+pub impl BitOr for Int64
+pub impl BitXOr for Int64
+pub impl Compare for Int64
+pub impl Default for Int64
+pub impl Div for Int64
+pub impl Eq for Int64
+pub impl Hash for Int64
+pub impl Mod for Int64
+pub impl Mul for Int64
+pub impl Neg for Int64
+pub impl Shl for Int64
+pub impl Show for Int64
+pub impl Shr for Int64
+pub impl Sub for Int64
+pub impl ToJson for Int64
+
+#alias(UInt32)
+pub type UInt
+pub fn UInt32::UInt(UInt32) -> UInt32
+pub fn UInt32::add(UInt32, UInt32) -> UInt32
+pub fn UInt32::clamp(UInt32, min~ : UInt32, max~ : UInt32) -> UInt32
+pub fn UInt32::clz(UInt32) -> Int32
+pub fn UInt32::compare(UInt32, UInt32) -> Int32
+pub fn UInt32::ctz(UInt32) -> Int32
+pub fn UInt32::div(UInt32, UInt32) -> UInt32
+pub fn UInt32::equal(UInt32, UInt32) -> Bool
+pub fn UInt32::hash(UInt32) -> Int32
+pub fn UInt32::land(UInt32, UInt32) -> UInt32
+pub fn UInt32::lnot(UInt32) -> UInt32
+pub fn UInt32::lor(UInt32, UInt32) -> UInt32
+#deprecated
+pub fn UInt32::lsl(UInt32, Int32) -> UInt32
+#deprecated
+pub fn UInt32::lsr(UInt32, Int32) -> UInt32
+pub fn UInt32::lxor(UInt32, UInt32) -> UInt32
+pub fn UInt32::max(UInt32, UInt32) -> UInt32
+pub fn UInt32::min(UInt32, UInt32) -> UInt32
+pub fn UInt32::mod(UInt32, UInt32) -> UInt32
+pub fn UInt32::mul(UInt32, UInt32) -> UInt32
+pub fn UInt32::popcnt(UInt32) -> Int32
+pub fn UInt32::reinterpret_as_int(UInt32) -> Int32
+#deprecated
+pub fn UInt32::shl(UInt32, Int32) -> UInt32
+#deprecated
+pub fn UInt32::shr(UInt32, Int32) -> UInt32
+pub fn UInt32::sub(UInt32, UInt32) -> UInt32
+pub fn UInt32::to_byte(UInt32) -> Byte
+pub fn UInt32::to_double(UInt32) -> Double
+#deprecated
+pub fn UInt32::to_int(UInt32) -> Int32
+pub fn UInt32::to_int64(UInt32) -> Int64
+pub fn UInt32::to_string(UInt32, radix? : Int32) -> String
+pub fn UInt32::to_uint16(UInt32) -> UInt16
+pub fn UInt32::to_uint64(UInt32) -> UInt64
+pub fn UInt32::trunc_double(Double) -> UInt32
+pub impl Add for UInt32
+pub impl BitAnd for UInt32
+pub impl BitOr for UInt32
+pub impl BitXOr for UInt32
+pub impl Compare for UInt32
+pub impl Default for UInt32
+pub impl Div for UInt32
+pub impl Eq for UInt32
+pub impl Hash for UInt32
+pub impl Mod for UInt32
+pub impl Mul for UInt32
+pub impl Shl for UInt32
+pub impl Show for UInt32
+pub impl Shr for UInt32
+pub impl Sub for UInt32
+pub impl ToJson for UInt32
+
+pub type UInt16
+pub fn UInt16::UInt16(UInt16) -> UInt16
+pub fn UInt16::add(UInt16, UInt16) -> UInt16
+pub fn UInt16::compare(UInt16, UInt16) -> Int32
+pub fn UInt16::div(UInt16, UInt16) -> UInt16
+pub fn UInt16::equal(UInt16, UInt16) -> Bool
+pub fn UInt16::hash(UInt16) -> Int32
+pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
+pub fn UInt16::is_surrogate(UInt16) -> Bool
+pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
+pub fn UInt16::land(UInt16, UInt16) -> UInt16
+pub fn UInt16::lnot(UInt16) -> UInt16
+pub fn UInt16::lor(UInt16, UInt16) -> UInt16
+pub fn UInt16::lxor(UInt16, UInt16) -> UInt16
+pub fn UInt16::mod(UInt16, UInt16) -> UInt16
+pub fn UInt16::mul(UInt16, UInt16) -> UInt16
+pub fn UInt16::shl(UInt16, Int32) -> UInt16
+pub fn UInt16::shr(UInt16, Int32) -> UInt16
+pub fn UInt16::sub(UInt16, UInt16) -> UInt16
+pub fn UInt16::to_byte(UInt16) -> Byte
+pub fn UInt16::to_char(UInt16) -> Char?
+pub fn UInt16::to_int(UInt16) -> Int32
+pub fn UInt16::to_int64(UInt16) -> Int64
+pub fn UInt16::to_string(UInt16, radix? : Int32) -> String
+pub fn UInt16::to_uint(UInt16) -> UInt32
+pub fn UInt16::to_uint64(UInt16) -> UInt64
+pub impl Add for UInt16
+pub impl BitAnd for UInt16
+pub impl BitOr for UInt16
+pub impl BitXOr for UInt16
+pub impl Compare for UInt16
+pub impl Default for UInt16
+pub impl Div for UInt16
+pub impl Eq for UInt16
+pub impl Hash for UInt16
+pub impl Mod for UInt16
+pub impl Mul for UInt16
+pub impl Shl for UInt16
+pub impl Show for UInt16
+pub impl Shr for UInt16
+pub impl Sub for UInt16
+pub impl ToJson for UInt16
+
+pub type UInt64
+pub fn UInt64::UInt64(UInt64) -> UInt64
+pub fn UInt64::add(UInt64, UInt64) -> UInt64
+pub fn UInt64::clz(UInt64) -> Int32
+pub fn UInt64::compare(UInt64, UInt64) -> Int32
+pub fn UInt64::ctz(UInt64) -> Int32
+pub fn UInt64::div(UInt64, UInt64) -> UInt64
+pub fn UInt64::equal(UInt64, UInt64) -> Bool
+pub fn UInt64::extend_uint(UInt32) -> UInt64
+pub fn UInt64::hash(UInt64) -> Int32
+pub fn UInt64::land(UInt64, UInt64) -> UInt64
+pub fn UInt64::lnot(UInt64) -> UInt64
+pub fn UInt64::lor(UInt64, UInt64) -> UInt64
+#deprecated
+pub fn UInt64::lsl(UInt64, Int32) -> UInt64
+#deprecated
+pub fn UInt64::lsr(UInt64, Int32) -> UInt64
+pub fn UInt64::lxor(UInt64, UInt64) -> UInt64
+pub fn UInt64::mod(UInt64, UInt64) -> UInt64
+pub fn UInt64::mul(UInt64, UInt64) -> UInt64
+pub fn UInt64::popcnt(UInt64) -> Int32
+pub fn UInt64::reinterpret_as_double(UInt64) -> Double
+pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
+#deprecated
+pub fn UInt64::shl(UInt64, Int32) -> UInt64
+#deprecated
+pub fn UInt64::shr(UInt64, Int32) -> UInt64
+pub fn UInt64::sub(UInt64, UInt64) -> UInt64
+pub fn UInt64::to_be_bytes(UInt64) -> Bytes
+pub fn UInt64::to_byte(UInt64) -> Byte
+pub fn UInt64::to_double(UInt64) -> Double
+pub fn UInt64::to_int(UInt64) -> Int32
+#deprecated
+pub fn UInt64::to_int64(UInt64) -> Int64
+pub fn UInt64::to_le_bytes(UInt64) -> Bytes
+pub fn UInt64::to_string(UInt64, radix? : Int32) -> String
+pub fn UInt64::to_uint(UInt64) -> UInt32
+pub fn UInt64::to_uint16(UInt64) -> UInt16
+pub fn UInt64::trunc_double(Double) -> UInt64
+pub impl Add for UInt64
+pub impl BitAnd for UInt64
+pub impl BitOr for UInt64
+pub impl BitXOr for UInt64
+pub impl Compare for UInt64
+pub impl Default for UInt64
+pub impl Div for UInt64
+pub impl Eq for UInt64
+pub impl Hash for UInt64
+pub impl Mod for UInt64
+pub impl Mul for UInt64
+pub impl Shl for UInt64
+pub impl Show for UInt64
+pub impl Shr for UInt64
+pub impl Sub for UInt64
+pub impl ToJson for UInt64
+
+pub type Double
+pub fn Double::Double(Double) -> Double
+pub fn Double::abs(Double) -> Double
+pub fn Double::add(Double, Double) -> Double
+pub fn Double::ceil(Double) -> Double
+pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
+pub fn Double::compare(Double, Double) -> Int32
+pub fn Double::convert_uint(UInt32) -> Double
+pub fn Double::convert_uint64(UInt64) -> Double
+pub fn Double::div(Double, Double) -> Double
+pub fn Double::equal(Double, Double) -> Bool
+pub fn Double::floor(Double) -> Double
+pub fn Double::from_int(Int32) -> Double
+pub fn Double::hash(Double) -> Int32
+pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
+pub fn Double::is_inf(Double) -> Bool
+pub fn Double::is_nan(Double) -> Bool
+pub fn Double::is_neg_inf(Double) -> Bool
+pub fn Double::is_pos_inf(Double) -> Bool
+pub fn Double::lerp(Double, target~ : Double, t~ : Double) -> Double
+pub fn Double::max(Double, Double) -> Double
+pub fn Double::min(Double, Double) -> Double
+pub fn Double::mod(Double, Double) -> Double
+pub fn Double::mul(Double, Double) -> Double
+pub fn Double::neg(Double) -> Double
+#deprecated
+pub fn Double::pow(Double, Double) -> Double
+#deprecated
+pub fn Double::reinterpret_as_i64(Double) -> Int64
+pub fn Double::reinterpret_as_int64(Double) -> Int64
+#deprecated
+pub fn Double::reinterpret_as_u64(Double) -> UInt64
+pub fn Double::reinterpret_as_uint64(Double) -> UInt64
+pub fn Double::round(Double) -> Double
+pub fn Double::signum(Double) -> Double
+pub fn Double::sqrt(Double) -> Double
+pub fn Double::sub(Double, Double) -> Double
+pub fn Double::to_int(Double) -> Int32
+pub fn Double::to_int64(Double) -> Int64
+pub fn Double::to_string(Double) -> String
+pub fn Double::to_uint(Double) -> UInt32
+pub fn Double::to_uint64(Double) -> UInt64
+pub fn Double::trunc(Double) -> Double
+#deprecated
+pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
+pub impl Add for Double
+pub impl Compare for Double
+pub impl Default for Double
+pub impl Div for Double
+pub impl Eq for Double
+pub impl Hash for Double
+pub impl Mod for Double
+pub impl Mul for Double
+pub impl Neg for Double
+pub impl Show for Double
+pub impl Sub for Double
+pub impl ToJson for Double
+
+pub type String
+pub fn String::add(String, String) -> String
+pub fn String::after(String, StringView) -> StringView?
+#alias(every)
+pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn String::any(String, (Char) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+#alias(code_unit_at)
+pub fn String::at(String, Int32) -> UInt16
+pub fn String::before(String, StringView) -> StringView?
+#alias(codepoint_length, deprecated)
+pub fn String::char_length(String, start_offset? : Int32, end_offset? : Int32) -> Int32
+pub fn String::char_length_eq(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Bool
+pub fn String::char_length_ge(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Bool
+#alias("_[_:_]")
+pub fn String::clamped_view(String, start? : Int32, end? : Int32) -> StringView
+pub fn String::code_units(String) -> ArrayView[UInt16]
+pub fn String::compare(String, String) -> Int32
+pub fn String::compare_ignore_ascii_case(String, String) -> Int32
+pub fn String::contains(String, StringView) -> Bool
+pub fn String::contains_any(String, chars~ : StringView) -> Bool
+pub fn String::contains_char(String, Char) -> Bool
+pub fn String::contains_code_unit(String, UInt16) -> Bool
+pub fn String::equal(String, String) -> Bool
+pub fn String::equal_ignore_ascii_case(String, String) -> Bool
+pub fn String::escape(String, quote? : Bool) -> String
+#alias(sub, deprecated)
+pub fn String::exact_view(String, start? : Int32, end? : Int32) -> StringView
+pub fn String::find(String, StringView) -> Int32?
+pub fn String::find_by(String, (Char) -> Bool raise?) -> Int32? raise?
+pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
+pub fn String::from_array(ArrayView[Char]) -> String
+#alias(from_iterator, deprecated)
+pub fn String::from_iter(Iter[Char]) -> String
+pub fn String::get(String, Int32) -> UInt16?
+pub fn String::get_char(String, Int32) -> Char?
+pub fn String::get_view(String, start? : Int32, end? : Int32) -> StringView?
+#alias(starts_with, deprecated)
+pub fn String::has_prefix(String, StringView) -> Bool
+#alias(ends_with, deprecated)
+pub fn String::has_suffix(String, StringView) -> Bool
+pub fn String::hash(String) -> Int32
+pub fn String::is_blank(String) -> Bool
+pub fn String::is_empty(String) -> Bool
+#alias(iterator, deprecated)
+pub fn String::iter(String) -> Iter[Char]
+#alias(iterator2, deprecated)
+pub fn String::iter2(String) -> Iter2[Int32, Char]
+#alias(charcode_length, deprecated)
+pub fn String::length(String) -> Int32
+pub fn String::lexical_compare(String, String) -> Int32
+pub fn String::make(Int32, Char) -> String
+pub fn String::offset_of_nth_char(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Int32?
+pub fn String::pad_end(String, Int32, Char) -> String
+pub fn String::pad_start(String, Int32, Char) -> String
+pub fn String::repeat(String, Int32) -> String
+pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
+pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
+pub fn String::rev(String) -> String
+pub fn String::rev_after(String, StringView) -> StringView?
+pub fn String::rev_before(String, StringView) -> StringView?
+pub fn String::rev_find(String, StringView) -> Int32?
+pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
+#alias(rev_iterator, deprecated)
+pub fn String::rev_iter(String) -> Iter[Char]
+pub fn String::rev_split_once(String, StringView) -> (StringView, StringView)?
+pub fn String::split(String, StringView) -> Iter[StringView]
+pub fn String::split_at(String, Int32) -> (StringView, StringView)
+pub fn String::split_once(String, StringView) -> (StringView, StringView)?
+#alias(chop_prefix, deprecated)
+pub fn String::strip_prefix(String, StringView) -> StringView?
+#alias(chop_suffix, deprecated)
+pub fn String::strip_suffix(String, StringView) -> StringView?
+#deprecated
+pub fn String::substring(String, start? : Int32, end? : Int32) -> String
+pub fn String::suffixes(String, include_empty? : Bool) -> Iter[StringView]
+pub fn String::to_array(String) -> Array[Char]
+#deprecated
+pub fn String::to_bytes(String) -> Bytes
+pub fn String::to_lower(String) -> String
+pub fn String::to_string(String) -> String
+pub fn String::to_string_view(String) -> StringView
+pub fn String::to_upper(String) -> String
+#label_migration(chars, alias=char_set)
+pub fn String::trim(String, chars? : StringView) -> StringView
+#label_migration(chars, alias=char_set)
+pub fn String::trim_end(String, chars? : StringView) -> StringView
+#deprecated
+pub fn String::trim_space(String) -> StringView
+#label_migration(chars, alias=char_set)
+pub fn String::trim_start(String, chars? : StringView) -> StringView
+#deprecated
+pub fn String::unsafe_char_at(String, Int32) -> Char
+pub fn String::unsafe_substring(String, start~ : Int32, end~ : Int32) -> String
+pub fn String::view(String, start_offset? : Int32, end_offset? : Int32) -> StringView
+pub impl Add for String
+pub impl Compare for String
+pub impl Default for String
+pub impl Eq for String
+pub impl Hash for String
+pub impl Show for String
+pub impl ToJson for String
+pub impl ToStringView for String
+
+pub type V128
+pub fn V128::equal(V128, V128) -> Bool
+pub fn V128::to_string(V128) -> String
+pub impl Eq for V128
+pub impl Show for V128
+
+pub(all) enum Option[T] {
+  None
+  Some(T)
+}
+pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
+pub fn[X : Compare] Option::compare(X?, X?) -> Int32
+pub fn[X : Eq] Option::equal(X?, X?) -> Bool
+pub fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
+#deprecated
+pub fn[T] Option::flatten(T??) -> T?
+pub fn[X : Hash] Option::hash(X?) -> Int32
+#deprecated
+pub fn[T] Option::is_empty(T?) -> Bool
+#deprecated
+pub fn[T] Option::is_none(T?) -> Bool
+#deprecated
+pub fn[T] Option::is_some(T?) -> Bool
+#alias(iterator, deprecated)
+pub fn[T] Option::iter(T?) -> Iter[T]
+pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
+pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
+pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
+#deprecated
+pub fn[X : Show] Option::to_string(X?) -> String
+pub fn[X] Option::unwrap(X?) -> X
+#alias(or, deprecated)
+pub fn[T] Option::unwrap_or(T?, T) -> T
+#alias(or_default, deprecated)
+pub fn[T : Default] Option::unwrap_or_default(T?) -> T
+#alias(or_else, deprecated)
+pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
+#alias(or_error, deprecated)
+pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
+pub impl[X : Compare] Compare for X?
+pub impl[X] Default for X?
+pub impl[X : Eq] Eq for X?
+pub impl[X : Hash] Hash for X?
+#deprecated
+pub impl[X : Show] Show for X?
+pub impl[T : ToJson] ToJson for T?
+
+pub type FixedArray[T]
+pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
+#alias(every)
+pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+pub fn[T] FixedArray::at(Self[T], Int32) -> T
+pub fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int32, Int32]
+pub fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int32 raise?) -> Result[Int32, Int32] raise?
+pub fn FixedArray::blit_from_bytes(Self[Byte], Int32, Bytes, Int32, Int32) -> Unit
+pub fn FixedArray::blit_from_bytesview(Self[Byte], Int32, BytesView) -> Unit
+pub fn FixedArray::blit_from_string(Self[Byte], Int32, String, Int32, Int32) -> Unit
+pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Unit
+#alias("_[_:_]")
+pub fn[T] FixedArray::clamped_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int32
+pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
+#alias(clone, deprecated)
+pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
+pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] FixedArray::eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
+pub fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool
+#alias(sub, deprecated)
+#alias(view, deprecated)
+pub fn[T] FixedArray::exact_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] FixedArray::fill(Self[T], T, start? : Int32, end? : Int32) -> Unit
+pub fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
+pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
+#alias(from_iterator, deprecated)
+pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
+pub fn[T] FixedArray::get(Self[T], Int32) -> T?
+pub fn[T] FixedArray::get_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] FixedArray::has_prefix(Self[T], ArrayView[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] FixedArray::has_suffix(Self[T], ArrayView[T]) -> Bool
+pub fn[T : Hash] FixedArray::hash(Self[T]) -> Int32
+pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
+pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
+#alias(iterator, deprecated)
+pub fn[X] FixedArray::iter(Self[X]) -> Iter[X]
+#alias(iterator2, deprecated)
+pub fn[X] FixedArray::iter2(Self[X]) -> Iter2[Int32, X]
+pub fn[A : ToStringView] FixedArray::join(Self[A], StringView) -> String
+pub fn[A] FixedArray::last(Self[A]) -> A?
+pub fn[T] FixedArray::length(Self[T]) -> Int32
+pub fn[T : Compare] FixedArray::lexical_compare(Self[T], Self[T]) -> Int32
+pub fn[T] FixedArray::make(Int32, T) -> Self[T]
+pub fn[T] FixedArray::make_and_blit(Self[T], allocate_len~ : Int32, init~ : T, len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Self[T]
+pub fn[T] FixedArray::makei(Int32, (Int32) -> T raise?) -> Self[T] raise?
+pub fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+pub fn[T, U] FixedArray::mapi(Self[T], (Int32, T) -> U raise?) -> Self[U] raise?
+pub fn[T] FixedArray::mut_view(Self[T], start? : Int32, end? : Int32) -> MutArrayView[T]
+pub fn[T] FixedArray::rev(Self[T]) -> Self[T]
+pub fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] FixedArray::rev_eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
+pub fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
+#alias(rev_inplace, deprecated)
+pub fn[T] FixedArray::rev_in_place(Self[T]) -> Unit
+pub fn[T : Eq] FixedArray::search(Self[T], T) -> Int32?
+#alias("_[_]=_")
+pub fn[T] FixedArray::set(Self[T], Int32, T) -> Unit
+pub fn FixedArray::set_utf16be_char(Self[Byte], Int32, Char) -> Int32
+pub fn FixedArray::set_utf16le_char(Self[Byte], Int32, Char) -> Int32
+pub fn FixedArray::set_utf8_char(Self[Byte], Int32, Char) -> Int32
+pub fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
+pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int32) -> Unit
+pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
+pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
+pub fn[T] FixedArray::swap(Self[T], Int32, Int32) -> Unit
+pub fn[A] FixedArray::unsafe_blit(Self[A], Int32, Self[A], Int32, Int32) -> Unit
+pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int32, UInt16) -> Unit
+pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int32, UInt16) -> Unit
+pub fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int32, UInt32) -> Unit
+pub fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int32, UInt32) -> Unit
+pub fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int32, UInt64) -> Unit
+pub fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int32, UInt64) -> Unit
+pub impl[T] Add for FixedArray[T]
+pub impl[T : Compare] Compare for FixedArray[T]
+pub impl[X] Default for FixedArray[X]
+pub impl[T : Eq] Eq for FixedArray[T]
+pub impl[T : Hash] Hash for FixedArray[T]
+#deprecated
+pub impl[X : Show] Show for FixedArray[X]
+pub impl[X : ToJson] ToJson for FixedArray[X]
+
+pub type ReadOnlyArray[T]
+#alias(every)
+pub fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+pub fn[T] ReadOnlyArray::at(Self[T], Int32) -> T
+pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int32, Int32]
+pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int32 raise?) -> Result[Int32, Int32] raise?
+pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
+pub fn[T] ReadOnlyArray::chunks(Self[T], Int32) -> Array[ArrayView[T]]
+#alias("_[_:_]")
+pub fn[T] ReadOnlyArray::clamped_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int32
+pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
+pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] ReadOnlyArray::eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
+pub fn[T : Eq] ReadOnlyArray::equal(Self[T], Self[T]) -> Bool
+#alias(sub, deprecated)
+#alias(view, deprecated)
+pub fn[T] ReadOnlyArray::exact_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] ReadOnlyArray::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
+pub fn[A, B] ReadOnlyArray::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
+pub fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
+pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
+#alias(from_iterator, deprecated)
+pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
+pub fn[T] ReadOnlyArray::get(Self[T], Int32) -> T?
+pub fn[T] ReadOnlyArray::get_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] ReadOnlyArray::has_prefix(Self[T], ArrayView[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] ReadOnlyArray::has_suffix(Self[T], ArrayView[T]) -> Bool
+pub fn[T : Hash] ReadOnlyArray::hash(Self[T]) -> Int32
+pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
+#alias(iterator, deprecated)
+pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
+pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int32, T]
+pub fn[A : ToStringView] ReadOnlyArray::join(Self[A], StringView) -> String
+pub fn[T] ReadOnlyArray::last(Self[T]) -> T?
+pub fn[T] ReadOnlyArray::length(Self[T]) -> Int32
+pub fn[T : Compare] ReadOnlyArray::lexical_compare(Self[T], Self[T]) -> Int32
+pub fn[T] ReadOnlyArray::makei(Int32, (Int32) -> T raise?) -> Self[T] raise?
+pub fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+pub fn[T, U] ReadOnlyArray::mapi(Self[T], (Int32, T) -> U raise?) -> Self[U] raise?
+pub fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
+pub fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
+pub fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
+pub fn[T] ReadOnlyArray::rev_iter(Self[T]) -> Iter[T]
+pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int32?
+pub fn[T] ReadOnlyArray::search_by(Self[T], (T) -> Bool raise?) -> Int32? raise?
+pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
+pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
+pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
+pub fn[T] ReadOnlyArray::windows(Self[T], Int32) -> Array[ArrayView[T]]
+pub impl[T : Compare] Compare for ReadOnlyArray[T]
+pub impl[T] Default for ReadOnlyArray[T]
+pub impl[T : Eq] Eq for ReadOnlyArray[T]
+pub impl[T : Hash] Hash for ReadOnlyArray[T]
+#deprecated
+pub impl[T : Show] Show for ReadOnlyArray[T]
+pub impl[T : ToJson] ToJson for ReadOnlyArray[T]
+
+pub type Bytes
+pub fn Bytes::add(Bytes, Bytes) -> Bytes
+#alias("_[_]")
+pub fn Bytes::at(Bytes, Int32) -> Byte
+#alias("_[_:_]")
+pub fn Bytes::clamped_view(Bytes, start? : Int32, end? : Int32) -> BytesView
+pub fn Bytes::compare(Bytes, Bytes) -> Int32
+#alias(clone, deprecated)
+#deprecated
+pub fn Bytes::copy(Bytes) -> Bytes
+pub fn Bytes::equal(Bytes, Bytes) -> Bool
+#alias(sub, deprecated)
+#alias(view, deprecated)
+pub fn Bytes::exact_view(Bytes, start? : Int32, end? : Int32) -> BytesView
+pub fn Bytes::find(Bytes, BytesView) -> Int32?
+#alias(of, deprecated)
+pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
+#deprecated
+pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int32) -> Bytes
+#alias(from_iterator, deprecated)
+pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
+pub fn Bytes::get(Bytes, Int32) -> Byte?
+pub fn Bytes::get_view(Bytes, start? : Int32, end? : Int32) -> BytesView?
+pub fn Bytes::has_prefix(Bytes, BytesView) -> Bool
+pub fn Bytes::has_suffix(Bytes, BytesView) -> Bool
+pub fn Bytes::hash(Bytes) -> Int32
+pub fn Bytes::is_empty(Bytes) -> Bool
+#alias(iterator, deprecated)
+pub fn Bytes::iter(Bytes) -> Iter[Byte]
+#alias(iterator2, deprecated)
+pub fn Bytes::iter2(Bytes) -> Iter2[Int32, Byte]
+pub fn Bytes::length(Bytes) -> Int32
+pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int32
+pub fn Bytes::make(Int32, Byte) -> Bytes
+pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
+pub fn Bytes::new(Int32) -> Bytes
+#deprecated
+pub fn Bytes::of_string(String) -> Bytes
+pub fn Bytes::repeat(Bytes, Int32) -> Bytes
+pub fn Bytes::rev_find(Bytes, BytesView) -> Int32?
+#alias(chop_prefix, deprecated)
+pub fn Bytes::strip_prefix(Bytes, BytesView) -> BytesView?
+#alias(chop_suffix, deprecated)
+pub fn Bytes::strip_suffix(Bytes, BytesView) -> BytesView?
+pub fn Bytes::to_array(Bytes) -> Array[Byte]
+#label_migration(len, fill=false)
+pub fn Bytes::to_fixedarray(Bytes, len? : Int32) -> FixedArray[Byte]
+pub fn Bytes::to_string(Bytes) -> String
+pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, length? : Int32) -> String
+pub impl Add for Bytes
+pub impl Compare for Bytes
+pub impl Default for Bytes
+pub impl Eq for Bytes
+pub impl Hash for Bytes
+pub impl Show for Bytes
+pub impl ToJson for Bytes
+
+pub type Error
+pub fn Error::to_string(Self) -> String
+pub impl Show for Error
+pub impl ToJson for Error
+
 pub(all) struct ArgsLoc(Array[SourceLoc?])
 pub fn ArgsLoc::to_json(Self) -> String
 pub fn ArgsLoc::to_string(Self) -> String
@@ -266,6 +1097,8 @@ pub impl[A : Hash] Hash for ArrayView[A]
 pub impl[X : Show] Show for ArrayView[X]
 pub impl[X : ToJson] ToJson for ArrayView[X]
 
+pub type FuncRef[T]
+
 type Hasher
 #alias(new, deprecated)
 pub fn Hasher::Hasher(seed? : Int32) -> Self
@@ -462,6 +1295,33 @@ pub impl[A : Hash] Hash for MutArrayView[A]
 #deprecated
 pub impl[X : Show] Show for MutArrayView[X]
 
+pub(all) enum Result[T, E] {
+  Err(E)
+  Ok(T)
+}
+pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E] raise?) -> Self[U, E] raise?
+pub fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int32
+pub fn[T : Eq, E : Eq] Result::equal(Self[T, E], Self[T, E]) -> Bool
+pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
+pub fn[T : Hash, E : Hash] Result::hash(Self[T, E]) -> Int32
+pub fn[T, E, U] Result::map(Self[T, E], (T) -> U raise?) -> Self[U, E] raise?
+pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F raise?) -> Self[T, F] raise?
+pub fn[T, E] Result::to_option(Self[T, E]) -> T?
+pub fn[T, E] Result::unwrap(Self[T, E]) -> T
+pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
+#alias(or, deprecated)
+pub fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
+pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
+#alias(or_else, deprecated)
+pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
+pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
+pub impl[T : Compare, E : Compare] Compare for Result[T, E]
+pub impl[T : Eq, E : Eq] Eq for Result[T, E]
+pub impl[T : Hash, E : Hash] Hash for Result[T, E]
+#deprecated
+pub impl[T : Show, E : Show] Show for Result[T, E]
+pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
+
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
 pub fn SourceLoc::to_string(Self) -> String
@@ -498,663 +1358,7 @@ pub fn[T] UninitializedArray::make_and_blit(Self[T], allocate_len~ : Int32, len~
 #alias("_[_]=_")
 pub fn[T] UninitializedArray::set(Self[T], Int32, T) -> Unit
 
-pub fn Unit::compare(Unit, Unit) -> Int32
-pub fn Unit::equal(Unit, Unit) -> Bool
-pub fn Unit::hash(Unit) -> Int32
-pub fn Unit::to_string(Unit) -> String
-
-pub fn Bool::compare(Bool, Bool) -> Int32
-pub fn Bool::equal(Bool, Bool) -> Bool
-pub fn Bool::hash(Bool) -> Int32
-#deprecated
-pub fn Bool::op_compare(Bool, Bool) -> Int32
-pub fn Bool::to_int(Bool) -> Int32
-pub fn Bool::to_int64(Bool) -> Int64
-pub fn Bool::to_string(Bool) -> String
-pub fn Bool::to_uint(Bool) -> UInt32
-pub fn Bool::to_uint16(Bool) -> UInt16
-pub fn Bool::to_uint64(Bool) -> UInt64
-
-pub fn Byte::Byte(Byte) -> Byte
-pub fn Byte::add(Byte, Byte) -> Byte
-pub fn Byte::compare(Byte, Byte) -> Int32
-pub fn Byte::default() -> Byte
-pub fn Byte::div(Byte, Byte) -> Byte
-pub fn Byte::equal(Byte, Byte) -> Bool
-pub fn Byte::hash(Byte) -> Int32
-pub fn Byte::land(Byte, Byte) -> Byte
-pub fn Byte::lnot(Byte) -> Byte
-pub fn Byte::lor(Byte, Byte) -> Byte
-#deprecated
-pub fn Byte::lsl(Byte, Int32) -> Byte
-#deprecated
-pub fn Byte::lsr(Byte, Int32) -> Byte
-pub fn Byte::lxor(Byte, Byte) -> Byte
-pub fn Byte::mod(Byte, Byte) -> Byte
-pub fn Byte::mul(Byte, Byte) -> Byte
-pub fn Byte::popcnt(Byte) -> Int32
-pub fn Byte::shl(Byte, Int32) -> Byte
-pub fn Byte::shr(Byte, Int32) -> Byte
-pub fn Byte::sub(Byte, Byte) -> Byte
-pub fn Byte::to_char(Byte) -> Char
-pub fn Byte::to_double(Byte) -> Double
-pub fn Byte::to_hex(Byte) -> String
-pub fn Byte::to_int(Byte) -> Int32
-pub fn Byte::to_int64(Byte) -> Int64
-pub fn Byte::to_string(Byte) -> String
-pub fn Byte::to_uint(Byte) -> UInt32
-pub fn Byte::to_uint16(Byte) -> UInt16
-pub fn Byte::to_uint64(Byte) -> UInt64
-
-pub fn Char::compare(Char, Char) -> Int32
-pub fn Char::equal(Char, Char) -> Bool
-pub fn Char::escape(Char, quote? : Bool) -> String
-#deprecated
-pub fn Char::from_int(Int32) -> Char
-pub fn Char::hash(Char) -> Int32
-pub fn Char::is_ascii(Char) -> Bool
-pub fn Char::is_ascii_alphabetic(Char) -> Bool
-pub fn Char::is_ascii_control(Char) -> Bool
-pub fn Char::is_ascii_digit(Char) -> Bool
-pub fn Char::is_ascii_graphic(Char) -> Bool
-pub fn Char::is_ascii_hexdigit(Char) -> Bool
-pub fn Char::is_ascii_lowercase(Char) -> Bool
-pub fn Char::is_ascii_octdigit(Char) -> Bool
-pub fn Char::is_ascii_punctuation(Char) -> Bool
-pub fn Char::is_ascii_uppercase(Char) -> Bool
-pub fn Char::is_ascii_whitespace(Char) -> Bool
-pub fn Char::is_bmp(Char) -> Bool
-pub fn Char::is_control(Char) -> Bool
-pub fn Char::is_digit(Char, UInt32) -> Bool
-pub fn Char::is_numeric(Char) -> Bool
-pub fn Char::is_printable(Char) -> Bool
-pub fn Char::is_whitespace(Char) -> Bool
-pub fn Char::to_ascii_lowercase(Char) -> Char
-pub fn Char::to_ascii_uppercase(Char) -> Char
-pub fn Char::to_int(Char) -> Int32
-pub fn Char::to_string(Char) -> String
-pub fn Char::to_uint(Char) -> UInt32
-#alias(length, deprecated)
-pub fn Char::utf16_len(Char) -> Int32
-
-pub fn Int32::Int(Int32) -> Int32
-pub fn Int32::abs(Int32) -> Int32
-pub fn Int32::add(Int32, Int32) -> Int32
-#deprecated
-pub fn Int32::asr(Int32, Int32) -> Int32
-pub fn Int32::clamp(Int32, min~ : Int32, max~ : Int32) -> Int32
-pub fn Int32::clz(Int32) -> Int32
-pub fn Int32::compare(Int32, Int32) -> Int32
-pub fn Int32::ctz(Int32) -> Int32
-pub fn Int32::div(Int32, Int32) -> Int32
-pub fn Int32::equal(Int32, Int32) -> Bool
-pub fn Int32::hash(Int32) -> Int32
-pub fn Int32::is_leading_surrogate(Int32) -> Bool
-pub fn Int32::is_neg(Int32) -> Bool
-pub fn Int32::is_non_neg(Int32) -> Bool
-pub fn Int32::is_non_pos(Int32) -> Bool
-pub fn Int32::is_pos(Int32) -> Bool
-pub fn Int32::is_surrogate(Int32) -> Bool
-pub fn Int32::is_trailing_surrogate(Int32) -> Bool
-pub fn Int32::land(Int32, Int32) -> Int32
-pub fn Int32::lnot(Int32) -> Int32
-pub fn Int32::lor(Int32, Int32) -> Int32
-#deprecated
-pub fn Int32::lsl(Int32, Int32) -> Int32
-#deprecated
-pub fn Int32::lsr(Int32, Int32) -> Int32
-pub fn Int32::lxor(Int32, Int32) -> Int32
-pub fn Int32::max(Int32, Int32) -> Int32
-pub fn Int32::min(Int32, Int32) -> Int32
-pub fn Int32::mod(Int32, Int32) -> Int32
-pub fn Int32::mul(Int32, Int32) -> Int32
-pub fn Int32::neg(Int32) -> Int32
-pub fn Int32::next_power_of_two(Int32) -> Int32
-pub fn Int32::popcnt(Int32) -> Int32
-pub fn Int32::reinterpret_as_uint(Int32) -> UInt32
-#deprecated
-pub fn Int32::shl(Int32, Int32) -> Int32
-#deprecated
-pub fn Int32::shr(Int32, Int32) -> Int32
-pub fn Int32::sub(Int32, Int32) -> Int32
-pub fn Int32::to_byte(Int32) -> Byte
-pub fn Int32::to_char(Int32) -> Char?
-pub fn Int32::to_double(Int32) -> Double
-pub fn Int32::to_int64(Int32) -> Int64
-pub fn Int32::to_string(Int32, radix? : Int32) -> String
-#deprecated
-pub fn Int32::to_uint(Int32) -> UInt32
-pub fn Int32::to_uint16(Int32) -> UInt16
-pub fn Int32::to_uint64(Int32) -> UInt64
-pub fn Int32::until(Int32, Int32, step? : Int32, inclusive? : Bool) -> Iter[Int32]
-
-pub fn Int64::Int64(Int64) -> Int64
-pub fn Int64::abs(Int64) -> Int64
-pub fn Int64::add(Int64, Int64) -> Int64
-#deprecated
-pub fn Int64::asr(Int64, Int32) -> Int64
-pub fn Int64::clamp(Int64, min~ : Int64, max~ : Int64) -> Int64
-pub fn Int64::clz(Int64) -> Int32
-pub fn Int64::compare(Int64, Int64) -> Int32
-pub fn Int64::ctz(Int64) -> Int32
-pub fn Int64::div(Int64, Int64) -> Int64
-pub fn Int64::equal(Int64, Int64) -> Bool
-pub fn Int64::from_int(Int32) -> Int64
-pub fn Int64::hash(Int64) -> Int32
-pub fn Int64::land(Int64, Int64) -> Int64
-pub fn Int64::lnot(Int64) -> Int64
-pub fn Int64::lor(Int64, Int64) -> Int64
-#deprecated
-pub fn Int64::lsl(Int64, Int32) -> Int64
-#deprecated
-pub fn Int64::lsr(Int64, Int32) -> Int64
-pub fn Int64::lxor(Int64, Int64) -> Int64
-pub fn Int64::max(Int64, Int64) -> Int64
-pub fn Int64::min(Int64, Int64) -> Int64
-pub fn Int64::mod(Int64, Int64) -> Int64
-pub fn Int64::mul(Int64, Int64) -> Int64
-pub fn Int64::neg(Int64) -> Int64
-pub fn Int64::popcnt(Int64) -> Int32
-pub fn Int64::reinterpret_as_double(Int64) -> Double
-pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
-#deprecated
-pub fn Int64::shl(Int64, Int32) -> Int64
-#deprecated
-pub fn Int64::shr(Int64, Int32) -> Int64
-pub fn Int64::sub(Int64, Int64) -> Int64
-pub fn Int64::to_byte(Int64) -> Byte
-pub fn Int64::to_double(Int64) -> Double
-pub fn Int64::to_int(Int64) -> Int32
-pub fn Int64::to_string(Int64, radix? : Int32) -> String
-pub fn Int64::to_uint16(Int64) -> UInt16
-#deprecated
-pub fn Int64::to_uint64(Int64) -> UInt64
-pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
-
-pub fn UInt32::UInt(UInt32) -> UInt32
-pub fn UInt32::add(UInt32, UInt32) -> UInt32
-pub fn UInt32::clamp(UInt32, min~ : UInt32, max~ : UInt32) -> UInt32
-pub fn UInt32::clz(UInt32) -> Int32
-pub fn UInt32::compare(UInt32, UInt32) -> Int32
-pub fn UInt32::ctz(UInt32) -> Int32
-pub fn UInt32::div(UInt32, UInt32) -> UInt32
-pub fn UInt32::equal(UInt32, UInt32) -> Bool
-pub fn UInt32::hash(UInt32) -> Int32
-pub fn UInt32::land(UInt32, UInt32) -> UInt32
-pub fn UInt32::lnot(UInt32) -> UInt32
-pub fn UInt32::lor(UInt32, UInt32) -> UInt32
-#deprecated
-pub fn UInt32::lsl(UInt32, Int32) -> UInt32
-#deprecated
-pub fn UInt32::lsr(UInt32, Int32) -> UInt32
-pub fn UInt32::lxor(UInt32, UInt32) -> UInt32
-pub fn UInt32::max(UInt32, UInt32) -> UInt32
-pub fn UInt32::min(UInt32, UInt32) -> UInt32
-pub fn UInt32::mod(UInt32, UInt32) -> UInt32
-pub fn UInt32::mul(UInt32, UInt32) -> UInt32
-pub fn UInt32::popcnt(UInt32) -> Int32
-pub fn UInt32::reinterpret_as_int(UInt32) -> Int32
-#deprecated
-pub fn UInt32::shl(UInt32, Int32) -> UInt32
-#deprecated
-pub fn UInt32::shr(UInt32, Int32) -> UInt32
-pub fn UInt32::sub(UInt32, UInt32) -> UInt32
-pub fn UInt32::to_byte(UInt32) -> Byte
-pub fn UInt32::to_double(UInt32) -> Double
-#deprecated
-pub fn UInt32::to_int(UInt32) -> Int32
-pub fn UInt32::to_int64(UInt32) -> Int64
-pub fn UInt32::to_string(UInt32, radix? : Int32) -> String
-pub fn UInt32::to_uint16(UInt32) -> UInt16
-pub fn UInt32::to_uint64(UInt32) -> UInt64
-pub fn UInt32::trunc_double(Double) -> UInt32
-
-pub fn UInt16::UInt16(UInt16) -> UInt16
-pub fn UInt16::add(UInt16, UInt16) -> UInt16
-pub fn UInt16::compare(UInt16, UInt16) -> Int32
-pub fn UInt16::div(UInt16, UInt16) -> UInt16
-pub fn UInt16::equal(UInt16, UInt16) -> Bool
-pub fn UInt16::hash(UInt16) -> Int32
-pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
-pub fn UInt16::is_surrogate(UInt16) -> Bool
-pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
-pub fn UInt16::land(UInt16, UInt16) -> UInt16
-pub fn UInt16::lnot(UInt16) -> UInt16
-pub fn UInt16::lor(UInt16, UInt16) -> UInt16
-pub fn UInt16::lxor(UInt16, UInt16) -> UInt16
-pub fn UInt16::mod(UInt16, UInt16) -> UInt16
-pub fn UInt16::mul(UInt16, UInt16) -> UInt16
-pub fn UInt16::shl(UInt16, Int32) -> UInt16
-pub fn UInt16::shr(UInt16, Int32) -> UInt16
-pub fn UInt16::sub(UInt16, UInt16) -> UInt16
-pub fn UInt16::to_byte(UInt16) -> Byte
-pub fn UInt16::to_char(UInt16) -> Char?
-pub fn UInt16::to_int(UInt16) -> Int32
-pub fn UInt16::to_int64(UInt16) -> Int64
-pub fn UInt16::to_string(UInt16, radix? : Int32) -> String
-pub fn UInt16::to_uint(UInt16) -> UInt32
-pub fn UInt16::to_uint64(UInt16) -> UInt64
-
-pub fn UInt64::UInt64(UInt64) -> UInt64
-pub fn UInt64::add(UInt64, UInt64) -> UInt64
-pub fn UInt64::clz(UInt64) -> Int32
-pub fn UInt64::compare(UInt64, UInt64) -> Int32
-pub fn UInt64::ctz(UInt64) -> Int32
-pub fn UInt64::div(UInt64, UInt64) -> UInt64
-pub fn UInt64::equal(UInt64, UInt64) -> Bool
-pub fn UInt64::extend_uint(UInt32) -> UInt64
-pub fn UInt64::hash(UInt64) -> Int32
-pub fn UInt64::land(UInt64, UInt64) -> UInt64
-pub fn UInt64::lnot(UInt64) -> UInt64
-pub fn UInt64::lor(UInt64, UInt64) -> UInt64
-#deprecated
-pub fn UInt64::lsl(UInt64, Int32) -> UInt64
-#deprecated
-pub fn UInt64::lsr(UInt64, Int32) -> UInt64
-pub fn UInt64::lxor(UInt64, UInt64) -> UInt64
-pub fn UInt64::mod(UInt64, UInt64) -> UInt64
-pub fn UInt64::mul(UInt64, UInt64) -> UInt64
-pub fn UInt64::popcnt(UInt64) -> Int32
-pub fn UInt64::reinterpret_as_double(UInt64) -> Double
-pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
-#deprecated
-pub fn UInt64::shl(UInt64, Int32) -> UInt64
-#deprecated
-pub fn UInt64::shr(UInt64, Int32) -> UInt64
-pub fn UInt64::sub(UInt64, UInt64) -> UInt64
-pub fn UInt64::to_be_bytes(UInt64) -> Bytes
-pub fn UInt64::to_byte(UInt64) -> Byte
-pub fn UInt64::to_double(UInt64) -> Double
-pub fn UInt64::to_int(UInt64) -> Int32
-#deprecated
-pub fn UInt64::to_int64(UInt64) -> Int64
-pub fn UInt64::to_le_bytes(UInt64) -> Bytes
-pub fn UInt64::to_string(UInt64, radix? : Int32) -> String
-pub fn UInt64::to_uint(UInt64) -> UInt32
-pub fn UInt64::to_uint16(UInt64) -> UInt16
-pub fn UInt64::trunc_double(Double) -> UInt64
-
-pub fn Double::Double(Double) -> Double
-pub fn Double::abs(Double) -> Double
-pub fn Double::add(Double, Double) -> Double
-pub fn Double::ceil(Double) -> Double
-pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
-pub fn Double::compare(Double, Double) -> Int32
-pub fn Double::convert_uint(UInt32) -> Double
-pub fn Double::convert_uint64(UInt64) -> Double
-pub fn Double::div(Double, Double) -> Double
-pub fn Double::equal(Double, Double) -> Bool
-pub fn Double::floor(Double) -> Double
-pub fn Double::from_int(Int32) -> Double
-pub fn Double::hash(Double) -> Int32
-pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
-pub fn Double::is_inf(Double) -> Bool
-pub fn Double::is_nan(Double) -> Bool
-pub fn Double::is_neg_inf(Double) -> Bool
-pub fn Double::is_pos_inf(Double) -> Bool
-pub fn Double::lerp(Double, target~ : Double, t~ : Double) -> Double
-pub fn Double::max(Double, Double) -> Double
-pub fn Double::min(Double, Double) -> Double
-pub fn Double::mod(Double, Double) -> Double
-pub fn Double::mul(Double, Double) -> Double
-pub fn Double::neg(Double) -> Double
-#deprecated
-pub fn Double::pow(Double, Double) -> Double
-#deprecated
-pub fn Double::reinterpret_as_i64(Double) -> Int64
-pub fn Double::reinterpret_as_int64(Double) -> Int64
-#deprecated
-pub fn Double::reinterpret_as_u64(Double) -> UInt64
-pub fn Double::reinterpret_as_uint64(Double) -> UInt64
-pub fn Double::round(Double) -> Double
-pub fn Double::signum(Double) -> Double
-pub fn Double::sqrt(Double) -> Double
-pub fn Double::sub(Double, Double) -> Double
-pub fn Double::to_int(Double) -> Int32
-pub fn Double::to_int64(Double) -> Int64
-pub fn Double::to_string(Double) -> String
-pub fn Double::to_uint(Double) -> UInt32
-pub fn Double::to_uint64(Double) -> UInt64
-pub fn Double::trunc(Double) -> Double
-#deprecated
-pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
-
-pub fn String::add(String, String) -> String
-pub fn String::after(String, StringView) -> StringView?
-#alias(every)
-pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
-#alias(exists)
-pub fn String::any(String, (Char) -> Bool raise?) -> Bool raise?
-#alias("_[_]")
-#alias(code_unit_at)
-pub fn String::at(String, Int32) -> UInt16
-pub fn String::before(String, StringView) -> StringView?
-#alias(codepoint_length, deprecated)
-pub fn String::char_length(String, start_offset? : Int32, end_offset? : Int32) -> Int32
-pub fn String::char_length_eq(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Bool
-pub fn String::char_length_ge(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Bool
-#alias("_[_:_]")
-pub fn String::clamped_view(String, start? : Int32, end? : Int32) -> StringView
-pub fn String::code_units(String) -> ArrayView[UInt16]
-pub fn String::compare(String, String) -> Int32
-pub fn String::compare_ignore_ascii_case(String, String) -> Int32
-pub fn String::contains(String, StringView) -> Bool
-pub fn String::contains_any(String, chars~ : StringView) -> Bool
-pub fn String::contains_char(String, Char) -> Bool
-pub fn String::contains_code_unit(String, UInt16) -> Bool
-pub fn String::equal(String, String) -> Bool
-pub fn String::equal_ignore_ascii_case(String, String) -> Bool
-pub fn String::escape(String, quote? : Bool) -> String
-#alias(sub, deprecated)
-pub fn String::exact_view(String, start? : Int32, end? : Int32) -> StringView
-pub fn String::find(String, StringView) -> Int32?
-pub fn String::find_by(String, (Char) -> Bool raise?) -> Int32? raise?
-pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
-pub fn String::from_array(ArrayView[Char]) -> String
-#alias(from_iterator, deprecated)
-pub fn String::from_iter(Iter[Char]) -> String
-pub fn String::get(String, Int32) -> UInt16?
-pub fn String::get_char(String, Int32) -> Char?
-pub fn String::get_view(String, start? : Int32, end? : Int32) -> StringView?
-#alias(starts_with, deprecated)
-pub fn String::has_prefix(String, StringView) -> Bool
-#alias(ends_with, deprecated)
-pub fn String::has_suffix(String, StringView) -> Bool
-pub fn String::hash(String) -> Int32
-pub fn String::is_blank(String) -> Bool
-pub fn String::is_empty(String) -> Bool
-#alias(iterator, deprecated)
-pub fn String::iter(String) -> Iter[Char]
-#alias(iterator2, deprecated)
-pub fn String::iter2(String) -> Iter2[Int32, Char]
-#alias(charcode_length, deprecated)
-pub fn String::length(String) -> Int32
-pub fn String::lexical_compare(String, String) -> Int32
-pub fn String::make(Int32, Char) -> String
-pub fn String::offset_of_nth_char(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Int32?
-pub fn String::pad_end(String, Int32, Char) -> String
-pub fn String::pad_start(String, Int32, Char) -> String
-pub fn String::repeat(String, Int32) -> String
-pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
-pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
-pub fn String::rev(String) -> String
-pub fn String::rev_after(String, StringView) -> StringView?
-pub fn String::rev_before(String, StringView) -> StringView?
-pub fn String::rev_find(String, StringView) -> Int32?
-pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
-#alias(rev_iterator, deprecated)
-pub fn String::rev_iter(String) -> Iter[Char]
-pub fn String::rev_split_once(String, StringView) -> (StringView, StringView)?
-pub fn String::split(String, StringView) -> Iter[StringView]
-pub fn String::split_at(String, Int32) -> (StringView, StringView)
-pub fn String::split_once(String, StringView) -> (StringView, StringView)?
-#alias(chop_prefix, deprecated)
-pub fn String::strip_prefix(String, StringView) -> StringView?
-#alias(chop_suffix, deprecated)
-pub fn String::strip_suffix(String, StringView) -> StringView?
-#deprecated
-pub fn String::substring(String, start? : Int32, end? : Int32) -> String
-pub fn String::suffixes(String, include_empty? : Bool) -> Iter[StringView]
-pub fn String::to_array(String) -> Array[Char]
-#deprecated
-pub fn String::to_bytes(String) -> Bytes
-pub fn String::to_lower(String) -> String
-pub fn String::to_string(String) -> String
-pub fn String::to_string_view(String) -> StringView
-pub fn String::to_upper(String) -> String
-#label_migration(chars, alias=char_set)
-pub fn String::trim(String, chars? : StringView) -> StringView
-#label_migration(chars, alias=char_set)
-pub fn String::trim_end(String, chars? : StringView) -> StringView
-#deprecated
-pub fn String::trim_space(String) -> StringView
-#label_migration(chars, alias=char_set)
-pub fn String::trim_start(String, chars? : StringView) -> StringView
-#deprecated
-pub fn String::unsafe_char_at(String, Int32) -> Char
-pub fn String::unsafe_substring(String, start~ : Int32, end~ : Int32) -> String
-pub fn String::view(String, start_offset? : Int32, end_offset? : Int32) -> StringView
-
-pub fn V128::equal(V128, V128) -> Bool
-pub fn V128::to_string(V128) -> String
-
-pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
-pub fn[X : Compare] Option::compare(X?, X?) -> Int32
-pub fn[X : Eq] Option::equal(X?, X?) -> Bool
-pub fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
-#deprecated
-pub fn[T] Option::flatten(T??) -> T?
-pub fn[X : Hash] Option::hash(X?) -> Int32
-#deprecated
-pub fn[T] Option::is_empty(T?) -> Bool
-#deprecated
-pub fn[T] Option::is_none(T?) -> Bool
-#deprecated
-pub fn[T] Option::is_some(T?) -> Bool
-#alias(iterator, deprecated)
-pub fn[T] Option::iter(T?) -> Iter[T]
-pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
-pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
-pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
-#deprecated
-pub fn[X : Show] Option::to_string(X?) -> String
-pub fn[X] Option::unwrap(X?) -> X
-#alias(or, deprecated)
-pub fn[T] Option::unwrap_or(T?, T) -> T
-#alias(or_default, deprecated)
-pub fn[T : Default] Option::unwrap_or_default(T?) -> T
-#alias(or_else, deprecated)
-pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
-#alias(or_error, deprecated)
-pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
-
-pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E] raise?) -> Self[U, E] raise?
-pub fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int32
-pub fn[T : Eq, E : Eq] Result::equal(Self[T, E], Self[T, E]) -> Bool
-pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
-pub fn[T : Hash, E : Hash] Result::hash(Self[T, E]) -> Int32
-pub fn[T, E, U] Result::map(Self[T, E], (T) -> U raise?) -> Self[U, E] raise?
-pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F raise?) -> Self[T, F] raise?
-pub fn[T, E] Result::to_option(Self[T, E]) -> T?
-pub fn[T, E] Result::unwrap(Self[T, E]) -> T
-pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
-#alias(or, deprecated)
-pub fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
-pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
-#alias(or_else, deprecated)
-pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
-pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
-
-pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
-#alias(every)
-pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
-#alias(exists)
-pub fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-#alias("_[_]")
-pub fn[T] FixedArray::at(Self[T], Int32) -> T
-pub fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int32, Int32]
-pub fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int32 raise?) -> Result[Int32, Int32] raise?
-pub fn FixedArray::blit_from_bytes(Self[Byte], Int32, Bytes, Int32, Int32) -> Unit
-pub fn FixedArray::blit_from_bytesview(Self[Byte], Int32, BytesView) -> Unit
-pub fn FixedArray::blit_from_string(Self[Byte], Int32, String, Int32, Int32) -> Unit
-pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Unit
-#alias("_[_:_]")
-pub fn[T] FixedArray::clamped_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
-pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int32
-pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
-#alias(clone, deprecated)
-pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
-pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
-pub fn[T] FixedArray::eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool
-#alias(sub, deprecated)
-#alias(view, deprecated)
-pub fn[T] FixedArray::exact_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
-pub fn[T] FixedArray::fill(Self[T], T, start? : Int32, end? : Int32) -> Unit
-pub fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-pub fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
-pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
-#alias(from_iterator, deprecated)
-pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
-pub fn[T] FixedArray::get(Self[T], Int32) -> T?
-pub fn[T] FixedArray::get_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]?
-#alias(starts_with, deprecated)
-pub fn[T : Eq] FixedArray::has_prefix(Self[T], ArrayView[T]) -> Bool
-#alias(ends_with, deprecated)
-pub fn[T : Eq] FixedArray::has_suffix(Self[T], ArrayView[T]) -> Bool
-pub fn[T : Hash] FixedArray::hash(Self[T]) -> Int32
-pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
-pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
-#alias(iterator, deprecated)
-pub fn[X] FixedArray::iter(Self[X]) -> Iter[X]
-#alias(iterator2, deprecated)
-pub fn[X] FixedArray::iter2(Self[X]) -> Iter2[Int32, X]
-pub fn[A : ToStringView] FixedArray::join(Self[A], StringView) -> String
-pub fn[A] FixedArray::last(Self[A]) -> A?
-pub fn[T] FixedArray::length(Self[T]) -> Int32
-pub fn[T : Compare] FixedArray::lexical_compare(Self[T], Self[T]) -> Int32
-pub fn[T] FixedArray::make(Int32, T) -> Self[T]
-pub fn[T] FixedArray::make_and_blit(Self[T], allocate_len~ : Int32, init~ : T, len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Self[T]
-pub fn[T] FixedArray::makei(Int32, (Int32) -> T raise?) -> Self[T] raise?
-pub fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
-pub fn[T, U] FixedArray::mapi(Self[T], (Int32, T) -> U raise?) -> Self[U] raise?
-pub fn[T] FixedArray::mut_view(Self[T], start? : Int32, end? : Int32) -> MutArrayView[T]
-pub fn[T] FixedArray::rev(Self[T]) -> Self[T]
-pub fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
-pub fn[T] FixedArray::rev_eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
-pub fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-pub fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
-#alias(rev_inplace, deprecated)
-pub fn[T] FixedArray::rev_in_place(Self[T]) -> Unit
-pub fn[T : Eq] FixedArray::search(Self[T], T) -> Int32?
-#alias("_[_]=_")
-pub fn[T] FixedArray::set(Self[T], Int32, T) -> Unit
-pub fn FixedArray::set_utf16be_char(Self[Byte], Int32, Char) -> Int32
-pub fn FixedArray::set_utf16le_char(Self[Byte], Int32, Char) -> Int32
-pub fn FixedArray::set_utf8_char(Self[Byte], Int32, Char) -> Int32
-pub fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
-pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int32) -> Unit
-pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
-pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
-pub fn[T] FixedArray::swap(Self[T], Int32, Int32) -> Unit
-pub fn[A] FixedArray::unsafe_blit(Self[A], Int32, Self[A], Int32, Int32) -> Unit
-pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int32, UInt16) -> Unit
-pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int32, UInt16) -> Unit
-pub fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int32, UInt32) -> Unit
-pub fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int32, UInt32) -> Unit
-pub fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int32, UInt64) -> Unit
-pub fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int32, UInt64) -> Unit
-
-#alias(every)
-pub fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
-#alias(exists)
-pub fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-#alias("_[_]")
-pub fn[T] ReadOnlyArray::at(Self[T], Int32) -> T
-pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int32, Int32]
-pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int32 raise?) -> Result[Int32, Int32] raise?
-pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
-pub fn[T] ReadOnlyArray::chunks(Self[T], Int32) -> Array[ArrayView[T]]
-#alias("_[_:_]")
-pub fn[T] ReadOnlyArray::clamped_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
-pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int32
-pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
-pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
-pub fn[T] ReadOnlyArray::eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] ReadOnlyArray::equal(Self[T], Self[T]) -> Bool
-#alias(sub, deprecated)
-#alias(view, deprecated)
-pub fn[T] ReadOnlyArray::exact_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
-pub fn[T] ReadOnlyArray::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
-pub fn[A, B] ReadOnlyArray::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
-pub fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-pub fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
-pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
-#alias(from_iterator, deprecated)
-pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
-pub fn[T] ReadOnlyArray::get(Self[T], Int32) -> T?
-pub fn[T] ReadOnlyArray::get_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]?
-#alias(starts_with, deprecated)
-pub fn[T : Eq] ReadOnlyArray::has_prefix(Self[T], ArrayView[T]) -> Bool
-#alias(ends_with, deprecated)
-pub fn[T : Eq] ReadOnlyArray::has_suffix(Self[T], ArrayView[T]) -> Bool
-pub fn[T : Hash] ReadOnlyArray::hash(Self[T]) -> Int32
-pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
-pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
-#alias(iterator, deprecated)
-pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
-pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int32, T]
-pub fn[A : ToStringView] ReadOnlyArray::join(Self[A], StringView) -> String
-pub fn[T] ReadOnlyArray::last(Self[T]) -> T?
-pub fn[T] ReadOnlyArray::length(Self[T]) -> Int32
-pub fn[T : Compare] ReadOnlyArray::lexical_compare(Self[T], Self[T]) -> Int32
-pub fn[T] ReadOnlyArray::makei(Int32, (Int32) -> T raise?) -> Self[T] raise?
-pub fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
-pub fn[T, U] ReadOnlyArray::mapi(Self[T], (Int32, T) -> U raise?) -> Self[U] raise?
-pub fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
-pub fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
-pub fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?
-pub fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?) -> B raise?
-pub fn[T] ReadOnlyArray::rev_iter(Self[T]) -> Iter[T]
-pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int32?
-pub fn[T] ReadOnlyArray::search_by(Self[T], (T) -> Bool raise?) -> Int32? raise?
-pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
-pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
-pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
-pub fn[T] ReadOnlyArray::windows(Self[T], Int32) -> Array[ArrayView[T]]
-
-pub fn Bytes::add(Bytes, Bytes) -> Bytes
-#alias("_[_]")
-pub fn Bytes::at(Bytes, Int32) -> Byte
-#alias("_[_:_]")
-pub fn Bytes::clamped_view(Bytes, start? : Int32, end? : Int32) -> BytesView
-pub fn Bytes::compare(Bytes, Bytes) -> Int32
-#alias(clone, deprecated)
-#deprecated
-pub fn Bytes::copy(Bytes) -> Bytes
-pub fn Bytes::equal(Bytes, Bytes) -> Bool
-#alias(sub, deprecated)
-#alias(view, deprecated)
-pub fn Bytes::exact_view(Bytes, start? : Int32, end? : Int32) -> BytesView
-pub fn Bytes::find(Bytes, BytesView) -> Int32?
-#alias(of, deprecated)
-pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
-#deprecated
-pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int32) -> Bytes
-#alias(from_iterator, deprecated)
-pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
-pub fn Bytes::get(Bytes, Int32) -> Byte?
-pub fn Bytes::get_view(Bytes, start? : Int32, end? : Int32) -> BytesView?
-pub fn Bytes::has_prefix(Bytes, BytesView) -> Bool
-pub fn Bytes::has_suffix(Bytes, BytesView) -> Bool
-pub fn Bytes::hash(Bytes) -> Int32
-pub fn Bytes::is_empty(Bytes) -> Bool
-#alias(iterator, deprecated)
-pub fn Bytes::iter(Bytes) -> Iter[Byte]
-#alias(iterator2, deprecated)
-pub fn Bytes::iter2(Bytes) -> Iter2[Int32, Byte]
-pub fn Bytes::length(Bytes) -> Int32
-pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int32
-pub fn Bytes::make(Int32, Byte) -> Bytes
-pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
-pub fn Bytes::new(Int32) -> Bytes
-#deprecated
-pub fn Bytes::of_string(String) -> Bytes
-pub fn Bytes::repeat(Bytes, Int32) -> Bytes
-pub fn Bytes::rev_find(Bytes, BytesView) -> Int32?
-#alias(chop_prefix, deprecated)
-pub fn Bytes::strip_prefix(Bytes, BytesView) -> BytesView?
-#alias(chop_suffix, deprecated)
-pub fn Bytes::strip_suffix(Bytes, BytesView) -> BytesView?
-pub fn Bytes::to_array(Bytes) -> Array[Byte]
-#label_migration(len, fill=false)
-pub fn Bytes::to_fixedarray(Bytes, len? : Int32) -> FixedArray[Byte]
-pub fn Bytes::to_string(Bytes) -> String
-pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, length? : Int32) -> String
-
-pub fn Error::to_string(Self) -> String
-
+pub type BytesView
 #alias("_[_]")
 pub fn BytesView::at(Self, Int32) -> Byte
 #alias("_[_:_]")
@@ -1190,7 +1394,13 @@ pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
 #alias(to_bytes, deprecated)
 pub fn BytesView::to_owned(Self) -> Bytes
 pub fn BytesView::to_string(Self) -> String
+pub impl Compare for BytesView
+pub impl Eq for BytesView
+pub impl Hash for BytesView
+pub impl Show for BytesView
+pub impl ToJson for BytesView
 
+pub type StringView
 pub fn StringView::add(Self, Self) -> Self
 pub fn StringView::after(Self, Self) -> Self?
 #alias(every)
@@ -1286,6 +1496,14 @@ pub fn StringView::trim_start(Self, chars? : Self) -> Self
 pub fn StringView::unsafe_charcode_at(Self, Int32) -> Int32
 pub fn StringView::unsafe_get(Self, Int32) -> UInt16
 pub fn StringView::view(Self, start_offset? : Int32, end_offset? : Int32) -> Self
+pub impl Add for StringView
+pub impl Compare for StringView
+pub impl Default for StringView
+pub impl Eq for StringView
+pub impl Hash for StringView
+pub impl Show for StringView
+pub impl ToJson for StringView
+pub impl ToStringView for StringView
 
 // Type aliases
 
@@ -1293,47 +1511,18 @@ pub fn StringView::view(Self, start_offset? : Int32, end_offset? : Int32) -> Sel
 pub(open) trait Add {
   fn add(Self, Self) -> Self
 }
-pub impl Add for Byte
-pub impl Add for Int32
-pub impl Add for Int64
-pub impl Add for UInt32
-pub impl Add for UInt16
-pub impl Add for UInt64
-pub impl Add for Double
-pub impl Add for String
-pub impl[T] Add for FixedArray[T]
-pub impl Add for Bytes
-pub impl Add for StringView
 
 pub(open) trait BitAnd {
   fn land(Self, Self) -> Self
 }
-pub impl BitAnd for Byte
-pub impl BitAnd for Int32
-pub impl BitAnd for Int64
-pub impl BitAnd for UInt32
-pub impl BitAnd for UInt16
-pub impl BitAnd for UInt64
 
 pub(open) trait BitOr {
   fn lor(Self, Self) -> Self
 }
-pub impl BitOr for Byte
-pub impl BitOr for Int32
-pub impl BitOr for Int64
-pub impl BitOr for UInt32
-pub impl BitOr for UInt16
-pub impl BitOr for UInt64
 
 pub(open) trait BitXOr {
   fn lxor(Self, Self) -> Self
 }
-pub impl BitXOr for Byte
-pub impl BitXOr for Int32
-pub impl BitXOr for Int64
-pub impl BitXOr for UInt32
-pub impl BitXOr for UInt16
-pub impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {
   fn compare(Self, Self) -> Int32
@@ -1342,22 +1531,6 @@ pub(open) trait Compare : Eq {
   fn op_le(Self, Self) -> Bool = _
   fn op_ge(Self, Self) -> Bool = _
 }
-pub impl Compare for Unit
-pub impl Compare for Bool
-pub impl Compare for Byte
-pub impl Compare for Char
-pub impl Compare for Int32
-pub impl Compare for Int64
-pub impl Compare for UInt32
-pub impl Compare for UInt16
-pub impl Compare for UInt64
-pub impl Compare for Double
-pub impl Compare for String
-pub impl[X : Compare] Compare for X?
-pub impl[T : Compare, E : Compare] Compare for Result[T, E]
-pub impl[T : Compare] Compare for FixedArray[T]
-pub impl[T : Compare] Compare for ReadOnlyArray[T]
-pub impl Compare for Bytes
 pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2)
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Compare for (T0, T1, T2, T3)
@@ -1373,61 +1546,19 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
-pub impl Compare for BytesView
-pub impl Compare for StringView
 
 pub(open) trait Default {
   fn default() -> Self
 }
-pub impl Default for Unit
-pub impl Default for Bool
-pub impl Default for Byte
-pub impl Default for Char
-pub impl Default for Int32
-pub impl Default for Int64
-pub impl Default for UInt32
-pub impl Default for UInt16
-pub impl Default for UInt64
-pub impl Default for Double
-pub impl Default for String
-pub impl[X] Default for X?
-pub impl[X] Default for FixedArray[X]
-pub impl[T] Default for ReadOnlyArray[T]
-pub impl Default for Bytes
-pub impl Default for StringView
 
 pub(open) trait Div {
   fn div(Self, Self) -> Self
 }
-pub impl Div for Byte
-pub impl Div for Int32
-pub impl Div for Int64
-pub impl Div for UInt32
-pub impl Div for UInt16
-pub impl Div for UInt64
-pub impl Div for Double
 
 pub(open) trait Eq {
   fn equal(Self, Self) -> Bool
   fn not_equal(Self, Self) -> Bool = _
 }
-pub impl Eq for Unit
-pub impl Eq for Bool
-pub impl Eq for Byte
-pub impl Eq for Char
-pub impl Eq for Int32
-pub impl Eq for Int64
-pub impl Eq for UInt32
-pub impl Eq for UInt16
-pub impl Eq for UInt64
-pub impl Eq for Double
-pub impl Eq for String
-pub impl Eq for V128
-pub impl[X : Eq] Eq for X?
-pub impl[T : Eq, E : Eq] Eq for Result[T, E]
-pub impl[T : Eq] Eq for FixedArray[T]
-pub impl[T : Eq] Eq for ReadOnlyArray[T]
-pub impl Eq for Bytes
 pub impl[T0 : Eq, T1 : Eq] Eq for (T0, T1)
 pub impl[T0 : Eq, T1 : Eq, T2 : Eq] Eq for (T0, T1, T2)
 pub impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Eq for (T0, T1, T2, T3)
@@ -1443,37 +1574,17 @@ pub impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq,
 pub impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 pub impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 pub impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
-pub impl Eq for BytesView
-pub impl Eq for StringView
 
 pub(open) trait Hash {
   fn hash_combine(Self, Hasher) -> Unit
   fn hash(Self) -> Int32 = _
 }
-pub impl Hash for Unit
-pub impl Hash for Bool
-pub impl Hash for Byte
-pub impl Hash for Char
-pub impl Hash for Int32
-pub impl Hash for Int64
-pub impl Hash for UInt32
-pub impl Hash for UInt16
-pub impl Hash for UInt64
-pub impl Hash for Double
-pub impl Hash for String
-pub impl[X : Hash] Hash for X?
-pub impl[T : Hash, E : Hash] Hash for Result[T, E]
-pub impl[T : Hash] Hash for FixedArray[T]
-pub impl[T : Hash] Hash for ReadOnlyArray[T]
-pub impl Hash for Bytes
 pub impl[A : Hash, B : Hash] Hash for (A, B)
 pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C)
 pub impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D)
 pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (A, B, C, D, E)
 pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (A, B, C, D, E, F)
 pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash for (A, B, C, D, E, F, G)
-pub impl Hash for BytesView
-pub impl Hash for StringView
 
 #must_implement_one(write_view, write_substring)
 pub(open) trait Logger {
@@ -1491,69 +1602,24 @@ pub fn[Obj : Show] &Logger::write_object(Self, Obj) -> Unit
 pub(open) trait Mod {
   fn mod(Self, Self) -> Self
 }
-pub impl Mod for Byte
-pub impl Mod for Int32
-pub impl Mod for Int64
-pub impl Mod for UInt32
-pub impl Mod for UInt16
-pub impl Mod for UInt64
-pub impl Mod for Double
 
 pub(open) trait Mul {
   fn mul(Self, Self) -> Self
 }
-pub impl Mul for Byte
-pub impl Mul for Int32
-pub impl Mul for Int64
-pub impl Mul for UInt32
-pub impl Mul for UInt16
-pub impl Mul for UInt64
-pub impl Mul for Double
 
 pub(open) trait Neg {
   fn neg(Self) -> Self
 }
-pub impl Neg for Int32
-pub impl Neg for Int64
-pub impl Neg for Double
 
 pub(open) trait Shl {
   fn shl(Self, Int32) -> Self
 }
-pub impl Shl for Byte
-pub impl Shl for Int32
-pub impl Shl for Int64
-pub impl Shl for UInt32
-pub impl Shl for UInt16
-pub impl Shl for UInt64
 
 #must_implement_one(output, to_string)
 pub(open) trait Show {
   fn output(Self, &Logger) -> Unit = _
   fn to_string(Self) -> String = _
 }
-pub impl Show for Unit
-pub impl Show for Bool
-pub impl Show for Byte
-pub impl Show for Char
-pub impl Show for Int32
-pub impl Show for Int64
-pub impl Show for UInt32
-pub impl Show for UInt16
-pub impl Show for UInt64
-pub impl Show for Double
-pub impl Show for String
-pub impl Show for V128
-#deprecated
-pub impl[X : Show] Show for X?
-#deprecated
-pub impl[T : Show, E : Show] Show for Result[T, E]
-#deprecated
-pub impl[X : Show] Show for FixedArray[X]
-#deprecated
-pub impl[T : Show] Show for ReadOnlyArray[T]
-pub impl Show for Bytes
-pub impl Show for Error
 #deprecated
 pub impl[A : Show, B : Show] Show for (A, B)
 #deprecated
@@ -1584,51 +1650,19 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 #deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
-pub impl Show for BytesView
-pub impl Show for StringView
 
 pub(open) trait Shr {
   fn shr(Self, Int32) -> Self
 }
-pub impl Shr for Byte
-pub impl Shr for Int32
-pub impl Shr for Int64
-pub impl Shr for UInt32
-pub impl Shr for UInt16
-pub impl Shr for UInt64
 
 pub(open) trait Sub {
   fn sub(Self, Self) -> Self
 }
-pub impl Sub for Byte
-pub impl Sub for Int32
-pub impl Sub for Int64
-pub impl Sub for UInt32
-pub impl Sub for UInt16
-pub impl Sub for UInt64
-pub impl Sub for Double
 
 #deprecated
 pub(open) trait ToJson {
   fn to_json(Self) -> Json
 }
-pub impl ToJson for Unit
-pub impl ToJson for Bool
-pub impl ToJson for Byte
-pub impl ToJson for Char
-pub impl ToJson for Int32
-pub impl ToJson for Int64
-pub impl ToJson for UInt32
-pub impl ToJson for UInt16
-pub impl ToJson for UInt64
-pub impl ToJson for Double
-pub impl ToJson for String
-pub impl[T : ToJson] ToJson for T?
-pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
-pub impl[X : ToJson] ToJson for FixedArray[X]
-pub impl[T : ToJson] ToJson for ReadOnlyArray[T]
-pub impl ToJson for Bytes
-pub impl ToJson for Error
 pub impl[A : ToJson, B : ToJson] ToJson for (A, B)
 pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
@@ -1644,11 +1678,7 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson,
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
-pub impl ToJson for BytesView
-pub impl ToJson for StringView
 
 pub trait ToStringView {
   fn to_string_view(Self) -> StringView
 }
-pub impl ToStringView for String
-pub impl ToStringView for StringView

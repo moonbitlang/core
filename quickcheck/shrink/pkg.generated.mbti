@@ -37,7 +37,6 @@ pub impl Shrink for Float
 pub impl Shrink for Double
 pub impl Shrink for String
 pub impl[T : Shrink] Shrink for T?
-pub impl[T : Shrink, E : Shrink] Shrink for Result[T, E]
 pub impl[X : Shrink] Shrink for FixedArray[X]
 pub impl[X : Shrink] Shrink for ReadOnlyArray[X]
 pub impl Shrink for Bytes
@@ -45,6 +44,7 @@ pub impl Shrink for @bigint.BigInt
 pub impl[X : Shrink] Shrink for Array[X]
 pub impl[X : Shrink] Shrink for ArrayView[X]
 pub impl[K : Shrink + Hash + Eq, V : Shrink] Shrink for Map[K, V]
+pub impl[T : Shrink, E : Shrink] Shrink for Result[T, E]
 pub impl[T : Shrink] Shrink for @deque.Deque[T]
 pub impl[K : Shrink + Hash + Eq, V : Shrink] Shrink for @moonbitlang/core/hashmap.HashMap[K, V]
 pub impl[T : Shrink + Eq + Hash] Shrink for @moonbitlang/core/hashset.HashSet[T]
