@@ -51,7 +51,6 @@ pub impl Debug for Double
 pub impl Debug for String
 pub impl Debug for V128
 pub impl[T : Debug] Debug for T?
-pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl[T : Debug] Debug for FixedArray[T]
 pub impl[T : Debug] Debug for ReadOnlyArray[T]
 pub impl Debug for Bytes
@@ -68,6 +67,7 @@ pub impl[A, B] Debug for Iter2[A, B]
 pub impl Debug for Json
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
+pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder

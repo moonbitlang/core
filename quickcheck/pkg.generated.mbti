@@ -93,7 +93,6 @@ pub impl Arbitrary for Float
 pub impl Arbitrary for Double
 pub impl Arbitrary for String
 pub impl[X : Arbitrary] Arbitrary for X?
-pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
 pub impl[X : Arbitrary] Arbitrary for ReadOnlyArray[X]
 pub impl Arbitrary for Bytes
@@ -102,6 +101,7 @@ pub impl[X : Arbitrary] Arbitrary for Array[X]
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
 pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for Map[K, V]
+pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for @deque.Deque[X]
 pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @moonbitlang/core/hashmap.HashMap[K, V]
 pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @moonbitlang/core/hashset.HashSet[X]

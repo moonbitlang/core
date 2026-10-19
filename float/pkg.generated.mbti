@@ -20,6 +20,7 @@ pub let not_a_number : Float
 // Errors
 
 // Types and methods
+pub type Float
 #as_free_fn(deprecated)
 pub fn Float::abs(Float) -> Float
 pub fn Float::add(Float, Float) -> Float
