@@ -328,7 +328,7 @@ fn Parser::term(
       if ctx.group_names.contains(name) {
         raise ctx.error_at(rest, offset=3, HINT_DUPLICATE_GROUP_NAME)
       }
-      ctx.group_names.push(name)
+      ctx.group_names[name] = ()
       let (rest, pat) = Parser::parse_group_continue(rest2, ctx~)
       (rest, @re.capture(name~, pat), false)
     }
