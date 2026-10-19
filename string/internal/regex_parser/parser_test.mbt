@@ -1525,3 +1525,38 @@ test "parse/unterminated_range_is_an_error" {
     ),
   )
 }
+
+///|
+test "parse/duplicate_group_names" {
+  let result = fn(pattern : String) {
+    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+      e => Err(e)
+    } noraise {
+      _ => Ok(())
+    }
+  }
+  debug_inspect(
+    result("(?<n>a)(?<n>b)"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("(?<n>a)|(?<n>b)"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("(?<n>(?<n>a))"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("(?<n>a)(?<m>b)(?<nm>c)"),
+    content=(
+      #|Ok(())
+    ),
+  )
+}
