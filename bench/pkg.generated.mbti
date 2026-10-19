@@ -10,7 +10,7 @@ pub fn monotonic_clock_end(Timestamp) -> Double
 
 pub fn monotonic_clock_start() -> Timestamp
 
-pub fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
+pub fn single_bench(name? : String, () -> Unit, count? : UInt32) -> Summary
 
 // Errors
 
@@ -21,7 +21,7 @@ type Bench
 #as_free_fn(new, deprecated)
 #as_free_fn
 pub fn Bench::Bench() -> Self
-pub fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
+pub fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt32) -> Unit
 pub fn Bench::dump_summaries(Self) -> String
 pub fn[Any] Bench::keep(Self, Any) -> Unit
 pub impl @debug.Debug for Bench

@@ -17,7 +17,7 @@ pub fn capture(name? : String, @ast.Pattern) -> @ast.Pattern
 
 pub fn char(@rechar_set.RecharSet) -> @ast.Pattern
 
-pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern, max_cache_words? : Int) -> Regex
+pub fn compile(profile~ : @shared_types.Profile, @ast.Pattern, max_cache_words? : Int32) -> Regex
 
 pub let empty : @ast.Pattern
 
@@ -45,10 +45,10 @@ pub let start_of_word : @ast.Pattern
 
 // Types and methods
 type MatchResult derive(@debug.Debug)
-pub fn MatchResult::group(Self, Int) -> (Int, Int)?
+pub fn MatchResult::group(Self, Int32) -> (Int32, Int32)?
 
 type Regex
-pub fn Regex::execute(Self, StringView, Int) -> MatchResult?
+pub fn Regex::execute(Self, StringView, Int32) -> MatchResult?
 pub fn Regex::group_names(Self) -> ReadOnlyArray[String?]
 
 // Type aliases
@@ -64,7 +64,7 @@ pub using @ast {type Quantifier}
 
 pub using @shared_types {type QuantifierMode}
 
-pub type Rechar = Int
+pub type Rechar = Int32
 
 pub using @rechar_set {type RecharSet}
 

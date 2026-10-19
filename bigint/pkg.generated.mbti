@@ -13,26 +13,26 @@ import {
 // Types and methods
 type BigInt
 pub fn BigInt::add(Self, Self) -> Self
-pub fn BigInt::bit_length(Self) -> Int
-pub fn BigInt::compare(Self, Self) -> Int
-pub fn BigInt::compare_int(Self, Int) -> Int
-pub fn BigInt::compare_int64(Self, Int64) -> Int
-pub fn BigInt::compare_uint(Self, UInt) -> Int
-pub fn BigInt::compare_uint64(Self, UInt64) -> Int
-pub fn BigInt::ctz(Self) -> Int
+pub fn BigInt::bit_length(Self) -> Int32
+pub fn BigInt::compare(Self, Self) -> Int32
+pub fn BigInt::compare_int(Self, Int32) -> Int32
+pub fn BigInt::compare_int64(Self, Int64) -> Int32
+pub fn BigInt::compare_uint(Self, UInt32) -> Int32
+pub fn BigInt::compare_uint64(Self, UInt64) -> Int32
+pub fn BigInt::ctz(Self) -> Int32
 pub fn BigInt::div(Self, Self) -> Self
 pub fn BigInt::equal(Self, Self) -> Bool
-pub fn BigInt::equal_int(Self, Int) -> Bool
+pub fn BigInt::equal_int(Self, Int32) -> Bool
 pub fn BigInt::equal_int64(Self, Int64) -> Bool
-pub fn BigInt::equal_uint(Self, UInt) -> Bool
+pub fn BigInt::equal_uint(Self, UInt32) -> Bool
 pub fn BigInt::equal_uint64(Self, UInt64) -> Bool
-pub fn BigInt::from_int(Int) -> Self
+pub fn BigInt::from_int(Int32) -> Self
 pub fn BigInt::from_int64(Int64) -> Self
-pub fn BigInt::from_octets(BytesView, signum? : Int) -> Self
-pub fn BigInt::from_string(String, radix? : Int) -> Self
-pub fn BigInt::from_uint(UInt) -> Self
+pub fn BigInt::from_octets(BytesView, signum? : Int32) -> Self
+pub fn BigInt::from_string(String, radix? : Int32) -> Self
+pub fn BigInt::from_uint(UInt32) -> Self
 pub fn BigInt::from_uint64(UInt64) -> Self
-pub fn BigInt::hash(Self) -> Int
+pub fn BigInt::hash(Self) -> Int32
 pub fn BigInt::is_zero(Self) -> Bool
 pub fn BigInt::land(Self, Self) -> Self
 pub fn BigInt::lor(Self, Self) -> Self
@@ -41,15 +41,15 @@ pub fn BigInt::mod(Self, Self) -> Self
 pub fn BigInt::mul(Self, Self) -> Self
 pub fn BigInt::neg(Self) -> Self
 pub fn BigInt::pow(Self, Self, modulus? : Self) -> Self
-pub fn BigInt::shl(Self, Int) -> Self
-pub fn BigInt::shr(Self, Int) -> Self
+pub fn BigInt::shl(Self, Int32) -> Self
+pub fn BigInt::shr(Self, Int32) -> Self
 pub fn BigInt::sub(Self, Self) -> Self
-pub fn BigInt::to_int(Self) -> Int
+pub fn BigInt::to_int(Self) -> Int32
 pub fn BigInt::to_int16(Self) -> Int16
 pub fn BigInt::to_int64(Self) -> Int64
-pub fn BigInt::to_octets(Self, length? : Int) -> Bytes
-pub fn BigInt::to_string(Self, radix? : Int) -> String
-pub fn BigInt::to_uint(Self) -> UInt
+pub fn BigInt::to_octets(Self, length? : Int32) -> Bytes
+pub fn BigInt::to_string(Self, radix? : Int32) -> String
+pub fn BigInt::to_uint(Self) -> UInt32
 pub fn BigInt::to_uint16(Self) -> UInt16
 pub fn BigInt::to_uint64(Self) -> UInt64
 pub impl Add for BigInt

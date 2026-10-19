@@ -8,19 +8,19 @@ import {
 }
 
 // Values
-pub fn parse_bigint(StringView, base? : Int) -> @bigint.BigInt raise
+pub fn parse_bigint(StringView, base? : Int32) -> @bigint.BigInt raise
 
 pub fn parse_bool(StringView) -> Bool raise
 
 pub fn parse_double(StringView) -> Double raise
 
-pub fn parse_int(StringView, base? : Int) -> Int raise
+pub fn parse_int(StringView, base? : Int32) -> Int32 raise
 
-pub fn parse_int64(StringView, base? : Int) -> Int64 raise
+pub fn parse_int64(StringView, base? : Int32) -> Int64 raise
 
-pub fn parse_uint(StringView, base? : Int) -> UInt raise
+pub fn parse_uint(StringView, base? : Int32) -> UInt32 raise
 
-pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise
+pub fn parse_uint64(StringView, base? : Int32) -> UInt64 raise
 
 // Errors
 
@@ -29,7 +29,7 @@ type MatchResult derive(@debug.Debug)
 pub fn MatchResult::after(Self) -> StringView
 pub fn MatchResult::before(Self) -> StringView
 pub fn MatchResult::content(Self) -> StringView
-pub fn MatchResult::group(Self, Int) -> StringView?
+pub fn MatchResult::group(Self, Int32) -> StringView?
 pub fn MatchResult::named_group(Self, String) -> StringView?
 
 pub struct Regex {
@@ -39,11 +39,11 @@ pub struct Regex {
 pub fn Regex::Regex(StringView) -> Self raise
 pub fn Regex::add(Self, Self) -> Self
 pub fn Regex::capture(Self, String) -> Self
-pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
+pub fn Regex::execute(Self, StringView, last_index? : Int32) -> MatchResult?
 pub fn Regex::find(Self, StringView) -> Iter[MatchResult]
 pub fn Regex::lor(Self, Self) -> Self
-pub fn Regex::repeat(Self, min? : Int, max? : Int, greedy? : Bool) -> Self
-pub fn Regex::replace_by(Self, StringView, (MatchResult) -> StringView, limit? : Int) -> StringView
+pub fn Regex::repeat(Self, min? : Int32, max? : Int32, greedy? : Bool) -> Self
+pub fn Regex::replace_by(Self, StringView, (MatchResult) -> StringView, limit? : Int32) -> StringView
 pub fn Regex::split(Self, StringView) -> Iter[StringView]
 pub fn Regex::string(StringView) -> Self
 pub fn Regex::unsafe_from_string(StringView) -> Self
@@ -63,9 +63,9 @@ pub(open) trait FromStr {
   fn from_str(StringView) -> Self raise
 }
 pub impl FromStr for Bool
-pub impl FromStr for Int
+pub impl FromStr for Int32
 pub impl FromStr for Int64
-pub impl FromStr for UInt
+pub impl FromStr for UInt32
 pub impl FromStr for UInt64
 pub impl FromStr for Double
 pub impl FromStr for @bigint.BigInt

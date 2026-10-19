@@ -13,15 +13,15 @@ pub fn from_bytes(BytesView) -> Buffer
 pub fn from_iter(Iter[Byte]) -> Buffer
 
 #deprecated
-pub fn new(size_hint? : Int) -> Buffer
+pub fn new(size_hint? : Int32) -> Buffer
 
 // Errors
 
 // Types and methods
 type Buffer
-pub fn Buffer::Buffer(size_hint? : Int) -> Self
+pub fn Buffer::Buffer(size_hint? : Int32) -> Self
 pub fn Buffer::is_empty(Self) -> Bool
-pub fn Buffer::length(Self) -> Int
+pub fn Buffer::length(Self) -> Int32
 pub fn Buffer::reset(Self) -> Unit
 #alias(contents)
 pub fn Buffer::to_bytes(Self) -> Bytes
@@ -41,8 +41,8 @@ pub fn Buffer::write_int16_be(Self, Int16) -> Unit
 pub fn Buffer::write_int16_le(Self, Int16) -> Unit
 pub fn Buffer::write_int64_be(Self, Int64) -> Unit
 pub fn Buffer::write_int64_le(Self, Int64) -> Unit
-pub fn Buffer::write_int_be(Self, Int) -> Unit
-pub fn Buffer::write_int_le(Self, Int) -> Unit
+pub fn Buffer::write_int_be(Self, Int32) -> Unit
+pub fn Buffer::write_int_le(Self, Int32) -> Unit
 pub fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
 pub fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
 #deprecated
@@ -55,8 +55,8 @@ pub fn Buffer::write_uint16_be(Self, UInt16) -> Unit
 pub fn Buffer::write_uint16_le(Self, UInt16) -> Unit
 pub fn Buffer::write_uint64_be(Self, UInt64) -> Unit
 pub fn Buffer::write_uint64_le(Self, UInt64) -> Unit
-pub fn Buffer::write_uint_be(Self, UInt) -> Unit
-pub fn Buffer::write_uint_le(Self, UInt) -> Unit
+pub fn Buffer::write_uint_be(Self, UInt32) -> Unit
+pub fn Buffer::write_uint_le(Self, UInt32) -> Unit
 #alias(write_bytes_interpolation)
 pub fn[T : Show] Buffer::write_utf8(Self, T) -> Unit
 pub impl Show for Buffer
@@ -66,7 +66,7 @@ pub impl @debug.Debug for Buffer
 
 // Traits
 trait Leb128
-pub impl Leb128 for Int
+pub impl Leb128 for Int32
 pub impl Leb128 for Int64
-pub impl Leb128 for UInt
+pub impl Leb128 for UInt32
 pub impl Leb128 for UInt64

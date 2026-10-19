@@ -20,7 +20,7 @@ pub fn Lexbuf::from_string(String) -> Self
 
 pub(all) struct StringScanner {
   data : StringView
-  mut cursor : Int
+  mut cursor : Int32
 }
 
 // Type aliases

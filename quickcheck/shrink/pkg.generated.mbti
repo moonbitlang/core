@@ -27,10 +27,10 @@ pub impl Shrink for Unit
 pub impl Shrink for Bool
 pub impl Shrink for Byte
 pub impl Shrink for Char
-pub impl Shrink for Int
+pub impl Shrink for Int32
 pub impl Shrink for Int16
 pub impl Shrink for Int64
-pub impl Shrink for UInt
+pub impl Shrink for UInt32
 pub impl Shrink for UInt16
 pub impl Shrink for UInt64
 pub impl Shrink for Float

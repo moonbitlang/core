@@ -10,8 +10,8 @@ pub fn track(String, CoverageCounter) -> Unit
 
 // Types and methods
 type CoverageCounter
-pub fn CoverageCounter::incr(Self, Int) -> Unit
-pub fn CoverageCounter::new(Int) -> Self
+pub fn CoverageCounter::incr(Self, Int32) -> Unit
+pub fn CoverageCounter::new(Int32) -> Self
 pub fn CoverageCounter::to_string(Self) -> String
 pub impl Show for CoverageCounter
 

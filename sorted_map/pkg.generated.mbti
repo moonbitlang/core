@@ -25,7 +25,7 @@ pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 #alias(clone, deprecated)
 pub fn[K, V] SortedMap::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
-pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+pub fn[K, V] SortedMap::eachi(Self[K, V], (Int32, K, V) -> Unit raise?) -> Unit raise?
 pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
 pub fn[K, V] SortedMap::first(Self[K, V]) -> (K, V)?
 pub fn[K : Compare, V] SortedMap::first_ge(Self[K, V], K) -> (K, V)?
@@ -48,7 +48,7 @@ pub fn[K, V] SortedMap::last(Self[K, V]) -> (K, V)?
 pub fn[K : Compare, V] SortedMap::last_le(Self[K, V], K) -> (K, V)?
 pub fn[K : Compare, V] SortedMap::last_lt(Self[K, V], K) -> (K, V)?
 #alias(size, deprecated)
-pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
+pub fn[K, V] SortedMap::length(Self[K, V]) -> Int32
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #as_free_fn(deprecated)

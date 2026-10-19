@@ -18,7 +18,7 @@ pub fn[K : Eq + Hash, V] VectorMap::add(Self[K, V], K, V) -> Self[K, V]
 pub fn[K : Eq + Hash, V] VectorMap::at(Self[K, V], K) -> V
 pub fn[K : Eq + Hash, V] VectorMap::contains(Self[K, V], K) -> Bool
 pub fn[K, V] VectorMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
-pub fn[K, V] VectorMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+pub fn[K, V] VectorMap::eachi(Self[K, V], (Int32, K, V) -> Unit raise?) -> Unit raise?
 pub fn[K : Eq, V : Eq] VectorMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] VectorMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
@@ -29,7 +29,7 @@ pub fn[K, V, A] VectorMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) ->
 pub fn[K : Eq + Hash, V] VectorMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] VectorMap::get(Self[K, V], K) -> V?
-pub fn[K : Hash, V : Hash] VectorMap::hash(Self[K, V]) -> Int
+pub fn[K : Hash, V : Hash] VectorMap::hash(Self[K, V]) -> Int32
 pub fn[K, V] VectorMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] VectorMap::iter(Self[K, V]) -> Iter[(K, V)]
@@ -37,7 +37,7 @@ pub fn[K, V] VectorMap::iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] VectorMap::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] VectorMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
-pub fn[K, V] VectorMap::length(Self[K, V]) -> Int
+pub fn[K, V] VectorMap::length(Self[K, V]) -> Int32
 #alias(map_with_key, deprecated)
 pub fn[K, V, A] VectorMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
 #as_free_fn
