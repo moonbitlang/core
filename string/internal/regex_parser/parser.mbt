@@ -104,11 +104,20 @@ fn Parser::class_atom(
 fn Parser::class_contents(
   rest : StringView,
   ctx~ : ParserContext,
+  class_start~ : StringView,
 ) -> (StringView, @re.RecharSet) raise ParserError {
+  // When the content starts with a colon, a colon that closes the class with
+  // something in between ends `[:name:]`, a POSIX class written without its
+  // outer brackets. This is the rule of the compiler's regex literals. Any
+  // other colon is an ordinary character.
+  let colon_start = rest is [':', ..]
+  let content_length = rest.length()
   outer~: for rest = rest, char_set = @re.RecharSet::empty() {
     match rest {
       [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
       [']', ..] => break outer~ (rest, char_set)
+      [':', ']', ..] if colon_start && content_length - rest.length() >= 2 =>
+        raise ctx.error_at(class_start, HINT_BARE_POSIX_CLASS)
       _ => {
         let (rest, left) = match rest {
           ['[', ':', ..] =>
@@ -167,6 +176,7 @@ fn Parser::character_class(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.RecharSet) raise ParserError {
+  let class_start = rest
   let (rest, neg) = match rest {
     ['[', '^', .. rest] => (rest, true)
     ['[', .. rest] => (rest, false)
@@ -177,7 +187,7 @@ fn Parser::character_class(
     ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
     _ => ()
   }
-  let (rest, char_set) = Parser::class_contents(rest, ctx~)
+  let (rest, char_set) = Parser::class_contents(rest, ctx~, class_start~)
   match rest {
     [']', .. rest] =>
       (
@@ -365,8 +375,6 @@ fn Parser::term(
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, @re.capture(pat), false)
     }
-    (re"^\[\^?:[a-z]+:\]", after=_) =>
-      raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
     (re"^\[", after=_) => {
       let (rest, char_set) = Parser::character_class(rest, ctx~)
       (rest, @re.char(char_set), false)

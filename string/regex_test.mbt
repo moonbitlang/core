@@ -90,7 +90,7 @@ test "execute/colon_range" {
   guard inverse.execute(":") is None else {
     fail("Expected inverse colon range to exclude colon")
   }
-  for pattern in ["^[:]$", "^[::]$", "^[:-:]$", "^[:-@:]$", "^[:a-z:]$"] {
+  for pattern in ["^[:]$", "^[::]$", "^[:-:]$"] {
     let regex = @string.Regex(pattern)
     guard regex.execute(":") is Some(_) else {
       fail("Expected literal colon to match")
