@@ -1592,3 +1592,36 @@ test "parse/duplicate_group_names" {
     ),
   )
 }
+
+///|
+test "parse/dash_after_range_or_posix_class" {
+  let result = fn(pattern : String) {
+    Ok(parse(profile=profile_unicode(), mode=String, pattern)) catch {
+      e => Err(e)
+    }
+  }
+  debug_inspect(
+    result("[a-b-c]"),
+    content=(
+      #|Ok(Char([(45, 45), (97, 99)]))
+    ),
+  )
+  debug_inspect(
+    result("[a-b-]"),
+    content=(
+      #|Ok(Char([(45, 45), (97, 98)]))
+    ),
+  )
+  debug_inspect(
+    result("[[:digit:]-a]"),
+    content=(
+      #|Ok(Char([(45, 45), (48, 57), (97, 97)]))
+    ),
+  )
+  debug_inspect(
+    result("[a-b\\-c]"),
+    content=(
+      #|Ok(Char([(45, 45), (97, 99)]))
+    ),
+  )
+}
