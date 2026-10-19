@@ -15,7 +15,7 @@ pub fn debug_inspect(&Debug, content? : String, loc~ : SourceLoc, args_loc~ : Ar
 #callsite(autofill(loc))
 pub fn[T : Debug] dump(T, name? : String, loc~ : SourceLoc) -> T
 
-pub fn render(Repr, max_depth? : Int) -> String
+pub fn render(Repr, max_depth? : Int32) -> String
 
 #alias(repr)
 pub fn[T : Debug] to_string(T) -> String
@@ -40,10 +40,10 @@ pub impl Debug for Unit
 pub impl Debug for Bool
 pub impl Debug for Byte
 pub impl Debug for Char
-pub impl Debug for Int
+pub impl Debug for Int32
 pub impl Debug for Int16
 pub impl Debug for Int64
-pub impl Debug for UInt
+pub impl Debug for UInt32
 pub impl Debug for UInt16
 pub impl Debug for UInt64
 pub impl Debug for Float

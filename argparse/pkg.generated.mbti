@@ -42,7 +42,7 @@ pub fn FlagArg::FlagArg(StringView, short? : Char, long? : StringView, about? : 
 pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
-  flag_counts : Map[String, Int]
+  flag_counts : Map[String, Int32]
   sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
   // private fields
@@ -71,7 +71,7 @@ pub struct ValueRange {
   // private fields
 } derive(Eq, Show, @debug.Debug)
 #alias(new, deprecated)
-pub fn ValueRange::ValueRange(lower? : Int, upper? : Int) -> Self
+pub fn ValueRange::ValueRange(lower? : Int32, upper? : Int32) -> Self
 pub fn ValueRange::equal(Self, Self) -> Bool
 pub fn ValueRange::single() -> Self
 pub fn ValueRange::to_string(Self) -> String

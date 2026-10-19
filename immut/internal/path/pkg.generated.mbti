@@ -9,14 +9,14 @@ pub fn[A : Hash] of(A) -> Path
 // Errors
 
 // Types and methods
-pub struct Path(UInt) derive(Eq)
-pub fn Path::advance(Self, Int) -> Self
+pub struct Path(UInt32) derive(Eq)
+pub fn Path::advance(Self, Int32) -> Self
 pub fn Path::equal(Self, Self) -> Bool
-pub fn Path::idx(Self) -> Int
-pub fn Path::idx_at(Self, Int) -> Int
+pub fn Path::idx(Self) -> Int32
+pub fn Path::idx_at(Self, Int32) -> Int32
 pub fn Path::is_last(Self) -> Bool
 pub fn Path::next(Self) -> Self
-pub fn Path::push(Self, Int) -> Self
+pub fn Path::push(Self, Int32) -> Self
 
 // Type aliases
 

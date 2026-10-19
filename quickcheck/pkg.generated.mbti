@@ -18,7 +18,7 @@ import {
 pub fn char_range(Char, Char) -> Generator[Char]
 
 #callsite(autofill(loc))
-pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
+pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt32, max_size? : UInt32, max_shrinks? : UInt32, discard_ratio? : UInt32, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
 
 pub fn classify(Bool, String) -> Observation
 
@@ -26,11 +26,11 @@ pub fn[T : @debug.Debug] collect(T) -> Observation
 
 pub fn[T] elements(Array[T]) -> Generator[T]
 
-pub fn[T] frequency(Array[(UInt, Generator[T])]) -> Generator[T]
+pub fn[T] frequency(Array[(UInt32, Generator[T])]) -> Generator[T]
 
-pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
+pub fn[T : Arbitrary] gen(size? : Int32, state? : @splitmix.RandomState) -> T
 
-pub fn int_range(Int, Int) -> Generator[Int]
+pub fn int_range(Int32, Int32) -> Generator[Int32]
 
 pub fn label(String) -> Observation
 
@@ -38,11 +38,11 @@ pub fn[T] one_of(Array[Generator[T]]) -> Generator[T]
 
 pub fn[T] pure(T) -> Generator[T]
 
-pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
+pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt32, max_size? : UInt32, max_shrinks? : UInt32, discard_ratio? : UInt32, seed? : UInt64) -> QuickCheckReport[A]
 
-pub fn[X : Arbitrary] samples(Int) -> Array[X]
+pub fn[X : Arbitrary] samples(Int32) -> Array[X]
 
-pub fn[T] sized((Int) -> Generator[T]) -> Generator[T]
+pub fn[T] sized((Int32) -> Generator[T]) -> Generator[T]
 
 pub fn[T : Arbitrary] spawn() -> Generator[T]
 
@@ -50,15 +50,15 @@ pub fn[T : Arbitrary] spawn() -> Generator[T]
 
 // Types and methods
 type Generator[T]
-pub fn[T] Generator::Generator((Int, @splitmix.RandomState) -> T) -> Self[T]
-pub fn[T] Generator::array_with_size(Self[T], Int) -> Self[Array[T]]
+pub fn[T] Generator::Generator((Int32, @splitmix.RandomState) -> T) -> Self[T]
+pub fn[T] Generator::array_with_size(Self[T], Int32) -> Self[Array[T]]
 pub fn[T, U] Generator::flat_map(Self[T], (T) -> Self[U]) -> Self[U]
 pub fn[T, U] Generator::map(Self[T], (T) -> U) -> Self[U]
-pub fn[T] Generator::resize(Self[T], Int) -> Self[T]
-pub fn[T] Generator::run(Self[T], Int, @splitmix.RandomState) -> T
-pub fn[T] Generator::sample(Self[T], size? : Int, seed? : UInt64) -> T
-pub fn[T] Generator::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
-pub fn[T] Generator::scale(Self[T], (Int) -> Int) -> Self[T]
+pub fn[T] Generator::resize(Self[T], Int32) -> Self[T]
+pub fn[T] Generator::run(Self[T], Int32, @splitmix.RandomState) -> T
+pub fn[T] Generator::sample(Self[T], size? : Int32, seed? : UInt64) -> T
+pub fn[T] Generator::samples(Self[T], count? : Int32, size? : Int32, seed? : UInt64) -> Array[T]
+pub fn[T] Generator::scale(Self[T], (Int32) -> Int32) -> Self[T]
 pub fn[T, U] Generator::zip(Self[T], Self[U]) -> Self[(T, U)]
 pub fn[T, U, V] Generator::zip_with(Self[T], Self[U], (T, U) -> V) -> Self[V]
 pub fn[T, U, V, W] Generator::zip_with3(Self[T], Self[U], Self[V], (T, U, V) -> W) -> Self[W]
@@ -77,16 +77,16 @@ pub using @shrink {trait Shrink}
 
 // Traits
 pub(open) trait Arbitrary {
-  fn arbitrary(Int, @splitmix.RandomState) -> Self
+  fn arbitrary(Int32, @splitmix.RandomState) -> Self
 }
 pub impl Arbitrary for Unit
 pub impl Arbitrary for Bool
 pub impl Arbitrary for Byte
 pub impl Arbitrary for Char
-pub impl Arbitrary for Int
+pub impl Arbitrary for Int32
 pub impl Arbitrary for Int16
 pub impl Arbitrary for Int64
-pub impl Arbitrary for UInt
+pub impl Arbitrary for UInt32
 pub impl Arbitrary for UInt16
 pub impl Arbitrary for UInt64
 pub impl Arbitrary for Float

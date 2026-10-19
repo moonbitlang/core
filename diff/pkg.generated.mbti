@@ -6,13 +6,13 @@ import {
 }
 
 // Values
-pub fn[T : Eq] edit_distance(ArrayView[T], ArrayView[T]) -> Int
+pub fn[T : Eq] edit_distance(ArrayView[T], ArrayView[T]) -> Int32
 
-pub fn edit_distance_str(StringView, StringView) -> Int
+pub fn edit_distance_str(StringView, StringView) -> Int32
 
-pub fn edit_distance_str_within(StringView, StringView, max_distance~ : Int) -> Int?
+pub fn edit_distance_str_within(StringView, StringView, max_distance~ : Int32) -> Int32?
 
-pub fn[T : Eq] edit_distance_within(ArrayView[T], ArrayView[T], max_distance~ : Int) -> Int?
+pub fn[T : Eq] edit_distance_within(ArrayView[T], ArrayView[T], max_distance~ : Int32) -> Int32?
 
 pub fn[T : Eq] levenshtein_edits(old~ : ArrayView[T], new~ : ArrayView[T]) -> Array[LevenshteinEdit]
 
@@ -20,9 +20,9 @@ pub fn[T : Eq] levenshtein_edits(old~ : ArrayView[T], new~ : ArrayView[T]) -> Ar
 
 // Types and methods
 type Diff[T]
-pub fn[T : Hash + Eq] Diff::Diff(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, algorithm? : DiffAlgorithm) -> Self[T]
+pub fn[T : Hash + Eq] Diff::Diff(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int32, algorithm? : DiffAlgorithm) -> Self[T]
 pub fn[T] Diff::edits(Self[T]) -> ArrayView[Edit]
-pub fn[T] Diff::group(Self[T], context? : Int) -> Array[Hunk[T]]
+pub fn[T] Diff::group(Self[T], context? : Int32) -> Array[Hunk[T]]
 pub fn[T] Diff::new_view(Self[T]) -> ArrayView[T]
 pub fn[T] Diff::old_view(Self[T]) -> ArrayView[T]
 
@@ -33,9 +33,9 @@ pub(all) enum DiffAlgorithm {
 pub fn DiffAlgorithm::equal(Self, Self) -> Bool
 
 pub enum Edit {
-  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
-  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Delete(old_index~ : Int32, old_len~ : Int32, new_index~ : Int32)
+  Insert(old_index~ : Int32, new_index~ : Int32, new_len~ : Int32)
+  Equal(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
 } derive(Eq, @debug.Debug)
 pub fn Edit::equal(Self, Self) -> Bool
 
@@ -47,10 +47,10 @@ pub fn[T] Hunk::old_view(Self[T]) -> ArrayView[T]
 pub fn[T] Hunk::render(Self[T], show~ : (T) -> String) -> String
 
 pub enum LevenshteinEdit {
-  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
-  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-  Replace(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Delete(old_index~ : Int32, old_len~ : Int32, new_index~ : Int32)
+  Insert(old_index~ : Int32, new_index~ : Int32, new_len~ : Int32)
+  Equal(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
+  Replace(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
 } derive(Eq, @debug.Debug)
 pub fn LevenshteinEdit::equal(Self, Self) -> Bool
 

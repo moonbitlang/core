@@ -13,7 +13,7 @@ import {
 type LazyList[A]
 pub fn[A] LazyList::LazyList(ArrayView[A]) -> Self[A]
 pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
-pub fn[A] LazyList::drop(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::drop(Self[A], Int32) -> Self[A]
 pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] LazyList::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #as_free_fn
@@ -30,7 +30,7 @@ pub fn[A] LazyList::iter(Self[A]) -> Iter[A]
 pub fn[A] LazyList::lazy_cons(A, () -> Self[A]) -> Self[A]
 pub fn[A, B] LazyList::map(Self[A], (A) -> B) -> Self[B]
 pub fn[A] LazyList::tail(Self[A]) -> Self[A]?
-pub fn[A] LazyList::take(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::take(Self[A], Int32) -> Self[A]
 pub fn[A] LazyList::take_while(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] LazyList::to_array(Self[A]) -> Array[A]
 pub fn[A, B] LazyList::zip(Self[A], Self[B]) -> Self[(A, B)]

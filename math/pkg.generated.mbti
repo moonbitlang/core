@@ -65,7 +65,7 @@ pub fn hypot(Double, Double) -> Double
 
 pub fn hypotf(Float, Float) -> Float
 
-pub fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int) -> Bool
+pub fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int32) -> Bool
 
 pub fn ln(Double) -> Double
 
@@ -92,13 +92,13 @@ pub fn pow(Double, Double) -> Double
 
 pub fn powf(Float, Float) -> Float
 
-pub fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
+pub fn probable_prime(Int32, @random.Rand) -> @bigint.BigInt
 
 pub fn round(Double) -> Double
 
-pub fn scalbn(Double, Int) -> Double
+pub fn scalbn(Double, Int32) -> Double
 
-pub fn scalbnf(Float, Int) -> Float
+pub fn scalbnf(Float, Int32) -> Float
 
 pub fn sin(Double) -> Double
 

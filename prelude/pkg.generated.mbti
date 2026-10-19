@@ -28,7 +28,7 @@ pub fn[T : @builtin.Eq + @debug.Debug] assert_not_eq(T, T, msg? : String, loc~ :
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise
 
-pub fn[A : @builtin.Compare] compare(A, A) -> Int
+pub fn[A : @builtin.Compare] compare(A, A) -> Int32
 
 pub fn[T : @debug.Debug] debug(T) -> Unit
 
@@ -46,7 +46,7 @@ pub fn[T : @builtin.Show] eprintln(T) -> Unit
 #callsite(autofill(loc))
 pub fn[T] fail(StringView, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
-pub fn[T : @builtin.Hash] hash(T) -> Int
+pub fn[T : @builtin.Hash] hash(T) -> Int32
 
 pub fn[T] ignore(T) -> Unit
 

@@ -16,12 +16,12 @@ type Queue[A]
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
-pub fn[A] Queue::Queue(ArrayView[A], capacity? : Int) -> Self[A]
+pub fn[A] Queue::Queue(ArrayView[A], capacity? : Int32) -> Self[A]
 pub fn[A] Queue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(Self[A]) -> Self[A]
 pub fn[A] Queue::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A] Queue::eachi(Self[A], (Int32, A) -> Unit raise?) -> Unit raise?
 pub fn[A : Eq] Queue::equal(Self[A], Self[A]) -> Bool
 pub fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(from_iterator, deprecated)
@@ -31,7 +31,7 @@ pub fn[A] Queue::from_iter(Iter[A]) -> Self[A]
 pub fn[A] Queue::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] Queue::iter(Self[A]) -> Iter[A]
-pub fn[A] Queue::length(Self[A]) -> Int
+pub fn[A] Queue::length(Self[A]) -> Int32
 #as_free_fn(deprecated)
 #deprecated
 pub fn[A] Queue::new() -> Self[A]
