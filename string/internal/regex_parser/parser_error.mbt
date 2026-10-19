@@ -78,7 +78,7 @@ const HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND = "Unsupported negative lookbehind as
 const HINT_INVALID_POSIX_CLASS = "Invalid POSIX character class"
 
 ///|
-const HINT_BARE_POSIX_CLASS = "Invalid character class, bare POSIX character class not allowed"
+const HINT_BARE_POSIX_CLASS = "A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon"
 
 ///|
 const HINT_UNSUPPORTED_POSIX_CLASS = "Unsupported POSIX character class"
