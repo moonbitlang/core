@@ -1409,10 +1409,25 @@ test "parse/nesting_depth" {
       #|ParserError at position 65: Groups nested too deeply
     ),
   )
+  // Named groups need distinct names.
+  let mut named = ""
+  for i in 10..<75 {
+    named = named + "(?<n\{i}>"
+  }
   inspect(
-    nested("(?<n>", 65),
+    try
+      parse(
+        profile=profile_unicode(),
+        mode=String,
+        named + "a" + ")".repeat(65),
+      )
+    catch {
+      err => err.to_string()
+    } noraise {
+      _ => "accepted"
+    },
     content=(
-      #|ParserError at position 325: Groups nested too deeply
+      #|ParserError at position 455: Groups nested too deeply
     ),
   )
   // Sibling groups do not increase the nesting depth.
@@ -1538,19 +1553,19 @@ test "parse/duplicate_group_names" {
   debug_inspect(
     result("(?<n>a)(?<n>b)"),
     content=(
-      #|Ok(())
+      #|Err(ParserError(at=10, hint="Duplicate capture group name"))
     ),
   )
   debug_inspect(
     result("(?<n>a)|(?<n>b)"),
     content=(
-      #|Ok(())
+      #|Err(ParserError(at=11, hint="Duplicate capture group name"))
     ),
   )
   debug_inspect(
     result("(?<n>(?<n>a))"),
     content=(
-      #|Ok(())
+      #|Err(ParserError(at=8, hint="Duplicate capture group name"))
     ),
   )
   debug_inspect(

@@ -60,6 +60,9 @@ const HINT_CHARACTER_OUT_OF_RANGE = "Character out of range"
 const HINT_INVALID_GROUP = "Invalid group"
 
 ///|
+const HINT_DUPLICATE_GROUP_NAME = "Duplicate capture group name"
+
+///|
 const HINT_UNSUPPORTED_LOOKAHEAD = "Unsupported lookahead assertion"
 
 ///|

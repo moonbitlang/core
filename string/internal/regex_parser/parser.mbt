@@ -321,9 +321,16 @@ fn Parser::term(
       raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKBEHIND)
     (re"^\(\?<!", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND)
-    (re"^\(\?<" + (re"[A-Za-z_][A-Za-z0-9_]*" as name) + re">", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
-      (rest, @re.capture(name=name.to_owned(), pat), false)
+    (re"^\(\?<" + (re"[A-Za-z_][A-Za-z0-9_]*" as name) + re">", after=rest2) => {
+      // A name is used once in a pattern, as in the compiler's regex
+      // literals, so that a capture is found by its name alone.
+      let name = name.to_owned()
+      if ctx.group_names.contains(name) {
+        raise ctx.error_at(rest, offset=3, HINT_DUPLICATE_GROUP_NAME)
+      }
+      ctx.group_names.push(name)
+      let (rest, pat) = Parser::parse_group_continue(rest2, ctx~)
+      (rest, @re.capture(name~, pat), false)
     }
     (re"^\(\?:", after=rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
