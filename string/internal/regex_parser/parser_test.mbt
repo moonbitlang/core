@@ -305,10 +305,6 @@ test "parse/colon_ranges_are_not_bare_posix_classes" {
     colon_then_hyphen,
     content="Char([(45, 45), (58, 58), (64, 64)])",
   )
-  let trailing_colon = parse(profile=profile_unicode(), mode=String, "[:-@:]")
-  debug_inspect(trailing_colon, content="Char([(58, 64)])")
-  let alphabet_range = parse(profile=profile_unicode(), mode=String, "[:a-z:]")
-  debug_inspect(alphabet_range, content="Char([(58, 58), (97, 122)])")
   let bytes_range = parse(profile=profile_bytes(), mode=Bytes, "[:-@]")
   debug_inspect(bytes_range, content="Char([(58, 64)])")
 }
@@ -1652,27 +1648,58 @@ test "parse/bare_posix_class_shapes" {
   }
   // A class whose content starts and ends with a colon.
   debug_inspect(
+    result("[:-@:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
     result("[:a-z:]"),
     content=(
-      #|Ok(())
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
     result("[:ab1:]"),
     content=(
-      #|Ok(())
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
     result("[:a\\]:]"),
     content=(
-      #|Ok(())
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
     result("[^:a-z:]"),
     content=(
-      #|Ok(())
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|  ),
+      #|)
     ),
   )
   // No character between the colons, an escaped colon, or a colon that
