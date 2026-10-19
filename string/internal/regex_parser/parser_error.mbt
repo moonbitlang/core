@@ -103,3 +103,6 @@ const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w
 
 ///|
 const HINT_DASH_AT_BOUNDARY = "Dash at the start or end of character class is not supported, use \\- to match a literal dash"
+
+///|
+const HINT_DASH_AFTER_RANGE = "Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash"
