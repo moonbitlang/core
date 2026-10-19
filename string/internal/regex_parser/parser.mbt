@@ -116,6 +116,10 @@ fn Parser::class_contents(
             Parser::class_atom(rest, ctx~)
           ['[', ..] =>
             raise ctx.error_at(rest, HINT_UNSUPPORTED_NESTED_CHAR_CLASS)
+          // A dash after a character makes a range, and the start of the
+          // class is checked by the caller, so this one follows a range or a
+          // POSIX class. It is an error, as in the compiler's regex literals.
+          ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AFTER_RANGE)
           _ => Parser::class_atom(rest, ctx~)
         }
         let (rest, left_set) = match left {

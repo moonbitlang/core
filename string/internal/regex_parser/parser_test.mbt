@@ -1603,19 +1603,34 @@ test "parse/dash_after_range_or_posix_class" {
   debug_inspect(
     result("[a-b-c]"),
     content=(
-      #|Ok(Char([(45, 45), (97, 99)]))
+      #|Err(
+      #|  ParserError(
+      #|    at=4,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
     result("[a-b-]"),
     content=(
-      #|Ok(Char([(45, 45), (97, 98)]))
+      #|Err(
+      #|  ParserError(
+      #|    at=4,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
     result("[[:digit:]-a]"),
     content=(
-      #|Ok(Char([(45, 45), (48, 57), (97, 97)]))
+      #|Err(
+      #|  ParserError(
+      #|    at=10,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
     ),
   )
   debug_inspect(
