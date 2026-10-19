@@ -319,7 +319,7 @@ test "parse/colon_preserves_posix_diagnostics" {
       err => err.to_string()
     }
     assert_eq(
-      result, "ParserError at position 0: Invalid character class, bare POSIX character class not allowed",
+      result, "ParserError at position 0: A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
     )
   }
   let digits = parse(profile=profile_unicode(), mode=String, "[[:digit:]]")
@@ -833,7 +833,7 @@ test "parse/error_bare_posix_class" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
@@ -1653,7 +1653,7 @@ test "parse/bare_posix_class_shapes" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
@@ -1664,7 +1664,7 @@ test "parse/bare_posix_class_shapes" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
@@ -1675,7 +1675,7 @@ test "parse/bare_posix_class_shapes" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
@@ -1686,7 +1686,7 @@ test "parse/bare_posix_class_shapes" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
@@ -1697,7 +1697,7 @@ test "parse/bare_posix_class_shapes" {
       #|Err(
       #|  ParserError(
       #|    at=0,
-      #|    hint="Invalid character class, bare POSIX character class not allowed",
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
       #|  ),
       #|)
     ),
