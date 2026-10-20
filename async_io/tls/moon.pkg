@@ -1,0 +1,46 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/lazy",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/async_io/io",
+  "moonbitlang/core/async_io/semaphore",
+  "moonbitlang/core/async_io/internal/bytes_util",
+  "moonbitlang/core/async_io/internal/c_buffer",
+  "moonbitlang/core/async_io/internal/event_loop",
+  "moonbitlang/core/async_io/internal/io_buffer",
+  "moonbitlang/core/internal/os_string",
+  "moonbitlang/core/async_io/os_error",
+  "moonbitlang/core/async_io/internal/errno_util",
+  "moonbitlang/core/async_io/fs",
+}
+
+import {
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/pipe",
+  "moonbitlang/core/async_io/socket",
+  "moonbitlang/core/async_io/internal/test_util",
+  "moonbitlang/core/encoding/utf8",
+} for "test"
+
+options(
+  targets: {
+    "certificate_test.mbt": [ "native", "wasm" ],
+    "channel_binding_test.mbt": [ "native", "wasm" ],
+    "crypto_util.mbt": [ "native" ],
+    "crypto_util.wasm.mbt": [ "wasm" ],
+    "deprecated.mbt": [ "native", "wasm" ],
+    "openssl.mbt": [ "native" ],
+    "openssl_loader.mbt": [ "native" ],
+    "schannel.mbt": [ "native" ],
+    "shutdown_test.mbt": [ "native", "wasm" ],
+    "tls.mbt": [ "native", "wasm" ],
+    "tls.wasm.mbt": [ "wasm" ],
+    "tls_test.mbt": [ "native", "wasm" ],
+    "transport.mbt": [ "native", "wasm" ],
+  },
+)

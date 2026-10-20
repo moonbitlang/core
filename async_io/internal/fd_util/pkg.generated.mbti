@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/internal/fd_util"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn close(UInt64, kind~ : FileKind, context~ : String) -> Unit raise
+
+pub fn fd_is_valid(UInt64) -> Bool
+
+pub let invalid_fd : UInt64
+
+pub fn pipe(read_end_is_async~ : Bool, write_end_is_async~ : Bool, context~ : String) -> (UInt64, UInt64) raise
+
+pub fn set_cloexec(UInt64, context~ : String) -> Unit raise
+
+// Errors
+
+// Types and methods
+pub(all) enum FileKind {
+  Unknown
+  Regular
+  Directory
+  SymLink
+  Socket
+  Pipe
+  BlockDevice
+  CharDevice
+  Console
+} derive(Eq, @debug.Debug)
+pub fn FileKind::can_poll(Self) -> Bool
+pub fn FileKind::unsafe_from_int(Int32) -> Self
+
+// Type aliases
+pub type Fd = UInt64
+
+// Traits

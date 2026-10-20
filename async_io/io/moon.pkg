@@ -1,0 +1,18 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/int",
+  "moonbitlang/core/async_io/internal/coroutine",
+}
+
+import {
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/internal/test_util",
+} for "test"
+
+import {
+  "moonbitlang/core/async_io",
+} for "wbtest"

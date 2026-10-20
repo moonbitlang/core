@@ -1,0 +1,20 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/async_io/types",
+  "moonbitlang/core/async_io/os_error",
+  "moonbitlang/core/async_io/internal/env_util",
+  "moonbitlang/core/internal/os_string",
+}
+
+options(
+  targets: {
+    "deprecated.mbt": [ "native", "wasm" ],
+    "fd_util.mbt": [ "native" ],
+    "fd_util.wasm.mbt": [ "wasm" ],
+    "pipe.mbt": [ "native" ],
+    "pipe.wasm.mbt": [ "wasm" ],
+    "stat.mbt": [ "native", "wasm" ],
+  },
+)

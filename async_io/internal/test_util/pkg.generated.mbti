@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/internal/test_util"
+
+// Values
+#callsite(autofill(loc))
+pub async fn[T, E : Error] assert_raise_async(async () -> T raise E, loc~ : SourceLoc) -> Unit
+
+pub async fn build_test_program(String) -> String
+
+#callsite(autofill(loc))
+pub async fn[T, E : Error] expect_error_async(async () -> T raise E, loc~ : SourceLoc) -> E
+
+pub fn increase_current_thread_priority() -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

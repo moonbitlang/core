@@ -1,0 +1,36 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/os_error"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn check_errno(String) -> Unit raise OsError
+
+// Errors
+pub suberror OsError {
+  OsError(Kind, raw_code~ : Int32, context~ : String)
+} derive(ToJson)
+#as_free_fn
+pub fn OsError::from_errno(Int32, context~ : String) -> Self
+pub fn OsError::to_string(Self) -> String
+pub fn OsError::wrap_context(Self, (String) -> String) -> Self
+pub impl Show for OsError
+pub impl @debug.Debug for OsError
+
+// Types and methods
+#non_exhaustive
+pub(all) enum Kind {
+  NotFound
+  AlreadyExists
+  AccessDenied
+  NotDirectory
+  ConnectionRefused
+  OperationNotSupported
+  Unknown
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits

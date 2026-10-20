@@ -1,0 +1,89 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/websocket"
+
+import {
+  "moonbitlang/core/async_io/http",
+  "moonbitlang/core/async_io/io",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+pub suberror WebSocketError {
+  ConnectionClosed(CloseCode, String?)
+  InvalidHandshake(String)
+  HandshakeRejected(String, @http.Response)
+  ProtocolError(String)
+} derive(@debug.Debug)
+#deprecated
+pub impl Show for WebSocketError
+
+// Types and methods
+pub(all) enum CloseCode {
+  Normal
+  GoingAway
+  ProtocolError
+  UnsupportedData
+  Abnormal
+  InvalidFramePayload
+  PolicyViolation
+  MessageTooBig
+  MissingExtension
+  InternalError
+  Other(UInt16)
+} derive(Eq, @debug.Debug)
+#deprecated
+pub impl Show for CloseCode
+
+pub struct Conn {
+  text : @io.Utf8Writer
+  // private fields
+}
+pub fn Conn::close(Self) -> Unit
+#as_free_fn
+pub async fn Conn::connect(String, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.Client) -> Self
+pub async fn Conn::end_message(Self) -> Unit
+#as_free_fn
+pub async fn Conn::from_http_client(@http.Client, StringView, extra_headers? : Map[@http.CaseInsensitiveString, String]) -> Self
+#as_free_fn
+pub async fn Conn::from_http_server(@http.Request, @http.ServerConnection) -> Self
+pub async fn Conn::ping(Self, msg? : BytesView) -> Unit
+pub async fn Conn::recv(Self) -> Message
+pub async fn Conn::send_binary(Self, BytesView) -> Unit
+pub async fn Conn::send_close(Self, code? : CloseCode, reason? : String) -> Unit
+pub async fn Conn::send_text(Self, StringView) -> Unit
+pub fn Conn::start_message(Self, MessageKind) -> Unit
+pub async fn Conn::write(Self, BytesView) -> Unit
+pub async fn Conn::write_reader(Self, &@io.BinaryReader) -> Unit
+pub impl @io.BinaryWriter for Conn
+
+pub struct Message {
+  kind : MessageKind
+  text : @io.Utf8Reader
+  // private fields
+}
+pub async fn Message::drop_all(Self) -> Int64
+pub async fn Message::drop_exactly(Self, Int32) -> Unit
+pub async fn Message::peek(Self) -> BytesView?
+pub async fn Message::peek_at_least(Self, Int32) -> BytesView
+pub async fn Message::peek_exactly(Self, Int32) -> BytesView
+pub async fn Message::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
+pub async fn Message::read(Self) -> Bytes?
+pub async fn Message::read_all(Self) -> Bytes
+pub async fn Message::read_at_least(Self, Int32) -> Bytes
+pub async fn Message::read_exactly(Self, Int32) -> Bytes
+pub async fn Message::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn Message::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub impl @io.BinaryReader for Message
+
+pub(all) enum MessageKind {
+  Binary
+  Text
+} derive(@debug.Debug)
+#deprecated
+pub impl Show for MessageKind
+
+// Type aliases
+
+// Traits

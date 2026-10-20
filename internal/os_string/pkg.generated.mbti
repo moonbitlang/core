@@ -2,11 +2,14 @@
 package "moonbitlang/core/internal/os_string"
 
 // Values
+pub let empty : OsString
 
 // Errors
 
 // Types and methods
 type OsString
+pub fn OsString::bytes_length(Self) -> Int32
+#as_free_fn
 pub fn OsString::from_string(StringView) -> Self
 #deprecated
 pub fn OsString::output(Self, &Logger) -> Unit

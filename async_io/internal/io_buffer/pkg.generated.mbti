@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/internal/io_buffer"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Buffer {
+  mut buf : FixedArray[Byte]
+  mut start : Int32
+  mut len : Int32
+}
+pub fn Buffer::clear(Self) -> Unit
+pub fn Buffer::drop(Self, Int32) -> Unit
+pub fn Buffer::enlarge_to(Self, Int32) -> Unit
+#as_free_fn
+pub fn Buffer::new(Int32) -> Self
+
+// Type aliases
+
+// Traits

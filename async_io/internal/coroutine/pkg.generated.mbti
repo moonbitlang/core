@@ -1,0 +1,60 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/internal/coroutine"
+
+import {
+  "moonbitlang/core/set",
+}
+
+// Values
+pub fn all_coroutines() -> @set.Set[Coroutine]
+
+pub async fn check_cancellation() -> Unit noraise
+
+pub fn current_coroutine() -> Coroutine
+
+pub async fn[X] handle_cancellation(async () -> X) -> X?
+
+pub fn has_immediately_ready_task() -> Bool
+
+pub fn is_being_cancelled() -> Bool
+
+pub async fn pause() -> Unit noraise
+
+pub async fn pause_nocancel() -> Unit noraise + nocancel
+
+pub async fn[X] protect_from_cancel(async () -> X) -> X nocancel
+
+pub async fn[X] raise_cancellation_signal() -> X noraise
+
+pub fn reschedule() -> Unit
+
+#callsite(autofill(loc))
+pub fn spawn(async () -> Unit, loc~ : SourceLoc) -> Coroutine
+
+pub async fn suspend() -> Unit noraise
+
+pub async fn suspend_check_cancel() -> SuspendResult noraise + nocancel
+
+// Errors
+
+// Types and methods
+pub struct Coroutine {
+  loc : SourceLoc
+  // private fields
+}
+pub fn Coroutine::cancel(Self) -> Unit
+pub fn Coroutine::check_error(Self) -> Unit raise
+pub fn Coroutine::unwrap(Self) -> SuspendResult raise
+pub async fn Coroutine::wait(Self) -> SuspendResult
+pub fn Coroutine::wake(Self) -> Unit
+pub impl Eq for Coroutine
+pub impl Hash for Coroutine
+
+pub enum SuspendResult {
+  Continue
+  Cancelled
+}
+
+// Type aliases
+
+// Traits

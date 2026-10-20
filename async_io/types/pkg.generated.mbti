@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/types"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Platform {
+  Linux
+  MacOS
+  Windows
+}
+
+// Type aliases
+pub type Fd = UInt64
+
+// Traits

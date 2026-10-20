@@ -53,8 +53,23 @@ pub extend OsString with @builtin.Show::{output}
 pub extend OsString with @builtin.Show::{to_string}
 
 ///|
+/// Return the number of bytes occupied by an `OsString`
+#cfg(all(target="native", not(platform="windows")))
+pub fn OsString::bytes_length(self : OsString) -> Int32 {
+  self.0.length()
+}
+
+///|
+/// Return the number of bytes occupied by an `OsString`
+#cfg(any(not(target="native"), platform="windows"))
+pub fn OsString::bytes_length(self : OsString) -> Int32 {
+  self.0.length() * 2
+}
+
+///|
 /// Create a `OsString` from a MoonBit `StringView`
 #cfg(any(not(target="native"), platform="windows"))
+#as_free_fn
 pub fn OsString::from_string(str : StringView) -> OsString {
   OsString(str.to_owned())
 }
@@ -62,9 +77,14 @@ pub fn OsString::from_string(str : StringView) -> OsString {
 ///|
 /// Create a `OsString` from a MoonBit `StringView`
 #cfg(all(target="native", not(platform="windows")))
+#as_free_fn
 pub fn OsString::from_string(str : StringView) -> OsString {
   OsString(@utf8.encode(str))
 }
+
+///|
+/// An empty `OsString`
+pub let empty : OsString = from_string("")
 
 ///|
 #cfg(any(not(target="native"), platform="windows"))

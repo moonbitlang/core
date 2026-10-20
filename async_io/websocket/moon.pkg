@@ -1,0 +1,45 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/random",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/async_io/io",
+  "moonbitlang/core/async_io/tls",
+  "moonbitlang/core/async_io/http",
+  "moonbitlang/core/async_io/semaphore",
+  "moonbitlang/core/async_io/internal/coroutine",
+}
+
+import {
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/socket",
+  "moonbitlang/core/async_io/process",
+  "moonbitlang/core/async_io/internal/test_util",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+  "moonbitlang/core/async_io/internal/test_util",
+} for "wbtest"
+
+options(
+  targets: {
+    "bad_client_test.mbt": [ "native", "wasm" ],
+    "client.mbt": [ "native", "wasm" ],
+    "conn.mbt": [ "native", "wasm" ],
+    "control_test.mbt": [ "native", "wasm" ],
+    "deprecated.mbt": [ "native", "wasm" ],
+    "external_client_test.mbt": [ "native", "wasm" ],
+    "handshake_wbtest.mbt": [ "native", "wasm" ],
+    "pkg.generated.mbti": [ "native", "wasm" ],
+    "server.mbt": [ "native", "wasm" ],
+    "types.mbt": [ "native", "wasm" ],
+    "types_wbtest.mbt": [ "native", "wasm" ],
+    "utf8_validation_test.mbt": [ "native", "wasm" ],
+    "utf8_validation_wbtest.mbt": [ "native", "wasm" ],
+    "utils.mbt": [ "native", "wasm" ],
+    "websocket_test.mbt": [ "native", "wasm" ],
+  },
+)

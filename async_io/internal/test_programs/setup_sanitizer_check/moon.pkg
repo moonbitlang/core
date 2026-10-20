@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/fs",
+}
+
+supported_targets = "-all+native"
+
+pkgtype(kind: "executable")
