@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/env",
+  "moonbitlang/core/async_io/cond_var",
+  "moonbitlang/core/async_io/external_loop_integration",
+  "moonbitlang/core/async_io/os_error",
+  "moonbitlang/core/async_io/internal/fd_util",
+}
+
+options(
+  "native-stub": [ "external_loop.c" ],
+  targets: { "deprecated.mbt": [ "native" ], "main.mbt": [ "native" ] },
+)

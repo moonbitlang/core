@@ -1,0 +1,15 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/set",
+  "moonbitlang/core/deque",
+}
+
+import {
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/internal/test_util",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+  "moonbitlang/core/json",
+} for "wbtest"

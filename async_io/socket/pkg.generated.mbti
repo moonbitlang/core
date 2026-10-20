@@ -1,0 +1,126 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/socket"
+
+import {
+  "moonbitlang/core/async_io/io",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+pub suberror InvalidAddr derive(ToJson, @debug.Debug)
+#deprecated
+pub impl Show for InvalidAddr
+
+pub suberror ResolveHostnameError {
+  ResolveHostnameError(String)
+} derive(ToJson, @debug.Debug)
+#deprecated
+pub impl Show for ResolveHostnameError
+
+// Types and methods
+type Addr derive(Compare, Eq, Hash)
+pub fn Addr::ip(Self) -> UInt32
+pub fn Addr::is_ipv6(Self) -> Bool
+pub fn Addr::is_multicast(Self) -> Bool
+pub fn Addr::new(UInt32, Int32) -> Self
+pub fn Addr::parse(String) -> Self raise
+pub fn Addr::port(Self) -> Int32
+pub async fn Addr::resolve(String, port~ : Int32, protocol? : IpProtocolPreference) -> Self
+pub fn Addr::to_string(Self) -> String
+pub impl Show for Addr
+pub impl @debug.Debug for Addr
+
+pub(all) enum IpProtocolPreference {
+  OnlyV4
+  OnlyV6
+  FavorV4
+  FavorV6
+  NoPreference
+} derive(@debug.Debug)
+#deprecated
+pub impl Show for IpProtocolPreference
+
+pub struct Tcp {
+  addr : Addr
+  // private fields
+}
+pub fn Tcp::addr(Self) -> Addr
+pub fn Tcp::close(Self) -> Unit
+pub async fn Tcp::connect(Addr) -> Self
+pub async fn Tcp::connect_to_host(StringView, port~ : Int32, protocol? : IpProtocolPreference) -> Self
+pub async fn Tcp::drop_all(Self) -> Int64
+pub async fn Tcp::drop_exactly(Self, Int32) -> Unit
+pub fn Tcp::enable_keepalive(Self, idle_before_keep_alive? : Int32, keep_alive_count? : Int32, keep_alive_interval? : Int32) -> Unit raise
+pub fn Tcp::fd(Self) -> UInt64
+pub async fn Tcp::peek(Self) -> BytesView?
+pub async fn Tcp::peek_at_least(Self, Int32) -> BytesView
+pub async fn Tcp::peek_exactly(Self, Int32) -> BytesView
+pub async fn Tcp::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
+pub async fn Tcp::read(Self) -> Bytes?
+pub async fn Tcp::read_all(Self) -> Bytes
+pub async fn Tcp::read_at_least(Self, Int32) -> Bytes
+pub async fn Tcp::read_exactly(Self, Int32) -> Bytes
+pub async fn Tcp::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn Tcp::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn Tcp::write(Self, BytesView) -> Unit
+pub async fn Tcp::write_reader(Self, &@io.BinaryReader) -> Unit
+pub impl @io.BinaryReader for Tcp
+pub impl @io.BinaryWriter for Tcp
+
+pub struct TcpServer {
+  addr : Addr
+  // private fields
+}
+#alias(new, deprecated)
+pub async fn TcpServer::TcpServer(Addr, dual_stack? : Bool, reuse_addr? : Bool, reuse_port_lb? : Bool) -> Self
+pub async fn TcpServer::accept(Self) -> (Tcp, Addr)
+#deprecated
+pub fn TcpServer::addr(Self) -> Addr
+pub fn TcpServer::close(Self) -> Unit
+pub fn TcpServer::fd(Self) -> UInt64
+pub async fn TcpServer::run_forever(Self, async (Tcp, Addr) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
+
+pub struct UdpClient {
+  addr : Addr
+  // private fields
+}
+#alias(new, deprecated)
+pub async fn UdpClient::UdpClient(Addr) -> Self
+#deprecated
+pub fn UdpClient::addr(Self) -> Addr
+pub fn UdpClient::close(Self) -> Unit
+pub fn UdpClient::connect(Self, Addr) -> Unit raise
+pub fn UdpClient::fd(Self) -> UInt64
+pub async fn UdpClient::recv(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn UdpClient::recvfrom(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> (Int32, Addr)
+pub async fn UdpClient::send(Self, Bytes, offset? : Int32, len? : Int32) -> Unit
+pub fn UdpClient::set_multicast_interface(Self, Addr) -> Unit raise
+pub fn UdpClient::set_multicast_interface_v6(Self, String) -> Unit raise
+pub fn UdpClient::set_multicast_loopback(Self, Bool) -> Unit raise
+pub fn UdpClient::set_multicast_ttl(Self, Int32) -> Unit raise
+
+pub struct UdpServer {
+  addr : Addr
+  // private fields
+}
+#alias(new, deprecated)
+pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool) -> Self
+#deprecated
+pub fn UdpServer::addr(Self) -> Addr
+pub fn UdpServer::close(Self) -> Unit
+pub fn UdpServer::fd(Self) -> UInt64
+pub fn UdpServer::join_multicast_group(Self, Addr, interface_addr? : Addr) -> Unit raise
+pub fn UdpServer::join_multicast_group_v6(Self, Addr, interface? : String) -> Unit raise
+pub async fn UdpServer::multicast(Addr, interface_addr? : Addr) -> Self
+pub async fn UdpServer::recvfrom(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> (Int32, Addr)
+pub async fn UdpServer::sendto(Self, Bytes, Addr, offset? : Int32, len? : Int32) -> Unit
+pub fn UdpServer::set_multicast_interface(Self, Addr) -> Unit raise
+pub fn UdpServer::set_multicast_interface_v6(Self, String) -> Unit raise
+pub fn UdpServer::set_multicast_loopback(Self, Bool) -> Unit raise
+pub fn UdpServer::set_multicast_ttl(Self, Int32) -> Unit raise
+
+// Type aliases
+
+// Traits

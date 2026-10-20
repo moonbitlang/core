@@ -1,0 +1,18 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async_io/internal/fd_util",
+  "moonbitlang/core/async_io/internal/event_loop",
+  "moonbitlang/core/async_io/io",
+}
+
+import {
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/fs",
+  "moonbitlang/core/async_io/socket",
+  "moonbitlang/core/async_io/os_error",
+  "moonbitlang/core/async_io/internal/test_util",
+  "moonbitlang/core/async_io/raw_fd/internal/raw_fd_test_util",
+} for "test"
+
+supported_targets = "-all+native"

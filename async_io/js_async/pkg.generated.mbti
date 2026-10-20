@@ -1,0 +1,53 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/js_async"
+
+import {
+  "moonbitlang/core/async_io/io",
+}
+
+// Values
+pub async fn[X] run_promise((AbortSignal) -> Promise[X]) -> X
+
+// Errors
+type JsError
+pub fn JsError::to_string(Self) -> String
+pub impl Show for JsError
+
+// Types and methods
+#external
+pub type AbortController
+pub fn AbortController::abort(Self) -> Unit
+pub fn AbortController::new() -> Self
+pub fn AbortController::signal(Self) -> AbortSignal
+
+#external
+pub type AbortSignal
+
+type JsReadableStream
+pub fn JsReadableStream::new_pipe() -> (Self, @io.PipeWrite)
+
+#external
+pub type Promise[X]
+pub fn[X] Promise::from_async(async () -> X, abort_signal? : AbortSignal) -> Self[X]
+pub async fn[X] Promise::wait(Self[X], abort_controller? : AbortController) -> X
+
+type ReadableStream
+pub fn ReadableStream::close(Self) -> Unit
+pub async fn ReadableStream::drop_all(Self) -> Int64
+pub async fn ReadableStream::drop_exactly(Self, Int32) -> Unit
+pub fn ReadableStream::from_js(JsReadableStream) -> Self
+pub async fn ReadableStream::peek(Self) -> BytesView?
+pub async fn ReadableStream::peek_at_least(Self, Int32) -> BytesView
+pub async fn ReadableStream::peek_exactly(Self, Int32) -> BytesView
+pub async fn ReadableStream::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
+pub async fn ReadableStream::read(Self) -> Bytes?
+pub async fn ReadableStream::read_all(Self) -> Bytes
+pub async fn ReadableStream::read_at_least(Self, Int32) -> Bytes
+pub async fn ReadableStream::read_exactly(Self, Int32) -> Bytes
+pub async fn ReadableStream::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn ReadableStream::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub impl @io.BinaryReader for ReadableStream
+
+// Type aliases
+
+// Traits

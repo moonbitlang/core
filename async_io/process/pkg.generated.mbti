@@ -1,0 +1,124 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/process"
+
+import {
+  "moonbitlang/core/async_io",
+  "moonbitlang/core/async_io/fs",
+  "moonbitlang/core/async_io/internal/event_loop",
+  "moonbitlang/core/async_io/io",
+  "moonbitlang/core/async_io/signal",
+  "moonbitlang/core/async_io/stdio",
+}
+
+// Values
+pub fn duplicate_stdout() -> &ProcessOutput
+
+pub fn graceful_cancel(timeout~ : Int32, signal? : @signal.Signal) -> CancellationHandler
+
+pub fn hard_cancel() -> CancellationHandler
+
+pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise
+
+pub fn read_from_process() -> &ProcessOutput
+
+pub fn read_from_process_shared() -> (ReadFromProcess, SharedProcessOutput) raise
+
+pub fn redirect_from_file(String) -> &ProcessInput
+
+pub async fn redirect_from_file_shared(String) -> SharedProcessInput
+
+pub fn redirect_to_file(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> &ProcessOutput
+
+pub async fn redirect_to_file_shared(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
+
+pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler) -> ProcessResult
+
+pub async fn spawn(@async_io.TaskGroup, StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, no_wait? : Bool) -> Process
+
+pub async fn spawn_orphan(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool) -> OrphanProcess
+
+pub async fn wait_pid(Int32) -> Int32
+
+pub fn write_to_process() -> &ProcessInput
+
+pub fn write_to_process_shared() -> (SharedProcessInput, WriteToProcess) raise
+
+// Errors
+
+// Types and methods
+pub(all) struct CancellationHandler(async (Int32) -> Unit)
+
+pub struct OrphanProcess {
+  pid : Int32
+  stdin : WriteToProcess
+  stdout : ReadFromProcess
+  stderr : ReadFromProcess
+  // private fields
+}
+pub fn OrphanProcess::close(Self) -> Unit
+pub async fn OrphanProcess::wait(Self) -> Int32
+
+pub struct Process {
+  pid : Int32
+  stdin : WriteToProcess
+  stdout : ReadFromProcess
+  stderr : ReadFromProcess
+  // private fields
+}
+pub fn Process::cancel(Self) -> Unit
+pub fn Process::try_wait(Self) -> Int32? raise
+pub async fn Process::wait(Self) -> Int32
+
+pub struct ProcessResult {
+  exit_code : Int32
+  // private fields
+}
+pub fn ProcessResult::stderr_binary(Self) -> Bytes
+pub fn ProcessResult::stderr_text(Self) -> String raise
+pub fn ProcessResult::stdout_binary(Self) -> Bytes
+pub fn ProcessResult::stdout_text(Self) -> String raise
+
+pub struct ReadFromProcess {
+  text : @io.Utf8Reader
+  // private fields
+}
+pub fn ReadFromProcess::close(Self) -> Unit
+pub async fn ReadFromProcess::drop_all(Self) -> Int64
+pub async fn ReadFromProcess::drop_exactly(Self, Int32) -> Unit
+pub async fn ReadFromProcess::peek(Self) -> BytesView?
+pub async fn ReadFromProcess::peek_at_least(Self, Int32) -> BytesView
+pub async fn ReadFromProcess::peek_exactly(Self, Int32) -> BytesView
+pub async fn ReadFromProcess::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
+pub async fn ReadFromProcess::read(Self) -> Bytes?
+pub async fn ReadFromProcess::read_all(Self) -> Bytes
+pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes
+pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes
+pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub impl @io.BinaryReader for ReadFromProcess
+
+type SharedProcessInput
+pub fn SharedProcessInput::close(Self) -> Unit
+pub impl ProcessInput for SharedProcessInput
+
+type SharedProcessOutput
+pub fn SharedProcessOutput::close(Self) -> Unit
+pub impl ProcessOutput for SharedProcessOutput
+
+pub struct WriteToProcess {
+  text : @io.Utf8Writer
+  // private fields
+}
+pub fn WriteToProcess::close(Self) -> Unit
+pub async fn WriteToProcess::write(Self, BytesView) -> Unit
+pub async fn WriteToProcess::write_reader(Self, &@io.BinaryReader) -> Unit
+pub impl @io.BinaryWriter for WriteToProcess
+
+// Type aliases
+
+// Traits
+trait ProcessInput
+pub impl ProcessInput for @stdio.Input
+
+trait ProcessOutput
+pub impl ProcessOutput for @stdio.Output

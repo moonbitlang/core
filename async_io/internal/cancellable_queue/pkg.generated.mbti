@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/internal/cancellable_queue"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Queue[X]
+pub fn[X] Queue::Queue() -> Self[X]
+pub fn[X : Element] Queue::pop(Self[X]) -> X?
+pub fn[X : Element] Queue::push(Self[X], X) -> Unit
+pub fn[X : Element] Queue::remove(Self[X], X) -> Unit
+
+// Type aliases
+
+// Traits
+pub(open) trait Element {
+  fn get_index(Self) -> Int32
+  fn set_index(Self, Int32) -> Unit
+  fn get_next(Self) -> Int32
+  fn set_next(Self, Int32) -> Unit
+  fn get_prev(Self) -> Int32
+  fn set_prev(Self, Int32) -> Unit
+  fn is_queued(Self) -> Bool = _
+}

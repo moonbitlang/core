@@ -1,0 +1,13 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async_io/external_loop_integration/internal/external_loop_test"
+
+// Values
+pub let unimplemented : Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
