@@ -51,6 +51,8 @@ pub async fn file_size_of_path(StringView, context~ : String) -> Int64
 
 pub async fn fstatx(UInt64, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
 
+pub fn get_current_event_loop() -> @ref.Ref[EventLoop?]
+
 pub async fn getaddrinfo(StringView, context~ : String) -> Result[AddrInfo, String]
 
 pub async fn inotify_add_watch(UInt64, StringView, is_dir~ : Bool, context~ : String) -> UInt64
@@ -117,6 +119,8 @@ pub(all) enum Access {
 }
 
 pub struct AddrInfo(UInt64)
+
+type EventLoop
 
 pub(all) struct FileIdentity {
   dev_id : UInt64
