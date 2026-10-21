@@ -1,8 +1,4 @@
 import {
-  "moonbitlang/core/abort",
-}
-
-import {
   "moonbitlang/core/int",
   "moonbitlang/core/double",
   "moonbitlang/core/uint64",

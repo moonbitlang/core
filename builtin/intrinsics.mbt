@@ -74,7 +74,12 @@ pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 fn[T] unsafe_is_unique_ref(value : T) -> Bool = "%unsafe_is_unique_ref"
 
 ///|
-pub using @abort {abort}
+/// Aborts execution with an error message. This function never returns.
+///
+/// JavaScript and native backends print the message to stderr before panicking.
+/// Linear-memory Wasm does the same when linked with WASI support. Otherwise,
+/// Wasm and Wasm GC trap without printing the message or requiring I/O imports.
+pub fn[T] abort(msg : String) -> T = "%abort"
 
 ///|
 /// Raise a panic with no payload.
