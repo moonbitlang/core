@@ -16,7 +16,7 @@
 pub using @env_util {platform}
 
 ///|
-priv struct EventLoop {
+struct EventLoop {
   bus : EventBus
   fds : Map[@fd_util.Fd, IoHandle]
   extra : PlatformEventLoopExtra
@@ -53,6 +53,12 @@ impl Hash for QueuedJob with fn hash_combine(job, hasher) {
 
 ///|
 let curr_loop : @ref.Ref[EventLoop?] = Ref(None)
+
+///|
+/// Get the cell for current event loop
+pub fn get_current_event_loop() -> @ref.Ref[EventLoop?] {
+  curr_loop
+}
 
 ///|
 priv struct EventLoopHook {

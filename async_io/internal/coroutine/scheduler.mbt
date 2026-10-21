@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv struct Scheduler {
+struct Scheduler {
   mut coro_id : Int32
   mut curr_coro : Coroutine?
   run_later : @deque.Deque[Coroutine]
@@ -21,7 +21,8 @@ priv struct Scheduler {
 }
 
 ///|
-let scheduler : Scheduler = {
+/// The global coroutine scheduler
+pub let scheduler : Scheduler = {
   coro_id: 0,
   curr_coro: None,
   run_later: Deque([]),

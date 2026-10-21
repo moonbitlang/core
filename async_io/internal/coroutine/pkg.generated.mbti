@@ -28,6 +28,8 @@ pub async fn[X] raise_cancellation_signal() -> X noraise
 
 pub fn reschedule() -> Unit
 
+pub let scheduler : Scheduler
+
 #callsite(autofill(loc))
 pub fn spawn(async () -> Unit, loc~ : SourceLoc) -> Coroutine
 
@@ -49,6 +51,8 @@ pub async fn Coroutine::wait(Self) -> SuspendResult
 pub fn Coroutine::wake(Self) -> Unit
 pub impl Eq for Coroutine
 pub impl Hash for Coroutine
+
+type Scheduler
 
 pub enum SuspendResult {
   Continue
