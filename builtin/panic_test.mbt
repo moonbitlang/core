@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+test "panic abort" {
+  abort("something went wrong")
+}
+
+///|
 test "panic array_swap" {
   [1, 2, 3].swap(1, 5)
 }
