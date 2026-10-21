@@ -39,7 +39,9 @@ impl Eq with fn not_equal(x, y) {
 /// restriction applies to floating components of derived/composite keys.
 /// Sorting, sortedness checks, binary search, and ordered collections rely on
 /// these laws; they do not validate inputs for NaNs or provide a total NaN
-/// ordering. Signed zeros compare as equal.
+/// ordering. Signed zeros compare as equal. To sort or search values containing
+/// NaNs, explicitly supply `Double::total_compare` or `Float::total_compare`
+/// to comparator-taking APIs, using the same comparator for both operations.
 ///
 /// The return value of [compare] is:
 /// - zero, if the two arguments are equal
