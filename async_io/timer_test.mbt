@@ -127,14 +127,14 @@ async test "Timer::cancel" {
       timer.cancel()
     }
     group.spawn_bg() <| () => {
-      let result = @test_util.expect_error_async(() => timer.wait())
+      let result = @test.expect_error_async(() => timer.wait())
       log.push("Timer::wait(): \{@debug.to_string(result)} at tick #\{tick()}")
     }
     @async_io.sleep(600)
-    let err = @test_util.expect_error_async(() => timer.wait())
+    let err = @test.expect_error_async(() => timer.wait())
     log.push("at tick #\{tick()}: Timer::wait(): \{@debug.to_string(err)}")
     timer.cancel()
-    let err = @test_util.expect_error_async(() => timer.wait())
+    let err = @test.expect_error_async(() => timer.wait())
     log.push("at tick #\{tick()}: Timer::wait(): \{@debug.to_string(err)}")
   }
   json_inspect(log, content=[
@@ -218,7 +218,7 @@ async test "Timer::refresh already cancelled" {
   timer.refresh()
   debug_inspect(
     @async_io.with_timeout_opt(0, () => {
-      @test_util.expect_error_async(() => timer.wait())
+      @test.expect_error_async(() => timer.wait())
     }),
     content=(
       #|Some(TimerCancelled)

@@ -625,7 +625,7 @@ signal number.
 #cfg(any(target="native", target="wasm"))
 async test "handle process errors" {
   // Non-existent command fails
-  @test_util.assert_raise_async(() => @process.run("nonexistent_command", []))
+  @test.assert_raise_async(() => @process.run("nonexistent_command", []))
 }
 
 ///|

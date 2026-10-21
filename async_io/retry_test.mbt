@@ -146,7 +146,7 @@ async test "retry fatal_error" {
   }
 
   debug_inspect(
-    @test_util.expect_error_async <| () => {
+    @test.expect_error_async <| () => {
       @async_io.retry(Immediate, fatal_error~, worker)
     },
     content=(

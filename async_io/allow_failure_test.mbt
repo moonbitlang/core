@@ -32,7 +32,7 @@ async test "allow_failure ignored" {
 ///|
 async test "allow_failure waited" {
   let buf = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       let task = root.spawn(allow_failure=true, () => raise Err)
       @async_io.sleep(100)

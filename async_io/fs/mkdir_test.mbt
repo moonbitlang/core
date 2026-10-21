@@ -32,7 +32,7 @@ async test "rmdir recursive" {
   @fs.write_text("\{path}/inner/file", "")
   @fs.symlink("\{path}/symlink", target="\{cwd}/_build")
   defer (if @fs.exists(path) { @fs.rmdir(path, recursive=true) })
-  @test_util.assert_raise_async(() => @fs.rmdir(path))
+  @test.assert_raise_async(() => @fs.rmdir(path))
   @fs.rmdir(path, recursive=true)
 }
 
@@ -74,13 +74,13 @@ async test "mkdir allow_exist" {
     @fs.mkdir("\{path}/", allow_exist=true)
     @fs.mkdir(path, recursive=true, allow_exist=true)
     // without `allow_exist`, an existing directory is an error
-    @test_util.assert_raise_async(() => @fs.mkdir(path))
-    @test_util.assert_raise_async(() => @fs.mkdir(path, recursive=true))
+    @test.assert_raise_async(() => @fs.mkdir(path))
+    @test.assert_raise_async(() => @fs.mkdir(path, recursive=true))
     // an existing non-directory is an error even with `allow_exist`
     let file = "\{base_path}/file"
     @fs.write_text(file, "", create_mode=CreateOrTruncate)
-    @test_util.assert_raise_async(() => @fs.mkdir(file, allow_exist=true))
-    @test_util.assert_raise_async(() => {
+    @test.assert_raise_async(() => @fs.mkdir(file, allow_exist=true))
+    @test.assert_raise_async(() => {
       @fs.mkdir(file, recursive=true, allow_exist=true)
     })
     json_inspect(@fs.readdir(base_path, sort=true), content=[

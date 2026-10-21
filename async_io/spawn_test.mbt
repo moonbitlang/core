@@ -15,7 +15,7 @@
 ///|
 async test "spawn error1" {
   let buf = StringBuilder()
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.sleep(1000)
@@ -39,7 +39,7 @@ async test "spawn error1" {
 ///|
 async test "spawn error2" {
   let buf = StringBuilder()
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.sleep(200)
@@ -63,7 +63,7 @@ async test "spawn error2" {
 ///|
 async test "spawn after cancelled" {
   let log = []
-  @test_util.assert_raise_async <| () => {
+  @test.assert_raise_async <| () => {
     (
       @async_io.with_task_group(group => {
         group.spawn_bg() <| () => {

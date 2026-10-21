@@ -55,7 +55,7 @@ async test "walk parallel" {
 async test "walk failure" {
   let log = StringBuilder()
   debug_inspect(
-    @test_util.expect_error_async <| () => {
+    @test.expect_error_async <| () => {
       @fs.walk("async_io/fs/test_directory/dir1", max_concurrency=1, (path, _) => {
         log.write_string("handling \{path}\n")
         raise Failure::Failure("failure when handling directory")

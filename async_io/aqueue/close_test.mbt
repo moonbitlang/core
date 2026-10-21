@@ -17,11 +17,11 @@ async test "put after closed" {
   let q = @async_io.Queue(kind=Unbounded)
   q.close()
   debug_inspect(
-    @test_util.expect_error_async(() => q.put(42)),
+    @test.expect_error_async(() => q.put(42)),
     content="QueueAlreadyClosed",
   )
   debug_inspect(
-    @test_util.expect_error_async(() => q.try_put(42)),
+    @test.expect_error_async(() => q.try_put(42)),
     content="QueueAlreadyClosed",
   )
 }
@@ -33,7 +33,7 @@ async test "get after closed" {
   q.close()
   debug_inspect(q.get(), content="42")
   debug_inspect(
-    @test_util.expect_error_async(() => q.get()),
+    @test.expect_error_async(() => q.get()),
     content="QueueAlreadyClosed",
   )
 }
@@ -45,7 +45,7 @@ async test "try_get after closed" {
   q.close()
   debug_inspect(q.try_get(), content="Some(42)")
   debug_inspect(
-    @test_util.expect_error_async(() => q.try_get()),
+    @test.expect_error_async(() => q.try_get()),
     content="QueueAlreadyClosed",
   )
 }
@@ -56,7 +56,7 @@ async test "get after hard close" {
   q.put(42)
   q.close(clear=true)
   debug_inspect(
-    @test_util.expect_error_async(() => q.get()),
+    @test.expect_error_async(() => q.get()),
     content="QueueAlreadyClosed",
   )
 }
@@ -67,7 +67,7 @@ async test "try_get after hard close" {
   q.put(42)
   q.close(clear=true)
   debug_inspect(
-    @test_util.expect_error_async(() => q.try_get()),
+    @test.expect_error_async(() => q.try_get()),
     content="QueueAlreadyClosed",
   )
 }
@@ -83,7 +83,7 @@ async test "close with blocking put" {
       q.close()
     }
     debug_inspect(
-      @test_util.expect_error_async(() => q.put(2)),
+      @test.expect_error_async(() => q.put(2)),
       content="QueueAlreadyClosed",
     )
     let now = @async_io.now()
@@ -102,7 +102,7 @@ async test "close zero buffered with blocking put" {
       q.close()
     }
     debug_inspect(
-      @test_util.expect_error_async(() => q.put(2)),
+      @test.expect_error_async(() => q.put(2)),
       content="QueueAlreadyClosed",
     )
     let now = @async_io.now()
@@ -121,7 +121,7 @@ async test "close with blocking get" {
       q.close()
     }
     debug_inspect(
-      @test_util.expect_error_async(() => q.get()),
+      @test.expect_error_async(() => q.get()),
       content="QueueAlreadyClosed",
     )
     let now = @async_io.now()
@@ -150,7 +150,7 @@ async test "close with completed get" {
     // one of `get` above and `try_get` here should suceed,
     // the value should not get swallowed.
     debug_inspect(
-      @test_util.expect_error_async(() => q.try_get()),
+      @test.expect_error_async(() => q.try_get()),
       content=(
         #|QueueAlreadyClosed
       ),

@@ -99,7 +99,7 @@ extern "js" fn failing_readable_stream() -> @js_async.JsReadableStream =
 ///|
 async test "ReadableStream propagates JS stream errors" {
   let r = @js_async.ReadableStream::from_js(failing_readable_stream())
-  let err = @test_util.expect_error_async(() => r.read())
+  let err = @test.expect_error_async(() => r.read())
   debug_inspect(
     err,
     content=(

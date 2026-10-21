@@ -19,5 +19,5 @@ fn init {
   ignore(@async_io.sleep)
   ignore(@socket.unimplemented)
   ignore(@process.unimplemented)
-  ignore((f : async () -> Unit) => @test_util.assert_raise_async(f))
+  ignore((f : async () -> Unit) => @test.assert_raise_async(f))
 }

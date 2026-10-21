@@ -112,7 +112,7 @@ async test "read_request fixed body early EOF" {
     let input = Reader::new(r)
     let _request = input.read_request()
     @debug.debug_inspect(
-      @test_util.expect_error_async(() => input.read_all()),
+      @test.expect_error_async(() => input.read_all()),
       content=(
         #|ReaderClosed
       ),
@@ -790,7 +790,7 @@ async test "fixed length early EOF" {
     let input = Reader::new(r)
     let _ = input.read_request()
     inspect(
-      @test_util.expect_error_async(() => input.read_all()),
+      @test.expect_error_async(() => input.read_all()),
       content=(
         #|ReaderClosed
       ),
@@ -815,7 +815,7 @@ async test "chunked early EOF: within chunk" {
     let input = Reader::new(r)
     let _ = input.read_request()
     inspect(
-      @test_util.expect_error_async(() => input.read_all()),
+      @test.expect_error_async(() => input.read_all()),
       content=(
         #|ReaderClosed
       ),
@@ -840,7 +840,7 @@ async test "chunked early EOF: chunk boundary" {
     let input = Reader::new(r)
     let _ = input.read_request()
     inspect(
-      @test_util.expect_error_async(() => input.read_all()),
+      @test.expect_error_async(() => input.read_all()),
       content=(
         #|ReaderClosed
       ),

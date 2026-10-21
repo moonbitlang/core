@@ -65,7 +65,7 @@ async test "rename replace" {
   old_file.write(b"abcd")
   inspect(@fs.read_text(old_path), content="abcd")
   inspect(@fs.read_text(new_path), content="xyzw")
-  @test_util.assert_raise_async <| () => {
+  @test.assert_raise_async <| () => {
     @fs.rename(old_path, new_path, replace=false)
   }
   @fs.rename(old_path, new_path, replace=true)

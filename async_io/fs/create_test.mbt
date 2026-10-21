@@ -74,7 +74,7 @@ async test "wrapper test" {
 async test "create_mode test" {
   let path = "_build/create_exclusive_test"
   for create_mode in [@fs.OpenExisting, TruncateExisting] {
-    @test_util.assert_raise_async <| () => {
+    @test.assert_raise_async <| () => {
       @fs.open(path, mode=WriteOnly, create_mode~)
     }
   }
@@ -85,8 +85,8 @@ async test "create_mode test" {
     file.write(b"abcd")
   }
   inspect(@fs.read_text(path), content="abcd")
-  @test_util.assert_raise_async(() => @fs.create(path, allow_existing=false))
-  @test_util.assert_raise_async <| () => {
+  @test.assert_raise_async(() => @fs.create(path, allow_existing=false))
+  @test.assert_raise_async <| () => {
     @fs.open(path, mode=WriteOnly, create_mode=CreateNew)
   }
   {

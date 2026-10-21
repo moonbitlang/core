@@ -26,7 +26,7 @@ async test "Promise::from_async" {
 ///|
 async test "Promise::from_async cancellation" {
   let mut worker_finished = false
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.with_timeout(100, () => {
       @js_async.run_promise() <| abort_signal => {
         @js_async.Promise::from_async(abort_signal~) <| () => {
@@ -49,7 +49,7 @@ async test "Promise::from_async cancellation 2" {
   @async_io.sleep(100)
   controller.abort()
   debug_inspect(
-    @test_util.expect_error_async(() => p.wait()),
+    @test.expect_error_async(() => p.wait()),
     content=(
       #|<moonbitlang/core/async_io/js_async.JsError.JsError: ...>
     ),
@@ -108,7 +108,7 @@ async test "Promise::from_async removes its abort listener after rejection" {
     },
   )
   inspect(abort_listener_count(signal), content="1")
-  ignore(@test_util.expect_error_async(() => promise.wait()))
+  ignore(@test.expect_error_async(() => promise.wait()))
   inspect(abort_listener_count(signal), content="0")
 }
 

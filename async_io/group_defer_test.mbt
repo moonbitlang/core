@@ -55,7 +55,7 @@ async test "group defer basic" {
 ///|
 async test "group defer error" {
   let log = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(fn(root) {
       root.add_defer(() => log <+ "first group defer\n")
       root.spawn_bg() <| () => {

@@ -20,6 +20,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/test",
   "moonbitlang/core/async_io",
   "moonbitlang/core/async_io/pipe",
   "moonbitlang/core/async_io/socket",

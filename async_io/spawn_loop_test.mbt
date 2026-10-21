@@ -39,7 +39,7 @@ async test "spawn_loop basic" {
 ///|
 async test "spawn_loop basic-error" {
   let log = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       let mut i = 0
       root.spawn_loop() <| () => {

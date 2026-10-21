@@ -47,7 +47,7 @@ async test "lazy init failure" {
     (@async_io.now() - start + 20).to_int() / 200
   }
 
-  let result = @test_util.expect_error_async(() => x.wait())
+  let result = @test.expect_error_async(() => x.wait())
   inspect(current_tick(), content="1")
   debug_inspect(
     result,
@@ -55,7 +55,7 @@ async test "lazy init failure" {
       #|Failure("msg")
     ),
   )
-  let result = @test_util.expect_error_async(() => x.wait())
+  let result = @test.expect_error_async(() => x.wait())
   inspect(current_tick(), content="1")
   debug_inspect(
     result,

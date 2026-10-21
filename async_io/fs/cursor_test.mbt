@@ -51,7 +51,7 @@ async test "append mode file does not support random access write" {
   json_inspect(file.read_exactly_at(2, position=2), content="cd")
   // random access write is forbidden for append-mode file
   debug_inspect(
-    @test_util.expect_error_async(() => file.write_at(b"CD", position=2)),
+    @test.expect_error_async(() => file.write_at(b"CD", position=2)),
     content=(
       #|Failure("`write_at` is not supported on non-regular file or file opened in append mode")
     ),

@@ -19,7 +19,7 @@ let _unimplemented : Unit = {
   ignore(() => @string.parse_int("0"))
   ignore(@fs.unimplemented)
   ignore(@utf8.encode(""))
-  ignore((f : async () -> Unit) => @test_util.assert_raise_async(f))
+  ignore((_ : @test.Test) => ())
 }
 
 ///|
