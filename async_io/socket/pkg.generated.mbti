@@ -16,7 +16,7 @@ pub impl Show for InvalidAddr
 pub suberror ResolveHostnameError {
   ResolveHostnameError(String)
 } derive(ToJson, @debug.Debug)
-#deprecated
+pub fn ResolveHostnameError::to_string(Self) -> String
 pub impl Show for ResolveHostnameError
 
 // Types and methods

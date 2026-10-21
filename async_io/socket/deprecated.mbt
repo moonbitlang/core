@@ -28,23 +28,6 @@ pub extend InvalidAddr with Show::{to_string}
 
 ///|
 #deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for ResolveHostnameError
-
-///|
-pub impl Show for ResolveHostnameError with fn output(self, logger) {
-  match self {
-    ResolveHostnameError(msg) =>
-      logger <+ "ResolveHostnameError(\{@debug.Repr(msg)})"
-  }
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend ResolveHostnameError with Show::{to_string}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
 pub impl Show for IpProtocolPreference
 
 ///|

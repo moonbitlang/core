@@ -389,6 +389,15 @@ pub suberror ResolveHostnameError {
 } derive(@debug.Debug, @json.ToJson)
 
 ///|
+pub impl Show for ResolveHostnameError with fn to_string(self) {
+  let ResolveHostnameError(msg) = self
+  msg
+}
+
+///|
+pub extend ResolveHostnameError with Show::{to_string}
+
+///|
 /// IPv4/IPv6 preference when resolving a host name
 pub(all) enum IpProtocolPreference {
   OnlyV4

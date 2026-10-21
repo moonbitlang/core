@@ -27,6 +27,24 @@ pub(all) enum RequestMethod {
 } derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
 
 ///|
+pub impl Show for RequestMethod with fn to_string(self) {
+  match self {
+    Get => "GET"
+    Head => "HEAD"
+    Post => "POST"
+    Put => "PUT"
+    Delete => "DELETE"
+    Connect => "CONNECT"
+    Options => "OPTIONS"
+    Trace => "TRACE"
+    Patch => "PATCH"
+  }
+}
+
+///|
+pub extend RequestMethod with Show::{to_string}
+
+///|
 /// Type for HTTP headers. The names of headers are case insensitive.
 ///
 /// The RFC requires that multiple header entries with the same name

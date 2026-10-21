@@ -19,7 +19,7 @@ pub impl Show for ConnectionClosed
 pub suberror TlsError {
   TlsError(String)
 } derive(ToJson, @debug.Debug)
-#deprecated
+pub fn TlsError::to_string(Self) -> String
 pub impl Show for TlsError
 
 // Types and methods

@@ -19,6 +19,15 @@ pub suberror TlsError {
 } derive(@debug.Debug, @json.ToJson)
 
 ///|
+pub impl Show for TlsError with fn to_string(self) {
+  let TlsError(msg) = self
+  msg
+}
+
+///|
+pub extend TlsError with Show::{to_string}
+
+///|
 /// Error raised when the peer abnormally close the underlying transport
 /// in a TLS connection.
 pub suberror ConnectionClosed derive(@debug.Debug, @json.ToJson)

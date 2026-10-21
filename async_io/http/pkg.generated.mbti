@@ -151,7 +151,7 @@ pub(all) enum RequestMethod {
   Trace
   Patch
 } derive(Compare, Eq, Hash, ToJson, @debug.Debug)
-#deprecated
+pub fn RequestMethod::to_string(Self) -> String
 pub impl Show for RequestMethod
 
 pub(all) struct Response {
