@@ -274,13 +274,6 @@ pub fn Server::close(self : Server) -> Unit {
 }
 
 ///|
-/// Get the listen address of the server
-#deprecated("use `.addr` instead")
-pub fn Server::addr(self : Server) -> @socket.Addr {
-  self.addr
-}
-
-///|
 /// Accept a new connection from a HTTP server.
 /// Return the new HTTP connection and the address of peer.
 pub async fn Server::accept(self : Server) -> (ServerConnection, @socket.Addr) {

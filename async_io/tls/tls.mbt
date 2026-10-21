@@ -66,22 +66,6 @@ fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
 }
 
 ///|
-/// Specify the trusted root when performing TLS certificate validation.
-///
-/// - `NoVerification`: disable certificate validation.
-///   This destroys the whole purpose of using TLS and should only be used for testing purpose.
-///
-/// - `SystemRoot`: use the default trusted root of the system
-///
-/// - `CustomPemFile(name)`: use the certificates in the PEM file `name` exclusively as trusted root.
-///   Useful for connecting to services whose certificates are issued by a private or self-signed root.
-pub(all) enum TrustedRoot {
-  NoVerification
-  SystemRoot
-  CustomPemFile(String)
-}
-
-///|
 /// Encoding type for a X509 certificate file
 pub(all) enum X509FileType {
   PEM = 1
@@ -100,19 +84,13 @@ pub(all) enum X509FileType {
 /// If `host` is present and `sni` is `true` (`true` by default),
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
 /// `sni=false` is currently unsupported on Windows.
-#label_migration(verify, fill=false, msg="use `trust` instead")
 pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(
   inner : Inner,
-  verify~ : Bool = true,
   host? : String,
   sni~ : Bool = true,
   trust? : TrustedRoot,
 ) -> Tls {
-  let trust = match trust {
-    Some(trust) => trust
-    None => if verify { SystemRoot } else { NoVerification }
-  }
-  Tls::client_from_pair(inner, inner, host?, sni~, trust~)
+  Tls::client_from_pair(inner, inner, host?, sni~, trust?)
 }
 
 ///|

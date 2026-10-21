@@ -9,8 +9,6 @@ import {
 
 // Errors
 pub suberror QueueAlreadyClosed derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for QueueAlreadyClosed
 
 // Types and methods
 pub(all) enum Kind {

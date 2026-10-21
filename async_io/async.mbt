@@ -41,12 +41,6 @@ pub using @coroutine {pause}
 pub using @coroutine {is_being_cancelled}
 
 ///|
-#deprecated("`catch` can no longer capture cancellation, and cancellation is no longer represented as an error, so `is_cancellation_error` is now meaningless. Use `with_cancellation_handler` or `is_being_cancelled` instead.")
-pub fn is_cancellation_error(_ : Error) -> Bool {
-  false
-}
-
-///|
 /// `handle_cancellation(f)` runs the asynchronous function `f`.
 /// The result of `handle_cancellation(f)` is:
 ///
@@ -60,24 +54,6 @@ pub fn is_cancellation_error(_ : Error) -> Bool {
 /// will still get cancelled immediately.
 /// To truly protect a piece of code from cancellation, use `protect_from_cancel` instead.
 pub using @coroutine {handle_cancellation}
-
-///|
-/// `with_cancellation_handler(f, handler~)` runs the asynchronous function `f`.
-/// If `f` is cancelled and does not produce a result, `handler` will be invoked.
-/// If `f` succeed or fail with a fatal error, the result of `f` will be returned as-is.
-#deprecated("use `handle_cancellation` instead")
-pub async fn[X] with_cancellation_handler(
-  f : async () -> X,
-  handler~ : async () -> Unit,
-) -> X {
-  match handle_cancellation(f) {
-    None => {
-      handler()
-      @coroutine.raise_cancellation_signal()
-    }
-    Some(ret) => ret
-  }
-}
 
 ///|
 /// Default error raised by `@async_io.with_timeout` when timeout expires

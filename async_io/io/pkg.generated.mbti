@@ -10,12 +10,8 @@ pub fn pipe() -> (PipeRead, PipeWrite)
 
 // Errors
 pub suberror PipeClosed derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for PipeClosed
 
 pub(all) suberror ReaderClosed derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for ReaderClosed
 
 // Types and methods
 type BinaryReaderController

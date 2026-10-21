@@ -13,8 +13,6 @@ pub fn sha1(Bytes) -> Bytes raise
 
 // Errors
 pub suberror ConnectionClosed derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for ConnectionClosed
 
 pub suberror TlsError {
   TlsError(String)
@@ -24,10 +22,8 @@ pub impl Show for TlsError
 
 // Types and methods
 type Tls
-#label_migration(verify, fill=false, msg="use `trust` instead")
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(Inner, verify? : Bool, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
-#label_migration(verify, fill=false, msg="use `trust` instead")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(R, W, verify? : Bool, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
+pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(Inner, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
+pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(R, W, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
 pub fn Tls::close(Self) -> Unit
 pub async fn Tls::drop_all(Self) -> Int64
 pub async fn Tls::drop_exactly(Self, Int32) -> Unit

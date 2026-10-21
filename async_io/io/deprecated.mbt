@@ -13,34 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for ReaderClosed
-
-///|
-pub impl Show for ReaderClosed with fn output(_self, logger) {
-  logger <+ "ReaderClosed"
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend ReaderClosed with Show::{to_string}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for PipeClosed
-
-///|
-pub impl Show for PipeClosed with fn output(_self, logger) {
-  logger <+ "PipeClosed"
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend PipeClosed with Show::{to_string}
-
-///|
 #deprecated
 #doc(hidden)
 pub extend ReaderClosed with @debug.Debug::{to_repr}
@@ -53,19 +25,9 @@ pub extend ReaderClosed with @json.ToJson::{to_json}
 ///|
 #deprecated
 #doc(hidden)
-pub extend ReaderClosed with Show::{output}
-
-///|
-#deprecated
-#doc(hidden)
 pub extend PipeClosed with @debug.Debug::{to_repr}
 
 ///|
 #deprecated
 #doc(hidden)
 pub extend PipeClosed with @json.ToJson::{to_json}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend PipeClosed with Show::{output}

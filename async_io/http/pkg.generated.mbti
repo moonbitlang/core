@@ -45,23 +45,17 @@ pub suberror HttpProtocolError {
   HttpVersionNotSupported(String)
   NotImplemented
 } derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for HttpProtocolError
 
 pub suberror IncorrectBodyLength derive(ToJson, @debug.Debug)
 
 pub suberror ProxyError {
   ProxyError(Response)
 } derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for ProxyError
 
 pub suberror UriParseError {
   InvalidFormat
   UnsupportedProtocol(String)
 } derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for UriParseError
 
 // Types and methods
 pub(all) struct CaseInsensitiveString(String) derive(ToJson)
@@ -77,8 +71,7 @@ pub struct Client {
   // private fields
 }
 #alias(new, deprecated)
-#label_migration(verify, fill=false, msg="use `trust` instead")
-pub async fn Client::Client(String, headers? : Map[CaseInsensitiveString, String], proxy? : Self, verify? : Bool, trust? : @tls.TrustedRoot) -> Self
+pub async fn Client::Client(String, headers? : Map[CaseInsensitiveString, String], proxy? : Self, trust? : @tls.TrustedRoot) -> Self
 pub fn Client::close(Self) -> Unit
 pub async fn Client::drop_all(Self) -> Int64
 pub async fn Client::drop_exactly(Self, Int32) -> Unit
@@ -129,16 +122,12 @@ pub(all) enum Protocol {
   Https
 } derive(Compare, Eq, Hash, ToJson, @debug.Debug)
 pub fn Protocol::default_port(Self) -> Int32
-#deprecated
-pub impl Show for Protocol
 
 pub(all) struct Request {
   meth : RequestMethod
   path : String
   headers : Map[CaseInsensitiveString, String]
 } derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for Request
 
 pub(all) enum RequestMethod {
   Get
@@ -160,8 +149,6 @@ pub(all) struct Response {
   headers : Map[CaseInsensitiveString, String]
   cookies : Array[Cookie]
 } derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for Response
 
 pub struct Server {
   addr : @socket.Addr
@@ -170,8 +157,6 @@ pub struct Server {
 #alias(new, deprecated)
 pub async fn Server::Server(@socket.Addr, dual_stack? : Bool, reuse_addr? : Bool, headers? : Map[CaseInsensitiveString, String]) -> Self
 pub async fn Server::accept(Self) -> (ServerConnection, @socket.Addr)
-#deprecated
-pub fn Server::addr(Self) -> @socket.Addr
 pub fn Server::close(Self) -> Unit
 pub async fn Server::run_forever(Self, async (Request, ServerConnection) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
 

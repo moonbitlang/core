@@ -195,20 +195,14 @@ async fn Tls::connect(self : Tls) -> Unit {
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
 /// `sni=false` is currently unsupported on Windows.
 #cfg(platform="windows")
-#label_migration(verify, fill=false, msg="use `trust` instead")
 pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   reader : R,
   writer : W,
-  verify~ : Bool = true,
   host? : String,
   sni~ : Bool = true,
-  trust? : TrustedRoot,
+  trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   ignore(sni)
-  let trust = match trust {
-    Some(trust) => trust
-    None => if verify { SystemRoot } else { NoVerification }
-  }
   let context = Schannel::new()
   let transport = Transport::new(reader, writer)
   let tls = {

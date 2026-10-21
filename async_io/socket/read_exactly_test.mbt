@@ -97,7 +97,7 @@ async test "read_exactly failure" {
       log("first message sent")
     }
   }) catch {
-    err => log(err.to_string())
+    err => log(@debug.to_string(err))
   }
   inspect(
     buf.to_string(),

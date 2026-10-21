@@ -119,21 +119,15 @@ async fn Client::connect(
 /// Using another HTTP client as proxy allows advanced features such as
 /// proxy authentication and https `CONNECT` proxy.
 #alias(new, deprecated)
-#label_migration(verify, fill=false, msg="use `trust` instead")
 pub async fn Client::Client(
   uri : String,
   headers~ : Headers = Map([]),
   proxy? : Client,
-  verify~ : Bool = true,
   trust? : @tls.TrustedRoot,
 ) -> Client {
   let (protocol, host, path) = resolve_url(uri)
   guard path is "/" else { raise InvalidFormat }
-  let trust = match trust {
-    Some(trust) => trust
-    None => if verify { SystemRoot } else { NoVerification }
-  }
-  Client::connect(host, protocol~, headers~, proxy?, trust~)
+  Client::connect(host, protocol~, headers~, proxy?, trust?)
 }
 
 ///|

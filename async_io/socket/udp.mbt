@@ -76,13 +76,6 @@ pub fn UdpClient::fd(self : UdpClient) -> @fd_util.Fd {
 }
 
 ///|
-/// Get the local address of a UDP client.
-#deprecated("use `.addr` instead")
-pub fn UdpClient::addr(self : UdpClient) -> Addr {
-  self.addr
-}
-
-///|
 /// Set the outgoing interface used for sending multicast packets with this client.
 ///
 /// This function is IPv4-only. For IPv6, use `set_multicast_interface_v6` instead.
@@ -282,13 +275,6 @@ pub async fn UdpServer::multicast(
   // in this case, we need to retrieve the actual port via `getsockname`.
   let addr = getsockname(sock, family, context~)
   { io, addr, is_multicast_only: true, }
-}
-
-///|
-/// Get the listen address of a UDP server.
-#deprecated("use `.addr` instead")
-pub fn UdpServer::addr(self : UdpServer) -> Addr {
-  self.addr
 }
 
 ///|

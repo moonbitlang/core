@@ -130,18 +130,18 @@ fn Client::connect(
 ///
 /// The `proxy` argument is not supported on JavaScript backend and has no effect.
 ///
-/// `verify` is ignored on JS backend
+/// `trust` is ignored on JS backend
 #warnings("-unused_async")
 #alias(new, deprecated)
-#label_migration(verify, fill=false, msg="verify is unsupported on Windows")
+#label_migration(trust, fill=false, msg="`trust` is unsupported on JS backend")
 pub async fn Client::Client(
   uri : String,
   headers~ : Headers = Map([]),
   proxy? : Client,
-  verify~ : Bool = true,
+  trust~ : @tls.TrustedRoot = SystemRoot,
 ) -> Client {
   ignore(proxy)
-  ignore(verify)
+  ignore(trust)
   let (protocol, host, path) = resolve_url(uri)
   guard path is "/" else { raise InvalidFormat }
   Client::connect(host, protocol~, headers~, proxy?)

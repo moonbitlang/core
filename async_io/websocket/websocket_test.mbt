@@ -38,11 +38,10 @@ async test "websocket basic" {
       ws.start_message(msg.kind)
       ws.text.write(msg_content)
       ws.end_message()
-      try ws.recv() catch {
-        err => inspect(err, content="ConnectionClosed(Normal, None)")
-      } noraise {
-        _ => raise Failure::Failure("expected error, but nothing happens")
-      }
+      debug_inspect(
+        @test.expect_error_async(() => ws.recv()),
+        content="ConnectionClosed(Normal, None)",
+      )
     }
     let client = @websocket.connect("ws://127.0.0.1:\{addr.port()}")
     defer client.close()

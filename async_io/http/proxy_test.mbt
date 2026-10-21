@@ -204,21 +204,23 @@ async test "proxy error" {
         conn.end_response()
       })
     }
-    try
-      @http.get_binary(
-        "https://www.moonbitlang.com",
-        proxy=Client("http://127.0.0.1:\{port}"),
-      )
-    catch {
-      err =>
-        inspect(
-          err,
-          content=(
-            #|ProxyError({code: 407, reason: "ProxyAuthenticationRequired", headers: {"Content-Length": "0"}})
-          ),
+    debug_inspect(
+      @test.expect_error_async(() => {
+        @http.get_binary(
+          "https://www.moonbitlang.com",
+          proxy=Client("http://127.0.0.1:\{port}"),
         )
-    } noraise {
-      _ => raise Failure::Failure("expected error, but nothing happens")
-    }
+      }),
+      content=(
+        #|ProxyError(
+        #|  {
+        #|    code: 407,
+        #|    reason: "ProxyAuthenticationRequired",
+        #|    headers: { "Content-Length": "0" },
+        #|    cookies: [],
+        #|  },
+        #|)
+      ),
+    )
   }
 }
