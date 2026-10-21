@@ -171,7 +171,7 @@ async test "`connect` accidental close" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      inspect(
+      debug_inspect(
         @test.expect_error_async <| () => {
           @tls.Tls::client_from_pair(
             client_read_from_server,

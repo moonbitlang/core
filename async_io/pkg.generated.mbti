@@ -19,9 +19,6 @@ pub async fn[X] handle_cancellation(async () -> X) -> X?
 
 pub fn is_being_cancelled() -> Bool
 
-#deprecated
-pub fn is_cancellation_error(Error) -> Bool
-
 pub fn now() -> Int64
 
 pub async fn pause() -> Unit noraise
@@ -35,9 +32,6 @@ pub async fn[X] retry(RetryMethod, max_retry? : Int32, fatal_error? : (Error) ->
 pub fn set_deadlock_handler((Array[SourceLoc]) -> Unit) -> Unit
 
 pub async fn sleep(Int32) -> Unit noraise
-
-#deprecated
-pub async fn[X] with_cancellation_handler(async () -> X, handler~ : async () -> Unit) -> X
 
 #callsite(autofill(loc))
 pub async fn with_task_group(async (TaskGroup) -> Unit, loc~ : SourceLoc) -> Unit

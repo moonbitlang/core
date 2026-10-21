@@ -80,7 +80,7 @@ async test "read_exactly failure" {
       w.write(b"abcdef")
     }
   }) catch {
-    err => log(err.to_string())
+    err => log(@debug.to_string(err))
   }
   inspect(
     buf.to_string(),

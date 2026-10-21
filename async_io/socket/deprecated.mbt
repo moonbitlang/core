@@ -13,40 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for InvalidAddr
-
-///|
-pub impl Show for InvalidAddr with fn output(_self, logger) {
-  logger <+ "InvalidAddr"
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend InvalidAddr with Show::{to_string}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for IpProtocolPreference
-
-///|
-pub impl Show for IpProtocolPreference with fn output(self, logger) {
-  match self {
-    OnlyV4 => logger <+ "OnlyV4"
-    OnlyV6 => logger <+ "OnlyV6"
-    FavorV4 => logger <+ "FavorV4"
-    FavorV6 => logger <+ "FavorV6"
-    NoPreference => logger <+ "NoPreference"
-  }
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend IpProtocolPreference with Show::{to_string}
-
-///|
 #deprecated
 #doc(hidden)
 pub extend Addr with Eq::{not_equal, equal}
@@ -84,11 +50,6 @@ pub extend InvalidAddr with @json.ToJson::{to_json}
 ///|
 #deprecated
 #doc(hidden)
-pub extend InvalidAddr with Show::{output}
-
-///|
-#deprecated
-#doc(hidden)
 pub extend ResolveHostnameError with @debug.Debug::{to_repr}
 
 ///|
@@ -105,8 +66,3 @@ pub extend ResolveHostnameError with Show::{output}
 #deprecated
 #doc(hidden)
 pub extend IpProtocolPreference with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend IpProtocolPreference with Show::{output}

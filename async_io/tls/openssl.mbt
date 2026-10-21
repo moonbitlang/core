@@ -400,20 +400,14 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
 /// If `host` is present and `sni` is `true` (`true` by default),
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
 #cfg(not(platform="windows"))
-#label_migration(verify, fill=false, msg="use `trust` instead")
 pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   r : R,
   w : W,
-  verify~ : Bool = true,
   host? : String,
   sni~ : Bool = true,
-  trust? : TrustedRoot,
+  trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   load_openssl()
-  let trust = match trust {
-    Some(trust) => trust
-    None => if verify { SystemRoot } else { NoVerification }
-  }
   let ctx = match trust {
     NoVerification | SystemRoot => client_ctx.force()
     CustomPemFile(root_cert) => SSL_CTX::client_with_custom_root(root_cert)

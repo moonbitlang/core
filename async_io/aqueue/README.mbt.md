@@ -238,7 +238,10 @@ async test "soft close drains buffered items" {
   // Reads still succeed until the buffer is empty.
   debug_inspect(q.get(), content="1")
   debug_inspect(q.get(), content="2")
-  inspect(@test.expect_error_async(() => q.get()), content="QueueAlreadyClosed")
+  debug_inspect(
+    @test.expect_error_async(() => q.get()),
+    content="QueueAlreadyClosed",
+  )
 }
 ```
 
@@ -254,7 +257,10 @@ async test "hard close discards buffered items" {
   q.put(1)
   q.put(2)
   q.close(clear=true)
-  inspect(@test.expect_error_async(() => q.get()), content="QueueAlreadyClosed")
+  debug_inspect(
+    @test.expect_error_async(() => q.get()),
+    content="QueueAlreadyClosed",
+  )
 }
 ```
 

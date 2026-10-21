@@ -120,13 +120,6 @@ pub async fn TcpServer::TcpServer(
 }
 
 ///|
-/// Get the address the server is listening on
-#deprecated("use `.addr` instead")
-pub fn TcpServer::addr(server : TcpServer) -> Addr {
-  server.addr
-}
-
-///|
 /// Start the main loop of a TCP server,
 /// keep listening for new connections
 /// and handle connections using the callback `f`.

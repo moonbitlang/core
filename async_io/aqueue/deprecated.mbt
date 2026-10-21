@@ -13,20 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for QueueAlreadyClosed
-
-///|
-pub impl Show for QueueAlreadyClosed with fn output(_self, logger) {
-  logger <+ "QueueAlreadyClosed"
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend QueueAlreadyClosed with Show::{to_string}
-
-///|
 #deprecated
 #doc(hidden)
 pub extend QueueAlreadyClosed with @debug.Debug::{to_repr}
@@ -35,8 +21,3 @@ pub extend QueueAlreadyClosed with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend QueueAlreadyClosed with @json.ToJson::{to_json}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend QueueAlreadyClosed with Show::{output}

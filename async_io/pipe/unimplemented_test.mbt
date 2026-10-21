@@ -18,4 +18,6 @@ let _ignore_unused_import : Unit = {
   ignore(@async_io.sleep)
   ignore(@utf8.encode(""))
   ignore((f : async () -> Unit) => @test.assert_raise_async(f))
+  ignore((_ : @test.Test) => ())
+  ignore((_ : @debug.Repr) => ())
 }

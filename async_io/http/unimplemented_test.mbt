@@ -19,4 +19,5 @@ let _ignore_unused_import : Unit = {
   ignore(@async_io.sleep)
   ignore((_ : @gzip_stream.Encoder[&@io.BinaryWriter]) => ())
   ignore(@fs.unimplemented)
+  ignore((_ : @test.Test) => ())
 }

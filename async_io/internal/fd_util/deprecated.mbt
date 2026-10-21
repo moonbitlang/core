@@ -13,33 +13,6 @@
 // limitations under the License.
 
 ///|
-#cfg(target="native")
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for FileKind
-
-///|
-#cfg(target="native")
-pub impl Show for FileKind with fn output(self, logger) {
-  match self {
-    Unknown => logger <+ "Unknown"
-    Regular => logger <+ "Regular"
-    Directory => logger <+ "Directory"
-    SymLink => logger <+ "SymLink"
-    Socket => logger <+ "Socket"
-    Pipe => logger <+ "Pipe"
-    BlockDevice => logger <+ "BlockDevice"
-    CharDevice => logger <+ "CharDevice"
-    Console => logger <+ "Console"
-  }
-}
-
-///|
-#cfg(target="native")
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend FileKind with Show::{to_string}
-
-///|
 #deprecated
 #doc(hidden)
 pub extend FileKind with Eq::{not_equal, equal}
@@ -48,9 +21,3 @@ pub extend FileKind with Eq::{not_equal, equal}
 #deprecated
 #doc(hidden)
 pub extend FileKind with @debug.Debug::{to_repr}
-
-///|
-#cfg(target="native")
-#deprecated
-#doc(hidden)
-pub extend FileKind with Show::{output}

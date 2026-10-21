@@ -326,19 +326,13 @@ async fn Tls::accept(self : Tls) -> Unit {
 ///|
 /// Create a generic TLS client from a reader and a writer.
 /// See `@tls.Tls::client` for more details.
-#label_migration(verify, fill=false, msg="use `trust` instead")
 pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   r : R,
   w : W,
-  verify~ : Bool = true,
   host? : String,
   sni~ : Bool = true,
-  trust? : TrustedRoot,
+  trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
-  let trust = match trust {
-    Some(trust) => trust
-    None => if verify { SystemRoot } else { NoVerification }
-  }
   let host_name = match host {
     Some(host) => host
     None => ""

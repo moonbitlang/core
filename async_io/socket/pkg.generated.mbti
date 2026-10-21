@@ -10,8 +10,6 @@ import {
 
 // Errors
 pub suberror InvalidAddr derive(ToJson, @debug.Debug)
-#deprecated
-pub impl Show for InvalidAddr
 
 pub suberror ResolveHostnameError {
   ResolveHostnameError(String)
@@ -39,8 +37,6 @@ pub(all) enum IpProtocolPreference {
   FavorV6
   NoPreference
 } derive(@debug.Debug)
-#deprecated
-pub impl Show for IpProtocolPreference
 
 pub struct Tcp {
   addr : Addr
@@ -76,8 +72,6 @@ pub struct TcpServer {
 #alias(new, deprecated)
 pub async fn TcpServer::TcpServer(Addr, dual_stack? : Bool, reuse_addr? : Bool, reuse_port_lb? : Bool) -> Self
 pub async fn TcpServer::accept(Self) -> (Tcp, Addr)
-#deprecated
-pub fn TcpServer::addr(Self) -> Addr
 pub fn TcpServer::close(Self) -> Unit
 pub fn TcpServer::fd(Self) -> UInt64
 pub async fn TcpServer::run_forever(Self, async (Tcp, Addr) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
@@ -88,8 +82,6 @@ pub struct UdpClient {
 }
 #alias(new, deprecated)
 pub async fn UdpClient::UdpClient(Addr) -> Self
-#deprecated
-pub fn UdpClient::addr(Self) -> Addr
 pub fn UdpClient::close(Self) -> Unit
 pub fn UdpClient::connect(Self, Addr) -> Unit raise
 pub fn UdpClient::fd(Self) -> UInt64
@@ -107,8 +99,6 @@ pub struct UdpServer {
 }
 #alias(new, deprecated)
 pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool) -> Self
-#deprecated
-pub fn UdpServer::addr(Self) -> Addr
 pub fn UdpServer::close(Self) -> Unit
 pub fn UdpServer::fd(Self) -> UInt64
 pub fn UdpServer::join_multicast_group(Self, Addr, interface_addr? : Addr) -> Unit raise

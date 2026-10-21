@@ -16,6 +16,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/test",
   "moonbitlang/core/async_io",
   "moonbitlang/core/async_io/fs",
   "moonbitlang/core/async_io/gzip" @gzip_stream,
