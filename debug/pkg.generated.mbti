@@ -15,7 +15,7 @@ pub fn debug_inspect(&Debug, content? : String, loc~ : SourceLoc, args_loc~ : Ar
 #callsite(autofill(loc))
 pub fn[T : Debug] dump(T, name? : String, loc~ : SourceLoc) -> T
 
-pub fn render(Repr, max_depth? : Int) -> String
+pub fn render(Repr, max_depth? : Int32) -> String
 
 #alias(repr)
 pub fn[T : Debug] to_string(T) -> String
@@ -40,10 +40,10 @@ pub impl Debug for Unit
 pub impl Debug for Bool
 pub impl Debug for Byte
 pub impl Debug for Char
-pub impl Debug for Int
+pub impl Debug for Int32
 pub impl Debug for Int16
 pub impl Debug for Int64
-pub impl Debug for UInt
+pub impl Debug for UInt32
 pub impl Debug for UInt16
 pub impl Debug for UInt64
 pub impl Debug for Float
@@ -51,7 +51,6 @@ pub impl Debug for Double
 pub impl Debug for String
 pub impl Debug for V128
 pub impl[T : Debug] Debug for T?
-pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl[T : Debug] Debug for FixedArray[T]
 pub impl[T : Debug] Debug for ReadOnlyArray[T]
 pub impl Debug for Bytes
@@ -68,6 +67,7 @@ pub impl[A, B] Debug for Iter2[A, B]
 pub impl Debug for Json
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
+pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder

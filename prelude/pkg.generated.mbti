@@ -28,7 +28,7 @@ pub fn[T : @builtin.Eq + @debug.Debug] assert_not_eq(T, T, msg? : String, loc~ :
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise
 
-pub fn[A : @builtin.Compare] compare(A, A) -> Int
+pub fn[A : @builtin.Compare] compare(A, A) -> Int32
 
 pub fn[T : @debug.Debug] debug(T) -> Unit
 
@@ -46,7 +46,7 @@ pub fn[T : @builtin.Show] eprintln(T) -> Unit
 #callsite(autofill(loc))
 pub fn[T] fail(StringView, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
-pub fn[T : @builtin.Hash] hash(T) -> Int
+pub fn[T : @builtin.Hash] hash(T) -> Int32
 
 pub fn[T] ignore(T) -> Unit
 
@@ -91,13 +91,39 @@ pub using @builtin {type ArrayView}
 
 pub using @bigint {type BigInt}
 
+pub type Bool = Bool
+
 pub using @buffer {type Buffer}
 
+pub type Byte = Byte
+
+pub type Bytes = Bytes
+
+pub using @builtin {type BytesView}
+
+pub type Char = Char
+
+pub type Double = Double
+
+pub using @builtin {type Error}
+
 pub using @builtin {type Failure}
+
+pub using @builtin {type FixedArray}
+
+pub type Float = Float
+
+pub using @builtin {type FuncRef}
 
 pub using @builtin {type Hasher}
 
 pub using @builtin {type InspectError}
+
+pub type Int = Int32
+
+pub type Int16 = Int16
+
+pub type Int64 = Int64
 
 pub using @builtin {type Iter}
 
@@ -117,11 +143,17 @@ pub using @builtin {type Map}
 
 pub using @builtin {type MutArrayView}
 
+pub using @builtin {type Option}
+
+pub using @builtin {type ReadOnlyArray}
+
 pub using @ref {type Ref}
 
 pub using @string {type Regex}
 
 pub using @debug {type Repr}
+
+pub using @builtin {type Result}
 
 pub using @set {type Set}
 
@@ -129,9 +161,23 @@ pub using @builtin {type SnapshotError}
 
 pub using @builtin {type SourceLoc}
 
+pub type String = String
+
 pub using @builtin {type StringBuilder}
 
+pub using @builtin {type StringView}
+
+pub type UInt = UInt32
+
+pub type UInt16 = UInt16
+
+pub type UInt64 = UInt64
+
 pub using @builtin {type UninitializedArray}
+
+pub type Unit = Unit
+
+pub type V128 = V128
 
 pub using @builtin {trait Add}
 

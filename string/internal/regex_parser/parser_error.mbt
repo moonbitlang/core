@@ -60,6 +60,9 @@ const HINT_CHARACTER_OUT_OF_RANGE = "Character out of range"
 const HINT_INVALID_GROUP = "Invalid group"
 
 ///|
+const HINT_DUPLICATE_GROUP_NAME = "Duplicate capture group name"
+
+///|
 const HINT_UNSUPPORTED_LOOKAHEAD = "Unsupported lookahead assertion"
 
 ///|
@@ -75,7 +78,7 @@ const HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND = "Unsupported negative lookbehind as
 const HINT_INVALID_POSIX_CLASS = "Invalid POSIX character class"
 
 ///|
-const HINT_BARE_POSIX_CLASS = "Invalid character class, bare POSIX character class not allowed"
+const HINT_BARE_POSIX_CLASS = "A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon"
 
 ///|
 const HINT_UNSUPPORTED_POSIX_CLASS = "Unsupported POSIX character class"
@@ -100,3 +103,6 @@ const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w
 
 ///|
 const HINT_DASH_AT_BOUNDARY = "Dash at the start or end of character class is not supported, use \\- to match a literal dash"
+
+///|
+const HINT_DASH_AFTER_RANGE = "Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash"

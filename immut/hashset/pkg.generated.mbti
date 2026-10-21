@@ -26,13 +26,13 @@ pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
-pub fn[A : Hash] HashSet::hash(Self[A]) -> Int
+pub fn[A : Hash] HashSet::hash(Self[A]) -> Int32
 pub fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] HashSet::iter(Self[A]) -> Iter[A]
 #alias(size, deprecated)
-pub fn[A] HashSet::length(Self[A]) -> Int
+pub fn[A] HashSet::length(Self[A]) -> Int32
 #as_free_fn
 pub fn[A] HashSet::new() -> Self[A]
 pub fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]

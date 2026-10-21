@@ -27,6 +27,9 @@ priv struct ParserContext {
   mode : Mode
   /// Number of groups open at the current position.
   depth : Int32
+  /// Names of the capture groups read so far, shared by every copy of the
+  /// context of one parse.
+  group_names : @set.Set[String]
 }
 
 ///|
@@ -35,7 +38,7 @@ fn ParserContext::new(
   base~ : Int32,
   mode~ : Mode,
 ) -> ParserContext {
-  { profile, base, ignore_case: false, mode, depth: 0, }
+  { profile, base, ignore_case: false, mode, depth: 0, group_names: Set([]), }
 }
 
 ///|

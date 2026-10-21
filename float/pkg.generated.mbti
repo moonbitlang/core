@@ -20,24 +20,25 @@ pub let not_a_number : Float
 // Errors
 
 // Types and methods
+pub type Float
 #as_free_fn(deprecated)
 pub fn Float::abs(Float) -> Float
 pub fn Float::add(Float, Float) -> Float
 #as_free_fn
 pub fn Float::ceil(Float) -> Float
 pub fn Float::clamp(Float, min~ : Float, max~ : Float) -> Float
-pub fn Float::compare(Float, Float) -> Int
+pub fn Float::compare(Float, Float) -> Int32
 pub fn Float::div(Float, Float) -> Float
 pub fn Float::equal(Float, Float) -> Bool
 #as_free_fn
 pub fn Float::floor(Float) -> Float
 pub fn Float::from_byte(Byte) -> Float
 pub fn Float::from_double(Double) -> Float
-pub fn Float::from_int(Int) -> Float
+pub fn Float::from_int(Int32) -> Float
 pub fn Float::from_int64(Int64) -> Float
-pub fn Float::from_uint(UInt) -> Float
+pub fn Float::from_uint(UInt32) -> Float
 pub fn Float::from_uint64(UInt64) -> Float
-pub fn Float::hash(Float) -> Int
+pub fn Float::hash(Float) -> Int32
 pub fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
@@ -52,10 +53,10 @@ pub fn Float::neg(Float) -> Float
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float
-pub fn Float::reinterpret_as_int(Float) -> Int
-pub fn Float::reinterpret_as_uint(Float) -> UInt
-pub fn Float::reinterpret_from_int(Int) -> Float
-pub fn Float::reinterpret_from_uint(UInt) -> Float
+pub fn Float::reinterpret_as_int(Float) -> Int32
+pub fn Float::reinterpret_as_uint(Float) -> UInt32
+pub fn Float::reinterpret_from_int(Int32) -> Float
+pub fn Float::reinterpret_from_uint(UInt32) -> Float
 #as_free_fn
 pub fn Float::round(Float) -> Float
 pub fn Float::signum(Float) -> Float
@@ -63,7 +64,7 @@ pub fn Float::sqrt(Float) -> Float
 pub fn Float::sub(Float, Float) -> Float
 pub fn Float::to_be_bytes(Float) -> Bytes
 pub fn Float::to_double(Float) -> Double
-pub fn Float::to_int(Float) -> Int
+pub fn Float::to_int(Float) -> Int32
 pub fn Float::to_le_bytes(Float) -> Bytes
 pub fn Float::to_string(Float) -> String
 #as_free_fn

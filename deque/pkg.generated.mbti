@@ -16,27 +16,27 @@ type Deque[A]
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
-pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int) -> Self[A]
+pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int32) -> Self[A]
 pub fn[A] Deque::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
-pub fn[A] Deque::at(Self[A], Int) -> A
+pub fn[A] Deque::at(Self[A], Int32) -> A
 pub fn[A] Deque::back(Self[A]) -> A?
-pub fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
-pub fn[A] Deque::binary_search_by(Self[A], (A) -> Int raise?) -> Result[Int, Int] raise?
-pub fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
-pub fn[A] Deque::capacity(Self[A]) -> Int
+pub fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int32, Int32]
+pub fn[A] Deque::binary_search_by(Self[A], (A) -> Int32 raise?) -> Result[Int32, Int32] raise?
+pub fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Unit
+pub fn[A] Deque::capacity(Self[A]) -> Int32
 pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
-pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
+pub fn[A] Deque::chunks(Self[A], Int32) -> Self[Self[A]]
 pub fn[A] Deque::clear(Self[A]) -> Unit
-pub fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int
+pub fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int32
 pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
 pub fn[A] Deque::copy(Self[A]) -> Self[A]
-pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
+pub fn[A] Deque::drain(Self[A], start~ : Int32, len? : Int32) -> Self[A]
 pub fn[A] Deque::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A] Deque::eachi(Self[A], (Int32, A) -> Unit raise?) -> Unit raise?
 pub fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
@@ -46,48 +46,48 @@ pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #as_free_fn
 pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 pub fn[A] Deque::front(Self[A]) -> A?
-pub fn[A] Deque::get(Self[A], Int) -> A?
-pub fn[A : Hash] Deque::hash(Self[A]) -> Int
-pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
+pub fn[A] Deque::get(Self[A], Int32) -> A?
+pub fn[A : Hash] Deque::hash(Self[A]) -> Int32
+pub fn[A] Deque::insert(Self[A], Int32, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] Deque::iter(Self[A]) -> Iter[A]
 #alias(iterator2, deprecated)
-pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
+pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int32, A]
 pub fn Deque::join(Self[String], StringView) -> String
-pub fn[A] Deque::length(Self[A]) -> Int
+pub fn[A] Deque::length(Self[A]) -> Int32
 pub fn[A, U] Deque::map(Self[A], (A) -> U raise?) -> Self[U] raise?
-pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U raise?) -> Self[U] raise?
+pub fn[A, U] Deque::mapi(Self[A], (Int32, A) -> U raise?) -> Self[U] raise?
 #as_free_fn(deprecated)
 #deprecated
-pub fn[A] Deque::new(capacity? : Int) -> Self[A]
+pub fn[A] Deque::new(capacity? : Int32) -> Self[A]
 pub fn[A] Deque::pop_back(Self[A]) -> A?
 pub fn[A] Deque::pop_front(Self[A]) -> A?
 pub fn[A] Deque::push_back(Self[A], A) -> Unit
 pub fn[A] Deque::push_front(Self[A], A) -> Unit
 pub fn[A] Deque::release_unused(Self[A], placeholder~ : A) -> Unit
-pub fn[A] Deque::remove(Self[A], Int) -> A
-pub fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
+pub fn[A] Deque::remove(Self[A], Int32) -> A
+pub fn[A] Deque::reserve_capacity(Self[A], Int32) -> Unit
 pub fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
 #alias(filter_map_inplace, deprecated)
 pub fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
 pub fn[A] Deque::rev(Self[A]) -> Self[A]
 pub fn[A] Deque::rev_each(Self[A], (A) -> Unit raise?) -> Unit raise?
-pub fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A] Deque::rev_eachi(Self[A], (Int32, A) -> Unit raise?) -> Unit raise?
 #alias(rev_inplace, deprecated)
 pub fn[A] Deque::rev_in_place(Self[A]) -> Unit
 #alias(rev_iterator, deprecated)
 pub fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
 #alias(rev_iterator2, deprecated)
-pub fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
-pub fn[A : Eq] Deque::search(Self[A], A) -> Int?
+pub fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int32, A]
+pub fn[A : Eq] Deque::search(Self[A], A) -> Int32?
 #alias("_[_]=_")
-pub fn[A] Deque::set(Self[A], Int, A) -> Unit
+pub fn[A] Deque::set(Self[A], Int32, A) -> Unit
 pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
-pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
-pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
+pub fn[A] Deque::shuffle(Self[A], rand~ : (Int32) -> Int32) -> Self[A]
+pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int32) -> Int32) -> Unit
 pub fn[A] Deque::to_array(Self[A]) -> Array[A]
-pub fn[A] Deque::truncate(Self[A], Int) -> Unit
+pub fn[A] Deque::truncate(Self[A], Int32) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]
 pub impl[A] Default for Deque[A]

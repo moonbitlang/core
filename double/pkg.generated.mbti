@@ -10,7 +10,7 @@ pub fn ceil(Double) -> Double
 pub fn floor(Double) -> Double
 
 #deprecated
-pub fn from_int(Int) -> Double
+pub fn from_int(Int32) -> Double
 
 pub let infinity : Double
 

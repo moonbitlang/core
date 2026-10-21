@@ -104,11 +104,20 @@ fn Parser::class_atom(
 fn Parser::class_contents(
   rest : StringView,
   ctx~ : ParserContext,
+  class_start~ : StringView,
 ) -> (StringView, @re.RecharSet) raise ParserError {
+  // When the content starts with a colon, a colon that closes the class with
+  // something in between ends `[:name:]`, a POSIX class written without its
+  // outer brackets. This is the rule of the compiler's regex literals. Any
+  // other colon is an ordinary character.
+  let colon_start = rest is [':', ..]
+  let content_length = rest.length()
   outer~: for rest = rest, char_set = @re.RecharSet::empty() {
     match rest {
       [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
       [']', ..] => break outer~ (rest, char_set)
+      [':', ']', ..] if colon_start && content_length - rest.length() >= 2 =>
+        raise ctx.error_at(class_start, HINT_BARE_POSIX_CLASS)
       _ => {
         let (rest, left) = match rest {
           ['[', ':', ..] =>
@@ -116,6 +125,10 @@ fn Parser::class_contents(
             Parser::class_atom(rest, ctx~)
           ['[', ..] =>
             raise ctx.error_at(rest, HINT_UNSUPPORTED_NESTED_CHAR_CLASS)
+          // A dash after a character makes a range, and the start of the
+          // class is checked by the caller, so this one follows a range or a
+          // POSIX class. It is an error, as in the compiler's regex literals.
+          ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AFTER_RANGE)
           _ => Parser::class_atom(rest, ctx~)
         }
         let (rest, left_set) = match left {
@@ -163,6 +176,7 @@ fn Parser::character_class(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.RecharSet) raise ParserError {
+  let class_start = rest
   let (rest, neg) = match rest {
     ['[', '^', .. rest] => (rest, true)
     ['[', .. rest] => (rest, false)
@@ -173,7 +187,7 @@ fn Parser::character_class(
     ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
     _ => ()
   }
-  let (rest, char_set) = Parser::class_contents(rest, ctx~)
+  let (rest, char_set) = Parser::class_contents(rest, ctx~, class_start~)
   match rest {
     [']', .. rest] =>
       (
@@ -321,9 +335,16 @@ fn Parser::term(
       raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKBEHIND)
     (re"^\(\?<!", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND)
-    (re"^\(\?<" + (re"[A-Za-z_][A-Za-z0-9_]*" as name) + re">", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
-      (rest, @re.capture(name=name.to_owned(), pat), false)
+    (re"^\(\?<" + (re"[A-Za-z_][A-Za-z0-9_]*" as name) + re">", after=rest2) => {
+      // A name is used once in a pattern, as in the compiler's regex
+      // literals, so that a capture is found by its name alone.
+      let name = name.to_owned()
+      if ctx.group_names.contains(name) {
+        raise ctx.error_at(rest, offset=3, HINT_DUPLICATE_GROUP_NAME)
+      }
+      ctx.group_names.add(name)
+      let (rest, pat) = Parser::parse_group_continue(rest2, ctx~)
+      (rest, @re.capture(name~, pat), false)
     }
     (re"^\(\?:", after=rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
@@ -354,8 +375,6 @@ fn Parser::term(
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, @re.capture(pat), false)
     }
-    (re"^\[\^?:[a-z]+:\]", after=_) =>
-      raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
     (re"^\[", after=_) => {
       let (rest, char_set) = Parser::character_class(rest, ctx~)
       (rest, @re.char(char_set), false)

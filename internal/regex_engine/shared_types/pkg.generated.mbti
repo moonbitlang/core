@@ -11,11 +11,11 @@ import {
 // Errors
 
 // Types and methods
-pub struct Category(Int) derive(Eq, Hash)
+pub struct Category(Int32) derive(Eq, Hash)
 pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
 pub fn Category::equal(Self, Self) -> Bool
-pub fn Category::hash(Self) -> Int
+pub fn Category::hash(Self) -> Int32
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
 pub fn Category::inexistant_or_non_word_end() -> Self
@@ -29,15 +29,15 @@ pub fn Category::word() -> Self
 pub impl Add for Category
 
 pub struct Profile {
-  lb : Int
-  ub : Int
+  lb : Int32
+  ub : Int32
   valid : @rechar_set.RecharSet
   word : @rechar_set.RecharSet
   word_symbolize_splits : ReadOnlyArray[@rechar_set.RecharSet]
-  category : (Int) -> Category
+  category : (Int32) -> Category
 }
 #alias(new, deprecated)
-pub fn Profile::Profile(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Self
+pub fn Profile::Profile(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int32) -> Category) -> Self
 
 pub(all) enum QuantifierMode {
   Greedy
@@ -45,7 +45,7 @@ pub(all) enum QuantifierMode {
 } derive(@debug.Debug)
 
 // Type aliases
-pub type Rechar = Int
+pub type Rechar = Int32
 
 pub using @rechar_set {type RecharSet}
 

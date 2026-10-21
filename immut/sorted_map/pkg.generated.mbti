@@ -17,10 +17,10 @@ pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
-pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int
+pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int32
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
-pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
+pub fn[K, V] SortedMap::eachi(Self[K, V], (Int32, K, V) -> Unit) -> Unit
 #deprecated
 pub fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
 pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
@@ -42,7 +42,7 @@ pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
-pub fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int
+pub fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int32
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
@@ -52,7 +52,7 @@ pub fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
-pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
+pub fn[K, V] SortedMap::length(Self[K, V]) -> Int32
 #alias(map_with_key, deprecated)
 pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y raise?) -> Self[K, Y] raise?
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
