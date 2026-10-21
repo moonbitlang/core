@@ -91,19 +91,19 @@ pub using @builtin {type ArrayView}
 
 pub using @bigint {type BigInt}
 
-pub using @builtin {type Bool}
+pub type Bool = Bool
 
 pub using @buffer {type Buffer}
 
-pub using @builtin {type Byte}
+pub type Byte = Byte
 
-pub using @builtin {type Bytes}
+pub type Bytes = Bytes
 
 pub using @builtin {type BytesView}
 
-pub using @builtin {type Char}
+pub type Char = Char
 
-pub using @builtin {type Double}
+pub type Double = Double
 
 pub using @builtin {type Error}
 
@@ -111,7 +111,7 @@ pub using @builtin {type Failure}
 
 pub using @builtin {type FixedArray}
 
-pub using @builtin {type Float}
+pub type Float = Float
 
 pub using @builtin {type FuncRef}
 
@@ -119,13 +119,11 @@ pub using @builtin {type Hasher}
 
 pub using @builtin {type InspectError}
 
-pub using @builtin {type Int}
+pub type Int = Int32
 
-pub using @builtin {type Int16}
+pub type Int16 = Int16
 
-pub using @builtin {type Int as Int32}
-
-pub using @builtin {type Int64}
+pub type Int64 = Int64
 
 pub using @builtin {type Iter}
 
@@ -163,25 +161,23 @@ pub using @builtin {type SnapshotError}
 
 pub using @builtin {type SourceLoc}
 
-pub using @builtin {type String}
+pub type String = String
 
 pub using @builtin {type StringBuilder}
 
 pub using @builtin {type StringView}
 
-pub using @builtin {type UInt}
+pub type UInt = UInt32
 
-pub using @builtin {type UInt16}
+pub type UInt16 = UInt16
 
-pub using @builtin {type UInt as UInt32}
-
-pub using @builtin {type UInt64}
+pub type UInt64 = UInt64
 
 pub using @builtin {type UninitializedArray}
 
-pub using @builtin {type Unit}
+pub type Unit = Unit
 
-pub using @builtin {type V128}
+pub type V128 = V128
 
 pub using @builtin {trait Add}
 
