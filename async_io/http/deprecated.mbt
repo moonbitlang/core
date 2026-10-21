@@ -14,17 +14,7 @@
 
 ///|
 fn RequestMethod::write_show(self : RequestMethod, logger : &Logger) -> Unit {
-  match self {
-    Get => logger <+ "Get"
-    Head => logger <+ "Head"
-    Post => logger <+ "Post"
-    Put => logger <+ "Put"
-    Delete => logger <+ "Delete"
-    Connect => logger <+ "Connect"
-    Options => logger <+ "Options"
-    Trace => logger <+ "Trace"
-    Patch => logger <+ "Patch"
-  }
+  logger.write_object(self)
 }
 
 ///|
@@ -65,20 +55,6 @@ fn Response::write_show(self : Response, logger : &Logger) -> Unit {
   write_headers_show(self.headers, logger)
   logger <+ "}"
 }
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-pub impl Show for RequestMethod
-
-///|
-pub impl Show for RequestMethod with fn output(self, logger) {
-  self.write_show(logger)
-}
-
-///|
-#deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
-#doc(hidden)
-pub extend RequestMethod with Show::{to_string}
 
 ///|
 #deprecated("`Show` implementation for this type is deprecated, use `Debug` related API, or use `@debug.to_string` instead.")
