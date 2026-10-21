@@ -102,7 +102,7 @@ async test "all single task" {
 ///|
 async test "all failure propagates" {
   let log = []
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.all([
       () => {
         @async_io.sleep(100)
@@ -200,7 +200,7 @@ async test "any returns first success" {
 ///|
 async test "any failure without allow_failure" {
   let log = []
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.any([
       () => {
         match @async_io.handle_cancellation(() => @async_io.sleep(300)) {
@@ -255,7 +255,7 @@ async test "any with allow_failure" {
 ///|
 async test "any with allow_failure all fail" {
   let log = []
-  let result : Error = @test_util.expect_error_async <| async fn() -> Unit {
+  let result : Error = @test.expect_error_async <| async fn() -> Unit {
     @async_io.any(
       [
         () => {
@@ -285,9 +285,9 @@ async test "any single task" {
 ///|
 async test "any empty fails" {
   debug_inspect(
-    @test_util.expect_error_async(() => (@async_io.any([]) : Unit)),
+    @test.expect_error_async(() => (@async_io.any([]) : Unit)),
     content=(
-      #|Failure("async_io/all_any_test.mbt:288:42-288:59@moonbitlang/core FAILED: no tasks provided to any()")
+      #|Failure("async_io/all_any_test.mbt:288:37-288:54@moonbitlang/core FAILED: no tasks provided to any()")
     ),
   )
 }

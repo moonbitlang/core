@@ -385,16 +385,12 @@ async fn watch_rename_inout_test(
     "1234",
     create_mode=OpenExisting,
   )
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 7. remove moved out file
   log.push("removing moved out file")
   @fs.remove("\{base_path}/moved_out_file")
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 8. move directory outside watched tree
   log.push("moving directory outside watched tree")
@@ -408,16 +404,12 @@ async fn watch_rename_inout_test(
     "xyzw",
     create_mode=OpenExisting,
   )
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 10. remove moved out file
   log.push("removing moved out directory")
   @fs.rmdir("\{base_path}/moved_out_dir", recursive=true)
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 11. moved in file overwrites existing file
   log.push("renaming foreign file to replace root_file")
@@ -628,9 +620,7 @@ async test "watch ignored path" {
   // 1. modify file in ignored path
   log.push("writing to ignored/file")
   @fs.write_text("\{path}/ignored/file", "ABCD", create_mode=OpenExisting)
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 2. modify file in normal path
   log.push("writing to normal/file")
@@ -643,16 +633,14 @@ async test "watch ignored path" {
     let file = @fs.create("\{path}/ignored/file2")
     defer file.close()
     assert_true(
-      @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
+      @test.expect_error_async(() => wait()) is @async_io.TimeoutError,
     )
 
     // 4. modify content of newly created file at ignored directory
     log.push("writing to newly created file in ignored directory")
     file.write(b"ABCD")
   }
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 5. create file in normal directory
   {
@@ -670,9 +658,7 @@ async test "watch ignored path" {
   // 7. remove a file in ignored directory
   log.push("removing file in ignored directory")
   @fs.remove("\{path}/ignored/file")
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 8. remove a file in normal directory
   log.push("removing file in normal directory")
@@ -682,9 +668,7 @@ async test "watch ignored path" {
   // 9. remove ignored directory
   log.push("removing ignored directory")
   @fs.rmdir("\{path}/ignored", recursive=true)
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 10. remove normal directory
   log.push("removing normal directory")
@@ -694,9 +678,7 @@ async test "watch ignored path" {
   // 11. re-create directory at ignored path
   log.push("re-creating directory at ignored path")
   @fs.mkdir("\{path}/ignored")
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 12. create new file in re-created ignored path
   {
@@ -704,16 +686,14 @@ async test "watch ignored path" {
     let file = @fs.create("\{path}/ignored/file")
     defer file.close()
     assert_true(
-      @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
+      @test.expect_error_async(() => wait()) is @async_io.TimeoutError,
     )
 
     // 13. create new file in re-created ignored path
     log.push("writing to newly created file in ignored directory")
     file.write(b"ABCD")
   }
-  assert_true(
-    @test_util.expect_error_async(() => wait()) is @async_io.TimeoutError,
-  )
+  assert_true(@test.expect_error_async(() => wait()) is @async_io.TimeoutError)
 
   // 14. re-create directory at normal path
   log.push("re-creating directory at normal path")

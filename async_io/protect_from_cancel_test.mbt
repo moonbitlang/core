@@ -122,7 +122,7 @@ async test "protect_from_cancel with_timeout" {
 ///|
 async test "protect_from_cancel fail" {
   let log = StringBuilder()
-  let result : Error = @test_util.expect_error_async <| () => {
+  let result : Error = @test.expect_error_async <| () => {
     (
       @async_io.with_task_group(root => {
         root.spawn_bg() <| () => {

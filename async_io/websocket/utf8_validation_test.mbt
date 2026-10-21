@@ -46,9 +46,7 @@ async test "UTF8 validation" {
       let client = @websocket.connect("ws://127.0.0.1:\{addr.port()}")
       defer client.close()
       client..start_message(Text)..write(msg).end_message()
-      let err = @test_util.expect_error_async <| () => {
-        client.recv().read_all()
-      }
+      let err = @test.expect_error_async <| () => { client.recv().read_all() }
       log.push(
         "client: \{@debug.to_string(msg.to_array())} => Err(\{@debug.to_string(err)})",
       )

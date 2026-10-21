@@ -18,7 +18,7 @@ let _ignore_unused_import : Unit = {
   ignore(@utf8.encode(""))
   ignore(@async_io.sleep)
   ignore(@socket.unimplemented)
-  ignore((f : async () -> Unit) => @test_util.assert_raise_async(f))
+  ignore((f : async () -> Unit) => @test.assert_raise_async(f))
 }
 
 ///|

@@ -21,5 +21,5 @@ fn _ignore_unused_import() -> Unit {
   ignore(@async_io.sleep)
   ignore(@fs.unimplemented)
   ignore(@bytes_util.ascii_to_string)
-  ignore((f : async () -> Unit) => @test_util.assert_raise_async(f))
+  ignore((f : async () -> Unit) => @test.assert_raise_async(f))
 }

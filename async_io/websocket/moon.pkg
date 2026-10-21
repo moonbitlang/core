@@ -13,6 +13,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/test",
   "moonbitlang/core/async_io",
   "moonbitlang/core/async_io/socket",
   "moonbitlang/core/async_io/process",

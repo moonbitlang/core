@@ -22,7 +22,7 @@ async test "bad client" {
       server.run_forever() <| ((req, conn) => {
         let ws = @websocket.from_http_server(req, conn)
         defer ws.close()
-        let result = @test_util.expect_error_async <| () => {
+        let result = @test.expect_error_async <| () => {
           let result = ws.recv().text.read_all()
           ws.send_text(result)
           result
@@ -54,7 +54,7 @@ async test "bad client" {
 
     // non-zero reserved bits
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0xc1, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0xc1, 0x00])),
       content=(
         #|ConnectionClosed(MissingExtension, Some("Reserved bits are not zero"))
       ),
@@ -66,7 +66,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0xa1, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0xa1, 0x00])),
       content=(
         #|ConnectionClosed(MissingExtension, Some("Reserved bits are not zero"))
       ),
@@ -78,7 +78,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x91, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x91, 0x00])),
       content=(
         #|ConnectionClosed(MissingExtension, Some("Reserved bits are not zero"))
       ),
@@ -92,7 +92,7 @@ async test "bad client" {
 
     // invalid OP code
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x8b, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x8b, 0x00])),
       content=(
         #|ConnectionClosed(ProtocolError, Some("Invalid OP code 11"))
       ),
@@ -104,7 +104,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x8f, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x8f, 0x00])),
       content=(
         #|ConnectionClosed(ProtocolError, Some("Invalid OP code 15"))
       ),
@@ -120,7 +120,7 @@ async test "bad client" {
 
     // CONTINUATION frame outside a message
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x80, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x80, 0x00])),
       content=(
         #|ConnectionClosed(ProtocolError, Some("Unexpected continuation frame"))
       ),
@@ -134,7 +134,7 @@ async test "bad client" {
 
     // new message inside a fragmented one
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frames([[0x01, 0x00], [0x81, 0x00]])
       },
       content=(
@@ -153,7 +153,7 @@ async test "bad client" {
 
     // new fragmented message inside another fragmented one
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frames([[0x01, 0x00], [0x01, 0x00]])
       },
       content=(
@@ -172,7 +172,7 @@ async test "bad client" {
 
     // non-FIN control packets
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x08, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x08, 0x00])),
       content=(
         #|ConnectionClosed(
         #|  ProtocolError,
@@ -187,7 +187,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x09, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x09, 0x00])),
       content=(
         #|ConnectionClosed(
         #|  ProtocolError,
@@ -202,7 +202,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async(() => test_bad_frame([0x0a, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x0a, 0x00])),
       content=(
         #|ConnectionClosed(
         #|  ProtocolError,
@@ -224,7 +224,7 @@ async test "bad client" {
 
     // too-long control packets
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frame([0x88, 126, ..u16_to_bytes(128)])
       },
       content=(
@@ -238,7 +238,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frame([0x89, 126, ..u16_to_bytes(128)])
       },
       content=(
@@ -252,7 +252,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frame([0x8a, 126, ..u16_to_bytes(128)])
       },
       content=(
@@ -268,7 +268,7 @@ async test "bad client" {
 
     // invalid frame length
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frame([0x81, 126, ..u16_to_bytes(125)])
       },
       content=(
@@ -276,7 +276,7 @@ async test "bad client" {
       ),
     )
     debug_inspect(
-      @test_util.expect_error_async <| () => {
+      @test.expect_error_async <| () => {
         test_bad_frame([
           0x81, 127, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
         ])

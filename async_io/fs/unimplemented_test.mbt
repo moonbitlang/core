@@ -19,7 +19,7 @@ let _ignore_unused_import : Unit = {
   ignore(@debug.to_string(0))
   ignore(@env.get_env_var)
   ignore(@process.unimplemented)
-  ignore((f : async () -> Unit) => @test_util.assert_raise_async(f))
+  ignore((f : async () -> Unit) => @test.assert_raise_async(f))
 }
 
 ///|

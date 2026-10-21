@@ -238,10 +238,7 @@ async test "soft close drains buffered items" {
   // Reads still succeed until the buffer is empty.
   debug_inspect(q.get(), content="1")
   debug_inspect(q.get(), content="2")
-  inspect(
-    @test_util.expect_error_async(() => q.get()),
-    content="QueueAlreadyClosed",
-  )
+  inspect(@test.expect_error_async(() => q.get()), content="QueueAlreadyClosed")
 }
 ```
 
@@ -257,10 +254,7 @@ async test "hard close discards buffered items" {
   q.put(1)
   q.put(2)
   q.close(clear=true)
-  inspect(
-    @test_util.expect_error_async(() => q.get()),
-    content="QueueAlreadyClosed",
-  )
+  inspect(@test.expect_error_async(() => q.get()), content="QueueAlreadyClosed")
 }
 ```
 
@@ -272,11 +266,11 @@ async test "writes after close fail" {
   let q = @aqueue.Queue(kind=Unbounded)
   q.close()
   debug_inspect(
-    @test_util.expect_error_async(() => q.put(42)),
+    @test.expect_error_async(() => q.put(42)),
     content="QueueAlreadyClosed",
   )
   debug_inspect(
-    @test_util.expect_error_async(() => q.try_put(42)),
+    @test.expect_error_async(() => q.try_put(42)),
     content="QueueAlreadyClosed",
   )
 }
@@ -325,7 +319,7 @@ async test "blocked put fails when queue is closed" {
     // This `put` blocks because the buffer is full, then gets
     // unblocked when `close()` runs.
     debug_inspect(
-      @test_util.expect_error_async(() => q.put(2)),
+      @test.expect_error_async(() => q.put(2)),
       content="QueueAlreadyClosed",
     )
   })
@@ -345,7 +339,7 @@ suberror MyDone derive(Debug)
 async test "custom close error" {
   let q : @aqueue.Queue[Int32] = Queue(kind=Unbounded)
   q.close(error=MyDone)
-  debug_inspect(@test_util.expect_error_async(() => q.get()), content="MyDone")
+  debug_inspect(@test.expect_error_async(() => q.get()), content="MyDone")
 }
 ```
 

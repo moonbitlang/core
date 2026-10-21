@@ -185,7 +185,7 @@ async test "with_timeout nested2" {
 ///|
 async test "with_timeout error_on_cancel" {
   let log = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.sleep(200)
@@ -216,7 +216,7 @@ async test "with_timeout error_on_cancel" {
 ///|
 async test "with_timeout error-on-timeout" {
   let log = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.sleep(200)

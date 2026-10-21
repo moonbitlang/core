@@ -43,7 +43,7 @@ suberror Err derive(Debug)
 ///|
 async test "error propagation" {
   let buf = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.sleep(300)
@@ -179,7 +179,7 @@ async test "recursive cancel" {
 ///|
 async test "spawn directly error" {
   let buf = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg() <| () => {
         @async_io.with_task_group() <| group => {
@@ -206,7 +206,7 @@ async test "spawn directly error" {
 ///|
 async test "error in cancellation" {
   let log = StringBuilder()
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @async_io.with_task_group(root => {
       root.spawn_bg(no_wait=true) <| () => {
         match @async_io.handle_cancellation(() => @async_io.sleep(1000)) {
@@ -256,7 +256,7 @@ async test "immediately cancelled" {
 
 ///|
 async test "immediate failure" {
-  let result = @test_util.expect_error_async <| () => {
+  let result = @test.expect_error_async <| () => {
     @async_io.with_task_group(group => {
       group.spawn_bg(() => raise Failure::Failure("failure"))
       group.spawn_bg(() => group.spawn_bg(() => @async_io.sleep(100)))

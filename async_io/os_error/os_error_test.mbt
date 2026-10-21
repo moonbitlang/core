@@ -14,7 +14,7 @@
 
 ///|
 async test "NotFound" {
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @fs.open("does_not_exist", mode=ReadOnly)
   }
   match err {
@@ -25,7 +25,7 @@ async test "NotFound" {
 
 ///|
 async test "AlreadyExists" {
-  let err = @test_util.expect_error_async <| () => {
+  let err = @test.expect_error_async <| () => {
     @fs.mkdir("async_io", permission=0o755)
   }
   match err {

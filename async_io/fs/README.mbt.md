@@ -764,7 +764,7 @@ All async file operations can raise errors. Use proper error handling:
 ///|
 #cfg(target="native")
 async test "error handling example" {
-  @test_util.assert_raise_async(() => @fs.read_binary("nonexistent.txt"))
+  @test.assert_raise_async(() => @fs.read_binary("nonexistent.txt"))
 }
 ```
 

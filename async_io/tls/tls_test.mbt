@@ -172,7 +172,7 @@ async test "`connect` accidental close" {
         client_write_to_server.close()
       }
       inspect(
-        @test_util.expect_error_async <| () => {
+        @test.expect_error_async <| () => {
           @tls.Tls::client_from_pair(
             client_read_from_server,
             client_write_to_server,
@@ -314,7 +314,7 @@ async test "client custom root certificate rejects different root" {
         server_read_from_client.close()
         server_write_to_client.close()
       }
-      @test_util.assert_raise_async <| () => {
+      @test.assert_raise_async <| () => {
         custom_root_test_server(
           server_read_from_client, server_write_to_client, "async_io/tls/test_keys/other_root_key.pem",
           "async_io/tls/test_keys/other_root_cert.pem", "async_io/tls/test_keys/other_root_cert.pfx",
@@ -326,7 +326,7 @@ async test "client custom root certificate rejects different root" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      @test_util.assert_raise_async <| () => {
+      @test.assert_raise_async <| () => {
         @tls.Tls::client_from_pair(
           client_read_from_server,
           client_write_to_server,
