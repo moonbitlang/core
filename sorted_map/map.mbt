@@ -202,6 +202,12 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 ///|
 /// Returns the value for the key if present, otherwise inserts the value
 /// produced by `init` and returns it.
+///
+/// `init` must not structurally modify `self`, directly or through an alias:
+/// it must not insert or remove keys, or clear the map. Violations have
+/// unspecified results and are not guaranteed to be detected. Memory and type
+/// safety remain guaranteed. If initialization needs to modify this map,
+/// perform an explicit lookup, compute the value, then insert it separately.
 pub fn[K : Compare, V] SortedMap::get_or_init(
   self : SortedMap[K, V],
   key : K,
@@ -237,6 +243,12 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// Note: `f` is *not* applied to `default` on first insertion — `default` is
 /// the value stored when the key is absent. This mirrors Java's `Map.merge`
 /// and Rust's `Entry::and_modify(f).or_insert(default)`.
+///
+/// `f` must not structurally modify `self`, directly or through an alias:
+/// it must not insert or remove keys, or clear the map. Violations have
+/// unspecified results and are not guaranteed to be detected. Memory and type
+/// safety remain guaranteed. If the computation needs to modify this map,
+/// perform an explicit lookup, compute the value, then insert it separately.
 pub fn[K : Compare, V] SortedMap::update_or_default(
   self : SortedMap[K, V],
   key : K,

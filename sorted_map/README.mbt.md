@@ -429,6 +429,20 @@ test {
 }
 ```
 
+### Callback Mutation Restrictions
+
+The callbacks passed to `get_or_init` and `update_or_default` must not
+structurally modify the same map, including through an alias or an indirect
+function call. Inserting or removing keys and clearing the map are structural
+modifications. Reading the map or modifying a different map is allowed.
+
+Violations have unspecified results and are not guaranteed to be detected;
+memory and type safety remain guaranteed. These methods do not promise
+fail-fast checks or support for reentrant structural mutation. If computing
+a value needs to modify the same map, use separate lookup, computation, and
+insertion steps, and explicitly decide how to handle changes made during
+the computation.
+
 ### Copy
 
 `copy()` creates a shallow clone of the map.
