@@ -2,8 +2,8 @@
 package "moonbitlang/core/flate/zlib"
 
 import {
-  "moonbitlang/core/flate",
   "moonbitlang/core/debug",
+  "moonbitlang/core/flate",
 }
 
 // Values
