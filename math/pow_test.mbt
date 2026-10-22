@@ -1272,3 +1272,12 @@ test "scalbnf exponent clamp" {
   assert_true(@math.scalbnf(1.0, 500).is_pos_inf())
   inspect(@math.scalbnf(1.0, -500), content="0")
 }
+
+///|
+test "pow keeps the low-order correction term" {
+  // fdlibm e_pow.c: r = (z*t1)/(t1-two) - (w+z*w). Dropping `w` from the
+  // correction made these results one ulp below the correctly rounded value.
+  inspect(@math.pow(10.0, -4.0), content="0.0001")
+  inspect(@math.pow(5.0, -4.0), content="0.0016")
+  inspect(@math.pow(20.0, -4.0), content="0.00000625")
+}
