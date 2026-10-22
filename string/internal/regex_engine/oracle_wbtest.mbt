@@ -21,10 +21,10 @@
 fn pike(re : Regex, input : StringView, start : Int32) -> Array[Int32]? {
   let mut seeds = [(re.entry, Array::make(re.ntags, -1))]
   let mut candidate : Array[Int32]? = None
-  for pos = start; pos <= input.length(); pos = pos + 1 {
+  for pos in start..<=input.length() {
     let seen = Array::make(re.nodes.length(), false)
     let stack : Array[(Int32, Array[Int32])] = []
-    for i = seeds.length() - 1; i >= 0; i = i - 1 {
+    for i in (seeds.length() - 1)>=..0 {
       stack.push(seeds[i])
     }
     let ready : Array[(RecharSet, Int32, Array[Int32])] = []
@@ -55,7 +55,7 @@ fn pike(re : Regex, input : StringView, start : Int32) -> Array[Int32]? {
           stack.push((next, copy))
         }
         Union(alts) =>
-          for i = alts.length() - 1; i >= 0; i = i - 1 {
+          for i in (alts.length() - 1)>=..0 {
             stack.push((alts[i], caps))
           }
         After(bit, next) =>

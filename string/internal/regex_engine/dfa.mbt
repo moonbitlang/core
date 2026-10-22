@@ -397,11 +397,11 @@ fn Regex::build(
               continue next, tags
             }
           Union(alts) => {
-            for j = alts.length() - 1; j > 0; j = j - 1 {
+            for j in (alts.length() - 1)>=..1 {
               stack.push((alts[j], tags))
             }
-            if alts.length() > 0 {
-              continue alts[0], tags
+            if alts is [first, ..] {
+              continue first, tags
             }
           }
           Char(set, next) =>
@@ -452,14 +452,7 @@ fn Regex::build(
       }
     }
   }
-  let slot = if fresh {
-    match used.search(false) {
-      Some(free) => free
-      None => used.length()
-    }
-  } else {
-    0
-  }
+  let slot = if fresh { used.search(false).unwrap_or(used.length()) } else { 0 }
   if slot >= self.regs.length() {
     self.regs = FixedArray::make_and_blit(
       self.regs,
