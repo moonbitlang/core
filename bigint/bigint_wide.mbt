@@ -136,7 +136,7 @@ fn BigInt::cmp_mag(self : BigInt, other : BigInt) -> Int32 {
   if self.len != other.len {
     return if self.len < other.len { -1 } else { 1 }
   }
-  for i = self.len - 1; i >= 0; i = i - 1 {
+  for i in self.len>..0 {
     let a = self.limbs.unsafe_get(i)
     let b = other.limbs.unsafe_get(i)
     if a != b {
@@ -399,7 +399,7 @@ fn BigInt::knuth_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let vn2 = v.unsafe_get(n - 2)
   let rec = reciprocal_word(vn1)
   let qhatv = make(n + 1)
-  for j = m; j >= 0; j = j - 1 {
+  for j in m>=..0 {
     // D3. Estimate q̂ from the top two limbs.
     let ujn = u.unsafe_get(j + n)
     let mut qhat = 0xffff_ffff_ffff_ffffUL
@@ -652,10 +652,7 @@ fn BigInt::pow_mont(self : BigInt, exp : BigInt, m : BigInt) -> BigInt {
   rr.unsafe_blit(0, rr_big.limbs, 0, rr_big.len)
 
   // powers[i] = Montgomery form of self^i, for the 4-bit window.
-  let powers : Array[FixedArray[UInt64]] = []
-  for _ in 0..<16 {
-    powers.push(make(n))
-  }
+  let powers : Array[FixedArray[UInt64]] = [ for _ in 0..<16 => make(n) ]
   montgomery(powers[0], one_arr, rr, mlimbs, k0, n, t)
   montgomery(powers[1], x, rr, mlimbs, k0, n, t)
   for i in 2..<16 {
@@ -664,7 +661,7 @@ fn BigInt::pow_mont(self : BigInt, exp : BigInt, m : BigInt) -> BigInt {
   let mut z = make(n)
   z.unsafe_blit(0, powers[0], 0, n)
   let mut zz = make(n)
-  for i = exp.len - 1; i >= 0; i = i - 1 {
+  for i in exp.len>..0 {
     let mut yi = exp.limbs.unsafe_get(i)
     let mut j = 0
     while j < 64 {
