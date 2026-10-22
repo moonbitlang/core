@@ -19,7 +19,7 @@
 ///|
 /// An `n`-unit view at offset 1; `diff_at` in `0..<n` changes that unit.
 fn range_equal_bench_view(n : Int32, diff_at~ : Int32 = -1) -> StringView {
-  let builder = StringBuilder(size_hint=(n + 2) * 2)
+  let builder = StringBuilder(size_hint=n + 2)
   builder.write_char('<')
   for i in 0..<n {
     builder.write_char(if i == diff_at { '!' } else { 'a' })

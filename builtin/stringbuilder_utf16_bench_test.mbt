@@ -16,7 +16,7 @@
 test "bench UTF-16 StringBuilder write string 1M units" (it : @bench.T) {
   let input = "abcdefgh".repeat(131072)
   it.bench(() => {
-    let builder = StringBuilder(size_hint=input.length() * 2)
+    let builder = StringBuilder(size_hint=input.length())
     builder.write_string(input)
     it.keep(builder.to_string())
   })
@@ -27,7 +27,7 @@ test "bench UTF-16 StringBuilder write view offset 1M units" (it : @bench.T) {
   let input = "prefix!" + "abcdefgh".repeat(131072) + "suffix!"
   let view = input[7:7 + 1048576]
   it.bench(() => {
-    let builder = StringBuilder(size_hint=view.length() * 2)
+    let builder = StringBuilder(size_hint=view.length())
     builder.write_view(view)
     it.keep(builder.to_string())
   })
@@ -37,7 +37,7 @@ test "bench UTF-16 StringBuilder write view offset 1M units" (it : @bench.T) {
 test "bench UTF-16 StringBuilder write chunks 4096x32" (it : @bench.T) {
   let input = "abcdefgh".repeat(4)
   it.bench(() => {
-    let builder = StringBuilder(size_hint=4096 * input.length() * 2)
+    let builder = StringBuilder(size_hint=4096 * input.length())
     for _ in 0..<4096 {
       builder.write_string(input)
     }
@@ -48,7 +48,7 @@ test "bench UTF-16 StringBuilder write chunks 4096x32" (it : @bench.T) {
 ///|
 test "bench UTF-16 StringBuilder short write 7 units" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=14)
+    let builder = StringBuilder(size_hint=7)
     builder.write_string("abcdefg")
     it.keep(builder.to_string())
   })
@@ -57,7 +57,7 @@ test "bench UTF-16 StringBuilder short write 7 units" (it : @bench.T) {
 ///|
 test "bench UTF-16 StringBuilder block write 8 units" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=16)
+    let builder = StringBuilder(size_hint=8)
     builder.write_string("abcdefgh")
     it.keep(builder.to_string())
   })
@@ -66,7 +66,7 @@ test "bench UTF-16 StringBuilder block write 8 units" (it : @bench.T) {
 ///|
 test "bench UTF-16 StringBuilder write char control 4096" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=8192)
+    let builder = StringBuilder(size_hint=4096)
     for _ in 0..<4096 {
       builder.write_char('x')
     }

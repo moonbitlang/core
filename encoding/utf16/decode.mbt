@@ -250,7 +250,7 @@ pub fn decode_lossy(
   endianness~ : Endian = Little,
 ) -> String {
   let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
-  let builder = StringBuilder(size_hint=bytes.length())
+  let builder = StringBuilder(size_hint=bytes.length() / 2 + bytes.length() % 2)
   if endianness is Little {
     for x = bytes {
       match x {

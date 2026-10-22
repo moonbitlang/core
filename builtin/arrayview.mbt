@@ -1695,7 +1695,6 @@ pub fn[A : ToStringView] ArrayView::join(
       } nobreak {
         size_hint
       }
-      let size_hint = size_hint << 1
       let buf = StringBuilder(size_hint~)
       // buf.write_string(hd)
       buf.write_view(hd)

@@ -149,7 +149,7 @@ test "UTF-16 StringBuilder copies offset views across block boundaries" {
 test "UTF-16 StringBuilder appends returned strings through growth and reset" {
   for len in [7, 8, 9, 15, 16, 17, 31, 32, 33, 65] {
     let input = "ab汉😀Bé汉😁z".repeat(8)[:len].to_owned()
-    let builder = StringBuilder(size_hint=len * 2)
+    let builder = StringBuilder(size_hint=len)
     builder.write_string(input)
     let first = builder.to_string()
     builder.write_string(first)

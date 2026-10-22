@@ -20,7 +20,7 @@
 ///|
 fn reference_encode(bytes : Bytes) -> String {
   let digits = "0123456789abcdef"
-  let sb = StringBuilder(size_hint=4 * bytes.length())
+  let sb = StringBuilder(size_hint=2 * bytes.length())
   for b in bytes {
     sb.write_char(digits.get_char(b.to_int() >> 4).unwrap())
     sb.write_char(digits.get_char(b.to_int() & 0x0F).unwrap())
@@ -47,7 +47,7 @@ test "quickcheck: decode accepts any case mixture and round-trips" {
     (input : (Bytes, Array[Bool])) => {
       let (bytes, flips) = input
       let lower = @hex.encode(bytes)
-      let sb = StringBuilder(size_hint=2 * lower.length())
+      let sb = StringBuilder(size_hint=lower.length())
       for i in 0..<lower.length() {
         let c = lower.unsafe_get(i).to_char().unwrap()
         let flip = flips.length() > 0 && flips[i % flips.length()]
@@ -79,7 +79,7 @@ test "quickcheck: corrupting any position makes decode raise" {
         'g', 'z', 'G', '/', ':', '@', '`', '\u{80}', '中', ' ',
       ]
       let bad = bad_pool[(char0 % bad_pool.length().reinterpret_as_uint()).reinterpret_as_int()]
-      let sb = StringBuilder(size_hint=2 * text.length())
+      let sb = StringBuilder(size_hint=text.length())
       for i in 0..<text.length() {
         sb.write_char(
           if i == pos {

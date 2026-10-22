@@ -13,6 +13,30 @@
 // limitations under the License.
 
 ///|
+test "StringBuilder capacity is measured in UTF-16 units" {
+  inspect(StringBuilder().data.length(), content="8")
+  inspect(StringBuilder(size_hint=0).data.length(), content="0")
+  let builder = StringBuilder(size_hint=3)
+  builder.write_string("a😀")
+  inspect(builder.data.length(), content="3")
+  inspect(builder.len, content="3")
+  inspect(builder.to_string(), content="a😀")
+}
+
+///|
+test "StringBuilder empty buffer grows for a non-BMP character" {
+  let builder = StringBuilder(size_hint=0)
+  builder.write_string("")
+  inspect(builder.data.length(), content="0")
+  builder.write_char('😀')
+  inspect(builder.data.length(), content="2")
+  inspect(builder.to_string(), content="😀")
+  builder.reset()
+  builder.write_view("!ab!"[1:3])
+  inspect(builder.to_string(), content="ab")
+}
+
+///|
 test "StringBuilder growth capacity doubles while representable" {
   inspect(stringbuilder_growth_capacity(8, 8, 9), content="16")
   inspect(stringbuilder_growth_capacity(8, 8, 33), content="64")
