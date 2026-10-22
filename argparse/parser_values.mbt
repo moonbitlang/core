@@ -37,12 +37,10 @@ fn assign_positionals(
       if take > remaining {
         take = remaining
       }
-      let mut taken = 0
-      while taken < take {
-        add_value(matches, arg.name, values[cursor + taken], arg, Argv)
-        taken += 1
+      for offset in 0..<take {
+        add_value(matches, arg.name, values[cursor + offset], arg, Argv)
       }
-      continue cursor + taken
+      continue cursor + take
     }
     if remaining > 0 {
       add_value(matches, arg.name, values[cursor], arg, Argv)
@@ -54,8 +52,7 @@ fn assign_positionals(
     cursor
   }
   if cursor < values.length() {
-    let overflow_label = if !positionals.is_empty() {
-      let last = positionals[positionals.length() - 1]
+    let overflow_label = if positionals is [.., last] {
       if last.multiple {
         Some("<\{last.name}...>")
       } else {
@@ -114,9 +111,7 @@ fn assign_value(
   source : ValueSource,
 ) -> Unit raise ArgParseError {
   match arg.info {
-    OptionInfo(action=Append, ..) =>
-      add_value(matches, arg.name, value, arg, source)
-    OptionInfo(action=Set, ..) | PositionalInfo(_) =>
+    OptionInfo(_) | PositionalInfo(_) =>
       add_value(matches, arg.name, value, arg, source)
     FlagInfo(action=SetTrue, ..) => {
       let flag = parse_bool(value)

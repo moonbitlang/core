@@ -176,22 +176,7 @@ fn build_matches(
       if find_decl_subcommand(cmd.subcommands, name) is Some(sub_spec) {
         Some((name, build_matches(sub_spec, sub_raw, child_globals)))
       } else {
-        Some(
-          (
-            name,
-            {
-              flags: Map([]),
-              values: Map([]),
-              flag_counts: Map([]),
-              sources: Map([]),
-              subcommand: None,
-              counts: Map([]),
-              flag_sources: Map([]),
-              value_sources: Map([]),
-              parsed_subcommand: None,
-            },
-          ),
-        )
+        Some((name, new_matches_parse_state()))
       }
     None => None
   }
