@@ -1524,34 +1524,7 @@ pub fn[A : ToStringView] FixedArray::join(
   self : FixedArray[A],
   separator : StringView,
 ) -> String {
-  let len = self.length()
-  if len == 0 {
-    return ""
-  }
-  let first = self[0].to_string_view()
-  let size_hint = for i in 1..<len; size_hint = first.length() {
-    continue size_hint + separator.length() + self[i].to_string_view().length()
-  } nobreak {
-    size_hint
-  }
-  let string = StringBuilder(size_hint~)
-  if separator.is_empty() {
-    string.write_view(first)
-    for i in 1..<len {
-      string.write_view(self[i].to_string_view())
-    }
-  } else {
-    string.write_view(first)
-    for i in 1..<len {
-      string.write_substring(
-        separator.data(),
-        separator.start_offset(),
-        separator.length(),
-      )
-      string.write_view(self[i].to_string_view())
-    }
-  }
-  string.to_string()
+  self[:].join(separator)
 }
 
 ///|

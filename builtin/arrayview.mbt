@@ -1678,35 +1678,7 @@ pub fn[A : ToStringView] ArrayView::join(
   self : ArrayView[A],
   separator : StringView,
 ) -> String {
-  match self {
-    [] => ""
-    [hd, .. tl] => {
-      let hd = hd.to_string_view()
-      let size_hint = for s in tl; size_hint = hd.length() {
-        continue size_hint + s.to_string_view().length() + separator.length()
-      } nobreak {
-        size_hint
-      }
-      let buf = StringBuilder(size_hint~)
-      // buf.write_string(hd)
-      buf.write_view(hd)
-      if separator is "" {
-        for s in tl {
-          // buf.write_string(s)
-          let s = s.to_string_view()
-          buf.write_view(s)
-        }
-      } else {
-        for s in tl {
-          let s = s.to_string_view()
-          buf.write_view(separator)
-          // buf.write_string(s)
-          buf.write_view(s)
-        }
-      }
-      buf.to_string()
-    }
-  }
+  join_string_views(self, separator)
 }
 
 ///|

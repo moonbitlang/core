@@ -474,16 +474,28 @@ pub fn[X] Iter::flatten(self : Iter[Iter[X]]) -> Iter[X] {
 /// Collects the string-renderable elements of the iterator into a single
 /// string, separated by `sep`.
 /// The old iterator `self` must not be used again after calling `join`.
+#cfg(not(target="js"))
 pub fn[A : ToStringView] Iter::join(self : Iter[A], sep : StringView) -> String {
-  let result = StringBuilder()
-  if self.next() is Some(x) {
-    result.write_view(x.to_string_view())
-    while self.next() is Some(x) {
-      result.write_view(sep)
-      result.write_view(x.to_string_view())
+  let parts = self.to_array()
+  join_string_views(parts, sep)
+}
+
+///|
+/// Collects the string-renderable elements of the iterator into a single
+/// string, separated by `sep`.
+/// The old iterator `self` must not be used again after calling `join`.
+#cfg(target="js")
+pub fn[A : ToStringView] Iter::join(self : Iter[A], sep : StringView) -> String {
+  let mut result = ""
+  if self.next() is Some(first) {
+    result = first.to_string_view().to_owned()
+    let separator = sep.to_owned()
+    while self.next() is Some(part) {
+      result += separator
+      result += part.to_string_view().to_owned()
     }
   }
-  result.to_string()
+  result
 }
 
 ///|
