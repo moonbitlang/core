@@ -69,7 +69,7 @@ test "iter2" {
   let ls = @list.List([1, 2, 3, 4, 5])
   let mut failed = false
   let it = ls.iter2()
-  while it.next() is Some((i, x)) {
+  for i, x in it {
     if x != i + 1 {
       failed = true
     }
