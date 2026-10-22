@@ -28,6 +28,8 @@ struct StringBuilder {
 ///
 /// Returns a new `StringBuilder` instance.
 ///
+/// Aborts if `size_hint` is negative.
+///
 #alias(new, deprecated="Use `StringBuilder()` instead")
 pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 8) -> StringBuilder {
   guard size_hint >= 0 else { abort("size_hint must be non-negative") }

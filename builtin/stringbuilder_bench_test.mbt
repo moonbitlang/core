@@ -27,7 +27,7 @@ let stringbuilder_bench_view : StringView = stringbuilder_bench_source[10:26]
 ///|
 test "bench StringBuilder::write_string chunks n=4096" (it : @bench.T) {
   let piece = stringbuilder_bench_piece
-  let size_hint = piece.length() * stringbuilder_bench_repeats * 2
+  let size_hint = piece.length() * stringbuilder_bench_repeats
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     for _ in 0..<stringbuilder_bench_repeats {
@@ -40,7 +40,7 @@ test "bench StringBuilder::write_string chunks n=4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder::write_view chunks n=4096" (it : @bench.T) {
   let view = stringbuilder_bench_view
-  let size_hint = view.length() * stringbuilder_bench_repeats * 2
+  let size_hint = view.length() * stringbuilder_bench_repeats
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     for _ in 0..<stringbuilder_bench_repeats {
@@ -53,7 +53,7 @@ test "bench StringBuilder::write_view chunks n=4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder::write_stringview chunks n=4096" (it : @bench.T) {
   let view = stringbuilder_bench_view
-  let size_hint = view.length() * stringbuilder_bench_repeats * 2
+  let size_hint = view.length() * stringbuilder_bench_repeats
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     for _ in 0..<stringbuilder_bench_repeats {
@@ -65,7 +65,7 @@ test "bench StringBuilder::write_stringview chunks n=4096" (it : @bench.T) {
 
 ///|
 test "bench StringBuilder::write_char ASCII n=4096" (it : @bench.T) {
-  let size_hint = stringbuilder_bench_repeats * 2
+  let size_hint = stringbuilder_bench_repeats
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     for _ in 0..<stringbuilder_bench_repeats {
@@ -78,7 +78,7 @@ test "bench StringBuilder::write_char ASCII n=4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder::write_char non-BMP n=4096" (it : @bench.T) {
   let ch = (0x1F923).unsafe_to_char()
-  let size_hint = stringbuilder_bench_repeats * 4
+  let size_hint = stringbuilder_bench_repeats * 2
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     for _ in 0..<stringbuilder_bench_repeats {
@@ -91,7 +91,7 @@ test "bench StringBuilder::write_char non-BMP n=4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder::reset reuse spare capacity n=4096" (it : @bench.T) {
   let piece = stringbuilder_bench_piece
-  let size_hint = piece.length() * 4
+  let size_hint = piece.length() * 2
   it.bench(fn() {
     let builder = StringBuilder(size_hint~)
     let mut sum = 0
