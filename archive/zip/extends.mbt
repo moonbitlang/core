@@ -13,12 +13,18 @@
 // limitations under the License.
 
 ///|
+#deprecated("Use `==` instead", skip_current_package=true)
+#doc(hidden)
 pub extend LimitKind with Eq::{equal}
 
 ///|
+#deprecated("Use `==` instead", skip_current_package=true)
+#doc(hidden)
 pub extend ZipErrorKind with Eq::{equal}
 
 ///|
+#deprecated("Use `==` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Compression with Eq::{equal}
 
 ///|

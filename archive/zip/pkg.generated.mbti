@@ -33,7 +33,6 @@ pub(all) enum Compression {
   Store
   Deflate
 } derive(Eq, @debug.Debug)
-pub fn Compression::equal(Self, Self) -> Bool
 
 pub struct Directory {
   // private fields
@@ -108,7 +107,6 @@ pub(all) enum LimitKind {
   DirectoryBytes
   OutputBytes
 } derive(Eq, @debug.Debug)
-pub fn LimitKind::equal(Self, Self) -> Bool
 
 pub struct ReadLimits {
   max_package_bytes : Int32
@@ -154,7 +152,6 @@ pub(all) enum ZipErrorKind {
   InvalidArgument
   InvalidState
 } derive(Eq, @debug.Debug)
-pub fn ZipErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases
 

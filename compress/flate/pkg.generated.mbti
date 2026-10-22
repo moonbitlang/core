@@ -48,7 +48,6 @@ pub(all) enum DeflateAction {
   SyncFlush
   Finish
 } derive(Eq, @debug.Debug)
-pub fn DeflateAction::equal(Self, Self) -> Bool
 
 pub struct Deflater {
   // private fields
@@ -68,7 +67,6 @@ pub(all) enum InflateErrorKind {
   Cancelled
   InvalidArgument
 } derive(Eq, @debug.Debug)
-pub fn InflateErrorKind::equal(Self, Self) -> Bool
 
 pub struct Inflater {
   // private fields
@@ -86,7 +84,6 @@ pub(all) enum Status {
   NeedMoreInput
   NeedMoreOutput
 } derive(Eq, @debug.Debug)
-pub fn Status::equal(Self, Self) -> Bool
 
 // Type aliases
 

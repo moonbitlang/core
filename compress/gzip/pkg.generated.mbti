@@ -46,7 +46,6 @@ pub(all) enum GzipErrorKind {
   ChecksumMismatch
   LengthMismatch
 } derive(Eq, @debug.Debug)
-pub fn GzipErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases
 
