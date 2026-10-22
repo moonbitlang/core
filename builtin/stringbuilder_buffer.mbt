@@ -14,6 +14,8 @@
 
 ///|
 struct StringBuilder {
+  // A shared buffer is always full. Appending grows into new storage, and
+  // reset detaches before old slots can be overwritten.
   mut data : FixedArray[UInt16]
   mut len : Int32
   mut buffer_is_shared : Bool
@@ -36,7 +38,7 @@ struct StringBuilder {
 pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 8) -> StringBuilder {
   guard size_hint >= 0 else { abort("size_hint must be non-negative") }
   let data : FixedArray[UInt16] = FixedArray::make(size_hint, 0)
-  { data, len: 0, buffer_is_shared: false }
+  { data, len: 0, buffer_is_shared: false, }
 }
 
 ///|

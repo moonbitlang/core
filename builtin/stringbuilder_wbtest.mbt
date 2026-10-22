@@ -26,3 +26,46 @@ test "StringBuilder::reset reuses an unshared buffer" {
   assert_true(backing[1] == ('y' : UInt16))
   assert_true(backing[2] == ('e' : UInt16))
 }
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder full string survives reset and reuse" {
+  let builder = StringBuilder(size_hint=2)
+  builder.write_string("ab")
+  builder.write_string("cd")
+  let full = builder.to_string()
+  inspect(full, content="abcd")
+
+  // The full-capacity conversion may share the backing buffer. Reset must
+  // detach before the next write, while a partial conversion must only expose
+  // the initialized prefix.
+  builder.reset()
+  builder.write_char('x')
+  inspect(builder.to_string(), content="x")
+  builder.reset()
+  builder.write_char('🤣')
+  inspect(builder.to_string(), content="🤣")
+  inspect(full, content="abcd")
+}
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder shared storage survives append and repeated resets" {
+  let builder = StringBuilder(size_hint=3)
+  builder.write_string("a😀")
+  let first = builder.to_string()
+  let again = builder.to_string()
+  builder.write_view(first)
+  let second = builder.to_string()
+  builder.reset()
+  builder.reset()
+  builder.write_string("x")
+  let partial = builder.to_string()
+  builder.reset()
+  builder.write_string("abcdefg")
+  inspect(first, content="a😀")
+  inspect(again, content="a😀")
+  inspect(second, content="a😀a😀")
+  inspect(partial, content="x")
+  inspect(builder.to_string(), content="abcdefg")
+}
