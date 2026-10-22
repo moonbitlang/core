@@ -20,15 +20,15 @@
 /// A reusable, whole-buffer raw DEFLATE compressor. Unlike the suspendable
 /// `Deflater`, it reads the input directly and writes one complete stream into
 /// either a caller-provided buffer or reusable growable output storage.
-pub struct Compressor {
-  priv level : Int32
-  priv fast_store : Bool
-  priv cfg : LevelConfig
-  priv finder : MatchFinder
-  priv tokens : Array[Int32]
-  priv mut output : FixedArray[Byte]
-  priv ll_freq : FixedArray[Int32]
-  priv d_freq : FixedArray[Int32]
+struct Compressor {
+  level : Int32
+  fast_store : Bool
+  cfg : LevelConfig
+  finder : MatchFinder
+  tokens : Array[Int32]
+  mut output : FixedArray[Byte]
+  ll_freq : FixedArray[Int32]
+  d_freq : FixedArray[Int32]
 }
 
 ///|

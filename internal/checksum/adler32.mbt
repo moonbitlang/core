@@ -25,9 +25,9 @@ const ADLER_BLOCK_SIZE : Int32 = 3800
 ///|
 /// Incremental Adler-32 accumulator (RFC 1950 §9), the streaming counterpart to
 /// `adler32`. Feed bytes with `update`, read with `finish`.
-pub struct Adler32 {
-  priv mut a : Int32
-  priv mut b : Int32
+struct Adler32 {
+  mut a : Int32
+  mut b : Int32
 }
 
 ///|

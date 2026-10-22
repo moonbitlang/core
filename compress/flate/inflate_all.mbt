@@ -1065,9 +1065,9 @@ pub fn inflate_all(
 /// into new `Bytes` (`decompress`), and says how much input the stream took
 /// (`last_consumed`), while retaining Huffman and dynamic-header workspace
 /// across streams.
-pub struct Decompressor {
-  priv decoder : MemDecoder
-  priv mut consumed : Int32 // input the latest successful call took
+struct Decompressor {
+  decoder : MemDecoder
+  mut consumed : Int32 // input the latest successful call took
 }
 
 ///|

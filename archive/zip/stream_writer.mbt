@@ -39,17 +39,17 @@ priv struct PendingEntry {
 /// Retains central-directory records, current-entry metadata and codec buffers.
 /// The sink must consume each view before returning. A sink exception poisons
 /// the writer and is propagated unchanged; no further output can be emitted.
-pub struct Writer {
-  priv sink : (BytesView) -> Unit raise
-  priv level : Int32
-  priv fast_store : Bool
-  priv mut mode : WriterMode
-  priv mut offset : UInt64
-  priv mut directory : Array[Bytes]
-  priv mut has_zip64 : Bool
-  priv mut compressor : @flate.Compressor?
-  priv mut deflater : @flate.Deflater?
-  priv mut scratch : FixedArray[Byte]
+struct Writer {
+  sink : (BytesView) -> Unit raise
+  level : Int32
+  fast_store : Bool
+  mut mode : WriterMode
+  mut offset : UInt64
+  mut directory : Array[Bytes]
+  mut has_zip64 : Bool
+  mut compressor : @flate.Compressor?
+  mut deflater : @flate.Deflater?
+  mut scratch : FixedArray[Byte]
 }
 
 ///|

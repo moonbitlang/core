@@ -33,19 +33,19 @@ priv enum EncMode {
 
 ///|
 /// Streaming gzip compressor.
-pub struct Encoder {
-  priv def : @flate.Deflater
-  priv crc : @checksum.Crc32
-  priv mut isize : UInt32 // total input length, mod 2^32 (gzip ISIZE)
-  priv mut mode : EncMode
-  priv mut stage : FixedArray[Byte] // header or trailer bytes being drained
-  priv mut stage_pos : Int32
+struct Encoder {
+  def : @flate.Deflater
+  crc : @checksum.Crc32
+  mut isize : UInt32 // total input length, mod 2^32 (gzip ISIZE)
+  mut mode : EncMode
+  mut stage : FixedArray[Byte] // header or trailer bytes being drained
+  mut stage_pos : Int32
   // The accepted control action remains sticky until the inner state machine
   // has drained it. A single enum makes finish and sync-flush mutually
   // exclusive by construction.
-  priv mut pending_action : @flate.DeflateAction
-  priv mut step_consumed : Int32
-  priv mut step_produced : Int32
+  mut pending_action : @flate.DeflateAction
+  mut step_consumed : Int32
+  mut step_produced : Int32
 }
 
 ///|

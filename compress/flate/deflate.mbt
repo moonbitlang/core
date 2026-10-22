@@ -44,27 +44,27 @@ fn clamp_level(level : Int32) -> Int32 {
 ///|
 /// Streaming DEFLATE compressor : a push-based, suspendable state
 /// machine. It emits the stream block-by-block as input arrives, and chooses fixed- or dynamic-Huffman per block.
-pub struct Deflater {
-  priv pending : FixedArray[Byte] // mirrored 64 KiB input ring
-  priv mut parse_pos : Int32 // first un-emitted absolute byte position
-  priv mut pending_end : Int32 // one past the last accepted absolute position
-  priv mut hashed_through : Int32 // first historical position not yet chained
-  priv finder : MatchFinder // persistent 32 KiB hash-chain matchfinder
-  priv w : BitWriter // persistent bit sink spanning all blocks
-  priv mut out_pos : Int32 // next `w.out` index to hand to the caller
-  priv mut emitted_final : Bool // the final block has been written into `w`
-  priv mut done : Bool // the final block has been fully drained
-  priv mut flush_done : Bool // the current buffered content has been sync-flushed
-  priv mut flush_requested : Bool // sticky until the requested flush is emitted
-  priv mut end_requested : Bool // sticky until reset; no later input is accepted
-  priv mut step_consumed : Int32 // input accepted by the latest successful step
-  priv mut step_produced : Int32 // output written by the latest successful step
-  priv fast_store : Bool
-  priv level : Int32 // compression level 0-9 (0 = stored only)
-  priv cfg : LevelConfig // match-search tuning for `level`
-  priv tokens : Array[Int32]
-  priv ll_freq : FixedArray[Int32]
-  priv d_freq : FixedArray[Int32]
+struct Deflater {
+  pending : FixedArray[Byte] // mirrored 64 KiB input ring
+  mut parse_pos : Int32 // first un-emitted absolute byte position
+  mut pending_end : Int32 // one past the last accepted absolute position
+  mut hashed_through : Int32 // first historical position not yet chained
+  finder : MatchFinder // persistent 32 KiB hash-chain matchfinder
+  w : BitWriter // persistent bit sink spanning all blocks
+  mut out_pos : Int32 // next `w.out` index to hand to the caller
+  mut emitted_final : Bool // the final block has been written into `w`
+  mut done : Bool // the final block has been fully drained
+  mut flush_done : Bool // the current buffered content has been sync-flushed
+  mut flush_requested : Bool // sticky until the requested flush is emitted
+  mut end_requested : Bool // sticky until reset; no later input is accepted
+  mut step_consumed : Int32 // input accepted by the latest successful step
+  mut step_produced : Int32 // output written by the latest successful step
+  fast_store : Bool
+  level : Int32 // compression level 0-9 (0 = stored only)
+  cfg : LevelConfig // match-search tuning for `level`
+  tokens : Array[Int32]
+  ll_freq : FixedArray[Int32]
+  d_freq : FixedArray[Int32]
 }
 
 ///|

@@ -54,12 +54,12 @@ priv enum DirectoryPhase {
 /// payloads. Retains owned metadata plus a bounded incomplete directory record.
 /// File reads, HTTP requests, source consistency, and cancellation between
 /// calls belong to the caller. No I/O callback is retained or invoked.
-pub struct DirectoryReader {
-  priv archive_size : UInt64
-  priv limits : DirectoryLimits
-  priv mut phase : DirectoryPhase
-  priv mut entries : Array[DirectoryEntry]
-  priv mut pending : Bytes
+struct DirectoryReader {
+  archive_size : UInt64
+  limits : DirectoryLimits
+  mut phase : DirectoryPhase
+  mut entries : Array[DirectoryEntry]
+  mut pending : Bytes
 }
 
 ///|

@@ -41,24 +41,24 @@ priv enum DecMode {
 /// Streaming gzip decompressor (RFC 1952). Feed compressed input and drain
 /// plaintext with `step`; it verifies the CRC-32 and length trailer. Binds no
 /// I/O trait.
-pub struct Decoder {
-  priv inf : @flate.Inflater
-  priv mut crc : @checksum.Crc32 // of the current member's decompressed output
-  priv mut header_crc : @checksum.Crc32
-  priv mut osize : UInt32 // current member's decompressed length, mod 2^32
-  priv mut pending : BytesView // unconsumed compressed input
-  priv mut pending_pos : Int32 // first unread byte in `pending`
-  priv mut borrowed_input : Bool // only borrowed during the active step
-  priv mut unused : Bytes // cached read-ahead suffix after successful completion
-  priv mut flg : Int32 // header FLG byte, gates the optional-field states
-  priv mut members : Int32 // fully verified members
-  priv mut ending : Bool // `end=true` is sticky across output suspension
-  priv multistream : Bool // decode RFC 1952 concatenated members when true
-  priv mut mode : DecMode
-  priv mut failure_kind : GzipErrorKind? // stable first terminal error
-  priv mut failure_message : String
-  priv mut step_consumed : Int32
-  priv mut step_produced : Int32
+struct Decoder {
+  inf : @flate.Inflater
+  mut crc : @checksum.Crc32 // of the current member's decompressed output
+  mut header_crc : @checksum.Crc32
+  mut osize : UInt32 // current member's decompressed length, mod 2^32
+  mut pending : BytesView // unconsumed compressed input
+  mut pending_pos : Int32 // first unread byte in `pending`
+  mut borrowed_input : Bool // only borrowed during the active step
+  mut unused : Bytes // cached read-ahead suffix after successful completion
+  mut flg : Int32 // header FLG byte, gates the optional-field states
+  mut members : Int32 // fully verified members
+  mut ending : Bool // `end=true` is sticky across output suspension
+  multistream : Bool // decode RFC 1952 concatenated members when true
+  mut mode : DecMode
+  mut failure_kind : GzipErrorKind? // stable first terminal error
+  mut failure_message : String
+  mut step_consumed : Int32
+  mut step_produced : Int32
 }
 
 ///|

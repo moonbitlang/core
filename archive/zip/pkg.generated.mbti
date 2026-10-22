@@ -16,9 +16,7 @@ pub suberror ZipError {
 }
 
 // Types and methods
-pub struct Archive {
-  // private fields
-}
+type Archive
 pub fn Archive::Archive() -> Self
 pub fn Archive::add(Self, String, BytesView, compression? : Compression) -> Unit
 pub fn Archive::clone(Self) -> Self
@@ -34,16 +32,12 @@ pub(all) enum Compression {
   Deflate
 } derive(Eq, @debug.Debug)
 
-pub struct Directory {
-  // private fields
-}
+type Directory
 pub fn Directory::comment(Self) -> BytesView
 pub fn Directory::entries(Self) -> ArrayView[DirectoryEntry]
 pub fn Directory::open_entry(Self, Int32, limits? : EntryReadLimits) -> EntryReader raise ZipError
 
-pub struct DirectoryEntry {
-  // private fields
-}
+type DirectoryEntry
 pub fn DirectoryEntry::compressed_size(Self) -> UInt64
 pub fn DirectoryEntry::crc32(Self) -> UInt32
 pub fn DirectoryEntry::creator_system(Self) -> Int32
@@ -56,14 +50,10 @@ pub fn DirectoryEntry::method_id(Self) -> Int32
 pub fn DirectoryEntry::name(Self) -> String
 pub fn DirectoryEntry::uncompressed_size(Self) -> UInt64
 
-pub struct DirectoryLimits {
-  // private fields
-}
+type DirectoryLimits
 pub fn DirectoryLimits::DirectoryLimits(max_directory_bytes? : UInt64, max_entries? : UInt64) -> Self
 
-pub struct DirectoryReader {
-  // private fields
-}
+type DirectoryReader
 pub fn DirectoryReader::DirectoryReader(UInt64, limits? : DirectoryLimits) -> Self
 pub fn DirectoryReader::advance(Self, BytesView) -> DirectoryStep raise ZipError
 
@@ -72,22 +62,16 @@ pub(all) enum DirectoryStep {
   Done(Directory)
 }
 
-pub struct Entry {
-  // private fields
-}
+type Entry
 pub fn Entry::compression(Self) -> Compression
 pub fn Entry::crc32(Self) -> UInt32
 pub fn Entry::data(Self) -> BytesView
 pub fn Entry::name(Self) -> String
 
-pub struct EntryReadLimits {
-  // private fields
-}
+type EntryReadLimits
 pub fn EntryReadLimits::EntryReadLimits(max_output_bytes? : UInt64) -> Self
 
-pub struct EntryReader {
-  // private fields
-}
+type EntryReader
 pub fn EntryReader::last_produced(Self) -> Int32
 pub fn EntryReader::step(Self, BytesView, FixedArray[Byte]) -> EntryStep raise ZipError
 pub fn EntryReader::total_consumed(Self) -> UInt64
@@ -116,15 +100,11 @@ pub struct ReadLimits {
 }
 pub fn ReadLimits::ReadLimits(max_package_bytes? : Int32, max_entries? : Int32, max_entry_uncompressed_bytes? : Int32, max_total_uncompressed_bytes? : Int32) -> Self
 
-pub struct ReadRange {
-  // private fields
-}
+type ReadRange
 pub fn ReadRange::length(Self) -> Int32
 pub fn ReadRange::offset(Self) -> UInt64
 
-pub struct Writer {
-  // private fields
-}
+type Writer
 pub fn Writer::Writer((BytesView) -> Unit raise, level? : Int32, fast_store? : Bool) -> Self
 pub fn Writer::add(Self, String, BytesView, compression? : Compression) -> Unit raise
 pub fn Writer::begin_entry(Self, String, compression? : Compression, size? : UInt64) -> Unit raise

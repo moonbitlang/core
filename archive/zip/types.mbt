@@ -72,15 +72,15 @@ priv struct SourceRecord {
 /// A single archive entry: its decoded payload plus the metadata the central
 /// directory carried for it. Entries produced by `read` retain their source
 /// records for byte-preserving rewrites; entries built with `Archive::add` do not.
-pub struct Entry {
-  priv name : String
-  priv data : Bytes
-  priv compression : Compression
-  priv crc32 : UInt32
-  priv data_descriptor : Bool
-  priv compressed_size : Int32
-  priv source : SourceRecord?
-  priv origin_local_offset : Int32?
+struct Entry {
+  name : String
+  data : Bytes
+  compression : Compression
+  crc32 : UInt32
+  data_descriptor : Bool
+  compressed_size : Int32
+  source : SourceRecord?
+  origin_local_offset : Int32?
 }
 
 ///|
@@ -121,11 +121,11 @@ priv struct TrailerTemplate {
 ///|
 /// An in-memory ZIP archive: an ordered list of entries plus an archive
 /// comment. Reading a ZIP materializes this; writing serializes it back.
-pub struct Archive {
-  priv entries : Array[Entry]
-  priv mut comment : Bytes
-  priv mut trailer : TrailerTemplate?
-  priv mut original : Bytes?
+struct Archive {
+  entries : Array[Entry]
+  mut comment : Bytes
+  mut trailer : TrailerTemplate?
+  mut original : Bytes?
 }
 
 ///|

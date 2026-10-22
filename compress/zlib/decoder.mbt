@@ -25,20 +25,20 @@ priv enum DecMode {
 
 ///|
 /// Streaming zlib decompressor
-pub struct Decoder {
-  priv inf : @flate.Inflater
-  priv adler : @checksum.Adler32 // of the decompressed output
-  priv mut pending : BytesView
-  priv mut pending_pos : Int32
-  priv mut borrowed_input : Bool
-  priv mut unused : Bytes // cached read-ahead suffix after successful completion
-  priv mut ending : Bool // `end=true` is sticky across output suspension
-  priv mut mode : DecMode
-  priv dict : BytesView? // preset dictionary, if the caller has one
-  priv mut failure_kind : ZlibErrorKind? // stable first terminal error
-  priv mut failure_message : String
-  priv mut step_consumed : Int32
-  priv mut step_produced : Int32
+struct Decoder {
+  inf : @flate.Inflater
+  adler : @checksum.Adler32 // of the decompressed output
+  mut pending : BytesView
+  mut pending_pos : Int32
+  mut borrowed_input : Bool
+  mut unused : Bytes // cached read-ahead suffix after successful completion
+  mut ending : Bool // `end=true` is sticky across output suspension
+  mut mode : DecMode
+  dict : BytesView? // preset dictionary, if the caller has one
+  mut failure_kind : ZlibErrorKind? // stable first terminal error
+  mut failure_message : String
+  mut step_consumed : Int32
+  mut step_produced : Int32
 }
 
 ///|

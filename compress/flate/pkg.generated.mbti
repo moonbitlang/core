@@ -28,16 +28,12 @@ pub suberror InflateError {
 }
 
 // Types and methods
-pub struct Compressor {
-  // private fields
-}
+type Compressor
 pub fn Compressor::Compressor(level? : Int32, fast_store? : Bool) -> Self
 pub fn Compressor::compress(Self, BytesView) -> Bytes
 pub fn Compressor::compress_into(Self, BytesView, FixedArray[Byte]) -> Int32?
 
-pub struct Decompressor {
-  // private fields
-}
+type Decompressor
 pub fn Decompressor::Decompressor() -> Self
 pub fn Decompressor::decompress(Self, BytesView) -> Bytes raise InflateError
 pub fn Decompressor::decompress_into(Self, BytesView, FixedArray[Byte], cancelled? : () -> Bool) -> Int32 raise InflateError
@@ -49,9 +45,7 @@ pub(all) enum DeflateAction {
   Finish
 } derive(Eq, @debug.Debug)
 
-pub struct Deflater {
-  // private fields
-}
+type Deflater
 pub fn Deflater::Deflater(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
 pub fn Deflater::is_finished(Self) -> Bool
 pub fn Deflater::last_consumed(Self) -> Int32
@@ -68,9 +62,7 @@ pub(all) enum InflateErrorKind {
   InvalidArgument
 } derive(Eq, @debug.Debug)
 
-pub struct Inflater {
-  // private fields
-}
+type Inflater
 pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
 pub fn Inflater::is_finished(Self) -> Bool
 pub fn Inflater::last_consumed(Self) -> Int32

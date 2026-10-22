@@ -19,9 +19,7 @@ pub suberror GzipError {
 }
 
 // Types and methods
-pub struct Decoder {
-  // private fields
-}
+type Decoder
 pub fn Decoder::Decoder(multistream? : Bool) -> Self
 pub fn Decoder::is_finished(Self) -> Bool
 pub fn Decoder::last_consumed(Self) -> Int32
@@ -30,9 +28,7 @@ pub fn Decoder::step(Self, BytesView, MutArrayView[Byte], end? : Bool) -> @flate
 pub fn Decoder::step_into(Self, BytesView, FixedArray[Byte], end? : Bool) -> @flate.Status raise GzipError
 pub fn Decoder::unused_input(Self) -> Bytes
 
-pub struct Encoder {
-  // private fields
-}
+type Encoder
 pub fn Encoder::Encoder(level? : Int32, fast_store? : Bool) -> Self
 pub fn Encoder::is_finished(Self) -> Bool
 pub fn Encoder::last_consumed(Self) -> Int32

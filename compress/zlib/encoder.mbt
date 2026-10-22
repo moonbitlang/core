@@ -34,17 +34,17 @@ priv enum EncMode {
 ///|
 /// Streaming zlib compressor (RFC 1950). Feed input and drain compressed output
 /// with `step`, finalize with `action=Finish`; binds no I/O trait.
-pub struct Encoder {
-  priv def : @flate.Deflater
-  priv mut adler : @checksum.Adler32
-  priv mut mode : EncMode
-  priv mut stage : FixedArray[Byte]
-  priv mut stage_pos : Int32
+struct Encoder {
+  def : @flate.Deflater
+  mut adler : @checksum.Adler32
+  mut mode : EncMode
+  mut stage : FixedArray[Byte]
+  mut stage_pos : Int32
   // Accepted stream control, latched until the inner deflater drains it.
   // Finish and sync-flush cannot both be pending.
-  priv mut pending_action : @flate.DeflateAction
-  priv mut step_consumed : Int32
-  priv mut step_produced : Int32
+  mut pending_action : @flate.DeflateAction
+  mut step_consumed : Int32
+  mut step_produced : Int32
 }
 
 ///|

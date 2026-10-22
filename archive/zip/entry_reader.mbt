@@ -16,8 +16,8 @@
 /// Bounds for streaming one entry. The ceiling applies to actual decoded bytes
 /// and also rejects an oversized directory declaration before reading payloads.
 #valtype
-pub struct EntryReadLimits {
-  priv max_output_bytes : UInt64
+struct EntryReadLimits {
+  max_output_bytes : UInt64
 }
 
 ///|
@@ -65,21 +65,21 @@ priv enum EntryPhase {
 /// Directory::open_entry so metadata and archive bounds cannot be forged.
 /// Retains at most one 64 KiB compressed response, bounded local metadata, and
 /// the inflater's workspace. Sizes and cumulative progress remain 64-bit.
-pub struct EntryReader {
-  priv entry : DirectoryEntry
-  priv central_offset : UInt64
-  priv max_output : UInt64
-  priv crc : @checksum.Crc32
-  priv mut inflater : @flate.Inflater?
-  priv mut phase : EntryPhase
-  priv mut payload_offset : UInt64
-  priv mut descriptor_zip64 : Bool
-  priv mut requested : UInt64
-  priv mut consumed : UInt64
-  priv mut produced : UInt64
-  priv mut step_produced : Int32
-  priv mut pending : Bytes
-  priv mut pending_pos : Int32
+struct EntryReader {
+  entry : DirectoryEntry
+  central_offset : UInt64
+  max_output : UInt64
+  crc : @checksum.Crc32
+  mut inflater : @flate.Inflater?
+  mut phase : EntryPhase
+  mut payload_offset : UInt64
+  mut descriptor_zip64 : Bool
+  mut requested : UInt64
+  mut consumed : UInt64
+  mut produced : UInt64
+  mut step_produced : Int32
+  mut pending : Bytes
+  mut pending_pos : Int32
 }
 
 ///|

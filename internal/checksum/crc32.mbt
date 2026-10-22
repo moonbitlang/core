@@ -44,8 +44,8 @@ let crc32_table : FixedArray[UInt32] = build_crc32_table()
 /// Incremental CRC-32 accumulator. Feed bytes with `update` across as many
 /// calls as you like, then read the result with `finish`; this is what a
 /// streaming gzip/ZIP container uses so it never has to hold the whole input.
-pub struct Crc32 {
-  priv mut state : UInt32 // running CRC, before the final one's-complement
+struct Crc32 {
+  mut state : UInt32 // running CRC, before the final one's-complement
 }
 
 ///|

@@ -86,46 +86,46 @@ priv enum Mode {
 /// blocks. `step` makes progress with as little as one byte of output room
 /// (the `output` view): a match too large for the buffer is copied in
 /// pieces across calls.
-pub struct Inflater {
-  priv mut mode : Mode
-  priv mut bitbuf : Int32 // LSB-first bit accumulator
-  priv mut bit_count : Int32
-  priv mut final_block : Bool
-  priv mut stored_remaining : Int32
-  priv mut hl : HuffmanDecoder? // literal/length table (None until a block sets it)
-  priv mut hd : HuffmanDecoder? // distance table (None => fixed 5-bit distances)
-  priv mut hd_fixed : Bool
-  priv window : FixedArray[Byte] // 32 KB circular history
-  priv mut wpos : Int32 // total bytes ever written; window index = wpos & 32767
-  priv mut filled : Bool // window has held >= 32 KB, so any distance <= 32768 is valid
-  priv dyn_litlen : HuffmanDecoder // dynamic literal/length (and code-length) table
-  priv dyn_dist : HuffmanDecoder // dynamic distance table
-  priv clbits : FixedArray[Int32]
-  priv codebits : FixedArray[Int32]
+struct Inflater {
+  mut mode : Mode
+  mut bitbuf : Int32 // LSB-first bit accumulator
+  mut bit_count : Int32
+  mut final_block : Bool
+  mut stored_remaining : Int32
+  mut hl : HuffmanDecoder? // literal/length table (None until a block sets it)
+  mut hd : HuffmanDecoder? // distance table (None => fixed 5-bit distances)
+  mut hd_fixed : Bool
+  window : FixedArray[Byte] // 32 KB circular history
+  mut wpos : Int32 // total bytes ever written; window index = wpos & 32767
+  mut filled : Bool // window has held >= 32 KB, so any distance <= 32768 is valid
+  dyn_litlen : HuffmanDecoder // dynamic literal/length (and code-length) table
+  dyn_dist : HuffmanDecoder // dynamic distance table
+  clbits : FixedArray[Int32]
+  codebits : FixedArray[Int32]
   // A match copy in progress, suspended because the output filled mid-copy.
   // `copy_remaining` bytes are still owed at back-distance `copy_dist`; the
   // next `step` drains them before decoding any new unit. This is what lets
   // the decoder make progress into an output buffer as small as one byte.
-  priv mut copy_remaining : Int32
-  priv mut copy_dist : Int32
+  mut copy_remaining : Int32
+  mut copy_dist : Int32
   // Bytes belonging to one incomplete atomic unit. Owning this bounded tail
   // lets callers drop every byte reported as consumed instead of re-presenting
   // a growing view on NeedMoreInput.
-  priv mut staged_input : Array[Byte]
-  priv mut staged_pos : Int32
-  priv mut ending : Bool // physical EOF has been declared by the caller
-  priv mut failure_kind : InflateErrorKind? // stable terminal error
-  priv mut failure_message : String
-  priv mut step_consumed : Int32 // input accepted by the latest successful step
-  priv mut step_produced : Int32 // output written by the latest successful step
+  mut staged_input : Array[Byte]
+  mut staged_pos : Int32
+  mut ending : Bool // physical EOF has been declared by the caller
+  mut failure_kind : InflateErrorKind? // stable terminal error
+  mut failure_message : String
+  mut step_consumed : Int32 // input accepted by the latest successful step
+  mut step_produced : Int32 // output written by the latest successful step
   // Step-local cursors (reset on each `step`).
-  priv mut view : BytesView
-  priv mut in_pos : Int32
-  priv mut out_pos : Int32
-  priv mut out : MutArrayView[Byte]
-  priv mut fixed_out : FixedArray[Byte]?
-  priv mut out_end : Int32 // one past the last writable index in `out`
-  priv empty_out : FixedArray[Byte]
+  mut view : BytesView
+  mut in_pos : Int32
+  mut out_pos : Int32
+  mut out : MutArrayView[Byte]
+  mut fixed_out : FixedArray[Byte]?
+  mut out_end : Int32 // one past the last writable index in `out`
+  empty_out : FixedArray[Byte]
 }
 
 ///|

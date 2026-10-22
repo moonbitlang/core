@@ -18,9 +18,9 @@
 /// Defaults permit any directory byte size and at most 2^31 - 1 entries;
 /// callers should select bounds appropriate to their metadata memory budget.
 #valtype
-pub struct DirectoryLimits {
-  priv max_directory_bytes : UInt64
-  priv max_entries : UInt64
+struct DirectoryLimits {
+  max_directory_bytes : UInt64
+  max_entries : UInt64
 }
 
 ///|
@@ -36,10 +36,10 @@ pub fn DirectoryLimits::DirectoryLimits(
 /// A directory listing in central-directory order, including duplicate names.
 /// Owns metadata only. A successful listing does not validate local headers,
 /// decompress payloads, or verify their CRC-32 values.
-pub struct Directory {
-  priv entries : Array[DirectoryEntry]
-  priv comment : Bytes
-  priv central_offset : UInt64
+struct Directory {
+  entries : Array[DirectoryEntry]
+  comment : Bytes
+  central_offset : UInt64
 }
 
 ///|
@@ -58,18 +58,18 @@ pub fn Directory::comment(self : Directory) -> BytesView {
 /// Metadata declared by a central-directory entry, without its payload.
 /// Sizes remain 64-bit even when the payload cannot fit in a MoonBit Bytes.
 /// Unknown compression methods and encrypted payloads can still be listed.
-pub struct DirectoryEntry {
-  priv name : String
-  priv compressed_size : UInt64
-  priv uncompressed_size : UInt64
-  priv local_offset : UInt64
-  priv method_id : Int32
-  priv flags : Int32
-  priv crc : UInt32
-  priv creator_system : Int32
-  priv external_attributes : UInt32
-  priv dos_date : Int32
-  priv dos_time : Int32
+struct DirectoryEntry {
+  name : String
+  compressed_size : UInt64
+  uncompressed_size : UInt64
+  local_offset : UInt64
+  method_id : Int32
+  flags : Int32
+  crc : UInt32
+  creator_system : Int32
+  external_attributes : UInt32
+  dos_date : Int32
+  dos_time : Int32
 }
 
 ///|
@@ -147,9 +147,9 @@ pub fn DirectoryEntry::dos_time(self : DirectoryEntry) -> Int32 {
 ///|
 /// One bounded request into the same immutable archive supplied to the reader.
 /// The offset is absolute; the length describes a single in-memory buffer.
-pub struct ReadRange {
-  priv offset : UInt64
-  priv length : Int32
+struct ReadRange {
+  offset : UInt64
+  length : Int32
 }
 
 ///|
