@@ -639,6 +639,7 @@ pub fn atan2f(y : Float, x : Float) -> Float {
     return @float.not_a_number
   }
   let pi : Float = 3.1415927410e+00
+  let pi_lo : Float = -8.7422776573e-08
   let zero : Float = 0.0
   let ix = x.reinterpret_as_uint()
   let iy = y.reinterpret_as_uint()
@@ -688,7 +689,7 @@ pub fn atan2f(y : Float, x : Float) -> Float {
   match m {
     0 => z
     1 => -z
-    2 => pi - z
-    _ => z - pi
+    2 => pi - (z - pi_lo)
+    _ => z - pi_lo - pi
   }
 }

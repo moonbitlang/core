@@ -648,3 +648,18 @@ test "acosf keeps the correction term for x > 0.5" {
     content="1062342791",
   )
 }
+
+///|
+test "atan2f adds pi_lo for x < 0" {
+  // musl atan2f.c returns pi - (z - pi_lo) and (z - pi_lo) - pi, where pi_lo
+  // is the part of pi that the Float `pi` cannot hold. Expected values are
+  // musl's, which are correctly rounded here.
+  inspect(@math.atan2f(1.0, -2.5).reinterpret_as_uint(), content="1076934051")
+  inspect(
+    @math.atan2f(
+      Float::reinterpret_from_uint(0xbfdb9761),
+      Float::reinterpret_from_uint(0xbed9804b),
+    ).reinterpret_as_uint(),
+    content="3219661283",
+  )
+}
