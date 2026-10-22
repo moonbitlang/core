@@ -1576,13 +1576,9 @@ pub fn[T] ArrayView::filter(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
 ) -> Array[T] raise? {
-  let arr = []
-  for v in self {
-    if f(v) {
-      arr.push(v)
-    }
-  }
-  arr
+  [
+    for v in self if f(v) => v
+  ]
 }
 
 ///|
@@ -1605,13 +1601,9 @@ pub fn[A, B] ArrayView::filter_map(
   self : ArrayView[A],
   f : (A) -> B? raise?,
 ) -> Array[B] raise? {
-  let result = []
-  for x in self {
-    if f(x) is Some(x) {
-      result.push(x)
-    }
-  }
-  result
+  [
+    for x in self if f(x) is Some(y) => y
+  ]
 }
 
 ///|
