@@ -173,7 +173,8 @@ fn build_matches(
 
   let subcommand = match raw.parsed_subcommand {
     Some((name, sub_raw)) =>
-      if find_decl_subcommand(cmd.subcommands, name) is Some(sub_spec) {
+      if cmd.subcommands.iter().find_first(sub => sub.name == name)
+        is Some(sub_spec) {
         Some((name, build_matches(sub_spec, sub_raw, child_globals)))
       } else {
         Some((name, new_matches_parse_state()))
@@ -192,16 +193,6 @@ fn build_matches(
     value_sources: Map([]),
     parsed_subcommand: None,
   }
-}
-
-///|
-fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
-  for sub in subs {
-    if sub.name == name {
-      return Some(sub)
-    }
-  }
-  None
 }
 
 ///|
