@@ -440,7 +440,8 @@ pub fn acosf(x : Float) -> Float {
   }
   let z = (one - x) * 0.5
   let s = z.sqrt()
-  let df = s
+  // musl acosf.c: SET_FLOAT_WORD(df, hx & 0xfffff000), which makes df*df exact
+  let df = Float::reinterpret_from_uint(s.reinterpret_as_uint() & 0xfffff000)
   let c = (z - df * df) / (s + df)
   let w = r(z) * s + c
   two * (df + w)
