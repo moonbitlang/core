@@ -487,10 +487,7 @@ fn parse_command_impl(
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
-            let value = match action {
-              SetFalse => true
-              _ => false
-            }
+            let value = action is SetFalse
             if action is Count {
               matches.counts[spec.name] = 0
             }
