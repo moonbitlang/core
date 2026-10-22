@@ -146,7 +146,6 @@ fn parse_number(s : StringView) -> Number? raise {
       _ => break
     }
   }
-  let mut mantissa = mantissa
   if n_digits > 0 {
     // at this point we have more than 19 significant digits, let's try again
     many_digits = true

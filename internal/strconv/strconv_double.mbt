@@ -133,35 +133,29 @@ let int_pow10 : ReadOnlyArray[UInt64] = [
 
 ///|
 fn Number::try_fast_path(self : Number) -> Double? {
-  if self.is_fast_path() {
-    let mut value = if self.exponent <= max_exponent_fast_path {
-      // normal fast path
-      let value = Double::convert_uint64(self.mantissa)
-      if self.exponent < 0L {
-        value / pow10_fast_path(-self.exponent.to_int())
-      } else {
-        value * pow10_fast_path(self.exponent.to_int())
-      }
+  guard self.is_fast_path() else { return None }
+  let value = if self.exponent <= max_exponent_fast_path {
+    // normal fast path
+    let value = Double::convert_uint64(self.mantissa)
+    if self.exponent < 0L {
+      value / pow10_fast_path(-self.exponent.to_int())
     } else {
-      // disguised fast path
-      let shift = self.exponent - max_exponent_fast_path
-      guard checked_mul(self.mantissa, int_pow10[shift.to_int()])
-        is Some(mantissa) else {
-        return None
-      }
-      if mantissa > max_mantissa_fast_path {
-        return None
-      }
-      Double::convert_uint64(mantissa) *
-      pow10_fast_path(max_exponent_fast_path.to_int())
+      value * pow10_fast_path(self.exponent.to_int())
     }
-    if self.negative {
-      value = -value
-    }
-    Some(value)
   } else {
-    None
+    // disguised fast path
+    let shift = self.exponent - max_exponent_fast_path
+    guard checked_mul(self.mantissa, int_pow10[shift.to_int()])
+      is Some(mantissa) else {
+      return None
+    }
+    if mantissa > max_mantissa_fast_path {
+      return None
+    }
+    Double::convert_uint64(mantissa) *
+    pow10_fast_path(max_exponent_fast_path.to_int())
   }
+  Some(if self.negative { -value } else { value })
 }
 
 ///|
