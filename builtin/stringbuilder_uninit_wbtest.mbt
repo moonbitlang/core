@@ -21,9 +21,8 @@ test "StringBuilder uninitialized storage exposes only the written prefix" {
   let full = builder.to_string()
   inspect(full, content="abcd")
 
-  // The full-capacity conversion may share the backing buffer. Reset must
-  // detach before the next write, while a partial conversion must only expose
-  // the initialized prefix.
+  // Full and partial conversions must both preserve the returned string
+  // across reset, and only expose the initialized prefix.
   builder.reset()
   builder.write_char('x')
   inspect(builder.to_string(), content="x")
