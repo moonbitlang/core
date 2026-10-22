@@ -519,30 +519,35 @@ fn validate_groups(
   for arg in args {
     arg_seen.add(arg.name)
   }
+  // Defaults count towards `required` groups and `requires` targets, but only
+  // explicitly given members make a group conflict or trigger its relations.
+  let group_explicit = Map([])
   for group in groups {
-    let count = for arg in args; count = 0 {
+    let (count, explicit) = for arg in args; count = 0, explicit = 0 {
       if !arg_in_group(arg, group) {
-        continue count
+        continue count, explicit
       }
-      if matches_has_value_or_flag(matches, arg.name) {
-        continue count + 1
+      if matches_explicitly_present(matches, arg) {
+        continue count + 1, explicit + 1
+      } else if matches_has_value_or_flag(matches, arg.name) {
+        continue count + 1, explicit
       } else {
-        continue count
+        continue count, explicit
       }
     } nobreak {
-      count
+      (count, explicit)
     }
     group_presence[group.name] = count
+    group_explicit[group.name] = explicit
     if group.required && count == 0 {
       raise MissingGroup(group.name)
     }
-    if !group.multiple && count > 1 {
+    if !group.multiple && explicit > 1 {
       raise GroupConflict(group.name)
     }
   }
   for group in groups {
-    let count = group_presence[group.name]
-    if count == 0 {
+    if group_explicit[group.name] == 0 {
       continue
     }
     for required in group.requires {
@@ -558,11 +563,11 @@ fn validate_groups(
     }
     for conflict in group.conflicts_with {
       if group_seen.contains(conflict) {
-        if group_presence.get(conflict).unwrap_or(0) > 0 {
+        if group_explicit.get(conflict).unwrap_or(0) > 0 {
           raise GroupConflict("\{group.name} conflicts with \{conflict}")
         }
       } else if arg_seen.contains(conflict) {
-        if matches_has_value_or_flag(matches, conflict) {
+        if matches_explicitly_present_by_name(matches, args, conflict) {
           raise GroupConflict("\{group.name} conflicts with \{conflict}")
         }
       }
@@ -616,7 +621,7 @@ fn validate_relationships(
   args : Array[Arg],
 ) -> Unit raise ArgParseError {
   for arg in args {
-    if !matches_has_value_or_flag(matches, arg.name) {
+    if !matches_explicitly_present(matches, arg) {
       continue
     }
     for required in arg.requires {
@@ -625,7 +630,7 @@ fn validate_relationships(
       }
     }
     for conflict in arg.conflicts_with {
-      if matches_has_value_or_flag(matches, conflict) {
+      if matches_explicitly_present_by_name(matches, args, conflict) {
         raise InvalidArgument(
           "conflicting arguments: \{arg.name} and \{conflict}",
         )
