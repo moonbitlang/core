@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/flate/checksum"
+package "moonbitlang/core/flate/internal/checksum"
 
 // Values
 pub fn adler32(BytesView) -> UInt32

@@ -3,7 +3,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
   "moonbitlang/core/flate",
-  "moonbitlang/core/flate/checksum",
+  "moonbitlang/core/flate/internal/checksum",
   "moonbitlang/core/encoding/utf8" @encoding/utf8,
 }
 

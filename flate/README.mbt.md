@@ -4,8 +4,9 @@ Pure-MoonBit **DEFLATE** (RFC 1951) — a runtime-agnostic, suspendable, io-free
 compression engine, with **gzip** (RFC 1952), **zlib** (RFC 1950), and
 **zip** (APPNOTE.TXT) container wrappers.
 
-CRC-32 and Adler-32 are provided by the `moonbitlang/core/flate/checksum`
-package. It depends only on MoonBit core and is shared by gzip, zlib, and zip.
+gzip, zlib, and zip share CRC-32 and Adler-32 implementations in the internal
+`moonbitlang/core/flate/internal/checksum` package. This package is an
+implementation detail and cannot be imported from outside `flate`.
 
 ## Import
 
@@ -424,7 +425,7 @@ chunk/output schedules, truncations and bit flips.
 
 The gzip and zlib packages add framing, checksums and streaming wrappers.
 ZIP provides in-memory archives and a synchronous incremental writer.
-The checksum package supplies CRC-32 and Adler-32 independently of the codecs.
+The internal checksum package supplies CRC-32 and Adler-32 independently of the codecs.
 
 ## Optional fast stored blocks
 
@@ -486,7 +487,7 @@ compress-once, serve-forever artifacts.
 
 Read-only inputs accept `BytesView`; existing `Bytes` values convert at the
 call site without copying. `Compressor::compress` and `compress_into` reuse
-workspace for repeated streams, and `@checksum.adler32` accepts views directly.
+workspace for repeated streams.
 
 Both `inflate_all` and `inflate_exact` take a plain optional integer ceiling:
 `max_output=n`. Omit it for unbounded output. `inflate_all` accepts a raw stream
