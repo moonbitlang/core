@@ -520,18 +520,9 @@ fn validate_groups(
     arg_seen.add(arg.name)
   }
   for group in groups {
-    let count = for arg in args; count = 0 {
-      if !arg_in_group(arg, group) {
-        continue count
-      }
-      if matches_has_value_or_flag(matches, arg.name) {
-        continue count + 1
-      } else {
-        continue count
-      }
-    } nobreak {
-      count
-    }
+    let count = args.count_if(arg => {
+      arg_in_group(arg, group) && matches_has_value_or_flag(matches, arg.name)
+    })
     group_presence[group.name] = count
     if group.required && count == 0 {
       raise MissingGroup(group.name)
