@@ -1274,9 +1274,12 @@ test "scalbnf exponent clamp" {
 }
 
 ///|
+/// The js backend calls `Math.pow` instead of this port, so its results
+/// depend on the JavaScript engine.
+#cfg(not(target="js"))
 test "pow keeps the low-order correction term" {
-  // fdlibm e_pow.c: r = (z*t1)/(t1-two) - (w+z*w). Dropping `w` from the
-  // correction made these results one ulp below the correctly rounded value.
+  // fdlibm e_pow.c: r = (z*t1)/(t1-two) - (w+z*w). With `w` misplaced in the
+  // denominator, these results were one ulp below the correctly rounded value.
   inspect(@math.pow(10.0, -4.0), content="0.0001")
   inspect(@math.pow(5.0, -4.0), content="0.0016")
   inspect(@math.pow(20.0, -4.0), content="0.00000625")

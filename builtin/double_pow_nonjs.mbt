@@ -430,7 +430,7 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
   t = z * z
   t1 = z -
     t * (POW_P1 + t * (POW_P2 + t * (POW_P3 + t * (POW_P4 + t * POW_P5))))
-  r = z * t1 / (t1 - TWO - (w + z * w))
+  r = z * t1 / (t1 - TWO) - (w + z * w)
   z = ONE - (r - z)
   j = get_high_word(z).reinterpret_as_int()
   j += (n.reinterpret_as_uint() << 20).reinterpret_as_int()

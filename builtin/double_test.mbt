@@ -219,3 +219,15 @@ test "equal double signed zero values hash equally" {
   let map : Map[Double, Int32] = { 0.0: 42 }
   inspect(map.get(-0.0) == Some(42), content="true")
 }
+
+///|
+/// The deprecated `Double::pow` keeps its own copy of the fdlibm port; see the
+/// test of the same name in `math/pow_test.mbt`. The js backend calls
+/// `Math.pow` instead, so its results depend on the JavaScript engine.
+#cfg(not(target="js"))
+#warnings("-deprecated")
+test "pow keeps the low-order correction term" {
+  inspect(10.0.pow(-4.0), content="0.0001")
+  inspect(5.0.pow(-4.0), content="0.0016")
+  inspect(20.0.pow(-4.0), content="0.00000625")
+}
