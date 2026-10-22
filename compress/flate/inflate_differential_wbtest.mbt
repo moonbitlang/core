@@ -121,7 +121,7 @@ fn inflate_differential_stream_bytes(
     } else {
       rng.size(23)
     }
-    let status = if available == input.length() {
+    let status_result = if available == input.length() {
       inflater.finish(
         input[input_pos:available],
         output.mut_view(end=output_size),
@@ -132,8 +132,9 @@ fn inflate_differential_stream_bytes(
         output.mut_view(end=output_size),
       )
     }
-    let consumed = inflater.last_consumed()
-    let produced = inflater.last_produced()
+    let status = status_result.status
+    let consumed = status_result.consumed
+    let produced = status_result.produced
     input_pos = input_pos + consumed
     for i in 0..<produced {
       decoded.write_byte(output[i])

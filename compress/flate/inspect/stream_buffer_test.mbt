@@ -27,20 +27,22 @@ test "fixed streaming output matches offset views across history wraps" {
       for ;; {
         let end = (position + 97).min(compressed.length())
         let input = compressed[position:end]
-        let status = if end == compressed.length() {
+        let status_result = if end == compressed.length() {
           fixed.finish_into(input, output)
         } else {
           fixed.step_into(input, output)
         }
-        let other = if end == compressed.length() {
+        let status = status_result.status
+        let other_result = if end == compressed.length() {
           viewed.finish(input, padded.mut_view(start=3, end=3 + capacity))
         } else {
           viewed.step(input, padded.mut_view(start=3, end=3 + capacity))
         }
+        let other = other_result.status
         @test.assert_eq(status, other)
-        @test.assert_eq(fixed.last_consumed(), viewed.last_consumed())
-        @test.assert_eq(fixed.last_produced(), viewed.last_produced())
-        let count = fixed.last_produced()
+        @test.assert_eq(status_result.consumed, other_result.consumed)
+        @test.assert_eq(status_result.produced, other_result.produced)
+        let count = status_result.produced
         @test.assert_eq(
           Bytes::from_array(output[:count]),
           Bytes::from_array(padded[3:3 + count]),
@@ -48,7 +50,7 @@ test "fixed streaming output matches offset views across history wraps" {
         @test.assert_eq(padded[2], b'\xA5')
         @test.assert_eq(padded[capacity + 3], b'\xA5')
         collected.append(output[:count])
-        position = position + fixed.last_consumed()
+        position = position + status_result.consumed
         if status is Done {
           break
         }
@@ -56,8 +58,9 @@ test "fixed streaming output matches offset views across history wraps" {
       @test.assert_eq(Bytes::from_array(collected), source)
       fixed.reset()
       let empty = FixedArray::make(0, b'\x00')
-      ignore(fixed.step_into(compressed, empty))
-      @test.assert_eq(fixed.last_produced(), 0)
+      let result = fixed.step_into(compressed, empty)
+      @test.assert_eq(result.status, NeedMoreOutput)
+      @test.assert_eq(result.produced, 0)
     }
   }
 }

@@ -20,20 +20,22 @@ test "gzip header FNAME bytes are discarded, not retained" {
   let decoder = Decoder()
   let output = FixedArray::make(64, b'\x00')
   let header = b"\x1F\x8B\x08\x08\x00\x00\x00\x00\x00\xFF"
-  @test.assert_eq(decoder.step(header, output.mut_view()), NeedMoreInput)
+  @test.assert_eq(decoder.step(header, output.mut_view()).status, NeedMoreInput)
   let chunk = Bytes::make(1024, b'x')
   for _ in 0..<64 {
-    @test.assert_eq(decoder.step(chunk, output.mut_view()), NeedMoreInput)
-    @test.assert_eq(decoder.last_consumed(), chunk.length())
-    @test.assert_eq(decoder.last_produced(), 0)
+    let result = decoder.step(chunk, output.mut_view())
+    @test.assert_eq(result.status, NeedMoreInput)
+    @test.assert_eq(result.consumed, chunk.length())
+    @test.assert_eq(result.produced, 0)
     @test.assert_eq(decoder.pending.length(), 0)
   }
   let plain = b"body after a long filename"
   let normal = compress(plain)
   let rest = b"\x00" + normal[10:].to_owned()
-  @test.assert_eq(decoder.finish(rest, output.mut_view()), Done)
-  @test.assert_eq(decoder.last_consumed(), rest.length())
-  @test.assert_eq(Bytes::from_array(output[:decoder.last_produced()]), plain)
+  let result = decoder.finish(rest, output.mut_view())
+  @test.assert_eq(result.status, Done)
+  @test.assert_eq(result.consumed, rest.length())
+  @test.assert_eq(Bytes::from_array(output[:result.produced]), plain)
 }
 
 ///|
@@ -51,9 +53,13 @@ test "gzip completion releases consumed input and caches read-ahead" {
   }
   let decoder = Decoder()
   let output = FixedArray::make(128, b'\x00')
-  let status = decoder.step(Bytes::from_array(combined), output.mut_view())
-  let consumed = decoder.last_consumed()
-  let _produced = decoder.last_produced()
+  let status_result = decoder.step(
+    Bytes::from_array(combined),
+    output.mut_view(),
+  )
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let _produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, gzip_stream.length() + suffix.length())
   @test.assert_eq(decoder.pending.length(), 0)
@@ -77,8 +83,7 @@ test "gzip failed state freezes decoder cursors" {
   let GzipError(first_kind, first_error) = @test.expect_error(() => {
     decoder.finish(malformed, output.mut_view())
   })
-  @test.assert_eq(decoder.last_consumed(), 0)
-  @test.assert_eq(decoder.last_produced(), 0)
+
   let pending_pos = decoder.pending_pos
   let pending_length = decoder.pending.length()
   let snapshot = decoder.pending.to_owned()
@@ -86,8 +91,7 @@ test "gzip failed state freezes decoder cursors" {
   let GzipError(repeated_kind, repeated_error) = @test.expect_error(() => {
     decoder.step(b"must not be accepted", output.mut_view())
   })
-  @test.assert_eq(decoder.last_consumed(), 0)
-  @test.assert_eq(decoder.last_produced(), 0)
+
   assert_true(first_kind == InvalidDeflate)
   assert_true(repeated_kind == first_kind)
   @test.assert_eq(repeated_error, first_error)
@@ -138,7 +142,7 @@ test "gzip step_into and offset step views preserve the per-call contract" {
           } catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
-            status => Ok(status)
+            result => Ok((result.status, result.consumed, result.produced))
           }
           let other = try {
             if end == stream.length() {
@@ -149,11 +153,9 @@ test "gzip step_into and offset step views preserve the per-call contract" {
           } catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
-            status => Ok(status)
+            result => Ok((result.status, result.consumed, result.produced))
           }
           @test.assert_eq(status, other)
-          @test.assert_eq(fixed.last_consumed(), viewed.last_consumed())
-          @test.assert_eq(fixed.last_produced(), viewed.last_produced())
           @test.assert_eq(padded[2], b'\xA5')
           @test.assert_eq(padded[room + 3], b'\xA5')
           match status {
@@ -161,15 +163,14 @@ test "gzip step_into and offset step views preserve the per-call contract" {
               verdict = Some(kind)
               break
             }
-            Ok(status) => {
-              let count = fixed.last_produced()
+            Ok((status, consumed, count)) => {
               @test.assert_eq(output[:count], padded[3:3 + count])
               decoded.write_bytes(Bytes::from_array(output[:count]))
-              position += fixed.last_consumed()
+              position += consumed
               if status is Done {
                 break
               }
-              assert_true(fixed.last_consumed() > 0 || count > 0)
+              assert_true(consumed > 0 || count > 0)
             }
           }
         }

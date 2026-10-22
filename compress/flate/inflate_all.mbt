@@ -1062,9 +1062,9 @@ pub fn inflate_all(
 ///|
 /// A reusable, whole-buffer raw DEFLATE decompressor. It decodes the stream at
 /// the front of its input, into caller-owned storage (`decompress_into`) or
-/// into new `Bytes` (`decompress`), and says how much input the stream took
-/// (`last_consumed`), while retaining Huffman and dynamic-header workspace
-/// across streams.
+/// into new `Bytes` (`decompress`). `decompress_into` returns both byte counts;
+/// `last_consumed` also reports the input consumed by either method. Huffman
+/// and dynamic-header workspace is retained across streams.
 struct Decompressor {
   decoder : MemDecoder
   mut consumed : Int32 // input the latest successful call took
@@ -1086,10 +1086,10 @@ pub fn Decompressor::last_consumed(self : Decompressor) -> Int32 {
 }
 
 ///|
-/// Decompress `input` into `output`, returning the number of bytes written.
+/// Decompress `input` into `output`, returning consumed and produced byte counts.
 /// The complete output must fit in `output`; otherwise this raises
 /// `InflateError(OutputLimitExceeded, _)`. As with `inflate_all`, bytes after
-/// the final DEFLATE block are ignored; `last_consumed` tells where they
+/// the final DEFLATE block are ignored; the returned `consumed` tells where they
 /// start. Reuse one `Decompressor` and output buffer to avoid per-stream
 /// decoder and result-buffer allocation.
 pub fn Decompressor::decompress_into(
@@ -1097,7 +1097,7 @@ pub fn Decompressor::decompress_into(
   input : BytesView,
   output : FixedArray[Byte],
   cancelled? : () -> Bool,
-) -> Int32 raise InflateError {
+) -> DecompressResult raise InflateError {
   self.consumed = 0
   self.decoder.reset_into(input, output, cancelled)
   errdefer self.decoder.release_buffers()
@@ -1105,7 +1105,7 @@ pub fn Decompressor::decompress_into(
   self.consumed = self.decoder.consumed()
   let length = self.decoder.out.length
   self.decoder.release_buffers()
-  length
+  { consumed: self.consumed, produced: length, }
 }
 
 ///|
@@ -1152,7 +1152,8 @@ pub fn Decompressor::decompress(
 
 ///|
 /// One-shot convenience form of `Decompressor::decompress_into`. It creates a
-/// decompressor for this call; use `Decompressor` when decoding many streams.
+/// decompressor for this call and returns only the produced count. Use
+/// `Decompressor::decompress_into` to obtain both counts and reuse workspace.
 pub fn inflate_into(
   input : BytesView,
   output : FixedArray[Byte],
@@ -1160,9 +1161,9 @@ pub fn inflate_into(
 ) -> Int32 raise InflateError {
   let decoder = Decompressor()
   if cancelled is Some(callback) {
-    decoder.decompress_into(input, output, cancelled=callback)
+    decoder.decompress_into(input, output, cancelled=callback).produced
   } else {
-    decoder.decompress_into(input, output)
+    decoder.decompress_into(input, output).produced
   }
 }
 
@@ -1187,9 +1188,10 @@ fn inflate_streaming_all(
   let decoded : Array[Byte] = []
   let mut input_pos = 0
   for ;; {
-    let status = inflater.step_into(input[input_pos:], scratch)
-    let consumed = inflater.last_consumed()
-    let produced = inflater.last_produced()
+    let status_result = inflater.step_into(input[input_pos:], scratch)
+    let status = status_result.status
+    let consumed = status_result.consumed
+    let produced = status_result.produced
     input_pos = input_pos + consumed
     guard !cancelled() else {
       raise InflateError(Cancelled, "cancelled by caller")
@@ -1283,9 +1285,10 @@ fn inflate_drive(
   let mut total = 0
   let mut input_pos = 0
   for ;; {
-    let status = inflater.finish_into(input[input_pos:], scratch)
-    let consumed = inflater.last_consumed()
-    let produced = inflater.last_produced()
+    let status_result = inflater.finish_into(input[input_pos:], scratch)
+    let status = status_result.status
+    let consumed = status_result.consumed
+    let produced = status_result.produced
     input_pos = input_pos + consumed
     total = checked_decode_output_length(total, produced)
     guard !cancelled() else {

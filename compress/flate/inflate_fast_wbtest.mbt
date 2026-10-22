@@ -31,7 +31,7 @@ fn fast_stream_run(
   let mut position = 0
   for ;; {
     let end = (position + chunk).min(input.length())
-    let status = try {
+    let status_result = try {
       if fixed {
         if end == input.length() {
           inflater.finish_into(input[position:end], output)
@@ -46,8 +46,9 @@ fn fast_stream_run(
     } catch {
       InflateError(kind, _) => return Err(kind)
     }
-    position += inflater.last_consumed()
-    decoded.write_bytes(Bytes::from_array(output[:inflater.last_produced()]))
+    let status = status_result.status
+    position += status_result.consumed
+    decoded.write_bytes(Bytes::from_array(output[:status_result.produced]))
     if status is Done {
       return Ok((decoded.to_bytes(), position))
     }
@@ -112,9 +113,13 @@ fn assert_calls_agree(
     let view = input[position:end]
     let last = end == input.length()
     let mut verdict : InflateErrorKind? = None
-    let mut status : Status = Done
+    let mut whole_result : StepResult = {
+      status: Done,
+      consumed: 0,
+      produced: 0,
+    }
     try {
-      status = if fixed {
+      whole_result = if fixed {
         if last {
           whole.finish_into(view, output)
         } else {
@@ -134,7 +139,7 @@ fn assert_calls_agree(
     let mut expected : Status = NeedMoreOutput
     for ;; {
       let piece = (room - produced).min(257)
-      let step = try {
+      let step_result = try {
         if last {
           pieces.finish(
             view[consumed:],
@@ -152,8 +157,9 @@ fn assert_calls_agree(
           break
         }
       }
-      consumed = consumed + pieces.last_consumed()
-      produced = produced + pieces.last_produced()
+      let step = step_result.status
+      consumed = consumed + step_result.consumed
+      produced = produced + step_result.produced
       expected = step
       guard step is NeedMoreOutput && produced < room else { break }
     }
@@ -161,9 +167,10 @@ fn assert_calls_agree(
     if verdict is Some(kind) {
       return Err(kind)
     }
+    let status = whole_result.status
     @test.assert_eq(status, expected)
-    @test.assert_eq(whole.last_consumed(), consumed)
-    @test.assert_eq(whole.last_produced(), produced)
+    @test.assert_eq(whole_result.consumed, consumed)
+    @test.assert_eq(whole_result.produced, produced)
     for i in 0..<produced {
       guard output[i] == reference[i] else {
         @test.fail("byte \{i} of a call differs")
@@ -319,15 +326,17 @@ test "fast loop marks the window full by what a call wrote" {
   let inflater = Inflater()
   inflater.wpos = -30000
   let output = FixedArray::make(40000, b'\x00')
-  let first = inflater.finish_into(stream, output)
+  let first_result = inflater.finish_into(stream, output)
+  let first = first_result.status
   assert_true(first is NeedMoreOutput)
-  @test.assert_eq(inflater.last_produced(), 40000)
+  @test.assert_eq(first_result.produced, 40000)
   @test.assert_eq(inflater.wpos, 10000)
   assert_true(inflater.filled)
-  let rest = stream[inflater.last_consumed():]
-  let second = inflater.finish_into(rest, output)
+  let rest = stream[first_result.consumed:]
+  let second_result = inflater.finish_into(rest, output)
+  let second = second_result.status
   assert_true(second is Done)
-  @test.assert_eq(inflater.last_produced(), 3)
+  @test.assert_eq(second_result.produced, 3)
   for i in 0..<3 {
     @test.assert_eq(output[i], (0x41 + (20000 + i) % 26).to_byte())
   }

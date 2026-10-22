@@ -33,7 +33,7 @@ fn consumed_streams() -> Array[(Bytes, Bytes)] {
 }
 
 ///|
-test "Decompressor::last_consumed is the length of the stream" {
+test "Decompressor returns both byte counts and preserves trailing input" {
   let decoder = @flate.Decompressor()
   @test.assert_eq(decoder.last_consumed(), 0)
   for (raw, plain) in consumed_streams() {
@@ -43,10 +43,9 @@ test "Decompressor::last_consumed is the length of the stream" {
         let input = around[3:3 + raw.length() + extra]
         for slack in [0, 300] {
           let output = FixedArray::make(plain.length() + slack, b'\xA5')
-          @test.assert_eq(
-            decoder.decompress_into(input, output),
-            plain.length(),
-          )
+          let result = decoder.decompress_into(input, output)
+          @test.assert_eq(result.produced, plain.length())
+          @test.assert_eq(result.consumed, raw.length())
           @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
           @test.assert_eq(decoder.last_consumed(), raw.length())
           for i in plain.length()..<output.length() {
@@ -83,7 +82,10 @@ test "Decompressor::last_consumed follows every call of one decompressor" {
       })
       @test.assert_eq(kind, expected)
       @test.assert_eq(decoder.last_consumed(), 0)
-      @test.assert_eq(decoder.decompress_into(raw, output), plain.length())
+      @test.assert_eq(
+        decoder.decompress_into(raw, output).produced,
+        plain.length(),
+      )
       @test.assert_eq(Bytes::from_array(output), plain)
       @test.assert_eq(decoder.last_consumed(), raw.length())
     }
@@ -114,7 +116,7 @@ test "Decompressor::last_consumed is zero after a call that raises" {
   let raw = b"\x4A\x04\x04\x02\x00\xFD\xFF\x62\x63"
   let behind = raw + raw
   for cut in 0..<raw.length() {
-    @test.assert_eq(decoder.decompress_into(behind, output), 3)
+    @test.assert_eq(decoder.decompress_into(behind, output).produced, 3)
     @test.assert_eq(Bytes::from_array(output[:3]), b"abc")
     @test.assert_eq(decoder.last_consumed(), raw.length())
     let InflateError(kind, _) = @test.expect_error(() => {
@@ -141,7 +143,10 @@ test "decompress and decompress_into take turns on one decompressor" {
     }
     @test.assert_eq(decoder.decompress(raw), plain)
     let output = FixedArray::make(plain.length(), b'\x00')
-    @test.assert_eq(decoder.decompress_into(raw, output), plain.length())
+    @test.assert_eq(
+      decoder.decompress_into(raw, output).produced,
+      plain.length(),
+    )
     @test.assert_eq(Bytes::from_array(output), plain)
     @test.assert_eq(decoder.last_consumed(), raw.length())
   }

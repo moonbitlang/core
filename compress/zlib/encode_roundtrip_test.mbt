@@ -47,14 +47,15 @@ fn roundtrip_zlib_drive(
   let out = FixedArray::make(out_chunk, b'\x00')
   let result = Buffer()
   for pos = 0 {
-    let status = encoder.step(input[pos:], out.mut_view(), action=Finish)
-    for i in 0..<encoder.last_produced() {
+    let status_result = encoder.step(input[pos:], out.mut_view(), action=Finish)
+    let status = status_result.status
+    for i in 0..<status_result.produced {
       result.write_byte(out[i])
     }
     if status is Done {
       break result.to_bytes()
     }
-    continue pos + encoder.last_consumed()
+    continue pos + status_result.consumed
   }
 }
 

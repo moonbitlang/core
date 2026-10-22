@@ -32,22 +32,22 @@ test "inflate_all rejects malformed block structure with the correct category" {
 ///|
 test "streaming Inflater rejects a reserved block immediately" {
   let inflater = @flate.Inflater()
-  @test.assert_eq(inflater.last_consumed(), 0)
-  @test.assert_eq(inflater.last_produced(), 0)
+
   let output = FixedArray::make(1, b'\x00')
   // A complete non-final stored block leaves the decoder waiting for another
-  // block and gives the counters non-zero values to clear on the next call.
+  // block and returns progress that remains valid even if the next call fails.
   let prefix : Bytes = [0x00, 0x01, 0x00, 0xFE, 0xFF, 0x41]
-  let prefix_status = inflater.step(prefix, output.mut_view())
+  let prefix_status_result = inflater.step(prefix, output.mut_view())
+  let prefix_status = prefix_status_result.status
   assert_true(prefix_status is NeedMoreInput)
-  @test.assert_eq(inflater.last_consumed(), prefix.length())
-  @test.assert_eq(inflater.last_produced(), 1)
+  @test.assert_eq(prefix_status_result.consumed, prefix.length())
+  @test.assert_eq(prefix_status_result.produced, 1)
   let InflateError(kind, _) = @test.expect_error(() => {
     inflater.step(([0x07] : Bytes), output.mut_view())
   })
   @test.assert_eq(kind, Corrupt)
-  @test.assert_eq(inflater.last_consumed(), 0)
-  @test.assert_eq(inflater.last_produced(), 0)
+  @test.assert_eq(prefix_status_result.consumed, prefix.length())
+  @test.assert_eq(prefix_status_result.produced, 1)
 }
 
 ///|
@@ -61,13 +61,13 @@ test "streaming Inflater turns EOF into a stable truncation error" {
     @test.assert_eq(kind, Truncated)
   }
   inflater.reset()
-  @test.assert_eq(inflater.last_consumed(), 0)
-  @test.assert_eq(inflater.last_produced(), 0)
+
   let source = b"reset clears the terminal error"
   let compressed = @flate.deflate_all(source)
-  let status = inflater.finish(compressed, output.mut_view())
-  let consumed = inflater.last_consumed()
-  let produced = inflater.last_produced()
+  let status_result = inflater.finish(compressed, output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, compressed.length())
   @test.assert_eq(produced, source.length())

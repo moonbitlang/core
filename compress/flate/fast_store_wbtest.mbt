@@ -113,9 +113,14 @@ fn append_fast_store_stream(
   let output = FixedArray::make(7, b'\x00')
   let mut consumed = 0
   for ;; {
-    let status = encoder.step(input[consumed:], output.mut_view(), action~)
-    let accepted = encoder.last_consumed()
-    let written = encoder.last_produced()
+    let status_result = encoder.step(
+      input[consumed:],
+      output.mut_view(),
+      action~,
+    )
+    let status = status_result.status
+    let accepted = status_result.consumed
+    let written = status_result.produced
     consumed += accepted
     for i in 0..<written {
       result.push(output[i])

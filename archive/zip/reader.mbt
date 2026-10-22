@@ -168,11 +168,11 @@ fn inflate_entry(
   // For a total-output limit, max_output is the remaining allowance.
   let previous = (reported_limit - max_output).to_uint64()
   let size = for position = 0, total = 0UL {
-    let status = inflater.finish_into(compressed[position:], scratch) catch {
+    let result = inflater.finish_into(compressed[position:], scratch) catch {
       err => raise wrap_inflate_error(err)
     }
-    let position = position + inflater.last_consumed()
-    let total = total + inflater.last_produced().to_uint64()
+    let position = position + result.consumed
+    let total = total + result.produced.to_uint64()
     check_cancelled(cancelled)
     guard total <= max_output.to_uint64() else {
       raise ZipError(
@@ -180,7 +180,7 @@ fn inflate_entry(
         "zip: decompressed size limit exceeded",
       )
     }
-    guard status is Done else { continue position, total }
+    guard result.status is Done else { continue position, total }
     guard position == compressed.length() else {
       raise ZipError(
         InvalidDeflate,

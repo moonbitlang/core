@@ -187,11 +187,12 @@ fn roundtrip_stream(
     } else {
       Continue
     }
-    let status = deflater.step(input[pos:end], out.mut_view(), action~)
-    for i in 0..<deflater.last_produced() {
+    let status_result = deflater.step(input[pos:end], out.mut_view(), action~)
+    let status = status_result.status
+    for i in 0..<status_result.produced {
       result.write_byte(out[i])
     }
-    pos += deflater.last_consumed()
+    pos += status_result.consumed
     if status is Done {
       break
     }
@@ -210,9 +211,10 @@ fn assert_decodes(
   let decoded = Buffer()
   let mut pos = 0
   for ;; {
-    let status = decoder.finish_into(compressed[pos:], output)
-    pos += decoder.last_consumed()
-    for i in 0..<decoder.last_produced() {
+    let status_result = decoder.finish_into(compressed[pos:], output)
+    let status = status_result.status
+    pos += status_result.consumed
+    for i in 0..<status_result.produced {
       decoded.write_byte(output[i])
     }
     if status is Done {
@@ -326,11 +328,16 @@ test "deflate round trips: randomized streaming schedules with reuse" {
           },
           b'\x00',
         )
-        let status = deflater.step(input[pos:end], out.mut_view(), action~)
-        for i in 0..<deflater.last_produced() {
+        let status_result = deflater.step(
+          input[pos:end],
+          out.mut_view(),
+          action~,
+        )
+        let status = status_result.status
+        for i in 0..<status_result.produced {
           compressed.write_byte(out[i])
         }
-        pos += deflater.last_consumed()
+        pos += status_result.consumed
         if status is Done {
           break
         }

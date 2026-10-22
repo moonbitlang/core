@@ -216,9 +216,10 @@ test "stored header truncation stages streaming input" {
   @test.assert_eq(kind, Truncated)
   let inflater = Inflater()
   let output = FixedArray::make(1, b'\x00')
-  let status = inflater.step(truncated, output.mut_view())
-  let consumed = inflater.last_consumed()
-  let produced = inflater.last_produced()
+  let status_result = inflater.step(truncated, output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is NeedMoreInput)
   @test.assert_eq(consumed, 1)
   @test.assert_eq(produced, 0)
@@ -259,9 +260,10 @@ test "fixed-symbol truncation suspends only the streaming inflater" {
   @test.assert_eq(kind, Truncated)
   let inflater = Inflater()
   let output = FixedArray::make(1, b'\x00')
-  let status = inflater.step(truncated, output.mut_view())
-  let consumed = inflater.last_consumed()
-  let produced = inflater.last_produced()
+  let status_result = inflater.step(truncated, output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is NeedMoreInput)
   @test.assert_eq(consumed, 1)
   @test.assert_eq(produced, 0)

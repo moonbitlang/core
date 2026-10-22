@@ -60,16 +60,17 @@ test "README caller-buffer DEFLATE" {
   let compressed = Bytes::from_array(compressed_buffer[:compressed_len])
   let decompressor = @flate.Decompressor()
   let output = FixedArray::make(source.length(), b'\x00')
-  let decoded_len = decompressor.decompress_into(compressed, output)
-  @test.assert_eq(Bytes::from_array(output[:decoded_len]), source)
+  let decoded = decompressor.decompress_into(compressed, output)
+  @test.assert_eq(decoded.consumed, compressed.length())
+  @test.assert_eq(Bytes::from_array(output[:decoded.produced]), source)
 }
 ```
 
 `deflate_into` and `inflate_into` are single-use convenience forms of those
 methods. Like `inflate_all`, `inflate_into` ignores trailing bytes after a valid
-final DEFLATE block; after `Decompressor::decompress_into`,
-`Decompressor::last_consumed()` is the number of input bytes the stream took, so
-a caller can find a trailer that follows it. Use the streaming APIs when input
+final DEFLATE block. `Decompressor::decompress_into` returns a `#valtype`
+`DecompressResult` with both `consumed` and `produced`, so a caller can find a
+trailer that follows the stream. `inflate_into` returns only the produced count. Use the streaming APIs when input
 or output must suspend under backpressure.
 
 `Compressor::compress(input)` returns independent `Bytes` and reuses its
@@ -109,19 +110,19 @@ test "README streaming Deflater" {
   let mut first = true
   for ;; {
     let input = if first { source[:] } else { b"" }
-    let status = encoder.step(
+    let result = encoder.step(
       input,
       chunk.mut_view(),
       action=if first { Finish } else { Continue },
     )
-    let consumed = encoder.last_consumed()
-    let produced = encoder.last_produced()
+    let consumed = result.consumed
+    let produced = result.produced
     @test.assert_eq(consumed, if first { source.length() } else { 0 })
     first = false
     for i in 0..<produced {
       compressed.write_byte(chunk[i])
     }
-    if status is Done {
+    if result.status is Done {
       break
     }
   }
@@ -131,11 +132,13 @@ test "README streaming Deflater" {
 
 ### State-machine contract
 
-- `step` returns the state-machine `Status`; `last_consumed()` and
-  `last_produced()` describe exactly the prefixes accepted and written by that
-  call. Drop only `input[:consumed]`; large input views may be
-  partially consumed when output is backpressured, keeping internal memory
-  bounded.
+- `step`, `finish`, and their fixed-array variants return a `#valtype`
+  `StepResult` containing `status`, `consumed`, and `produced`. The counts
+  describe exactly the prefixes accepted and written by that call. Drop only
+  `input[:result.consumed]`; large input views may be partially consumed when
+  output is backpressured, keeping internal memory bounded. Later calls and
+  resets do not change an earlier result. A failing call returns no result,
+  and its output buffer may already contain partial output.
 - `NeedMoreOutput` preserves all pending work. Resume with another non-empty
   output view; one byte is sufficient.
 - `Inflater` owns the bounded tail of an incomplete atomic unit. On
@@ -154,7 +157,7 @@ test "README streaming Deflater" {
   `FixedArray[Byte]` and checksum decoded output in batches. Use it when the caller owns a fixed
   output buffer; `step` accepts arbitrary mutable views. Both drain pending
   body input before accepting more, so output can be produced while
-  `last_consumed()` is zero. Re-present the unaccepted input on the next call.
+  `result.consumed` is zero. Re-present the unaccepted input on the next call.
 - Call `Inflater::finish(input, output)` or a container decoder's `finish`
   with the final input chunk; pass empty input if all input has already been
   supplied. `finish_into` accepts a complete fixed output array. If output

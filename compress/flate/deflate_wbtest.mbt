@@ -23,9 +23,10 @@ test "Deflater pending stays bounded after a large feed" {
     arr.push((i % 251).to_byte())
   }
   let src = Bytes::from_array(arr)
-  let first_status = d.step(src, no_output.mut_view())
-  let first_consumed = d.last_consumed()
-  let first_produced = d.last_produced()
+  let first_status_result = d.step(src, no_output.mut_view())
+  let first_status = first_status_result.status
+  let first_consumed = first_status_result.consumed
+  let first_produced = first_status_result.produced
   assert_true(first_status is NeedMoreOutput)
   assert_true(first_consumed > 0)
   assert_true(first_consumed < src.length())
@@ -36,8 +37,9 @@ test "Deflater pending stays bounded after a large feed" {
   let buf = FixedArray::make(65536, b'\x00')
   let mut pos = first_consumed
   for ;; {
-    let status = d.step(src[pos:], buf.mut_view())
-    let consumed = d.last_consumed()
+    let status_result = d.step(src[pos:], buf.mut_view())
+    let status = status_result.status
+    let consumed = status_result.consumed
     pos = pos + consumed
     assert_true(d.pending_bytes() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD)
     assert_true(d.w.out.length() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD + 16)
@@ -55,9 +57,14 @@ test "Deflater latches end before a completed view is backpressured" {
   )
   let deflater = Deflater(level=0)
   let no_output = FixedArray::make(0, b'\x00')
-  let first_status = deflater.step(source, no_output.mut_view(), action=Finish)
-  let consumed = deflater.last_consumed()
-  let produced = deflater.last_produced()
+  let first_status_result = deflater.step(
+    source,
+    no_output.mut_view(),
+    action=Finish,
+  )
+  let first_status = first_status_result.status
+  let consumed = first_status_result.consumed
+  let produced = first_status_result.produced
   assert_true(first_status is NeedMoreOutput)
   @test.assert_eq(consumed, source.length())
   @test.assert_eq(produced, 0)
@@ -66,9 +73,10 @@ test "Deflater latches end before a completed view is backpressured" {
   let output = FixedArray::make(257, b'\x00')
   for ;; {
     // The original one-shot end request must suffice while draining.
-    let status = deflater.step(b"", output.mut_view())
-    let later_consumed = deflater.last_consumed()
-    let n = deflater.last_produced()
+    let status_result = deflater.step(b"", output.mut_view())
+    let status = status_result.status
+    let later_consumed = status_result.consumed
+    let n = status_result.produced
     @test.assert_eq(later_consumed, 0)
     for i in 0..<n {
       compressed.write_byte(output[i])
@@ -87,9 +95,12 @@ test "Deflater reset clears queued flush and end requests" {
   let no_output = FixedArray::make(0, b'\x00')
   for action in [SyncFlush, Finish] {
     let deflater = Deflater(level=0)
-    @test.assert_eq(deflater.step(source, no_output.mut_view()), NeedMoreOutput)
     @test.assert_eq(
-      deflater.step(b"", no_output.mut_view(), action~),
+      deflater.step(source, no_output.mut_view()).status,
+      NeedMoreOutput,
+    )
+    @test.assert_eq(
+      deflater.step(b"", no_output.mut_view(), action~).status,
       NeedMoreOutput,
     )
     assert_true(
@@ -101,15 +112,16 @@ test "Deflater reset clears queued flush and end requests" {
     )
     deflater.reset()
     let output = FixedArray::make(64, b'\xA5')
-    let status = deflater.step(
+    let status_result = deflater.step(
       b"fresh stream",
       output.mut_view(),
       action=Finish,
     )
+    let status = status_result.status
     @test.assert_eq(status, Done)
-    @test.assert_eq(deflater.last_consumed(), 12)
+    @test.assert_eq(status_result.consumed, 12)
     @test.assert_eq(
-      inflate_all(Bytes::from_array(output[:deflater.last_produced()])),
+      inflate_all(Bytes::from_array(output[:status_result.produced])),
       b"fresh stream",
     )
   }

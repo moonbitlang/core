@@ -67,9 +67,10 @@ test "coverage: one-shot zlib body and trailer errors" {
 test "coverage: streaming zlib header and FDICT errors" {
   let output = FixedArray::make(1, b'\x00')
   let short = @zlib.Decoder()
-  let short_status = short.step(b"\x78", output.mut_view())
-  let short_consumed = short.last_consumed()
-  let short_produced = short.last_produced()
+  let short_status_result = short.step(b"\x78", output.mut_view())
+  let short_status = short_status_result.status
+  let short_consumed = short_status_result.consumed
+  let short_produced = short_status_result.produced
   assert_true(short_status is NeedMoreInput)
   @test.assert_eq(short_consumed, 1)
   @test.assert_eq(short_produced, 0)
@@ -80,15 +81,17 @@ test "coverage: streaming zlib header and FDICT errors" {
   // CMF/FLG 0x7820 announces FDICT. Adler-32(b"") is 1, so the first
   // decoder can validate the split DICTID once all four bytes arrive.
   let split = @zlib.Decoder(dictionary=b"")
-  let header_status = split.step(b"\x78\x20", output.mut_view())
-  let header_consumed = split.last_consumed()
-  let header_produced = split.last_produced()
+  let header_status_result = split.step(b"\x78\x20", output.mut_view())
+  let header_status = header_status_result.status
+  let header_consumed = header_status_result.consumed
+  let header_produced = header_status_result.produced
   assert_true(header_status is NeedMoreInput)
   @test.assert_eq(header_consumed, 2)
   @test.assert_eq(header_produced, 0)
-  let dict_status = split.step(b"\x00\x00\x00\x01", output.mut_view())
-  let dict_consumed = split.last_consumed()
-  let dict_produced = split.last_produced()
+  let dict_status_result = split.step(b"\x00\x00\x00\x01", output.mut_view())
+  let dict_status = dict_status_result.status
+  let dict_consumed = dict_status_result.consumed
+  let dict_produced = dict_status_result.produced
   assert_true(dict_status is NeedMoreInput)
   @test.assert_eq(dict_consumed, 4)
   @test.assert_eq(dict_produced, 0)
@@ -108,9 +111,13 @@ test "coverage: streaming zlib header and FDICT errors" {
 test "coverage: streaming truncated DEFLATE and output backpressure" {
   let output = FixedArray::make(1, b'\x00')
   let truncated = @zlib.Decoder()
-  let truncated_status = truncated.step(b"\x78\x01\x03", output.mut_view())
-  let truncated_consumed = truncated.last_consumed()
-  let truncated_produced = truncated.last_produced()
+  let truncated_status_result = truncated.step(
+    b"\x78\x01\x03",
+    output.mut_view(),
+  )
+  let truncated_status = truncated_status_result.status
+  let truncated_consumed = truncated_status_result.consumed
+  let truncated_produced = truncated_status_result.produced
   assert_true(truncated_status is NeedMoreInput)
   @test.assert_eq(truncated_consumed, 3)
   @test.assert_eq(truncated_produced, 0)
@@ -119,17 +126,19 @@ test "coverage: streaming truncated DEFLATE and output backpressure" {
   let encoded = @zlib.compress(source)
   let decoder = @zlib.Decoder()
   let no_output = FixedArray::make(0, b'\x00')
-  let blocked_status = decoder.step(encoded, no_output.mut_view())
-  let blocked_consumed = decoder.last_consumed()
-  let blocked_produced = decoder.last_produced()
+  let blocked_status_result = decoder.step(encoded, no_output.mut_view())
+  let blocked_status = blocked_status_result.status
+  let blocked_consumed = blocked_status_result.consumed
+  let blocked_produced = blocked_status_result.produced
   assert_true(blocked_status is NeedMoreOutput)
   @test.assert_eq(blocked_consumed, encoded.length())
   @test.assert_eq(blocked_produced, 0)
   let decoded = @buffer.Buffer()
   for _ in 0..<4096 {
-    let status = decoder.step(b"", output.mut_view())
-    let consumed = decoder.last_consumed()
-    let produced = decoder.last_produced()
+    let status_result = decoder.step(b"", output.mut_view())
+    let status = status_result.status
+    let consumed = status_result.consumed
+    let produced = status_result.produced
     @test.assert_eq(consumed, 0)
     assert_true(produced >= 0 && produced <= 1)
     if produced == 1 {
@@ -154,9 +163,10 @@ test "coverage: streaming Adler mismatch after backpressure" {
   let ZlibError(kind, _) = @test.expect_error(() => {
     for _ in 0..<4096 {
       let chunk = if first { input[:] } else { b"" }
-      let status = decoder.step(chunk, output.mut_view())
-      let consumed = decoder.last_consumed()
-      let produced = decoder.last_produced()
+      let status_result = decoder.step(chunk, output.mut_view())
+      let status = status_result.status
+      let consumed = status_result.consumed
+      let produced = status_result.produced
       if consumed != chunk.length() {
         abort("streaming decoder reported an invalid consumed count")
       }

@@ -21,22 +21,18 @@ pub suberror ZlibError {
 // Types and methods
 type Decoder
 pub fn Decoder::Decoder(dictionary? : BytesView) -> Self
-pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.Status raise ZlibError
-pub fn Decoder::finish_into(Self, BytesView, FixedArray[Byte]) -> @flate.Status raise ZlibError
+pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
+pub fn Decoder::finish_into(Self, BytesView, FixedArray[Byte]) -> @flate.StepResult raise ZlibError
 pub fn Decoder::is_finished(Self) -> Bool
-pub fn Decoder::last_consumed(Self) -> Int32
-pub fn Decoder::last_produced(Self) -> Int32
-pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.Status raise ZlibError
-pub fn Decoder::step_into(Self, BytesView, FixedArray[Byte]) -> @flate.Status raise ZlibError
+pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
+pub fn Decoder::step_into(Self, BytesView, FixedArray[Byte]) -> @flate.StepResult raise ZlibError
 pub fn Decoder::unused_input(Self) -> Bytes
 
 type Encoder
 pub fn Encoder::Encoder(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
 pub fn Encoder::is_finished(Self) -> Bool
-pub fn Encoder::last_consumed(Self) -> Int32
-pub fn Encoder::last_produced(Self) -> Int32
 pub fn Encoder::reset(Self, dictionary? : BytesView) -> Unit
-pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.Status
+pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
 
 pub(all) enum ZlibErrorKind {
   Truncated

@@ -57,8 +57,6 @@ struct Deflater {
   mut flush_done : Bool // the current buffered content has been sync-flushed
   mut flush_requested : Bool // sticky until the requested flush is emitted
   mut end_requested : Bool // sticky until reset; no later input is accepted
-  mut step_consumed : Int32 // input accepted by the latest successful step
-  mut step_produced : Int32 // output written by the latest successful step
   fast_store : Bool
   level : Int32 // compression level 0-9 (0 = stored only)
   cfg : LevelConfig // match-search tuning for `level`
@@ -93,8 +91,6 @@ pub fn Deflater::Deflater(
     flush_done: false,
     flush_requested: false,
     end_requested: false,
-    step_consumed: 0,
-    step_produced: 0,
     level: lv,
     fast_store,
     cfg: level_configs[lv],
@@ -144,8 +140,6 @@ pub fn Deflater::reset(self : Deflater, dictionary? : BytesView) -> Unit {
   self.flush_done = false
   self.flush_requested = false
   self.end_requested = false
-  self.step_consumed = 0
-  self.step_produced = 0
   if dictionary is Some(dict) {
     self.preload_dictionary(dict)
   }
@@ -155,33 +149,6 @@ pub fn Deflater::reset(self : Deflater, dictionary? : BytesView) -> Unit {
 /// Whether the final compressed stream has been fully emitted.
 pub fn Deflater::is_finished(self : Deflater) -> Bool {
   self.done
-}
-
-///|
-/// Number of input bytes accepted by the latest `step` call. This is zero
-/// initially, after `reset`, and for the stable `Done` state.
-pub fn Deflater::last_consumed(self : Deflater) -> Int32 {
-  self.step_consumed
-}
-
-///|
-/// Number of output bytes written by the latest `step` call. This is zero
-/// initially, after `reset`, and for the stable `Done` state.
-pub fn Deflater::last_produced(self : Deflater) -> Int32 {
-  self.step_produced
-}
-
-///|
-/// Commit the counters for one normally returning public step.
-fn Deflater::finish_step(
-  self : Deflater,
-  status : Status,
-  consumed : Int32,
-  produced : Int32,
-) -> Status {
-  self.step_consumed = consumed
-  self.step_produced = produced
-  status
 }
 
 ///|
@@ -249,8 +216,8 @@ fn Deflater::accept_input(
 ///|
 /// Run one compression step. Accepts as much of `input` as fits in one bounded
 /// block window, emits blocks, and drains compressed bytes into `output`.
-/// Returns the status; read `last_consumed()` and `last_produced()` immediately
-/// afterwards for this call's counts. Drop only `input[:last_consumed()]` and
+/// Returns `StepResult` with the status and this call's consumed/produced
+/// counts. Drop only `input[:result.consumed]` and
 /// re-present the suffix. With a small output buffer a large input may be
 /// consumed only partially, which propagates output backpressure instead of
 /// growing internal memory with the caller's input size. Once a final block has
@@ -274,13 +241,11 @@ pub fn Deflater::step(
   input : BytesView,
   output : MutArrayView[Byte],
   action~ : DeflateAction = Continue,
-) -> Status {
-  self.step_consumed = 0
-  self.step_produced = 0
+) -> StepResult {
   // Completion is a stable terminal state. In particular, input presented by
   // a generic driver after it observes EOF remains unconsumed instead of
   // disappearing into a stream that can no longer encode it.
-  guard !self.done else { return self.finish_step(Done, 0, 0) }
+  guard !self.done else { return { status: Done, consumed: 0, produced: 0, } }
   // An empty view is already fully accepted, so its control request can be
   // latched even while older compressed output is still backpressured.
   if input.length() == 0 && !self.end_requested && !self.emitted_final {
@@ -295,7 +260,7 @@ pub fn Deflater::step(
     // Drain compressed bytes already produced into the caller's buffer.
     write_pos = self.drain_output(output, write_pos, out_end)
     guard self.out_pos >= self.w.out.length() else {
-      return self.finish_step(NeedMoreOutput, consumed, write_pos)
+      return { status: NeedMoreOutput, consumed, produced: write_pos, }
     }
     // The current block buffer is fully drained; reclaim it.
     if self.w.out.length() > 0 {
@@ -304,7 +269,7 @@ pub fn Deflater::step(
     }
     guard !self.emitted_final else {
       self.done = true
-      return self.finish_step(Done, consumed, write_pos)
+      return { status: Done, consumed, produced: write_pos, }
     }
     // Produce already-requested control blocks before accepting later input.
     guard !self.end_requested else {
@@ -327,7 +292,7 @@ pub fn Deflater::step(
       continue
     }
     guard consumed < input_end else {
-      return self.finish_step(NeedMoreInput, consumed, write_pos)
+      return { status: NeedMoreInput, consumed, produced: write_pos, }
     }
     consumed = self.accept_input(
       input,

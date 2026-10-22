@@ -25,13 +25,14 @@ test "preset dictionaries retain exactly the final 32 KiB" {
   let message = Bytes::from_array(message_bytes)
   let deflater = @flate.Deflater(dictionary~)
   let compressed_buffer = FixedArray::make(4096, b'\x00')
-  let deflate_status = deflater.step(
+  let deflate_status_result = deflater.step(
     message,
     compressed_buffer.mut_view(),
     action=Finish,
   )
-  let consumed = deflater.last_consumed()
-  let compressed_size = deflater.last_produced()
+  let deflate_status = deflate_status_result.status
+  let consumed = deflate_status_result.consumed
+  let compressed_size = deflate_status_result.produced
   assert_true(deflate_status is Done)
   @test.assert_eq(consumed, message.length())
   // A correct final-32-KiB dictionary turns the 512-byte suffix into a match.
@@ -42,11 +43,12 @@ test "preset dictionaries retain exactly the final 32 KiB" {
   }
   let inflater = @flate.Inflater(dictionary~)
   let output = FixedArray::make(1024, b'\x00')
-  let inflate_status = inflater.step(
+  let inflate_status_result = inflater.step(
     Bytes::from_array(compressed),
     output.mut_view(),
   )
-  let produced = inflater.last_produced()
+  let inflate_status = inflate_status_result.status
+  let produced = inflate_status_result.produced
   assert_true(inflate_status is Done)
   @test.assert_eq(produced, message.length())
   for i in 0..<produced {
@@ -55,13 +57,14 @@ test "preset dictionaries retain exactly the final 32 KiB" {
   // `reset(dictionary=...)` is the allocation-reusing configuration path; it
   // must preload the same final 32 KiB as construction does.
   deflater.reset(dictionary~)
-  let reset_status = deflater.step(
+  let reset_status_result = deflater.step(
     message,
     compressed_buffer.mut_view(),
     action=Finish,
   )
-  let reset_consumed = deflater.last_consumed()
-  let reset_size = deflater.last_produced()
+  let reset_status = reset_status_result.status
+  let reset_consumed = reset_status_result.consumed
+  let reset_size = reset_status_result.produced
   assert_true(reset_status is Done)
   @test.assert_eq(reset_consumed, message.length())
   @test.assert_eq(reset_size, compressed_size)

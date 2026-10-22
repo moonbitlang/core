@@ -80,7 +80,9 @@ test "caller-buffer codecs match one-shot streams and reuse workspace" {
       @test.assert_eq(compressed, @flate.deflate_all(source, level~))
 
       let decoded_buffer = FixedArray::make(source.length(), b'\x00')
-      let decoded_len = decompressor.decompress_into(compressed, decoded_buffer)
+      let decoded = decompressor.decompress_into(compressed, decoded_buffer)
+      let decoded_len = decoded.produced
+      @test.assert_eq(decoded.consumed, compressed.length())
       @test.assert_eq(decoded_len, source.length())
       @test.assert_eq(direct_bytes(decoded_buffer, decoded_len), source)
     }

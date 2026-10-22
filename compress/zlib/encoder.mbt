@@ -43,8 +43,6 @@ struct Encoder {
   // Accepted stream control, latched until the inner deflater drains it.
   // Finish and sync-flush cannot both be pending.
   mut pending_action : @flate.DeflateAction
-  mut step_consumed : Int32
-  mut step_produced : Int32
 }
 
 ///|
@@ -71,8 +69,6 @@ pub fn Encoder::Encoder(
     stage: zlib_header(dictionary),
     stage_pos: 0,
     pending_action: Continue,
-    step_consumed: 0,
-    step_produced: 0,
   }
 }
 
@@ -109,28 +105,12 @@ pub fn Encoder::reset(self : Encoder, dictionary? : BytesView) -> Unit {
   self.stage = zlib_header(dictionary)
   self.stage_pos = 0
   self.pending_action = Continue
-  self.step_consumed = 0
-  self.step_produced = 0
 }
 
 ///|
 /// Whether the complete zlib stream has been emitted.
 pub fn Encoder::is_finished(self : Encoder) -> Bool {
   self.mode is Finished
-}
-
-///|
-/// Number of input bytes accepted by the most recent successful `step` call.
-/// It is zero before the first call and after a call that reports no progress.
-pub fn Encoder::last_consumed(self : Encoder) -> Int32 {
-  self.step_consumed
-}
-
-///|
-/// Number of output bytes written by the most recent successful `step` call.
-/// It is zero before the first call and after a call that reports no progress.
-pub fn Encoder::last_produced(self : Encoder) -> Int32 {
-  self.step_produced
 }
 
 ///|
@@ -144,22 +124,10 @@ fn Encoder::build_trailer(self : Encoder) -> FixedArray[Byte] {
 }
 
 ///|
-fn Encoder::finish_step(
-  self : Encoder,
-  status : @flate.Status,
-  consumed : Int32,
-  produced : Int32,
-) -> @flate.Status {
-  self.step_consumed = consumed
-  self.step_produced = produced
-  status
-}
-
-///|
 /// Run one compression step. Accepts a bounded prefix of `input`, folds only
-/// that prefix into Adler-32, then drains zlib output into `output`. Read the
-/// accepted and produced counts with `last_consumed()` and `last_produced()`,
-/// then drop only `input[:last_consumed()]`: a large view may be partially
+/// that prefix into Adler-32, then drains zlib output into `output`. Returns
+/// `StepResult` with this call's status, consumed and produced byte counts.
+/// Drop only `input[:result.consumed]`: a large view may be partially
 /// consumed under output backpressure. Re-present its suffix with the same
 /// `action`; once the complete view is accepted, `SyncFlush` or `Finish` remains
 /// sticky. Later input is left unconsumed while the finished stream is drained.
@@ -168,21 +136,18 @@ pub fn Encoder::step(
   input : BytesView,
   output : MutArrayView[Byte],
   action~ : @flate.DeflateAction = Continue,
-) -> @flate.Status {
-  self.step_consumed = 0
-  self.step_produced = 0
+) -> @flate.StepResult {
   // A terminal encoder must not claim or checksum input that cannot become
   // part of the already-finished stream.
   if self.mode is Finished {
-    return Done
+    return { status: Done, consumed: 0, produced: 0, }
   }
   let mut consumed = 0
   // A pending Finish leaves later input unconsumed: feed only while the inner
   // deflater still accepts.
   if !(self.pending_action is Finish) {
     let scratch = FixedArray::make(0, b'\x00').mut_view()
-    let _status = self.def.step(input, scratch, action~)
-    let accepted = self.def.last_consumed()
+    let accepted = self.def.step(input, scratch, action~).consumed
     consumed = accepted
     if accepted > 0 {
       self.adler.update(input[:accepted])
@@ -202,17 +167,18 @@ pub fn Encoder::step(
           self.stage_pos = self.stage_pos + 1
         }
         if self.stage_pos < self.stage.length() {
-          return self.finish_step(NeedMoreOutput, consumed, op)
+          return { status: NeedMoreOutput, consumed, produced: op, }
         }
         self.mode = if self.mode is Header { Body } else { Finished }
       }
       Body => {
-        let st = self.def.step(
+        let st_result = self.def.step(
           b"",
           output.mut_view(start=op),
           action=self.pending_action,
         )
-        let p = self.def.last_produced()
+        let st = st_result.status
+        let p = st_result.produced
         op = op + p
         if st is NeedMoreInput {
           // Deflater returns NeedMoreInput only after a requested sync flush
@@ -220,16 +186,16 @@ pub fn Encoder::step(
           if self.pending_action is SyncFlush {
             self.pending_action = Continue
           }
-          return self.finish_step(NeedMoreInput, consumed, op)
+          return { status: NeedMoreInput, consumed, produced: op, }
         }
         if st is NeedMoreOutput {
-          return self.finish_step(NeedMoreOutput, consumed, op)
+          return { status: NeedMoreOutput, consumed, produced: op, }
         }
         self.stage = self.build_trailer()
         self.stage_pos = 0
         self.mode = Trailer
       }
-      Finished => return self.finish_step(Done, consumed, op)
+      Finished => return { status: Done, consumed, produced: op, }
     }
   }
 }

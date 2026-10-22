@@ -395,7 +395,7 @@ fn EntryReader::read_payload(
 ) -> EntryStep raise ZipError {
   guard output.length() != 0 else { return NeedMoreOutput }
   if self.inflater is Some(inflater) {
-    let status = try {
+    let status_result = try {
       if self.requested == self.entry.compressed_size {
         inflater.finish_into(self.pending[self.pending_pos:], output)
       } else {
@@ -404,11 +404,8 @@ fn EntryReader::read_payload(
     } catch {
       error => raise wrap_inflate_error(error)
     }
-    self.record_output(
-      output,
-      inflater.last_produced(),
-      inflater.last_consumed(),
-    )
+    let status = status_result.status
+    self.record_output(output, status_result.produced, status_result.consumed)
     match status {
       Done => {
         guard self.consumed == self.entry.compressed_size else {

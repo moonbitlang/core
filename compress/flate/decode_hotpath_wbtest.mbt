@@ -37,7 +37,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
         @test.assert_eq(stopped[i], b'\xA5')
       }
       let output = FixedArray::make(9017, b'\xA5')
-      @test.assert_eq(decoder.decompress_into(input, output), 9000)
+      @test.assert_eq(decoder.decompress_into(input, output).produced, 9000)
       @test.assert_eq(calls, 2)
       for i in 0..<9000 {
         @test.assert_eq(output[i], source[i])
@@ -50,7 +50,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
         decoder.decompress_into(input, output, cancelled=() => {
           calls += 1
           false
-        }),
+        }).produced,
         9000,
       )
       @test.assert_eq(calls, 3)

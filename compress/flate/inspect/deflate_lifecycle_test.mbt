@@ -20,28 +20,31 @@ test "reset reuses engines across streams" {
   let s1 = b"first stream payload, first stream payload"
   let s2 = b"second stream: completely different bytes!!"
   let d = @flate.Deflater()
-  @test.assert_eq(d.last_consumed(), 0)
-  @test.assert_eq(d.last_produced(), 0)
+
   let obuf = FixedArray::make(4096, b'\x00')
-  let st1 = d.step(s1, obuf.mut_view(), action=Finish)
+  let st1_result = d.step(s1, obuf.mut_view(), action=Finish)
+  let st1 = st1_result.status
   assert_true(st1 is Done)
   d.reset()
-  @test.assert_eq(d.last_consumed(), 0)
-  @test.assert_eq(d.last_produced(), 0)
-  let st2 = d.step(s2, obuf.mut_view(), action=Finish)
-  let p2 = d.last_produced()
+
+  let st2_result = d.step(s2, obuf.mut_view(), action=Finish)
+  let st2 = st2_result.status
+  let p2 = st2_result.produced
   assert_true(st2 is Done)
+  // Earlier results remain valid after reset and another stream.
+  @test.assert_eq(st1_result.consumed, s1.length())
+  @test.assert_eq(st2_result.consumed, s2.length())
   let reused : Array[Byte] = []
   for i in 0..<p2 {
     reused.push(obuf[i])
   }
   @test.assert_eq(Bytes::from_array(reused), @flate.deflate_all(s2))
   let inf = @flate.Inflater()
-  @test.assert_eq(inf.last_consumed(), 0)
-  @test.assert_eq(inf.last_produced(), 0)
+
   let dbuf = FixedArray::make(4096, b'\x00')
-  let ist1 = inf.step(@flate.deflate_all(s1), dbuf.mut_view())
-  let ip1 = inf.last_produced()
+  let ist1_result = inf.step(@flate.deflate_all(s1), dbuf.mut_view())
+  let ist1 = ist1_result.status
+  let ip1 = ist1_result.produced
   assert_true(ist1 is Done)
   let got1 : Array[Byte] = []
   for i in 0..<ip1 {
@@ -49,19 +52,22 @@ test "reset reuses engines across streams" {
   }
   @test.assert_eq(Bytes::from_array(got1), s1)
   let sentinel = FixedArray::make(4, b'\xA5')
-  let done_status = inf.step(@flate.deflate_all(s2), sentinel.mut_view())
+  let done_status_result = inf.step(@flate.deflate_all(s2), sentinel.mut_view())
+  let done_status = done_status_result.status
   assert_true(done_status is Done)
-  @test.assert_eq(inf.last_consumed(), 0)
-  @test.assert_eq(inf.last_produced(), 0)
+  @test.assert_eq(done_status_result.consumed, 0)
+  @test.assert_eq(done_status_result.produced, 0)
   for byte in sentinel {
     @test.assert_eq(byte, b'\xA5')
   }
   inf.reset()
-  @test.assert_eq(inf.last_consumed(), 0)
-  @test.assert_eq(inf.last_produced(), 0)
-  let ist2 = inf.step(@flate.deflate_all(s2), dbuf.mut_view())
-  let ip2 = inf.last_produced()
+
+  let ist2_result = inf.step(@flate.deflate_all(s2), dbuf.mut_view())
+  let ist2 = ist2_result.status
+  let ip2 = ist2_result.produced
   assert_true(ist2 is Done)
+  @test.assert_eq(ist1_result.produced, s1.length())
+  @test.assert_eq(ist2_result.produced, s2.length())
   let got2 : Array[Byte] = []
   for i in 0..<ip2 {
     got2.push(dbuf[i])
@@ -78,8 +84,9 @@ test "preset dictionary: raw deflate round-trip" {
   let msg = b"the quick brown fox jumps over the lazy dog, again and again!"
   let d = @flate.Deflater(dictionary=dict)
   let obuf = FixedArray::make(4096, b'\x00')
-  let st = d.step(msg, obuf.mut_view(), action=Finish)
-  let p = d.last_produced()
+  let st_result = d.step(msg, obuf.mut_view(), action=Finish)
+  let st = st_result.status
+  let p = st_result.produced
   assert_true(st is Done)
   let comp : Array[Byte] = []
   for i in 0..<p {
@@ -91,8 +98,9 @@ test "preset dictionary: raw deflate round-trip" {
   // With the dictionary: decodes to the message.
   let inf = @flate.Inflater(dictionary=dict)
   let dbuf = FixedArray::make(4096, b'\x00')
-  let ist = inf.step(compressed, dbuf.mut_view())
-  let ip = inf.last_produced()
+  let ist_result = inf.step(compressed, dbuf.mut_view())
+  let ist = ist_result.status
+  let ip = ist_result.produced
   assert_true(ist is Done)
   let got : Array[Byte] = []
   for i in 0..<ip {

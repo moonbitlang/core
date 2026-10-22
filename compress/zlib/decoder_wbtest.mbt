@@ -27,8 +27,12 @@ test "zlib completion releases consumed input and caches read-ahead" {
   }
   let decoder = Decoder()
   let output = FixedArray::make(128, b'\x00')
-  let status = decoder.step(Bytes::from_array(combined), output.mut_view())
-  let consumed = decoder.last_consumed()
+  let status_result = decoder.step(
+    Bytes::from_array(combined),
+    output.mut_view(),
+  )
+  let status = status_result.status
+  let consumed = status_result.consumed
   assert_true(status is Done)
   @test.assert_eq(consumed, stream.length() + suffix.length())
   @test.assert_eq(decoder.pending.length(), 0)
@@ -48,15 +52,13 @@ test "zlib failed state freezes decoder cursors" {
   let ZlibError(first_kind, first_error) = @test.expect_error(() => {
     decoder.finish(malformed, output.mut_view())
   })
-  @test.assert_eq(decoder.last_consumed(), 0)
-  @test.assert_eq(decoder.last_produced(), 0)
+
   let pending_pos = decoder.pending_pos
   let pending_length = decoder.pending.length()
   let ZlibError(repeated_kind, repeated_error) = @test.expect_error(() => {
     decoder.step(b"must not be accepted", output.mut_view())
   })
-  @test.assert_eq(decoder.last_consumed(), 0)
-  @test.assert_eq(decoder.last_produced(), 0)
+
   assert_true(first_kind == InvalidDeflate)
   assert_true(repeated_kind == first_kind)
   @test.assert_eq(repeated_error, first_error)
@@ -105,7 +107,7 @@ test "zlib step_into and offset step views preserve the per-call contract" {
           } catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
-            status => Ok(status)
+            result => Ok((result.status, result.consumed, result.produced))
           }
           let other = try {
             if end == stream.length() {
@@ -116,11 +118,9 @@ test "zlib step_into and offset step views preserve the per-call contract" {
           } catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
-            status => Ok(status)
+            result => Ok((result.status, result.consumed, result.produced))
           }
           @test.assert_eq(status, other)
-          @test.assert_eq(fixed.last_consumed(), viewed.last_consumed())
-          @test.assert_eq(fixed.last_produced(), viewed.last_produced())
           @test.assert_eq(padded[2], b'\xA5')
           @test.assert_eq(padded[room + 3], b'\xA5')
           match status {
@@ -128,15 +128,14 @@ test "zlib step_into and offset step views preserve the per-call contract" {
               verdict = Some(kind)
               break
             }
-            Ok(status) => {
-              let count = fixed.last_produced()
+            Ok((status, consumed, count)) => {
               @test.assert_eq(output[:count], padded[3:3 + count])
               decoded.write_bytes(Bytes::from_array(output[:count]))
-              position += fixed.last_consumed()
+              position += consumed
               if status is Done {
                 break
               }
-              assert_true(fixed.last_consumed() > 0 || count > 0)
+              assert_true(consumed > 0 || count > 0)
             }
           }
         }

@@ -26,13 +26,14 @@ test "Inflater owns only a bounded atomic tail between non-overlapping chunks" {
   let mut pos = 0
   for ;; {
     let endi = if pos < compressed.length() { pos + 1 } else { pos }
-    let status = if endi == compressed.length() {
+    let status_result = if endi == compressed.length() {
       inflater.finish(compressed[pos:endi], output.mut_view())
     } else {
       inflater.step(compressed[pos:endi], output.mut_view())
     }
-    let consumed = inflater.last_consumed()
-    let produced = inflater.last_produced()
+    let status = status_result.status
+    let consumed = status_result.consumed
+    let produced = status_result.produced
     pos = pos + consumed
     if produced == 1 {
       decoded.write_byte(output[0])

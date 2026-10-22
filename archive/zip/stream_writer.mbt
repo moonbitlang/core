@@ -337,13 +337,14 @@ fn Writer::pump(
   if self.deflater is Some(deflater) {
     let mut consumed = 0
     for ;; {
-      let status = deflater.step(
+      let status_result = deflater.step(
         input[consumed:],
         self.scratch.mut_view(),
         action~,
       )
-      consumed += deflater.last_consumed()
-      let produced = deflater.last_produced()
+      let status = status_result.status
+      consumed += status_result.consumed
+      let produced = status_result.produced
       if produced > 0 {
         self.emit(Bytes::from_array(self.scratch[:produced]))
       }

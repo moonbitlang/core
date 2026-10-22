@@ -53,11 +53,12 @@ fn fixed_batch_streaming(input : BytesView) -> (Bytes, Int32, String) {
   let decoded = @buffer.Buffer()
   let mut used = 0
   for ;; {
-    let status = inflater.finish_into(input[used:], output) catch {
+    let status_result = inflater.finish_into(input[used:], output) catch {
       InflateError(kind, _) => return (b"", 0, @debug.to_string(kind))
     }
-    used += inflater.last_consumed()
-    decoded.write_bytes(Bytes::from_array(output[:inflater.last_produced()]))
+    let status = status_result.status
+    used += status_result.consumed
+    decoded.write_bytes(Bytes::from_array(output[:status_result.produced]))
     if status is Done {
       return (decoded.to_bytes(), used, "done")
     }

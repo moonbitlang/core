@@ -94,8 +94,6 @@ fn cov_expect_decoder_error(
     decoder.finish_into(input, output)
   })
   @test.assert_eq(kind, expected_kind)
-  @test.assert_eq(decoder.last_consumed(), 0)
-  @test.assert_eq(decoder.last_produced(), 0)
 }
 
 ///|
@@ -153,9 +151,10 @@ test "gzip coverage: streaming FEXTRA has buffered remainder" {
   let framed = cov_reheader(base, 4, b"\x01\x00\xAA")
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
-  let status = decoder.finish(framed, output.mut_view())
-  let consumed = decoder.last_consumed()
-  let produced = decoder.last_produced()
+  let status_result = decoder.finish(framed, output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, framed.length())
   @test.assert_eq(Bytes::from_array(output[0:produced].to_owned()), payload)
@@ -206,9 +205,10 @@ test "gzip coverage: subsequent member boundaries" {
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
   let combined = cov_join([first_member, partial_magic])
-  let status = decoder.finish(combined, output.mut_view())
-  let consumed = decoder.last_consumed()
-  let produced = decoder.last_produced()
+  let status_result = decoder.finish(combined, output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, combined.length())
   @test.assert_eq(Bytes::from_array(output[0:produced].to_owned()), payload)
@@ -221,18 +221,20 @@ test "gzip coverage: end after a clean member boundary" {
   let first_member = @gzip.compress(payload)
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
-  let first_status = decoder.step(first_member, output.mut_view())
-  let first_consumed = decoder.last_consumed()
-  let first_produced = decoder.last_produced()
+  let first_status_result = decoder.step(first_member, output.mut_view())
+  let first_status = first_status_result.status
+  let first_consumed = first_status_result.consumed
+  let first_produced = first_status_result.produced
   assert_true(first_status is NeedMoreInput)
   @test.assert_eq(first_consumed, first_member.length())
   @test.assert_eq(
     Bytes::from_array(output[0:first_produced].to_owned()),
     payload,
   )
-  let status = decoder.finish(b"", output.mut_view())
-  let consumed = decoder.last_consumed()
-  let produced = decoder.last_produced()
+  let status_result = decoder.finish(b"", output.mut_view())
+  let status = status_result.status
+  let consumed = status_result.consumed
+  let produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, 0)
   @test.assert_eq(produced, 0)

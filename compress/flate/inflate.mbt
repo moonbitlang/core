@@ -116,8 +116,6 @@ struct Inflater {
   mut ending : Bool // physical EOF has been declared by the caller
   mut failure_kind : InflateErrorKind? // stable terminal error
   mut failure_message : String
-  mut step_consumed : Int32 // input accepted by the latest successful step
-  mut step_produced : Int32 // output written by the latest successful step
   // Step-local cursors (reset on each `step`).
   mut view : BytesView
   mut in_pos : Int32
@@ -156,8 +154,6 @@ pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
     ending: false,
     failure_kind: None,
     failure_message: "",
-    step_consumed: 0,
-    step_produced: 0,
     view: b"",
     in_pos: 0,
     out_pos: 0,
@@ -176,22 +172,6 @@ pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
 /// Whether the end of the DEFLATE stream has been reached.
 pub fn Inflater::is_finished(self : Inflater) -> Bool {
   self.mode is Done
-}
-
-///|
-/// Number of input bytes accepted by the latest `step` call. This is zero
-/// initially, after `reset`, after a call raises, and in the stable `Done`
-/// state.
-pub fn Inflater::last_consumed(self : Inflater) -> Int32 {
-  self.step_consumed
-}
-
-///|
-/// Number of output bytes written by the latest `step` call. This is zero
-/// initially, after `reset`, after a call raises, and in the stable `Done`
-/// state.
-pub fn Inflater::last_produced(self : Inflater) -> Int32 {
-  self.step_produced
 }
 
 ///|
@@ -228,8 +208,6 @@ pub fn Inflater::reset(self : Inflater, dictionary? : BytesView) -> Unit {
   self.ending = false
   self.failure_kind = None
   self.failure_message = ""
-  self.step_consumed = 0
-  self.step_produced = 0
   self.view = b""
   self.in_pos = 0
   self.out_pos = 0
@@ -922,26 +900,12 @@ fn Inflater::run_step(self : Inflater) -> Status raise InflateError {
 }
 
 ///|
-/// Commit the counters for one normally returning public step.
-fn Inflater::finish_step(
-  self : Inflater,
-  status : Status,
-  consumed : Int32,
-  produced : Int32,
-) -> Status {
-  self.step_consumed = consumed
-  self.step_produced = produced
-  status
-}
-
-///|
 /// Run one decompression step. Reads from `input`, writes into `output`, and
-/// returns the status. After a normal return, read `last_consumed()` and
-/// `last_produced()` for this call's counts, and drop exactly
-/// `input[:last_consumed()]`. An empty output makes no progress
+/// returns `StepResult` with this call's status, consumed and produced byte
+/// counts. Drop exactly `input[:result.consumed]`. An empty output makes no progress
 /// (`NeedMoreOutput`, zero produced); one output byte always suffices to
-/// advance. Both counts are cleared before every call and remain zero if the
-/// call raises.
+/// advance. A failing call returns no result; its output buffer may already
+/// contain partial output.
 ///
 /// Headers and Huffman symbols remain atomic internally, but an incomplete
 /// unit's small tail is retained by the engine. Therefore callers may feed
@@ -954,7 +918,7 @@ pub fn Inflater::step(
   self : Inflater,
   input : BytesView,
   output : MutArrayView[Byte],
-) -> Status raise InflateError {
+) -> StepResult raise InflateError {
   self.step_output(input, output, None, end=false)
 }
 
@@ -962,19 +926,19 @@ pub fn Inflater::step(
 /// Advance the streaming decoder into a complete fixed output array. This has
 /// the same consumption, backpressure and EOF semantics as `step`, with bulk
 /// window copies. The array is borrowed only for this call; inspect
-/// `last_consumed` and `last_produced` after a successful step.
+/// the returned `consumed` and `produced` after a successful step.
 pub fn Inflater::step_into(
   self : Inflater,
   input : BytesView,
   output : FixedArray[Byte],
-) -> Status raise InflateError {
+) -> StepResult raise InflateError {
   self.step_output(input, output.mut_view(), Some(output), end=false)
 }
 
 ///|
 /// Decode the final input chunk and declare the end of input. Pass an empty
 /// input if the final chunk has already been supplied through `step`.
-/// Read `last_consumed()` and `last_produced()` after each successful call.
+/// Returns `StepResult` with this call's status and consumed/produced counts.
 /// If output backpressure leaves part of `input` unconsumed, call `finish`
 /// again with that suffix and fresh output space. Once the final chunk has
 /// been accepted, the end signal remains latched while output is drained.
@@ -984,7 +948,7 @@ pub fn Inflater::finish(
   self : Inflater,
   input : BytesView,
   output : MutArrayView[Byte],
-) -> Status raise InflateError {
+) -> StepResult raise InflateError {
   self.step_output(input, output, None, end=true)
 }
 
@@ -996,7 +960,7 @@ pub fn Inflater::finish_into(
   self : Inflater,
   input : BytesView,
   output : FixedArray[Byte],
-) -> Status raise InflateError {
+) -> StepResult raise InflateError {
   self.step_output(input, output.mut_view(), Some(output), end=true)
 }
 
@@ -1007,9 +971,7 @@ fn Inflater::step_output(
   output : MutArrayView[Byte],
   fixed_output : FixedArray[Byte]?,
   end~ : Bool,
-) -> Status raise InflateError {
-  self.step_consumed = 0
-  self.step_produced = 0
+) -> StepResult raise InflateError {
   if self.failure_kind is Some(kind) {
     raise InflateError(kind, self.failure_message)
   }
@@ -1051,5 +1013,5 @@ fn Inflater::step_output(
     decoded_input
   }
   self.release_step_views()
-  self.finish_step(status, consumed, produced)
+  { status, consumed, produced, }
 }

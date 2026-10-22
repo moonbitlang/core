@@ -42,3 +42,27 @@ pub(all) enum DeflateAction {
   /// Finish the DEFLATE stream after all input in this view has been accepted.
   Finish
 } derive(Eq, @debug.Debug)
+
+///|
+/// Result of one streaming codec call. The counts describe the input prefix
+/// accepted and the output prefix written by this call, including when it
+/// returns `Done`. Keep the result to inspect it independently of later calls.
+#valtype
+pub(all) struct StepResult {
+  /// Whether decoding or encoding completed or needs more input/output.
+  status : Status
+  /// Number of bytes accepted from this call's input view.
+  consumed : Int32
+  /// Number of bytes written to this call's output view.
+  produced : Int32
+}
+
+///|
+/// Byte counts from a successful whole-buffer decompression call.
+#valtype
+pub struct DecompressResult {
+  /// Compressed bytes consumed, excluding any trailing data.
+  consumed : Int32
+  /// Decompressed bytes written to the caller's buffer.
+  produced : Int32
+}
