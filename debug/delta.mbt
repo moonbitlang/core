@@ -26,36 +26,16 @@ priv enum ReprDelta {
 const DEFAULT_MAX_RELATIVE_ERROR : Double = 0.000000000001
 
 ///|
-/// Absolute value for `Double`.
-fn double_abs(x : Double) -> Double {
-  if x < 0.0 {
-    -x
-  } else {
-    x
-  }
-}
-
-///|
-/// Maximum of two `Double` values.
-fn double_max(x : Double, y : Double) -> Double {
-  if x > y {
-    x
-  } else {
-    y
-  }
-}
-
-///|
 /// Relative error metric used for approximate `DoubleLit` comparisons.
 fn relative_error(x : Double, y : Double) -> Double {
   if x == y {
     0.0
   } else {
-    let denom = double_max(double_abs(x), double_abs(y))
+    let denom = Double::max(x.abs(), y.abs())
     if denom == 0.0 {
-      double_abs(x - y)
+      (x - y).abs()
     } else {
-      double_abs(x - y) / denom
+      (x - y).abs() / denom
     }
   }
 }
@@ -106,7 +86,7 @@ fn diff_info_with(
       let ys = right_node.children()
       let xlen = xs.length()
       let ylen = ys.length()
-      let min_len = if xlen < ylen { xlen } else { ylen }
+      let min_len = Int32::min(xlen, ylen)
       let children : Array[ReprDelta] = []
       for i in 0..<min_len {
         children.push(go(xs[i], ys[i]))
@@ -212,15 +192,6 @@ fn prune_delta(max_depth : Int32?, delta : ReprDelta) -> ReprDelta {
 }
 
 ///|
-/// Heuristic "size" of a delta for compact-vs-multiline decisions.
-fn delta_root_size(delta : ReprDelta) -> Int32 {
-  match delta {
-    Same(label, _) => info_size(label)
-    _ => 0
-  }
-}
-
-///|
 /// ANSI escape reset.
 const ANSI_RESET : String = "\u001b[0m"
 
@@ -264,51 +235,25 @@ fn render_delta(
       let children = children_delta.map(child => {
         render_delta(threshold, use_ansi, child)
       })
-      with_resizing(
-        delta_root_size(delta),
-        threshold,
-        label.pretty_print(children),
-      )
+      with_resizing(threshold, label.pretty_print(children))
     }
-    Different(left, right) => {
-      let children : Array[Content] = [
-        left.render_repr(threshold),
-        right.render_repr(threshold),
-      ]
+    Different(left, right) =>
       with_resizing(
-        0,
         threshold,
-        match children {
-          [left, right] =>
-            no_parens(
-              mark_removed(use_ansi, left.no_wrap()) +
-              mark_added(use_ansi, right.no_wrap()),
-            )
-          _ => empty_content()
-        },
+        no_parens(
+          mark_removed(use_ansi, left.render_repr(threshold).no_wrap()) +
+          mark_added(use_ansi, right.render_repr(threshold).no_wrap()),
+        ),
       )
-    }
-    Extra1(x) => {
-      let children : Array[Content] = [x.render_repr(threshold)]
+    Extra1(x) =>
       with_resizing(
-        0,
         threshold,
-        match children {
-          [x] => no_parens(mark_removed(use_ansi, x.no_wrap()))
-          _ => empty_content()
-        },
+        no_parens(mark_removed(use_ansi, x.render_repr(threshold).no_wrap())),
       )
-    }
-    Extra2(x) => {
-      let children : Array[Content] = [x.render_repr(threshold)]
+    Extra2(x) =>
       with_resizing(
-        0,
         threshold,
-        match children {
-          [x] => no_parens(mark_added(use_ansi, x.no_wrap()))
-          _ => empty_content()
-        },
+        no_parens(mark_added(use_ansi, x.render_repr(threshold).no_wrap())),
       )
-    }
   }
 }
