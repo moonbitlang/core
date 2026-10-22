@@ -63,14 +63,7 @@ fn oracle(a : ArrayView[Int32], b : ArrayView[Int32]) -> Int32 {
         (if a[i - 1] == b[j - 1] { 0 } else { 1 })
       let delete = d[i - 1][j] + 1
       let insert = d[i][j - 1] + 1
-      let mut best = substitute
-      if delete < best {
-        best = delete
-      }
-      if insert < best {
-        best = insert
-      }
-      d[i][j] = best
+      d[i][j] = substitute.min(delete).min(insert)
     }
   }
   d[m][n]
