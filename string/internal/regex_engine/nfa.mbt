@@ -123,7 +123,7 @@ fn Builder::lower(self : Builder, pat : Pattern) -> Ir {
       while stack.pop() is Some(p) {
         match p.desc {
           Alternation(ps) =>
-            for i = ps.length() - 1; i >= 0; i = i - 1 {
+            for i in (ps.length() - 1)>=..0 {
               stack.push(ps[i])
             }
           _ => flat.push(p)
