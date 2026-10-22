@@ -726,10 +726,7 @@ pub impl[A : Eq] Eq for Vector[A] with fn equal(self, other) {
     let left = self.iter()
     let right = other.iter()
     for _ in 0..<self.size {
-      match (left.next(), right.next()) {
-        (Some(a), Some(b)) => if a != b { return false }
-        _ => return false
-      }
+      guard left.next() == right.next() else { return false }
     }
     true
   }
