@@ -837,15 +837,10 @@ test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
   @quickcheck.check(count=250, (seeds : Array[UInt32]) => {
     let a8 = lanes8_of(seeds, 0xb1)
     let va8 = v8(a8)
-    let mut any = false
-    let mut all8 = true
+    let any = a8.any(x => x != 0)
+    let all8 = a8.all(x => x != 0)
     let mut bm8 = 0
     for i in 0..<16 {
-      if a8[i] != 0 {
-        any = true
-      } else {
-        all8 = false
-      }
       if s8(a8[i]) < 0 {
         bm8 = bm8 | (1 << i)
       }
@@ -855,12 +850,9 @@ test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
     guard @v128.i8x16_bitmask(va8) == bm8 else { return false }
     let a16 = lanes16_of(seeds, 0xb2)
     let va16 = v16(a16)
-    let mut all16 = true
+    let all16 = a16.all(x => x != 0)
     let mut bm16 = 0
     for i in 0..<8 {
-      if a16[i] == 0 {
-        all16 = false
-      }
       if s16(a16[i]) < 0 {
         bm16 = bm16 | (1 << i)
       }
@@ -869,12 +861,9 @@ test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
     guard @v128.i16x8_bitmask(va16) == bm16 else { return false }
     let a32 = lanes32_of(seeds, 0xb3)
     let va32 = v32(a32)
-    let mut all32 = true
+    let all32 = a32.all(x => x != 0)
     let mut bm32 = 0
     for i in 0..<4 {
-      if a32[i] == 0 {
-        all32 = false
-      }
       if a32[i].reinterpret_as_int() < 0 {
         bm32 = bm32 | (1 << i)
       }
@@ -883,12 +872,9 @@ test "quickcheck: any_true, all_true and bitmask agree with scalar folds" {
     guard @v128.i32x4_bitmask(va32) == bm32 else { return false }
     let a64 = lanes64_of(seeds, 0xb4)
     let va64 = v64(a64)
-    let mut all64 = true
+    let all64 = a64.all(x => x != 0)
     let mut bm64 = 0
     for i in 0..<2 {
-      if a64[i] == 0 {
-        all64 = false
-      }
       if a64[i].reinterpret_as_int64() < 0L {
         bm64 = bm64 | (1 << i)
       }
