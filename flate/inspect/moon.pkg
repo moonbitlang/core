@@ -1,0 +1,14 @@
+import {
+  "moonbitlang/core/builtin",
+}
+
+import {
+  "moonbitlang/core/flate",
+  "moonbitlang/core/flate/gzip",
+  "moonbitlang/core/flate/zlib",
+  "moonbitlang/core/flate/zip",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/test",
+} for "test"
