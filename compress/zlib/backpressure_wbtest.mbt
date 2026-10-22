@@ -29,7 +29,7 @@ test "zlib wrappers bound accepted input under output backpressure" {
   let compressed = compress(source, level=0)
   let decoder = Decoder()
   @test.assert_eq(decoder.unused_input(), b"")
-  let dec_status = decoder.step(compressed, no_output.mut_view(), end=true)
+  let dec_status = decoder.finish(compressed, no_output.mut_view())
   let dec_consumed = decoder.last_consumed()
   let dec_produced = decoder.last_produced()
   assert_true(dec_status is NeedMoreOutput)
@@ -40,11 +40,7 @@ test "zlib wrappers bound accepted input under output backpressure" {
   assert_false(decoder.ending)
   let mut input_pos = dec_consumed
   for _ in 0..<8 {
-    let status = decoder.step(
-      compressed[input_pos:],
-      no_output.mut_view(),
-      end=true,
-    )
+    let status = decoder.finish(compressed[input_pos:], no_output.mut_view())
     let consumed = decoder.last_consumed()
     let produced = decoder.last_produced()
     assert_true(status is NeedMoreOutput)

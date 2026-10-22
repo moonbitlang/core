@@ -56,7 +56,7 @@ test "streaming Inflater turns EOF into a stable truncation error" {
   let output = FixedArray::make(64, b'\x00')
   for input in [([0x01] : Bytes), ([0x07] : Bytes)] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      inflater.step(input, output.mut_view(), end=true)
+      inflater.finish(input, output.mut_view())
     })
     @test.assert_eq(kind, Truncated)
   }
@@ -65,7 +65,7 @@ test "streaming Inflater turns EOF into a stable truncation error" {
   @test.assert_eq(inflater.last_produced(), 0)
   let source = b"reset clears the terminal error"
   let compressed = @flate.deflate_all(source)
-  let status = inflater.step(compressed, output.mut_view(), end=true)
+  let status = inflater.finish(compressed, output.mut_view())
   let consumed = inflater.last_consumed()
   let produced = inflater.last_produced()
   assert_true(status is Done)

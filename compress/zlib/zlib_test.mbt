@@ -249,26 +249,26 @@ test "streaming zlib Decoder reports truncation at end" {
   let output = FixedArray::make(256, b'\x00')
   let header = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    header.step(b"\x78", output.mut_view(), end=true)
+    header.finish(b"\x78", output.mut_view())
   })
   @test.assert_eq(kind, Truncated)
 
   let dictid = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    dictid.step(b"\x78\x20\x00\x00", output.mut_view(), end=true)
+    dictid.finish(b"\x78\x20\x00\x00", output.mut_view())
   })
   @test.assert_eq(kind, Truncated)
 
   let body = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    body.step(b"\x78\x01\x03", output.mut_view(), end=true)
+    body.finish(b"\x78\x01\x03", output.mut_view())
   })
   @test.assert_eq(kind, Truncated)
 
   let encoded = @zlib.compress(b"truncated checksum trailer")
   let trailer = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    trailer.step(encoded[:encoded.length() - 1], output.mut_view(), end=true)
+    trailer.finish(encoded[:encoded.length() - 1], output.mut_view())
   })
   @test.assert_eq(kind, Truncated)
 }
@@ -281,7 +281,7 @@ test "streaming zlib Decoder latches end across output backpressure" {
   let encoded = @zlib.compress(source)
   let decoder = @zlib.Decoder()
   let no_output = FixedArray::make(0, b'\x00')
-  let initial_status = decoder.step(encoded, no_output.mut_view(), end=true)
+  let initial_status = decoder.finish(encoded, no_output.mut_view())
   let initial_consumed = decoder.last_consumed()
   let initial_produced = decoder.last_produced()
   assert_true(initial_status is NeedMoreOutput)

@@ -210,7 +210,7 @@ fn assert_decodes(
   let decoded = Buffer()
   let mut pos = 0
   for ;; {
-    let status = decoder.step_into(compressed[pos:], output, end=true)
+    let status = decoder.finish_into(compressed[pos:], output)
     pos += decoder.last_consumed()
     for i in 0..<decoder.last_produced() {
       decoded.write_byte(output[i])

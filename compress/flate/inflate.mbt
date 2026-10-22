@@ -946,18 +946,16 @@ fn Inflater::finish_step(
 /// Headers and Huffman symbols remain atomic internally, but an incomplete
 /// unit's small tail is retained by the engine. Therefore callers may feed
 /// ordinary non-overlapping chunks: on `NeedMoreInput` the complete supplied
-/// view has been accepted and need not be re-presented. Pass `end=true` with
-/// the physical final input view; the signal is sticky across output
-/// backpressure, and an incomplete stream then raises `InflateError` instead of
-/// returning `NeedMoreInput` forever. Once any error is raised, later calls
+/// view has been accepted and need not be re-presented. Use `finish` for the
+/// physical final input view so an incomplete stream raises `InflateError`
+/// instead of requesting more input. Once any error is raised, later calls
 /// stably raise the same error until `reset()`.
 pub fn Inflater::step(
   self : Inflater,
   input : BytesView,
   output : MutArrayView[Byte],
-  end~ : Bool = false,
 ) -> Status raise InflateError {
-  self.step_output(input, output, None, end~)
+  self.step_output(input, output, None, end=false)
 }
 
 ///|
@@ -969,9 +967,37 @@ pub fn Inflater::step_into(
   self : Inflater,
   input : BytesView,
   output : FixedArray[Byte],
-  end~ : Bool = false,
 ) -> Status raise InflateError {
-  self.step_output(input, output.mut_view(), Some(output), end~)
+  self.step_output(input, output.mut_view(), Some(output), end=false)
+}
+
+///|
+/// Decode the final input chunk and declare the end of input. Pass an empty
+/// input if the final chunk has already been supplied through `step`.
+/// Read `last_consumed()` and `last_produced()` after each successful call.
+/// If output backpressure leaves part of `input` unconsumed, call `finish`
+/// again with that suffix and fresh output space. Once the final chunk has
+/// been accepted, the end signal remains latched while output is drained.
+/// An incomplete stream raises `InflateError` instead of requesting more input.
+/// Errors remain latched as with `step`; `Done` remains terminal.
+pub fn Inflater::finish(
+  self : Inflater,
+  input : BytesView,
+  output : MutArrayView[Byte],
+) -> Status raise InflateError {
+  self.step_output(input, output, None, end=true)
+}
+
+///|
+/// Finish decoding into a complete fixed output array. This has the same
+/// final-input, backpressure and error semantics as `finish`, with the
+/// fixed-array output path of `step_into`.
+pub fn Inflater::finish_into(
+  self : Inflater,
+  input : BytesView,
+  output : FixedArray[Byte],
+) -> Status raise InflateError {
+  self.step_output(input, output.mut_view(), Some(output), end=true)
 }
 
 ///|

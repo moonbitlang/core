@@ -29,7 +29,7 @@ test "gzip wrappers bound accepted input under output backpressure" {
   let compressed = compress(source, level=0)
   let decoder = Decoder()
   @test.assert_eq(decoder.unused_input(), b"")
-  let dec_status = decoder.step_into(compressed, no_output, end=true)
+  let dec_status = decoder.finish_into(compressed, no_output)
   let dec_consumed = decoder.last_consumed()
   let dec_produced = decoder.last_produced()
   assert_true(dec_status is NeedMoreOutput)
@@ -40,11 +40,7 @@ test "gzip wrappers bound accepted input under output backpressure" {
   assert_false(decoder.borrowed_input)
   assert_false(decoder.ending)
   for _ in 0..<8 {
-    let status = decoder.step_into(
-      compressed[dec_consumed:],
-      no_output,
-      end=true,
-    )
+    let status = decoder.finish_into(compressed[dec_consumed:], no_output)
     let consumed = decoder.last_consumed()
     let produced = decoder.last_produced()
     assert_true(status is NeedMoreOutput)

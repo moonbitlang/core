@@ -52,7 +52,7 @@ struct Decoder {
   mut unused : Bytes // cached read-ahead suffix after successful completion
   mut flg : Int32 // header FLG byte, gates the optional-field states
   mut members : Int32 // fully verified members
-  mut ending : Bool // `end=true` is sticky across output suspension
+  mut ending : Bool // Final input stays latched across output suspension
   multistream : Bool // decode RFC 1952 concatenated members when true
   mut mode : DecMode
   mut failure_kind : GzipErrorKind? // stable first terminal error
@@ -376,11 +376,11 @@ fn Decoder::u32_le(self : Decoder, off : Int32) -> UInt32 {
 /// output backpressure. Pending body input is drained before accepting more,
 /// so a call can produce output without consuming new input.
 /// Input is borrowed only for this call; any retained suffix is copied.
-/// Once `end=true` has been accepted with its complete
-/// view (or after `Done`), later input is not accepted and `last_consumed()` is
-/// zero. Keep calling until `Done` (then `is_finished()` is true). `end=true`
-/// is sticky across `NeedMoreOutput`: gzip members are self-delimiting but the
-/// stream is not, so the signal resolves whether another member can follow.
+/// Use `finish` for the physical final input view. Once that complete view
+/// has been accepted (or after `Done`), later input is not accepted and
+/// `last_consumed()` is zero. Keep draining until `Done`. gzip members are
+/// self-delimiting but a multi-member stream needs `finish` to establish
+/// that no further member will follow.
 /// Concatenated multi-member streams (RFC 1952 §2.2) decode in full; their
 /// payloads are joined. If the final accepted view also contains non-gzip
 /// bytes, retrieve that read-ahead after `Done` with `unused_input()`. On
@@ -390,9 +390,8 @@ pub fn Decoder::step(
   self : Decoder,
   input : BytesView,
   output : MutArrayView[Byte],
-  end~ : Bool = false,
 ) -> @flate.Status raise GzipError {
-  self.step_output(input, output, None, end~)
+  self.step_output(input, output, None, end=false)
 }
 
 ///|
@@ -403,9 +402,37 @@ pub fn Decoder::step_into(
   self : Decoder,
   input : BytesView,
   output : FixedArray[Byte],
-  end~ : Bool = false,
 ) -> @flate.Status raise GzipError {
-  self.step_output(input, output.mut_view(), Some(output), end~)
+  self.step_output(input, output.mut_view(), Some(output), end=false)
+}
+
+///|
+/// Decode the final input chunk and declare the end of input. Pass an empty
+/// input if the final chunk has already been supplied through `step`.
+/// Read `last_consumed()` and `last_produced()` after each successful call.
+/// If output backpressure leaves part of `input` unconsumed, call `finish`
+/// again with that suffix and fresh output space. Once the final chunk has
+/// been accepted, the end signal remains latched while output is drained.
+/// An incomplete stream raises `GzipError` instead of requesting more input.
+/// Errors remain latched as with `step`; `Done` remains terminal.
+pub fn Decoder::finish(
+  self : Decoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+) -> @flate.Status raise GzipError {
+  self.step_output(input, output, None, end=true)
+}
+
+///|
+/// Finish decoding into a complete fixed output array. This has the same
+/// final-input, backpressure and error semantics as `finish`, with the
+/// fixed-array output path of `step_into`.
+pub fn Decoder::finish_into(
+  self : Decoder,
+  input : BytesView,
+  output : FixedArray[Byte],
+) -> @flate.Status raise GzipError {
+  self.step_output(input, output.mut_view(), Some(output), end=true)
 }
 
 ///|

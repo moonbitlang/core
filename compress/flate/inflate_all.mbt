@@ -1283,7 +1283,7 @@ fn inflate_drive(
   let mut total = 0
   let mut input_pos = 0
   for ;; {
-    let status = inflater.step_into(input[input_pos:], scratch, end=true)
+    let status = inflater.finish_into(input[input_pos:], scratch)
     let consumed = inflater.last_consumed()
     let produced = inflater.last_produced()
     input_pos = input_pos + consumed
@@ -1298,7 +1298,7 @@ fn inflate_drive(
       )
     }
     emit(scratch, produced)
-    // `Inflater::step(end=true)` raises `Truncated` on exhausted input, so
+    // `Inflater::finish_into` raises `Truncated` on exhausted input, so
     // only `Done` and `NeedMoreOutput` can be returned here.
     guard status is Done else { continue }
     if exact && input_pos != input.length() {

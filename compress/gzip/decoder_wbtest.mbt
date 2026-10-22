@@ -31,7 +31,7 @@ test "gzip header FNAME bytes are discarded, not retained" {
   let plain = b"body after a long filename"
   let normal = compress(plain)
   let rest = b"\x00" + normal[10:].to_owned()
-  @test.assert_eq(decoder.step(rest, output.mut_view(), end=true), Done)
+  @test.assert_eq(decoder.finish(rest, output.mut_view()), Done)
   @test.assert_eq(decoder.last_consumed(), rest.length())
   @test.assert_eq(Bytes::from_array(output[:decoder.last_produced()]), plain)
 }
@@ -75,7 +75,7 @@ test "gzip failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let GzipError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.step(malformed, output.mut_view(), end=true)
+    decoder.finish(malformed, output.mut_view())
   })
   @test.assert_eq(decoder.last_consumed(), 0)
   @test.assert_eq(decoder.last_produced(), 0)
@@ -129,20 +129,24 @@ test "gzip step_into and offset step views preserve the per-call contract" {
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try
-            fixed.step_into(input, output, end=end == stream.length())
-          catch {
+          let status = try {
+            if end == stream.length() {
+              fixed.finish_into(input, output)
+            } else {
+              fixed.step_into(input, output)
+            }
+          } catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             status => Ok(status)
           }
-          let other = try
-            viewed.step(
-              input,
-              padded.mut_view(start=3, end=room + 3),
-              end=end == stream.length(),
-            )
-          catch {
+          let other = try {
+            if end == stream.length() {
+              viewed.finish(input, padded.mut_view(start=3, end=room + 3))
+            } else {
+              viewed.step(input, padded.mut_view(start=3, end=room + 3))
+            }
+          } catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             status => Ok(status)

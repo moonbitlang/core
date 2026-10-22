@@ -94,7 +94,7 @@ test "decompress decodes a multi-member stream" {
 ///|
 /// A member boundary may coincide with an input boundary, and the next call
 /// may contain only the first magic byte. Neither boundary means EOF without
-/// `end=true`; both must suspend for more input.
+/// `finish`; both must suspend for more input.
 test "streaming gzip Decoder suspends across a split member magic" {
   let first_payload = b"first member"
   let second_payload = b"second member"
@@ -117,7 +117,7 @@ test "streaming gzip Decoder suspends across a split member magic" {
   assert_true(at_magic is NeedMoreInput)
   @test.assert_eq(magic_used, 1)
   @test.assert_eq(magic_produced, 0)
-  let _done = dec.step_into(second[1:], obuf, end=true)
+  let _done = dec.finish_into(second[1:], obuf)
   let rest_used = dec.last_consumed()
   let rest_produced = dec.last_produced()
   @test.assert_eq(rest_used, second.length() - 1)
@@ -147,7 +147,11 @@ test "streaming gzip Decoder decodes a multi-member stream in tiny chunks" {
   let mut fed = 0
   for ;; {
     let next = if fed + 3 < n { fed + 3 } else { n }
-    let _st = dec.step_into(stream[fed:next], obuf, end=next == n)
+    let _st = if next == n {
+      dec.finish_into(stream[fed:next], obuf)
+    } else {
+      dec.step_into(stream[fed:next], obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     for i in 0..<p {
@@ -232,7 +236,11 @@ test "streaming gzip Decoder: empty" {
   let mut fed = 0
   for ;; {
     let next = if fed + 1 < n { fed + 1 } else { n }
-    let _st = dec.step_into(gz[fed:next], obuf, end=next == n)
+    let _st = if next == n {
+      dec.finish_into(gz[fed:next], obuf)
+    } else {
+      dec.step_into(gz[fed:next], obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     for i in 0..<p {
@@ -287,7 +295,11 @@ test "streaming gzip Decoder validates optional header fields" {
   let mut fed = 0
   for ;; {
     let next = if fed + 1 < n { fed + 1 } else { n }
-    let _st = dec.step_into(full[fed:next], obuf, end=next == n)
+    let _st = if next == n {
+      dec.finish_into(full[fed:next], obuf)
+    } else {
+      dec.step_into(full[fed:next], obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     for i in 0..<p {
@@ -321,7 +333,7 @@ test "gzip decoders reject reserved FLG bits" {
   }
   let dec = @gzip.Decoder()
   let out = FixedArray::make(64, b'\x00')
-  try ignore(dec.step_into(bad, out, end=true)) catch {
+  try ignore(dec.finish_into(bad, out)) catch {
     GzipError(kind, _) => assert_true(kind == InvalidHeader)
   } noraise {
     _ => @test.fail("streaming decoding accepted a reserved FLG bit")
@@ -336,7 +348,7 @@ test "gzip decoders reject reserved FLG bits" {
 test "streaming gzip Decoder rejects truncated input at end" {
   let out = FixedArray::make(256, b'\x00')
   let empty_dec = @gzip.Decoder()
-  try ignore(empty_dec.step_into(b"", out, end=true)) catch {
+  try ignore(empty_dec.finish_into(b"", out)) catch {
     GzipError(kind, _) => assert_true(kind == Truncated)
   } noraise {
     _ => @test.fail("empty EOF was accepted as a complete gzip stream")
@@ -346,7 +358,7 @@ test "streaming gzip Decoder rejects truncated input at end" {
   let gz = @gzip.compress(b"missing trailer byte")
   let truncated = prefix_bytes(gz, gz.length() - 1)
   let dec = @gzip.Decoder()
-  try ignore(dec.step_into(truncated, out, end=true)) catch {
+  try ignore(dec.finish_into(truncated, out)) catch {
     GzipError(kind, _) => assert_true(kind == Truncated)
   } noraise {
     _ => @test.fail("truncated trailer was accepted")
@@ -372,7 +384,7 @@ test "gzip decoders wrap malformed DEFLATE as GzipError" {
   }
   let dec = @gzip.Decoder()
   let out = FixedArray::make(64, b'\x00')
-  try ignore(dec.step_into(bad, out, end=true)) catch {
+  try ignore(dec.finish_into(bad, out)) catch {
     GzipError(kind, _) => assert_true(kind == InvalidDeflate)
   } noraise {
     _ => @test.fail("streaming decoding accepted a reserved DEFLATE block")
@@ -394,7 +406,11 @@ test "streaming gzip Decoder latches end across one-byte output" {
   let mut finished = false
   for _i in 0..<4096 {
     let view = if first { gz[:] } else { b"" }
-    let st = dec.step_into(view, obuf, end=first)
+    let st = if first {
+      dec.finish_into(view, obuf)
+    } else {
+      dec.step_into(view, obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     @test.assert_eq(c, if first { gz.length() } else { 0 })
@@ -439,7 +455,11 @@ test "streaming gzip Decoder resumes with one-byte input and output" {
   for _i in 0..<20000 {
     let next = if fed < gz.length() { fed + 1 } else { fed }
     let view = if fed < gz.length() { gz[fed:next] } else { b"" }
-    let _st = dec.step_into(view, obuf, end=next == gz.length())
+    let _st = if next == gz.length() {
+      dec.finish_into(view, obuf)
+    } else {
+      dec.step_into(view, obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     fed = fed + c
@@ -475,7 +495,11 @@ test "streaming gzip Decoder drains a large stored member one byte at a time" {
   let mut finished = false
   for _i in 0..<20000 {
     let view = if first { gz[:] } else { b"" }
-    let _st = dec.step_into(view, obuf, end=first)
+    let _st = if first {
+      dec.finish_into(view, obuf)
+    } else {
+      dec.step_into(view, obuf)
+    }
     let c = dec.last_consumed()
     let p = dec.last_produced()
     @test.assert_eq(c, if first { gz.length() } else { 0 })

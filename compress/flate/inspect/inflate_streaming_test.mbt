@@ -30,11 +30,17 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
       let mut pos = 0
       for ;; {
         let end = (pos + chunk).min(compressed.length())
-        let status = inflater.step(
-          compressed[pos:end],
-          output.mut_view(start=3, end=3 + room),
-          end=end == compressed.length(),
-        )
+        let status = if end == compressed.length() {
+          inflater.finish(
+            compressed[pos:end],
+            output.mut_view(start=3, end=3 + room),
+          )
+        } else {
+          inflater.step(
+            compressed[pos:end],
+            output.mut_view(start=3, end=3 + room),
+          )
+        }
         let used = inflater.last_consumed()
         let written = inflater.last_produced()
         assert_true(used >= 0 && used <= end - pos)

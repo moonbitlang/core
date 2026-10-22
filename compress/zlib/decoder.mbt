@@ -32,7 +32,7 @@ struct Decoder {
   mut pending_pos : Int32
   mut borrowed_input : Bool
   mut unused : Bytes // cached read-ahead suffix after successful completion
-  mut ending : Bool // `end=true` is sticky across output suspension
+  mut ending : Bool // Final input stays latched across output suspension
   mut mode : DecMode
   dict : BytesView? // preset dictionary, if the caller has one
   mut failure_kind : ZlibErrorKind? // stable first terminal error
@@ -271,9 +271,9 @@ fn Decoder::read_ztrailer(self : Decoder) -> Bool raise ZlibError {
 /// `input[:last_consumed()]`. Pending body input is drained before accepting
 /// more; output backpressure may leave a suffix unaccepted. Input is borrowed
 /// only during this call, and any retained suffix is copied.
-/// `end=true` becomes sticky after its complete view is consumed and turns
-/// incomplete headers, DEFLATE bodies, and trailers into `ZlibError` instead of
-/// another `NeedMoreInput`. If the final accepted view also contains bytes after
+/// Use `finish` for the physical final input view. It turns incomplete
+/// headers, DEFLATE bodies, and trailers into `ZlibError` instead of requesting
+/// more input. If the final accepted view also contains bytes after
 /// the zlib trailer, retrieve that read-ahead with `unused_input()`. On failure,
 /// the decoder locks the first `ZlibError` kind/message and rethrows it on every
 /// later call; both progress counters remain zero.
@@ -281,9 +281,8 @@ pub fn Decoder::step(
   self : Decoder,
   input : BytesView,
   output : MutArrayView[Byte],
-  end~ : Bool = false,
 ) -> @flate.Status raise ZlibError {
-  self.step_output(input, output, None, end~)
+  self.step_output(input, output, None, end=false)
 }
 
 ///|
@@ -294,9 +293,37 @@ pub fn Decoder::step_into(
   self : Decoder,
   input : BytesView,
   output : FixedArray[Byte],
-  end~ : Bool = false,
 ) -> @flate.Status raise ZlibError {
-  self.step_output(input, output.mut_view(), Some(output), end~)
+  self.step_output(input, output.mut_view(), Some(output), end=false)
+}
+
+///|
+/// Decode the final input chunk and declare the end of input. Pass an empty
+/// input if the final chunk has already been supplied through `step`.
+/// Read `last_consumed()` and `last_produced()` after each successful call.
+/// If output backpressure leaves part of `input` unconsumed, call `finish`
+/// again with that suffix and fresh output space. Once the final chunk has
+/// been accepted, the end signal remains latched while output is drained.
+/// An incomplete stream raises `ZlibError` instead of requesting more input.
+/// Errors remain latched as with `step`; `Done` remains terminal.
+pub fn Decoder::finish(
+  self : Decoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+) -> @flate.Status raise ZlibError {
+  self.step_output(input, output, None, end=true)
+}
+
+///|
+/// Finish decoding into a complete fixed output array. This has the same
+/// final-input, backpressure and error semantics as `finish`, with the
+/// fixed-array output path of `step_into`.
+pub fn Decoder::finish_into(
+  self : Decoder,
+  input : BytesView,
+  output : FixedArray[Byte],
+) -> @flate.Status raise ZlibError {
+  self.step_output(input, output.mut_view(), Some(output), end=true)
 }
 
 ///|

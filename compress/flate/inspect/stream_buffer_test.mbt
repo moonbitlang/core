@@ -27,16 +27,16 @@ test "fixed streaming output matches offset views across history wraps" {
       for ;; {
         let end = (position + 97).min(compressed.length())
         let input = compressed[position:end]
-        let status = fixed.step_into(
-          input,
-          output,
-          end=end == compressed.length(),
-        )
-        let other = viewed.step(
-          input,
-          padded.mut_view(start=3, end=3 + capacity),
-          end=end == compressed.length(),
-        )
+        let status = if end == compressed.length() {
+          fixed.finish_into(input, output)
+        } else {
+          fixed.step_into(input, output)
+        }
+        let other = if end == compressed.length() {
+          viewed.finish(input, padded.mut_view(start=3, end=3 + capacity))
+        } else {
+          viewed.step(input, padded.mut_view(start=3, end=3 + capacity))
+        }
         @test.assert_eq(status, other)
         @test.assert_eq(fixed.last_consumed(), viewed.last_consumed())
         @test.assert_eq(fixed.last_produced(), viewed.last_produced())

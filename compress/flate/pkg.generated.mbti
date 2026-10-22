@@ -64,12 +64,14 @@ pub(all) enum InflateErrorKind {
 
 type Inflater
 pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
+pub fn Inflater::finish(Self, BytesView, MutArrayView[Byte]) -> Status raise InflateError
+pub fn Inflater::finish_into(Self, BytesView, FixedArray[Byte]) -> Status raise InflateError
 pub fn Inflater::is_finished(Self) -> Bool
 pub fn Inflater::last_consumed(Self) -> Int32
 pub fn Inflater::last_produced(Self) -> Int32
 pub fn Inflater::reset(Self, dictionary? : BytesView) -> Unit
-pub fn Inflater::step(Self, BytesView, MutArrayView[Byte], end? : Bool) -> Status raise InflateError
-pub fn Inflater::step_into(Self, BytesView, FixedArray[Byte], end? : Bool) -> Status raise InflateError
+pub fn Inflater::step(Self, BytesView, MutArrayView[Byte]) -> Status raise InflateError
+pub fn Inflater::step_into(Self, BytesView, FixedArray[Byte]) -> Status raise InflateError
 
 pub(all) enum Status {
   Done

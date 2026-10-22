@@ -23,7 +23,7 @@ test "reserved HLIT wins over a truncated HDIST" {
   let inflater = Inflater()
   let output = FixedArray::make(1, b'\x00')
   let InflateError(kind, _) = @test.expect_error(() => {
-    inflater.step(data, output.mut_view(), end=true)
+    inflater.finish(data, output.mut_view())
   })
   @test.assert_eq(kind, Corrupt)
 }

@@ -155,10 +155,14 @@ test "README streaming Deflater" {
   output buffer; `step` accepts arbitrary mutable views. Both drain pending
   body input before accepting more, so output can be produced while
   `last_consumed()` is zero. Re-present the unaccepted input on the next call.
-- Raw `Inflater::step(..., end=true)` and the container decoders turn physical
-  EOF before `Done` into a stable truncation error. After any decoder error,
-  discard or reset the raw engine; container decoder instances stably rethrow
-  the same error.
+- Call `Inflater::finish(input, output)` or a container decoder's `finish`
+  with the final input chunk; pass empty input if all input has already been
+  supplied. `finish_into` accepts a complete fixed output array. If output
+  backpressure leaves an input suffix unconsumed, repeat the finish call with
+  that suffix and fresh output space until `Done`. Finishing an incomplete
+  stream raises a stable truncation error instead of requesting more input.
+  After any decoder error, discard or reset the raw engine; container decoder
+  instances stably rethrow the same error.
 - Once `Done` is returned, new input is not consumed; reset the raw engine or
   the zlib `Encoder` (`reset(dictionary?)`), or create a new wrapper, before
   reuse. A reset encoder produces exactly the bytes of a freshly constructed

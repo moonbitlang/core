@@ -46,7 +46,7 @@ test "zlib failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let ZlibError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.step(malformed, output.mut_view(), end=true)
+    decoder.finish(malformed, output.mut_view())
   })
   @test.assert_eq(decoder.last_consumed(), 0)
   @test.assert_eq(decoder.last_produced(), 0)
@@ -96,20 +96,24 @@ test "zlib step_into and offset step views preserve the per-call contract" {
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try
-            fixed.step_into(input, output, end=end == stream.length())
-          catch {
+          let status = try {
+            if end == stream.length() {
+              fixed.finish_into(input, output)
+            } else {
+              fixed.step_into(input, output)
+            }
+          } catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
             status => Ok(status)
           }
-          let other = try
-            viewed.step(
-              input,
-              padded.mut_view(start=3, end=room + 3),
-              end=end == stream.length(),
-            )
-          catch {
+          let other = try {
+            if end == stream.length() {
+              viewed.finish(input, padded.mut_view(start=3, end=room + 3))
+            } else {
+              viewed.step(input, padded.mut_view(start=3, end=room + 3))
+            }
+          } catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
             status => Ok(status)

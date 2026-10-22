@@ -33,17 +33,15 @@ fn fast_stream_run(
     let end = (position + chunk).min(input.length())
     let status = try {
       if fixed {
-        inflater.step_into(
-          input[position:end],
-          output,
-          end=end == input.length(),
-        )
+        if end == input.length() {
+          inflater.finish_into(input[position:end], output)
+        } else {
+          inflater.step_into(input[position:end], output)
+        }
+      } else if end == input.length() {
+        inflater.finish(input[position:end], output.mut_view())
       } else {
-        inflater.step(
-          input[position:end],
-          output.mut_view(),
-          end=end == input.length(),
-        )
+        inflater.step(input[position:end], output.mut_view())
       }
     } catch {
       InflateError(kind, _) => return Err(kind)
@@ -117,9 +115,15 @@ fn assert_calls_agree(
     let mut status : Status = Done
     try {
       status = if fixed {
-        whole.step_into(view, output, end=last)
+        if last {
+          whole.finish_into(view, output)
+        } else {
+          whole.step_into(view, output)
+        }
+      } else if last {
+        whole.finish(view, output.mut_view())
       } else {
-        whole.step(view, output.mut_view(), end=last)
+        whole.step(view, output.mut_view())
       }
     } catch {
       InflateError(kind, _) => verdict = Some(kind)
@@ -130,11 +134,19 @@ fn assert_calls_agree(
     let mut expected : Status = NeedMoreOutput
     for ;; {
       let piece = (room - produced).min(257)
-      let step = pieces.step(
-        view[consumed:],
-        reference.mut_view(start=produced, end=produced + piece),
-        end=last,
-      ) catch {
+      let step = try {
+        if last {
+          pieces.finish(
+            view[consumed:],
+            reference.mut_view(start=produced, end=produced + piece),
+          )
+        } else {
+          pieces.step(
+            view[consumed:],
+            reference.mut_view(start=produced, end=produced + piece),
+          )
+        }
+      } catch {
         InflateError(kind, _) => {
           expected_verdict = Some(kind)
           break
@@ -307,13 +319,13 @@ test "fast loop marks the window full by what a call wrote" {
   let inflater = Inflater()
   inflater.wpos = -30000
   let output = FixedArray::make(40000, b'\x00')
-  let first = inflater.step_into(stream, output, end=true)
+  let first = inflater.finish_into(stream, output)
   assert_true(first is NeedMoreOutput)
   @test.assert_eq(inflater.last_produced(), 40000)
   @test.assert_eq(inflater.wpos, 10000)
   assert_true(inflater.filled)
   let rest = stream[inflater.last_consumed():]
-  let second = inflater.step_into(rest, output, end=true)
+  let second = inflater.finish_into(rest, output)
   assert_true(second is Done)
   @test.assert_eq(inflater.last_produced(), 3)
   for i in 0..<3 {
