@@ -200,9 +200,9 @@ jobs:
           version: pre-release
 
       - name: check
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: moon check --target native --deny-warn
 
       - name: run native release tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         uses: ./.github/actions/test-native-release
