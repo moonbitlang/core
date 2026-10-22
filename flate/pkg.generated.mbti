@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/flate"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn deflate_all(BytesView, level? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn deflate_all_optimal(BytesView, iterations? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn deflate_all_split(BytesView, level? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn deflate_bound(Int32) -> Int32
+
+pub fn deflate_into(BytesView, FixedArray[Byte], level? : Int32, fast_store? : Bool) -> Int32?
+
+pub fn inflate_all(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise InflateError
+
+pub fn inflate_exact(BytesView, max_output? : Int32, cancelled? : () -> Bool, preallocated? : Bool) -> Bytes raise InflateError
+
+pub fn inflate_into(BytesView, FixedArray[Byte], cancelled? : () -> Bool) -> Int32 raise InflateError
+
+// Errors
+pub suberror InflateError {
+  InflateError(InflateErrorKind, String)
+}
+
+// Types and methods
+pub struct Compressor {
+  // private fields
+}
+pub fn Compressor::Compressor(level? : Int32, fast_store? : Bool) -> Self
+pub fn Compressor::compress(Self, BytesView) -> Bytes
+pub fn Compressor::compress_into(Self, BytesView, FixedArray[Byte]) -> Int32?
+
+pub struct Decompressor {
+  // private fields
+}
+pub fn Decompressor::Decompressor() -> Self
+pub fn Decompressor::decompress(Self, BytesView) -> Bytes raise InflateError
+pub fn Decompressor::decompress_into(Self, BytesView, FixedArray[Byte], cancelled? : () -> Bool) -> Int32 raise InflateError
+pub fn Decompressor::last_consumed(Self) -> Int32
+
+pub(all) enum DeflateAction {
+  Continue
+  SyncFlush
+  Finish
+} derive(Eq, @debug.Debug)
+pub fn DeflateAction::equal(Self, Self) -> Bool
+
+pub struct Deflater {
+  // private fields
+}
+pub fn Deflater::Deflater(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
+pub fn Deflater::is_finished(Self) -> Bool
+pub fn Deflater::last_consumed(Self) -> Int32
+pub fn Deflater::last_produced(Self) -> Int32
+pub fn Deflater::reset(Self, dictionary? : BytesView) -> Unit
+pub fn Deflater::step(Self, BytesView, MutArrayView[Byte], action? : DeflateAction) -> Status
+
+pub(all) enum InflateErrorKind {
+  Truncated
+  Corrupt
+  TrailingData
+  OutputLimitExceeded
+  Cancelled
+  InvalidArgument
+} derive(Eq, @debug.Debug)
+pub fn InflateErrorKind::equal(Self, Self) -> Bool
+
+pub struct Inflater {
+  // private fields
+}
+pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
+pub fn Inflater::is_finished(Self) -> Bool
+pub fn Inflater::last_consumed(Self) -> Int32
+pub fn Inflater::last_produced(Self) -> Int32
+pub fn Inflater::reset(Self, dictionary? : BytesView) -> Unit
+pub fn Inflater::step(Self, BytesView, MutArrayView[Byte], end? : Bool) -> Status raise InflateError
+pub fn Inflater::step_into(Self, BytesView, FixedArray[Byte], end? : Bool) -> Status raise InflateError
+
+pub(all) enum Status {
+  Done
+  NeedMoreInput
+  NeedMoreOutput
+} derive(Eq, @debug.Debug)
+pub fn Status::equal(Self, Self) -> Bool
+
+// Type aliases
+
+// Traits
