@@ -53,3 +53,24 @@ test "StringBuilder uninitialized storage preserves returned strings" {
   inspect(partial, content="x")
   inspect(builder.to_string(), content="abcdefg")
 }
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder reset reuses storage after full and partial conversions" {
+  let builder = StringBuilder(size_hint=3)
+  let backing = builder.data
+  builder.write_string("a😀")
+  let full = builder.to_string()
+  builder.reset()
+  builder.write_string("xy")
+  let partial = builder.to_string()
+  builder.reset()
+  builder.reset()
+  builder.write_string("123")
+  inspect(full, content="a😀")
+  inspect(partial, content="xy")
+  inspect(builder.to_string(), content="123")
+  // The original storage is overwritten, but neither returned string is.
+  inspect(backing[0].to_int(), content="49")
+  inspect(backing[2].to_int(), content="51")
+}

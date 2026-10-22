@@ -267,6 +267,5 @@ pub impl Show for StringBuilder with fn to_string(self) {
 ///|
 /// Resets the string builder to an empty state.
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
-  self.data = UninitializedArray::make(self.data.length())
   self.len = 0
 }
