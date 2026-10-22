@@ -64,9 +64,6 @@ fn leaf(x : String, needs_parens~ : Bool = false) -> Content {
 }
 
 ///|
-/// Render any `Show` value as a leaf with a type suffix.
-
-///|
 /// Map a transformation over the lines of `ContentParens`.
 fn with_lines(
   r : ContentParens,
@@ -136,11 +133,7 @@ fn compact_middle(middle : ArrayView[String]) -> StringView {
     }
   }
   let joined0 = parts.join(" ")
-  let joined : StringView = match joined0.strip_suffix(",") {
-    Some(sv) => sv
-    None => joined0
-  }
-  joined
+  joined0.strip_suffix(",").unwrap_or(joined0)
 }
 
 ///|
@@ -232,6 +225,31 @@ fn indent_spaces(n : Int32, r : ContentParens) -> ContentParens {
 }
 
 ///|
+/// Append each content chunk's non-empty lines to `out`, indented by
+/// `indent_by`, with a trailing comma on the chunk's last line
+/// (multi-line trailing-comma style).
+fn push_indented_items(
+  out : Array[String],
+  indent_by : Int32,
+  contents : Array[Array[String]],
+) -> Unit {
+  for item in contents {
+    let item_lines = item.filter(line => line != "")
+    match item_lines {
+      [] => ()
+      [x] => out.push(" ".repeat(indent_by) + x + ",")
+      [first, .. middle, last] => {
+        out.push(" ".repeat(indent_by) + first)
+        for mid in middle {
+          out.push(" ".repeat(indent_by) + mid)
+        }
+        out.push(" ".repeat(indent_by) + last + ",")
+      }
+    }
+  }
+}
+
+///|
 /// Render a bracket/brace sequence.
 ///
 /// Multi-line layout is:
@@ -294,20 +312,7 @@ fn bracket_seq_lines(
     _ => {
       // Multi-line always uses trailing comma style to match expectation.
       let out : Array[String] = [open]
-      for item in contents {
-        let item_lines = item.filter(line => line != "")
-        match item_lines {
-          [] => ()
-          [x] => out.push(" ".repeat(indent_by) + x + ",")
-          [first, .. middle, last] => {
-            out.push(" ".repeat(indent_by) + first)
-            for mid in middle {
-              out.push(" ".repeat(indent_by) + mid)
-            }
-            out.push(" ".repeat(indent_by) + last + ",")
-          }
-        }
-      }
+      push_indented_items(out, indent_by, contents)
       out.push(close)
       out
     }
@@ -331,15 +336,11 @@ fn comma_seq_lines(
   } else if begin == "" && end == "" {
     // Used by some internal layouts (e.g. opaque wrappers).
     // Keep the legacy behavior to avoid introducing an empty leading/trailing line.
-    fn spacer(begin : String) -> String {
-      " ".repeat(begin.length())
-    }
-
     let lines = match contents {
       [] => [begin + end]
       [item] => surround_lines(begin, end, item)
       [first, .. middle, last] => {
-        let space = spacer(begin)
+        let space = " ".repeat(begin.length())
         let middle_lines = []
         for item in middle {
           middle_lines.append(surround_lines(space, ",", item))
@@ -372,7 +373,7 @@ fn comma_seq_lines(
           [.. pre_lines, last_line] =>
             [
               begin,
-              ..pre_lines.iter().map(line => " ".repeat(indent_by) + line),
+              ..pre_lines.map(line => " ".repeat(indent_by) + line),
               " ".repeat(indent_by) + last_line + ",",
               end,
             ]
@@ -380,20 +381,7 @@ fn comma_seq_lines(
       }
       _ => {
         let out : Array[String] = [begin]
-        for item in contents {
-          let item_lines = item.filter(line => line != "")
-          match item_lines {
-            [] => ()
-            [x] => out.push(" ".repeat(indent_by) + x + ",")
-            [first, .. middle, last] => {
-              out.push(" ".repeat(indent_by) + first)
-              for mid in middle {
-                out.push(" ".repeat(indent_by) + mid)
-              }
-              out.push(" ".repeat(indent_by) + last + ",")
-            }
-          }
-        }
+        push_indented_items(out, indent_by, contents)
         out.push(end)
         out
       }
@@ -431,11 +419,7 @@ fn print_content(r : ContentParens) -> String {
 /// `threshold` is treated as a *maximum width hint* (not a structural node count).
 /// This fixes cases where a structurally small tree expands to a very long single
 /// line (e.g. deeply nested `Cons(...)`).
-fn with_resizing(
-  _root_size : Int32,
-  threshold : Int32,
-  rendered_children : Content,
-) -> Content {
+fn with_resizing(threshold : Int32, rendered_children : Content) -> Content {
   // `threshold=0` is used by tests/users to force multi-line output.
   // In that mode we should never run the compaction pass.
   if threshold <= 0 {
