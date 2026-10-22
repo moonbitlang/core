@@ -3,10 +3,10 @@ import {
 }
 
 import {
-  "moonbitlang/core/flate",
-  "moonbitlang/core/flate/gzip",
-  "moonbitlang/core/flate/zlib",
-  "moonbitlang/core/flate/zip",
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/compress/gzip",
+  "moonbitlang/core/compress/zlib",
+  "moonbitlang/core/archive/zip",
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
   "moonbitlang/core/quickcheck",

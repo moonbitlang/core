@@ -2,8 +2,8 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
-  "moonbitlang/core/flate",
-  "moonbitlang/core/flate/internal/checksum",
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/internal/checksum",
 }
 
 import {

@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/flate/zip"
+package "moonbitlang/core/archive/zip"
 
 import {
   "moonbitlang/core/debug",

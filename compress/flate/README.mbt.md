@@ -1,12 +1,13 @@
 # flate
 
 Pure-MoonBit **DEFLATE** (RFC 1951) — a runtime-agnostic, suspendable, io-free
-compression engine, with **gzip** (RFC 1952), **zlib** (RFC 1950), and
-**zip** (APPNOTE.TXT) container wrappers.
+compression engine in `moonbitlang/core/compress/flate`. The sibling
+`compress/gzip` (RFC 1952) and `compress/zlib` (RFC 1950) packages provide
+compressed formats; `archive/zip` (APPNOTE.TXT) provides ZIP archives.
 
 gzip, zlib, and zip share CRC-32 and Adler-32 implementations in the internal
-`moonbitlang/core/flate/internal/checksum` package. This package is an
-implementation detail and cannot be imported from outside `flate`.
+`moonbitlang/core/internal/checksum` package. This package is an
+implementation detail and cannot be imported from outside `moonbitlang/core`.
 
 ## Import
 
@@ -14,10 +15,10 @@ Add the packages you use to `moon.pkg`:
 
 ```moon.pkg
 import {
-  "moonbitlang/core/flate",
-  "moonbitlang/core/flate/gzip",
-  "moonbitlang/core/flate/zlib",
-  "moonbitlang/core/flate/zip",
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/compress/gzip",
+  "moonbitlang/core/compress/zlib",
+  "moonbitlang/core/archive/zip",
 }
 ```
 
