@@ -47,7 +47,7 @@
 ///   children to the left of the target need to be full.
 /// - *Full does not imply radix.* `append_right_leaf` and `push_end` grow a
 ///   relaxed node by patching its sizes array (`append_sizes_last`,
-///   `push_sizes_last`, `update_sizes_last`) instead of re-deriving it, so a
+///   `push_sizes_last`) instead of re-deriving it, so a
 ///   node can reach exactly its full size while still carrying sizes. Marking
 ///   its parent radix on the strength of the child's *size* is what made `at`
 ///   abort in #4083; `compute_sizes` now also requires `Tree::is_radix`.
@@ -246,24 +246,6 @@ fn[T] Tree::push_end(
   shift : Int32,
   value : T,
 ) -> (Tree[T], Int32) {
-  fn update_sizes_last(sizes : FixedArray[Int32]?) -> FixedArray[Int32]? {
-    match sizes {
-      Some(sizes) => {
-        let new_sizes = sizes.copy()
-        new_sizes[new_sizes.length() - 1] += 1
-        Some(new_sizes)
-      }
-      None => None
-    }
-  }
-
-  fn push_sizes_last(sizes : FixedArray[Int32]?) -> FixedArray[Int32]? {
-    match sizes {
-      Some(sizes) => Some(immutable_push(sizes, 1 + sizes[sizes.length() - 1]))
-      None => None
-    }
-  }
-
   fn worker(node : Tree[T], shift : Int32) -> Tree[T]? {
     match node {
       Leaf(leaf) => {
@@ -288,7 +270,7 @@ fn[T] Tree::push_end(
             let new_nodes = nodes.copy()
             new_nodes[len - 1] = new_node
             let new_sizes = match sizes {
-              Some(_) => update_sizes_last(sizes)
+              Some(_) => append_sizes_last(sizes, 1)
               None => compute_sizes(new_nodes, shift - NUM_BITS)
             }
             Some(Node(new_nodes, new_sizes))
@@ -301,7 +283,7 @@ fn[T] Tree::push_end(
                 new_branch_left([value], shift - NUM_BITS),
               )
               let new_sizes = match sizes {
-                Some(_) => push_sizes_last(sizes)
+                Some(_) => push_sizes_last(sizes, 1)
                 None => compute_sizes(new_nodes, shift - NUM_BITS)
               }
               Some(Node(new_nodes, new_sizes))
