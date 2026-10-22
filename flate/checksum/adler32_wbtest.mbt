@@ -30,7 +30,7 @@ test "Adler group bound never forms an index past the end" {
     let groups_end = adler_groups_end(start, end)
     assert_true(groups_end >= start && groups_end <= end)
     assert_true(end - groups_end < 8)
-    assert_eq((groups_end - start) % 8, 0)
+    @test.assert_eq((groups_end - start) % 8, 0)
   }
 }
 
@@ -70,15 +70,15 @@ test "Adler 16-byte chunks agree with the serial sums and stay inside the view" 
             checksum.a = seed.0
             checksum.b = seed.1
             let position = checksum.fold_chunks16(view, start, end)
-            assert_eq(position, start + length / 16 * 16)
+            @test.assert_eq(position, start + length / 16 * 16)
             let mut a = seed.0
             let mut b = seed.1
             for i in start..<position {
               a = a + view[i].to_int()
               b = b + a
             }
-            assert_eq(checksum.a, a)
-            assert_eq(checksum.b, b)
+            @test.assert_eq(checksum.a, a)
+            @test.assert_eq(checksum.b, b)
           }
         }
       }

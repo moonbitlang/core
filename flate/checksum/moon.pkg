@@ -13,3 +13,7 @@ warnings = "-alert_experimental-unused_package"
 import {
   "moonbitlang/core/test",
 } for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"
