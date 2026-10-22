@@ -496,7 +496,7 @@ fn div_w(
 ) -> UInt64 {
   let mut r = 0UL
   if s == 0 {
-    for i = n - 1; i >= 0; i = i - 1 {
+    for i in n>..0 {
       let dm = div2by1(r, x.unsafe_get(i), dn, rec)
       q.unsafe_set(i, dm.q)
       r = dm.r
@@ -508,7 +508,7 @@ fn div_w(
   // bits shifted off the top become the initial remainder.
   let t = 64 - s
   r = x.unsafe_get(n - 1) >> t
-  for i = n - 1; i >= 0; i = i - 1 {
+  for i in n>..0 {
     let cur = x.unsafe_get(i)
     let lower = if i > 0 { x.unsafe_get(i - 1) } else { 0UL }
     let dm = div2by1(r, (cur << s) | (lower >> t), dn, rec)
@@ -590,7 +590,7 @@ fn shl_vu(
   }
   let t = 64 - s
   let c = x.unsafe_get(n - 1) >> t
-  for i = n - 1; i > 0; i = i - 1 {
+  for i in n>..1 {
     z.unsafe_set(i, (x.unsafe_get(i) << s) | (x.unsafe_get(i - 1) >> t))
   }
   z.unsafe_set(0, x.unsafe_get(0) << s)
