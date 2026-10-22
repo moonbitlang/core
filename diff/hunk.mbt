@@ -42,9 +42,7 @@ fn HunkHeader::new(edits : ArrayView[Edit]) -> Self {
   let mut new_end = first_new_end
   let mut found_old_end = false
   let mut found_new_end = false
-  let mut i = edits.length()
-  while i > 0 {
-    i -= 1
+  for i in edits.length()>..0 {
     let edit = edits[i]
     let (edit_old_start, edit_old_end) = edit.old_range()
     let (edit_new_start, edit_new_end) = edit.new_range()
