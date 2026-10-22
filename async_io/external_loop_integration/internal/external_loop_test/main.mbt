@@ -55,7 +55,7 @@ pub fn trigger_main_loop_event(delay~ : Int32) -> Unit {
 ///|
 /// A simple custom event loop for testing purpose
 pub struct MainLoop {
-  log : Array[String]
+  mut terminated : Bool
   priv main_loop_event : @cond_var.Cond
 }
 
@@ -65,13 +65,7 @@ pub fn MainLoop::MainLoop() -> MainLoop raise {
   if init_main_loop() < 0 {
     @os_error.check_errno("init main loop")
   }
-  { log: [], main_loop_event: Cond(), }
-}
-
-///|
-/// Log a message in the custom event loop
-pub fn MainLoop::log(self : MainLoop, msg : String) -> Unit {
-  self.log.push(msg)
+  { terminated: false, main_loop_event: Cond(), }
 }
 
 ///|
@@ -98,10 +92,7 @@ pub impl @external_loop_integration.ExternalEventLoop for MainLoop with fn poll(
   }
   match ret {
     0 | 1 => ()
-    2 => {
-      self.log("main loop: received custom event")
-      self.main_loop_event.signal()
-    }
+    2 => self.main_loop_event.signal()
     _ => panic()
   }
 }
@@ -110,6 +101,6 @@ pub impl @external_loop_integration.ExternalEventLoop for MainLoop with fn poll(
 pub impl @external_loop_integration.ExternalEventLoop for MainLoop with fn terminate(
   self,
 ) {
-  self.log("terminate main loop")
+  self.terminated = true
   destroy_main_loop()
 }

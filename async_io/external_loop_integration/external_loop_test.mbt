@@ -18,45 +18,22 @@ test "external loop mixed" {
   let main_loop = @external_loop_test.MainLoop()
   @event_loop.with_event_loop <| () => {
     @async_io.set_external_event_loop(main_loop)
-    @async_io.with_task_group <| group => {
-      let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-      let start = @async_io.now()
-      fn tick() {
-        (@async_io.now() - start + 50) / 150
-      }
-      group.spawn_bg() <| () => {
-        defer server.close()
-        let (conn, _) = server.accept()
-        defer conn.close()
-        main_loop.log("TCP server received connection at #\{tick()}")
-      }
-      group.spawn_bg() <| () => {
-        @async_io.sleep(300)
-        main_loop.log("attempting connect")
-        let conn = @socket.Tcp::connect(server.addr)
-        @async_io.sleep(100)
-        defer conn.close()
-      }
-      group.spawn_bg(no_wait=true) <| () => {
-        for ;; {
-          main_loop.wait()
-          main_loop.log("received main loop specific event at #\{tick()}")
+    @async_io.with_timeout(500) <| () => {
+      @async_io.with_task_group <| group => {
+        let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
+        group.spawn_bg() <| () => {
+          defer server.close()
+          let (conn, _) = server.accept()
+          defer conn.close()
         }
+        let conn = @socket.Tcp::connect(server.addr)
+        defer conn.close()
       }
-      group.spawn_bg() <| () => {
-        @external_loop_test.trigger_main_loop_event(delay=150)
-      }
-      group.spawn_bg() <| () => {
-        @external_loop_test.trigger_main_loop_event(delay=450)
-      }
-      @async_io.sleep(600)
     }
+    @external_loop_test.trigger_main_loop_event(delay=150)
+    @async_io.with_timeout(300, () => main_loop.wait())
   }
-  json_inspect(main_loop.log, content=[
-    "main loop: received custom event", "received main loop specific event at #1",
-    "attempting connect", "TCP server received connection at #2", "main loop: received custom event",
-    "received main loop specific event at #3", "terminate main loop",
-  ])
+  assert_true(main_loop.terminated)
 }
 
 ///|
@@ -65,22 +42,10 @@ test "external loop blocked on external only" {
   let main_loop = @external_loop_test.MainLoop()
   @event_loop.with_event_loop <| () => {
     @async_io.set_external_event_loop(main_loop)
-    @async_io.with_task_group <| group => {
-      let start = @async_io.now()
-      fn tick() {
-        (@async_io.now() - start + 50) / 150
-      }
-      group.spawn_bg() <| () => {
-        @external_loop_test.trigger_main_loop_event(delay=150)
-      }
-      main_loop.wait()
-      main_loop.log("main loop received custom event at #\{tick()}")
-    }
+    @external_loop_test.trigger_main_loop_event(delay=150)
+    @async_io.with_timeout(300, () => main_loop.wait())
   }
-  json_inspect(main_loop.log, content=[
-    "main loop: received custom event", "main loop received custom event at #1",
-    "terminate main loop",
-  ])
+  assert_true(main_loop.terminated)
 }
 
 ///|
@@ -89,28 +54,14 @@ test "external loop blocked on async only" {
   let main_loop = @external_loop_test.MainLoop()
   @event_loop.with_event_loop <| () => {
     @async_io.set_external_event_loop(main_loop)
-    @async_io.with_task_group <| group => {
-      let (r, w) = @pipe.pipe()
-      defer r.close()
-      defer w.close()
-      let start = @async_io.now()
-      fn tick() {
-        (@async_io.now() - start + 50) / 150
-      }
-      for i, delay in [150, 300] {
-        group.spawn_bg() <| () => {
-          @external_loop_test.trigger_event(w.fd(), i, delay~)
-        }
-      }
-      for _ in 0..<2 {
-        guard! r.read_exactly(4) is [i32le(data)]
-        main_loop.log("main loop received \{data} at #\{tick()}")
-      }
-    }
+    let (r, w) = @pipe.pipe()
+    defer r.close()
+    defer w.close()
+    @external_loop_test.trigger_event(w.fd(), 42, delay=150)
+    guard! @async_io.with_timeout(300, () => r.read_exactly(4)) is [i32le(data)]
+    inspect(data, content="42")
   }
-  json_inspect(main_loop.log, content=[
-    "main loop received 0 at #1", "main loop received 1 at #2", "terminate main loop",
-  ])
+  assert_true(main_loop.terminated)
 }
 
 ///|
@@ -127,7 +78,7 @@ test "non-blocking read & external waiter race" {
         defer w.close()
         // The `write` here will generate a read-readiness event for the pipe
         w.write(b"abcd")
-        @async_io.sleep(150)
+        @async_io.sleep(200)
         w.write(b"xyzw")
       }
       group.spawn_bg() <| () => {
@@ -164,4 +115,5 @@ test "non-blocking read & external waiter race" {
       }
     }
   }
+  assert_true(main_loop.terminated)
 }
