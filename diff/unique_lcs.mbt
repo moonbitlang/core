@@ -29,8 +29,7 @@ fn[T : Eq + Hash] unique_lcs(
 ) -> ArrayView[(Int32, Int32)] {
   let matches = find_unique(old~, new~)
   let piles = Piles(Array(capacity=matches.length()))
-  for place in 0..<matches.length() {
-    let (_, new_idx) = matches[place]
+  for place, (_, new_idx) in matches {
     // Each pile top stores `(new_idx, place)`: the candidate tail in `new~`
     // and the position needed to recover the original `(old_idx, new_idx)`
     // pair after backtracking.
@@ -43,10 +42,5 @@ fn[T : Eq + Hash] unique_lcs(
   guard piles.last() is Some(head) else { return [] }
   // The top of the last pile ends one longest chain; following the
   // backpointers yields the full chain in order.
-  let seq = []
-  for pair in head.top().to_array().iter() {
-    let (_, place) = pair
-    seq.push(matches[place])
-  }
-  return seq
+  return [ for (_, place) in head.top().to_array() => matches[place] ]
 }

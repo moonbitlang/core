@@ -34,11 +34,11 @@ fn[T : Eq + Hash] find_unique(
     [],
     capacity=old.length().max(new.length()),
   )
-  for i in 0..<old.length() {
-    if match_lines.get(old[i]) is Some(count_record) {
+  for i, value in old {
+    if match_lines.get(value) is Some(count_record) {
       count_record.old_count += 1
     } else {
-      match_lines[old[i]] = {
+      match_lines[value] = {
         old_idx: i,
         old_count: 1,
         new_idx: -1,
@@ -46,8 +46,8 @@ fn[T : Eq + Hash] find_unique(
       }
     }
   }
-  for i in 0..<new.length() {
-    if match_lines.get(new[i]) is Some(count_record) {
+  for i, value in new {
+    if match_lines.get(value) is Some(count_record) {
       count_record.new_count += 1
       if count_record.new_idx == -1 {
         count_record.new_idx = i
@@ -56,14 +56,10 @@ fn[T : Eq + Hash] find_unique(
   }
   // Only unique-on-both-sides values can serve as stable patience-diff
   // anchors.
-  let match_lines = match_lines
-    .iter()
-    .filter(p => p.1.new_count == 1 && p.1.old_count == 1)
-    .map(p => p.1)
-  let unique_match_lines = []
-  for record in match_lines {
-    unique_match_lines.push((record.old_idx, record.new_idx))
-  }
+  let unique_match_lines : Array[(Int32, Int32)] = [
+    for (_, record) in match_lines.iter() if record.new_count == 1 &&
+    record.old_count == 1 => (record.old_idx, record.new_idx)
+  ]
   // Sorting by `old_idx` turns the LIS over `new_idx` into a common
   // subsequence in both arrays.
   unique_match_lines.sort_by_key(pair => pair.0)
