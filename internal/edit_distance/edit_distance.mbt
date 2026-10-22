@@ -100,14 +100,7 @@ fn[S : LevInput] lev_distance(s : S) -> Int32 {
       let sub = prev[j - 1] + (if s.eq(p + i - 1, p + j - 1) { 0 } else { 1 })
       let del = prev[j] + 1
       let ins = cur[j - 1] + 1
-      let mut best = sub
-      if del < best {
-        best = del
-      }
-      if ins < best {
-        best = ins
-      }
-      cur[j] = best
+      cur[j] = sub.min(del).min(ins)
     }
     let t = prev
     prev = cur
@@ -153,32 +146,21 @@ fn[S : LevInput] lev_within(s : S, max_distance : Int32) -> Int32? {
   let mut cur = FixedArray::make(n + 1, inf)
   for i0 in 0..<m {
     let i = i0 + 1
-    let lo = if i - k > 1 { i - k } else { 1 }
+    let lo = (i - k).max(1)
     // i + k computed as a comparison against n - i to avoid overflow
     let hi = if k >= n - i { n } else { i + k }
     // cells left of the band are unreachable within the bound
     cur[lo - 1] = if lo == 1 && i <= k { i } else { inf }
     let mut row_min = inf
-    for j in lo..<(hi + 1) {
+    for j in lo..<=hi {
       let sub = prev[j - 1] + (if s.eq(p + i - 1, p + j - 1) { 0 } else { 1 })
       let del = prev[j] + 1
       let ins = cur[j - 1] + 1
-      let mut best = sub
-      if del < best {
-        best = del
-      }
-      if ins < best {
-        best = ins
-      }
       // saturate: anything past the bound is equally dead, and unclamped
       // stale cells could otherwise creep one past `inf` per row
-      if best > inf {
-        best = inf
-      }
+      let best = sub.min(del).min(ins).min(inf)
       cur[j] = best
-      if best < row_min {
-        row_min = best
-      }
+      row_min = row_min.min(best)
     }
     if row_min > k {
       return None
