@@ -22,10 +22,12 @@ let all_protocol_preferences : FixedArray[@socket.IpProtocolPreference] = [
 
 ///|
 async test "Only_V4 server" {
+  // Use a rarely used port outside random assignment range,
+  // so that there is no collision with randomly assigned IPv6 port
+  let port = 8344
   let log = StringBuilder()
   @async_io.with_task_group() <| root => {
-    let server = @socket.TcpServer(@socket.Addr::parse("0.0.0.0:0"))
-    let port = server.addr.port()
+    let server = @socket.TcpServer(@socket.Addr::parse("0.0.0.0:\{port}"))
     root.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((conn, addr) => {
         let addr_str = addr.to_string()
@@ -76,13 +78,15 @@ async test "Only_V4 server" {
 
 ///|
 async test "Only_V6 server" {
+  // Use a rarely used port outside random assignment range,
+  // so that there is no collision with randomly assigned IPv4 port
+  let port = 8346
   let log = StringBuilder()
   @async_io.with_task_group() <| root => {
     let server = @socket.TcpServer(
-      @socket.Addr::parse("[::]:0"),
+      @socket.Addr::parse("[::]:\{port}"),
       dual_stack=false,
     )
-    let port = server.addr.port()
     root.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((conn, addr) => {
         let addr_str = addr.to_string()
@@ -184,10 +188,12 @@ async test "dual stack server" {
 
 ///|
 async test "Only_V4 UDP server" {
+  // Use a rarely used port outside random assignment range,
+  // so that there is no collision with randomly assigned IPv6 port
+  let port = 8344
   let log = StringBuilder()
   @async_io.with_task_group() <| root => {
-    let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:0"))
-    let port = server.addr.port()
+    let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:\{port}"))
     root.spawn_bg(no_wait=true) <| () => {
       defer server.close()
       let buf = FixedArray::make(1024, b'\x00')
@@ -237,10 +243,13 @@ async test "Only_V4 UDP server" {
 
 ///|
 async test "Only_V6 UDP server" {
+  // Use a rarely used port outside random assignment range,
+  // so that there is no collision with randomly assigned IPv4 port
+  let port = 8346
   let log = StringBuilder()
   @async_io.with_task_group() <| root => {
     let server = @socket.UdpServer(
-      @socket.Addr::parse("[::]:0"),
+      @socket.Addr::parse("[::]:\{port}"),
       dual_stack=false,
     )
     let port = server.addr.port()

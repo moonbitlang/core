@@ -773,7 +773,9 @@ async test "watch init event" {
 
 ///|
 async test "watch debounce" {
-  let test_dir = Dir({ "watched": Dir({ "file": File("abcd") }) })
+  let test_dir = Dir({
+    "watched": Dir({ "file": File("abcd"), "another_file": File("xyzw") }),
+  })
   let path = "_build/watch_debounce_test"
   let watched_path = "\{path}/watched"
   test_dir.instantiate(path)
@@ -793,41 +795,34 @@ async test "watch debounce" {
         log.write("watcher received: \{Repr(events)}\n")
       }
     }
-    let immediate_watcher = @fs.Watcher(watched_path, debounce_timeout=0)
-    defer immediate_watcher.close()
 
     // 1. multiple events happen within debounce interval
     log.write("rename happen within debounce interval\n")
     @fs.rename("\{watched_path}/file", "\{path}/file")
-    immediate_watcher.wait_any()
-    @async_io.sleep(200)
+    @async_io.sleep(100)
     @fs.rename("\{path}/file", "\{watched_path}/file2")
-    immediate_watcher.wait_any()
     @async_io.sleep(600)
 
     // 2. exceed debounce interval
     log.write("rename longer than debounce interval\n")
     @fs.rename("\{watched_path}/file2", "\{path}/file")
-    immediate_watcher.wait_any()
-    @async_io.sleep(450)
+    @async_io.sleep(600)
     @fs.rename("\{path}/file", "\{watched_path}/file")
-    immediate_watcher.wait_any()
     @async_io.sleep(600)
 
     // 3. exceed max interval
     log.write("rename exceed max debounce delay\n")
-    @fs.write_text("\{watched_path}/file", "xyzw")
-    immediate_watcher.wait_any()
-    let timers : ReadOnlyArray[@async_io.Timer] = [
-      Timer(250),
-      Timer(400),
-      Timer(750),
-    ]
-    timers[0].wait()
     @fs.rename("\{watched_path}/file", "\{path}/file")
-    timers[1].wait()
-    @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
-    timers[2].wait()
+    let start = @async_io.now()
+    // Refresh the watcher with other events until max debounce delay exceeds
+    while @async_io.now() - start < 650 {
+      @async_io.sleep(200)
+      // If we are too close to the deadline, don't perform refreshing,
+      // to avoid an extra modification event from appearing in the result
+      if @async_io.now() - start < 550 {
+        @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
+      }
+    }
     @fs.rename("\{path}/file", "\{watched_path}/file2")
     @async_io.sleep(600)
   }
@@ -840,7 +835,7 @@ async test "watch debounce" {
       #|watcher received: [Remove("file2")]
       #|watcher received: [Create("file")]
       #|rename exceed max debounce delay
-      #|watcher received: [Create("another_file"), Remove("file")]
+      #|watcher received: [Modify("another_file"), Remove("file")]
       #|watcher received: [Create("file2")]
       #|
     ),
