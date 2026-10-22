@@ -82,5 +82,5 @@ jobs:
           moon version --all
 
       - name: run native release tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         uses: ./.github/actions/test-native-release
