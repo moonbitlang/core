@@ -1,0 +1,19 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/v128",
+}
+
+// Non-cryptographic checksums over byte views. Independent of compression
+// formats, I/O, and cancellation policies.
+
+// v128 is experimental; its import is used only by native/linear-wasm paths.
+
+warnings = "-alert_experimental-unused_package"
+
+import {
+  "moonbitlang/core/test",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"
