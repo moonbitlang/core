@@ -223,6 +223,57 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
 }
 
 ///|
+test "ZIP readers reject incomplete DEFLATE after output suspension" {
+  let archive = @zip.Archive()
+  let payload = Bytes::make(8194, b'x')
+  archive.add("x", payload, compression=Deflate)
+  let original = @zip.write(archive, level=0)
+  let central = zip_test_field(original, original.length() - 22 + 16, 4)
+  let compressed_size = zip_test_field(original, 18, 4)
+  // A single stored DEFLATE block after the local header and one-byte name.
+  @test.assert_eq(original[31], b'\x01')
+  let missing_end = original.to_array()
+  missing_end[31] = b'\x00'
+  let short_payload = original.to_array()
+  // Both headers agree on a payload that is missing its final byte.
+  for offset in [18, central + 20] {
+    for i = 0; i < 4; i = i + 1 {
+      short_payload[offset + i] = ((compressed_size - 1) >> (8 * i)).to_byte()
+    }
+  }
+  for changed in [missing_end, short_payload] {
+    let bytes = Bytes::from_array(changed)
+    let mut polls = 0
+    let ZipError(kind, _) = @test.expect_error(() => {
+      @zip.read(bytes, cancelled=() => {
+        polls += 1
+        polls > 100
+      })
+    })
+    @test.assert_eq(kind, Truncated)
+    let source = archive_range_source(bytes)
+    let directory = drive_directory_ranges(
+      DirectoryReader(bytes.length().to_uint64()),
+      source,
+    )
+    for room in [1, 8192] {
+      let reader = directory.open_entry(0)
+      let ZipError(kind, _) = @test.expect_error(() => {
+        drive_entry_ranges(reader, source, room)
+      })
+      @test.assert_eq(kind, Truncated)
+      assert_true(reader.total_produced() >= 8192UL)
+      @test.assert_eq(reader.last_produced(), 0)
+      let ZipError(repeated, _) = @test.expect_error(() => {
+        reader.step(b"later input", FixedArray::make(room, b'\x00'))
+      })
+      @test.assert_eq(repeated, kind)
+      @test.assert_eq(reader.last_produced(), 0)
+    }
+  }
+}
+
+///|
 test "ZIP readers report observed per-entry and cumulative output limits" {
   let cases : Array[(@zip.ReadLimits, @zip.LimitKind, UInt64, UInt64)] = [
     (

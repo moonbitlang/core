@@ -395,16 +395,16 @@ fn EntryReader::read_payload(
 ) -> EntryStep raise ZipError {
   guard output.length() != 0 else { return NeedMoreOutput }
   if self.inflater is Some(inflater) {
-    let status_result = try {
-      if self.requested == self.entry.compressed_size {
-        inflater.finish(self.pending[self.pending_pos:], output.mut_view())
-      } else {
-        inflater.step(self.pending[self.pending_pos:], output.mut_view())
-      }
-    } catch {
+    let status_result = inflater.step(
+      self.pending[self.pending_pos:],
+      output.mut_view(),
+    ) catch {
       error => raise wrap_inflate_error(error)
     }
     let status = status_result.status
+    if status is NeedMoreInput && self.requested == self.entry.compressed_size {
+      raise ZipError(Truncated, "zip: truncated DEFLATE payload")
+    }
     self.record_output(output, status_result.produced, status_result.consumed)
     match status {
       Done => {
@@ -417,12 +417,7 @@ fn EntryReader::read_payload(
         self.finish_payload()
       }
       NeedMoreOutput => NeedMoreOutput
-      NeedMoreInput => {
-        guard self.requested < self.entry.compressed_size else {
-          raise ZipError(Truncated, "zip: truncated DEFLATE payload")
-        }
-        self.request_payload()
-      }
+      NeedMoreInput => self.request_payload()
     }
   } else {
     let count = (self.pending.length() - self.pending_pos).min(output.length())

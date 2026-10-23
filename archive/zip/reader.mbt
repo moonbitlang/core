@@ -168,8 +168,11 @@ fn inflate_entry(
   // For a total-output limit, max_output is the remaining allowance.
   let previous = (reported_limit - max_output).to_uint64()
   let size = for position = 0, total = 0UL {
-    let result = inflater.finish(compressed[position:], scratch.mut_view()) catch {
+    let result = inflater.step(compressed[position:], scratch.mut_view()) catch {
       err => raise wrap_inflate_error(err)
+    }
+    guard !(result.status is NeedMoreInput) else {
+      raise ZipError(Truncated, "zip: truncated DEFLATE payload")
     }
     let position = position + result.consumed
     let total = total + result.produced.to_uint64()
