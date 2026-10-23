@@ -1,0 +1,17 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/external_loop_integration"
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait ExternalEventLoop {
+  fn poll(Self, timeout? : Int32) -> Unit raise
+  fn get_wakeup_callback_for_foreign_thread(Self) -> FuncRef[() -> Unit]
+  fn terminate(Self) -> Unit raise
+}

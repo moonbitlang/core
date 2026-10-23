@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/internal/env_util"
+
+import {
+  "moonbitlang/core/async/types",
+}
+
+// Values
+pub let current_process : UInt32
+
+pub let platform : @types.Platform
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+pub using @types {type Platform}
+
+// Traits

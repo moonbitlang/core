@@ -1,0 +1,172 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/internal/event_loop"
+
+import {
+  "moonbitlang/core/async/external_loop_integration",
+  "moonbitlang/core/async/internal/c_buffer",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/types",
+  "moonbitlang/core/internal/os_string",
+  "moonbitlang/core/ref",
+}
+
+// Values
+pub const STAT_ACCESS_TIME : UInt32 = 0x0010
+
+pub const STAT_CHANGE_TIME : UInt32 = 0x0040
+
+pub const STAT_CREATE_TIME : UInt32 = 0x0080
+
+pub const STAT_DEVICE_ID : UInt32 = 0x0004
+
+pub const STAT_FILE_ID : UInt32 = 0x0008
+
+pub const STAT_FILE_KIND : UInt32 = 0x0001
+
+pub const STAT_FILE_SIZE : UInt32 = 0x0002
+
+pub const STAT_MODIFY_TIME : UInt32 = 0x0020
+
+pub async fn access(StringView, Access, context~ : String) -> Int32
+
+pub let all_signals : ReadOnlyArray[Int32]
+
+pub async fn atime(UInt64, context~ : String) -> (Int64, Int32)
+
+pub async fn atime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
+
+pub let check_fd_leak : @ref.Ref[Bool]
+
+pub async fn chmod(StringView, Int32, context~ : String) -> Unit
+
+pub async fn ctime(UInt64, context~ : String) -> (Int64, Int32)
+
+pub async fn ctime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
+
+pub async fn file_kind_by_path(StringView, parent~ : UInt64, follow_symlink~ : Bool, context~ : String) -> @fd_util.FileKind
+
+pub async fn file_size(UInt64, context~ : String) -> Int64
+
+pub async fn file_size_of_path(StringView, context~ : String) -> Int64
+
+pub async fn fstatx(UInt64, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
+
+pub fn get_current_event_loop() -> @ref.Ref[EventLoop?]
+
+pub async fn getaddrinfo(StringView, context~ : String) -> Result[AddrInfo, String]
+
+pub async fn inotify_add_watch(UInt64, StringView, is_dir~ : Bool, context~ : String) -> UInt64
+
+pub async fn kind_of_fd(UInt64, context~ : String) -> @fd_util.FileKind
+
+pub async fn mkdir(StringView, mode~ : Int32, context~ : String) -> Unit
+
+pub async fn mtime(UInt64, context~ : String) -> (Int64, Int32)
+
+pub async fn mtime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
+
+pub fn now() -> Int64
+
+pub async fn open(StringView, Int32, create~ : Int32, append~ : Bool, sync~ : Int32, mode~ : Int32, context~ : String) -> (IoHandle, FileIdentity)
+
+pub let platform : @types.Platform
+
+pub async fn realpath(StringView, context~ : String) -> String
+
+pub fn register_hook(init? : () -> Unit raise, exit? : () -> Unit raise) -> Unit
+
+pub async fn remove(StringView, context~ : String) -> Unit nocancel
+
+pub async fn rename(StringView, StringView, replace~ : Bool, context~ : String) -> Unit
+
+pub async fn rmdir(StringView, context~ : String) -> Unit nocancel
+
+pub fn set_deadlock_handler((Array[SourceLoc]) -> Unit) -> Unit
+
+pub fn set_external_event_loop(&@external_loop_integration.ExternalEventLoop) -> Unit
+
+pub fn set_global_cancellation_signals(ReadOnlyArray[Int32]) -> Unit
+
+pub async fn sleep(Int32) -> Unit noraise
+
+pub async fn spawn_unix(@os_string.OsString, UInt64, env~ : UInt64, stdin~ : UInt64, stdout~ : UInt64, stderr~ : UInt64, is_orphan~ : Bool, cwd~ : @os_string.OsString?, context~ : String) -> Process
+
+pub async fn spawn_windows(@os_string.OsString, env~ : UInt64, stdin~ : UInt64, stdout~ : UInt64, stderr~ : UInt64, cwd~ : @os_string.OsString?, no_console_window~ : Bool, is_orphan~ : Bool, context~ : String) -> Process
+
+pub async fn statx(StringView, parent~ : UInt64, follow_symlink~ : Bool, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
+
+pub let stderr : Result[IoHandle, Error]
+
+pub let stdin : Result[IoHandle, Error]
+
+pub let stdout : Result[IoHandle, Error]
+
+pub async fn symlink(StringView, StringView, force_symlink~ : Bool, context~ : String) -> Unit
+
+pub fn with_event_loop(async () -> Unit, max_worker_count? : Int32) -> Unit raise
+
+// Errors
+pub suberror KilledBySignal {
+  KilledBySignal(Int32)
+}
+
+// Types and methods
+pub(all) enum Access {
+  Exist
+  CanRead
+  CanWrite
+  CanExecute
+}
+
+pub struct AddrInfo(UInt64)
+
+type EventLoop
+
+pub(all) struct FileIdentity {
+  dev_id : UInt64
+  file_id : UInt64
+} derive(Eq, Hash)
+
+pub struct IoHandle {
+  mut read_offset : Int64
+  mut write_offset : Int64
+  // private fields
+}
+pub async fn IoHandle::accept_unix(Self, Bytes, context~ : String) -> Self
+pub async fn IoHandle::accept_windows(Self, Self, Bytes, context~ : String) -> Unit
+pub async fn IoHandle::bind(Self, Bytes, context~ : String) -> Unit
+pub fn IoHandle::close(Self) -> Unit
+pub async fn IoHandle::connect(Self, Bytes, context~ : String) -> Unit
+pub fn IoHandle::detach_from_event_loop(Self) -> Unit
+pub fn IoHandle::fd(Self) -> UInt64
+pub fn IoHandle::from_fd(UInt64, kind~ : @fd_util.FileKind, is_async? : Bool, read_only? : Bool) -> Self raise
+pub async fn IoHandle::fsync(Self, only_data~ : Bool, context~ : String) -> Unit
+pub fn IoHandle::kind(Self) -> @fd_util.FileKind
+pub async fn IoHandle::lock(Self, exclusive~ : Bool, context~ : String) -> Unit
+pub async fn IoHandle::read(Self, FixedArray[Byte], offset~ : Int32, len~ : Int32, context~ : String) -> Int32
+pub async fn IoHandle::read_at(Self, FixedArray[Byte], offset~ : Int32, len~ : Int32, position~ : Int64, context~ : String) -> Int32
+pub async fn IoHandle::read_dir_changes(Self, WindowsWatcherBuf, Int32, context~ : String) -> Int32
+pub async fn IoHandle::readdir(Self, @c_buffer.Buffer, Int32, restart~ : Bool, context~ : String) -> Int32
+pub async fn IoHandle::recvfrom(Self, FixedArray[Byte], offset~ : Int32, len~ : Int32, addr~ : Bytes, context~ : String) -> Int32
+pub async fn IoHandle::sendto(Self, Bytes, offset~ : Int32, len~ : Int32, addr~ : Bytes, context~ : String) -> Int32
+pub async fn IoHandle::wait_read(Self) -> Unit
+pub async fn IoHandle::write(Self, Bytes, offset~ : Int32, len~ : Int32, context~ : String) -> Int32
+pub async fn IoHandle::write_at(Self, Bytes, offset~ : Int32, len~ : Int32, position~ : Int64, context~ : String) -> Unit
+
+pub struct Process {
+  pid : Int32
+  // private fields
+}
+pub fn Process::close(Self) -> Unit
+pub fn Process::from_pid(Int32, context~ : String) -> Self raise
+pub async fn Process::wait_pid(Self, context~ : String) -> Int32
+
+type Timer
+pub fn Timer::cancel(Self) -> Unit
+pub fn Timer::new(Int32, () -> Unit) -> Self
+
+pub(all) struct WindowsWatcherBuf(UInt64)
+
+// Type aliases
+
+// Traits

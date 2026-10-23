@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/semaphore"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Semaphore {
+  size : Int32
+  // private fields
+}
+#alias(new, deprecated)
+pub fn Semaphore::Semaphore(Int32, initial_value? : Int32) -> Self
+pub async fn Semaphore::acquire(Self) -> Unit noraise
+pub fn Semaphore::release(Self) -> Unit
+pub fn Semaphore::try_acquire(Self) -> Bool
+
+// Type aliases
+
+// Traits

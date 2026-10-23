@@ -1,0 +1,22 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/set",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/async/internal/coroutine",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/aqueue",
+  "moonbitlang/core/async/semaphore",
+  "moonbitlang/core/async/cond_var",
+}
+
+import {
+  "moonbitlang/core/test",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+options(
+  targets: { "integration.wasm.mbt": [ "wasm" ] },
+)
