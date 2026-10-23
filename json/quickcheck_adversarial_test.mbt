@@ -15,20 +15,20 @@
 // Adversarial property-based tests for the json package, complementing
 // `quickcheck_test.mbt`:
 //
-// - strings built from hostile UTF-16 sequences (every control character,
-//   JSON syntax characters, astral pairs), used both as values and as
-//   object keys;
+// - well-formed strings built from adversarial characters (every control
+//   character, JSON syntax characters, astral pairs), used both as values
+//   and as object keys;
 // - the fully `\uXXXX`-escaped spelling of those strings;
-// - *lone surrogates* injected into any position of such strings — raw or
-//   as `\uXXXX` escapes — which the parser must always reject with a clean
-//   parse error (strings stay Unicode well-formed) and never abort on;
+// - *lone surrogates* injected as `\uXXXX` escapes into such strings,
+//   which the parser must always reject with a clean parse error (strings
+//   stay Unicode well-formed) and never abort on;
 // - textual zero literals (`-0`, `-0.0e7`, ...) which must preserve the
 //   IEEE-754 sign of zero;
 // - integer literals across the full Int64/UInt64 range, whose text must be
 //   preserved exactly by `stringify` (via `repr`) beyond 2^53;
 // - random legal whitespace inserted between tokens;
 // - objects spelled with duplicate keys (last occurrence wins);
-// - single-code-unit deletions/replacements of valid documents, which must
+// - single-character deletions/replacements of valid documents, which must
 //   never make the parser panic and must keep `parse` consistent with
 //   `valid`.
 
@@ -38,7 +38,7 @@
 /// escapes), JSON syntax characters, BMP boundary values, and astral code
 /// points (surrogate pairs in UTF-16). Only Unicode scalar values appear
 /// here — MoonBit strings stay Unicode well-formed, so unpaired surrogates
-/// are generated separately and asserted to be *rejected* by the parser.
+/// are spelled as ASCII escapes and asserted to be *rejected* by the parser.
 fn adversarial_char_gen() -> @quickcheck.Generator[Char] {
   @quickcheck.frequency([
     // Every control character U+0000..U+001F.
@@ -122,7 +122,7 @@ fn fully_escaped(s : String) -> String {
 
 ///|
 test "adversarial strings roundtrip as values and as object keys" {
-  @quickcheck.check((input : (AdvString, AdvString, Int, Bool)) => {
+  @quickcheck.check((input : (AdvString, AdvString, Int32, Bool)) => {
     let (key, value, raw_indent, escape_slash) = input
     let doc = Json::object(Map([(key.0, Json::array([Json::string(value.0)]))]))
     let text = doc.stringify(indent=wrap_index(raw_indent, 5), escape_slash~)
@@ -141,26 +141,32 @@ test "fully \\uXXXX-escaped strings parse back to the original" {
 }
 
 ///|
-/// A lone surrogate — raw or spelled as a `\uXXXX` escape — injected at any
+/// A lone surrogate spelled as a `\uXXXX` escape injected at any
 /// position of an otherwise hostile string must always be rejected with a
 /// clean parse error (`parse` raises, `valid` is false, nothing aborts):
 /// parsed strings stay Unicode well-formed. The surrounding prefix/suffix
 /// supply nearby escapes, astral pairs, and control characters, exercising
-/// both the escape-free fast path and the slow path of the string lexer.
-test "lone surrogates are rejected in every position" {
-  @quickcheck.check((input : (AdvString, AdvString, Int, Bool)) => {
-    let (prefix, suffix, raw_unit, escape_spelling) = input
+/// the slow path of the string lexer. The JSON source itself remains
+/// well-formed UTF-16; no invalid Char or String is constructed.
+test "escaped lone surrogates are rejected in every position" {
+  @quickcheck.check((input : (AdvString, AdvString, Int32, Bool)) => {
+    let (prefix, suffix, raw_unit, escape_surroundings) = input
     let unit = 0xD800 + wrap_index(raw_unit, 0x800)
-    let lone = String::from_array([unit.unsafe_to_char()])
-    let content = prefix.0 + lone + suffix.0
-    let text = if escape_spelling {
-      fully_escaped(content)
+    let before = if escape_surroundings {
+      fully_escaped(prefix.0)
     } else {
-      // `stringify` writes the lone surrogate raw; prefix/suffix contribute
-      // short escapes and `\uXXXX` escapes when they contain control or
-      // quote characters.
-      Json::string(content).stringify()
+      Json(prefix.0).stringify()
     }
+    let after = if escape_surroundings {
+      fully_escaped(suffix.0)
+    } else {
+      Json(suffix.0).stringify()
+    }
+    // Surrogate values always have exactly four hexadecimal digits.
+    let text = before[:before.length() - 1].to_owned() +
+      "\\u" +
+      unit.to_string(radix=16) +
+      after[1:].to_owned()
     parse_succeeds(text) == false && @json.valid(text) == false
   })
 }
@@ -171,7 +177,7 @@ test "lone surrogates are rejected in every position" {
 /// integer spelling `-0` used to lose the sign because the integer fast path
 /// negated an `Int64` (where `-0 == 0`) before converting to `Double`.
 test "zero literals preserve the sign of zero" {
-  @quickcheck.check((input : (Bool, Int, Int, Int)) => {
+  @quickcheck.check((input : (Bool, Int32, Int32, Int32)) => {
     let (negative, raw_frac, raw_exp_kind, raw_exp) = input
     let text = StringBuilder()
     if negative {
@@ -217,7 +223,7 @@ test "integer literals roundtrip through parse and stringify textually" {
 test "whitespace between tokens does not change the parsed value" {
   @quickcheck.check((input : (ArbJson, UInt64)) => {
     let (json, seed) = input
-    let rng = @splitmix.new(seed~)
+    let rng = @quickcheck.RandomState(seed~)
     let ws : ReadOnlyArray[Char] = [' ', '\t', '\n', '\r']
     let text = json.0.stringify()
     let buf = StringBuilder()
@@ -233,8 +239,7 @@ test "whitespace between tokens does not change the parsed value" {
     maybe_ws()
     let mut in_string = false
     let mut escaped = false
-    for unit in text.code_units() {
-      let c = unit.to_int().unsafe_to_char()
+    for c in text {
       buf.write_char(c)
       if in_string {
         if escaped {
@@ -262,7 +267,7 @@ test "whitespace between tokens does not change the parsed value" {
 /// Objects spelled with duplicate keys parse with the last occurrence of
 /// each key winning, matching `Map` insert semantics.
 test "duplicate object keys: last occurrence wins" {
-  @quickcheck.check((entries : Array[(Int, Int)]) => {
+  @quickcheck.check((entries : Array[(Int32, Int32)]) => {
     let text = StringBuilder()
     text.write_char('{')
     let expected : Map[String, Json] = Map([])
@@ -282,29 +287,27 @@ test "duplicate object keys: last occurrence wins" {
 }
 
 ///|
-/// Deleting or replacing one UTF-16 code unit of a valid document must keep
+/// Deleting or replacing one Unicode scalar value of a valid document must keep
 /// the parser total: it either succeeds or raises a parse error (`valid`
 /// agrees with `parse`), and when the mutant still parses, the parsed value
 /// is a fixed point of restringify-and-reparse.
 ///
-/// Mutating at the code-unit level (not the `Char` level) means an astral
-/// character can lose half of its surrogate pair, and the replacement unit —
-/// drawn from the full 16-bit range — can itself be a lone surrogate.
-test "parse stays total under single code-unit deletion and replacement" {
-  @quickcheck.check((input : (ArbJson, Int, Int)) => {
-    let (json, position, raw_replacement) = input
-    let units = json.0.stringify().code_units()
-    guard units.length() > 0 else { return true }
-    let idx = wrap_index(position, units.length())
-    let replacement = wrap_index(raw_replacement, 0x10000)
-    let deleted = StringBuilder(size_hint=units.length())
-    let replaced = StringBuilder(size_hint=units.length())
-    for i, unit in units {
+/// Mutations preserve the well-formed UTF-16 contract of String/StringView,
+/// even when the document contains astral characters.
+test "parse stays total under single character deletion and replacement" {
+  @quickcheck.check((input : (ArbJson, Int32, Char)) => {
+    let (json, position, replacement) = input
+    let chars = json.0.stringify().to_array()
+    guard chars.length() > 0 else { return true }
+    let idx = wrap_index(position, chars.length())
+    let deleted = StringBuilder()
+    let replaced = StringBuilder()
+    for i, c in chars {
       if i != idx {
-        deleted.write_char(unit.to_int().unsafe_to_char())
-        replaced.write_char(unit.to_int().unsafe_to_char())
+        deleted.write_char(c)
+        replaced.write_char(c)
       } else {
-        replaced.write_char(replacement.unsafe_to_char())
+        replaced.write_char(replacement)
       }
     }
     for mutant in [deleted.to_string(), replaced.to_string()] {
@@ -342,6 +345,8 @@ test "default nesting limit boundary at depth 1024" {
   assert_eq(outcome(deep_object), "parsed")
   let too_deep_object = "{\"k\":".repeat(1025) + "0" + "}".repeat(1025)
   assert_eq(outcome(too_deep_object), "depth limit")
+  inspect(@json.parse(deep_array).stringify() == deep_array, content="true")
+  inspect(@json.parse(deep_object).stringify() == deep_object, content="true")
   let mut tree : Json = Json::number(0.0)
   for _ in 0..<1024 {
     tree = Json::array([tree])
@@ -352,29 +357,41 @@ test "default nesting limit boundary at depth 1024" {
 ///|
 /// Deterministic pins for the surrogate cases the properties above explore
 /// randomly, so a regression shows up with a readable diff. Parsed strings
-/// stay Unicode well-formed: every unpaired surrogate — raw or escaped — is
+/// stay Unicode well-formed: every unpaired surrogate escape is
 /// a clean parse error, never an abort and never an ill-formed string.
 test "surrogate handling pins" {
-  let lone_high = String::from_array([(0xD800).unsafe_to_char()])
-  let lone_low = String::from_array([(0xDC00).unsafe_to_char()])
-  // Raw lone surrogates, escape-free (fast path).
-  assert_false(@json.valid("\"" + lone_high + "\""))
-  assert_false(@json.valid("\"" + lone_low + "\""))
-  // A reversed pair (low then high) is two unpaired surrogates.
-  assert_false(@json.valid("\"" + lone_low + lone_high + "\""))
-  // Raw lone surrogates next to escapes (slow path; used to abort the
-  // process via checked slicing in `flush`).
-  assert_false(@json.valid("\"" + lone_low + "\\n\""))
-  assert_false(@json.valid("\"\\n" + lone_low + "\""))
-  assert_false(@json.valid("\"" + lone_high + "\\t\""))
   // Escaped lone surrogates.
   assert_false(@json.valid("\"\\uD800\""))
   assert_false(@json.valid("\"\\uDC00\""))
   assert_false(@json.valid("\"\\uD800\\uD800\""))
-  // Mixed raw/escaped halves do not pair up.
-  assert_false(@json.valid("\"\\uD800" + lone_low + "\""))
-  assert_false(@json.valid("\"" + lone_high + "\\uDC00\""))
+  assert_false(@json.valid("\"\\uDC00\\uD800\""))
+  // A complete raw pair cannot supply the missing escaped half.
+  assert_false(@json.valid("\"\\uD800😀\""))
+  assert_false(@json.valid("\"😀\\uDC00\""))
   // Well-formed pairs still parse, raw or escaped.
   assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
   assert_true(@json.parse("\"\u{1F600}\"") == Json::string("\u{1F600}"))
+}
+
+///|
+/// Astral pairs and escapes near the scalar/SIMD thresholds must survive
+/// both ordinary parsing and parsing a view with a nonzero start offset.
+test "long adversarial strings roundtrip across scan and view boundaries" {
+  for
+    padding in [
+      0, 1, 7, 8, 15, 16, 30, 31, 32, 33, 126, 127, 128, 129, 255, 256, 257,
+    ] {
+    for
+      middle in [
+        "😀", "😀\\\n", "\\\n😀", "\u{10FFFF}\u{0}\u{D7FF}\u{E000}",
+      ] {
+      let s = "x".repeat(padding) + middle + "y".repeat(260 - padding)
+      let doc = Json::object(Map([(s, Json(s))]))
+      let text = doc.stringify()
+      assert_eq(@json.parse(text), doc)
+      let padded = "😀abc" + text + "xyz😀"
+      assert_eq(@json.parse(padded[5:5 + text.length()]), doc)
+      assert_eq(@json.parse(fully_escaped(s)), Json(s))
+    }
+  }
 }
