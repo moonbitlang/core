@@ -30,20 +30,23 @@ pub fn increase_current_thread_priority() -> Unit {
 /// Build test utility in `async_io/internal/test_programs`, and return the path of the executable
 #cfg(any(target="native", target="wasm"))
 pub async fn build_test_program(name : String) -> String {
-  let proc = @process.run("moon", [
-    "build",
-    "async_io/internal/test_programs/\{name}",
-    "--target",
-    "native",
-    "--debug",
-    "--target-dir",
-    "_build/test_programs",
-  ])
-  if proc.exit_code != 0 {
+  guard! @env.current_dir() is Some(cwd)
+  let bundle = @process.run("moon", ["bundle", "--target", "native"])
+  guard bundle.exit_code is 0 else {
+    fail("failed to bundle core for test program: \{bundle.exit_code}")
+  }
+  let proc = @process.run(
+    "moon",
+    [
+      "-C", "async_io/test_programs/", "build", name, "--target", "native", "--debug",
+      "--target-dir", "../../_build/test_programs",
+    ],
+    extra_env={ "MOON_CORE_OVERRIDE": cwd },
+  )
+  guard proc.exit_code is 0 else {
     fail("failed to build test program `\{name}`: \{proc.exit_code}")
   }
-  guard! @env.current_dir() is Some(cwd)
-  "\{cwd}/_build/test_programs/native/debug/build/async_io/internal/test_programs/\{name}/\{name}.exe"
+  "\{cwd}/_build/test_programs/native/debug/build/\{name}/\{name}.exe"
 }
 
 ///|
