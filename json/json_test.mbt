@@ -210,6 +210,81 @@ test "Replacer::keep observes key array changes between uses" {
 }
 
 ///|
+test "Replacer key filters observe mutations in stringify and transform" {
+  for count in [8, 9] {
+    let keys : Array[StringView] = Array::makei(count, i => {
+      if i == 0 {
+        "a"
+      } else {
+        "unused-" + i.to_string()
+      }
+    })
+    let keep = @json.Replacer::keep(keys)
+    let exclude = @json.Replacer::exclude(keys)
+    let value : Json = { "a": 1, "b": 2 }
+    assert_eq(value.stringify(replacer=keep), "{\"a\":1}")
+    assert_eq(value.transform(keep).stringify(), "{\"a\":1}")
+    assert_eq(value.stringify(replacer=exclude), "{\"b\":2}")
+    assert_eq(value.transform(exclude).stringify(), "{\"b\":2}")
+    keys[0] = "b"
+    assert_eq(value.stringify(replacer=keep), "{\"b\":2}")
+    assert_eq(value.transform(keep).stringify(), "{\"b\":2}")
+    assert_eq(value.stringify(replacer=exclude), "{\"a\":1}")
+    assert_eq(value.transform(exclude).stringify(), "{\"a\":1}")
+  }
+}
+
+///|
+test "Replacer key filters match linear lookup across the index threshold" {
+  let sliced_key = "prefix-😀-suffix".exact_view(start=7, end=9)
+  let value : Json = {
+    "a": { "a": 1, "b": 2, "😀": 3, "": 4 },
+    "b": 5,
+    "😀": [{ "a": 6, "b": 7 }, 8],
+    "": 9,
+  }
+  for count in [0, 1, 8, 9, 32] {
+    let keys : Array[StringView] = Array::makei(count, i => {
+      match i % 5 {
+        0 => "a"
+        1 => sliced_key
+        2 => ""
+        _ => "missing"
+      }
+    })
+    for keep in [true, false] {
+      let indexed = if keep {
+        @json.Replacer::keep(keys)
+      } else {
+        @json.Replacer::exclude(keys)
+      }
+      let linear = @json.Replacer((key, value) => {
+        if keys.contains(key) == keep {
+          Some(value)
+        } else {
+          None
+        }
+      })
+      assert_eq(
+        value.stringify(replacer=indexed, indent=2),
+        value.stringify(replacer=linear, indent=2),
+      )
+      @debug.assert_eq(value.transform(indexed), value.transform(linear))
+    }
+  }
+}
+
+///|
+test "Replacer preserves its debug representation" {
+  debug_inspect(@json.Replacer::keep([]), content="{ f: <function: ...> }")
+  debug_inspect(@json.Replacer::exclude([]), content="{ f: <function: ...> }")
+  debug_inspect(
+    @json.Replacer((_, value) => Some(value)),
+    content="{ f: <function: ...> }",
+  )
+}
+
+///|
 test "stringify with replace recursively" {
   let json : Json = {
     "a": 1.0,

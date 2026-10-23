@@ -42,3 +42,29 @@ test "bench Json::stringify Replacer::keep keys=3 fields=5000" (it : @bench.T) {
   let replacer = @json.Replacer::keep(keys)
   it.bench(fn() { it.keep(json.stringify(replacer~).length()) })
 }
+
+///|
+test "bench Json::stringify Replacer::exclude keys=2500 fields=5000" (
+  it : @bench.T,
+) {
+  let (json, keys) = make_replacer_bench_data()
+  let replacer = @json.Replacer::exclude(keys)
+  it.bench(fn() { it.keep(json.stringify(replacer~).length()) })
+}
+
+///|
+test "bench Json::transform Replacer::keep keys=2500 fields=5000" (
+  it : @bench.T,
+) {
+  let (json, keys) = make_replacer_bench_data()
+  let replacer = @json.Replacer::keep(keys)
+  it.bench(fn() { it.keep(json.transform(replacer)) })
+}
+
+///|
+test "bench Json::stringify Replacer::keep keys=2500 fields=3" (it : @bench.T) {
+  let (_, keys) = make_replacer_bench_data()
+  let json : Json = { "key-0": 0, "key-2500": 2500, "key-4999": 4999 }
+  let replacer = @json.Replacer::keep(keys)
+  it.bench(fn() { it.keep(json.stringify(replacer~).length()) })
+}

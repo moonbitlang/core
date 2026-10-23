@@ -171,7 +171,7 @@ pub impl @debug.Debug for Replacer with fn to_repr(_) {
 /// ```
 #alias(new, deprecated="Use `Replacer()` instead")
 pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
-  { kind: Custom(f) }
+  { kind: Custom(f), }
 }
 
 ///|
@@ -193,7 +193,7 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  { kind: Keep(array) }
+  { kind: Keep(array), }
 }
 
 ///|
@@ -215,7 +215,7 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  { kind: Exclude(array) }
+  { kind: Exclude(array), }
 }
 
 ///|
