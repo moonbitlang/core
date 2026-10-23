@@ -186,18 +186,3 @@ pub let delimiter : Char = if is_windows { ';' } else { ':' }
 ///|
 /// OS platform specific path component separator.
 pub let sep : Char = if is_windows { '\\' } else { '/' }
-
-///|
-#deprecated
-pub extend Path with Eq::{not_equal, equal}
-
-///|
-#deprecated
-pub extend Path with @debug.Debug::{to_repr}
-
-///|
-pub extend Path with Show::{to_string}
-
-///|
-#deprecated
-pub extend Path with Show::{output}
