@@ -31,6 +31,19 @@ pub const MIN_VALUE : Int16 = -32768
 pub let min_value : Int16 = -32768
 
 ///|
+/// The identity constructor for `Int16`, allowing values to be written using
+/// constructor syntax, e.g. `Int16(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(3), content="3")
+/// }
+/// ```
+pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
+
+///|
 pub impl Add for Int16 with fn add(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() + that.to_int())
 }

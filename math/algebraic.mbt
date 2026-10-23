@@ -56,7 +56,7 @@ pub fn cbrtf(x : Float) -> Float {
     if hx == 0 {
       return x
     } // cbrt(+-0) is itx
-    ui = (x * Float(0x1.0p24)).reinterpret_as_uint()
+    ui = (x * @float.Float(0x1.0p24)).reinterpret_as_uint()
     hx = ui & 0x7fffffff
     hx = hx / 3 + b2
   } else {

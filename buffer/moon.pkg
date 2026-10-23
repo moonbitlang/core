@@ -6,6 +6,7 @@ import {
 import {
   "moonbitlang/core/bench",
   "moonbitlang/core/int",
+  "moonbitlang/core/int16",
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
 } for "test"

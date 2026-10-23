@@ -91,7 +91,7 @@ test "shrink minimum int64 without overflowing" {
 ///|
 test "shrink int16" {
   debug_inspect(
-    @shrink.Shrink::shrink(Int16(100)).collect(),
+    @shrink.Shrink::shrink(@int16.Int16(100)).collect(),
     content=(
       #|[50, 75, 88, 94, 97, 99, 0]
     ),
@@ -419,7 +419,7 @@ test "shrink double: small value" {
 
 ///|
 test "shrink float: basic" {
-  let s = @shrink.Shrink::shrink(Float(3.14)).collect()
+  let s = @shrink.Shrink::shrink(@float.Float(3.14)).collect()
   assert_true(s.contains(3.0))
   assert_true(s.contains(0.0))
 }

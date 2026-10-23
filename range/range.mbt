@@ -165,9 +165,9 @@ pub impl Step for UInt64 with fn step_one() {
 
 ///|
 pub impl Step for Float with fn direction(self) {
-  if self > Float(0.0) {
+  if self > @float.Float(0.0) {
     1
-  } else if self < Float(0.0) {
+  } else if self < @float.Float(0.0) {
     -1
   } else {
     0
@@ -176,7 +176,7 @@ pub impl Step for Float with fn direction(self) {
 
 ///|
 pub impl Step for Float with fn step_one() {
-  Float(1.0)
+  @float.Float(1.0)
 }
 
 ///|
@@ -274,9 +274,9 @@ pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
 
 ///|
 pub impl Step for Int16 with fn direction(self) {
-  if self > Int16(0) {
+  if self > @int16.Int16(0) {
     1
-  } else if self < Int16(0) {
+  } else if self < @int16.Int16(0) {
     -1
   } else {
     0
@@ -285,7 +285,7 @@ pub impl Step for Int16 with fn direction(self) {
 
 ///|
 pub impl Step for Int16 with fn step_one() {
-  Int16(1)
+  @int16.Int16(1)
 }
 
 ///|
