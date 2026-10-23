@@ -65,7 +65,32 @@ pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
 /// }
 /// ```
 pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
-  timsort(self)
+  timsort(self, Compare::compare)
+}
+
+///|
+/// Sorts the array view in place with a custom comparison function, preserving
+/// the relative order of elements that compare equal.
+///
+/// The comparator must define a total order: it returns a negative value when
+/// its first argument comes before the second, zero when they compare equal,
+/// and a positive value when the first comes after the second.
+/// The worst-case time complexity is O(n log n), with O(n) auxiliary space.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let arr = [(2, "a"), (1, "b"), (2, "c")]
+///   arr.mut_view().stable_sort_by((a, b) => a.0.compare(b.0))
+///   @test.assert_eq(arr, [(1, "b"), (2, "a"), (2, "c")])
+/// }
+/// ```
+pub fn[T] MutArrayView::stable_sort_by(
+  self : MutArrayView[T],
+  cmp : (T, T) -> Int32,
+) -> Unit {
+  timsort(self, cmp)
 }
 
 ///|
@@ -274,6 +299,31 @@ pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
   self.mut_view().stable_sort()
+}
+
+///|
+/// Sorts the array in place with a custom comparison function, preserving
+/// the relative order of elements that compare equal.
+///
+/// The comparator must define a total order: it returns a negative value when
+/// its first argument comes before the second, zero when they compare equal,
+/// and a positive value when the first comes after the second.
+/// The worst-case time complexity is O(n log n), with O(n) auxiliary space.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[_] = [(2, "a"), (1, "b"), (2, "c")]
+///   arr.stable_sort_by((a, b) => a.0.compare(b.0))
+///   @test.assert_eq(arr, [(1, "b"), (2, "a"), (2, "c")])
+/// }
+/// ```
+pub fn[T] FixedArray::stable_sort_by(
+  self : FixedArray[T],
+  cmp : (T, T) -> Int32,
+) -> Unit {
+  self.mut_view().stable_sort_by(cmp)
 }
 
 ///|
