@@ -1,6 +1,6 @@
 # Compression integration tests
 
-`moonbitlang/core/compress/flate/inspect` is a test-only package for the public
+`moonbitlang/core/compress/flate/inspect_test` is a test-only package for the public
 compression APIs. Its `_test.mbt` files exercise `compress/flate` and compare
 behavior across the `compress/gzip` and `compress/zlib` wrappers. Keeping these
 tests in a separate package checks the APIs as a caller sees them, including
@@ -27,5 +27,5 @@ The tests cover:
 Run this package from the repository root:
 
 ```sh
-moon test compress/flate/inspect --target all --deny-warn
+moon test compress/flate/inspect_test --target all --deny-warn
 ```

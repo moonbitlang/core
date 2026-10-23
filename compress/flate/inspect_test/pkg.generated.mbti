@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/compress/flate/inspect"
+package "moonbitlang/core/compress/flate/inspect_test"
 
 // Values
 
