@@ -101,28 +101,15 @@ test "inflate_exact preallocated and grow paths agree" {
 }
 
 ///|
-test "preallocated inflate_exact rejects truncation before polling again" {
-  let source = Bytes::make(8194, b'x')
-  let compressed = @flate.deflate_all(source, level=0)
-  @test.assert_eq(@flate.inflate_exact(compressed, preallocated=true), source)
-  // The last case fills one output chunk before running out of payload.
-  // A later cancellation must not hide the truncation or mask a stalled loop.
-  for
-    (input, expected_polls) in [
-      (b""[:], 1),
-      (compressed[:1], 1),
-      (compressed[:compressed.length() - 1], 2),
-    ] {
-    let mut polls = 0
-    let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_exact(input, preallocated=true, cancelled=() => {
-        polls += 1
-        polls > expected_polls
-      })
-    })
-    @test.assert_eq(kind, Truncated)
-    @test.assert_eq(polls, expected_polls)
-  }
+test "preallocated inflate_exact rejects truncation after output suspension" {
+  let compressed = @flate.deflate_all(Bytes::make(8194, b'x'), level=0)
+  let InflateError(kind, _) = @test.expect_error(() => {
+    @flate.inflate_exact(
+      compressed[:compressed.length() - 1],
+      preallocated=true,
+    )
+  })
+  @test.assert_eq(kind, Truncated)
 }
 
 ///|

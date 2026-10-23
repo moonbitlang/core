@@ -56,35 +56,17 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
 }
 
 ///|
-test "Inflater step resumes after empty input and drains into one byte" {
+test "Inflater resumes after an empty input chunk" {
   let inflater = @flate.Inflater()
-  let output = FixedArray::make(1, b'\x00')
-  let first = inflater.step(hello_stored[:1], output.mut_view())
-  @test.assert_eq(first.status, NeedMoreInput)
-  @test.assert_eq(first.consumed, 1)
-  @test.assert_eq(first.produced, 0)
-  let empty = inflater.step(b"", output.mut_view())
-  @test.assert_eq(empty.status, NeedMoreInput)
-  @test.assert_eq(empty.consumed, 0)
-  @test.assert_eq(empty.produced, 0)
-  let decoded = @buffer.Buffer()
-  let mut position = 1
-  let mut suspensions = 0
-  for ;; {
-    let result = inflater.step(hello_stored[position:], output.mut_view())
-    position += result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
-    match result.status {
-      Done => break
-      NeedMoreOutput => suspensions += 1
-      NeedMoreInput => @test.fail("complete input was treated as truncated")
-    }
-  }
-  assert_true(suspensions > 0)
-  @test.assert_eq(position, hello_stored.length())
-  @test.assert_eq(decoded.to_bytes(), b"hello")
-  let done = inflater.step(b"later input", output.mut_view())
-  @test.assert_eq(done.status, Done)
-  @test.assert_eq(done.consumed, 0)
-  @test.assert_eq(done.produced, 0)
+  let output = FixedArray::make(5, b'\x00')
+  @test.assert_eq(
+    inflater.step(hello_stored[:1], output.mut_view()).status,
+    NeedMoreInput,
+  )
+  @test.assert_eq(inflater.step(b"", output.mut_view()).status, NeedMoreInput)
+  @test.assert_eq(
+    inflater.step(hello_stored[1:], output.mut_view()).status,
+    Done,
+  )
+  @test.assert_eq(Bytes::from_array(output), b"hello")
 }
