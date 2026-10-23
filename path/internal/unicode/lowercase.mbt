@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let shift_one : FixedArray[Char] = [
+let shift_one : ReadOnlyArray[Char] = [
   'Ā', 'Ă', 'Ą', 'Ć', 'Ĉ', 'Ċ', 'Č', 'Ď', 'Đ', 'Ē', 'Ĕ', 'Ė', 'Ę', 'Ě',
   'Ĝ', 'Ğ', 'Ġ', 'Ģ', 'Ĥ', 'Ħ', 'Ĩ', 'Ī', 'Ĭ', 'Į', 'Ĳ', 'Ĵ', 'Ķ', 'Ĺ',
   'Ļ', 'Ľ', 'Ŀ', 'Ł', 'Ń', 'Ņ', 'Ň', 'Ŋ', 'Ō', 'Ŏ', 'Ő', 'Œ', 'Ŕ', 'Ŗ',
@@ -62,7 +62,7 @@ let shift_one : FixedArray[Char] = [
 ///|
 /// Inclusive ranges and isolated chars with their fold delta; isolated
 /// chars are written as `(ch, ch, delta)`.
-let shift_ranges : FixedArray[(Char, Char, Int32)] = [
+let shift_ranges : ReadOnlyArray[(Char, Char, Int32)] = [
   ('A', 'Z', 0x20),
   ('À', 'Ö', 0x20),
   ('Ø', 'Þ', 0x20),
@@ -145,7 +145,7 @@ let shift_ranges : FixedArray[(Char, Char, Int32)] = [
 ]
 
 ///|
-let explicit_maps : FixedArray[(Char, Char)] = [
+let explicit_maps : ReadOnlyArray[(Char, Char)] = [
   ('Ÿ', 'ÿ'),
   ('Ɓ', 'ɓ'),
   ('Ɔ', 'ɔ'),
