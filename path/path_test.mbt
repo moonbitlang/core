@@ -24,6 +24,63 @@ test "platform packages share ResolveError" {
 }
 
 ///|
+test "catch ResolveError through public re-exports" {
+  // Construct and raise the error using only the public package aliases.
+  // Erase its type to Error so the catch also checks runtime type identity.
+  fn fail_path() -> Unit raise @path.ResolveError {
+    raise CurrentDirectoryUnavailable
+  }
+  fn fail_posix() -> Unit raise @posix.ResolveError {
+    raise CurrentDirectoryUnavailable
+  }
+  fn fail_win32() -> Unit raise @win32.ResolveError {
+    raise CurrentDirectoryUnavailable
+  }
+  let failures : Array[() -> Unit raise] = [
+    () => fail_path(),
+    () => fail_posix(),
+    () => fail_win32(),
+  ]
+  let handled : Array[String] = []
+  for failure in failures {
+    try failure() catch {
+      @path.ResolveError::CurrentDirectoryUnavailable => handled.push("path")
+      _ => fail("expected the public path ResolveError")
+    } noraise {
+      _ => fail("expected a resolution error")
+    }
+    try failure() catch {
+      @posix.ResolveError::CurrentDirectoryUnavailable => handled.push("posix")
+      _ => fail("expected the public posix ResolveError")
+    } noraise {
+      _ => fail("expected a resolution error")
+    }
+    try failure() catch {
+      @win32.ResolveError::CurrentDirectoryUnavailable => handled.push("win32")
+      _ => fail("expected the public win32 ResolveError")
+    } noraise {
+      _ => fail("expected a resolution error")
+    }
+  }
+  debug_inspect(
+    handled,
+    content=(
+      #|[
+      #|  "path",
+      #|  "posix",
+      #|  "win32",
+      #|  "path",
+      #|  "posix",
+      #|  "win32",
+      #|  "path",
+      #|  "posix",
+      #|  "win32",
+      #|]
+    ),
+  )
+}
+
+///|
 test "debug" {
   let path : @path.Path = "a/b"
   debug_inspect(path, content="Path(\"a/b\")")
