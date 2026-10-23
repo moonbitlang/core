@@ -44,11 +44,9 @@ test "Deflater sync flush makes the prefix decodable" {
   let enc = @flate.Deflater()
   let obuf = FixedArray::make(4096, b'\x00')
   let st1_result = enc.step(part1, obuf.mut_view(), action=SyncFlush)
-  let st1 = st1_result.status
-  let c1 = st1_result.consumed
   let p1 = st1_result.produced
-  assert_true(st1 is NeedMoreInput)
-  @test.assert_eq(c1, part1.length())
+  assert_true(st1_result.status is NeedMoreInput)
+  @test.assert_eq(st1_result.consumed, part1.length())
   // zlib sync-flush signature: the flushed bytes end with 00 00 FF FF.
   assert_true(p1 >= 4)
   @test.assert_eq(obuf[p1 - 4], b'\x00')
@@ -57,57 +55,30 @@ test "Deflater sync flush makes the prefix decodable" {
   @test.assert_eq(obuf[p1 - 1], b'\xFF')
   // Repeating the same request without new input is idempotent.
   let repeat_status_result = enc.step(b"", obuf.mut_view(), action=SyncFlush)
-  let repeat_status = repeat_status_result.status
-  let repeat_consumed = repeat_status_result.consumed
-  let repeat_produced = repeat_status_result.produced
-  assert_true(repeat_status is NeedMoreInput)
-  @test.assert_eq(repeat_consumed, 0)
-  @test.assert_eq(repeat_produced, 0)
+  assert_true(repeat_status_result.status is NeedMoreInput)
+  @test.assert_eq(repeat_status_result.consumed, 0)
+  @test.assert_eq(repeat_status_result.produced, 0)
   // The prefix alone already decodes to part1 (stream not finished).
-  let prefix : Array[Byte] = []
-  for i in 0..<p1 {
-    prefix.push(obuf[i])
-  }
+  let prefix = Bytes::from_array(obuf[:p1])
   let inf = @flate.Inflater()
   let dbuf = FixedArray::make(4096, b'\x00')
-  let dst_result = inf.step(Bytes::from_array(prefix), dbuf.mut_view())
-  let dst = dst_result.status
-  let _dc = dst_result.consumed
-  let dp = dst_result.produced
-  assert_true(dst is NeedMoreInput)
-  let got : Array[Byte] = []
-  for i in 0..<dp {
-    got.push(dbuf[i])
-  }
-  @test.assert_eq(Bytes::from_array(got), part1)
+  let dst_result = inf.step(prefix, dbuf.mut_view())
+  assert_true(dst_result.status is NeedMoreInput)
+  @test.assert_eq(Bytes::from_array(dbuf[:dst_result.produced]), part1)
   // Continue past the flush point and finish; the whole stream round-trips.
   let out = @buffer.Buffer()
-  for i in 0..<p1 {
-    out.write_byte(obuf[i])
-  }
+  out.write_bytes(prefix)
   let mut sent_end = false
   for ;; {
     let chunk = if sent_end { b""[:] } else { part2 }
     let st_result = enc.step(chunk, obuf.mut_view(), action=Finish)
-    let st = st_result.status
-    let _c = st_result.consumed
-    let p = st_result.produced
     sent_end = true
-    for i in 0..<p {
-      out.write_byte(obuf[i])
-    }
-    if st is Done {
+    out.write_bytes(Bytes::from_array(obuf[:st_result.produced]))
+    if st_result.status is Done {
       break
     }
   }
-  let full : Array[Byte] = []
-  for b in part1 {
-    full.push(b)
-  }
-  for b in part2 {
-    full.push(b)
-  }
-  @test.assert_eq(@flate.inflate_all(out.to_bytes()), Bytes::from_array(full))
+  @test.assert_eq(@flate.inflate_all(out.to_bytes()), part1 + part2)
 }
 
 ///|
@@ -121,23 +92,17 @@ test "Deflater latches sync flush across output backpressure" {
   let enc = @flate.Deflater(level=0)
   let no_output = FixedArray::make(0, b'\x00')
   let initial_status_result = enc.step(src, no_output.mut_view())
-  let initial_status = initial_status_result.status
-  let initial_consumed = initial_status_result.consumed
-  let initial_produced = initial_status_result.produced
-  assert_true(initial_status is NeedMoreOutput)
-  @test.assert_eq(initial_consumed, src.length())
-  @test.assert_eq(initial_produced, 0)
+  assert_true(initial_status_result.status is NeedMoreOutput)
+  @test.assert_eq(initial_status_result.consumed, src.length())
+  @test.assert_eq(initial_status_result.produced, 0)
   let flush_status_result = enc.step(
     b"",
     no_output.mut_view(),
     action=SyncFlush,
   )
-  let flush_status = flush_status_result.status
-  let flush_consumed = flush_status_result.consumed
-  let flush_produced = flush_status_result.produced
-  assert_true(flush_status is NeedMoreOutput)
-  @test.assert_eq(flush_consumed, 0)
-  @test.assert_eq(flush_produced, 0)
+  assert_true(flush_status_result.status is NeedMoreOutput)
+  @test.assert_eq(flush_status_result.consumed, 0)
+  @test.assert_eq(flush_status_result.produced, 0)
   let obuf = FixedArray::make(257, b'\x00')
   let prefix = @buffer.Buffer()
   for ;; {
@@ -146,9 +111,7 @@ test "Deflater latches sync flush across output backpressure" {
     let consumed = status_result.consumed
     let produced = status_result.produced
     @test.assert_eq(consumed, 0)
-    for i in 0..<produced {
-      prefix.write_byte(obuf[i])
-    }
+    prefix.write_bytes(Bytes::from_array(obuf[:produced]))
     if status is NeedMoreInput {
       break
     }
@@ -163,12 +126,9 @@ test "Deflater latches sync flush across output backpressure" {
   let inf = @flate.Inflater()
   let decoded = FixedArray::make(18000, b'\x00')
   let decode_status_result = inf.step(flushed, decoded.mut_view())
-  let decode_status = decode_status_result.status
-  let decode_consumed = decode_status_result.consumed
-  let decode_produced = decode_status_result.produced
-  assert_true(decode_status is NeedMoreInput)
-  @test.assert_eq(decode_consumed, flushed.length())
-  @test.assert_eq(decode_produced, src.length())
+  assert_true(decode_status_result.status is NeedMoreInput)
+  @test.assert_eq(decode_status_result.consumed, flushed.length())
+  @test.assert_eq(decode_status_result.produced, src.length())
   for i in 0..<src.length() {
     @test.assert_eq(decoded[i], src[i])
   }

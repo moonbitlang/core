@@ -38,8 +38,7 @@ test "streaming Inflater rejects a reserved block immediately" {
   // block and returns progress that remains valid even if the next call fails.
   let prefix : Bytes = [0x00, 0x01, 0x00, 0xFE, 0xFF, 0x41]
   let prefix_status_result = inflater.step(prefix, output.mut_view())
-  let prefix_status = prefix_status_result.status
-  assert_true(prefix_status is NeedMoreInput)
+  assert_true(prefix_status_result.status is NeedMoreInput)
   @test.assert_eq(prefix_status_result.consumed, prefix.length())
   @test.assert_eq(prefix_status_result.produced, 1)
   let InflateError(kind, _) = @test.expect_error(() => {
@@ -65,11 +64,9 @@ test "streaming Inflater keeps corruption errors until reset" {
   let source = b"reset clears the terminal error"
   let compressed = @flate.deflate_all(source)
   let status_result = inflater.step(compressed, output.mut_view())
-  let status = status_result.status
-  let consumed = status_result.consumed
   let produced = status_result.produced
-  assert_true(status is Done)
-  @test.assert_eq(consumed, compressed.length())
+  assert_true(status_result.status is Done)
+  @test.assert_eq(status_result.consumed, compressed.length())
   @test.assert_eq(produced, source.length())
   @test.assert_eq(Bytes::from_array(output[:produced]), source)
 }

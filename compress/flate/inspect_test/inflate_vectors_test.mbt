@@ -64,32 +64,15 @@ let dynamic_plain : Bytes = b"The quick brown fox jumps over the lazy dog. " +
   b"How razorback-jumping frogs can level six piqued gymnasts! "
 
 ///|
-test "inflate a stored block (one-shot)" {
-  @test.assert_eq(@flate.inflate_all(hello_stored), b"hello")
-}
-
-///|
-test "inflate fixed-Huffman block" {
-  @test.assert_eq(@flate.inflate_all(v_fixed_hello), b"hello")
-}
-
-///|
-test "inflate fixed-Huffman with back-references" {
-  @test.assert_eq(
-    @flate.inflate_all(v_fixed_aaa),
-    b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-  )
-}
-
-///|
-test "inflate dynamic-Huffman block (exercises link table)" {
-  @test.assert_eq(@flate.inflate_all(v_dynamic_text), dynamic_plain)
-}
-
-///|
-test "inflate stored block via inflate_all" {
-  @test.assert_eq(
-    @flate.inflate_all(v_stored_seq),
-    Bytes::makei(60, i => i.to_byte()),
-  )
+test "inflate standard stored fixed and dynamic vectors" {
+  for
+    (compressed, plain) in [
+      (hello_stored, b"hello"),
+      (v_fixed_hello, b"hello"),
+      (v_fixed_aaa, b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+      (v_dynamic_text, dynamic_plain),
+      (v_stored_seq, Bytes::makei(60, i => i.to_byte())),
+    ] {
+    @test.assert_eq(@flate.inflate_all(compressed), plain)
+  }
 }

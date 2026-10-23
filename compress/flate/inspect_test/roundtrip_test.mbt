@@ -32,12 +32,10 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
   let no_output = FixedArray::make(0, b'\x00')
   let compressed = @buffer.Buffer()
   let prefix_status_result = def.step(prefix, no_output.mut_view())
-  let prefix_status = prefix_status_result.status
   let prefix_consumed = prefix_status_result.consumed
-  let prefix_produced = prefix_status_result.produced
-  assert_true(prefix_status is NeedMoreOutput)
+  assert_true(prefix_status_result.status is NeedMoreOutput)
   assert_true(prefix_consumed < prefix.length())
-  @test.assert_eq(prefix_produced, 0)
+  @test.assert_eq(prefix_status_result.produced, 0)
   let obuf = FixedArray::make(257, b'\x00')
   let mut prefix_pos = prefix_consumed
   for ;; {
@@ -46,9 +44,7 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
     let consumed = status_result.consumed
     let produced = status_result.produced
     prefix_pos = prefix_pos + consumed
-    for i in 0..<produced {
-      compressed.write_byte(obuf[i])
-    }
+    compressed.write_bytes(Bytes::from_array(obuf[:produced]))
     if prefix_pos == prefix.length() && status is NeedMoreInput {
       break
     }
@@ -60,21 +56,15 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
     no_output.mut_view(),
     action=SyncFlush,
   )
-  let flush_status = flush_status_result.status
-  let _flush_consumed = flush_status_result.consumed
-  let _flush_produced = flush_status_result.produced
-  assert_true(flush_status is NeedMoreOutput)
+  assert_true(flush_status_result.status is NeedMoreOutput)
   let first_status_result = def.step(
     final_input,
     no_output.mut_view(),
     action=Finish,
   )
-  let first_status = first_status_result.status
-  let first_consumed = first_status_result.consumed
-  let first_produced = first_status_result.produced
-  assert_true(first_status is NeedMoreOutput)
-  @test.assert_eq(first_consumed, 0)
-  @test.assert_eq(first_produced, 0)
+  assert_true(first_status_result.status is NeedMoreOutput)
+  @test.assert_eq(first_status_result.consumed, 0)
+  @test.assert_eq(first_status_result.produced, 0)
   let mut drain_calls = 0
   let mut final_pos = 0
   for ;; {
@@ -96,9 +86,7 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
     } else {
       @test.assert_eq(consumed, 0)
     }
-    for i in 0..<produced {
-      compressed.write_byte(obuf[i])
-    }
+    compressed.write_bytes(Bytes::from_array(obuf[:produced]))
     drain_calls = drain_calls + 1
     if status is Done {
       break
@@ -108,16 +96,9 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
   assert_true(drain_calls > 1)
   @test.assert_eq(final_pos, final_input.length())
   assert_true(def.is_finished())
-  let expected = @buffer.Buffer()
-  for byte in prefix {
-    expected.write_byte(byte)
-  }
-  for byte in final_input {
-    expected.write_byte(byte)
-  }
   @test.assert_eq(
     @flate.inflate_all(compressed.to_bytes()),
-    expected.to_bytes(),
+    prefix + final_input,
   )
   let sentinel = FixedArray::make(4, b'\xA5')
   let done_status_result = def.step(
@@ -125,12 +106,9 @@ test "Deflater finalization preserves unconsumed input under backpressure" {
     sentinel.mut_view(),
     action=SyncFlush,
   )
-  let done_status = done_status_result.status
-  let done_consumed = done_status_result.consumed
-  let done_produced = done_status_result.produced
-  assert_true(done_status is Done)
-  @test.assert_eq(done_consumed, 0)
-  @test.assert_eq(done_produced, 0)
+  assert_true(done_status_result.status is Done)
+  @test.assert_eq(done_status_result.consumed, 0)
+  @test.assert_eq(done_status_result.produced, 0)
   for byte in sentinel {
     @test.assert_eq(byte, b'\xA5')
   }

@@ -34,8 +34,7 @@ test "fixed streaming output views match offset array views across history wraps
           input,
           padded.mut_view(start=3, end=3 + capacity),
         )
-        let other = other_result.status
-        @test.assert_eq(status, other)
+        @test.assert_eq(status, other_result.status)
         @test.assert_eq(status_result.consumed, other_result.consumed)
         @test.assert_eq(status_result.produced, other_result.produced)
         let count = status_result.produced

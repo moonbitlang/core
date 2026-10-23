@@ -30,26 +30,18 @@ test "preset dictionaries retain exactly the final 32 KiB" {
     compressed_buffer.mut_view(),
     action=Finish,
   )
-  let deflate_status = deflate_status_result.status
   let consumed = deflate_status_result.consumed
   let compressed_size = deflate_status_result.produced
-  assert_true(deflate_status is Done)
+  assert_true(deflate_status_result.status is Done)
   @test.assert_eq(consumed, message.length())
   // A correct final-32-KiB dictionary turns the 512-byte suffix into a match.
   assert_true(compressed_size < 100)
-  let compressed : Array[Byte] = []
-  for i in 0..<compressed_size {
-    compressed.push(compressed_buffer[i])
-  }
+  let compressed = Bytes::from_array(compressed_buffer[:compressed_size])
   let inflater = @flate.Inflater(dictionary~)
   let output = FixedArray::make(1024, b'\x00')
-  let inflate_status_result = inflater.step(
-    Bytes::from_array(compressed),
-    output.mut_view(),
-  )
-  let inflate_status = inflate_status_result.status
+  let inflate_status_result = inflater.step(compressed, output.mut_view())
   let produced = inflate_status_result.produced
-  assert_true(inflate_status is Done)
+  assert_true(inflate_status_result.status is Done)
   @test.assert_eq(produced, message.length())
   for i in 0..<produced {
     @test.assert_eq(output[i], message[i])
@@ -62,10 +54,7 @@ test "preset dictionaries retain exactly the final 32 KiB" {
     compressed_buffer.mut_view(),
     action=Finish,
   )
-  let reset_status = reset_status_result.status
-  let reset_consumed = reset_status_result.consumed
-  let reset_size = reset_status_result.produced
-  assert_true(reset_status is Done)
-  @test.assert_eq(reset_consumed, message.length())
-  @test.assert_eq(reset_size, compressed_size)
+  assert_true(reset_status_result.status is Done)
+  @test.assert_eq(reset_status_result.consumed, message.length())
+  @test.assert_eq(reset_status_result.produced, compressed_size)
 }

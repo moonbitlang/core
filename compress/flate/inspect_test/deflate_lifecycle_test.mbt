@@ -23,38 +23,27 @@ test "reset reuses engines across streams" {
 
   let obuf = FixedArray::make(4096, b'\x00')
   let st1_result = d.step(s1, obuf.mut_view(), action=Finish)
-  let st1 = st1_result.status
-  assert_true(st1 is Done)
+  assert_true(st1_result.status is Done)
   d.reset()
 
   let st2_result = d.step(s2, obuf.mut_view(), action=Finish)
-  let st2 = st2_result.status
-  let p2 = st2_result.produced
-  assert_true(st2 is Done)
+  assert_true(st2_result.status is Done)
   // Earlier results remain valid after reset and another stream.
   @test.assert_eq(st1_result.consumed, s1.length())
   @test.assert_eq(st2_result.consumed, s2.length())
-  let reused : Array[Byte] = []
-  for i in 0..<p2 {
-    reused.push(obuf[i])
-  }
-  @test.assert_eq(Bytes::from_array(reused), @flate.deflate_all(s2))
+  @test.assert_eq(
+    Bytes::from_array(obuf[:st2_result.produced]),
+    @flate.deflate_all(s2),
+  )
   let inf = @flate.Inflater()
 
   let dbuf = FixedArray::make(4096, b'\x00')
   let ist1_result = inf.step(@flate.deflate_all(s1), dbuf.mut_view())
-  let ist1 = ist1_result.status
-  let ip1 = ist1_result.produced
-  assert_true(ist1 is Done)
-  let got1 : Array[Byte] = []
-  for i in 0..<ip1 {
-    got1.push(dbuf[i])
-  }
-  @test.assert_eq(Bytes::from_array(got1), s1)
+  assert_true(ist1_result.status is Done)
+  @test.assert_eq(Bytes::from_array(dbuf[:ist1_result.produced]), s1)
   let sentinel = FixedArray::make(4, b'\xA5')
   let done_status_result = inf.step(@flate.deflate_all(s2), sentinel.mut_view())
-  let done_status = done_status_result.status
-  assert_true(done_status is Done)
+  assert_true(done_status_result.status is Done)
   @test.assert_eq(done_status_result.consumed, 0)
   @test.assert_eq(done_status_result.produced, 0)
   for byte in sentinel {
@@ -63,16 +52,10 @@ test "reset reuses engines across streams" {
   inf.reset()
 
   let ist2_result = inf.step(@flate.deflate_all(s2), dbuf.mut_view())
-  let ist2 = ist2_result.status
-  let ip2 = ist2_result.produced
-  assert_true(ist2 is Done)
+  assert_true(ist2_result.status is Done)
   @test.assert_eq(ist1_result.produced, s1.length())
   @test.assert_eq(ist2_result.produced, s2.length())
-  let got2 : Array[Byte] = []
-  for i in 0..<ip2 {
-    got2.push(dbuf[i])
-  }
-  @test.assert_eq(Bytes::from_array(got2), s2)
+  @test.assert_eq(Bytes::from_array(dbuf[:ist2_result.produced]), s2)
 }
 
 ///|
@@ -85,28 +68,16 @@ test "preset dictionary: raw deflate round-trip" {
   let d = @flate.Deflater(dictionary=dict)
   let obuf = FixedArray::make(4096, b'\x00')
   let st_result = d.step(msg, obuf.mut_view(), action=Finish)
-  let st = st_result.status
-  let p = st_result.produced
-  assert_true(st is Done)
-  let comp : Array[Byte] = []
-  for i in 0..<p {
-    comp.push(obuf[i])
-  }
-  let compressed = Bytes::from_array(comp)
+  assert_true(st_result.status is Done)
+  let compressed = Bytes::from_array(obuf[:st_result.produced])
   // The dictionary must actually pay: smaller than dictionary-less output.
   assert_true(compressed.length() < @flate.deflate_all(msg).length())
   // With the dictionary: decodes to the message.
   let inf = @flate.Inflater(dictionary=dict)
   let dbuf = FixedArray::make(4096, b'\x00')
   let ist_result = inf.step(compressed, dbuf.mut_view())
-  let ist = ist_result.status
-  let ip = ist_result.produced
-  assert_true(ist is Done)
-  let got : Array[Byte] = []
-  for i in 0..<ip {
-    got.push(dbuf[i])
-  }
-  @test.assert_eq(Bytes::from_array(got), msg)
+  assert_true(ist_result.status is Done)
+  @test.assert_eq(Bytes::from_array(dbuf[:ist_result.produced]), msg)
   // Without the dictionary, the first reference reaches before the stream.
   let inf2 = @flate.Inflater()
   let InflateError(kind, _) = @test.expect_error(() => {

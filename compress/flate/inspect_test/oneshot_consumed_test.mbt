@@ -36,25 +36,29 @@ fn consumed_streams() -> Array[(Bytes, Bytes)] {
 test "Decompressor returns both byte counts and preserves trailing input" {
   let decoder = @flate.Decompressor()
   @test.assert_eq(decoder.last_consumed(), 0)
+  let tails = [b""]
+  for byte in [b'\x00', b'\xFF'] {
+    for size in [1, 7, 8, 9, 17] {
+      tails.push(Bytes::make(size, byte))
+    }
+  }
   for (raw, plain) in consumed_streams() {
-    for tail in [Bytes::make(17, b'\x00'), Bytes::make(17, b'\xFF')] {
-      for extra in [0, 1, 7, 8, 9, 17] {
-        let around = b"PAD" + raw + tail[:extra].to_owned() + b"OUTSIDE"
-        let input = around[3:3 + raw.length() + extra]
-        for slack in [0, 300] {
-          let output = FixedArray::make(plain.length() + slack, b'\xA5')
-          let result = decoder.decompress_into(input, output)
-          @test.assert_eq(result.produced, plain.length())
-          @test.assert_eq(result.consumed, raw.length())
-          @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
-          @test.assert_eq(decoder.last_consumed(), raw.length())
-          for i in plain.length()..<output.length() {
-            @test.assert_eq(output[i], b'\xA5')
-          }
-        }
-        @test.assert_eq(decoder.decompress(input), plain)
+    for tail in tails {
+      let around = b"PAD" + raw + tail + b"OUTSIDE"
+      let input = around[3:3 + raw.length() + tail.length()]
+      for slack in [0, 300] {
+        let output = FixedArray::make(plain.length() + slack, b'\xA5')
+        let result = decoder.decompress_into(input, output)
+        @test.assert_eq(result.produced, plain.length())
+        @test.assert_eq(result.consumed, raw.length())
+        @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
         @test.assert_eq(decoder.last_consumed(), raw.length())
+        for i in plain.length()..<output.length() {
+          @test.assert_eq(output[i], b'\xA5')
+        }
       }
+      @test.assert_eq(decoder.decompress(input), plain)
+      @test.assert_eq(decoder.last_consumed(), raw.length())
     }
   }
 }

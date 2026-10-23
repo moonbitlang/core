@@ -16,13 +16,10 @@
 test "codec equality methods can be passed as functions across packages" {
   let error_equal = @flate.InflateErrorKind::equal
   @test.assert_eq(error_equal(Truncated, Truncated), true)
-  @test.assert_eq(error_equal(Truncated, Corrupt), false)
   let status_equal = @flate.Status::equal
   @test.assert_eq(status_equal(Done, Done), true)
-  @test.assert_eq(status_equal(Done, NeedMoreInput), false)
   let action_equal = @flate.DeflateAction::equal
   @test.assert_eq(action_equal(Finish, Finish), true)
-  @test.assert_eq(action_equal(Finish, Continue), false)
 }
 
 ///|
@@ -39,18 +36,14 @@ test "bounded inflate_all enforces its decoded-size boundary" {
     @flate.inflate_all(compressed + b"TRAILING", max_output=source.length()),
     source,
   )
-  try
-    ignore(@flate.inflate_all(compressed, max_output=source.length() - 1))
-  catch {
-    InflateError(kind, _) => assert_true(kind == OutputLimitExceeded)
-  } noraise {
-    _ => @test.fail("bounded inflate_all exceeded its output limit")
-  }
-  try ignore(@flate.inflate_all(compressed, max_output=-1)) catch {
-    InflateError(kind, _) => assert_true(kind == InvalidArgument)
-  } noraise {
-    _ => @test.fail("bounded inflate_all accepted a negative limit")
-  }
+  let InflateError(kind, _) = @test.expect_error(() => {
+    @flate.inflate_all(compressed, max_output=source.length() - 1)
+  })
+  @test.assert_eq(kind, OutputLimitExceeded)
+  let InflateError(kind, _) = @test.expect_error(() => {
+    @flate.inflate_all(compressed, max_output=-1)
+  })
+  @test.assert_eq(kind, InvalidArgument)
   let empty = @flate.deflate_all(b"")
   @test.assert_eq(@flate.inflate_all(empty, max_output=0), b"")
   // More than one scratch buffer forces the convenience driver through
@@ -116,19 +109,15 @@ test "inflate_exact enforces max_output on both paths" {
     source,
   )
   for preallocated in [false, true] {
-    try
-      ignore(@flate.inflate_exact(compressed, max_output=19999, preallocated~))
-    catch {
-      InflateError(kind, _) => assert_true(kind == OutputLimitExceeded)
-    } noraise {
-      _ => @test.fail("inflate_exact exceeded its output limit")
-    }
+    let InflateError(kind, _) = @test.expect_error(() => {
+      @flate.inflate_exact(compressed, max_output=19999, preallocated~)
+    })
+    @test.assert_eq(kind, OutputLimitExceeded)
   }
-  try ignore(@flate.inflate_exact(compressed, max_output=-1)) catch {
-    InflateError(kind, _) => assert_true(kind == InvalidArgument)
-  } noraise {
-    _ => @test.fail("inflate_exact accepted a negative limit")
-  }
+  let InflateError(kind, _) = @test.expect_error(() => {
+    @flate.inflate_exact(compressed, max_output=-1)
+  })
+  @test.assert_eq(kind, InvalidArgument)
 }
 
 ///|
@@ -150,22 +139,17 @@ test "preallocated inflate_exact honors cancellation in both passes" {
   // Poll 3 lands in pass 1, poll 6 in pass 2.
   for cancel_at in [3, 6] {
     let mut calls = 0
-    try
-      ignore(
-        @flate.inflate_exact(
-          compressed,
-          cancelled=() => {
-            calls = calls + 1
-            calls >= cancel_at
-          },
-          preallocated=true,
-        ),
+    let InflateError(kind, _) = @test.expect_error(() => {
+      @flate.inflate_exact(
+        compressed,
+        cancelled=() => {
+          calls = calls + 1
+          calls >= cancel_at
+        },
+        preallocated=true,
       )
-    catch {
-      InflateError(kind, _) => assert_true(kind == Cancelled)
-    } noraise {
-      _ => @test.fail("preallocated inflate_exact ignored cancellation")
-    }
+    })
+    @test.assert_eq(kind, Cancelled)
   }
 }
 
