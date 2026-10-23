@@ -104,7 +104,7 @@ test "Double::to_json" {
 
 ///|
 test "Float::to_json" {
-  debug_inspect(Json(Float(42.0)), content="Number(42)")
+  debug_inspect(Json(@float.Float(42.0)), content="Number(42)")
 }
 
 ///|

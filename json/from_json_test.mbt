@@ -1048,7 +1048,7 @@ test "Bytes from_json" {
 
 ///|
 test "float roundtrip" {
-  let u = Json(Float(3.14))
+  let u = Json(@float.Float(3.14))
   let v : Float = @json.from_json(u)
   inspect(
     v,
@@ -1056,10 +1056,10 @@ test "float roundtrip" {
       #|3.14
     ),
   )
-  let u = Json(Float(0.0))
+  let u = Json(@float.Float(0.0))
   let v : Float = @json.from_json(u)
   inspect(v, content="0")
-  let u = Json(Float(-1.5))
+  let u = Json(@float.Float(-1.5))
   let v : Float = @json.from_json(u)
   inspect(v, content="-1.5")
 }

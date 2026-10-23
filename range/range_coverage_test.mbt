@@ -23,10 +23,13 @@ test "a zero step yields an empty range for the remaining Step types" {
   inspect(@range.iter(from=Int64(1), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=UInt(1), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=UInt64(1), to=5, step=0).count(), content="0")
-  inspect(@range.iter(from=Int16(1), to=5, step=0).count(), content="0")
+  inspect(@range.iter(from=@int16.Int16(1), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=UInt16(1), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=Byte(1), to=5, step=0).count(), content="0")
-  inspect(@range.iter(from=Float(1.0), to=5.0, step=0.0).count(), content="0")
+  inspect(
+    @range.iter(from=@float.Float(1.0), to=5.0, step=0.0).count(),
+    content="0",
+  )
   inspect(
     @range.iter(from=(1 : @bigint.BigInt), to=5, step=0).count(),
     content="0",
@@ -37,14 +40,17 @@ test "a zero step yields an empty range for the remaining Step types" {
 test "the default step is the type's natural unit step" {
   // omitting `step` uses `Step::step_one`
   @debug.assert_eq(@range.iter(from=Int64(1), to=4).to_array(), [1, 2, 3])
-  @debug.assert_eq(@range.iter(from=Float(1.0), to=4.0).to_array(), [1, 2, 3])
+  @debug.assert_eq(@range.iter(from=@float.Float(1.0), to=4.0).to_array(), [
+    1, 2, 3,
+  ])
 }
 
 ///|
 test "a negative step descends" {
-  @debug.assert_eq(@range.iter(from=Float(5.0), to=1.0, step=-1.0).to_array(), [
-    5, 4, 3, 2,
-  ])
+  @debug.assert_eq(
+    @range.iter(from=@float.Float(5.0), to=1.0, step=-1.0).to_array(),
+    [5, 4, 3, 2],
+  )
   @debug.assert_eq(
     @range.iter(from=Int64(5), to=1, step=-1, inclusive=true).to_array(),
     [5, 4, 3, 2, 1],

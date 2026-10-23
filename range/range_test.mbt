@@ -232,7 +232,7 @@ test "iter Double Inf step yields one and stops" {
 ///|
 test "iter Float" {
   debug_inspect(
-    @range.iter(from=Float(0.0), to=1.0, step=0.25).to_array(),
+    @range.iter(from=@float.Float(0.0), to=1.0, step=0.25).to_array(),
     content=(
       #|[0, 0.25, 0.5, 0.75]
     ),
@@ -242,19 +242,23 @@ test "iter Float" {
 ///|
 test "iter Int16" {
   debug_inspect(
-    @range.iter(from=Int16(0), to=Int16(5)).to_array(),
+    @range.iter(from=@int16.Int16(0), to=@int16.Int16(5)).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=Int16(0), to=Int16(10), step=Int16(3)).to_array(),
+    @range.iter(from=@int16.Int16(0), to=@int16.Int16(10), step=@int16.Int16(3)).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=Int16(10), to=Int16(0), step=Int16(-1)).to_array(),
+    @range.iter(
+      from=@int16.Int16(10),
+      to=@int16.Int16(0),
+      step=@int16.Int16(-1),
+    ).to_array(),
     content=(
       #|[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     ),
@@ -515,13 +519,13 @@ test "iter Double computes each element as from + k * step" {
 ///|
 test "iter Float computes each element as from + k * step" {
   debug_inspect(
-    @range.iter(from=Float(0), to=1.0, step=0.01).count(),
+    @range.iter(from=@float.Float(0), to=1.0, step=0.01).count(),
     content=(
       #|100
     ),
   )
   debug_inspect(
-    @range.iter(from=Float(0), to=1.0, step=0.01, inclusive=true)
+    @range.iter(from=@float.Float(0), to=1.0, step=0.01, inclusive=true)
     .to_array()
     .last()
     .map(Float::to_double),

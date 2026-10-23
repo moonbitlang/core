@@ -104,6 +104,19 @@ pub let min_value : Float = Float::reinterpret_from_int(0xFF7FFFFF)
 pub let min_positive : Float = Float::reinterpret_from_int(0x00800000)
 
 ///|
+/// The identity constructor for `Float`, allowing values to be written using
+/// constructor syntax, e.g. `Float(3.2)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   ignore(Float(3.2))
+/// }
+/// ```
+pub fn Float::Float(self : Float) -> Float = "%identity"
+
+///|
 /// Returns the absolute value of a floating-point number.
 ///
 /// Parameters:

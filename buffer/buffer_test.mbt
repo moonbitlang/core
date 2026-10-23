@@ -461,8 +461,8 @@ test "write_uint16_be method" {
 ///|
 test "write_int16_le method" {
   let buf = @buffer.Buffer(size_hint=4)
-  buf.write_int16_le(Int16(-2))
-  buf.write_int16_le(Int16(0x1234))
+  buf.write_int16_le(@int16.Int16(-2))
+  buf.write_int16_le(@int16.Int16(0x1234))
   inspect(
     buf.to_bytes(),
     content=(
@@ -474,8 +474,8 @@ test "write_int16_le method" {
 ///|
 test "write_int16_be method" {
   let buf = @buffer.Buffer(size_hint=4)
-  buf.write_int16_be(Int16(-2))
-  buf.write_int16_be(Int16(0x1234))
+  buf.write_int16_be(@int16.Int16(-2))
+  buf.write_int16_be(@int16.Int16(0x1234))
   inspect(
     buf.to_bytes(),
     content=(
