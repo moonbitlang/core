@@ -15,6 +15,28 @@
 // Types
 
 ///|
+/// A slot of the table, also a link in the insertion-order list: `next` is the
+/// following entry and `prev` is the slot index of the preceding one.
+///
+/// # Why `#unsafe_cycle_free` holds
+///
+/// The `next` links form a singly linked list from `head` to the entry at
+/// `tail`, whose `next` is `None`. `add_entry_to_tail` is the only place that
+/// points a `next` at an entry, and only at the entry being appended, whose own
+/// `next` is `None`. `remove_entry` only unlinks (it points the predecessor at
+/// the removed entry's successor), `grow` clears each `next` before re-adding
+/// the entry at the tail, and `copy` links only entries it has just allocated.
+/// None of these can close a cycle.
+///
+/// Like builtin `Map`'s `Entry`, the attribute only covers the `next` links. If
+/// `K` can reach a set again, the compiler ignores it for that instance.
+///
+/// Without it, `Entry` is cycle-capable (a mutable field points back to
+/// `Entry`). With trial deletion enabled, every release of an entry that does
+/// not free it then registers a possible cycle root, and the collector walks
+/// the whole chain from those roots. Remove the attribute if a change to `next`
+/// can ever form a cycle; otherwise such a cycle leaks.
+#unsafe_cycle_free
 priv struct Entry[K] {
   mut prev : Int32
   mut next : Entry[K]?
