@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-fn from_json_map_bench_input(size : Int) -> Json {
-  let object : Map[String, Json] = Map([], capacity=size)
+fn from_json_map_bench_input(size : Int32, capacity? : Int32) -> Json {
+  let object : Map[String, Json] = Map([], capacity=capacity.unwrap_or(size))
   for i in 0..<size {
     object[i.to_string()] = Json::number(i.to_double())
   }
@@ -25,7 +25,7 @@ fn from_json_map_bench_input(size : Int) -> Json {
 test "bench Map::from_json entries=10000" (it : @bench.T) {
   let input = from_json_map_bench_input(10000)
   it.bench(fn() {
-    let decoded : Map[String, Int] = try! @json.from_json(input)
+    let decoded : Map[String, Int32] = try! @json.from_json(input)
     it.keep(decoded.length())
   })
 }
@@ -34,7 +34,37 @@ test "bench Map::from_json entries=10000" (it : @bench.T) {
 test "bench Map::from_json entries=100000" (it : @bench.T) {
   let input = from_json_map_bench_input(100000)
   it.bench(fn() {
-    let decoded : Map[String, Int] = try! @json.from_json(input)
+    let decoded : Map[String, Int32] = try! @json.from_json(input)
+    it.keep(decoded.length())
+  })
+}
+
+///|
+// These sizes cross the 13/16 load threshold of the next power-of-two
+// bucket count, distinguishing source-capacity sizing from length sizing.
+test "bench Map::from_json entries=15000" (it : @bench.T) {
+  let input = from_json_map_bench_input(15000)
+  it.bench(fn() {
+    let decoded : Map[String, Int32] = try! @json.from_json(input)
+    it.keep(decoded.length())
+  })
+}
+
+///|
+test "bench Map::from_json entries=120000" (it : @bench.T) {
+  let input = from_json_map_bench_input(120000)
+  it.bench(fn() {
+    let decoded : Map[String, Int32] = try! @json.from_json(input)
+    it.keep(decoded.length())
+  })
+}
+
+///|
+// A source can retain spare capacity after removals or reserve it up front.
+test "bench Map::from_json entries=100 source_capacity=131072" (it : @bench.T) {
+  let input = from_json_map_bench_input(100, capacity=131072)
+  it.bench(fn() {
+    let decoded : Map[String, Int32] = try! @json.from_json(input)
     it.keep(decoded.length())
   })
 }
