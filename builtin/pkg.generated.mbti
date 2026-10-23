@@ -745,6 +745,7 @@ pub fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
 pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
+pub fn[T] FixedArray::stable_sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T] FixedArray::swap(Self[T], Int32, Int32) -> Unit
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int32, Self[A], Int32, Int32) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int32, UInt16) -> Unit
@@ -1286,6 +1287,7 @@ pub fn[T : Compare] MutArrayView::sort(Self[T]) -> Unit
 pub fn[T] MutArrayView::sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T, K : Compare] MutArrayView::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] MutArrayView::stable_sort(Self[T]) -> Unit
+pub fn[T] MutArrayView::stable_sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T] MutArrayView::start_offset(Self[T]) -> Int32
 #alias(to_array, deprecated)
 pub fn[T] MutArrayView::to_owned(Self[T]) -> Array[T]
