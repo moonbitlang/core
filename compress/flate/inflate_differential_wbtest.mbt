@@ -121,18 +121,14 @@ fn inflate_differential_stream_bytes(
     } else {
       rng.size(23)
     }
-    let status_result = if available == input.length() {
-      inflater.finish(
-        input[input_pos:available],
-        output.mut_view(end=output_size),
-      )
-    } else {
-      inflater.step(
-        input[input_pos:available],
-        output.mut_view(end=output_size),
-      )
-    }
+    let status_result = inflater.step(
+      input[input_pos:available],
+      output.mut_view(end=output_size),
+    )
     let status = status_result.status
+    if status is NeedMoreInput && available == input.length() {
+      raise InflateError(Truncated, "unexpected end of input")
+    }
     let consumed = status_result.consumed
     let produced = status_result.produced
     input_pos = input_pos + consumed

@@ -69,7 +69,6 @@ pub fn InflateErrorKind::equal(Self, Self) -> Bool
 
 type Inflater
 pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
-pub fn Inflater::finish(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError
 pub fn Inflater::is_finished(Self) -> Bool
 pub fn Inflater::reset(Self, dictionary? : BytesView) -> Unit
 pub fn Inflater::step(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError

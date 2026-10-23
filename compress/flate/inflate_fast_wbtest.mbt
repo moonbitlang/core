@@ -35,16 +35,13 @@ fn fast_stream_run(
   let mut position = 0
   for ;; {
     let end = (position + chunk).min(input.length())
-    let status_result = try {
-      if end == input.length() {
-        inflater.finish(input[position:end], output)
-      } else {
-        inflater.step(input[position:end], output)
-      }
-    } catch {
+    let status_result = inflater.step(input[position:end], output) catch {
       InflateError(kind, _) => return Err(kind)
     }
     let status = status_result.status
+    if status is NeedMoreInput && end == input.length() {
+      return Err(Truncated)
+    }
     position += status_result.consumed
     decoded.write_bytes(Bytes::from_array(output[:status_result.produced]))
     if status is Done {
@@ -113,7 +110,6 @@ fn assert_calls_agree(
   for ;; {
     let end = (position + chunk).min(input.length())
     let view = input[position:end]
-    let last = end == input.length()
     let mut verdict : InflateErrorKind? = None
     let mut whole_result : StepResult = {
       status: Done,
@@ -121,11 +117,7 @@ fn assert_calls_agree(
       produced: 0,
     }
     try {
-      whole_result = if last {
-        whole.finish(view, output)
-      } else {
-        whole.step(view, output)
-      }
+      whole_result = whole.step(view, output)
     } catch {
       InflateError(kind, _) => verdict = Some(kind)
     }
@@ -135,19 +127,10 @@ fn assert_calls_agree(
     let mut expected : Status = NeedMoreOutput
     for ;; {
       let piece = (room - produced).min(257)
-      let step_result = try {
-        if last {
-          pieces.finish(
-            view[consumed:],
-            reference.mut_view(start=produced, end=produced + piece),
-          )
-        } else {
-          pieces.step(
-            view[consumed:],
-            reference.mut_view(start=produced, end=produced + piece),
-          )
-        }
-      } catch {
+      let step_result = pieces.step(
+        view[consumed:],
+        reference.mut_view(start=produced, end=produced + piece),
+      ) catch {
         InflateError(kind, _) => {
           expected_verdict = Some(kind)
           break
@@ -176,6 +159,9 @@ fn assert_calls_agree(
     position += consumed
     if status is Done {
       return Ok((decoded.to_bytes(), position))
+    }
+    if status is NeedMoreInput && end == input.length() {
+      return Err(Truncated)
     }
     assert_true(consumed > 0 || produced > 0, msg="streaming decoder stalled")
   }
@@ -322,14 +308,14 @@ test "fast loop marks the window full by what a call wrote" {
   let inflater = Inflater()
   inflater.wpos = -30000
   let output = FixedArray::make(40000, b'\x00')
-  let first_result = inflater.finish(stream, output.mut_view())
+  let first_result = inflater.step(stream, output.mut_view())
   let first = first_result.status
   assert_true(first is NeedMoreOutput)
   @test.assert_eq(first_result.produced, 40000)
   @test.assert_eq(inflater.wpos, 10000)
   assert_true(inflater.filled)
   let rest = stream[first_result.consumed:]
-  let second_result = inflater.finish(rest, output.mut_view())
+  let second_result = inflater.step(rest, output.mut_view())
   let second = second_result.status
   assert_true(second is Done)
   @test.assert_eq(second_result.produced, 3)

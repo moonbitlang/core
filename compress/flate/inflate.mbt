@@ -113,7 +113,6 @@ struct Inflater {
   // a growing view on NeedMoreInput.
   mut staged_input : Array[Byte]
   mut staged_pos : Int32
-  mut ending : Bool // physical EOF has been declared by the caller
   mut failure_kind : InflateErrorKind? // stable terminal error
   mut failure_message : String
   // Step-local cursors (reset on each `step`).
@@ -150,7 +149,6 @@ pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
     copy_dist: 0,
     staged_input: [],
     staged_pos: 0,
-    ending: false,
     failure_kind: None,
     failure_message: "",
     view: b"",
@@ -203,7 +201,6 @@ pub fn Inflater::reset(self : Inflater, dictionary? : BytesView) -> Unit {
   self.copy_dist = 0
   self.staged_input.clear()
   self.staged_pos = 0
-  self.ending = false
   self.failure_kind = None
   self.failure_message = ""
   self.view = b""
@@ -934,47 +931,18 @@ fn Inflater::run_step(self : Inflater) -> Status raise InflateError {
 /// Headers and Huffman symbols remain atomic internally, but an incomplete
 /// unit's small tail is retained by the engine. Therefore callers may feed
 /// ordinary non-overlapping chunks: on `NeedMoreInput` the complete supplied
-/// view has been accepted and need not be re-presented. Use `finish` for the
-/// physical final input view so an incomplete stream raises `InflateError`
-/// instead of requesting more input. Once any error is raised, later calls
-/// stably raise the same error until `reset()`.
+/// view has been accepted and need not be re-presented. The caller owns input
+/// completion: if the input source has ended and this returns `NeedMoreInput`,
+/// report a truncated stream. `NeedMoreOutput` still requires draining with
+/// fresh output space, even after all input has been accepted. Once any error
+/// is raised, later calls stably raise the same error until `reset()`.
 pub fn Inflater::step(
   self : Inflater,
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> StepResult raise InflateError {
-  self.step_output(input, output, end=false)
-}
-
-///|
-/// Decode the final input chunk and declare the end of input. Pass an empty
-/// input if the final chunk has already been supplied through `step`.
-/// Returns `StepResult` with this call's status and consumed/produced counts.
-/// If output backpressure leaves part of `input` unconsumed, call `finish`
-/// again with that suffix and fresh output space. Once the final chunk has
-/// been accepted, the end signal remains latched while output is drained.
-/// An incomplete stream raises `InflateError` instead of requesting more input.
-/// Errors remain latched as with `step`; `Done` remains terminal.
-pub fn Inflater::finish(
-  self : Inflater,
-  input : BytesView,
-  output : MutArrayView[Byte],
-) -> StepResult raise InflateError {
-  self.step_output(input, output, end=true)
-}
-
-///|
-fn Inflater::step_output(
-  self : Inflater,
-  input : BytesView,
-  output : MutArrayView[Byte],
-  end~ : Bool,
-) -> StepResult raise InflateError {
   if self.failure_kind is Some(kind) {
     raise InflateError(kind, self.failure_message)
-  }
-  if end {
-    self.ending = true
   }
   self.view = input
   self.in_pos = 0
@@ -995,15 +963,6 @@ fn Inflater::step_output(
   let produced = self.out_pos
   let consumed = if status is NeedMoreInput {
     self.stage_incomplete_input()
-    guard !self.ending else {
-      let message = "unexpected end of input"
-      self.failure_kind = Some(Truncated)
-      self.failure_message = message
-      self.staged_input.clear()
-      self.staged_pos = 0
-      self.release_step_views()
-      raise InflateError(Truncated, message)
-    }
     input.length()
   } else {
     self.compact_staged_input()

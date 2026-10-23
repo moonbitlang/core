@@ -51,20 +51,20 @@ test "streaming Inflater rejects a reserved block immediately" {
 }
 
 ///|
-test "streaming Inflater turns EOF into a stable truncation error" {
+test "streaming Inflater keeps corruption errors until reset" {
   let inflater = @flate.Inflater()
   let output = FixedArray::make(64, b'\x00')
-  for input in [([0x01] : Bytes), ([0x07] : Bytes)] {
+  for input in [([0x07] : Bytes), ([0x01] : Bytes)] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      inflater.finish(input, output.mut_view())
+      inflater.step(input, output.mut_view())
     })
-    @test.assert_eq(kind, Truncated)
+    @test.assert_eq(kind, Corrupt)
   }
   inflater.reset()
 
   let source = b"reset clears the terminal error"
   let compressed = @flate.deflate_all(source)
-  let status_result = inflater.finish(compressed, output.mut_view())
+  let status_result = inflater.step(compressed, output.mut_view())
   let status = status_result.status
   let consumed = status_result.consumed
   let produced = status_result.produced

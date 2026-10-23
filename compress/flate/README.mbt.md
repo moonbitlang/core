@@ -154,14 +154,14 @@ test "README streaming Deflater" {
   zlib checksum the produced range and drain pending body input before
   accepting more, so output can be produced while `result.consumed` is zero.
   Re-present the unaccepted input on the next call.
-- Call `Inflater::finish(input, output)` or a container decoder's `finish`
-  with the final input chunk; pass empty input if all input has already been
-  supplied. It accepts the same mutable output views as `step`. If output
-  backpressure leaves an input suffix unconsumed, repeat the finish call with
-  that suffix and fresh output space until `Done`. Finishing an incomplete
-  stream raises a stable truncation error instead of requesting more input.
-  After any decoder error, discard or reset the raw engine; container decoder
-  instances stably rethrow the same error.
+- Raw `Inflater` callers own input completion: `NeedMoreInput` after the
+  input source is exhausted means the stream is truncated. On `NeedMoreOutput`,
+  keep calling `step` with the unconsumed suffix and fresh output space, even
+  if the suffix is empty; stop at `Done`.
+- gzip/zlib decoders accept the final input chunk through `finish`; repeat
+  with any unconsumed suffix and fresh output space until `Done`. They report
+  truncation themselves. After a raw decoder error, discard or reset it;
+  container decoder instances stably rethrow the same error.
 - Once `Done` is returned, new input is not consumed; reset the raw engine or
   the zlib `Encoder` (`reset(dictionary?)`), or create a new wrapper, before
   reuse. A reset encoder produces exactly the bytes of a freshly constructed

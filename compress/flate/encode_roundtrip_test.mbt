@@ -211,8 +211,9 @@ fn assert_decodes(
   let decoded = Buffer()
   let mut pos = 0
   for ;; {
-    let status_result = decoder.finish(compressed[pos:], output.mut_view())
+    let status_result = decoder.step(compressed[pos:], output.mut_view())
     let status = status_result.status
+    assert_false(status is NeedMoreInput, msg="truncated compressed output")
     pos += status_result.consumed
     for i in 0..<status_result.produced {
       decoded.write_byte(output[i])

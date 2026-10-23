@@ -30,18 +30,12 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
       let mut pos = 0
       for ;; {
         let end = (pos + chunk).min(compressed.length())
-        let status_result = if end == compressed.length() {
-          inflater.finish(
-            compressed[pos:end],
-            output.mut_view(start=3, end=3 + room),
-          )
-        } else {
-          inflater.step(
-            compressed[pos:end],
-            output.mut_view(start=3, end=3 + room),
-          )
-        }
+        let status_result = inflater.step(
+          compressed[pos:end],
+          output.mut_view(start=3, end=3 + room),
+        )
         let status = status_result.status
+        assert_false(status is NeedMoreInput && end == compressed.length())
         let used = status_result.consumed
         let written = status_result.produced
         assert_true(used >= 0 && used <= end - pos)
@@ -59,4 +53,38 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
       @test.assert_eq(decoded.to_bytes(), plain)
     }
   }
+}
+
+///|
+test "Inflater step resumes after empty input and drains into one byte" {
+  let inflater = @flate.Inflater()
+  let output = FixedArray::make(1, b'\x00')
+  let first = inflater.step(hello_stored[:1], output.mut_view())
+  @test.assert_eq(first.status, NeedMoreInput)
+  @test.assert_eq(first.consumed, 1)
+  @test.assert_eq(first.produced, 0)
+  let empty = inflater.step(b"", output.mut_view())
+  @test.assert_eq(empty.status, NeedMoreInput)
+  @test.assert_eq(empty.consumed, 0)
+  @test.assert_eq(empty.produced, 0)
+  let decoded = @buffer.Buffer()
+  let mut position = 1
+  let mut suspensions = 0
+  for ;; {
+    let result = inflater.step(hello_stored[position:], output.mut_view())
+    position += result.consumed
+    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    match result.status {
+      Done => break
+      NeedMoreOutput => suspensions += 1
+      NeedMoreInput => @test.fail("complete input was treated as truncated")
+    }
+  }
+  assert_true(suspensions > 0)
+  @test.assert_eq(position, hello_stored.length())
+  @test.assert_eq(decoded.to_bytes(), b"hello")
+  let done = inflater.step(b"later input", output.mut_view())
+  @test.assert_eq(done.status, Done)
+  @test.assert_eq(done.consumed, 0)
+  @test.assert_eq(done.produced, 0)
 }

@@ -27,17 +27,13 @@ test "fixed streaming output views match offset array views across history wraps
       for ;; {
         let end = (position + 97).min(compressed.length())
         let input = compressed[position:end]
-        let status_result = if end == compressed.length() {
-          fixed.finish(input, output.mut_view())
-        } else {
-          fixed.step(input, output.mut_view())
-        }
+        let status_result = fixed.step(input, output.mut_view())
         let status = status_result.status
-        let other_result = if end == compressed.length() {
-          viewed.finish(input, padded.mut_view(start=3, end=3 + capacity))
-        } else {
-          viewed.step(input, padded.mut_view(start=3, end=3 + capacity))
-        }
+        assert_false(status is NeedMoreInput && end == compressed.length())
+        let other_result = viewed.step(
+          input,
+          padded.mut_view(start=3, end=3 + capacity),
+        )
         let other = other_result.status
         @test.assert_eq(status, other)
         @test.assert_eq(status_result.consumed, other_result.consumed)
