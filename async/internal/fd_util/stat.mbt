@@ -27,8 +27,27 @@ pub(all) enum FileKind {
 } derive(Eq, @debug.Debug)
 
 ///|
-/// Create a `FileKind` from its raw integer representation
-pub fn FileKind::unsafe_from_int(value : Int32) -> FileKind = "%identity"
+let known_kinds : ReadOnlyArray[FileKind] = [
+  Regular,
+  Directory,
+  SymLink,
+  Socket,
+  Pipe,
+  BlockDevice,
+  CharDevice,
+  Console,
+]
+
+///|
+/// Create a `FileKind` from its raw integer representation.
+/// Return `Unknown` for unknown integer value.
+pub fn FileKind::from_int(value : Int32) -> FileKind {
+  if value >= 1 && value - 1 < known_kinds.length() {
+    known_kinds[value - 1]
+  } else {
+    Unknown
+  }
+}
 
 ///|
 /// Return `true` if fd of the specific kind may be pollable.

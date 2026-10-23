@@ -47,7 +47,7 @@ let dummy_console_buffer : WindowsConsoleBuffer = {
 fn WindowsConsoleBuffer::WindowsConsoleBuffer(
   kind : @fd_util.FileKind,
 ) -> WindowsConsoleBuffer {
-  if kind is Console && IS_NATIVE_WINDOWS {
+  if kind is Console && platform is Windows {
     {
       buffer: FixedArray::make(WINDOWS_CONSOLE_BUFFER_SIZE, 0),
       unpaired_surrogate: 0,

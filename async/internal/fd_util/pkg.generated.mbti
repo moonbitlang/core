@@ -31,7 +31,7 @@ pub(all) enum FileKind {
   Console
 } derive(Eq, @debug.Debug)
 pub fn FileKind::can_poll(Self) -> Bool
-pub fn FileKind::unsafe_from_int(Int32) -> Self
+pub fn FileKind::from_int(Int32) -> Self
 
 // Type aliases
 pub type Fd = UInt64
