@@ -850,6 +850,132 @@ pub fn[T] ArrayView::windows(
 }
 
 ///|
+/// Splits the view into sub-views separated by elements that satisfy the
+/// predicate. The delimiters are not included, and each returned sub-view
+/// shares the original backing array — no elements are copied.
+///
+/// The result has the same shape as `Array::split`: a leading delimiter
+/// produces an empty sub-view, while a trailing delimiter does not.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 0, 2, 0, 3, 0, 4][:]
+///   debug_inspect(
+///     v.split(x => x == 0),
+///     content=(
+///       #|[
+///       #|  <ArrayView: [1]>,
+///       #|  <ArrayView: [2]>,
+///       #|  <ArrayView: [3]>,
+///       #|  <ArrayView: [4]>,
+///       #|]
+///     ),
+///   )
+/// }
+/// ```
+#locals(pred)
+pub fn[T] ArrayView::split(
+  self : ArrayView[T],
+  pred : (T) -> Bool raise?,
+) -> Array[ArrayView[T]] raise? {
+  let chunks = []
+  let len = self.length()
+  for start = 0; start < len; {
+    let end = for i = start; i < len && !pred(self.unsafe_get(i)); {
+      continue i + 1
+    } nobreak {
+      i
+    }
+    chunks.push(self[start:end])
+    continue end + 1
+  }
+  chunks
+}
+
+///|
+/// Zips two views into an array of pairs. The result is as long as the
+/// shorter view.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v1 = [1, 2, 3][:]
+///   let v2 = ['a', 'b'][:]
+///   debug_inspect(v1.zip(v2), content="[(1, 'a'), (2, 'b')]")
+/// }
+/// ```
+pub fn[A, B] ArrayView::zip(
+  self : ArrayView[A],
+  other : ArrayView[B],
+) -> Array[(A, B)] {
+  let length = Int32::min(self.length(), other.length())
+  Array::makei(length, i => (self.unsafe_get(i), other.unsafe_get(i)))
+}
+
+///|
+/// Zips two views into an iterator that yields corresponding elements. The
+/// iteration stops when the shorter view is exhausted.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v1 = [1, 2, 3][:]
+///   let v2 = ['a', 'b', 'c'][:]
+///   debug_inspect(
+///     v1.zip_to_iter2(v2).to_array(),
+///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
+///   )
+/// }
+/// ```
+pub fn[A, B] ArrayView::zip_to_iter2(
+  self : ArrayView[A],
+  other : ArrayView[B],
+) -> Iter2[A, B] {
+  let length = Int32::min(self.length(), other.length())
+  let mut i = 0
+  Iter2::new(
+    () => {
+      guard i < length else { None }
+      let elem = (self.unsafe_get(i), other.unsafe_get(i))
+      i += 1
+      Some(elem)
+    },
+    size_hint=length,
+  )
+}
+
+///|
+/// Splits a view of pairs into two arrays holding the first and the second
+/// elements.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [(1, "a"), (2, "b"), (3, "c")][:]
+///   let (nums, strs) = v.unzip()
+///   debug_inspect(nums, content="[1, 2, 3]")
+///   debug_inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// }
+/// ```
+pub fn[T1, T2] ArrayView::unzip(
+  self : ArrayView[(T1, T2)],
+) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array(capacity=self.length())
+  let arr2 : Array[T2] = Array(capacity=self.length())
+  for pair in self {
+    let (x, y) = pair
+    arr1.push(x)
+    arr2.push(y)
+  }
+  (arr1, arr2)
+}
+
+///|
 /// Returns an iterator that yields each element of the array view in sequence
 /// from start to end.
 ///

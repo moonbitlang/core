@@ -1302,3 +1302,101 @@ test "ArrayView::strip_suffix on sliced view" {
   let v = [0, 1, 2, 3, 4][:4]
   debug_inspect(v.strip_suffix([2, 3]), content="Some(<ArrayView: [0, 1]>)")
 }
+
+///|
+test "ArrayView::split leading and trailing delimiters" {
+  let v = [0, 1, 0, 0, 2, 0][:]
+  debug_inspect(
+    v.split(x => x == 0),
+    content=(
+      #|[<ArrayView: []>, <ArrayView: [1]>, <ArrayView: []>, <ArrayView: [2]>]
+    ),
+  )
+}
+
+///|
+test "ArrayView::split matches Array::split" {
+  let arr = [3, 0, 0, 1, 2, 0, 4, 0]
+  let from_view = arr[:].split(x => x == 0).map(v => v.to_owned())
+  debug_inspect(from_view, content="[[3], [], [1, 2], [4]]")
+  debug_inspect(arr.split(x => x == 0), content="[[3], [], [1, 2], [4]]")
+}
+
+///|
+test "ArrayView::split without delimiters" {
+  let v = [1, 2, 3][:]
+  debug_inspect(
+    v.split(x => x == 0),
+    content=(
+      #|[<ArrayView: [1, 2, 3]>]
+    ),
+  )
+}
+
+///|
+test "ArrayView::split empty view" {
+  let v : ArrayView[Int32] = [1, 2, 3][0:0]
+  debug_inspect(v.split(x => x == 0), content="[]")
+}
+
+///|
+test "ArrayView::split on sliced view shares backing" {
+  let arr : FixedArray[Int32] = [9, 1, 0, 2, 3, 0, 9]
+  let parts = arr[1:6].split(x => x == 0)
+  arr[1] = 10
+  debug_inspect(
+    parts,
+    content=(
+      #|[<ArrayView: [10]>, <ArrayView: [2, 3]>]
+    ),
+  )
+}
+
+///|
+test "ArrayView::split propagates errors" {
+  let v = [1, 2, 3][:]
+  let mut visited = 0
+  try
+    v.split(x => {
+      visited += 1
+      if x == 2 {
+        fail("boom")
+      }
+      false
+    })
+    |> ignore
+  catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected error")
+  }
+  inspect(visited, content="2")
+}
+
+///|
+test "ArrayView::zip uses the shorter length" {
+  let v1 = [1, 2, 3, 4][1:]
+  let v2 = ['a', 'b'][:]
+  debug_inspect(v1.zip(v2), content="[(2, 'a'), (3, 'b')]")
+  debug_inspect(v2.zip(v1), content="[('a', 2), ('b', 3)]")
+  let empty : ArrayView[Int32] = [1][0:0]
+  debug_inspect(empty.zip(v2), content="[]")
+}
+
+///|
+test "ArrayView::zip_to_iter2 stops at the shorter view" {
+  let v1 = [1, 2, 3][:]
+  let v2 = ["x", "y"][:]
+  let iter = v1.zip_to_iter2(v2)
+  debug_inspect(iter.to_array(), content="[(1, \"x\"), (2, \"y\")]")
+}
+
+///|
+test "ArrayView::unzip" {
+  let v = [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')][1:3]
+  let (nums, chars) = v.unzip()
+  debug_inspect(nums, content="[2, 3]")
+  debug_inspect(chars, content="['b', 'c']")
+  let empty : ArrayView[(Int32, Char)] = [(1, 'a')][0:0]
+  debug_inspect(empty.unzip(), content="([], [])")
+}
