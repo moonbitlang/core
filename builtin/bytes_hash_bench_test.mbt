@@ -37,7 +37,7 @@ fn make_bytes_hash_bench_map_keys() -> Array[Bytes] {
 
 ///|
 fn make_bytes_hash_bench_map(keys : Array[Bytes]) -> Map[Bytes, Int32] {
-  let map : Map[Bytes, Int32] = Map([], capacity=bytes_hash_bench_map_size * 2)
+  let map : Map[Bytes, Int32] = Map([], capacity=bytes_hash_bench_map_size)
   for i in 0..<keys.length() {
     map.set(keys[i], i)
   }
