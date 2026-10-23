@@ -1,0 +1,12 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/fs",
+  "moonbitlang/core/async/stdio",
+}
+
+supported_targets = "-all+native"
+
+pkgtype(kind: "executable")

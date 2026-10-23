@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/internal/c_buffer"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Buffer
+pub fn Buffer::blit_from_bytes(Self, dst_offset? : Int32, src~ : Bytes, src_offset? : Int32, len~ : Int32) -> Unit
+pub fn Buffer::blit_to_bytes(Self, src_offset? : Int32, dst~ : FixedArray[Byte], dst_offset? : Int32, len~ : Int32) -> Unit
+pub fn Buffer::decode_as_os_string(Self, offset? : Int32, len? : Int32) -> String
+pub fn Buffer::free(Self) -> Unit
+#alias("_[_]")
+pub fn Buffer::get(Self, Int32) -> Byte
+pub fn Buffer::is_null(Self) -> Bool
+#as_free_fn
+pub fn Buffer::new(Int32) -> Self
+pub fn Buffer::strlen(Self) -> Int32
+
+// Type aliases
+
+// Traits

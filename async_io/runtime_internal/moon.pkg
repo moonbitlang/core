@@ -1,6 +1,0 @@
-import {
-  "moonbitlang/core/builtin",
-  "moonbitlang/core/ref",
-  "moonbitlang/core/async_io/internal/coroutine",
-  "moonbitlang/core/async_io/internal/event_loop",
-}

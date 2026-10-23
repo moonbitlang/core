@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/env",
+  "moonbitlang/core/async/process",
+}
+
+options(
+  "native-stub": [ "stub.c" ],
+)

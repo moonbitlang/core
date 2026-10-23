@@ -1,0 +1,49 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/lazy",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/string",
+  "moonbitlang/core/async/os_error",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/internal/c_buffer",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async",
+  "moonbitlang/core/internal/os_string",
+}
+
+import {
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/test",
+  "moonbitlang/core/string",
+  "moonbitlang/core/async/internal/test_util",
+  "moonbitlang/core/async/process",
+} for "test"
+
+options(
+  targets: {
+    "addr.mbt": [ "native", "wasm" ],
+    "addr_test.mbt": [ "native", "wasm" ],
+    "addr_utils.mbt": [ "native", "wasm" ],
+    "connect_burst_test.mbt": [ "native", "wasm" ],
+    "deprecated.mbt": [ "native", "wasm" ],
+    "dual_stack_test.mbt": [ "native", "wasm" ],
+    "ffi.mbt": [ "native" ],
+    "ffi.wasm.mbt": [ "wasm" ],
+    "getsockname_test.mbt": [ "native", "wasm" ],
+    "happy_eyeball.mbt": [ "native", "wasm" ],
+    "ifname.mbt": [ "native" ],
+    "ifname.wasm.mbt": [ "wasm" ],
+    "interface_util_for_test.mbt": [ "native", "wasm" ],
+    "multicast_test.mbt": [ "native", "wasm" ],
+    "read_exactly_test.mbt": [ "native", "wasm" ],
+    "resolve_host_test.mbt": [ "native" ],
+    "resolve_host_wasm_test.mbt": [ "wasm" ],
+    "reuse_addr_test.mbt": [ "native", "wasm" ],
+    "reuse_port_test.mbt": [ "native", "wasm" ],
+    "tcp.mbt": [ "native", "wasm" ],
+    "udp.mbt": [ "native", "wasm" ],
+  },
+)
