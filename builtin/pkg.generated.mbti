@@ -1332,7 +1332,7 @@ type StringBuilder
 #alias(new, deprecated)
 pub fn StringBuilder::StringBuilder(size_hint? : Int32) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
-pub fn StringBuilder::reset(Self) -> Unit
+pub fn StringBuilder::reset(Self, keep_capacity? : Bool) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
 pub fn StringBuilder::write_char(Self, Char) -> Unit
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit

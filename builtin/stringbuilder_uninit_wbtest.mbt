@@ -74,3 +74,19 @@ test "StringBuilder reset reuses storage after full and partial conversions" {
   inspect(backing[0].to_int(), content="49")
   inspect(backing[2].to_int(), content="51")
 }
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder reset can discard capacity" {
+  let builder = StringBuilder(size_hint=2)
+  builder.write_string("abcdef")
+  let capacity = builder.data.length()
+  builder.reset(keep_capacity=true)
+  inspect(builder.data.length() == capacity, content="true")
+  builder.reset(keep_capacity=false)
+  inspect(builder.data.length(), content="0")
+  inspect(builder.len, content="0")
+  builder.reset(keep_capacity=false)
+  builder.write_char('😀')
+  inspect(builder.to_string(), content="😀")
+}
