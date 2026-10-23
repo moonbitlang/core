@@ -13,6 +13,67 @@
 // limitations under the License.
 
 ///|
+async test "proxy at an IPv6 address" {
+  @async.with_task_group() <| group => {
+    let proxy = @socket.TcpServer(@socket.Addr::parse("[::1]:0"))
+    let proxy_port = proxy.addr.port()
+    group.spawn_bg() <| () => {
+      defer proxy.close()
+      let (conn, _) = proxy.accept()
+      let conn = @http.ServerConnection::new(conn)
+      defer conn.close()
+      let request = conn.read_request()
+      debug_inspect(request.meth, content="Connect")
+      inspect(request.path, content="[::1]:8080")
+      conn..send_response(502, "BadGateway").end_response()
+    }
+    let result = try {
+      ignore(
+        @http.get_binary(
+          "http://[::1]:8080/",
+          proxy=Client("http://[::1]:\{proxy_port}"),
+        ),
+      )
+      "connected"
+    } catch {
+      @http.ProxyError(response) => "proxy error \{response.code}"
+      err => raise err
+    }
+    inspect(result, content="proxy error 502")
+  }
+}
+
+///|
+async test "CONNECT keeps the zone ID of an IPv6 address" {
+  @async.with_task_group() <| group => {
+    let proxy = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
+    let proxy_port = proxy.addr.port()
+    group.spawn_bg() <| () => {
+      defer proxy.close()
+      let (conn, _) = proxy.accept()
+      let conn = @http.ServerConnection::new(conn)
+      defer conn.close()
+      let request = conn.read_request()
+      inspect(request.path, content="[fe80::1%25eth%2B%C3%A9]:8080")
+      conn..send_response(502, "BadGateway").end_response()
+    }
+    let result = try {
+      ignore(
+        @http.get_binary(
+          "http://[fe80::1%25eth%2b%c3%a9]:8080/",
+          proxy=Client("http://127.0.0.1:\{proxy_port}"),
+        ),
+      )
+      "connected"
+    } catch {
+      @http.ProxyError(response) => "proxy error \{response.code}"
+      err => raise err
+    }
+    inspect(result, content="proxy error 502")
+  }
+}
+
+///|
 async test "passthrough mode" {
   let log = []
   @async.with_task_group() <| group => {
