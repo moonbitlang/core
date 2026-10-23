@@ -21,3 +21,47 @@ test "parse error" {
     ),
   )
 }
+
+///|
+test "astral parse errors point to the first UTF-16 code unit" {
+  debug_inspect(
+    expect_parse_error("[0😀]", "expected InvalidChar"),
+    content="InvalidChar({ line: 1, column: 2 }, '😀')",
+  )
+  // Columns still count UTF-16 code units, including earlier astral characters.
+  debug_inspect(
+    expect_parse_error("[\n\"😀\"😀]", "expected InvalidChar"),
+    content="InvalidChar({ line: 2, column: 4 }, '😀')",
+  )
+}
+
+///|
+test "invalid characters after numbers and structural tokens keep their start" {
+  // Each prefix reaches a different lexer continuation or error branch.
+  // Large numbers exercise the string-preserving conversion fallback.
+  for
+    prefix in [
+      "", "-", "0", "1", "1.", "1.0", "1e", "1e+", "1e-", "1e0", "9007199254740992",
+      "1.234567890123456789", "[0", "[null", "{", "{\"k\"", "{\"k\":null", "{\"k\":null,",
+      "[\"😀\"", "t", "\"\\", "\"\\u",
+    ] {
+    for c in ['x', '界', '\u{10000}', '😀', '\u{10FFFF}'] {
+      let text = prefix + c.to_string()
+      let expected = @json.ParseError::InvalidChar(
+        { line: 1, column: prefix.length(), },
+        c,
+      )
+      // Parse a view inside a larger string as well as the full input.
+      let padded = "😀prefix" + text + "suffix😀"
+      for input in [text[:], padded[8:8 + text.length()]] {
+        for preserve_number_repr in [false, true] {
+          let error : @json.ParseError = expect_error(
+            () => @json.parse(input, preserve_number_repr~) |> ignore,
+            "expected InvalidChar",
+          )
+          assert_eq(error, expected, msg="input: \{text}")
+        }
+      }
+    }
+  }
+}
