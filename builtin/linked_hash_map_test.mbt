@@ -730,6 +730,36 @@ test "Map::set updating existing key should not grow" {
 }
 
 ///|
+test "capacity hint reserves entries without growing" {
+  for hint in [-1, 0, 1, 2, 3, 6, 7, 8, 13, 14, 15, 16, 26, 27, 1024, 15000] {
+    let map : Map[Int32, Int32] = Map([], capacity=hint)
+    let initial_capacity = map.capacity()
+    for i in 0..<hint.max(0) {
+      map[i] = i
+      assert_eq(map.capacity(), initial_capacity, msg="hint=\{hint}, key=\{i}")
+    }
+    assert_eq(map.length(), hint.max(0))
+    // Reserving the same entry count as an array constructor should choose
+    // the same table size, except for the default empty constructor.
+    if hint > 0 {
+      let from_array = Map([ for i in 0..<hint => (i, i) ])
+      assert_eq(map.capacity(), from_array.capacity())
+      assert_eq(map.to_array(), from_array.to_array())
+    }
+  }
+  // The hint counts total entries, including those supplied in the array.
+  let seeded = Map([(0, 0), (1, 1)], capacity=13)
+  let capacity = seeded.capacity()
+  for i in 2..<13 {
+    seeded[i] = i
+    assert_eq(seeded.capacity(), capacity)
+  }
+  debug_inspect((seeded.length(), seeded.capacity()), content="(13, 16)")
+  let smaller_hint = Map([(0, 0), (1, 1), (2, 2)], capacity=1)
+  inspect(smaller_hint.capacity(), content="4")
+}
+
+///|
 test "filter sizes the result for the kept entries" {
   let m : Map[Int32, Int32] = Map([ for i in 0..<10000 => (i, i) ])
   for keep in [0, 1, 10, 5000, 10000] {
@@ -1003,7 +1033,8 @@ test "update_or_default: f removes the present key" {
 test "get_or_init: default removes a key on the probe path and inserts another" {
   // Id(16) probes slot 0 (Id(0)) and then slot 1. `default` empties slot 0
   // and adds a key elsewhere, so the length is unchanged when it returns.
-  let m : Map[Id, Int32] = Map([(Id(0), 0)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0)], capacity=13)
+  inspect(m.capacity(), content="16")
   let v = m.get_or_init(Id(16), () => {
     m.remove(Id(0))
     m.set(Id(5), 5)
@@ -1044,7 +1075,8 @@ test "update: f grows the map and updates the present key" {
 ///|
 test "update: f removes a key before the present key in its probe chain" {
   // Id(16) sits in slot 1 behind Id(0); removing Id(0) shifts it to slot 0.
-  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=13)
+  inspect(m.capacity(), content="16")
   m.update(Id(16), _ => {
     m.remove(Id(0))
     None
@@ -1061,7 +1093,8 @@ test "update: f removes a key before the present key in its probe chain" {
       #|None
     ),
   )
-  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=16)
+  let m : Map[Id, Int32] = Map([(Id(0), 0), (Id(16), 16)], capacity=13)
+  inspect(m.capacity(), content="16")
   m.update(Id(16), v => {
     m.remove(Id(0))
     v.map(x => x + 1)

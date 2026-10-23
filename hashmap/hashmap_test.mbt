@@ -13,6 +13,24 @@
 // limitations under the License.
 
 ///|
+test "ToJson sizes its Map for live entries" {
+  let source : @hashmap.HashMap[String, Int32] = HashMap(
+    [
+      for i in 0..<256 => (i.to_string(), i)
+    ],
+  )
+  source.clear()
+  source["first"] = 1
+  source["second"] = 2
+  source["third"] = 3
+  guard Json(source) is Object(object) else { fail("expected object") }
+  inspect(object.capacity(), content="4")
+  assert_eq(object["first"], Json(1))
+  assert_eq(object["second"], Json(2))
+  assert_eq(object["third"], Json(3))
+}
+
+///|
 test "new" {
   let m : @hashmap.HashMap[Int32, Int32] = HashMap([])
   inspect(m.capacity(), content="8")

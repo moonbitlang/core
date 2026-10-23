@@ -93,6 +93,10 @@ fn[K, V] new_map(capacity : Int32) -> Map[K, V] {
 
 ///|
 fn capacity_for_length(length : Int32) -> Int32 {
+  // 2^30 is the largest positive power-of-two bucket count in Int32.
+  guard length <= calc_grow_threshold(0x40000000) else {
+    abort("Map capacity overflow")
+  }
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -102,8 +106,25 @@ fn capacity_for_length(length : Int32) -> Int32 {
 
 ///|
 /// Create a hash map from an array.
-/// The optional `capacity` is treated as a minimum initial capacity and will be
-/// rounded up to the smallest power of 2 that can hold the requested capacity.
+/// The optional `capacity` reserves room for at least that many total entries
+/// without growing, including the entries in `arr`. The bucket count is rounded
+/// up to a power of two with room for the map's load factor. A hint smaller than
+/// `arr.length()` is ignored; non-positive hints on an empty array reserve zero
+/// entries. Without a hint, an empty map uses the default initial bucket count.
+///
+/// `Map::capacity()` reports the bucket count, which may exceed this entry hint.
+/// Aborts if the requested entry count exceeds the supported table size.
+///
+/// ```mbt check
+/// test {
+///   let map : Map[Int32, Int32] = Map([], capacity=16)
+///   let initial_capacity = map.capacity()
+///   for i in 0..<16 {
+///     map[i] = i
+///   }
+///   inspect(map.capacity() == initial_capacity, content="true")
+/// }
+/// ```
 #alias(from_array)
 pub fn[K : Hash + Eq, V] Map::Map(
   arr : ArrayView[(K, V)],
@@ -111,7 +132,7 @@ pub fn[K : Hash + Eq, V] Map::Map(
 ) -> Map[K, V] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity.max(capacity_for_length(length))
+    Some(capacity) => capacity_for_length(capacity.max(length))
     None =>
       if length == 0 {
         default_init_capacity
@@ -685,7 +706,9 @@ fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit 
 
 ///|
 fn calc_grow_threshold(capacity : Int32) -> Int32 {
-  capacity * 13 / 16
+  // Divide first to avoid overflow for large power-of-two bucket counts.
+  // The remainder preserves the rounding for tables smaller than 16 buckets.
+  capacity / 16 * 13 + capacity % 16 * 13 / 16
 }
 
 // Utils
@@ -720,7 +743,9 @@ pub fn[K, V] Map::length(self : Map[K, V]) -> Int32 {
 }
 
 ///|
-/// Get the capacity of the map.
+/// Get the number of buckets allocated for the map. Some buckets are kept empty
+/// for probing, so this is larger than the number of entries that fit without
+/// growing. The constructor's `capacity` hint is an entry count instead.
 pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int32 {
   self.capacity
 }

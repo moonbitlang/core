@@ -39,3 +39,9 @@ test "panic alphabet function coverage" {
 test "panic unwrap" {
   (None : Unit?).unwrap()
 }
+
+///|
+test "panic Map capacity hint exceeds the maximum entry count" {
+  // One more than floor(2^30 * 13 / 16); reject before allocating.
+  let _ : Map[Int32, Int32] = Map([], capacity=0x34000001)
+}
