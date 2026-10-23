@@ -1,7 +1,13 @@
 # flate
 
 Pure-MoonBit **DEFLATE** (RFC 1951) — a runtime-agnostic, suspendable, io-free
-compression engine in `moonbitlang/core/compress/flate`.
+compression engine in `moonbitlang/core/compress/flate`. The sibling
+`compress/gzip` (RFC 1952) and `compress/zlib` (RFC 1950) packages provide
+compressed formats.
+
+gzip and zlib share CRC-32 and Adler-32 implementations in the internal
+`moonbitlang/core/internal/checksum` package. This package is an
+implementation detail and cannot be imported from outside `moonbitlang/core`.
 
 ## Import
 
@@ -10,6 +16,8 @@ Add the packages you use to `moon.pkg`:
 ```moon.pkg
 import {
   "moonbitlang/core/compress/flate",
+  "moonbitlang/core/compress/gzip",
+  "moonbitlang/core/compress/zlib",
 }
 ```
 
@@ -123,7 +131,7 @@ test "README streaming Deflater" {
 
 ### State-machine contract
 
-- `step` returns a `#valtype`
+- `step` and `finish` return a `#valtype`
   `StepResult` containing `status`, `consumed`, and `produced`. The counts
   describe exactly the prefixes accepted and written by that call. Drop only
   `input[:result.consumed]`; large input views may be partially consumed when
@@ -142,22 +150,32 @@ test "README streaming Deflater" {
   backpressure.
 - Decoder `step(input, output)` methods accept a mutable output view,
   including slices of fixed arrays or arrays. The engine chooses its copy
-  strategy internally and releases caller buffers after each call.
+  strategy internally and releases caller buffers after each call. gzip and
+  zlib checksum the produced range and drain pending body input before
+  accepting more, so output can be produced while `result.consumed` is zero.
   Re-present the unaccepted input on the next call.
 - Raw `Inflater` callers own input completion: `NeedMoreInput` after the
   input source is exhausted means the stream is truncated. On `NeedMoreOutput`,
   keep calling `step` with the unconsumed suffix and fresh output space, even
   if the suffix is empty; stop at `Done`.
-- After a decoder error, discard or reset it.
-- Once `Done` is returned, new input is not consumed; reset the raw engine
-  before reuse. A reset encoder produces exactly the bytes of a freshly constructed
+- gzip/zlib decoders accept the final input chunk through `finish`; repeat
+  with any unconsumed suffix and fresh output space until `Done`. They report
+  truncation themselves. After a raw decoder error, discard or reset it;
+  container decoder instances stably rethrow the same error.
+- Once `Done` is returned, new input is not consumed; reset the raw engine or
+  the zlib `Encoder` (`reset(dictionary?)`), or create a new wrapper, before
+  reuse. A reset encoder produces exactly the bytes of a freshly constructed
   one with the same options and driving schedule, while reusing its workspace.
 - Configure a raw preset dictionary through `Deflater(...)`/`Inflater(...)`, or
   while starting a fresh stream through `reset(dictionary=...)`; dictionary
   selection cannot be mutated after a stream begins.
+- gzip/zlib decoders may accept transport read-ahead beyond their trailer;
+  after `Done`, recover that suffix with `unused_input()` before parsing the
+  next protocol frame. For an exact one-member gzip boundary, construct the
+  decoder with `multistream=false`.
 - Raw failures expose a stable `InflateErrorKind` (`Truncated`, `Corrupt`,
   `TrailingData`, `OutputLimitExceeded`, `Cancelled`, or `InvalidArgument`)
-  alongside diagnostic text.
+  alongside diagnostic text; gzip/zlib similarly expose `GzipErrorKind`/`ZlibErrorKind`.
 - One-shot decoding (`inflate_all`, `inflate_exact`)
   accepts an optional `cancelled` callback, polled at entry and then every
   ~4-8 KiB of decoded output; returning `true` raises
@@ -225,6 +243,9 @@ output, `Decompressor::decompress` with an output that grows.
 Differential tests compare one-shot and streaming decoding across randomized
 chunk/output schedules, truncations and bit flips.
 
+The gzip and zlib packages add framing, checksums and streaming wrappers.
+The internal checksum package supplies CRC-32 and Adler-32 independently of the codecs.
+
 ## Optional fast stored blocks
 
 `fast_store=true` opts into a heuristic speed/ratio trade-off. It samples byte
@@ -245,7 +266,7 @@ let stream = @flate.Deflater(level=6, fast_store=true)
 ```
 
 The option is also available on `deflate_into`, split/optimal convenience APIs,
-and streaming encoders. Whole-buffer APIs classify the entire input;
+gzip/zlib compression functions and streaming encoders. Whole-buffer APIs classify the entire input;
 streaming encoders decide per block and retain stored bytes as match history.
 
 This is **not a proof of incompressibility**. Long repeated patterns or useful
@@ -268,6 +289,12 @@ adds zopfli-style iterated optimal parsing (`optimal_parse.mbt`) plus
 content-driven block splitting (`optimal_plan.mbt`). Both paths use the shared
 block writer. Output size depends on the input and chosen parsing strategy.
 
+The containers expose both tiers: `@gzip.compress` / `@zlib.compress` and their
+streaming `Encoder`s take `level` 0-9; `@gzip.compress_optimal` /
+`@zlib.compress_optimal` apply the offline zopfli path (one-shot only — a
+streaming encoder cannot suspend a whole-input optimal parse), for
+compress-once, serve-forever artifacts.
+
 ## API conventions
 
 Read-only inputs accept `BytesView`; existing `Bytes` values convert at the
@@ -282,6 +309,8 @@ Internal format and tuning constants are private. Use `deflate_bound` to size
 compression output. Filename-based compression selection belongs to the caller;
 the CLI supplies its own policy.
 
+gzip payload CRC and FHCRC are verified. A damaged checksum raises
+`ChecksumMismatch`.
 `deflate_bound` rejects negative or unrepresentable capacities.
 
 Use `!=` for inequality and `@debug.Repr(value)` for debugging.
