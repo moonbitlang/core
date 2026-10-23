@@ -92,3 +92,42 @@ test "tail guards do not wrap near the largest position" {
   assert_true(has_bytes_from(7, 4, 11))
   assert_false(has_bytes_from(8, 4, 11))
 }
+
+///|
+test "whole-buffer block targets advance through the final Int32-sized tail" {
+  let end = 2147483647
+  for block_size in [65535, OPTIMAL_MASTER_BLOCK] {
+    let start = end - 2 * block_size - 1
+    let first = next_block_target(start, end, block_size)
+    let second = next_block_target(first, end, block_size)
+    let last = next_block_target(second, end, block_size)
+    @test.assert_eq(first, end - block_size - 1)
+    @test.assert_eq(second, end - 1)
+    @test.assert_eq(last, end)
+    @test.assert_eq(next_block_target(last, end, block_size), end)
+    @test.assert_eq(next_block_target(end - block_size, end, block_size), end)
+    @test.assert_eq(
+      next_block_target(0, block_size + 1, block_size),
+      block_size,
+    )
+    @test.assert_eq(next_block_target(0, 0, block_size), 0)
+  }
+}
+
+///|
+test "fixed-cadence cuts are independent of the absolute input offset" {
+  let tokens = [97, 98, 99]
+  // The first cut is valid, but advancing to the next cadence point would
+  // overflow at the high offset. The second token must not become a cut.
+  let offsets : FixedArray[Int32] = [0, 65535, 65536, 65537]
+  for start in [0, 2147483647 - 65537] {
+    let positions = offsets.map(offset => start + offset)
+    @test.assert_eq(fixed_cadence_cuts(tokens, positions, start, 65535), [1])
+  }
+  // A final short chunk has no cut, even when its first cadence point would
+  // already lie beyond the largest representable position.
+  for start in [0, 2147483647 - 3] {
+    let positions : FixedArray[Int32] = [start, start + 1, start + 2, start + 3]
+    @test.assert_eq(fixed_cadence_cuts(tokens, positions, start, 65535), [])
+  }
+}

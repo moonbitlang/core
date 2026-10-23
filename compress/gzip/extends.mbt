@@ -13,8 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `==` instead", skip_current_package=true)
-#doc(hidden)
 pub extend GzipErrorKind with Eq::{equal}
 
 ///|

@@ -176,12 +176,13 @@ fn fixed_cadence_cuts(
 ) -> Array[Int32] {
   let m = tokens.length()
   let cuts : Array[Int32] = []
-  let mut target = pos + block_size
+  let end = all_pos[m]
+  let mut target = next_block_target(pos, end, block_size)
   let mut k = 1
   while k < m {
     if all_pos[k] >= target {
       cuts.push(k)
-      target = target + block_size
+      target = next_block_target(target, end, block_size)
     }
     k = k + 1
   }
@@ -298,7 +299,7 @@ pub fn deflate_all_split(
   finder.reset_for_input(input, long_hash_bits~)
   let mut pos = 0
   for ;; {
-    let target = (pos + master_size).min(n)
+    let target = next_block_target(pos, n, master_size)
     let tokens : Array[Int32] = []
     let ll_freq = FixedArray::make(MAX_NUM_LIT, 0)
     let d_freq = FixedArray::make(MAX_NUM_DIST, 0)

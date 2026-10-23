@@ -49,6 +49,7 @@ pub(all) enum DeflateAction {
   SyncFlush
   Finish
 } derive(Eq, @debug.Debug)
+pub fn DeflateAction::equal(Self, Self) -> Bool
 
 type Deflater
 pub fn Deflater::Deflater(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
@@ -64,6 +65,7 @@ pub(all) enum InflateErrorKind {
   Cancelled
   InvalidArgument
 } derive(Eq, @debug.Debug)
+pub fn InflateErrorKind::equal(Self, Self) -> Bool
 
 type Inflater
 pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
@@ -77,6 +79,7 @@ pub(all) enum Status {
   NeedMoreInput
   NeedMoreOutput
 } derive(Eq, @debug.Debug)
+pub fn Status::equal(Self, Self) -> Bool
 
 pub(all) struct StepResult {
   status : Status

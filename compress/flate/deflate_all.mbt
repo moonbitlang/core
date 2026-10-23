@@ -181,6 +181,14 @@ pub fn deflate_into(
 }
 
 ///|
+/// Cap the span before adding it to an absolute input position. Callers supply
+/// `0 <= pos <= end` and a positive block size, including near the Int32 limit.
+#inline
+fn next_block_target(pos : Int32, end : Int32, block_size : Int32) -> Int32 {
+  pos + (end - pos).min(block_size)
+}
+
+///|
 /// Whole-buffer encoders share one block cadence and encoding decision. The
 /// caller owns the match finder and workspaces, so reuse introduces no copies.
 fn encode_blocks(
@@ -196,7 +204,7 @@ fn encode_blocks(
   let block_size = 65535
   let mut pos = 0
   for ;; {
-    let target = pos + (n - pos).min(block_size)
+    let target = next_block_target(pos, n, block_size)
     tokens.clear()
     ll_freq.fill(0)
     d_freq.fill(0)

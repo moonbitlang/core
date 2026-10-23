@@ -13,6 +13,25 @@
 // limitations under the License.
 
 ///|
+test "codec equality methods can be passed as functions across packages" {
+  let error_equal = @flate.InflateErrorKind::equal
+  @test.assert_eq(error_equal(Truncated, Truncated), true)
+  @test.assert_eq(error_equal(Truncated, Corrupt), false)
+  let status_equal = @flate.Status::equal
+  @test.assert_eq(status_equal(Done, Done), true)
+  @test.assert_eq(status_equal(Done, NeedMoreInput), false)
+  let action_equal = @flate.DeflateAction::equal
+  @test.assert_eq(action_equal(Finish, Finish), true)
+  @test.assert_eq(action_equal(Finish, Continue), false)
+  let gzip_equal = @gzip.GzipErrorKind::equal
+  @test.assert_eq(gzip_equal(Truncated, Truncated), true)
+  @test.assert_eq(gzip_equal(Truncated, InvalidHeader), false)
+  let zlib_equal = @zlib.ZlibErrorKind::equal
+  @test.assert_eq(zlib_equal(Truncated, Truncated), true)
+  @test.assert_eq(zlib_equal(Truncated, InvalidHeader), false)
+}
+
+///|
 test "bounded inflate_all enforces its decoded-size boundary" {
   let source = b"bounded one-shot inflate"
   let compressed = @flate.deflate_all(source)

@@ -13,18 +13,12 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `==` instead", skip_current_package=true)
-#doc(hidden)
 pub extend InflateErrorKind with Eq::{equal}
 
 ///|
-#deprecated("Use `==` instead", skip_current_package=true)
-#doc(hidden)
 pub extend Status with Eq::{equal}
 
 ///|
-#deprecated("Use `==` instead", skip_current_package=true)
-#doc(hidden)
 pub extend DeflateAction with Eq::{equal}
 
 ///|

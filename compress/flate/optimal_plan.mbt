@@ -359,7 +359,7 @@ pub fn deflate_all_optimal(
   let finder = MatchFinder(input_size=n, long_hash_bits~)
   finder.reset_for_input(input, long_hash_bits~)
   for ;; {
-    let target = (pos + OPTIMAL_MASTER_BLOCK).min(n)
+    let target = next_block_target(pos, n, OPTIMAL_MASTER_BLOCK)
     let chunk = optimal_parse_chunk(input, finder, pos, target, iters)
     emit_optimal_chunk(w, input, chunk, pos, n)
     pos = chunk.chunk_end
