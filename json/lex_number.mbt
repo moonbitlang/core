@@ -241,8 +241,8 @@ fn ParseContext::lex_integer_end(
       // exact source text in `repr` so `stringify` stays lossless. Only a
       // literal strconv itself rejects (beyond double range) keeps the
       // infinity sentinel.
-      // Malformed tokens may end inside a surrogate pair. Keep raw slicing
-      // here and in lex_number_end so parsing reports an error without aborting.
+      // The lexer leaves the first non-number character unconsumed, so
+      // these offsets delimit only the ASCII number token.
       let s = ctx.input.view(start_offset=start, end_offset=end)
       try {
         let value = @internal/strconv.parse_double(s)
@@ -270,8 +270,8 @@ fn ParseContext::lex_decimal_integer(
       Some('.') => return ctx.lex_decimal_point(start~)
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..<='9') => continue
-      Some(_) => {
-        ctx.offset -= 1
+      Some(c) => {
+        ctx.offset -= c.utf16_len()
         return ctx.lex_number_end(start, ctx.offset)
       }
       None => return ctx.lex_number_end(start, ctx.offset)
@@ -286,7 +286,7 @@ fn ParseContext::lex_decimal_point(
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('0'..<='9') => ctx.lex_decimal_fraction(start~)
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -300,8 +300,8 @@ fn ParseContext::lex_decimal_fraction(
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..<='9') => continue
-      Some(_) => {
-        ctx.offset -= 1
+      Some(c) => {
+        ctx.offset -= c.utf16_len()
         return ctx.lex_number_end(start, ctx.offset)
       }
       None => return ctx.lex_number_end(start, ctx.offset)
@@ -317,10 +317,7 @@ fn ParseContext::lex_decimal_exponent(
   match ctx.read_char() {
     Some('+' | '-') => return ctx.lex_decimal_exponent_sign(start~)
     Some('0'..<='9') => return ctx.lex_decimal_exponent_integer(start~)
-    Some(_) => {
-      ctx.offset -= 1
-      ctx.invalid_char()
-    }
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -332,10 +329,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('0'..<='9') => return ctx.lex_decimal_exponent_integer(start~)
-    Some(_) => {
-      ctx.offset -= 1
-      ctx.invalid_char()
-    }
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -348,8 +342,8 @@ fn ParseContext::lex_decimal_exponent_integer(
   for ;; {
     match ctx.read_char() {
       Some('0'..<='9') => continue
-      Some(_) => {
-        ctx.offset -= 1
+      Some(c) => {
+        ctx.offset -= c.utf16_len()
         return ctx.lex_number_end(start, ctx.offset)
       }
       None => return ctx.lex_number_end(start, ctx.offset)
@@ -369,8 +363,8 @@ fn ParseContext::lex_zero(
       ctx.offset -= 1
       ctx.invalid_char()
     }
-    Some(_) => {
-      ctx.offset -= 1
+    Some(c) => {
+      ctx.offset -= c.utf16_len()
       return ctx.lex_number_end(start, ctx.offset)
     }
     None => return ctx.lex_number_end(start, ctx.offset)
@@ -385,8 +379,7 @@ fn ParseContext::lex_number_end(
 ) -> LexedNumber {
   let number = ctx.lex_number_value(start, end)
   if ctx.preserve_number_repr {
-    // Use raw slicing like the fallback below: malformed input can end inside
-    // a surrogate pair and must report a parse error rather than abort.
+    // The offsets delimit the ASCII number token, excluding any lookahead.
     {
       value: number.value,
       repr: Some(ctx.input.view(start_offset=start, end_offset=end)),

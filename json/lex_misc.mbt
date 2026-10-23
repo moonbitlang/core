@@ -179,7 +179,7 @@ fn ParseContext::lex_after_array_value(
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -191,7 +191,7 @@ fn ParseContext::lex_after_property_name(
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => ()
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -204,7 +204,7 @@ fn ParseContext::lex_after_object_value(
   match ctx.read_char() {
     Some('}') => RBrace
     Some(',') => Comma
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -223,7 +223,7 @@ fn ParseContext::lex_property_name(
       let s = ctx.lex_string()
       (String(s), offset)
     }
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -242,7 +242,7 @@ fn ParseContext::lex_property_name2(
       let s = ctx.lex_string()
       (String(s), offset)
     }
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
