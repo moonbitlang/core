@@ -65,7 +65,7 @@ pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
 /// }
 /// ```
 pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
-  timsort(self, Compare::compare)
+  timsort(self)
 }
 
 ///|
@@ -90,7 +90,7 @@ pub fn[T] MutArrayView::stable_sort_by(
   self : MutArrayView[T],
   cmp : (T, T) -> Int32,
 ) -> Unit {
-  timsort(self, cmp)
+  timsort_by(self, cmp)
 }
 
 ///|

@@ -28,32 +28,32 @@ priv struct TimSortRun {
 /// 2. for every `i` in `2..runs.len()`: `runs[i - 2].len > runs[i - 1].len + runs[i].len`
 ///
 /// The invariants ensure that the total running time is *O*(*n* \* log(*n*)) worst-case.
-fn[T] timsort(arr : MutArrayView[T], cmp : (T, T) -> Int32) -> Unit {
+fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
   // Slices of up to this length get sorted using insertion sort.
   let max_insertion = 20
 
   // Short arrays get sorted in-place via insertion sort to avoid allocations.
   let len = arr.length()
   if len <= max_insertion {
-    MutArrayView::insertion_sort(arr, cmp)
+    MutArrayView::insertion_sort(arr)
     return
   }
   let runs : Array[TimSortRun] = []
   for start = 0, end = 0; end < len; {
-    let (streak_end, was_reversed) = find_streak(arr.mut_view(start~), cmp)
+    let (streak_end, was_reversed) = find_streak(arr.mut_view(start~))
     let end = end + streak_end
     if was_reversed {
       arr.mut_view(start~, end~).rev_in_place()
     }
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
-    let end = provide_sorted_batch(arr, start, end, cmp)
+    let end = provide_sorted_batch(arr, start, end)
     runs.push({ start, len: end - start, })
     while true {
       guard collapse(runs, len) is Some(r) else { break }
       let left = runs[r]
       let right = runs[r + 1]
-      merge(arr.slice(left.start, right.start + right.len), left.len, cmp)
+      merge(arr.slice(left.start, right.start + right.len), left.len)
       runs[r + 1] = { start: left.start, len: left.len + right.len, }
       runs.remove(r) |> ignore
     }
@@ -62,14 +62,9 @@ fn[T] timsort(arr : MutArrayView[T], cmp : (T, T) -> Int32) -> Unit {
 }
 
 ///|
-fn[T] MutArrayView::insertion_sort(
-  arr : MutArrayView[T],
-  cmp : (T, T) -> Int32,
-) -> Unit {
+fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i
-        j > 0 && cmp(arr.unsafe_get(j), arr.unsafe_get(j - 1)) < 0
-        j = j - 1 {
+    for j = i; j > 0 && arr.unsafe_get(j) < arr.unsafe_get(j - 1); j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -78,7 +73,7 @@ fn[T] MutArrayView::insertion_sort(
 ///|
 /// Merges non-decreasing runs `arr[:mid]` and `arr[mid:]`. Copy `arr[mid:]` to buf and merge 
 /// `buf` and `arr[:mid]` to `arr[:]`
-fn[T] merge(arr : MutArrayView[T], mid : Int32, cmp : (T, T) -> Int32) -> Unit {
+fn[T : Compare] merge(arr : MutArrayView[T], mid : Int32) -> Unit {
   let buf_len = arr.length() - mid
   let buf = UninitializedArray::make_and_blit(
     arr.buf(),
@@ -89,7 +84,7 @@ fn[T] merge(arr : MutArrayView[T], mid : Int32, cmp : (T, T) -> Int32) -> Unit {
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {
-    if cmp(arr.unsafe_get(p1), buf[p2]) > 0 {
+    if arr.unsafe_get(p1) > buf[p2] {
       arr.unsafe_set(p, arr.unsafe_get(p1))
       continue p1 - 1, p2, p - 1
     } else {
@@ -114,18 +109,15 @@ fn[T] merge(arr : MutArrayView[T], mid : Int32, cmp : (T, T) -> Int32) -> Unit {
 /// Finds a streak of presorted elements starting at the beginning of the slice. Returns the first
 /// value that is not part of said streak, and a bool denoting whether the streak was reversed.
 /// Streaks can be increasing or decreasing.
-fn[T] find_streak(
-  arr : MutArrayView[T],
-  cmp : (T, T) -> Int32,
-) -> (Int32, Bool) {
+fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int32, Bool) {
   let len = arr.length()
   if len < 2 {
     return (len, false)
   }
-  let assume_reverse = cmp(arr.unsafe_get(1), arr.unsafe_get(0)) < 0
+  let assume_reverse = arr.unsafe_get(1) < arr.unsafe_get(0)
   if assume_reverse {
     let end = for idx in 2..<len {
-      if cmp(arr.unsafe_get(idx), arr.unsafe_get(idx - 1)) < 0 {
+      if arr.unsafe_get(idx) < arr.unsafe_get(idx - 1) {
         continue
       }
       break idx
@@ -135,7 +127,7 @@ fn[T] find_streak(
     (end, true)
   } else {
     let end = for idx in 2..<len {
-      if cmp(arr.unsafe_get(idx), arr.unsafe_get(idx - 1)) >= 0 {
+      if arr.unsafe_get(idx) >= arr.unsafe_get(idx - 1) {
         continue
       }
       break idx
@@ -147,11 +139,10 @@ fn[T] find_streak(
 }
 
 ///|
-fn[T] provide_sorted_batch(
+fn[T : Compare] provide_sorted_batch(
   arr : MutArrayView[T],
   start : Int32,
   end : Int32,
-  cmp : (T, T) -> Int32,
 ) -> Int32 {
   let len = arr.length()
   // This value is a balance between least comparisons and best performance, as
@@ -165,7 +156,7 @@ fn[T] provide_sorted_batch(
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
     let sort_end = minimum(len, start + min_insertion_run)
-    MutArrayView::insertion_sort(arr.slice(start, sort_end), cmp)
+    MutArrayView::insertion_sort(arr.slice(start, sort_end))
     sort_end
   } else {
     end
@@ -548,7 +539,7 @@ test "stable_sort_complex" {
 ///|
 test "find_streak with empty array" {
   let arr : FixedArray[Int32] = []
-  let (streak_end, was_reversed) = find_streak(arr.mut_view(), Int32::compare)
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="0")
   inspect(was_reversed, content="false")
 }
@@ -556,7 +547,7 @@ test "find_streak with empty array" {
 ///|
 test "find_streak with single element array" {
   let arr : FixedArray[_] = [1]
-  let (streak_end, was_reversed) = find_streak(arr.mut_view(), Int32::compare)
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="1")
   inspect(was_reversed, content="false")
 }
@@ -564,7 +555,7 @@ test "find_streak with single element array" {
 ///|
 test "find_streak with increasing elements" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let (streak_end, was_reversed) = find_streak(arr.mut_view(), Int32::compare)
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="5")
   inspect(was_reversed, content="false")
 }
@@ -572,7 +563,7 @@ test "find_streak with increasing elements" {
 ///|
 test "find_streak with decreasing elements" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
-  let (streak_end, was_reversed) = find_streak(arr.mut_view(), Int32::compare)
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="5")
   inspect(was_reversed, content="true")
 }
@@ -580,7 +571,7 @@ test "find_streak with decreasing elements" {
 ///|
 test "provide_sorted_batch with long run" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let end = provide_sorted_batch(arr.mut_view(), 0, 5, Int32::compare)
+  let end = provide_sorted_batch(arr.mut_view(), 0, 5)
   inspect(end, content="5")
 }
 
