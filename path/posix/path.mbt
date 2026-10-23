@@ -13,7 +13,11 @@
 // limitations under the License.
 
 ///|
-/// A newtype wrapper provide path operation methods.
+/// A string wrapper providing POSIX path operations.
+///
+/// Equality compares the underlying strings exactly, including case and
+/// separators. It does not normalize paths or determine whether they refer to
+/// the same filesystem entry.
 pub(all) struct Path(String) derive(Eq, @debug.Debug)
 
 ///|
