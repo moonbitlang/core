@@ -1262,6 +1262,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int32) -> T
+pub fn[T] MutArrayView::blit_from_array(Self[T], ArrayView[T], dst_offset? : Int32) -> Unit
 #alias("_[_:_]")
 pub fn[T] MutArrayView::clamped_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
 pub fn[T : Compare] MutArrayView::compare(Self[T], Self[T]) -> Int32
