@@ -230,15 +230,3 @@ pub let delimiter : Char = ':'
 ///|
 /// OS platform specific path component separator.
 pub let sep : Char = '/'
-
-///|
-#deprecated
-pub extend Path with Eq::{not_equal, equal}
-
-///|
-#deprecated
-pub extend Path with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-pub extend Path with Show::{to_string, output}
