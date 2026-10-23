@@ -21,9 +21,16 @@ pub extern "js" fn is_windows() -> Bool =
   #|};
 
 ///|
+#cfg(any(target="wasm", target="wasm-gc"))
+#unsafe_skip_stub_check
+fn get_platform() -> Int32 = "moonbitlang/async" "runtime/get_platform"
+
+///|
 /// Checks whether the platform is Windows.
 #cfg(any(target="wasm", target="wasm-gc"))
-pub fn is_windows() -> Bool = "__moonbit_sys_unstable" "is_windows"
+pub fn is_windows() -> Bool {
+  get_platform() == 2
+}
 
 ///|
 /// Checks whether the platform is Windows.
