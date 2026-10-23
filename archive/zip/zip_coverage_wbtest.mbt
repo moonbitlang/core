@@ -436,6 +436,35 @@ test "ZIP entry decoding honors entry and deferred cancellation" {
 }
 
 ///|
+test "stored entry limits are checked before entering the owned copy" {
+  let archive = Archive()
+  archive.add("x", b"0123456789", compression=Store)
+  let original = write(archive)
+  let eocd = parse_end_of_central(original, ReadLimits(), () => false)
+  let changed = original.to_fixedarray()
+  // The local and central declarations agree, but underreport a Store payload.
+  changed[22] = b'\x05'
+  changed[eocd.central_offset + 24] = b'\x05'
+  let bytes = Bytes::from_array(changed)
+  let metas = parse_central_directory(bytes, eocd, ReadLimits(), () => false)
+  let limits = ReadLimits(
+    max_entry_uncompressed_bytes=10,
+    max_total_uncompressed_bytes=10,
+  )
+  let mut polls = 0
+  let ZipError(kind, _) = @test.expect_error(() => {
+    decode_entry(bytes, metas[0], eocd.central_offset, limits, 5, () => {
+      polls += 1
+      // decode_entry polls once on entry; a second poll means it has entered
+      // copy_cancellable instead of rejecting the insufficient allowance.
+      polls > 1
+    })
+  })
+  @test.assert_eq(kind, LimitExceeded(TotalUncompressedBytes, 10UL, 15UL))
+  @test.assert_eq(polls, 1)
+}
+
+///|
 fn classic_eocd(
   disk_no : Int32,
   disk_start : Int32,

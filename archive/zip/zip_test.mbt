@@ -649,3 +649,86 @@ test "optional ZIP64 end records preserve ordinary classic fields" {
     })
   }
 }
+
+///|
+test "optional ZIP64 trailers remain consistent after removal and replacement" {
+  let replacement = Bytes::make(1000, b'x')
+  for remove in [true, false] {
+    let archive = @zip.read(optional_zip64)
+    if remove {
+      @test.assert_eq(archive.remove("x"), true)
+    } else {
+      @test.assert_eq(archive.replace("x", replacement), true)
+    }
+    let rewritten = @zip.write(archive, preserve=true)
+    let end = rewritten.length() - 22
+    // Retain the optional ZIP64 records and non-sentinel classic counts.
+    @test.assert_eq(rewritten[end - 76:end - 72], b"PK\x06\x06")
+    let count = if remove { 0 } else { 1 }
+    @test.assert_eq(zip_test_field(rewritten, end + 8, 2), count)
+    @test.assert_eq(zip_test_field(rewritten, end + 10, 2), count)
+    let reparsed = @zip.read(rewritten)
+    @test.assert_eq(reparsed.entries().length(), count)
+    let source = archive_range_source(rewritten)
+    let directory = drive_directory_ranges(
+      DirectoryReader(rewritten.length().to_uint64()),
+      source,
+    )
+    @test.assert_eq(directory.entries().length(), count)
+    if !remove {
+      @test.assert_eq(reparsed.get("x"), Some(replacement))
+      @test.assert_eq(
+        drive_entry_ranges(directory.open_entry(0), source, 37),
+        replacement,
+      )
+    }
+  }
+}
+
+///|
+test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
+  let archive = @zip.Archive()
+  for _ in 0..<65534 {
+    archive.add("x", b"", compression=Store)
+  }
+  let classic = @zip.write(archive)
+  let parsed = @zip.read(classic)
+  @test.assert_eq(parsed.entries().length(), 65534)
+  parsed.add("last", b"", compression=Store)
+  // Cover fresh serialization and promotion of a preserved classic trailer.
+  for preserve in [false, true] {
+    let bytes = @zip.write(parsed, preserve~)
+    @test.assert_eq(@zip.read(bytes).entries().length(), 65535)
+    let directory = drive_directory_ranges(
+      DirectoryReader(bytes.length().to_uint64()),
+      archive_range_source(bytes),
+    )
+    @test.assert_eq(directory.entries().length(), 65535)
+    @test.assert_eq(directory.entries()[65534].name(), "last")
+  }
+}
+
+///|
+test "ZIP equality methods can be passed as functions across packages" {
+  let limit_equal = @zip.LimitKind::equal
+  @test.assert_eq(limit_equal(Entries, Entries), true)
+  @test.assert_eq(limit_equal(Entries, OutputBytes), false)
+  let error_equal = @zip.ZipErrorKind::equal
+  @test.assert_eq(
+    error_equal(
+      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
+      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
+    ),
+    true,
+  )
+  @test.assert_eq(
+    error_equal(
+      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
+      LimitExceeded(TotalUncompressedBytes, 10UL, 16UL),
+    ),
+    false,
+  )
+  let compression_equal = @zip.Compression::equal
+  @test.assert_eq(compression_equal(Store, Store), true)
+  @test.assert_eq(compression_equal(Store, Deflate), false)
+}

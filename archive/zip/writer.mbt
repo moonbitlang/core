@@ -508,9 +508,11 @@ fn Output::write_preserved_trailer(
   output.write_bytes(locator[0:8])
   output.write_u64(zip64_offset.to_uint64_checked())
   output.write_bytes(locator[16:])
-  // The classic record of a preserved ZIP64 archive carries sentinels;
-  // re-emit it verbatim.
-  output.write_bytes(classic)
+  // Optional ZIP64 trailers can retain ordinary classic fields. Patch those
+  // fields too, leaving any ZIP64 sentinels untouched.
+  output.write_preserved_classic_end_record(
+    classic, total_entries, central_size, central_offset,
+  )
 }
 
 ///|
@@ -715,7 +717,7 @@ fn write_trailer(
   force_zip64 : Bool,
 ) -> Unit raise ZipError {
   let needs_zip64 = force_zip64 ||
-    total_entries > 0xffff ||
+    total_entries >= 0xffff ||
     central_size.to_uint_checked() > MAX_U32 ||
     central_offset.to_uint_checked() > MAX_U32
   match (preserve, archive.trailer) {

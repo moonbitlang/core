@@ -224,7 +224,6 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
 
 ///|
 test "ZIP readers report observed per-entry and cumulative output limits" {
-  let bytes = zip_with_underreported_size(Deflate)
   let cases : Array[(@zip.ReadLimits, @zip.LimitKind, UInt64, UInt64)] = [
     (
       ReadLimits(max_entry_uncompressed_bytes=5),
@@ -239,16 +238,20 @@ test "ZIP readers report observed per-entry and cumulative output limits" {
       15UL,
     ),
   ]
-  for (limits, expected_kind, ceiling, full_size) in cases {
-    let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes, limits~))
-    guard kind is LimitExceeded(resource, limit, actual) else {
-      @test.fail("expected a decoded-output limit error")
+  for compression in [@zip.Store, Deflate] {
+    let bytes = zip_with_underreported_size(compression)
+    for (limits, expected_kind, ceiling, full_size) in cases {
+      let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes, limits~))
+      guard kind is LimitExceeded(resource, limit, actual) else {
+        @test.fail("expected a decoded-output limit error")
+      }
+      @test.assert_eq(resource, expected_kind)
+      @test.assert_eq(limit, ceiling)
+      // The observed batch may vary; the old limit-as-actual result must fail.
+      assert_true(actual > limit && actual <= full_size)
     }
-    @test.assert_eq(resource, expected_kind)
-    @test.assert_eq(limit, ceiling)
-    // The observed batch may vary; the old limit-as-actual result must fail.
-    assert_true(actual > limit && actual <= full_size)
   }
+  let bytes = zip_with_underreported_size(Deflate)
   let source = archive_range_source(bytes)
   let directory = drive_directory_ranges(
     DirectoryReader(bytes.length().to_uint64()),

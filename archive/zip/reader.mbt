@@ -520,16 +520,12 @@ fn decode_entry(
     }
     match compression {
       Store => {
-        guard record.compressed.length() <= entry_limit else {
-          raise ZipError(
-            LimitExceeded(
-              EntryUncompressedBytes,
-              entry_limit.to_uint64(),
-              record.compressed.length().to_uint64(),
-            ),
-            "zip: stored entry exceeds its limit",
-          )
-        }
+        check_sizes(
+          record.compressed.length(),
+          entry_limit,
+          total_limit,
+          actual_total,
+        )
         copy_cancellable(record.compressed, cancelled)
       }
       Deflate =>
