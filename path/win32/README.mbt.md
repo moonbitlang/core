@@ -187,6 +187,14 @@ test "relative path calculation" {
 
 Convert relative paths to absolute paths and normalize them:
 
+`resolve` and `relative` raise `ResolveError::CurrentDirectoryUnavailable`
+when they need the current working directory and it cannot be determined.
+Fully qualified drive, UNC, verbatim, and device paths can be resolved without
+a current working directory. `relative` likewise needs no current working
+directory when both inputs are fully qualified. Drive-less rooted paths such
+as `\file` still need the current working directory to determine their drive
+or UNC share.
+
 ```moonbit check
 ///|
 test "path resolution" {

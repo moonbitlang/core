@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/path/internal/error",
   "moonbitlang/core/env",
   "moonbitlang/core/cmp",
   "moonbitlang/core/path/internal/unicode",

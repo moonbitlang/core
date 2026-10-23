@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+test "platform packages share ResolveError" {
+  let resolve_posix : (@posix.Path) -> @posix.Path raise @path.ResolveError = @posix.Path::resolve
+  let resolve_win32 : (@win32.Path) -> @win32.Path raise @path.ResolveError = @win32.Path::resolve
+  inspect(resolve_posix("/a/../b"), content="/b")
+  inspect(resolve_win32("C:\\a\\..\\b"), content="C:\\b")
+  let error = @posix.ResolveError::CurrentDirectoryUnavailable
+  let error : @win32.ResolveError = error
+  debug_inspect(error, content="CurrentDirectoryUnavailable")
+}
+
+///|
 test "debug" {
   let path : @path.Path = "a/b"
   debug_inspect(path, content="Path(\"a/b\")")
