@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/checksum"
+
+// Values
+pub fn adler32(BytesView) -> UInt32
+
+pub fn crc32(BytesView) -> UInt32
+
+// Errors
+
+// Types and methods
+type Adler32
+pub fn Adler32::Adler32() -> Self
+pub fn Adler32::finish(Self) -> UInt32
+pub fn Adler32::update(Self, BytesView) -> Unit
+pub fn Adler32::update_array(Self, ArrayView[Byte]) -> Unit
+pub fn Adler32::update_byte(Self, Byte) -> Unit
+
+type Crc32
+pub fn Crc32::Crc32() -> Self
+pub fn Crc32::finish(Self) -> UInt32
+pub fn Crc32::update(Self, BytesView) -> Unit
+pub fn Crc32::update_array(Self, ArrayView[Byte]) -> Unit
+pub fn Crc32::update_byte(Self, Byte) -> Unit
+
+// Type aliases
+
+// Traits
