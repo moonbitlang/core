@@ -31,9 +31,14 @@ pub fn increase_current_thread_priority() -> Unit {
 #cfg(any(target="native", target="wasm"))
 pub async fn build_test_program(name : String) -> String {
   guard! @env.current_dir() is Some(cwd)
-  let bundle = @process.run("moon", ["bundle", "--target", "native"])
+  let bundle = @process.run(
+    "moon",
+    stdout=@process.read_from_process(),
+    stderr=@process.duplicate_stdout(),
+    ["bundle", "--target", "native"],
+  )
   guard bundle.exit_code is 0 else {
-    fail("failed to bundle core for test program: \{bundle.exit_code}")
+    fail("failed to bundle core for test program: \{bundle.stdout_text()}")
   }
   let proc = @process.run(
     "moon",
@@ -41,10 +46,12 @@ pub async fn build_test_program(name : String) -> String {
       "-C", "async/test_programs/", "build", name, "--target", "native", "--debug",
       "--target-dir", "../../_build/test_programs",
     ],
+    stdout=@process.read_from_process(),
+    stderr=@process.duplicate_stdout(),
     extra_env={ "MOON_CORE_OVERRIDE": cwd },
   )
   guard proc.exit_code is 0 else {
-    fail("failed to build test program `\{name}`: \{proc.exit_code}")
+    fail("failed to build test program `\{name}`: \{proc.stdout_text()}")
   }
   "\{cwd}/_build/test_programs/native/debug/build/\{name}/\{name}.exe"
 }

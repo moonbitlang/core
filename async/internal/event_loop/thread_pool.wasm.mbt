@@ -201,23 +201,51 @@ fn Job::write(
 }
 
 ///|
+// Counts and offsets at this boundary are UTF-16 code units. The host owns the
+// buffer while a worker is running; the completion callback copies it back.
+#unsafe_skip_stub_check
+fn JobHandle::read_console(fd : @fd_util.Fd, len : Int32) -> JobHandle = "moonbitlang/async" "thread_pool/make_read_console_job"
+
+///|
+#unsafe_skip_stub_check
+#borrow(buf)
+fn JobHandle::get_read_console_result(
+  self : JobHandle,
+  buf : FixedArray[UInt16],
+  offset : Int32,
+  len : Int32,
+) -> Unit = "moonbitlang/async" "thread_pool/get_read_console_result"
+
+///|
 fn Job::read_console(
-  _fd : @fd_util.Fd,
-  _buf : FixedArray[UInt16],
-  _offset : Int32,
-  _len : Int32,
+  fd : @fd_util.Fd,
+  buf : FixedArray[UInt16],
+  offset : Int32,
+  len : Int32,
 ) -> Job {
-  panic()
+  Job(JobHandle::read_console(fd, len), copy_output=job => {
+    job.get_read_console_result(buf, offset, len)
+  })
 }
 
 ///|
+#unsafe_skip_stub_check
+#borrow(buf)
+fn JobHandle::write_console(
+  fd : @fd_util.Fd,
+  buf : FixedArray[UInt16],
+  offset : Int32,
+  len : Int32,
+) -> JobHandle = "moonbitlang/async" "thread_pool/make_write_console_job"
+
+///|
 fn Job::write_console(
-  _fd : @fd_util.Fd,
-  _buf : FixedArray[UInt16],
-  _offset : Int32,
-  _len : Int32,
+  fd : @fd_util.Fd,
+  buf : FixedArray[UInt16],
+  offset : Int32,
+  len : Int32,
 ) -> Job {
-  panic()
+  Job(JobHandle::write_console(fd, buf, offset, len))
 }
 
 ///|
