@@ -204,7 +204,7 @@ const LOWERCASE_ENTRY_COUNT = 1487
 /// Unicode simple case folding (lowercase direction), following Node.js
 /// `toLowerCase`.
 pub fn to_lowercase(ch : Char) -> Char {
-  lowercase_map.get(ch).unwrap_or(ch)
+  lowercase_map.force().get(ch).unwrap_or(ch)
 }
 
 ///|
@@ -213,19 +213,22 @@ fn Char::shift_char(c : Char, delta : Int32) -> Char {
 }
 
 ///|
-let lowercase_map : @hashmap.HashMap[Char, Char] = {
+let lowercase_map : @lazy.Lazy[@hashmap.HashMap[Char, Char]] = Lazy(() => {
   let map : @hashmap.HashMap[Char, Char] = HashMap(
     [],
     capacity=LOWERCASE_ENTRY_COUNT * 2,
   )
-  shift_one.each(e => map[e] = e.shift_char(0x1))
-  explicit_maps.each(e => map[e.0] = e.1)
-  shift_ranges.each(item => {
-    let (start, end, delta) = item
+  for e in shift_one {
+    map[e] = e.shift_char(0x1)
+  }
+  for e in explicit_maps {
+    map[e.0] = e.1
+  }
+  for (start, end, delta) in shift_ranges {
     for code in start.to_int().until(end.to_int(), inclusive=true) {
       let ch = code.to_char().unwrap()
       map[ch] = ch.shift_char(delta)
     }
-  })
+  }
   map
-}
+})
