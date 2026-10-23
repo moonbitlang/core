@@ -21,9 +21,8 @@ test "StringBuilder uninitialized storage exposes only the written prefix" {
   let full = builder.to_string()
   inspect(full, content="abcd")
 
-  // The full-capacity conversion may share the backing buffer. Reset must
-  // detach before the next write, while a partial conversion must only expose
-  // the initialized prefix.
+  // Full and partial conversions must both preserve the returned string
+  // across reset, and only expose the initialized prefix.
   builder.reset()
   builder.write_char('x')
   inspect(builder.to_string(), content="x")
@@ -53,4 +52,41 @@ test "StringBuilder uninitialized storage preserves returned strings" {
   inspect(second, content="a😀a😀")
   inspect(partial, content="x")
   inspect(builder.to_string(), content="abcdefg")
+}
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder reset reuses storage after full and partial conversions" {
+  let builder = StringBuilder(size_hint=3)
+  let backing = builder.data
+  builder.write_string("a😀")
+  let full = builder.to_string()
+  builder.reset()
+  builder.write_string("xy")
+  let partial = builder.to_string()
+  builder.reset()
+  builder.reset()
+  builder.write_string("123")
+  inspect(full, content="a😀")
+  inspect(partial, content="xy")
+  inspect(builder.to_string(), content="123")
+  // The original storage is overwritten, but neither returned string is.
+  inspect(backing[0].to_int(), content="49")
+  inspect(backing[2].to_int(), content="51")
+}
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder reset can discard capacity" {
+  let builder = StringBuilder(size_hint=2)
+  builder.write_string("abcdef")
+  let capacity = builder.data.length()
+  builder.reset(keep_capacity=true)
+  inspect(builder.data.length() == capacity, content="true")
+  builder.reset(keep_capacity=false)
+  inspect(builder.data.length(), content="0")
+  inspect(builder.len, content="0")
+  builder.reset(keep_capacity=false)
+  builder.write_char('😀')
+  inspect(builder.to_string(), content="😀")
 }

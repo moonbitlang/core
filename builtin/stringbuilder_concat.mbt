@@ -92,6 +92,23 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 
 ///|
 /// Resets the string builder to an empty state.
-pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
+///
+/// Keeps the allocated capacity by default for reuse. Set `keep_capacity=false`
+/// to discard the backing buffer. Previously returned strings are unaffected.
+/// This option has no effect on JS, which does not retain a mutable buffer.
+///
+/// ```mbt check
+/// test {
+///   let builder = StringBuilder()
+///   builder.write_string("hello")
+///   builder.reset(keep_capacity=false)
+///   inspect(builder.to_string(), content="")
+/// }
+/// ```
+pub fn StringBuilder::reset(
+  self : StringBuilder,
+  keep_capacity~ : Bool = true,
+) -> Unit {
+  ignore(keep_capacity)
   self.val = ""
 }

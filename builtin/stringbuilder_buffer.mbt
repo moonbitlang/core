@@ -14,8 +14,7 @@
 
 ///|
 struct StringBuilder {
-  // Only 0..<len is initialized. A buffer shared with a returned string is
-  // always full, so appending grows; reset always replaces the backing storage.
+  // Only 0..<len is initialized. Returned strings have separate storage.
   mut data : UninitializedArray[UInt16]
   mut len : Int32
 }
@@ -146,8 +145,7 @@ fn FixedArray::unsafe_blit_from_string_simd(
   len : Int32,
 ) -> Unit {
   let vector_len = len - (len & 7)
-  // Callers copy into separate storage. A builder grows before appending to
-  // a full buffer shared with a previously returned string.
+  // Source strings have separate storage from the builder's mutable buffer.
   // SAFETY: both ranges are in bounds. Each vector stays inside the requested
   // range; the remainder is copied one unit at a time.
   for i = 0; i < vector_len; i = i + 8 {
@@ -245,12 +243,6 @@ pub impl Logger for StringBuilder with fn write_view(
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   if self.len == 0 {
     ""
-  } else if self.len == self.data.length() {
-    // All slots are initialized. Append grows and reset replaces the buffer,
-    // so this conversion can share storage without subsequent mutation.
-    unsafe_fixedarray_uint16_to_string(
-      unsafe_uint16_buffer_as_fixedarray(self.data),
-    )
   } else {
     let data = UninitializedArray::make_and_blit(
       self.data,
@@ -274,7 +266,25 @@ pub impl Show for StringBuilder with fn to_string(self) {
 
 ///|
 /// Resets the string builder to an empty state.
-pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
-  self.data = UninitializedArray::make(self.data.length())
+///
+/// Keeps the allocated capacity by default for reuse. Set `keep_capacity=false`
+/// to discard the backing buffer. Previously returned strings are unaffected.
+/// This option has no effect on JS, which does not retain a mutable buffer.
+///
+/// ```mbt check
+/// test {
+///   let builder = StringBuilder()
+///   builder.write_string("hello")
+///   builder.reset(keep_capacity=false)
+///   inspect(builder.to_string(), content="")
+/// }
+/// ```
+pub fn StringBuilder::reset(
+  self : StringBuilder,
+  keep_capacity~ : Bool = true,
+) -> Unit {
   self.len = 0
+  if !keep_capacity {
+    self.data = UninitializedArray::make(0)
+  }
 }
