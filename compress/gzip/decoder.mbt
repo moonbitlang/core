@@ -15,6 +15,14 @@
 ///|
 const DECODER_INPUT_LIMIT : Int32 = 65536
 
+///|
+#cfg(any(target="native", target="wasm"))
+const CHECKSUM_BUFFER_SIZE : Int32 = 4096
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+const CHECKSUM_BUFFER_SIZE : Int32 = 0
+
 // Streaming gzip (RFC 1952) decompressor: a push-based, suspendable state
 // machine wrapping the `@flate.Inflater`. The variable-length header is parsed
 // with one state per field: FEXTRA, FNAME and FCOMMENT bytes are discarded
@@ -44,6 +52,8 @@ priv enum DecMode {
 struct Decoder {
   inf : @flate.Inflater
   mut crc : @checksum.Crc32 // of the current member's decompressed output
+  checksum_buffer : FixedArray[Byte] // owned batch storage; empty on direct-view backends
+  mut checksum_pending : Int32
   mut header_crc : @checksum.Crc32
   mut osize : UInt32 // current member's decompressed length, mod 2^32
   mut pending : BytesView // unconsumed compressed input
@@ -69,6 +79,8 @@ pub fn Decoder::Decoder(multistream~ : Bool = true) -> Decoder {
   {
     inf: Inflater(),
     crc: Crc32(),
+    checksum_buffer: FixedArray::make(CHECKSUM_BUFFER_SIZE, b'\x00'),
+    checksum_pending: 0,
     header_crc: Crc32(),
     osize: 0,
     pending: b"",
@@ -288,6 +300,7 @@ fn Decoder::finish_member_trailer(self : Decoder) -> Bool raise GzipError {
     guard !self.ending else { raise GzipError(Truncated, "gzip: truncated") }
     return true
   }
+  self.flush_output_checksum()
   guard self.crc.finish() == self.u32_le(0) else {
     raise GzipError(ChecksumMismatch, "gzip: CRC-32 mismatch")
   }
@@ -351,6 +364,48 @@ fn Decoder::u32_le(self : Decoder, off : Int32) -> UInt32 {
 }
 
 ///|
+/// Copy output into owned batches on native/linear Wasm. Other backends
+/// checksum the view directly. No caller-owned view survives this call.
+fn Decoder::update_output_checksum(
+  decoder : Decoder,
+  data : ArrayView[Byte],
+) -> Unit {
+  let capacity = decoder.checksum_buffer.length()
+  guard capacity > 0 else {
+    decoder.crc.update_array(data)
+    return
+  }
+  let mut position = 0
+  while position < data.length() {
+    let count = (data.length() - position).min(
+      capacity - decoder.checksum_pending,
+    )
+    decoder.checksum_buffer
+    .mut_view()
+    .blit_from_array(
+      data[position:position + count],
+      dst_offset=decoder.checksum_pending,
+    )
+    position += count
+    decoder.checksum_pending += count
+    if decoder.checksum_pending == capacity {
+      decoder.flush_output_checksum()
+    }
+  }
+}
+
+///|
+/// Fold the final partial batch before comparing a stream/member trailer.
+fn Decoder::flush_output_checksum(decoder : Decoder) -> Unit {
+  guard decoder.checksum_pending > 0 else { return }
+  // The alias is read synchronously; only owned batch storage is exposed.
+  decoder.crc.update(
+    decoder.checksum_buffer.unsafe_reinterpret_as_bytes()[:decoder.checksum_pending],
+  )
+  decoder.checksum_pending = 0
+}
+
+///|
 /// Run one decompression step. Accepts a bounded prefix of `input`, then decodes
 /// plaintext into `output`. Returns `StepResult` with this call's status,
 /// consumed and produced byte counts; drop only `input[:result.consumed]` and re-present a suffix that was held back by
@@ -373,19 +428,7 @@ pub fn Decoder::step(
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> @flate.StepResult raise GzipError {
-  self.step_output(input, output, None, end=false)
-}
-
-///|
-/// Decode into a fixed output array, updating the payload CRC in batches.
-/// Consumption, backpressure and EOF semantics match `step`. The output array
-/// is borrowed only for this call.
-pub fn Decoder::step_into(
-  self : Decoder,
-  input : BytesView,
-  output : FixedArray[Byte],
-) -> @flate.StepResult raise GzipError {
-  self.step_output(input, output.mut_view(), Some(output), end=false)
+  self.step_output(input, output, end=false)
 }
 
 ///|
@@ -402,19 +445,7 @@ pub fn Decoder::finish(
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> @flate.StepResult raise GzipError {
-  self.step_output(input, output, None, end=true)
-}
-
-///|
-/// Finish decoding into a complete fixed output array. This has the same
-/// final-input, backpressure and error semantics as `finish`, with the
-/// fixed-array output path of `step_into`.
-pub fn Decoder::finish_into(
-  self : Decoder,
-  input : BytesView,
-  output : FixedArray[Byte],
-) -> @flate.StepResult raise GzipError {
-  self.step_output(input, output.mut_view(), Some(output), end=true)
+  self.step_output(input, output, end=true)
 }
 
 ///|
@@ -422,13 +453,12 @@ fn Decoder::step_output(
   self : Decoder,
   input : BytesView,
   output : MutArrayView[Byte],
-  fixed_output : FixedArray[Byte]?,
   end~ : Bool,
 ) -> @flate.StepResult raise GzipError {
   if self.failure_kind is Some(kind) {
     raise GzipError(kind, self.failure_message)
   }
-  let result = self.step_active(input, output, fixed_output, end~) catch {
+  let result = self.step_active(input, output, end~) catch {
     GzipError(kind, message) => {
       self.detach_input()
       self.failure_kind = Some(kind)
@@ -445,7 +475,6 @@ fn Decoder::step_active(
   self : Decoder,
   input : BytesView,
   output : MutArrayView[Byte],
-  fixed_output : FixedArray[Byte]?,
   end~ : Bool,
 ) -> @flate.StepResult raise GzipError {
   if self.mode is GzFinished {
@@ -533,28 +562,17 @@ fn Decoder::step_active(
       }
       GzBody => {
         let op_before = op
-        // A fixed array that is still empty goes to the inflater as it is,
-        // for its bulk window copies; a view (or a later part of the array,
-        // which `step_into` cannot address) takes the per-byte writes.
-        let st_result = try {
-          if fixed_output is Some(fixed) && op == 0 {
-            self.inf.step_into(self.pending_view(), fixed)
-          } else {
-            self.inf.step(self.pending_view(), output.mut_view(start=op))
-          }
-        } catch {
+        let st_result = self.inf.step(
+          self.pending_view(),
+          output.mut_view(start=op),
+        ) catch {
           err => raise wrap_inflate_error(err)
         }
         let st = st_result.status
         let used = st_result.consumed
         let produced = st_result.produced
         if produced > 0 {
-          if fixed_output is Some(fixed) {
-            let bytes = unsafe_bytes_of_array(fixed)
-            self.crc.update(bytes[op_before:op_before + produced])
-          } else {
-            self.checksum_view(output, op_before, produced)
-          }
+          self.update_output_checksum(output[op_before:op_before + produced])
           self.osize = self.osize + produced.reinterpret_as_uint()
         }
         op = op + produced
@@ -589,49 +607,11 @@ fn Decoder::advance_header(self : Decoder, count : Int32) -> Unit {
 }
 
 ///|
-/// Bytes of a mutable view that are checksummed per batch.
-const CHECKSUM_VIEW_CHUNK : Int32 = 4096
-
-///|
-/// Fold `output[start:start + length)` into the CRC-32. Core has no bulk
-/// read of a mutable view, so the bytes are gathered into a scratch chunk and
-/// folded a chunk at a time instead of one `update_byte` (two divisions for
-/// Adler-32, a table step for CRC-32) per byte.
-fn Decoder::checksum_view(
-  self : Decoder,
-  output : MutArrayView[Byte],
-  start : Int32,
-  length : Int32,
-) -> Unit {
-  guard start >= 0 && length > 0 && length <= output.length() - start else {
-    return
-  }
-  let chunk = FixedArray::make(length.min(CHECKSUM_VIEW_CHUNK), b'\x00')
-  let bytes = unsafe_bytes_of_array(chunk)
-  let mut done = 0
-  while done < length {
-    let count = (length - done).min(chunk.length())
-    // SAFETY: `done + count <= length` and the guard above keeps
-    // `start + length` within the view; `count <= chunk.length()`.
-    for i in 0..<count {
-      chunk.unsafe_set(i, output.unsafe_get(start + done + i))
-    }
-    self.crc.update(bytes[:count])
-    done = done + count
-  }
-}
-
-///|
-// Callers either transfer a fresh array or borrow the alias synchronously for
-// checksum calculation, before the output array can be written again.
-fn unsafe_bytes_of_array(output : FixedArray[Byte]) -> Bytes = "%identity"
-
-///|
 // BytesView::to_owned can share a full backing buffer. Retained input must be
 // independent even when the caller lends an entire reusable I/O buffer.
 fn copy_input(input : BytesView) -> Bytes {
   guard input.length() != 0 else { return b"" }
   let copy = FixedArray::make(input.length(), b'\x00')
   copy.blit_from_bytes(0, input.data(), input.start_offset(), input.length())
-  unsafe_bytes_of_array(copy)
+  copy.unsafe_reinterpret_as_bytes()
 }

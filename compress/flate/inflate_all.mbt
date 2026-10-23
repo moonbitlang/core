@@ -1188,7 +1188,7 @@ fn inflate_streaming_all(
   let decoded : Array[Byte] = []
   let mut input_pos = 0
   for ;; {
-    let status_result = inflater.step_into(input[input_pos:], scratch)
+    let status_result = inflater.step(input[input_pos:], scratch.mut_view())
     let status = status_result.status
     let consumed = status_result.consumed
     let produced = status_result.produced
@@ -1285,7 +1285,7 @@ fn inflate_drive(
   let mut total = 0
   let mut input_pos = 0
   for ;; {
-    let status_result = inflater.finish_into(input[input_pos:], scratch)
+    let status_result = inflater.finish(input[input_pos:], scratch.mut_view())
     let status = status_result.status
     let consumed = status_result.consumed
     let produced = status_result.produced
@@ -1301,7 +1301,7 @@ fn inflate_drive(
       )
     }
     emit(scratch, produced)
-    // `Inflater::finish_into` raises `Truncated` on exhausted input, so
+    // `Inflater::finish` raises `Truncated` on exhausted input, so
     // only `Done` and `NeedMoreOutput` can be returned here.
     guard status is Done else { continue }
     if exact && input_pos != input.length() {

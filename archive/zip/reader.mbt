@@ -168,7 +168,7 @@ fn inflate_entry(
   // For a total-output limit, max_output is the remaining allowance.
   let previous = (reported_limit - max_output).to_uint64()
   let size = for position = 0, total = 0UL {
-    let result = inflater.finish_into(compressed[position:], scratch) catch {
+    let result = inflater.finish(compressed[position:], scratch.mut_view()) catch {
       err => raise wrap_inflate_error(err)
     }
     let position = position + result.consumed

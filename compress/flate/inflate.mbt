@@ -121,7 +121,6 @@ struct Inflater {
   mut in_pos : Int32
   mut out_pos : Int32
   mut out : MutArrayView[Byte]
-  mut fixed_out : FixedArray[Byte]?
   mut out_end : Int32 // one past the last writable index in `out`
   empty_out : FixedArray[Byte]
 }
@@ -158,7 +157,6 @@ pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
     in_pos: 0,
     out_pos: 0,
     out: empty_out.mut_view(),
-    fixed_out: None,
     out_end: 0,
     empty_out,
   }
@@ -212,7 +210,6 @@ pub fn Inflater::reset(self : Inflater, dictionary? : BytesView) -> Unit {
   self.in_pos = 0
   self.out_pos = 0
   self.out = self.empty_out.mut_view()
-  self.fixed_out = None
   self.out_end = 0
   if dictionary is Some(dict) {
     self.preload_dictionary(dict)
@@ -431,7 +428,6 @@ fn Inflater::release_step_views(self : Inflater) -> Unit {
   self.in_pos = 0
   self.out_pos = 0
   self.out = self.empty_out.mut_view()
-  self.fixed_out = None
   self.out_end = 0
 }
 
@@ -447,25 +443,48 @@ fn Inflater::advance_window(self : Inflater, count : Int32) -> Unit {
 
 ///|
 /// Drain a contiguous window segment into the caller's output view. The caller
-/// proves both ranges fit. Fixed-array callers use a bulk copy; arbitrary
-/// mutable views retain the scalar fallback because core exposes no view blit.
+/// proves both ranges fit. Native view output uses the same bulk operation
+/// as fixed arrays, including views with a nonzero backing offset.
 #inline
 fn Inflater::write_window_to_output(
   self : Inflater,
   start : Int32,
   length : Int32,
 ) -> Unit {
-  if self.fixed_out is Some(output) {
-    FixedArray::unsafe_blit(output, self.out_pos, self.window, start, length)
-  } else {
-    let window = self.window
-    let output = self.out
-    let out_pos = self.out_pos
-    for i in 0..<length {
-      output.unsafe_set(out_pos + i, window.unsafe_get(start + i))
-    }
-  }
+  self.copy_window_to_view(start, length)
   self.out_pos = self.out_pos + length
+}
+
+///|
+#cfg(not(target="js"))
+#inline
+fn Inflater::copy_window_to_view(
+  self : Inflater,
+  start : Int32,
+  length : Int32,
+) -> Unit {
+  self.out.blit_from_array(
+    self.window[start:start + length],
+    dst_offset=self.out_pos,
+  )
+}
+
+///|
+/// JavaScript's scalar view writes beat its fixed-array copy kernel on the
+/// stored and repeated-match cases; keep this choice inside the engine.
+#cfg(target="js")
+#inline
+fn Inflater::copy_window_to_view(
+  self : Inflater,
+  start : Int32,
+  length : Int32,
+) -> Unit {
+  let window = self.window
+  let output = self.out
+  let out_pos = self.out_pos
+  for i in 0..<length {
+    output.unsafe_set(out_pos + i, window.unsafe_get(start + i))
+  }
 }
 
 ///|
@@ -495,9 +514,23 @@ fn Inflater::copy_window_segment(
 }
 
 ///|
-/// Matches up to this length are copied byte by byte into a fixed output
-/// array when no range wraps; longer ones are two bulk copies.
+/// Up to this length, even distance-one matches use the forward byte loop
+/// when neither history range wraps.
 const SHORT_MATCH_COPY : Int32 = 48
+
+///|
+#cfg(not(target="js"))
+#inline
+fn use_bulk_match(distance : Int32) -> Bool {
+  distance == 1
+}
+
+///|
+#cfg(target="js")
+#inline
+fn use_bulk_match(_distance : Int32) -> Bool {
+  false
+}
 
 ///|
 /// Copy as many bytes of the in-progress match as fit before `out_end`, leaving
@@ -509,32 +542,23 @@ fn Inflater::drain_match(self : Inflater) -> Unit {
   guard total > 0 else { return }
   let source = (self.wpos - self.copy_dist) & (WINDOW_SIZE - 1)
   let target = self.wpos & (WINDOW_SIZE - 1)
-  if (total <= SHORT_MATCH_COPY || self.fixed_out is None) &&
+  if (total <= SHORT_MATCH_COPY || !use_bulk_match(self.copy_dist)) &&
     source <= WINDOW_SIZE - total &&
     target <= WINDOW_SIZE - total {
     // Most matches are a few bytes long and wrap neither range: two bulk
-    // copies cost more than the bytes. A view has no bulk copy at all, so
-    // there every such match is one loop instead of a window copy and a
-    // second pass. A forward byte loop is DEFLATE's own definition of a
-    // match, so it is right for every distance.
+    // copies cost more than the bytes. Short-distance overlapping matches
+    // also avoid repeated tiny blits by expanding in one forward loop.
+    // Forward byte expansion is correct for every DEFLATE distance.
     // SAFETY: `source + total` and `target + total` are at most
     // `WINDOW_SIZE`, the window's length, and `total` is at most
     // `out_end - out_pos`, the room left in the output of this step.
     let window = self.window
     let out_pos = self.out_pos
-    if self.fixed_out is Some(output) {
-      for i in 0..<total {
-        let byte = window.unsafe_get(source + i)
-        window.unsafe_set(target + i, byte)
-        output.unsafe_set(out_pos + i, byte)
-      }
-    } else {
-      let output = self.out
-      for i in 0..<total {
-        let byte = window.unsafe_get(source + i)
-        window.unsafe_set(target + i, byte)
-        output.unsafe_set(out_pos + i, byte)
-      }
+    let output = self.out
+    for i in 0..<total {
+      let byte = window.unsafe_get(source + i)
+      window.unsafe_set(target + i, byte)
+      output.unsafe_set(out_pos + i, byte)
     }
     self.out_pos = out_pos + total
     self.advance_window(total)
@@ -919,20 +943,7 @@ pub fn Inflater::step(
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> StepResult raise InflateError {
-  self.step_output(input, output, None, end=false)
-}
-
-///|
-/// Advance the streaming decoder into a complete fixed output array. This has
-/// the same consumption, backpressure and EOF semantics as `step`, with bulk
-/// window copies. The array is borrowed only for this call; inspect
-/// the returned `consumed` and `produced` after a successful step.
-pub fn Inflater::step_into(
-  self : Inflater,
-  input : BytesView,
-  output : FixedArray[Byte],
-) -> StepResult raise InflateError {
-  self.step_output(input, output.mut_view(), Some(output), end=false)
+  self.step_output(input, output, end=false)
 }
 
 ///|
@@ -949,19 +960,7 @@ pub fn Inflater::finish(
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> StepResult raise InflateError {
-  self.step_output(input, output, None, end=true)
-}
-
-///|
-/// Finish decoding into a complete fixed output array. This has the same
-/// final-input, backpressure and error semantics as `finish`, with the
-/// fixed-array output path of `step_into`.
-pub fn Inflater::finish_into(
-  self : Inflater,
-  input : BytesView,
-  output : FixedArray[Byte],
-) -> StepResult raise InflateError {
-  self.step_output(input, output.mut_view(), Some(output), end=true)
+  self.step_output(input, output, end=true)
 }
 
 ///|
@@ -969,7 +968,6 @@ fn Inflater::step_output(
   self : Inflater,
   input : BytesView,
   output : MutArrayView[Byte],
-  fixed_output : FixedArray[Byte]?,
   end~ : Bool,
 ) -> StepResult raise InflateError {
   if self.failure_kind is Some(kind) {
@@ -982,7 +980,6 @@ fn Inflater::step_output(
   self.in_pos = 0
   self.out_pos = 0
   self.out = output
-  self.fixed_out = fixed_output
   self.out_end = output.length()
   let status = self.run_step() catch {
     InflateError(kind, message) => {

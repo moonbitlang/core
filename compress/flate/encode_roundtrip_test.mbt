@@ -211,7 +211,7 @@ fn assert_decodes(
   let decoded = Buffer()
   let mut pos = 0
   for ;; {
-    let status_result = decoder.finish_into(compressed[pos:], output)
+    let status_result = decoder.finish(compressed[pos:], output.mut_view())
     let status = status_result.status
     pos += status_result.consumed
     for i in 0..<status_result.produced {

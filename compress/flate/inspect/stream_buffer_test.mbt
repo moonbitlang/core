@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "fixed streaming output matches offset views across history wraps" {
+test "fixed streaming output views match offset array views across history wraps" {
   let source = Bytes::from_array(Array::makei(140000, i => (i % 257).to_byte()))
   for level in [0, 6] {
     let compressed = @flate.deflate_all(source, level~)
@@ -21,16 +21,16 @@ test "fixed streaming output matches offset views across history wraps" {
       let fixed = @flate.Inflater()
       let viewed = @flate.Inflater()
       let output = FixedArray::make(capacity, b'\x00')
-      let padded = FixedArray::make(capacity + 6, b'\xA5')
+      let padded = Array::make(capacity + 6, b'\xA5')
       let collected : Array[Byte] = []
       let mut position = 0
       for ;; {
         let end = (position + 97).min(compressed.length())
         let input = compressed[position:end]
         let status_result = if end == compressed.length() {
-          fixed.finish_into(input, output)
+          fixed.finish(input, output.mut_view())
         } else {
-          fixed.step_into(input, output)
+          fixed.step(input, output.mut_view())
         }
         let status = status_result.status
         let other_result = if end == compressed.length() {
@@ -58,7 +58,7 @@ test "fixed streaming output matches offset views across history wraps" {
       @test.assert_eq(Bytes::from_array(collected), source)
       fixed.reset()
       let empty = FixedArray::make(0, b'\x00')
-      let result = fixed.step_into(compressed, empty)
+      let result = fixed.step(compressed, empty.mut_view())
       @test.assert_eq(result.status, NeedMoreOutput)
       @test.assert_eq(result.produced, 0)
     }

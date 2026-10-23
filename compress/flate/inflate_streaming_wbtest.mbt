@@ -78,9 +78,12 @@ fn assert_drained_match(
   inflater.copy_dist = distance
   let produced = @buffer.Buffer()
   while inflater.copy_remaining > 0 {
-    let output = FixedArray::make(room + 3, b'\xA5')
+    let output = if fixed {
+      FixedArray::make(room + 3, b'\xA5').mut_view()
+    } else {
+      Array::make(room + 3, b'\xA5').mut_view()
+    }
     inflater.out = output.mut_view(end=room)
-    inflater.fixed_out = if fixed { Some(output) } else { None }
     inflater.out_pos = 0
     inflater.out_end = room
     let before = inflater.copy_remaining

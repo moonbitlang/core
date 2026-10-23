@@ -51,6 +51,23 @@ fn adler_group8(data : BytesView, i : Int32) -> Int32 {
   let d5 = data.unsafe_get(i + 5).to_int()
   let d6 = data.unsafe_get(i + 6).to_int()
   let d7 = data.unsafe_get(i + 7).to_int()
+  adler_group_sums(d0, d1, d2, d3, d4, d5, d6, d7)
+}
+
+///|
+/// Pack the plain sum and the 8..1 weighted sum of eight bytes.
+#cfg(not(any(target="native", target="wasm")))
+#inline
+fn adler_group_sums(
+  d0 : Int32,
+  d1 : Int32,
+  d2 : Int32,
+  d3 : Int32,
+  d4 : Int32,
+  d5 : Int32,
+  d6 : Int32,
+  d7 : Int32,
+) -> Int32 {
   let s01 = d0 + d1
   let s0123 = s01 + (d2 + d3)
   let s45 = d4 + d5

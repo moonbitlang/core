@@ -68,11 +68,9 @@ pub(all) enum InflateErrorKind {
 type Inflater
 pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
 pub fn Inflater::finish(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError
-pub fn Inflater::finish_into(Self, BytesView, FixedArray[Byte]) -> StepResult raise InflateError
 pub fn Inflater::is_finished(Self) -> Bool
 pub fn Inflater::reset(Self, dictionary? : BytesView) -> Unit
 pub fn Inflater::step(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError
-pub fn Inflater::step_into(Self, BytesView, FixedArray[Byte]) -> StepResult raise InflateError
 
 pub(all) enum Status {
   Done

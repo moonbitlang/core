@@ -352,3 +352,31 @@ test "MutArrayView equality compare hash" {
   hasher.combine(left)
   inspect(hasher.finalize() != 0, content="true")
 }
+
+///|
+test "mutable view bulk copy respects offsets and overlapping ranges" {
+  let values = [0, 1, 2, 3, 4, 5, 6]
+  values.mut_view(start=1, end=6).blit_from_array(values[2:6])
+  @test.assert_eq(values, [0, 2, 3, 4, 5, 5, 6])
+  values.mut_view(start=2, end=6).blit_from_array(values[:4])
+  @test.assert_eq(values, [0, 2, 0, 2, 3, 4, 6])
+  let destination : FixedArray[Int32] = [9, 9, 9, 9, 9, 9]
+  destination
+  .mut_view(start=1, end=5)
+  .blit_from_array(values[2:4], dst_offset=1)
+  @test.assert_eq(destination[:], [9, 9, 0, 2, 9, 9])
+  destination.mut_view(start=6).blit_from_array(values[0:0])
+  @test.assert_eq(destination[:], [9, 9, 0, 2, 9, 9])
+}
+
+///|
+test "panic mutable view bulk copy rejects a source larger than the view" {
+  let values : FixedArray[Int32] = [0, 1, 2, 3]
+  values.mut_view(start=1, end=2).blit_from_array(values[:2])
+}
+
+///|
+test "panic mutable view bulk copy rejects a negative destination offset" {
+  let values : FixedArray[Int32] = [0, 1, 2, 3]
+  values.mut_view().blit_from_array(values[:0], dst_offset=-1)
+}

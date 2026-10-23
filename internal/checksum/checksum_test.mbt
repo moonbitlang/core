@@ -42,3 +42,27 @@ test "adler32 matches the zlib reference" {
     @test.assert_eq(@checksum.adler32(input), expected)
   }
 }
+
+///|
+test "array view checksums match byte updates across offsets and block boundaries" {
+  let source = Bytes::makei(12000, i => ((i * 71 + i / 13) & 255).to_byte())
+  let fixed = source.to_fixedarray()
+  let array = source.to_array()
+  for size in [0, 1, 7, 8, 15, 16, 257, 3799, 3800, 3801, 11000] {
+    for data in [fixed[3:3 + size], array[3:3 + size]] {
+      let crc = @checksum.Crc32()
+      let adler = @checksum.Adler32()
+      // A preceding update and two unequal array pieces exercise accumulation.
+      crc.update(b"prefix")
+      adler.update(b"prefix")
+      let mid = size / 3
+      crc.update_array(data[:mid])
+      crc.update_array(data[mid:])
+      adler.update_array(data[:mid])
+      adler.update_array(data[mid:])
+      let expected = b"prefix" + source[3:3 + size].to_owned()
+      @test.assert_eq(crc.finish(), @checksum.crc32(expected))
+      @test.assert_eq(adler.finish(), @checksum.adler32(expected))
+    }
+  }
+}

@@ -91,7 +91,7 @@ fn cov_expect_decoder_error(
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(65536, b'\x00')
   let GzipError(kind, _) = @test.expect_error(() => {
-    decoder.finish_into(input, output)
+    decoder.finish(input, output.mut_view())
   })
   @test.assert_eq(kind, expected_kind)
 }

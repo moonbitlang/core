@@ -22,10 +22,8 @@ pub suberror ZlibError {
 type Decoder
 pub fn Decoder::Decoder(dictionary? : BytesView) -> Self
 pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
-pub fn Decoder::finish_into(Self, BytesView, FixedArray[Byte]) -> @flate.StepResult raise ZlibError
 pub fn Decoder::is_finished(Self) -> Bool
 pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
-pub fn Decoder::step_into(Self, BytesView, FixedArray[Byte]) -> @flate.StepResult raise ZlibError
 pub fn Decoder::unused_input(Self) -> Bytes
 
 type Encoder

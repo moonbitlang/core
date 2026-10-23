@@ -511,3 +511,34 @@ pub impl[T : Compare] Compare for MutArrayView[T] with fn compare(self, other) -
 pub impl[A : Hash] Hash for MutArrayView[A] with fn hash_combine(self, hasher) {
   self[:].hash_combine(hasher)
 }
+
+///|
+/// Copies every element of `source` into this view starting at `dst_offset`.
+/// Source and destination may overlap; the result is as if the source had
+/// been copied before writing the destination. Neither view is resized.
+/// Panics unless `0 <= dst_offset` and the whole source fits in this view.
+///
+/// ```mbt check
+/// test {
+///   let values = [0, 1, 2, 3, 4]
+///   values.mut_view(start=2).blit_from_array(values[:3])
+///   @test.assert_eq(values, [0, 1, 0, 1, 2])
+/// }
+/// ```
+#inline
+pub fn[T] MutArrayView::blit_from_array(
+  self : MutArrayView[T],
+  source : ArrayView[T],
+  dst_offset~ : Int32 = 0,
+) -> Unit {
+  guard! dst_offset >= 0 &&
+    dst_offset <= self.len() &&
+    source.len() <= self.len() - dst_offset
+  UninitializedArray::unsafe_blit(
+    self.buf(),
+    self.start() + dst_offset,
+    source.buf(),
+    source.start(),
+    source.len(),
+  )
+}

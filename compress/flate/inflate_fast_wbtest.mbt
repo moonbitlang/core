@@ -26,22 +26,20 @@ fn fast_stream_run(
   fixed : Bool,
 ) -> Result[(Bytes, Int32), InflateErrorKind] {
   let inflater = Inflater()
-  let output = FixedArray::make(room, b'\x00')
+  let output = if fixed {
+    FixedArray::make(room, b'\x00').mut_view()
+  } else {
+    Array::make(room, b'\x00').mut_view()
+  }
   let decoded = @buffer.Buffer()
   let mut position = 0
   for ;; {
     let end = (position + chunk).min(input.length())
     let status_result = try {
-      if fixed {
-        if end == input.length() {
-          inflater.finish_into(input[position:end], output)
-        } else {
-          inflater.step_into(input[position:end], output)
-        }
-      } else if end == input.length() {
-        inflater.finish(input[position:end], output.mut_view())
+      if end == input.length() {
+        inflater.finish(input[position:end], output)
       } else {
-        inflater.step(input[position:end], output.mut_view())
+        inflater.step(input[position:end], output)
       }
     } catch {
       InflateError(kind, _) => return Err(kind)
@@ -104,7 +102,11 @@ fn assert_calls_agree(
 ) -> Result[(Bytes, Int32), InflateErrorKind] raise {
   let whole = Inflater()
   let pieces = Inflater()
-  let output = FixedArray::make(room, b'\x00')
+  let output = if fixed {
+    FixedArray::make(room, b'\x00').mut_view()
+  } else {
+    Array::make(room, b'\x00').mut_view()
+  }
   let reference = FixedArray::make(room, b'\x00')
   let mut position = 0
   let decoded = @buffer.Buffer()
@@ -119,16 +121,10 @@ fn assert_calls_agree(
       produced: 0,
     }
     try {
-      whole_result = if fixed {
-        if last {
-          whole.finish_into(view, output)
-        } else {
-          whole.step_into(view, output)
-        }
-      } else if last {
-        whole.finish(view, output.mut_view())
+      whole_result = if last {
+        whole.finish(view, output)
       } else {
-        whole.step(view, output.mut_view())
+        whole.step(view, output)
       }
     } catch {
       InflateError(kind, _) => verdict = Some(kind)
@@ -326,14 +322,14 @@ test "fast loop marks the window full by what a call wrote" {
   let inflater = Inflater()
   inflater.wpos = -30000
   let output = FixedArray::make(40000, b'\x00')
-  let first_result = inflater.finish_into(stream, output)
+  let first_result = inflater.finish(stream, output.mut_view())
   let first = first_result.status
   assert_true(first is NeedMoreOutput)
   @test.assert_eq(first_result.produced, 40000)
   @test.assert_eq(inflater.wpos, 10000)
   assert_true(inflater.filled)
   let rest = stream[first_result.consumed:]
-  let second_result = inflater.finish_into(rest, output)
+  let second_result = inflater.finish(rest, output.mut_view())
   let second = second_result.status
   assert_true(second is Done)
   @test.assert_eq(second_result.produced, 3)

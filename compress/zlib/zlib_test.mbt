@@ -555,3 +555,40 @@ test "streaming zlib Decoder preserves input after the trailer" {
   @test.assert_eq(produced, 0)
   @test.assert_eq(decoder.unused_input(), next_frame)
 }
+
+///|
+test "streaming zlib checksum survives output reuse before a split trailer" {
+  let source = Bytes::makei(12003, i => (i * 71 + i / 13).to_byte())
+  let stream = @zlib.compress(source, level=0)
+  let body_end = stream.length() - 4
+  let decoder = @zlib.Decoder()
+  let padded = Array::make(263, b'\xA5')
+  let output = padded.mut_view(start=3, end=260)
+  let decoded = @buffer.Buffer()
+  let mut position = 0
+  for ;; {
+    let result = decoder.step(stream[position:body_end], output)
+    position += result.consumed
+    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    for i in 0..<output.length() {
+      output[i] = b'\xCC'
+    }
+    if result.status is NeedMoreInput {
+      break
+    }
+    assert_true(result.consumed > 0 || result.produced > 0)
+  }
+  @test.assert_eq(position, body_end)
+  @test.assert_eq(decoded.to_bytes(), source)
+  for i in 0..<4 {
+    let input = stream[body_end + i:body_end + i + 1]
+    let result = if i == 3 {
+      decoder.finish(input, output)
+    } else {
+      decoder.step(input, output)
+    }
+    @test.assert_eq(result.status, if i == 3 { Done } else { NeedMoreInput })
+  }
+  @test.assert_eq(padded[2], b'\xA5')
+  @test.assert_eq(padded[260], b'\xA5')
+}

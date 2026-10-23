@@ -132,7 +132,7 @@ test "README streaming Deflater" {
 
 ### State-machine contract
 
-- `step`, `finish`, and their fixed-array variants return a `#valtype`
+- `step` and `finish` return a `#valtype`
   `StepResult` containing `status`, `consumed`, and `produced`. The counts
   describe exactly the prefixes accepted and written by that call. Drop only
   `input[:result.consumed]`; large input views may be partially consumed when
@@ -149,18 +149,15 @@ test "README streaming Deflater" {
   `consumed < input.length()`, re-present that suffix with the same action. Once
   the complete view is accepted, the request remains latched across output
   backpressure.
-- `Inflater::step_into(input, output)` accepts a complete `FixedArray[Byte]`
-  and uses bulk window copies. It has the same consumption and backpressure
-  semantics as `step`, which accepts arbitrary mutable output views. Both
-  release caller buffers after each call.
-- gzip and zlib `Decoder::step_into(input, output)` accept a complete
-  `FixedArray[Byte]` and checksum decoded output in batches. Use it when the caller owns a fixed
-  output buffer; `step` accepts arbitrary mutable views. Both drain pending
-  body input before accepting more, so output can be produced while
-  `result.consumed` is zero. Re-present the unaccepted input on the next call.
+- Decoder `step(input, output)` methods accept a mutable output view,
+  including slices of fixed arrays or arrays. The engine chooses its copy
+  strategy internally and releases caller buffers after each call. gzip and
+  zlib checksum the produced range and drain pending body input before
+  accepting more, so output can be produced while `result.consumed` is zero.
+  Re-present the unaccepted input on the next call.
 - Call `Inflater::finish(input, output)` or a container decoder's `finish`
   with the final input chunk; pass empty input if all input has already been
-  supplied. `finish_into` accepts a complete fixed output array. If output
+  supplied. It accepts the same mutable output views as `step`. If output
   backpressure leaves an input suffix unconsumed, repeat the finish call with
   that suffix and fresh output space until `Done`. Finishing an incomplete
   stream raises a stable truncation error instead of requesting more input.

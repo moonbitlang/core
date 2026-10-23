@@ -67,9 +67,9 @@ test "zlib failed state freezes decoder cursors" {
 }
 
 ///|
-// Both output entry points must agree on every call, including checksum
-// failures. Known plaintext also catches a bug shared by both entry points.
-test "zlib step_into and offset step views preserve the per-call contract" {
+// Fixed and array-backed output views must agree on every call, including checksum
+// failures. Known plaintext also checks the shared decode implementation.
+test "zlib fixed and array-backed output views preserve the per-call contract" {
   let source = Bytes::makei(70000, i => {
     if i % 4096 < 2600 {
       b"streaming decoders must agree. "[i % 31]
@@ -91,7 +91,7 @@ test "zlib step_into and offset step views preserve the per-call contract" {
         let fixed = Decoder()
         let viewed = Decoder()
         let output = FixedArray::make(room, b'\x00')
-        let padded = FixedArray::make(room + 6, b'\xA5')
+        let padded = Array::make(room + 6, b'\xA5')
         let decoded = @buffer.Buffer()
         let mut position = 0
         let mut verdict = None
@@ -100,9 +100,9 @@ test "zlib step_into and offset step views preserve the per-call contract" {
           let input = stream[position:end]
           let status = try {
             if end == stream.length() {
-              fixed.finish_into(input, output)
+              fixed.finish(input, output.mut_view())
             } else {
-              fixed.step_into(input, output)
+              fixed.step(input, output.mut_view())
             }
           } catch {
             ZlibError(kind, _) => Err(kind)

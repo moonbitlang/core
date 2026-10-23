@@ -397,9 +397,9 @@ fn EntryReader::read_payload(
   if self.inflater is Some(inflater) {
     let status_result = try {
       if self.requested == self.entry.compressed_size {
-        inflater.finish_into(self.pending[self.pending_pos:], output)
+        inflater.finish(self.pending[self.pending_pos:], output.mut_view())
       } else {
-        inflater.step_into(self.pending[self.pending_pos:], output)
+        inflater.step(self.pending[self.pending_pos:], output.mut_view())
       }
     } catch {
       error => raise wrap_inflate_error(error)

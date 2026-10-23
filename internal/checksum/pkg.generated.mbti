@@ -13,12 +13,14 @@ type Adler32
 pub fn Adler32::Adler32() -> Self
 pub fn Adler32::finish(Self) -> UInt32
 pub fn Adler32::update(Self, BytesView) -> Unit
+pub fn Adler32::update_array(Self, ArrayView[Byte]) -> Unit
 pub fn Adler32::update_byte(Self, Byte) -> Unit
 
 type Crc32
 pub fn Crc32::Crc32() -> Self
 pub fn Crc32::finish(Self) -> UInt32
 pub fn Crc32::update(Self, BytesView) -> Unit
+pub fn Crc32::update_array(Self, ArrayView[Byte]) -> Unit
 pub fn Crc32::update_byte(Self, Byte) -> Unit
 
 // Type aliases
