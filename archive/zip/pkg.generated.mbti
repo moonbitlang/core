@@ -1,0 +1,138 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/archive/zip"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn read(BytesView, limits? : ReadLimits, cancelled? : () -> Bool) -> Archive raise ZipError
+
+pub fn write(Archive, preserve? : Bool, max_output_bytes? : Int32, level? : Int32, fast_store? : Bool) -> Bytes raise ZipError
+
+// Errors
+pub suberror ZipError {
+  ZipError(ZipErrorKind, String)
+}
+
+// Types and methods
+type Archive
+pub fn Archive::Archive() -> Self
+pub fn Archive::add(Self, String, BytesView, compression? : Compression) -> Unit
+pub fn Archive::clone(Self) -> Self
+pub fn Archive::comment(Self) -> BytesView
+pub fn Archive::entries(Self) -> ArrayView[Entry]
+pub fn Archive::get(Self, StringView) -> BytesView?
+pub fn Archive::remove(Self, StringView) -> Bool
+pub fn Archive::replace(Self, StringView, BytesView) -> Bool
+pub fn Archive::set_comment(Self, BytesView) -> Unit
+
+pub(all) enum Compression {
+  Store
+  Deflate
+} derive(Eq, @debug.Debug)
+
+type Directory
+pub fn Directory::comment(Self) -> BytesView
+pub fn Directory::entries(Self) -> ArrayView[DirectoryEntry]
+pub fn Directory::open_entry(Self, Int32, limits? : EntryReadLimits) -> EntryReader raise ZipError
+
+type DirectoryEntry
+pub fn DirectoryEntry::compressed_size(Self) -> UInt64
+pub fn DirectoryEntry::crc32(Self) -> UInt32
+pub fn DirectoryEntry::creator_system(Self) -> Int32
+pub fn DirectoryEntry::dos_date(Self) -> Int32
+pub fn DirectoryEntry::dos_time(Self) -> Int32
+pub fn DirectoryEntry::external_attributes(Self) -> UInt32
+pub fn DirectoryEntry::is_directory(Self) -> Bool
+pub fn DirectoryEntry::is_encrypted(Self) -> Bool
+pub fn DirectoryEntry::method_id(Self) -> Int32
+pub fn DirectoryEntry::name(Self) -> String
+pub fn DirectoryEntry::uncompressed_size(Self) -> UInt64
+
+type DirectoryLimits
+pub fn DirectoryLimits::DirectoryLimits(max_directory_bytes? : UInt64, max_entries? : UInt64) -> Self
+
+type DirectoryReader
+pub fn DirectoryReader::DirectoryReader(UInt64, limits? : DirectoryLimits) -> Self
+pub fn DirectoryReader::advance(Self, BytesView) -> DirectoryStep raise ZipError
+
+pub(all) enum DirectoryStep {
+  NeedRead(ReadRange)
+  Done(Directory)
+}
+
+type Entry
+pub fn Entry::compression(Self) -> Compression
+pub fn Entry::crc32(Self) -> UInt32
+pub fn Entry::data(Self) -> BytesView
+pub fn Entry::name(Self) -> String
+
+type EntryReadLimits
+pub fn EntryReadLimits::EntryReadLimits(max_output_bytes? : UInt64) -> Self
+
+type EntryReader
+pub fn EntryReader::last_produced(Self) -> Int32
+pub fn EntryReader::step(Self, BytesView, FixedArray[Byte]) -> EntryStep raise ZipError
+pub fn EntryReader::total_consumed(Self) -> UInt64
+pub fn EntryReader::total_produced(Self) -> UInt64
+
+pub(all) enum EntryStep {
+  NeedRead(ReadRange)
+  NeedMoreOutput
+  Done
+}
+
+pub(all) enum LimitKind {
+  PackageBytes
+  Entries
+  EntryUncompressedBytes
+  TotalUncompressedBytes
+  DirectoryBytes
+  OutputBytes
+} derive(Eq, @debug.Debug)
+
+pub struct ReadLimits {
+  max_package_bytes : Int32
+  max_entries : Int32
+  max_entry_uncompressed_bytes : Int32
+  max_total_uncompressed_bytes : Int32
+}
+pub fn ReadLimits::ReadLimits(max_package_bytes? : Int32, max_entries? : Int32, max_entry_uncompressed_bytes? : Int32, max_total_uncompressed_bytes? : Int32) -> Self
+
+type ReadRange
+pub fn ReadRange::length(Self) -> Int32
+pub fn ReadRange::offset(Self) -> UInt64
+
+type Writer
+pub fn Writer::Writer((BytesView) -> Unit raise, level? : Int32, fast_store? : Bool) -> Self
+pub fn Writer::add(Self, String, BytesView, compression? : Compression) -> Unit raise
+pub fn Writer::begin_entry(Self, String, compression? : Compression, size? : UInt64) -> Unit raise
+pub fn Writer::end_entry(Self) -> Unit raise
+pub fn Writer::finish(Self, comment? : BytesView) -> Unit raise
+pub fn Writer::is_failed(Self) -> Bool
+pub fn Writer::is_finished(Self) -> Bool
+pub fn Writer::position(Self) -> UInt64
+pub fn Writer::write(Self, BytesView) -> Unit raise
+
+pub(all) enum ZipErrorKind {
+  Truncated
+  InvalidSignature
+  MissingEndOfCentral
+  UnsupportedCompression(Int32)
+  InvalidUtf8
+  UnsupportedFeature
+  InvalidDeflate
+  InvalidRead
+  InvalidEntryIndex(Int32)
+  SizeMismatch
+  ChecksumMismatch
+  LimitExceeded(LimitKind, UInt64, UInt64)
+  Cancelled
+  InvalidArgument
+  InvalidState
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
