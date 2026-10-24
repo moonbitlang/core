@@ -422,7 +422,7 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
 #as_free_fn(from_iterator, deprecated)
 pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
   let s = new_hashset(default_init_capacity)
-  while iter.next() is Some(e) {
+  for e in iter {
     s.add(e)
   }
   s
