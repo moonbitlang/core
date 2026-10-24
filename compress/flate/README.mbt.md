@@ -3,9 +3,9 @@
 Pure-MoonBit **DEFLATE** (RFC 1951) — a runtime-agnostic, suspendable, io-free
 compression engine in `moonbitlang/core/compress/flate`. The sibling
 `compress/gzip` (RFC 1952) and `compress/zlib` (RFC 1950) packages provide
-compressed formats.
+compressed formats; `archive/zip` (APPNOTE.TXT) provides ZIP archives.
 
-gzip and zlib share CRC-32 and Adler-32 implementations in the internal
+gzip, zlib, and zip share CRC-32 and Adler-32 implementations in the internal
 `moonbitlang/core/internal/checksum` package. This package is an
 implementation detail and cannot be imported from outside `moonbitlang/core`.
 
@@ -18,6 +18,7 @@ import {
   "moonbitlang/core/compress/flate",
   "moonbitlang/core/compress/gzip",
   "moonbitlang/core/compress/zlib",
+  "moonbitlang/core/archive/zip",
 }
 ```
 
@@ -218,6 +219,190 @@ callers that do not need the memory bound. Called with the input alone,
 callback or `preallocated` selects the stepping decoder, which gives the same
 result and the same error for a malformed, truncated or extended stream.
 
+## ZIP container
+
+The `@zip` package provides metadata-only range reads, in-memory archives, and
+incremental writing over the same compression engine.
+
+Use `DirectoryReader` to browse a ZIP without loading the complete file or
+decoding its payloads. It supports classic ZIP beyond 2 GiB and ZIP64, with
+`UInt64` archive sizes, file offsets, and declared entry sizes. The caller owns
+file or HTTP range I/O; the reader requests only a bounded tail, necessary ZIP64
+records, and directory chunks:
+
+```moonbit nocheck
+///|
+fn browse_zip(
+  size : UInt64,
+  read_range : (UInt64, Int32) -> Bytes raise,
+) -> @zip.Directory raise {
+  let reader = @zip.DirectoryReader(
+    size,
+    limits=DirectoryLimits(max_directory_bytes=16777216UL, max_entries=100000UL),
+  )
+  let mut input : Bytes = b""
+  for ;; {
+    match reader.advance(input) {
+      NeedRead(range) => input = read_range(range.offset(), range.length())
+      Done(directory) => return directory
+    }
+  }
+}
+```
+
+Start with empty input, then supply the exact bytes from each requested range.
+Accumulate short transport reads before submitting them. All ranges must come
+from the same immutable archive. Requests are at most 65,557 bytes; directory
+chunks are at most 64 KiB, and records crossing chunks are retained in a bounded
+buffer. Memory grows with directory metadata, rather than compressed or decoded
+payload sizes. `DirectoryLimits` caps encoded directory bytes and entry count;
+the in-memory listing can hold at most 2^31 - 1 entries. No declared payload size
+causes a payload allocation or counts against these directory limits.
+
+`Directory::entries()` preserves directory order and duplicate names.
+`DirectoryEntry` exposes the UTF-8 name, compressed/uncompressed `UInt64` sizes,
+raw compression method number, declared CRC-32, directory/encryption indicators,
+creator system, external attributes, and packed DOS modification date/time
+(without a timezone). Unknown compression methods and encrypted payloads remain
+listable when the directory itself is readable. Multi-disk archives and encrypted
+central directories are unsupported. Listing validates directory structure and
+referenced bounds; it does not read local headers, inflate files, or verify CRCs.
+An optional trailing directory digital-signature record is accepted after
+checking its signature marker and length; its cryptographic contents are not
+verified.
+`InvalidRead` identifies incorrect response lengths or input outside an active
+request. Errors remain latched; repeated empty calls after `Done` return the
+same listing. Callers can cancel by stopping between requests.
+
+Open a listed entry with `Directory::open_entry(index)` to create an
+`EntryReader`. Indices distinguish duplicate names. It extracts Store and Deflate
+entries from bounded ranges, including ZIP64 and entries with more than 2 GiB
+of decoded data. `EntryReadLimits(max_output_bytes=...)` sets a `UInt64` output
+ceiling; oversized declarations are rejected before I/O, and actual decoded
+output is checked before reporting bytes to the caller.
+
+```moonbit nocheck
+///|
+fn extract_entry(
+  directory : @zip.Directory,
+  index : Int32,
+  read_range : (UInt64, Int32) -> Bytes raise,
+  emit : (BytesView) -> Unit raise,
+) -> Unit raise {
+  let reader = directory.open_entry(index)
+  let output = FixedArray::make(65536, b'\x00')
+  let mut input : Bytes = b""
+  for ;; {
+    let status = reader.step(input, output)
+    let produced = reader.last_produced()
+    if produced > 0 {
+      emit(Bytes::from_array(output[:produced]))
+    }
+    match status {
+      NeedRead(range) => input = read_range(range.offset(), range.length())
+      NeedMoreOutput => input = b""
+      Done => return
+    }
+  }
+}
+```
+
+Start with empty input. A `NeedRead` response requires exactly the requested
+bytes; after `NeedMoreOutput`, submit empty input with another output buffer.
+The reader retains unconsumed compressed bytes, so callers never replay an
+accepted range. Input and output arrays are released before each return.
+Read `last_produced()` after **every successful step**, including those returning
+`NeedRead` or `Done`. `total_consumed()` and `total_produced()` report `UInt64`
+compressed-payload and decoded byte counts. Memory is bounded by one compressed
+chunk, local metadata, the codec workspace, and the caller's output buffer.
+
+`Done` verifies the local header against the directory, exact compressed and
+decoded sizes, CRC-32, and any classic or ZIP64 data descriptor. Output produced
+earlier remains unverified; discard partial output on failure.
+Like `read`, zero-length Deflate entries with zero compressed bytes are accepted;
+CRC-32 and any data descriptor are still checked.
+Unsupported methods and encrypted entries remain listable but cannot be opened.
+`InvalidEntryIndex` identifies an invalid index, `SizeMismatch` an inconsistent
+decoded size, and `InvalidRead` a range-response protocol error. A failed reader
+stably rethrows its error with `last_produced()` zero; repeated empty steps after
+completion return `Done`. Cancel by stopping between calls.
+
+Use `Archive` for in-memory editing and serialization. `read(BytesView)` still
+decodes and verifies every entry, and `write(Archive)` returns one complete
+`Bytes`; these convenience paths retain their Int32 buffer limits. Use
+`DirectoryReader` / `EntryReader` for reading large archives and chunked `Writer`
+input/output for creating them:
+
+```mbt check
+///|
+test "README zip round-trip" {
+  let archive = @zip.Archive()
+  archive.add("hello.txt", b"hello, zip")
+  let bytes = @zip.write(archive)
+  let parsed = @zip.read(bytes)
+  @test.assert_eq(parsed.get("hello.txt"), Some(b"hello, zip"))
+}
+```
+
+Supported features include STORED and DEFLATE entries, ZIP64, data descriptors,
+UTF-8 names, and archive comments. `read` accepts `ReadLimits` to bound archive
+size (including the complete retained source), entry count, and decompressed sizes, plus a
+`cancelled` callback. Exceeding a limit raises
+`ZipError(LimitExceeded(kind, limit, actual), message)`; limit and actual values
+are `UInt64` on both memory and directory paths.
+
+`read` verifies each entry's CRC-32, raising `ChecksumMismatch` for a damaged
+payload. Cancellation remains `Cancelled` throughout parsing, decoding and
+checksum verification.
+
+`write(archive, preserve=true)` reuses unchanged source records; an unmodified
+archive round-trips byte-for-byte, including prefixes, gaps and directory order.
+After an edit, local records and directory entries keep their respective order;
+bytes outside records, such as prefixes and gaps, are omitted.
+`max_package_bytes` covers the full retained source, including these bytes.
+Supply `max_output_bytes` to bound the serialized size before allocating it.
+`write` returns the complete ZIP as `Bytes`.
+
+For incremental output, use `Writer` with a synchronous sink. `add` accepts a
+complete file; `begin_entry` / `write` / `end_entry` accept chunks. Supply `size`
+when known; unknown sizes use ZIP64.
+
+```mbt check
+///|
+test "README incremental ZIP writer" {
+  // A real folder adapter passes a buffered file-write callback here.
+  let output = @buffer.Buffer()
+  let writer = @zip.Writer(chunk => output.write_bytes(chunk))
+  writer.add("small.txt", b"small file")
+  writer.begin_entry("chunked.txt", size=6UL)
+  writer.write(b"abc")
+  writer.write(b"def")
+  writer.end_entry()
+  writer.finish()
+  let archive = @zip.read(output.to_bytes())
+  @test.assert_eq(archive.get("chunked.txt"), Some(b"abcdef"))
+}
+```
+
+Call `finish` to write the central directory. The sink must consume each chunk
+before returning. If it raises an error, the writer becomes unusable and the
+partial output must be discarded; the sink's error reaches the caller unchanged.
+The writer's own failures are `ZipError`s: `InvalidState` for a call out of
+order (no open entry, an entry already open, a reentrant sink call, or use after
+`finish` or a sink failure) and `SizeMismatch` when an entry's input exceeds or
+falls short of its declared `size`. A size error leaves the entry open, so the
+caller can supply the missing bytes and call `end_entry` again.
+
+Large individual entries use `begin_entry` / repeated `write` / `end_entry`;
+their declared size and cumulative positions are `UInt64`. The writer selects
+ZIP64 and data descriptors internally. `add(BytesView)` remains convenient for
+a complete in-memory entry. Directory metadata is retained until `finish`.
+
+`Writer` retains directory metadata, current-entry metadata and codec buffers.
+`add` processes a complete file during the call; `write` feeds chunks through
+the codec or directly to the sink. Folder traversal and file I/O belong to
+the caller.
+
 ## Architecture
 
 The raw engine shares Huffman construction, block writing and format validation
@@ -244,6 +429,7 @@ Differential tests compare one-shot and streaming decoding across randomized
 chunk/output schedules, truncations and bit flips.
 
 The gzip and zlib packages add framing, checksums and streaming wrappers.
+ZIP provides in-memory archives and a synchronous incremental writer.
 The internal checksum package supplies CRC-32 and Adler-32 independently of the codecs.
 
 ## Optional fast stored blocks
@@ -263,11 +449,18 @@ let raw = @flate.deflate_all(input, fast_store=true)
 
 ///|
 let stream = @flate.Deflater(level=6, fast_store=true)
+
+///|
+let archive_bytes = @zip.write(archive, fast_store=true)
 ```
 
 The option is also available on `deflate_into`, split/optimal convenience APIs,
-gzip/zlib compression functions and streaming encoders. Whole-buffer APIs classify the entire input;
+gzip/zlib compression functions and streaming encoders, all ZIP serialization
+functions, and `zip.Writer`. Whole-buffer APIs classify the entire input;
 streaming encoders decide per block and retain stored bytes as match history.
+ZIP entries declared `Deflate` remain method 8; this option selects stored blocks
+inside DEFLATE, rather than changing the entry to ZIP method 0. Preserved ZIP
+payloads are reused; record offsets may be patched.
 
 This is **not a proof of incompressibility**. Long repeated patterns or useful
 dictionary matches can be missed, potentially making output much larger. Enable
@@ -305,12 +498,26 @@ Both `inflate_all` and `inflate_exact` take a plain optional integer ceiling:
 `max_output=n`. Omit it for unbounded output. `inflate_all` accepts a raw stream
 prefix; `inflate_exact` rejects trailing bytes.
 
+ZIP writing uses `write(archive, preserve=true, max_output_bytes=n)` for
+byte-preserving, bounded output. The options are independent. Construct read
+bounds with `ReadLimits(max_entries=..., max_package_bytes=...,
+max_entry_uncompressed_bytes=..., max_total_uncompressed_bytes=...)`.
+`max_package_bytes` also bounds the source retained for byte-preserving writes.
+Metadata-only reads use separate `DirectoryLimits`, without decoded-size limits.
+
+ZIP layout controls are internal: `Archive::add` no longer takes
+`data_descriptor`, and `Entry` no longer exposes `data_descriptor()`.
+The former `max_preserved_source_bytes` limit and `PreservedSourceBytes` error
+kind are replaced by the existing package-size limit. Limit errors now carry
+64-bit ceilings and actual values.
+
 Internal format and tuning constants are private. Use `deflate_bound` to size
 compression output. Filename-based compression selection belongs to the caller;
 the CLI supplies its own policy.
 
-gzip payload CRC and FHCRC are verified. A damaged checksum raises
-`ChecksumMismatch`.
+ZIP payload CRC and gzip FHCRC are verified. A damaged checksum raises
+`ChecksumMismatch`; malformed ZIP DEFLATE data raises `InvalidDeflate`, and
+cancellation during ZIP decompression remains `Cancelled`.
 `deflate_bound` rejects negative or unrepresentable capacities.
 
 Use `!=` for inequality and `@debug.Repr(value)` for debugging.
