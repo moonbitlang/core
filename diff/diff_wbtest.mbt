@@ -315,10 +315,7 @@ test "reverse order" {
 test "integer arrays diff" {
   let old = [1, 2, 3, 4, 5][:]
   let new = [1, 3, 5, 6, 7][:]
-  let result = Array()
-  for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
-    result.push((old_idx, new_idx))
-  }
+  let result = iter_matches(old~, new~, cutoff=None).to_array()
 
   // Should find matching elements: (0,0)=1, (2,1)=3, (4,2)=5
   @debug.debug_inspect(result, content="[(0, 0), (2, 1), (4, 2)]")
@@ -393,8 +390,7 @@ test "iter_matches callback verification" {
   }
 
   // Verify that matched elements are indeed equal
-  for i in 0..<matches.length() {
-    let (old_idx, new_idx) = matches[i]
+  for (old_idx, new_idx) in matches {
     inspect(old[old_idx] == new[new_idx], content="true")
   }
 
@@ -409,10 +405,7 @@ test "iter_matches callback verification" {
 test "string array edge cases" {
   let old = ["", "a", "", "b", ""][:]
   let new = ["", "b", "", "a", ""][:]
-  let result = Array()
-  for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
-    result.push((old_idx, new_idx))
-  }
+  let result = iter_matches(old~, new~, cutoff=None).to_array()
 
   // Should find some matches (empty strings will match)
   inspect(!result.is_empty(), content="true")
@@ -511,10 +504,7 @@ test "iter_matches parameter order" {
 test "repeated subsequence" {
   let old = ['a', 'b', 'a', 'b', 'c'].map(x => String::make(3, x))[:]
   let new = ['a', 'b', 'c', 'a', 'b'].map(x => String::make(3, x))[:]
-  let result = Array()
-  for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
-    result.push((old_idx, new_idx))
-  }
+  let result = iter_matches(old~, new~, cutoff=None).to_array()
 
   // Verify that some matches were found
   inspect(result.length() >= 3, content="true")
@@ -526,16 +516,10 @@ test "diff symmetry test" {
   let arr2 = ['a', 'x', 'c'].map(x => String::make(3, x))[:]
 
   // Calculate diff from arr1 -> arr2
-  let matches1 = Array()
-  for old_idx, new_idx in iter_matches(old=arr1, new=arr2, cutoff=None) {
-    matches1.push((old_idx, new_idx))
-  }
+  let matches1 = iter_matches(old=arr1, new=arr2, cutoff=None).to_array()
 
   // Calculate diff from arr2 -> arr1
-  let matches2 = Array()
-  for old_idx, new_idx in iter_matches(old=arr2, new=arr1, cutoff=None) {
-    matches2.push((old_idx, new_idx))
-  }
+  let matches2 = iter_matches(old=arr2, new=arr1, cutoff=None).to_array()
 
   // Both directions should have the same number of matches
   @test.assert_eq(matches1.length(), matches2.length())

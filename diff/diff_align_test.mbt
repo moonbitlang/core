@@ -164,7 +164,7 @@ fn subst_cost(a : Tok, b : Tok) -> Int32? {
 /// Weighted token edit distance, rolling rows (scoring only).
 fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int32 {
   let n = b.length()
-  let mut prev = Array::makei(n + 1, j => if j == 0 { 0 } else { 0 })
+  let mut prev = Array::make(n + 1, 0)
   let mut j0 = 0
   for j in 1..<(n + 1) {
     j0 += weight(b[j - 1].kind)
@@ -176,7 +176,7 @@ fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int32 {
     for j in 1..<(n + 1) {
       let del = prev[j] + weight(a[i - 1].kind)
       let ins = cur[j - 1] + weight(b[j - 1].kind)
-      let mut best = if del < ins { del } else { ins }
+      let mut best = del.min(ins)
       match subst_cost(a[i - 1], b[j - 1]) {
         Some(c) => if prev[j - 1] + c < best { best = prev[j - 1] + c }
         None => ()
@@ -395,7 +395,7 @@ test "tokenizer: markers, strings, raw lines, comments, faithfulness" {
       #|["\"a//b\""]
     ),
   )
-  inspect(toks.filter(t => t.kind is Comment).length() > 0, content="true")
+  inspect(toks.any(t => t.kind is Comment), content="true")
   // raw-string lines are one Str token
   @debug.debug_inspect(tokenize_line("#|x // y")[0].kind, content="Str")
   // faithfulness, including Unicode fallbacks
