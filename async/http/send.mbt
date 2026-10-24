@@ -31,7 +31,84 @@ priv struct Sender {
   mut send_len : Int32
   ctrl : @io.BinaryWriterController
   headers : Bytes
+  host_header_start : Int32
+  host_header_end : Int32
   has_accept_encoding : Bool
+}
+
+///|
+// Validate only the authority needed for Host generation; keep its wire spelling.
+fn validate_request_authority(
+  authority : StringView,
+  require_port~ : Bool,
+) -> Unit raise {
+  guard !authority.is_empty() else { raise InvalidFormat }
+  for c in authority.code_units() {
+    guard !(c is (0..<=0x20 | 0x7F | '@' | '/' | '?' | '#' | '\\')) else {
+      raise InvalidFormat
+    }
+  }
+  let host_end = if authority.has_prefix("[") {
+    guard authority.find("]") is Some(end) &&
+      end > 1 &&
+      authority[1:end].contains(":") &&
+      !authority[1:end].contains_any(chars="[]") else {
+      raise InvalidFormat
+    }
+    end + 1
+  } else {
+    guard !authority.contains_any(chars="[]") else { raise InvalidFormat }
+    authority.find(":").unwrap_or(authority.length())
+  }
+  guard host_end > 0 else { raise InvalidFormat }
+  if host_end == authority.length() {
+    guard !require_port else { raise InvalidFormat }
+  } else {
+    guard authority[host_end] == ':' else { raise InvalidFormat }
+    let port = authority[host_end + 1:]
+    // An empty HTTP(S) URI port denotes the default; CONNECT needs a number.
+    if port.is_empty() && !require_port {
+      return
+    }
+    guard !port.is_empty() else { raise InvalidFormat }
+    for c in port.code_units() {
+      guard c is ('0'..<='9') else { raise InvalidFormat }
+    }
+    let port = @string.parse_int(port) catch { _ => raise InvalidFormat }
+    guard port is (1..<65536) else { raise InvalidFormat }
+  }
+}
+
+///|
+fn request_target_host(
+  meth : RequestMethod,
+  target : StringView,
+) -> StringView? raise {
+  if meth is Connect {
+    validate_request_authority(target, require_port=true)
+    return Some(target)
+  }
+  guard target.length() >= 7 && target[0] is ('h' | 'H') else { return None }
+  let authority_start = if target[:7].equal_ignore_ascii_case("http://") {
+    7
+  } else if target.length() >= 8 &&
+    target[:8].equal_ignore_ascii_case("https://") {
+    8
+  } else {
+    return None
+  }
+  guard !target.contains("#") else { raise InvalidFormat }
+  let rest = target[authority_start:]
+  let authority_end = for i in 0..<rest.length() {
+    if rest[i] is ('/' | '?') {
+      break i
+    }
+  } nobreak {
+    rest.length()
+  }
+  let authority = rest[:authority_end]
+  validate_request_authority(authority, require_port=false)
+  Some(authority)
 }
 
 ///|
@@ -68,6 +145,8 @@ fn[W : @io.BinaryWriter] Sender::new(
 ) -> Sender {
   let header_text = @buffer.Buffer()
   let mut has_accept_encoding = false
+  let mut host_header_start = 0
+  let mut host_header_end = 0
   for k, v in headers {
     if !is_valid_http_header_field_name(k.0) {
       continue
@@ -76,11 +155,16 @@ fn[W : @io.BinaryWriter] Sender::new(
       if k == "Accept-Encoding" {
         has_accept_encoding = true
       }
+      let start = header_text.length()
       header_text
       ..write_string_utf8(k.0)
       ..write_bytes(b": ")
       ..write_string_utf8(sanitize_header_value(v))
       .write_bytes(b"\r\n")
+      if k == "Host" {
+        host_header_start = start
+        host_header_end = header_text.length()
+      }
     }
   }
   {
@@ -90,6 +174,8 @@ fn[W : @io.BinaryWriter] Sender::new(
     send_len: 0,
     ctrl: BinaryWriterController(),
     headers: header_text.contents(),
+    host_header_start,
+    host_header_end,
     has_accept_encoding,
   }
 }
@@ -310,10 +396,17 @@ async fn Sender::end_body(self : Sender) -> Unit {
 }
 
 ///|
-async fn Sender::send_headers(self : Sender, headers : Headers) -> Int64? {
+async fn Sender::send_headers(
+  self : Sender,
+  headers : Headers,
+  skip_host~ : Bool = false,
+) -> Int64? {
   let mut content_length = None
   for k, v in headers {
     if !is_valid_http_header_field_name(k.0) {
+      continue
+    }
+    if skip_host && k == "Host" {
       continue
     }
     if k == "Content-Length" {
@@ -340,6 +433,8 @@ async fn Sender::send_request(
   extra_headers~ : Headers,
 ) -> Bool {
   guard! self.mode is SendingHeader
+  // Validate before writing so a rejected target leaves the sender reusable.
+  let host = request_target_host(meth, path)
   match meth {
     Get => self.write(b"GET ")
     Head => self.write(b"HEAD ")
@@ -351,11 +446,22 @@ async fn Sender::send_request(
     Trace => self.write(b"TRACE ")
     Patch => self.write(b"PATCH ")
   }
-  let content_length = self
-    ..write(@utf8.encode(path))
-    ..write(b" HTTP/1.1\r\n")
-    ..write(self.headers)
-    .send_headers(extra_headers)
+  self..write(@utf8.encode(path)).write(b" HTTP/1.1\r\n")
+  if host is Some(host) {
+    // Replace the cached Host line without rebuilding the other persistent headers.
+    self
+    ..write(self.headers[:self.host_header_start])
+    ..write(b"Host: ")
+    ..write(@utf8.encode(host))
+    ..write(b"\r\n")
+    .write(self.headers[self.host_header_end:])
+  } else {
+    self.write(self.headers)
+  }
+  let content_length = self.send_headers(
+    extra_headers,
+    skip_host=host is Some(_),
+  )
   let auto_decompress = !self.has_accept_encoding &&
     !extra_headers.contains("Accept-Encoding")
   if auto_decompress {

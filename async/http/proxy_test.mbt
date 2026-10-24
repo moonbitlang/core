@@ -25,7 +25,8 @@ async test "passthrough mode" {
       defer conn.close()
       let request = conn.read_request()
       debug_inspect(request.meth, content="Connect")
-      inspect(request.path, content="/path")
+      inspect(request.path, content="origin.example:443")
+      inspect(request.headers["Host"], content="origin.example:443")
       conn..send_response(200, "OK").end_response()
       conn.enter_passthrough_mode()
       while conn.text.read() is Some(packet) {
@@ -34,7 +35,7 @@ async test "passthrough mode" {
     }
     let client = @http.Client("http://127.0.0.1:\{server_addr.port()}")
     defer client.close()
-    let response = client..request(Connect, "/path").end_request()
+    let response = client..request(Connect, "origin.example:443").end_request()
     inspect(response.code, content="200")
     client.enter_passthrough_mode()
     for packet in ["abcd", "efgh", "ijkl"] {
@@ -83,6 +84,7 @@ async fn handle_connect(
     conn..send_response(400, "BadRequest").end_response()
     return
   }
+  assert_true(request.headers.get("Host") is Some(host) && host == request.path)
   guard request.path.rev_find(":") is Some(index) else {
     conn..send_response(400, "BadRequest").end_response()
     return
@@ -105,6 +107,70 @@ async fn handle_connect(
   @async.with_task_group() <| group => {
     group.spawn_bg(() => conn.write_reader(client))
     group.spawn_bg(() => client.write_reader(conn))
+  }
+}
+
+///|
+async test "forward proxy receives target Host and persistent credentials" {
+  @async.with_timeout(5000) <| () => {
+    @async.with_task_group() <| group => {
+      let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+      defer server.close()
+      group.spawn_bg(no_wait=true) <| () => {
+        server.run_forever(allow_failure=false) <| ((request, conn) => {
+          inspect(
+            request.path,
+            content="http://origin.example:8081/path?key=value",
+          )
+          inspect(request.headers["Host"], content="origin.example:8081")
+          inspect(request.headers["Proxy-Authorization"], content="Basic test")
+          inspect(request.headers["X-Persistent"], content="kept")
+          conn.send_response(200, "OK")
+          conn.text.write("forwarded")
+          conn.end_response()
+        })
+      }
+      let client = @http.Client("http://\{server.addr}", headers={
+        "Proxy-Authorization": "Basic test",
+        "X-Persistent": "kept",
+      })
+      defer client.close()
+      let response = client
+        ..request(Get, "http://origin.example:8081/path?key=value")
+        .end_request()
+      inspect(response.code, content="200")
+      inspect(client.text.read_all(), content="forwarded")
+    }
+  }
+}
+
+///|
+async test "automatic CONNECT uses target Host and proxy credentials" {
+  @async.with_timeout(5000) <| () => {
+    @async.with_task_group() <| group => {
+      let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+      defer server.close()
+      group.spawn_bg(no_wait=true) <| () => {
+        server.run_forever(allow_failure=false) <| ((request, conn) => {
+          debug_inspect(request.meth, content="Connect")
+          inspect(request.path, content="origin.example:8081")
+          inspect(request.headers["Host"], content="origin.example:8081")
+          inspect(request.headers["Proxy-Authorization"], content="Basic test")
+          conn..send_response(403, "Forbidden").end_response()
+        })
+      }
+      let proxy = @http.Client("http://\{server.addr}", headers={
+        "Proxy-Authorization": "Basic test",
+      })
+      try {
+        let client = @http.Client("http://origin.example:8081", proxy~)
+        client.close()
+        fail("expected proxy rejection")
+      } catch {
+        @http.ProxyError(response) => inspect(response.code, content="403")
+        error => raise error
+      }
+    }
   }
 }
 
