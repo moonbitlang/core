@@ -22,8 +22,6 @@ import {
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/float",
-  "moonbitlang/core/int16",
 } for "test"
 
 warnings = "+unnecessary_annotation+missing_doc-test_unqualified_package"
