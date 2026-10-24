@@ -99,8 +99,8 @@ pub fn Crc32::update(self : Crc32, data : BytesView) -> Unit {
   // Short streaming updates need neither the wide kernel nor a backing Bytes
   // reference. Keep their original checked scalar path before acquiring it.
   guard data.length() >= 8 else {
-    for i in 0..<data.length() {
-      crc = crc32_table[((crc ^ data[i].to_uint()) & 0xFF).reinterpret_as_int()] ^
+    for byte in data {
+      crc = crc32_table[((crc ^ byte.to_uint()) & 0xFF).reinterpret_as_int()] ^
         (crc >> 8)
     }
     self.state = crc
