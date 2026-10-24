@@ -292,7 +292,7 @@ pub impl[X : ToJson] ToJson for FixedArray[X] with fn to_json(self) {
   if len == 0 {
     return []
   }
-  let res = Array::unsafe_make_uninit(self.length())
+  let res = Array::unsafe_make_uninit(len)
   for i, x in self {
     res.unsafe_set(i, ToJson::to_json(x))
   }
@@ -305,7 +305,7 @@ pub impl[X : ToJson] ToJson for ArrayView[X] with fn to_json(self) {
   if len == 0 {
     return []
   }
-  let res = Array::unsafe_make_uninit(self.length())
+  let res = Array::unsafe_make_uninit(len)
   for i, x in self {
     res.unsafe_set(i, ToJson::to_json(x))
   }

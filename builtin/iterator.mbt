@@ -365,10 +365,8 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
   {
     f: fn() {
-      match self.next() {
-        Some(x) => Some(f(x))
-        None => None
-      }
+      guard self.next() is Some(x) else { None }
+      Some(f(x))
     },
     size_hint: self.size_hint,
   }
@@ -397,14 +395,10 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int32, X) -> Y) -> Iter[Y] {
   let mut i = 0
   {
     f: fn() {
-      match self.next() {
-        Some(x) => {
-          let result = f(i, x)
-          i += 1
-          Some(result)
-        }
-        None => None
-      }
+      guard self.next() is Some(x) else { None }
+      let result = f(i, x)
+      i += 1
+      Some(result)
     },
     size_hint: self.size_hint,
   }
