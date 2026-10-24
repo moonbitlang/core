@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/path/internal/error"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+pub(all) suberror ResolveError {
+  CurrentDirectoryUnavailable
+} derive(@debug.Debug)
+
+// Types and methods
+
+// Type aliases
+
+// Traits

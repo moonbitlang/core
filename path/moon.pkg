@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/path/internal/error",
+  "moonbitlang/core/path/posix",
+  "moonbitlang/core/path/win32",
+  "moonbitlang/core/path/internal/ffi",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/builtin",
+}
+
+warnings = "-1"
