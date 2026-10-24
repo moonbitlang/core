@@ -44,11 +44,9 @@ pub fn Cookie::Cookie(
 fn Cookie::parse(line : StringView) -> Cookie raise {
   guard line.find("=") is Some(name_end) else { raise BadRequest }
   let name = line[:name_end].to_owned()
-  guard line[name_end + 1:].find(";") is Some(value_end) else {
-    Cookie(name, line[name_end + 1:].to_owned())
-  }
-  let value_end = name_end + 1 + value_end
-  let value = line[name_end + 1:value_end].to_owned()
+  let rest = line[name_end + 1:]
+  guard rest.find(";") is Some(value_end) else { Cookie(name, rest.to_owned()) }
+  let value = rest[:value_end].to_owned()
 
   let mut path = None
   let mut expires_raw = None
@@ -58,13 +56,13 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
   let mut http_only = false
   let extensions = []
   for parsed = value_end + 1 {
-    let attr_end = if line[parsed:].find(";") is Some(attr_end) {
+    let attr_end = if rest[parsed:].find(";") is Some(attr_end) {
       parsed + attr_end
     } else {
-      line.length()
+      rest.length()
     }
 
-    let attr = line[parsed:attr_end].trim()
+    let attr = rest[parsed:attr_end].trim()
     if attr.find("=") is Some(attr_name_end) {
       let name = attr[:attr_name_end]
       let value = attr[attr_name_end + 1:]
@@ -86,7 +84,7 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
       }
     }
 
-    if attr_end == line.length() {
+    if attr_end == rest.length() {
       break
     } else {
       continue attr_end + 1

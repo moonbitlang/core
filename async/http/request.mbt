@@ -49,7 +49,6 @@ fn resolve_url(uri : String) -> (Protocol, String, StringView) raise {
   } else {
     (uri, "/")
   }
-  let path : StringView = if path == "" { "/" } else { path }
   (protocol, host.to_owned(), path)
 }
 
