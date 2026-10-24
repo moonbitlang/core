@@ -84,11 +84,10 @@ fn rev_find_code_unit_scalar(
   end : Int32,
   code : UInt16,
 ) -> Int32 {
-  for pos = end - 1; pos >= start; {
+  for pos in end>..start {
     if data.unsafe_get(pos) == code {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }
@@ -448,12 +447,11 @@ fn rev_find_two_anchor_candidate_scalar(
   last_offset : Int32,
   last : UInt16,
 ) -> Int32 {
-  for pos = candidate_end - 1; pos >= start; {
+  for pos in candidate_end>..start {
     if data.unsafe_get(pos) == first &&
       data.unsafe_get(pos + last_offset) == last {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }

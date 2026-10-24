@@ -58,7 +58,7 @@ fn stringbuilder_growth_capacity(
     abort("StringBuilder capacity overflow")
   }
   // Start doubling from at least 1 so a zero-length initial buffer can grow.
-  let enough_space = for space = current.max(1); space < required; {
+  for space = current.max(1); space < required; {
     let next = space * 2
     if next <= space {
       break required
@@ -67,7 +67,6 @@ fn stringbuilder_growth_capacity(
   } nobreak {
     space
   }
-  enough_space
 }
 
 ///|
