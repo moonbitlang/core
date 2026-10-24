@@ -212,8 +212,7 @@ fn fixed_distance_code(symbol : Int32) -> (UInt32, Int32) {
 
 ///|
 fn find_length_code(length : Int32) -> (Int32, Int32, Int32) {
-  for i in 0..<length_bases.length() {
-    let base = length_bases[i]
+  for i, base in length_bases {
     let extra_bits = length_extras[i]
     let end = if extra_bits == 0 { base } else { base + (1 << extra_bits) - 1 }
     if length <= end {
@@ -225,8 +224,7 @@ fn find_length_code(length : Int32) -> (Int32, Int32, Int32) {
 
 ///|
 fn find_distance_code(distance : Int32) -> (Int32, Int32, Int32) {
-  for i in 0..<distance_bases.length() {
-    let base = distance_bases[i]
+  for i, base in distance_bases {
     let extra_bits = distance_extras[i]
     let end = if extra_bits == 0 { base } else { base + (1 << extra_bits) - 1 }
     if distance <= end {
