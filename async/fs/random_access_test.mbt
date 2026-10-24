@@ -50,3 +50,28 @@ async test "read_at" {
   inspect(n, content="1")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[:n], content="f")
 }
+
+///|
+async test "read_at rejects destination ranges outside the buffer" {
+  let path = "_build/read_at_bounds_test"
+  @fs.write_text(path, "abcdef", sync=Full)
+  defer @fs.remove(path)
+  let r = @fs.open(path, mode=ReadOnly)
+  defer r.close()
+  let dst : FixedArray[Byte] = FixedArray::make(16, b'0')
+  try r.read_at(dst, position=0, offset=16, len=1) catch {
+    _ => ()
+  } noraise {
+    _ => fail("read_at past the end succeeded")
+  }
+  try r.read_at(dst, position=0, offset=-1, len=1) catch {
+    _ => ()
+  } noraise {
+    _ => fail("read_at with a negative offset succeeded")
+  }
+  try r.read_at(dst, position=0, offset=0, len=17) catch {
+    _ => ()
+  } noraise {
+    _ => fail("read_at beyond capacity succeeded")
+  }
+}
