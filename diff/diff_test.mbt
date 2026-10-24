@@ -49,7 +49,7 @@ priv struct User {
 
 ///|
 fn show_user(u : User) -> String {
-  "User { id: " + u.id.to_string() + ", name: " + u.name + " }"
+  "User { id: \{u.id}, name: \{u.name} }"
 }
 
 ///|
@@ -65,8 +65,8 @@ fn show_token(t : Token) -> String {
   match t {
     Start => "Start"
     Stop => "Stop"
-    Num(n) => "Num(" + n.to_string() + ")"
-    Word(w) => "Word(\"" + w + "\")"
+    Num(n) => "Num(\{n})"
+    Word(w) => "Word(\"\{w}\")"
   }
 }
 
@@ -502,11 +502,7 @@ test "property: edit scripts reconstruct new from old" {
   let seqs : Array[Array[Int32]] = []
   for len in 0..<5 {
     for bits in 0..<(1 << len) {
-      let a = Array(capacity=len)
-      for i in 0..<len {
-        a.push((bits >> i) & 1)
-      }
-      seqs.push(a)
+      seqs.push([ for i in 0..<len => (bits >> i) & 1 ])
     }
   }
   for a in seqs {

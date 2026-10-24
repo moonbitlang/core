@@ -57,7 +57,7 @@ fn[T : Eq + Hash] find_unique(
   // Only unique-on-both-sides values can serve as stable patience-diff
   // anchors.
   let unique_match_lines : Array[(Int32, Int32)] = [
-    for (_, record) in match_lines.iter() if record.new_count == 1 &&
+    for (_, record) in match_lines if record.new_count == 1 &&
     record.old_count == 1 => (record.old_idx, record.new_idx)
   ]
   // Sorting by `old_idx` turns the LIS over `new_idx` into a common
