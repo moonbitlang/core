@@ -89,18 +89,13 @@ fn parse_path(
         Relative
       }
   }
-  let only_separators = raw.iter().all(segment => segment.is_empty())
+  let only_separators = raw.all(segment => segment.is_empty())
   // A trailing separator asks for directories only. A path that is nothing but
   // separators is just its root, with no such request attached.
   let directories_only = !only_separators &&
-    raw.length() > 1 &&
-    raw[raw.length() - 1].is_empty()
-  let segments = []
-  for segment in raw {
-    if !segment.is_empty() {
-      segments.push(segment)
-    }
-  }
+    raw is [_, .., last] &&
+    last.is_empty()
+  let segments = [ for segment in raw if !segment.is_empty() => segment ]
   (root, segments, directories_only)
 }
 
@@ -245,11 +240,7 @@ fn match_segment(pattern : String, name : String) -> Bool {
 
 ///|
 fn collect_chars(text : String) -> Array[Char] {
-  let chars = []
-  for char in text {
-    chars.push(char)
-  }
-  chars
+  text.to_array()
 }
 
 ///|
@@ -426,12 +417,7 @@ fn in_members(members : Array[(Char, Char)], candidate : Char) -> Bool {
 
 ///|
 fn in_ranges(members : Array[(Char, Char)], candidate : Char) -> Bool {
-  for range in members {
-    if candidate >= range.0 && candidate <= range.1 {
-      return true
-    }
-  }
-  false
+  members.any(range => candidate >= range.0 && candidate <= range.1)
 }
 
 ///|
@@ -684,19 +670,14 @@ fn join(prefix : String, entry : String) -> String {
   if prefix.is_empty() || prefix.has_suffix("/") {
     prefix + entry
   } else {
-    prefix + "/" + entry
+    "\{prefix}/\{entry}"
   }
 }
 
 ///|
 /// Whether a segment has no metacharacters, so it needs no directory listing.
 fn is_literal_segment(segment : String) -> Bool {
-  for item in parse_segment(segment) {
-    if !(item is Literal(_)) {
-      return false
-    }
-  }
-  true
+  parse_segment(segment).all(item => item is Literal(_))
 }
 
 ///|
