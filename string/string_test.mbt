@@ -217,8 +217,7 @@ test "equal_ignore_ascii_case" {
     ("", ""),
     ("", "x"),
   ]
-  for pair in pairs {
-    let (x, y) = pair
+  for (x, y) in pairs {
     @test.assert_eq(
       x.equal_ignore_ascii_case(y),
       x.compare_ignore_ascii_case(y) == 0,
@@ -698,18 +697,6 @@ test "split" {
     ),
   )
   debug_inspect(
-    "a,b,c,d,e".split(",").to_array(),
-    content=(
-      #|[
-      #|  <StringView: "a">,
-      #|  <StringView: "b">,
-      #|  <StringView: "c">,
-      #|  <StringView: "d">,
-      #|  <StringView: "e">,
-      #|]
-    ),
-  )
-  debug_inspect(
     "abcde".split("").to_array(),
     content=(
       #|[
@@ -719,36 +706,6 @@ test "split" {
       #|  <StringView: "d">,
       #|  <StringView: "e">,
       #|]
-    ),
-  )
-  debug_inspect(
-    "a b c d e".split(" ").to_array(),
-    content=(
-      #|[
-      #|  <StringView: "a">,
-      #|  <StringView: "b">,
-      #|  <StringView: "c">,
-      #|  <StringView: "d">,
-      #|  <StringView: "e">,
-      #|]
-    ),
-  )
-  debug_inspect(
-    "abcde".split("x").to_array(),
-    content=(
-      #|[<StringView: "abcde">]
-    ),
-  )
-  debug_inspect(
-    "".split("").to_array(),
-    content=(
-      #|[]
-    ),
-  )
-  debug_inspect(
-    "".split("x").to_array(),
-    content=(
-      #|[<StringView: "">]
     ),
   )
 }

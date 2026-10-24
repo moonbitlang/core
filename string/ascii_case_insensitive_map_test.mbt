@@ -153,8 +153,7 @@ test "AsciiCaseInsensitiveString agrees with equal_ignore_ascii_case" {
     ("", ""),
     ("", "x"),
   ]
-  for pair in key_pairs {
-    let (k1, k2) = pair
+  for (k1, k2) in key_pairs {
     let m : Map[AsciiCaseInsensitiveString, Int32] = Map([])
     m[key(k1)] = 1
     let map_says_same = m.contains(key(k2))
