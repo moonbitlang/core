@@ -21,35 +21,29 @@ pub fn encode(
   bom~ : Bool = false,
   endianness~ : Endian = Little,
 ) -> Bytes {
+  let bom_length = if bom { 2 } else { 0 }
+  let arr = FixedArray::make(str.length() * 2 + bom_length, b'\x00')
   if endianness is Little {
-    if bom is true {
-      let arr = FixedArray::make(str.length() * 2 + 2, b'\x00')
+    if bom {
       arr[0] = 0xFF
       arr[1] = 0xFE
-      arr.blit_from_string(2, str.data(), str.start_offset(), str.length())
-      arr.unsafe_reinterpret_as_bytes()
-    } else {
-      let arr = FixedArray::make(str.length() * 2, b'\x00')
-      arr.blit_from_string(0, str.data(), str.start_offset(), str.length())
-      arr.unsafe_reinterpret_as_bytes()
     }
-  } else if bom is true {
-    let arr = FixedArray::make(str.length() * 2 + 2, b'\x00')
-    arr[0] = 0xFE
-    arr[1] = 0xFF
-    for code_unit in str.code_units(); i = 2 {
-      arr[i] = (code_unit >> 8).to_byte()
-      arr[i + 1] = (code_unit & 0xFF).to_byte()
-      continue i + 2
-    }
-    arr.unsafe_reinterpret_as_bytes()
+    arr.blit_from_string(
+      bom_length,
+      str.data(),
+      str.start_offset(),
+      str.length(),
+    )
   } else {
-    let arr = FixedArray::make(str.length() * 2, b'\x00')
-    for code_unit in str.code_units(); i = 0 {
+    if bom {
+      arr[0] = 0xFE
+      arr[1] = 0xFF
+    }
+    for code_unit in str.code_units(); i = bom_length {
       arr[i] = (code_unit >> 8).to_byte()
       arr[i + 1] = (code_unit & 0xFF).to_byte()
       continue i + 2
     }
-    arr.unsafe_reinterpret_as_bytes()
   }
+  arr.unsafe_reinterpret_as_bytes()
 }
