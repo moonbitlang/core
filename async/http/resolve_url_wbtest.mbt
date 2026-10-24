@@ -104,3 +104,44 @@ test "resolve_host" {
     ),
   )
 }
+
+///|
+test "encode_ip_literal" {
+  inspect(encode_ip_literal("2001:db8::1"), content="2001:db8::1")
+  inspect(encode_ip_literal("fe80::1%eth0"), content="fe80::1%25eth0")
+  inspect(encode_ip_literal("fe80::1%25\u{100}"), content="fe80::1%2525%C4%80")
+}
+
+///|
+test "resolve_host IPv6 literals" {
+  let (host, port) = resolve_host("[::1]:8080", protocol=Http)
+  inspect(host, content="::1")
+  inspect(port, content="8080")
+  let (host, port) = resolve_host("[2001:db8::1]", protocol=Https)
+  inspect(host, content="2001:db8::1")
+  inspect(port, content="443")
+  let cases = [
+    ("[fe80::1%25eth0]:8080", "fe80::1%eth0", 8080),
+    ("[fe80::1%25en%30]", "fe80::1%en0", 80),
+    ("[fe80::1%25eth%C3%A9]", "fe80::1%ethé", 80),
+  ]
+  for (authority, expected_host, expected_port) in cases {
+    let (host, port) = resolve_host(authority, protocol=Http)
+    @test.assert_eq(host, expected_host)
+    @test.assert_eq(port, expected_port)
+  }
+  for
+    host in [
+      "[localhost]:8080", "[127.0.0.1]", "[fe80::1%eth0]", "[fe80::1%25]", "[fe80::1%25%3]",
+      "[fe80::1%25%zz]", "[fe80::1%25%00]", "[fe80::1%25%20]", "[fe80::1%25%C3]",
+      "[fe80::1%25eth/0]",
+    ] {
+    @debug.debug_inspect(
+      @test.expect_error(() => {
+        let (host, port) = resolve_host(host, protocol=Http)
+        (host.to_owned(), port)
+      }),
+      content="InvalidFormat",
+    )
+  }
+}

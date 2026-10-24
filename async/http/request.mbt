@@ -54,12 +54,14 @@ fn resolve_url(uri : String) -> (Protocol, String, StringView) raise {
 }
 
 ///|
+/// Split an authority into the host name and port to connect to, removing
+/// the brackets around an IPv6 address before passing it to the resolver.
 #cfg(any(target="native", target="wasm"))
 fn resolve_host(
   host : StringView,
   protocol~ : Protocol,
 ) -> (StringView, Int32) raise {
-  if host =~ (
+  let (host, port) = if host =~ (
       re"^" +
       (re".*" as host) +
       re":" +
@@ -72,6 +74,56 @@ fn resolve_host(
   } else {
     (host, protocol.default_port())
   }
+  if host.has_prefix("[") && host.has_suffix("]") {
+    // Brackets hold an IP literal (RFC 3986 section 3.2.2). Only reject what
+    // cannot be an IPv6 address; the resolver checks the rest.
+    let address = host[1:host.length() - 1]
+    guard address.contains(":") else { raise InvalidFormat }
+    // A URI uses `%25` before a zone ID, while the resolver expects `%`.
+    guard address.find("%") is Some(i) else { return (address, port) }
+    guard address[i:].has_prefix("%25") else { raise InvalidFormat }
+    let zone = decode_zone_id(address[i + 3:])
+    ("\{address[:i]}%\{zone}", port)
+  } else {
+    (host, port)
+  }
+}
+
+///|
+/// Decode an RFC 6874 zone ID of unreserved characters and percent-encoded
+/// UTF-8 octets. Reject whitespace and control characters in interface names.
+#cfg(any(target="native", target="wasm"))
+fn decode_zone_id(zone : StringView) -> String raise UriParseError {
+  fn hex(c : Char) -> Int32 raise UriParseError {
+    match c {
+      '0'..<='9' => c.to_int() - '0'.to_int()
+      'a'..<='f' => c.to_int() - 'a'.to_int() + 10
+      'A'..<='F' => c.to_int() - 'A'.to_int() + 10
+      _ => raise InvalidFormat
+    }
+  }
+
+  guard zone.length() > 0 else { raise InvalidFormat }
+  let octets = @buffer.Buffer()
+  let mut rest = zone
+  while rest is [c, .. tail] {
+    match (c, tail) {
+      ('a'..<='z' | 'A'..<='Z' | '0'..<='9' | '-' | '.' | '_' | '~', _) => {
+        octets.write_byte(c.to_int().to_byte())
+        rest = tail
+      }
+      ('%', [hi, lo, .. after]) => {
+        octets.write_byte((hex(hi) * 16 + hex(lo)).to_byte())
+        rest = after
+      }
+      _ => raise InvalidFormat
+    }
+  }
+  let zone = @utf8.decode(octets.contents()) catch { _ => raise InvalidFormat }
+  for c in zone {
+    guard c > ' ' && c != '\u{7f}' else { raise InvalidFormat }
+  }
+  zone
 }
 
 ///|
