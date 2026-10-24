@@ -115,9 +115,8 @@ async test "forward proxy receives target Host and persistent credentials" {
   @async.with_timeout(5000) <| () => {
     @async.with_task_group() <| group => {
       let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-      defer server.close()
       group.spawn_bg(no_wait=true) <| () => {
-        server.run_forever(allow_failure=false) <| ((request, conn) => {
+        server.run_forever() <| ((request, conn) => {
           inspect(
             request.path,
             content="http://origin.example:8081/path?key=value",
@@ -149,9 +148,8 @@ async test "automatic CONNECT uses target Host and proxy credentials" {
   @async.with_timeout(5000) <| () => {
     @async.with_task_group() <| group => {
       let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-      defer server.close()
       group.spawn_bg(no_wait=true) <| () => {
-        server.run_forever(allow_failure=false) <| ((request, conn) => {
+        server.run_forever() <| ((request, conn) => {
           debug_inspect(request.meth, content="Connect")
           inspect(request.path, content="origin.example:8081")
           inspect(request.headers["Host"], content="origin.example:8081")
