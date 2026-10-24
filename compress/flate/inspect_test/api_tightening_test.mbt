@@ -20,6 +20,8 @@ test "codec equality methods can be passed as functions across packages" {
   @test.assert_eq(status_equal(Done, Done), true)
   let action_equal = @flate.DeflateAction::equal
   @test.assert_eq(action_equal(Finish, Finish), true)
+  let gzip_equal = @gzip.GzipErrorKind::equal
+  @test.assert_eq(gzip_equal(Truncated, Truncated), true)
 }
 
 ///|

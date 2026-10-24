@@ -1,0 +1,45 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/compress/gzip"
+
+import {
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn compress(BytesView, level? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn compress_optimal(BytesView, iterations? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn decompress(BytesView) -> Bytes raise GzipError
+
+// Errors
+pub suberror GzipError {
+  GzipError(GzipErrorKind, String)
+}
+
+// Types and methods
+type Decoder
+pub fn Decoder::Decoder(multistream? : Bool) -> Self
+pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise GzipError
+pub fn Decoder::is_finished(Self) -> Bool
+pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise GzipError
+pub fn Decoder::unused_input(Self) -> Bytes
+
+type Encoder
+pub fn Encoder::Encoder(level? : Int32, fast_store? : Bool) -> Self
+pub fn Encoder::is_finished(Self) -> Bool
+pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
+
+pub(all) enum GzipErrorKind {
+  Truncated
+  InvalidHeader
+  InvalidDeflate
+  ChecksumMismatch
+  LengthMismatch
+} derive(Eq, @debug.Debug)
+pub fn GzipErrorKind::equal(Self, Self) -> Bool
+
+// Type aliases
+
+// Traits

@@ -4,6 +4,7 @@ import {
 
 import {
   "moonbitlang/core/compress/flate",
+  "moonbitlang/core/compress/gzip",
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
   "moonbitlang/core/quickcheck",
