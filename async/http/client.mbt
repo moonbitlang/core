@@ -287,6 +287,16 @@ pub async fn Client::end_request(
 /// After performing a request,
 /// the next request MUST NOT be made before the request is completed via `end_request`.
 ///
+/// `path` is the request target. For ordinary requests, pass an origin-form
+/// target such as `/path?query` (or `*` for server-wide OPTIONS).
+/// For a forward proxy, pass an absolute `http://` or `https://` URI;
+/// its authority supplies `Host`, while the connection remains with this client.
+/// For CONNECT, pass the tunnel destination as `host:port`, with brackets around
+/// IPv6 literals. `Host` is generated from that destination as well.
+/// Ordinary requests continue to use the host specified when creating the client.
+/// An invalid target authority or a fragment in an absolute URI raises `InvalidFormat`
+/// before any part of the request is sent. Userinfo is not allowed in the authority.
+///
 /// In addition to headers in `Client::connect`,
 /// extra HTTP headers can be passed via `extra_headers`.
 /// The following headers is automatically set by `request`,
