@@ -1084,13 +1084,17 @@ pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?)
 pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int32?
 pub fn[T] ArrayView::search_by(Self[T], (T) -> Bool raise?) -> Int32? raise?
+pub fn[T] ArrayView::split(Self[T], (T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int32
 pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(Self[T]) -> Array[T]
+pub fn[T1, T2] ArrayView::unzip(Self[(T1, T2)]) -> (Array[T1], Array[T2])
 pub fn[T] ArrayView::windows(Self[T], Int32) -> Array[Self[T]]
+pub fn[A, B] ArrayView::zip(Self[A], Self[B]) -> Array[(A, B)]
+pub fn[A, B] ArrayView::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]
