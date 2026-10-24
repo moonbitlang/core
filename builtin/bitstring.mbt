@@ -83,9 +83,7 @@ pub fn ArrayView::unsafe_extract_byte(
     (byte >> shift) & mask
   } else {
     // extract 16 bits at [byte_index, byte_index + 1]
-    let b0 = bs.unsafe_get(byte_index).to_uint()
-    let b1 = bs.unsafe_get(byte_index + 1).to_uint()
-    let data = (b0 << 8) | b1
+    guard! bs[byte_index:] is [u16be(data), ..]
     // mask off the top bits
     let bit_mask = (1U << (16 - (offset & 7))) - 1
     let data = data & bit_mask
@@ -1021,9 +1019,7 @@ pub fn BytesView::unsafe_extract_byte(
     (byte >> shift) & mask
   } else {
     // extract 16 bits at [byte_index, byte_index + 1]
-    let b0 = bs.unsafe_get(byte_index).to_uint()
-    let b1 = bs.unsafe_get(byte_index + 1).to_uint()
-    let data = (b0 << 8) | b1
+    guard! bs[byte_index:] is [u16be(data), ..]
     // mask off the top bits
     let bit_mask = (1U << (16 - (offset & 7))) - 1
     let data = data & bit_mask
