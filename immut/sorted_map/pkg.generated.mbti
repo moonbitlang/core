@@ -54,7 +54,7 @@ pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int32
 #alias(map_with_key, deprecated)
-pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y) -> Self[K, Y]
+pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y raise?) -> Self[K, Y] raise?
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn

@@ -21,6 +21,7 @@
 
 #### Fixed
 
+- `SortedMap::map` now invokes its callback in ascending key order, the same order as `each`, `iter`, and `fold`. A raising callback stops the traversal, and a non-raising one still makes the call non-raising. `HashMap::map` and immutable `HashMap::map` document that their callbacks follow each map's own traversal (#4357).
 - Compiling very long regex literals (for example `Regex::string` of 100k characters) no longer overflows the stack on the JS and Wasm backends (#4266).
 - `@string.Regex` no longer loses matches (or panics in debug builds) once a pattern needs more than 2047 live capture slots, as long literal runs such as `(a)(?:a{256}){9}` do (#4264).
 - The regex engine's character sets now merge touching intervals on union, so patterns no longer produce redundant symbol classes (#4265).

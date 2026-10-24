@@ -167,16 +167,25 @@ pub fn[K, V] SortedMap::eachi(
 }
 
 ///|
-/// Maps over the key-value pairs in the map.
+/// Maps over the key-value pairs in ascending key order.
+///
+/// `f` runs in the same order as `each`, `iter`, and `fold`: the left
+/// subtree, then this entry, then the right subtree. The result keeps the
+/// source tree's shape. If `f` raises, no pair later in that order is
+/// visited. A non-raising `f` makes this call non-raising too.
 #alias(map_with_key, deprecated)
 pub fn[K, X, Y] SortedMap::map(
   self : SortedMap[K, X],
-  f : (K, X) -> Y,
-) -> SortedMap[K, Y] {
+  f : (K, X) -> Y raise?,
+) -> SortedMap[K, Y] raise? {
   match self {
     Empty => Empty
-    Tree(k, value~, l, r, size~) =>
-      Tree(k, value=f(k, value), size~, l.map(f), r.map(f))
+    Tree(k, value~, l, r, size~) => {
+      let left = l.map(f)
+      let mapped = f(k, value)
+      let right = r.map(f)
+      Tree(k, value=mapped, size~, left, right)
+    }
   }
 }
 
