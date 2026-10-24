@@ -116,6 +116,13 @@ impl BinaryReader with fn read_into(
   guard max_len > 0 else {
     raise Failure("`BinaryReader::read_into()`: `max_len` must not be zero")
   }
+  guard offset >= 0 &&
+    offset <= dst.length() &&
+    max_len <= dst.length() - offset else {
+    raise Failure(
+      "`BinaryReader::read_into()`: destination range out of bounds",
+    )
+  }
   let controller = BinaryReaderImpl::get_controller(self)
   if controller.buf_len > 0 {
     controller.blit_to(dst, offset~, max_len~)
