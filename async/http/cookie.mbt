@@ -42,11 +42,12 @@ pub fn Cookie::Cookie(
 ///|
 #cfg(any(target="native", target="wasm"))
 fn Cookie::parse(line : StringView) -> Cookie raise {
-  guard line.find("=") is Some(name_end) else { raise BadRequest }
-  let name = line[:name_end].to_owned()
-  let rest = line[name_end + 1:]
-  guard rest.find(";") is Some(value_end) else { Cookie(name, rest.to_owned()) }
-  let value = rest[:value_end].to_owned()
+  guard line.split_once("=") is Some((name, rest)) else { raise BadRequest }
+  let name = name.to_owned()
+  guard rest.split_once(";") is Some((value, attrs)) else {
+    Cookie(name, rest.to_owned())
+  }
+  let value = value.to_owned()
 
   let mut path = None
   let mut expires_raw = None
@@ -55,17 +56,9 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
   let mut secure = false
   let mut http_only = false
   let extensions = []
-  for parsed = value_end + 1 {
-    let attr_end = if rest[parsed:].find(";") is Some(attr_end) {
-      parsed + attr_end
-    } else {
-      rest.length()
-    }
-
-    let attr = rest[parsed:attr_end].trim()
-    if attr.find("=") is Some(attr_name_end) {
-      let name = attr[:attr_name_end]
-      let value = attr[attr_name_end + 1:]
+  for attr in attrs.split(";") {
+    let attr = attr.trim()
+    if attr.split_once("=") is Some((name, value)) {
       match name.to_lower() {
         "path" => path = Some(value.to_owned())
         "expires" => expires_raw = Some(value.to_owned())
@@ -82,12 +75,6 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
         "httponly" => http_only = true
         _ => extensions.push(attr.to_owned())
       }
-    }
-
-    if attr_end == rest.length() {
-      break
-    } else {
-      continue attr_end + 1
     }
   }
   {
