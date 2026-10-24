@@ -22,6 +22,9 @@ test "codec equality methods can be passed as functions across packages" {
   @test.assert_eq(action_equal(Finish, Finish), true)
   let gzip_equal = @gzip.GzipErrorKind::equal
   @test.assert_eq(gzip_equal(Truncated, Truncated), true)
+  let zlib_equal = @zlib.ZlibErrorKind::equal
+  @test.assert_eq(zlib_equal(Truncated, Truncated), true)
+  @test.assert_eq(zlib_equal(Truncated, InvalidHeader), false)
 }
 
 ///|

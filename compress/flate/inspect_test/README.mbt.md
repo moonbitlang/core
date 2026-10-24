@@ -1,7 +1,8 @@
 # Compression integration tests
 
 `moonbitlang/core/compress/flate/inspect_test` is a test-only package for the public
-compression APIs. Its `_test.mbt` files exercise `compress/flate`. Keeping these
+compression APIs. Its `_test.mbt` files exercise `compress/flate` and compare
+behavior across the `compress/gzip` and `compress/zlib` wrappers. Keeping these
 tests in a separate package checks the APIs as a caller sees them, including
 method visibility and passing methods as function values. Tests that need codec
 internals live alongside the implementations in `_wbtest.mbt` files.
@@ -20,7 +21,8 @@ The tests cover:
 - Whole-buffer, streaming, and caller-owned output APIs; byte counts,
   backpressure, flushing, and finalization.
 - Preset dictionaries, sliding-window boundaries, workspace reuse, and reset.
-- Compression round trips, split and optimal parsing, and fast-store behavior.
+- Compression round trips, split and optimal parsing, and fast-store behavior
+  across raw DEFLATE, gzip, and zlib.
 
 Run this package from the repository root:
 
