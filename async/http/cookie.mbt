@@ -40,12 +40,16 @@ pub fn Cookie::Cookie(
 }
 
 ///|
+/// Parse a `Set-Cookie` value, ignoring a line without a name-value pair
+/// or a malformed `Max-Age` attribute as specified by RFC 6265 section 5.2.
 #cfg(any(target="native", target="wasm"))
-fn Cookie::parse(line : StringView) -> Cookie raise {
-  guard line.split_once("=") is Some((name, rest)) else { raise BadRequest }
+fn Cookie::parse(line : StringView) -> Cookie? {
+  guard line.split_once("=") is Some((name, rest)) && !name.contains(";") else {
+    return None
+  }
   let name = name.to_owned()
   guard rest.split_once(";") is Some((value, attrs)) else {
-    Cookie(name, rest.to_owned())
+    return Some(Cookie(name, rest.to_owned()))
   }
   let value = value.to_owned()
 
@@ -62,10 +66,10 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
       match name.to_lower() {
         "path" => path = Some(value.to_owned())
         "expires" => expires_raw = Some(value.to_owned())
-        "max-age" => {
-          let value = @string.parse_int64(value) catch { _ => raise BadRequest }
-          max_age = Some(value)
-        }
+        "max-age" =>
+          if parse_max_age(value) is Some(value) {
+            max_age = Some(value)
+          }
         "domain" => domain = Some(value.to_owned())
         _ => extensions.push(attr.to_owned())
       }
@@ -77,7 +81,7 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
       }
     }
   }
-  {
+  Some({
     name,
     value,
     path,
@@ -87,6 +91,22 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
     secure,
     http_only,
     extensions,
+  })
+}
+
+///|
+/// Ignore invalid syntax (RFC 6265 section 5.2.2). Also ignore values outside
+/// `Int64`, since this implementation cannot represent them.
+#cfg(any(target="native", target="wasm"))
+fn parse_max_age(value : StringView) -> Int64? {
+  let digits = if value.has_prefix("-") { value[1:] } else { value }
+  guard digits.length() > 0 && digits.iter().all(c => c is ('0'..<='9')) else {
+    return None
+  }
+  try @string.parse_int64(value) catch {
+    _ => None
+  } noraise {
+    value => Some(value)
   }
 }
 
