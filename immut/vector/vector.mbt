@@ -902,12 +902,7 @@ fn tail_len_of_size(size : Int32) -> Int32 {
   if size <= BRANCHING_FACTOR {
     size
   } else {
-    let rem = size % BRANCHING_FACTOR
-    if rem == 0 {
-      0
-    } else {
-      rem
-    }
+    size % BRANCHING_FACTOR
   }
 }
 

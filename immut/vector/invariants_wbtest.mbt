@@ -155,8 +155,8 @@ fn[A] check_tree(t : Tree[A], shift : Int32, path : String) -> Unit raise {
         t.size(shift) == true_size(t),
         "\{path}: Tree::size = \{t.size(shift)}, recomputed \{true_size(t)}",
       )
-      for i in 0..<len {
-        check_tree(children[i], child_shift, "\{path}.\{i}")
+      for i, child in children {
+        check_tree(child, child_shift, "\{path}.\{i}")
       }
     }
   }
@@ -202,11 +202,8 @@ fn check_contents(
     v.length() == model.length(),
     "\{what}: length \{v.length()} != model \{model.length()}",
   )
-  for i in 0..<model.length() {
-    ensure(
-      v[i] == model[i],
-      "\{what}: at(\{i}) = \{v[i]}, expected \{model[i]}",
-    )
+  for i, x in model {
+    ensure(v[i] == x, "\{what}: at(\{i}) = \{v[i]}, expected \{x}")
   }
 }
 

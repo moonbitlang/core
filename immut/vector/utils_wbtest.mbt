@@ -89,9 +89,8 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
       }
       Concat(v) => {
         // concat
-        let len = v.length()
-        for i in 0..<len {
-          a.push(v[i])
+        for x in v {
+          a.push(x)
         }
         t = t.concat(from_array(v))
         check_array_eq(a, t)
