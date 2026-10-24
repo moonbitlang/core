@@ -27,7 +27,7 @@ pub impl[X : Eq] Eq for X? with fn equal(self, other) {
 pub fn[X : Show] Option::to_string(self : X?) -> String {
   match self {
     None => "None"
-    Some(x) => "Some(" + x.to_string() + ")"
+    Some(x) => "Some(\{x})"
   }
 }
 

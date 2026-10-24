@@ -175,11 +175,10 @@ fn rev_find_byte_from_view(
   end : Int32,
   byte : Byte,
 ) -> Int32 {
-  for pos = end - 1; pos >= start; {
+  for pos in end>..start {
     if target.unsafe_get(pos) == byte {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }
@@ -285,11 +284,10 @@ fn rev_find_byte_from_bytes(
   } nobreak {
     pos
   }
-  for pos = head_end - 1; pos >= start; {
+  for pos in head_end>..start {
     if data.unsafe_get(pos) == byte {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }
@@ -402,12 +400,11 @@ fn rev_find_short_candidate_from_view(
   last_offset : Int32,
   last : Byte,
 ) -> Int32 {
-  for pos = candidate_end - 1; pos >= start; {
+  for pos in candidate_end>..start {
     if target.unsafe_get(pos) == first &&
       target.unsafe_get(pos + last_offset) == last {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }
@@ -478,12 +475,11 @@ fn rev_find_short_candidate_from_bytes(
   } nobreak {
     pos
   }
-  for pos = head_end - 1; pos >= start; {
+  for pos in head_end>..start {
     if data.unsafe_get(pos) == first &&
       data.unsafe_get(pos + last_offset) == last {
       break pos
     }
-    continue pos - 1
   } nobreak {
     -1
   }

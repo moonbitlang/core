@@ -210,7 +210,7 @@ fn array_growth_capacity(
     abort("Array capacity overflow")
   }
   let start = if current == 0 { 8 } else { current }
-  let enough_space = for space = start; space < required; {
+  for space = start; space < required; {
     let next = space * 2
     if next <= space {
       break required
@@ -219,7 +219,6 @@ fn array_growth_capacity(
   } nobreak {
     space
   }
-  enough_space
 }
 
 ///|
