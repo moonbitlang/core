@@ -821,8 +821,7 @@ fn[A] compute_sizes(
   let mut sum = 0
   let mut flag = true
   let full_subtree_size = BRANCHING_FACTOR << shift
-  for i in 0..<len {
-    let child = children[i]
+  for i, child in children {
     let sz = child.size(shift)
     // Dropping the sizes array commits every reader to radix descent, so the
     // children must be full *and* radix themselves.

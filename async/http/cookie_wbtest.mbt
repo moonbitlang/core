@@ -93,3 +93,42 @@ test "parse cookie ignores malformed lines and attributes" {
   let cookie = Cookie::parse("Cookie=value; Max-Age=60; Max-Age=soon").unwrap()
   @debug.debug_inspect(cookie.max_age, content="Some(60)")
 }
+
+///|
+test "parse cookie preserves empty attributes" {
+  @debug.debug_inspect(
+    Cookie::parse("Cookie=value").unwrap().extensions,
+    content="[]",
+  )
+  @debug.debug_inspect(
+    Cookie::parse("Cookie=value;").unwrap().extensions,
+    content=(
+      #|[""]
+    ),
+  )
+  @debug.debug_inspect(
+    Cookie::parse("Cookie=value;; secure; ;").unwrap().extensions,
+    content=(
+      #|["", "", ""]
+    ),
+  )
+}
+
+///|
+test "parse cookie preserves equals in values" {
+  inspect(Cookie::parse("Cookie=a=b==").unwrap().value, content="a=b==")
+  let cookie = Cookie::parse("Cookie=a=b==; path=/a=b; extension=x=y").unwrap()
+  inspect(cookie.value, content="a=b==")
+  @debug.debug_inspect(
+    cookie.path,
+    content=(
+      #|Some("/a=b")
+    ),
+  )
+  @debug.debug_inspect(
+    cookie.extensions,
+    content=(
+      #|["extension=x=y"]
+    ),
+  )
+}

@@ -20,10 +20,9 @@ pub suberror Malformed {
 
 ///|
 fn drop_utf8_bom(bytes : BytesView, ignore_bom : Bool) -> BytesView {
-  let bytes = if ignore_bom && bytes is [.. b"\xef\xbb\xbf", .. rest] {
+  if ignore_bom && bytes is [.. b"\xef\xbb\xbf", .. rest] {
     rest
   } else {
     bytes
   }
-  bytes
 }

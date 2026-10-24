@@ -44,14 +44,14 @@ pub fn Cookie::Cookie(
 /// or a malformed `Max-Age` attribute as specified by RFC 6265 section 5.2.
 #cfg(any(target="native", target="wasm"))
 fn Cookie::parse(line : StringView) -> Cookie? {
-  let name_value_end = line.find(";").unwrap_or(line.length())
-  guard line[:name_value_end].find("=") is Some(name_end) else { return None }
-  let name = line[:name_end].to_owned()
-  guard line[name_end + 1:].find(";") is Some(value_end) else {
-    return Some(Cookie(name, line[name_end + 1:].to_owned()))
+  guard line.split_once("=") is Some((name, rest)) && !name.contains(";") else {
+    return None
   }
-  let value_end = name_end + 1 + value_end
-  let value = line[name_end + 1:value_end].to_owned()
+  let name = name.to_owned()
+  guard rest.split_once(";") is Some((value, attrs)) else {
+    return Some(Cookie(name, rest.to_owned()))
+  }
+  let value = value.to_owned()
 
   let mut path = None
   let mut expires_raw = None
@@ -60,17 +60,9 @@ fn Cookie::parse(line : StringView) -> Cookie? {
   let mut secure = false
   let mut http_only = false
   let extensions = []
-  for parsed = value_end + 1 {
-    let attr_end = if line[parsed:].find(";") is Some(attr_end) {
-      parsed + attr_end
-    } else {
-      line.length()
-    }
-
-    let attr = line[parsed:attr_end].trim()
-    if attr.find("=") is Some(attr_name_end) {
-      let name = attr[:attr_name_end]
-      let value = attr[attr_name_end + 1:]
+  for attr in attrs.split(";") {
+    let attr = attr.trim()
+    if attr.split_once("=") is Some((name, value)) {
       match name.to_lower() {
         "path" => path = Some(value.to_owned())
         "expires" => expires_raw = Some(value.to_owned())
@@ -87,12 +79,6 @@ fn Cookie::parse(line : StringView) -> Cookie? {
         "httponly" => http_only = true
         _ => extensions.push(attr.to_owned())
       }
-    }
-
-    if attr_end == line.length() {
-      break
-    } else {
-      continue attr_end + 1
     }
   }
   Some({

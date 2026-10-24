@@ -37,8 +37,8 @@ fn assign_positionals(
       if take > remaining {
         take = remaining
       }
-      for offset in 0..<take {
-        add_value(matches, arg.name, values[cursor + offset], arg, Argv)
+      for value in values[cursor:cursor + take] {
+        add_value(matches, arg.name, value, arg, Argv)
       }
       continue cursor + take
     }

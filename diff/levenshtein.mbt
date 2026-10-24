@@ -64,11 +64,7 @@ pub enum LevenshteinEdit {
 ///|
 /// Length of the longest common prefix of `old` and `new`.
 fn[T : Eq] common_prefix_len(old : ArrayView[T], new : ArrayView[T]) -> Int32 {
-  let max = if old.length() < new.length() {
-    old.length()
-  } else {
-    new.length()
-  }
+  let max = old.length().min(new.length())
   let mut i = 0
   while i < max && old[i] == new[i] {
     i += 1

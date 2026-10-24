@@ -54,7 +54,6 @@ test "stringview access iter" {
   let str = "Hello🤣🤣🤣"
   let view = str.exact_view(start=1, end=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
-  inspect(view.iter().nth(4).unwrap(), content="🤣")
 }
 
 ///|
@@ -1240,8 +1239,7 @@ test "stringview equal_ignore_ascii_case" {
 
   // Cross-check with compare_ignore_ascii_case
   let cases = [("Foo", "FOO"), ("Foo", "Bar"), ("Foo", "FoO!"), ("ä", "Ä")]
-  for c in cases {
-    let (x, y) = c
+  for (x, y) in cases {
     @test.assert_eq(
       x.exact_view().equal_ignore_ascii_case(y.exact_view()),
       x.exact_view().compare_ignore_ascii_case(y.exact_view()) == 0,

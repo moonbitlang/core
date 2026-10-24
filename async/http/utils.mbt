@@ -63,7 +63,7 @@ fn is_valid_http_header_field_name(name : StringView) -> Bool {
   for c in name.code_units() {
     guard is_token_char(c) else { return false }
   } nobreak {
-    name.length() > 0
+    !name.is_empty()
   }
 }
 

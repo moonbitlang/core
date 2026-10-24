@@ -1591,8 +1591,7 @@ let lexmatch_cases : ReadOnlyArray[(String, String)] = [
 ///|
 test "whole matches agree with compile-time lexmatch" {
   let mut checks = 0
-  for case_ in lexmatch_cases {
-    let (pattern, results) = case_
+  for (pattern, results) in lexmatch_cases {
     let re = @string.Regex::unsafe_from_string(pattern)
     let expected = results.split(" ").collect()
     assert_eq(expected.length(), lexmatch_inputs.length())

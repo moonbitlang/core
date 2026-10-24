@@ -192,8 +192,8 @@ test "quickcheck: concat agrees with array append at tree-shape boundaries" {
       guard c.length() == la + lb else { return false }
       // random access at every index of the concatenated tree — the classic
       // place where a mis-rebalanced node shifts elements
-      for i in 0..<expected.length() {
-        guard c.at(i) == expected[i] else { return false }
+      for i, x in expected {
+        guard c.at(i) == x else { return false }
       }
       guard c.to_array() == expected else { return false }
       // `+` is concat
@@ -402,8 +402,8 @@ test "quickcheck: random access survives slice/concat/push/pop pipelines" {
       guard v.length() == model.length() else { return false }
       // Read every index. A radix/relaxed mix-up shows up here as a wrong
       // element or an abort - never as a wrong length.
-      for i in 0..<model.length() {
-        guard v.at(i) == model[i] else { return false }
+      for i, x in model {
+        guard v.at(i) == x else { return false }
       }
       guard v.to_array() == model else { return false }
       // the vector must still be usable afterwards

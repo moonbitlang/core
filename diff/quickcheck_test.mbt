@@ -70,10 +70,7 @@ fn mutate(
         if !out.is_empty() {
           let start = pos % out.length()
           let stop = (start + (op.2 & 3) + 1).min(out.length())
-          let block : Array[Int32] = []
-          for k in start..<stop {
-            block.push(out[k])
-          }
+          let block : Array[Int32] = [ for k in start..<stop => out[k] ]
           for i, x in block {
             out.insert(stop + i, x)
           }
@@ -83,10 +80,7 @@ fn mutate(
         if !out.is_empty() {
           let start = pos % out.length()
           let stop = (start + (op.2 & 3) + 1).min(out.length())
-          let block : Array[Int32] = []
-          for k in start..<stop {
-            block.push(out[k])
-          }
+          let block : Array[Int32] = [ for k in start..<stop => out[k] ]
           for _ in start..<stop {
             out.remove(start) |> ignore
           }

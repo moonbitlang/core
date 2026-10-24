@@ -2650,32 +2650,6 @@ pub fn Byte::to_double(self : Byte) -> Double {
 }
 
 ///|
-/// The identity constructor for `Float`, allowing values to be written using
-/// constructor syntax, e.g. `Float(3.2)`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   ignore(Float(3.2))
-/// }
-/// ```
-pub fn Float::Float(self : Float) -> Float = "%identity"
-
-///|
-/// The identity constructor for `Int16`, allowing values to be written using
-/// constructor syntax, e.g. `Int16(3)`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(Int16(3), content="3")
-/// }
-/// ```
-pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
-
-///|
 /// Converts an unsigned 16-bit integer to a 32-bit signed integer. The value is
 /// zero-extended to fill the higher bits.
 ///
