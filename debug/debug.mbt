@@ -233,10 +233,7 @@ pub fn debug_inspect(
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
   let actual = render(obj.to_repr())
-  let want = match content {
-    None => ""
-    Some(x) => x
-  }
+  let want = content.unwrap_or("")
   if actual != want {
     // Only a failing check needs the locations; formatting them is most of
     // the cost of a passing call.
@@ -282,10 +279,10 @@ pub fn[T : Eq + Debug] assert_eq(
 
 ///|
 test "core builtin Debug implementations" {
-  debug_inspect(Int16(1), content="1")
+  debug_inspect(@int16.Int16(1), content="1")
   debug_inspect(UInt16(1), content="1")
   debug_inspect(UInt64(1), content="1")
-  debug_inspect(Float(1.0), content="1")
+  debug_inspect(@float.Float(1.0), content="1")
   let b : Bytes = b"ab"
   debug_inspect(b, content="<Bytes: [0x61, 0x62]>")
   let bv : BytesView = b
@@ -317,10 +314,7 @@ test "core builtin Debug implementations" {
 #callsite(autofill(loc))
 #deprecated("This function is for debugging only and should not be used in production", skip_current_package=true)
 pub fn[T : Debug] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
-  let name = match name {
-    Some(name) => name
-    None => ""
-  }
+  let name = name.unwrap_or("")
   println("dump(\{name}@\{loc}) = \{to_string(t)}")
   t
 }

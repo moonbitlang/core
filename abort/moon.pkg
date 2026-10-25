@@ -1,3 +1,0 @@
-warnings = "-35"
-
-virtual(has_default: true) // virtual is reserved in MoonBit lexer

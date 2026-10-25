@@ -74,7 +74,12 @@ pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 fn[T] unsafe_is_unique_ref(value : T) -> Bool = "%unsafe_is_unique_ref"
 
 ///|
-pub using @abort {abort}
+/// Aborts execution with an error message. This function never returns.
+///
+/// JavaScript and native backends print the message to stderr before panicking.
+/// Linear-memory Wasm does the same when linked with WASI support. Otherwise,
+/// Wasm and Wasm GC trap without printing the message or requiring I/O imports.
+pub fn[T] abort(msg : String) -> T = "%abort"
 
 ///|
 /// Raise a panic with no payload.
@@ -2643,32 +2648,6 @@ pub fn UInt32::to_double(self : UInt32) -> Double = "%u32.to_f64"
 pub fn Byte::to_double(self : Byte) -> Double {
   self.to_int().to_double()
 }
-
-///|
-/// The identity constructor for `Float`, allowing values to be written using
-/// constructor syntax, e.g. `Float(3.2)`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   ignore(Float(3.2))
-/// }
-/// ```
-pub fn Float::Float(self : Float) -> Float = "%identity"
-
-///|
-/// The identity constructor for `Int16`, allowing values to be written using
-/// constructor syntax, e.g. `Int16(3)`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(Int16(3), content="3")
-/// }
-/// ```
-pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
 
 ///|
 /// Converts an unsigned 16-bit integer to a 32-bit signed integer. The value is

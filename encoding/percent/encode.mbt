@@ -45,9 +45,8 @@ fn write_escape(builder : StringBuilder, byte : Int32) -> Unit {
 /// `!*'()` unescaped: those five characters are reserved sub-delimiters in
 /// RFC 3986 and are escaped here.
 pub fn encode(text : StringView) -> String {
-  // size_hint is measured in bytes: an ASCII input that needs no escaping
-  // produces `text.length()` code units of two bytes each.
-  let builder = StringBuilder(size_hint=2 * text.length())
+  // An ASCII input that needs no escaping produces `text.length()` UTF-16 units.
+  let builder = StringBuilder(size_hint=text.length())
   let length = text.length()
   let mut i = 0
   // Start of the pending run of unreserved characters, copied in one piece.

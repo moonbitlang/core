@@ -436,22 +436,18 @@ fn[T : Eq + Hash] make_indexer(
   let n = a.length()
   let present : Map[T, Bool] = Map([], capacity=b.length())
 
-  for i in 0..<b.length() {
-    present[b[i]] = true
+  for elem in b {
+    present[elem] = true
   }
   let ai = FixedArray::make(n, 0) // temporary storage for valid indices
   let mut k = 0 // valid element count
 
-  for i in 0..<n {
-    guard present.get(a[i]) is Some(_) else { () } // doesn't exist in b, skip
+  for i, elem in a {
+    guard present.get(elem) is Some(_) else { () } // doesn't exist in b, skip
     ai[k] = i // record original index of this element
     k += 1
   }
-  let result = FixedArray::make(k, 0)
-  for i in 0..<k {
-    result[i] = ai[i]
-  }
-  result
+  FixedArray::makei(k, i => ai[i])
 }
 
 ///|
@@ -555,8 +551,7 @@ fn[T : Eq + Hash] append_patience_matches(
   // so unmatched gaps fall back to Myers instead of recursing.
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
-  for i in 0..<anchors.length() {
-    let (old_idx, new_idx) = anchors[i]
+  for (old_idx, new_idx) in anchors {
     append_myers_matches(
       matches,
       cutoff,
@@ -671,8 +666,7 @@ pub fn[T : Hash + Eq] Diff::Diff(
   let mut equal_old_idx = 0
   let mut equal_new_idx = 0
   let mut consecutive_equal_length = 0
-  for pair in matches {
-    let (old_idx, new_idx) = pair
+  for (old_idx, new_idx) in matches {
     // emit delete
     if prev_old_idx != old_idx {
       if consecutive_equal_length != 0 {

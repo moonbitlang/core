@@ -96,14 +96,14 @@ struct MatchResult {
 /// Return match `before` view.
 pub fn MatchResult::before(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
-  self.input[0:start]
+  self.input[:start]
 }
 
 ///|
 /// Return match `after` view.
 pub fn MatchResult::after(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
-  self.input[end:self.input.length()]
+  self.input[end:]
 }
 
 ///|
@@ -358,10 +358,10 @@ pub fn Regex::execute(
   input : StringView,
   last_index~ : Int32 = 0,
 ) -> MatchResult? {
-  match self.re().execute(input, last_index) {
+  let re = self.re()
+  match re.execute(input, last_index) {
     None => None
-    Some(result) =>
-      Some({ input, group_names: self.re().group_names(), result, })
+    Some(result) => Some({ input, group_names: re.group_names(), result, })
   }
 }
 

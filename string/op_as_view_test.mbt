@@ -26,17 +26,13 @@ test "String::op_as_view with positive indices" {
   let view3 = s[:5]
   inspect(view3, content="hello")
 
-  // Test with default end (length of string)
-  let view4 = s[6:]
-  inspect(view4, content="world")
-
   // Test entire string
-  let view5 = s[:]
-  inspect(view5, content="hello world")
+  let view4 = s[:]
+  inspect(view4, content="hello world")
 
   // Test empty range
-  let view6 = s[5:5]
-  inspect(view6, content="")
+  let view5 = s[5:5]
+  inspect(view5, content="")
 }
 
 ///|

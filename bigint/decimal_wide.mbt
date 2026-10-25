@@ -176,7 +176,7 @@ fn write_decimal_leaf(
     builder.write_char('0')
   }
   builder.write_string(head)
-  for i = chunks.length() - 2; i >= 0; i = i - 1 {
+  for i in (chunks.length() - 1)>..0 {
     let chunk = chunks[i].to_string()
     for _ in chunk.length()..<DECIMAL_CHUNK_DIGITS {
       builder.write_char('0')

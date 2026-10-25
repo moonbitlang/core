@@ -22,14 +22,17 @@ struct StringBuilder {
 ///
 /// Parameters:
 ///
-/// * `size_hint` : An optional initial capacity hint for the internal buffer. If
-/// less than 1, a minimum capacity of 1 is used. Defaults to 0. It is the size of bytes, 
-/// not the size of characters. `size_hint` may be ignored on some platforms, JS for example.
+/// * `size_hint` : An optional initial capacity hint for the internal buffer,
+/// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
+/// buffer. `size_hint` may be ignored on some platforms, JS for example.
 ///
-/// Returns a new `StringBuilder` instance with the specified initial capacity.
+/// Returns a new `StringBuilder` instance.
+///
+/// Aborts if `size_hint` is negative.
 ///
 #alias(new, deprecated="Use `StringBuilder()` instead")
-pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 0) -> StringBuilder {
+pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 8) -> StringBuilder {
+  guard size_hint >= 0 else { abort("size_hint must be non-negative") }
   ignore(size_hint)
   { val: "", }
 }
@@ -89,6 +92,23 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 
 ///|
 /// Resets the string builder to an empty state.
-pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
+///
+/// Keeps the allocated capacity by default for reuse. Set `keep_capacity=false`
+/// to discard the backing buffer. Previously returned strings are unaffected.
+/// This option has no effect on JS, which does not retain a mutable buffer.
+///
+/// ```mbt check
+/// test {
+///   let builder = StringBuilder()
+///   builder.write_string("hello")
+///   builder.reset(keep_capacity=false)
+///   inspect(builder.to_string(), content="")
+/// }
+/// ```
+pub fn StringBuilder::reset(
+  self : StringBuilder,
+  keep_capacity~ : Bool = true,
+) -> Unit {
+  ignore(keep_capacity)
   self.val = ""
 }

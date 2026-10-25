@@ -79,31 +79,6 @@ fn Repr::info_adds_depth(info : Repr) -> Bool {
 }
 
 ///|
-/// Heuristic "size" of a node for compact-vs-multiline decisions.
-fn info_size(info : Repr) -> Int32 {
-  match info {
-    UnitLit => 1
-    Integer(_) => 1
-    DoubleLit(_) => 1
-    FloatLit(_) => 1
-    BoolLit(_) => 1
-    CharLit(_) => 1
-    StringLit(s) => if s.length() <= 15 { 1 } else { 2 }
-    Tuple(_) => 1
-    Array(_) => 1
-    Record(_) => 2
-    RecordField(name, _) => if name.length() <= 15 { 0 } else { 1 }
-    EnumLabeledArg(name, _) => if name.length() <= 15 { 0 } else { 1 }
-    Enum(name, _) => if name.length() <= 15 { 1 } else { 2 }
-    Opaque(name, _) => if name.length() <= 15 { 1 } else { 2 }
-    Literal(s) => if s.length() <= 15 { 1 } else { 2 }
-    Map(_) => 2
-    MapEntry(_, _) => 0
-    Omitted => 0
-  }
-}
-
-///|
 /// Returns `true` when a record field name can be printed without quotes.
 fn is_unquoted_key(key : String) -> Bool {
   match key {
@@ -135,7 +110,7 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
       leaf(x.to_string(), needs_parens~)
     }
     FloatLit(x) => {
-      let needs_parens : Bool = Float(1.0) / x < Float(0.0)
+      let needs_parens : Bool = @float.Float(1.0) / x < @float.Float(0.0)
       leaf(x.to_string(), needs_parens~)
     }
     BoolLit(x) => leaf(x.to_string())
@@ -174,12 +149,6 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
           let v = val.no_wrap()
           match v.lines {
             [] => empty_content()
-            [one] =>
-              no_parens(
-                content_parens(1 + k.size + v.size, [
-                  print_content(surround("", ": ", k)) + one,
-                ]),
-              )
             [first, .. rest] => {
               let head = print_content(surround("", ": ", k)) + first
               no_parens(content_parens(1 + k.size + v.size, [head, ..rest]))
@@ -193,8 +162,6 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
         [val] =>
           match val.lines {
             [] => empty_content()
-            [first] =>
-              no_parens(content_parens(1 + val.size, [name + "=" + first]))
             [first, .. rest] =>
               no_parens(
                 content_parens(1 + val.size, [name + "=" + first, ..rest]),
@@ -209,7 +176,6 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
           let v = val.no_wrap()
           match v.lines {
             [] => empty_content()
-            [one] => no_parens(content_parens(1 + v.size, [label + ": " + one]))
             [first, .. rest] =>
               no_parens(
                 content_parens(1 + v.size, [label + ": " + first, ..rest]),
@@ -227,7 +193,7 @@ fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
 fn Repr::render_repr(self : Repr, threshold : Int32) -> Content {
   let label = self.shallow()
   let children = self.children().map(child => child.render_repr(threshold))
-  with_resizing(info_size(label), threshold, label.pretty_print(children))
+  with_resizing(threshold, label.pretty_print(children))
 }
 
 ///|

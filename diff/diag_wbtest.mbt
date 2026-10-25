@@ -14,10 +14,7 @@
 
 ///|
 fn[T] identity_compacted(source : Array[T]) -> CompactedElements[T] {
-  let indices = FixedArray::make(source.length(), 0)
-  for i in 0..<source.length() {
-    indices[i] = i
-  }
+  let indices = FixedArray::makei(source.length(), i => i)
   CompactedElements((source, indices))
 }
 
@@ -83,11 +80,7 @@ fn patterned_array(
   shift : Int32,
   modulo : Int32,
 ) -> Array[Int32] {
-  let result = Array::make(length, 0)
-  for i in 0..<length {
-    result[i] = (i + shift) % modulo
-  }
-  result
+  Array::makei(length, i => (i + shift) % modulo)
 }
 
 ///|
@@ -120,13 +113,13 @@ test "diag heuristic path can choose either side" {
   let saw_forward = @ref.Ref(false)
   let saw_backward = @ref.Ref(false)
   for n in 3..<=8 {
-    for m = 3; m <= 8; m = m + 1 {
+    for m in 3..<=8 {
       for old_shift in 0..<5 {
-        for new_shift = 0; new_shift < 5; new_shift = new_shift + 1 {
+        for new_shift in 0..<5 {
           let old = patterned_array(n, old_shift, 5)
           let new = patterned_array(m, new_shift, 5)
-          for xoff = 0; xoff <= 1; xoff = xoff + 1 {
-            for yoff = 0; yoff <= 1; yoff = yoff + 1 {
+          for xoff in 0..<=1 {
+            for yoff in 0..<=1 {
               if xoff < n && yoff < m {
                 let partition = run_diag_range(
                   old, new, xoff, n, yoff, m, 0, false,

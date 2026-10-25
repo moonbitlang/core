@@ -109,8 +109,8 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
   guard json is Array(arr) else {
     raise JsonDecodeError((path, "@list.from_json: expected array"))
   }
-  for i = arr.length() - 1, list = Empty; i >= 0; {
-    continue i - 1, list.prepend(A::from_json(arr[i], path.add_index(i)))
+  for i in arr.length()>..0; list = Empty {
+    continue list.prepend(A::from_json(arr[i], path.add_index(i)))
   } nobreak {
     list
   }
@@ -885,13 +885,10 @@ pub fn[A] List::repeat(n : Int32, x : A) -> List[A] {
     abort("negative repeat count")
   }
   for acc = Empty, i = n {
-    match (acc, i) {
-      (acc, n) =>
-        if n <= 0 {
-          break acc
-        } else {
-          continue More(x, tail=acc), n - 1
-        }
+    if i <= 0 {
+      break acc
+    } else {
+      continue More(x, tail=acc), i - 1
     }
   }
 }
@@ -1850,7 +1847,7 @@ pub fn[A] List::iter2(self : List[A]) -> Iter2[Int32, A] {
 pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
   let mut head = Empty
   let mut tail = Empty
-  while iter.next() is Some(x) {
+  for x in iter {
     match tail {
       Empty => {
         tail = More(x, tail~)

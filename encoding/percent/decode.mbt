@@ -72,9 +72,8 @@ pub fn decode_lossy(text : StringView) -> String {
 /// returns `Some`.
 fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
   let length = text.length()
-  // size_hint is measured in bytes; the output has at most `length` code
-  // units of two bytes each.
-  let builder = StringBuilder(size_hint=2 * length)
+  // The output has at most `length` UTF-16 code units.
+  let builder = StringBuilder(size_hint=length)
   let bytes = @buffer.Buffer()
   let mut i = 0
   // Start of the pending span of literal characters, copied in one piece.

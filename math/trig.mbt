@@ -356,7 +356,7 @@ pub fn asinf(x : Float) -> Float {
     }
     return x + x * r(x * x)
   }
-  let z = (Float(1.0) - x.abs()) * 0.5
+  let z = (@float.Float(1.0) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
   let x = Float::from_double(pio2 - 2.0 * (s + s * r(z).to_double()))
   if hx >> 31 != 0 {
@@ -440,7 +440,8 @@ pub fn acosf(x : Float) -> Float {
   }
   let z = (one - x) * 0.5
   let s = z.sqrt()
-  let df = s
+  // musl acosf.c: SET_FLOAT_WORD(df, hx & 0xfffff000), which makes df*df exact
+  let df = Float::reinterpret_from_uint(s.reinterpret_as_uint() & 0xfffff000)
   let c = (z - df * df) / (s + df)
   let w = r(z) * s + c
   two * (df + w)
@@ -638,6 +639,7 @@ pub fn atan2f(y : Float, x : Float) -> Float {
     return @float.not_a_number
   }
   let pi : Float = 3.1415927410e+00
+  let pi_lo : Float = -8.7422776573e-08
   let zero : Float = 0.0
   let ix = x.reinterpret_as_uint()
   let iy = y.reinterpret_as_uint()
@@ -687,7 +689,7 @@ pub fn atan2f(y : Float, x : Float) -> Float {
   match m {
     0 => z
     1 => -z
-    2 => pi - z
-    _ => z - pi
+    2 => pi - (z - pi_lo)
+    _ => z - pi_lo - pi
   }
 }

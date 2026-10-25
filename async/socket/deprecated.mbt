@@ -1,0 +1,68 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Addr with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Addr with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Addr with Hash::{hash, hash_combine}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Addr with Show::{output}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Addr with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend InvalidAddr with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend InvalidAddr with @json.ToJson::{to_json}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ResolveHostnameError with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ResolveHostnameError with @json.ToJson::{to_json}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ResolveHostnameError with Show::{output}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend IpProtocolPreference with @debug.Debug::{to_repr}

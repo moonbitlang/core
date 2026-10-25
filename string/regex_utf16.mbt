@@ -28,8 +28,7 @@ fn re_lower_cset(cs : @re.RecharSet) -> @re.Pattern {
   if !cset1.is_empty() {
     alts.push(@re.char(cset1))
   }
-  for interval in cset2.intervals() {
-    let (lo, hi) = interval
+  for (lo, hi) in cset2.intervals() {
     if lo == hi {
       let pair = re_surrogate_pair(lo)
       alts.push(

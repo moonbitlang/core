@@ -48,6 +48,18 @@ test "reset does not mutate returned string" {
 }
 
 ///|
+test "StringBuilder size_hint zero grows" {
+  let buf = StringBuilder(size_hint=0)
+  buf.write_string("hello")
+  inspect(buf.to_string(), content="hello")
+}
+
+///|
+test "panic StringBuilder constructor negative size_hint" {
+  ignore(StringBuilder(size_hint=-1))
+}
+
+///|
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.json_inspect(
@@ -137,7 +149,7 @@ test "UTF-16 StringBuilder copies offset views across block boundaries" {
 test "UTF-16 StringBuilder appends returned strings through growth and reset" {
   for len in [7, 8, 9, 15, 16, 17, 31, 32, 33, 65] {
     let input = "ab汉😀Bé汉😁z".repeat(8)[:len].to_owned()
-    let builder = StringBuilder(size_hint=len * 2)
+    let builder = StringBuilder(size_hint=len)
     builder.write_string(input)
     let first = builder.to_string()
     builder.write_string(first)

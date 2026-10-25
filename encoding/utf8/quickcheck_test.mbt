@@ -450,16 +450,9 @@ test "every scalar round-trips, with the byte length Table 3-6 prescribes" {
     let text = String::from_array([scalar.unsafe_to_char()])
     let bytes = @utf8.encode(text)
     assert_eq(bytes.length(), expected_length(scalar))
-    assert_eq(
-      bytes,
-      Bytes::from_array(
-        {
-          let o = []
-          push_scalar(o, scalar)
-          o
-        },
-      ),
-    )
+    let expected = []
+    push_scalar(expected, scalar)
+    assert_eq(bytes, Bytes::from_array(expected))
     assert_eq(@utf8.decode(bytes), text)
     assert_eq(@utf8.decode_lossy(bytes), text)
   }

@@ -1,0 +1,14 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async/internal/env_util",
+  "moonbitlang/core/async/internal/c_buffer",
+}
+
+options(
+  targets: {
+    "errno_linux.mbt": [ "native", "wasm" ],
+    "errno_macos.mbt": [ "native", "wasm" ],
+    "errno_windows.mbt": [ "native", "wasm" ],
+    "errno_common.mbt": [ "native", "wasm" ],
+  },
+)

@@ -130,7 +130,7 @@ test "vectorized paths honor view start and end offsets" {
       let bytes_view = padded[pad:pad + length]
       @test.assert_eq(encode(bytes_view), encode_scalar(bytes_view))
       let body = encode_scalar(bytes_view)
-      let sb = StringBuilder(size_hint=2 * (pad + body.length() + pad))
+      let sb = StringBuilder(size_hint=pad + body.length() + pad)
       for _ in 0..<pad {
         sb.write_char('a')
       }
@@ -153,7 +153,7 @@ test "invalid characters at every lane position defer to the scalar error" {
   // must raise, regardless of which lane the invalid byte lands in
   let body = encode(sample_bytes(32))
   for position in 0..<body.length() {
-    let sb = StringBuilder(size_hint=2 * body.length())
+    let sb = StringBuilder(size_hint=body.length())
     for i in 0..<body.length() {
       sb.write_char(
         if i == position {

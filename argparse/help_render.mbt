@@ -63,7 +63,7 @@ fn usage_tail(cmd : Command) -> String {
   if parts.is_empty() {
     ""
   } else {
-    " " + parts.join(" ")
+    " \{parts.join(" ")}"
   }
 }
 

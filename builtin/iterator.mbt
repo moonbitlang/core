@@ -93,7 +93,7 @@ pub impl[X : ToJson] ToJson for Iter[X] with fn to_json(self) {
 /// - `f`: A function that takes an element of type `X` and returns `Unit`. This function is applied to each element of the iterator.
 #locals(f)
 pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
-  while self.next() is Some(x) {
+  for x in self {
     f(x)
   }
 }
@@ -103,7 +103,7 @@ pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
 /// Function `any`.
 #locals(f)
 pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool raise?) -> Bool raise? {
-  while self.next() is Some(x) {
+  for x in self {
     if f(x) {
       break true
     }
@@ -117,7 +117,7 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool raise?) -> Bool raise? {
 /// Function `all`.
 #locals(f)
 pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool raise?) -> Bool raise? {
-  while self.next() is Some(x) {
+  for x in self {
     guard f(x) else { break false }
   } nobreak {
     true
@@ -140,10 +140,8 @@ pub fn[X] Iter::eachi(
   self : Iter[X],
   f : (Int32, X) -> Unit raise?,
 ) -> Unit raise? {
-  let mut i = 0
-  while self.next() is Some(x) {
+  for i, x in self {
     f(i, x)
-    i += 1
   }
 }
 
@@ -335,7 +333,7 @@ pub fn[X] Iter::repeat(x : X) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `filter`.
 pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   Iter::new(fn() {
-    while self.next() is Some(x) {
+    for x in self {
       if f(x) {
         break Some(x)
       }
@@ -367,10 +365,8 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
   {
     f: fn() {
-      match self.next() {
-        Some(x) => Some(f(x))
-        None => None
-      }
+      guard self.next() is Some(x) else { None }
+      Some(f(x))
     },
     size_hint: self.size_hint,
   }
@@ -399,14 +395,10 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int32, X) -> Y) -> Iter[Y] {
   let mut i = 0
   {
     f: fn() {
-      match self.next() {
-        Some(x) => {
-          let result = f(i, x)
-          i += 1
-          Some(result)
-        }
-        None => None
-      }
+      guard self.next() is Some(x) else { None }
+      let result = f(i, x)
+      i += 1
+      Some(result)
     },
     size_hint: self.size_hint,
   }
@@ -476,16 +468,28 @@ pub fn[X] Iter::flatten(self : Iter[Iter[X]]) -> Iter[X] {
 /// Collects the string-renderable elements of the iterator into a single
 /// string, separated by `sep`.
 /// The old iterator `self` must not be used again after calling `join`.
+#cfg(not(target="js"))
 pub fn[A : ToStringView] Iter::join(self : Iter[A], sep : StringView) -> String {
-  let result = StringBuilder()
-  if self.next() is Some(x) {
-    result.write_view(x.to_string_view())
-    while self.next() is Some(x) {
-      result.write_view(sep)
-      result.write_view(x.to_string_view())
+  let parts = self.to_array()
+  join_string_views(parts, sep)
+}
+
+///|
+/// Collects the string-renderable elements of the iterator into a single
+/// string, separated by `sep`.
+/// The old iterator `self` must not be used again after calling `join`.
+#cfg(target="js")
+pub fn[A : ToStringView] Iter::join(self : Iter[A], sep : StringView) -> String {
+  let mut result = ""
+  if self.next() is Some(first) {
+    result = first.to_string_view().to_owned()
+    let separator = sep.to_owned()
+    while self.next() is Some(part) {
+      result += separator
+      result += part.to_string_view().to_owned()
     }
   }
-  result.to_string()
+  result
 }
 
 ///|
@@ -701,7 +705,7 @@ pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// # Note
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool raise?) -> X? raise? {
-  while self.next() is Some(x) {
+  for x in self {
     if f(x) {
       break Some(x)
     }
@@ -1004,7 +1008,7 @@ pub fn[X] Iter::clamped_view(
 /// # Note
 /// The old iterator `self` will advance past the searched element.
 pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
-  while self.next() is Some(x) {
+  for x in self {
     if x == value {
       break true
     }
@@ -1031,7 +1035,7 @@ pub fn[X] Iter::nth(self : Iter[X], n : Int32) -> X? {
 pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
-  while self.next() is Some(x) {
+  for x in self {
     if x > res {
       res = x
     }
@@ -1044,7 +1048,7 @@ pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
 pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
-  while self.next() is Some(x) {
+  for x in self {
     if x < res {
       res = x
     }

@@ -440,9 +440,7 @@ fn parse_command_impl(
       if i + 1 < argv.length() {
         positional_arg_found = true
       }
-      for rest in argv[i + 1:] {
-        positional_values.push(rest)
-      }
+      positional_values.append(argv[i + 1:])
       break
     }
     if builtin_help_short && arg == "-h" {
@@ -487,10 +485,7 @@ fn parse_command_impl(
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
-            let value = match action {
-              SetFalse => true
-              _ => false
-            }
+            let value = action is SetFalse
             if action is Count {
               matches.counts[spec.name] = 0
             }
@@ -554,9 +549,7 @@ fn parse_command_impl(
             if default_subcommand is Some(sub) {
               let remaining = Array(capacity=argv.length() - i)
               remaining.push("-\{short}\{String::from_iter(chars)}")
-              for rest in argv[i + 1:] {
-                remaining.push(rest)
-              }
+              remaining.append(argv[i + 1:])
               return dispatch_subcommand(sub, remaining)
             } else {
               raise_unknown_short(short, short_index)

@@ -42,14 +42,27 @@ test "empty constructor" {
 ///|
 test "constructor capacity" {
   let empty : Map[String, Int32] = Map([], capacity=16)
-  assert_true(empty.capacity == 16)
+  assert_true(empty.capacity == 32)
   assert_true(empty.is_empty())
   let below_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=2)
   assert_true(below_length.capacity == 4)
   assert_true(below_length.length() == 3)
   let above_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=16)
-  assert_true(above_length.capacity == 16)
+  assert_true(above_length.capacity == 32)
   assert_true(above_length.to_array() == [("a", 1), ("b", 2), ("c", 3)])
+}
+
+///|
+test "entry capacity arithmetic at large table boundaries" {
+  // Exercise the arithmetic without allocating the enormous tables.
+  for buckets in [1, 2, 4, 8, 16, 0x8000000, 0x10000000, 0x20000000, 0x40000000] {
+    let threshold = (buckets.to_int64() * 13L / 16L).to_int()
+    assert_true(calc_grow_threshold(buckets) == threshold)
+    assert_true(capacity_for_length(threshold) == buckets)
+    if buckets < 0x40000000 {
+      assert_true(capacity_for_length(threshold + 1) == buckets * 2)
+    }
+  }
 }
 
 ///|
@@ -118,7 +131,7 @@ test "get_or_init" {
 
 ///|
 test "get_or_init on push_back" {
-  let m : Map[MyString, Array[Int32]] = Map([], capacity=4)
+  let m : Map[MyString, Array[Int32]] = new_map(4)
   inspect(m.grow_at, content="3")
   m.set("x", Array())
   m.set("xx", Array())
@@ -129,7 +142,7 @@ test "get_or_init on push_back" {
 
 ///|
 test "get_or_init full" {
-  let m = Map([], capacity=2)
+  let m = new_map(2)
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
@@ -180,7 +193,7 @@ test "update_or_default preserves insertion order" {
 
 ///|
 test "update_or_default triggers grow" {
-  let m : Map[Int32, Int32] = Map([], capacity=2)
+  let m : Map[Int32, Int32] = new_map(2)
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }

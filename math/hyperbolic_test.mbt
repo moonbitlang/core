@@ -248,3 +248,15 @@ test "sinh overflow-threshold boundary" {
   assert_true(!neg.is_inf() && !neg.is_nan() && neg < -1.79e308)
   assert_true(@math.sinh(711.0).is_inf())
 }
+
+///|
+/// The js backend calls `Math.tanh` instead of this port, so its results
+/// depend on the JavaScript engine.
+#cfg(not(target="js"))
+test "tanh returns x for |x| < 2^-28" {
+  // FreeBSD s_tanh.c returns x below 2^-28; the expm1 path that the port used
+  // instead was one ulp off for these inputs.
+  for x in [2.8168330460985245e-14, -2.0052600624146233e-10] {
+    assert_eq(@math.tanh(x).reinterpret_as_uint64(), x.reinterpret_as_uint64())
+  }
+}

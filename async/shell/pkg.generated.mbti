@@ -1,0 +1,52 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/shell"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub async fn glob(String, cwd? : String) -> Array[String]
+
+// Errors
+
+// Types and methods
+type Cmd derive(@debug.Debug)
+pub fn Cmd::Cmd(String, ArrayView[String], cwd? : String, env? : Map[String, String], inherit_env? : Bool, stdin? : Stdin, stdout? : Redirect, stderr? : Redirect) -> Self
+pub async fn Cmd::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
+pub async fn Cmd::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
+pub async fn Cmd::run(Self, timeout_ms? : Int32) -> Unit
+pub async fn Cmd::status(Self, timeout_ms? : Int32) -> Int32
+
+type Output derive(@debug.Debug)
+pub fn Output::check(Self) -> Unit raise
+pub fn Output::exit_code(Self) -> Int32
+pub fn Output::stderr(Self) -> String
+pub fn Output::stdout(Self) -> String
+pub fn Output::stdout_bytes(Self) -> Bytes
+
+type Pipeline derive(@debug.Debug)
+pub fn Pipeline::Pipeline(Array[Cmd]) -> Self
+pub async fn Pipeline::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
+pub async fn Pipeline::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
+pub async fn Pipeline::run(Self, timeout_ms? : Int32) -> Unit
+pub async fn Pipeline::status(Self, timeout_ms? : Int32) -> Int32
+
+pub(all) enum Redirect {
+  Capture
+  Inherit
+  ToFile(String)
+  AppendToFile(String)
+  Discard
+} derive(@debug.Debug)
+
+pub(all) enum Stdin {
+  Text(String)
+  Binary(Bytes)
+  FromFile(String)
+  Inherit
+} derive(@debug.Debug)
+
+// Type aliases
+
+// Traits

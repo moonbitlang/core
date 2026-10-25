@@ -14,7 +14,8 @@
 
 ///|
 struct StringBuilder {
-  mut data : FixedArray[UInt16]
+  // Only 0..<len is initialized. Returned strings have separate storage.
+  mut data : UninitializedArray[UInt16]
   mut len : Int32
 }
 
@@ -23,16 +24,18 @@ struct StringBuilder {
 ///
 /// Parameters:
 ///
-/// * `size_hint` : An optional initial capacity hint for the internal buffer. If
-/// less than 1, a minimum capacity of 1 is used. Defaults to 0. It is the size of bytes, 
-/// not the size of characters. `size_hint` may be ignored on some platforms, JS for example.
+/// * `size_hint` : An optional initial capacity hint for the internal buffer,
+/// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
+/// buffer. `size_hint` may be ignored on some platforms, JS for example.
 ///
-/// Returns a new `StringBuilder` instance with the specified initial capacity.
+/// Returns a new `StringBuilder` instance.
+///
+/// Aborts if `size_hint` is negative.
 ///
 #alias(new, deprecated="Use `StringBuilder()` instead")
-pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 0) -> StringBuilder {
-  let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
-  let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
+pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 8) -> StringBuilder {
+  guard size_hint >= 0 else { abort("size_hint must be non-negative") }
+  let data : UninitializedArray[UInt16] = UninitializedArray::make(size_hint)
   { data, len: 0, }
 }
 
@@ -54,7 +57,8 @@ fn stringbuilder_growth_capacity(
   if required < len {
     abort("StringBuilder capacity overflow")
   }
-  let enough_space = for space = current; space < required; {
+  // Start doubling from at least 1 so a zero-length initial buffer can grow.
+  for space = current.max(1); space < required; {
     let next = space * 2
     if next <= space {
       break required
@@ -63,7 +67,6 @@ fn stringbuilder_growth_capacity(
   } nobreak {
     space
   }
-  enough_space
 }
 
 ///|
@@ -77,13 +80,25 @@ fn StringBuilder::grow(self : StringBuilder, required : Int32) -> Unit {
     self.len,
     required,
   )
-  let new_data = FixedArray::make_and_blit(
+  let new_data = UninitializedArray::make_and_blit(
     self.data,
     allocate_len=new_capacity,
-    init=(Default::default() : UInt16),
     len=self.len,
   )
   self.data = new_data
+}
+
+///|
+fn UninitializedArray::unsafe_blit_from_string_uninit(
+  self : UninitializedArray[UInt16],
+  dst_offset : Int32,
+  str : String,
+  str_offset : Int32,
+  len : Int32,
+) -> Unit {
+  unsafe_uint16_buffer_as_fixedarray(self).unsafe_blit_from_string(
+    dst_offset, str, str_offset, len,
+  )
 }
 
 ///|
@@ -129,8 +144,7 @@ fn FixedArray::unsafe_blit_from_string_simd(
   len : Int32,
 ) -> Unit {
   let vector_len = len - (len & 7)
-  // Callers copy into separate storage. A builder grows before appending to
-  // a full buffer shared with a previously returned string.
+  // Source strings have separate storage from the builder's mutable buffer.
   // SAFETY: both ranges are in bounds. Each vector stays inside the requested
   // range; the remainder is copied one unit at a time.
   for i = 0; i < vector_len; i = i + 8 {
@@ -140,6 +154,12 @@ fn FixedArray::unsafe_blit_from_string_simd(
     self.unsafe_set(dst_offset + i, str.unsafe_get(str_offset + i))
   }
 }
+
+///|
+/// Reinterpret the backing storage. Callers must only read initialized slots.
+fn unsafe_uint16_buffer_as_fixedarray(
+  buffer : UninitializedArray[UInt16],
+) -> FixedArray[UInt16] = "%identity"
 
 ///|
 /// Writes a string to the StringBuilder.
@@ -152,7 +172,7 @@ pub impl Logger for StringBuilder with fn write_string(self, str) {
   if required > self.data.length() || required < self.len {
     self.grow(required)
   }
-  self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
+  self.data.unsafe_blit_from_string_uninit(self.len, str, 0, str_len)
   self.len += str_len
 }
 
@@ -208,7 +228,7 @@ pub impl Logger for StringBuilder with fn write_view(
   if required > self.data.length() || required < self.len {
     self.grow(required)
   }
-  self.data.unsafe_blit_from_string(
+  self.data.unsafe_blit_from_string_uninit(
     self.len,
     str.data(),
     str.start_offset(),
@@ -222,16 +242,13 @@ pub impl Logger for StringBuilder with fn write_view(
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   if self.len == 0 {
     ""
-  } else if self.len == self.data.length() {
-    unsafe_fixedarray_uint16_to_string(self.data)
   } else {
-    let data = FixedArray::make_and_blit(
+    let data = UninitializedArray::make_and_blit(
       self.data,
       allocate_len=self.len,
-      init=(Default::default() : UInt16),
       len=self.len,
     )
-    unsafe_fixedarray_uint16_to_string(data)
+    unsafe_fixedarray_uint16_to_string(unsafe_uint16_buffer_as_fixedarray(data))
   }
 }
 
@@ -248,10 +265,25 @@ pub impl Show for StringBuilder with fn to_string(self) {
 
 ///|
 /// Resets the string builder to an empty state.
-pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
-  self.data = FixedArray::make(
-    self.data.length(),
-    (Default::default() : UInt16),
-  )
+///
+/// Keeps the allocated capacity by default for reuse. Set `keep_capacity=false`
+/// to discard the backing buffer. Previously returned strings are unaffected.
+/// This option has no effect on JS, which does not retain a mutable buffer.
+///
+/// ```mbt check
+/// test {
+///   let builder = StringBuilder()
+///   builder.write_string("hello")
+///   builder.reset(keep_capacity=false)
+///   inspect(builder.to_string(), content="")
+/// }
+/// ```
+pub fn StringBuilder::reset(
+  self : StringBuilder,
+  keep_capacity~ : Bool = true,
+) -> Unit {
   self.len = 0
+  if !keep_capacity {
+    self.data = UninitializedArray::make(0)
+  }
 }

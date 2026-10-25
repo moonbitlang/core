@@ -1,0 +1,14 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/internal/gzip_internal",
+}
+
+import {
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/fs",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/process",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"

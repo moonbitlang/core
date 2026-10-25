@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/socket",
+}
+
+supported_targets = "-all+native"
+
+options(
+  "native-stub": [ "stub.c" ],
+)

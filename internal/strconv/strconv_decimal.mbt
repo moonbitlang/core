@@ -200,11 +200,10 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise {
   // scale by powers of 2 until in range [0.5 .. 1]
   // right shift
   while self.decimal_point > 0 {
-    let mut n = 0
-    if self.decimal_point >= powtab.length() {
-      n = 60
+    let n = if self.decimal_point >= powtab.length() {
+      60
     } else {
-      n = powtab[self.decimal_point]
+      powtab[self.decimal_point]
     }
     self.shift_priv(-n)
     exponent += n
@@ -212,11 +211,10 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise {
   // left shift
   while self.decimal_point < 0 ||
         (self.decimal_point == 0 && self.digits[0].to_int() < 5) {
-    let mut n = 0
-    if -self.decimal_point >= powtab.length() {
-      n = 60
+    let n = if -self.decimal_point >= powtab.length() {
+      60
     } else {
-      n = powtab[-self.decimal_point]
+      powtab[-self.decimal_point]
     }
     self.shift_priv(n)
     exponent -= n
@@ -520,12 +518,11 @@ fn Decimal::new_digits(self : Decimal, s : Int32) -> Int32 {
 fn Decimal::left_shift(self : Decimal, s : Int32) -> Unit {
   let new_digits = self.new_digits(s)
   // from right to left
-  let mut read_index = self.digits_num
+  let mut read_index = self.digits_num - 1
   let mut write_index = self.digits_num + new_digits
 
   // read a digit and output a shifted digit
   let mut acc = 0L
-  read_index -= 1
   while read_index >= 0 {
     let d = self.digits[read_index].to_int64()
     acc += d << s

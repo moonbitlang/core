@@ -207,6 +207,10 @@ pub fn tanh(x : Double) -> Double {
     return x * (1.0 + x)
   }
   let tiny = 1.0e-300
+  // |x| < 2^-28: tanh(x) rounds to x (FreeBSD s_tanh.c)
+  if ix < 0x3e300000 {
+    return x
+  }
   let z = if ix < 0x40360000 {
     if ix >= 0x3ff00000 {
       let t = (2.0 * x.abs()) |> expm1

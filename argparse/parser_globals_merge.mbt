@@ -57,17 +57,7 @@ fn merge_global_value_from_child(
   if arg.multiple || arg.info is OptionInfo(action=Append, ..) {
     let both_argv = parent_source is Some(Argv) && child_source is Some(Argv)
     if both_argv {
-      let merged = []
-      if parent_vals is Some(pv) {
-        for v in pv {
-          merged.push(v)
-        }
-      }
-      if child_vals is Some(cv) {
-        for v in cv {
-          merged.push(v)
-        }
-      }
+      let merged = parent_vals.unwrap_or([]) + child_vals.unwrap_or([])
       if !merged.is_empty() {
         parent.values[name] = merged
         parent.value_sources[name] = Argv

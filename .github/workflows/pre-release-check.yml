@@ -138,6 +138,10 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
 
       - name: install
@@ -184,6 +188,10 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
 
       - name: install
@@ -192,9 +200,9 @@ jobs:
           version: pre-release
 
       - name: check
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: moon check --target native --deny-warn
 
       - name: run native release tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         uses: ./.github/actions/test-native-release

@@ -726,10 +726,7 @@ pub impl[A : Eq] Eq for Vector[A] with fn equal(self, other) {
     let left = self.iter()
     let right = other.iter()
     for _ in 0..<self.size {
-      match (left.next(), right.next()) {
-        (Some(a), Some(b)) => if a != b { return false }
-        _ => return false
-      }
+      guard left.next() == right.next() else { return false }
     }
     true
   }
@@ -905,12 +902,7 @@ fn tail_len_of_size(size : Int32) -> Int32 {
   if size <= BRANCHING_FACTOR {
     size
   } else {
-    let rem = size % BRANCHING_FACTOR
-    if rem == 0 {
-      0
-    } else {
-      rem
-    }
+    size % BRANCHING_FACTOR
   }
 }
 

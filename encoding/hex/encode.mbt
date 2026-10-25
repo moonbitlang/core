@@ -37,9 +37,8 @@ pub fn encode(bytes : BytesView) -> String {
 /// Retained on every backend: the linear-memory backends reach it only from
 /// the differential tests, but it is the implementation everywhere else.
 fn encode_scalar(bytes : BytesView) -> String {
-  // size_hint is measured in bytes, and each of the 2n output code units
-  // occupies two bytes in the builder's UTF-16 buffer
-  let builder = StringBuilder(size_hint=4 * bytes.length())
+  // Each input byte produces two UTF-16 code units.
+  let builder = StringBuilder(size_hint=2 * bytes.length())
   for byte in bytes {
     let n = byte.to_int()
     builder.write_char(HEX_DIGITS[(n >> 4) & 0x0F].to_char())

@@ -1,0 +1,25 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/io",
+}
+
+import {
+  "moonbitlang/core/test",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+options(
+  targets: {
+    "deprecated.mbt": [ "native", "wasm" ],
+    "pipe.mbt": [ "native", "wasm" ],
+    "read_exactly_test.mbt": [ "native", "wasm" ],
+    "reader_closed_test.mbt": [ "native", "wasm" ],
+    "unimplemented.mbt": [ "js", "wasm-gc" ],
+    "unimplemented_test.mbt": [ "js", "wasm-gc" ],
+  },
+)

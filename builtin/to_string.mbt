@@ -230,28 +230,26 @@ pub fn Int32::to_string(self : Int32, radix~ : Int32 = 10) -> String {
   }
 
   // Calculate length, allocate buffer, and write digits
+  let digit_start = if is_negative { 1 } else { 0 }
   let buffer = match radix {
     10 => {
       let digit_len = dec_count32(num)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int_to_string_dec(buffer, num, digit_start, total_len)
       buffer
     }
     16 => {
       let digit_len = hex_count32(num)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int_to_string_hex(buffer, num, digit_start, total_len)
       buffer
     }
     _ => {
       let digit_len = radix_count32(num, radix)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int_to_string_generic(buffer, num, digit_start, total_len, radix)
       buffer
     }
@@ -568,28 +566,26 @@ pub fn Int64::to_string(self : Int64, radix~ : Int32 = 10) -> String {
   }
 
   // Calculate length, allocate buffer, and write digits
+  let digit_start = if is_negative { 1 } else { 0 }
   let buffer = match radix {
     10 => {
       let digit_len = dec_count64(num)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int64_to_string_dec(buffer, num, digit_start, total_len)
       buffer
     }
     16 => {
       let digit_len = hex_count64(num)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int64_to_string_hex(buffer, num, digit_start, total_len)
       buffer
     }
     _ => {
       let digit_len = radix_count64(num, radix)
-      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let total_len = digit_len + digit_start
       let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
-      let digit_start = if is_negative { 1 } else { 0 }
       int64_to_string_generic(buffer, num, digit_start, total_len, radix)
       buffer
     }

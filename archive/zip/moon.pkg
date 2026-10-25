@@ -1,0 +1,20 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/internal/checksum",
+  "moonbitlang/core/encoding/utf8" @encoding/utf8,
+}
+
+// Package "@zip": ZIP over the `@flate` DEFLATE engine. Metadata-only 64-bit
+// directory/entry range reads, in-memory Archive editing, and Writer output.
+// File and HTTP range I/O are supplied by the caller.
+
+import {
+  "moonbitlang/core/test",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"

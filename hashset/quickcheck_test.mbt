@@ -75,14 +75,14 @@ test "quickcheck: set predicates and equality agree with a sorted-array model" {
     let ys = normalized(ys.map(y => y % 23))
     let a = @hashset.from_array(xs.map(key))
     let b = @hashset.from_array(ys.map(key))
-    let model_sub = xs.iter().all(x => ys.contains(x))
-    let model_sup = ys.iter().all(y => xs.contains(y))
-    let model_dis = xs.iter().all(x => !ys.contains(x))
+    let model_sub = xs.all(x => ys.contains(x))
+    let model_sup = ys.all(y => xs.contains(y))
+    let model_dis = xs.all(x => !ys.contains(x))
     let sym = a.symmetric_difference(b)
     let model_sym = xs.filter(x => !ys.contains(x)) +
       ys.filter(y => !xs.contains(y))
     let sym_ok = sym.length() == model_sym.length() &&
-      model_sym.iter().all(x => sym.contains(key(x)))
+      model_sym.all(x => sym.contains(key(x)))
     let union = a.union(b)
     let union_ok = union.length() == normalized(xs + ys).length() &&
       union.iter().all(k => a.contains(k) || b.contains(k))

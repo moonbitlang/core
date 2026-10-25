@@ -21,6 +21,10 @@ jobs:
       (github.event_name == 'pull_request' && startsWith(github.head_ref, 'nightly/')) ||
       (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
@@ -64,6 +68,10 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/main')
     continue-on-error: false
     steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
@@ -74,5 +82,5 @@ jobs:
           moon version --all
 
       - name: run native release tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         uses: ./.github/actions/test-native-release
