@@ -95,11 +95,59 @@ pub fn Command::render_help(self : Command) -> String {
 }
 
 ///|
+/// The result of `Command::try_parse`.
+///
+/// `Help` and `Version` hold the text that `Command::parse` prints before it
+/// exits, without its final newline.
+pub(all) enum ParseOutcome {
+  /// The arguments parsed into matches.
+  Parsed(Matches)
+  /// The arguments asked for help, for example `--help` or `help <subcommand>`.
+  Help(String)
+  /// The arguments asked for the version, for example `--version`.
+  Version(String)
+}
+
+///|
+/// Parse argv/environment according to this command spec, without printing or
+/// terminating the process.
+///
+/// Behavior:
+/// - Help/version requests return `Help(text)` or `Version(text)`. The caller
+///   decides how to show the text and how to continue. Use this function when
+///   the program cannot or must not exit, for example when an embedder runs it
+///   or in a test.
+/// - Parse failures raise display-ready error text with full contextual help.
+/// - Command-definition validation failures raise display-ready validation
+///   text (without appended help).
+///
+/// `argv` and `env` have the same meaning as in `Command::parse`.
+#as_free_fn
+pub fn Command::try_parse(
+  self : Command,
+  argv~ : ArrayView[String] = default_argv(),
+  env~ : Map[String, String] = Map([]),
+) -> ParseOutcome raise {
+  try {
+    let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)
+    Parsed(build_matches(self, raw, []))
+  } catch {
+    DisplayHelp::Message(text) => Help(trim_single_trailing_newline(text))
+    DisplayVersion::Message(text) => Version(trim_single_trailing_newline(text))
+    ArgError::Message(_) as err => raise err
+    err => {
+      println(err.to_string())
+      panic()
+    }
+  }
+}
+
+///|
 /// Parse argv/environment according to this command spec.
 ///
 /// Behavior:
 /// - Help/version requests print output immediately and terminate with exit code
-///   `0`.
+///   `0`. Use `Command::try_parse` to get the text instead.
 /// - Parse failures raise display-ready error text with full contextual help.
 /// - Command-definition validation failures raise display-ready validation
 ///   text (without appended help).
@@ -116,17 +164,9 @@ pub fn Command::parse(
   argv~ : ArrayView[String] = default_argv(),
   env~ : Map[String, String] = Map([]),
 ) -> Matches raise {
-  try {
-    let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)
-    build_matches(self, raw, [])
-  } catch {
-    DisplayHelp::Message(text) => print_and_exit_success(text)
-    DisplayVersion::Message(text) => print_and_exit_success(text)
-    ArgError::Message(_) as err => raise err
-    err => {
-      println(err.to_string())
-      panic()
-    }
+  match self.try_parse(argv~, env~) {
+    Parsed(matches) => matches
+    Help(text) | Version(text) => print_and_exit_success(text)
   }
 }
 

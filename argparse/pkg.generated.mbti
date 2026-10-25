@@ -22,6 +22,8 @@ pub fn Command::Command(StringView, flags? : ArrayView[FlagArg], options? : Arra
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self) -> String
+#as_free_fn
+pub fn Command::try_parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> ParseOutcome raise
 
 pub(all) enum FlagAction {
   SetTrue
@@ -60,6 +62,12 @@ pub struct OptionArg {
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn OptionArg::OptionArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+
+pub(all) enum ParseOutcome {
+  Parsed(Matches)
+  Help(String)
+  Version(String)
+}
 
 pub struct PositionArg {
   // private fields

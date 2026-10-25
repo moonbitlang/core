@@ -10,6 +10,23 @@ Argument constructors are named `FlagArg` / `OptionArg` / `PositionArg` to
 avoid shadowing built-in types like `Option`.
 
 
+`parse` prints help or version text and exits the process with code `0` when the
+arguments ask for it. `try_parse` returns `Help(text)` or `Version(text)` instead,
+for programs that must keep control, such as a WebAssembly module that an
+embedder runs:
+
+```mbt check
+///|
+test "help request without exit" {
+  let cmd = @argparse.Command("demo", version="1.0.0")
+  match @argparse.try_parse(cmd, argv=["--version"], env=Map([])) {
+    Version(text) => inspect(text, content="1.0.0")
+    _ => fail("expected a version request")
+  }
+}
+```
+
+
 ## Quick Start
 
 For tests, snapshotting the failure message is the recommended way to cover
