@@ -35,8 +35,9 @@ pub(all) enum InflateErrorKind {
   Corrupt
   /// Exact decoding reached a valid final block before the input boundary.
   TrailingData
-  /// Decoded output would exceed the caller-supplied safety limit.
-  OutputLimitExceeded
+  /// Output ceiling and observed decoded size, including the rejected chunk/match.
+  /// Observed bytes need not have been written or cover the complete stream.
+  OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   /// A caller-supplied cancellation callback requested an early stop.
   Cancelled
   /// A caller-supplied argument is out of range, such as a negative limit.

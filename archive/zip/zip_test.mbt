@@ -469,7 +469,7 @@ test "zip package-size limit" {
   catch {
     ZipError(kind, _) =>
       match kind {
-        LimitExceeded(PackageBytes, _, _) => ()
+        LimitExceeded(kind=PackageBytes, limit=_, observed=_) => ()
         _ => @test.fail("expected a package-size limit")
       }
   } noraise {
@@ -482,7 +482,7 @@ test "zip entry-count limit" {
   try ignore(@zip.read(py_mini, limits=ReadLimits(max_entries=0))) catch {
     ZipError(kind, _) =>
       match kind {
-        LimitExceeded(Entries, _, _) => ()
+        LimitExceeded(kind=Entries, limit=_, observed=_) => ()
         _ => @test.fail("expected an entry-count limit")
       }
   } noraise {
@@ -509,13 +509,15 @@ test "zip per-entry and total uncompressed limits" {
     let ZipError(kind, _) = @test.expect_error(() => {
       @zip.read(bytes, limits=ReadLimits(max_entry_uncompressed_bytes=2))
     })
-    guard kind is LimitExceeded(EntryUncompressedBytes, _, _) else {
+    guard kind
+      is LimitExceeded(kind=EntryUncompressedBytes, limit=_, observed=_) else {
       @test.fail("expected the per-entry limit")
     }
     let ZipError(kind, _) = @test.expect_error(() => {
       @zip.read(bytes, limits=ReadLimits(max_total_uncompressed_bytes=5))
     })
-    guard kind is LimitExceeded(TotalUncompressedBytes, _, _) else {
+    guard kind
+      is LimitExceeded(kind=TotalUncompressedBytes, limit=_, observed=_) else {
       @test.fail("expected the cumulative limit")
     }
   }
@@ -531,7 +533,7 @@ test "zip directory-byte limit" {
   try ignore(reader.advance(py_mini)) catch {
     ZipError(kind, _) =>
       match kind {
-        LimitExceeded(DirectoryBytes, _, _) => ()
+        LimitExceeded(kind=DirectoryBytes, limit=_, observed=_) => ()
         _ => @test.fail("expected a directory-byte limit")
       }
   } noraise {
@@ -561,7 +563,7 @@ test "zip write with max_output_bytes matches write and rejects oversize" {
   try ignore(@zip.write(archive, max_output_bytes=exact.length() - 1)) catch {
     ZipError(kind, _) =>
       match kind {
-        LimitExceeded(OutputBytes, _, _) => ()
+        LimitExceeded(kind=OutputBytes, limit=_, observed=_) => ()
         _ => @test.fail("expected an output limit")
       }
   } noraise {
@@ -716,15 +718,15 @@ test "ZIP equality methods can be passed as functions across packages" {
   let error_equal = @zip.ZipErrorKind::equal
   @test.assert_eq(
     error_equal(
-      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
-      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
+      LimitExceeded(kind=TotalUncompressedBytes, limit=10UL, observed=15UL),
+      LimitExceeded(kind=TotalUncompressedBytes, limit=10UL, observed=15UL),
     ),
     true,
   )
   @test.assert_eq(
     error_equal(
-      LimitExceeded(TotalUncompressedBytes, 10UL, 15UL),
-      LimitExceeded(TotalUncompressedBytes, 10UL, 16UL),
+      LimitExceeded(kind=TotalUncompressedBytes, limit=10UL, observed=15UL),
+      LimitExceeded(kind=TotalUncompressedBytes, limit=10UL, observed=16UL),
     ),
     false,
   )

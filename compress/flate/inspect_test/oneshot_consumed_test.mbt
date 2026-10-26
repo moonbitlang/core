@@ -57,7 +57,10 @@ test "Decompressor returns both byte counts and preserves trailing input" {
           @test.assert_eq(output[i], b'\xA5')
         }
       }
-      @test.assert_eq(decoder.decompress(input), plain)
+      @test.assert_eq(
+        decoder.decompress(input, max_output=plain.length()),
+        plain,
+      )
       @test.assert_eq(decoder.last_consumed(), raw.length())
     }
   }
@@ -93,22 +96,24 @@ test "Decompressor::last_consumed follows every call of one decompressor" {
       @test.assert_eq(Bytes::from_array(output), plain)
       @test.assert_eq(decoder.last_consumed(), raw.length())
     }
-    if fixed {
-      for cancel_at in [1, 2] {
-        let mut polls = 0
-        let cancelled = () => {
-          polls += 1
-          polls == cancel_at
-        }
-        let InflateError(kind, _) = @test.expect_error(() => {
-          ignore(decoder.decompress_into(raw, output, cancelled~))
-        })
-        @test.assert_eq(kind, Cancelled)
-        @test.assert_eq(polls, cancel_at)
-        @test.assert_eq(decoder.last_consumed(), 0)
-        @test.assert_eq(decoder.decompress(raw), plain)
-        @test.assert_eq(decoder.last_consumed(), raw.length())
+    for cancel_at in [1, 2] {
+      let mut polls = 0
+      let cancelled = () => {
+        polls += 1
+        polls == cancel_at
       }
+      let InflateError(kind, _) = @test.expect_error(() => {
+        if fixed {
+          ignore(decoder.decompress_into(raw, output, cancelled~))
+        } else {
+          ignore(decoder.decompress(raw, max_output=plain.length(), cancelled~))
+        }
+      })
+      @test.assert_eq(kind, Cancelled)
+      @test.assert_eq(decoder.last_consumed(), 0)
+      @test.assert_eq(decoder.decompress(raw), plain)
+      @test.assert_eq(polls, cancel_at)
+      @test.assert_eq(decoder.last_consumed(), raw.length())
     }
   }
 }
@@ -139,11 +144,23 @@ test "decompress and decompress_into take turns on one decompressor" {
     @test.assert_eq(decoder.last_consumed(), raw.length())
     if plain.length() > 0 {
       let short = FixedArray::make(plain.length() - 1, b'\x00')
-      let InflateError(kind, _) = @test.expect_error(() => {
-        decoder.decompress_into(raw, short)
-      })
-      @test.assert_eq(kind, OutputLimitExceeded)
-      @test.assert_eq(decoder.last_consumed(), 0)
+      for fixed in [true, false] {
+        let InflateError(kind, _) = @test.expect_error(() => {
+          if fixed {
+            ignore(decoder.decompress_into(raw, short))
+          } else {
+            ignore(decoder.decompress(raw, max_output=short.length()))
+          }
+        })
+        @test.assert_eq(
+          kind,
+          OutputLimitExceeded(
+            limit=short.length().to_uint64(),
+            observed=plain.length().to_uint64(),
+          ),
+        )
+        @test.assert_eq(decoder.last_consumed(), 0)
+      }
     }
     @test.assert_eq(decoder.decompress(raw), plain)
     let output = FixedArray::make(plain.length(), b'\x00')
@@ -154,4 +171,9 @@ test "decompress and decompress_into take turns on one decompressor" {
     @test.assert_eq(Bytes::from_array(output), plain)
     @test.assert_eq(decoder.last_consumed(), raw.length())
   }
+  let InflateError(kind, _) = @test.expect_error(() => {
+    decoder.decompress(b"", max_output=-1)
+  })
+  @test.assert_eq(kind, InvalidArgument)
+  @test.assert_eq(decoder.last_consumed(), 0)
 }

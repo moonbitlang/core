@@ -147,7 +147,10 @@ test "batch and checked tails preserve literal capacity and cancellation boundar
           decoder.decode_block(packed_fixed_huffman_decoder, Some(distances))
         })
         guard error is InflateError(kind, _)
-        @test.assert_eq(kind, OutputLimitExceeded)
+        @test.assert_eq(
+          kind,
+          OutputLimitExceeded(limit=capacity.to_uint64(), observed=600UL),
+        )
         @test.assert_eq(calls, 0)
         @test.assert_eq(decoder.out.length, capacity)
       } else {

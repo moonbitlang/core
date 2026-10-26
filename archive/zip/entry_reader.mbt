@@ -103,9 +103,9 @@ pub fn Directory::open_entry(
   guard entry.uncompressed_size <= limits.max_output_bytes else {
     raise ZipError(
       LimitExceeded(
-        EntryUncompressedBytes,
-        limits.max_output_bytes,
-        entry.uncompressed_size,
+        kind=EntryUncompressedBytes,
+        limit=limits.max_output_bytes,
+        observed=entry.uncompressed_size,
       ),
       "zip: entry exceeds its decoded-output limit",
     )
@@ -371,7 +371,11 @@ fn EntryReader::record_output(
   let actual = self.produced + produced.to_uint64()
   guard actual <= self.max_output else {
     raise ZipError(
-      LimitExceeded(EntryUncompressedBytes, self.max_output, actual),
+      LimitExceeded(
+        kind=EntryUncompressedBytes,
+        limit=self.max_output,
+        observed=actual,
+      ),
       "zip: entry exceeds its decoded-output limit",
     )
   }
