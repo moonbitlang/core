@@ -812,8 +812,8 @@ async test "watch debounce" {
     let start = @async.now()
     // Refresh the watcher with other events until max debounce delay exceeds
     while @async.now() - start < 750 {
-      @async.sleep(200)
       @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
+      @async.sleep(200)
     }
     @fs.rename("\{path}/file", "\{watched_path}/file2")
     // Do an extra modification so that there is always a modification event
