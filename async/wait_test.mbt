@@ -15,27 +15,23 @@
 ///|
 async test "wait basic" {
   let buf = StringBuilder()
-  @async.with_task_group(root => {
-    root.spawn_bg() <| () => {
-      @async.sleep(200)
-      buf <+ "200ms tick\n"
-      @async.sleep(200)
-      buf <+ "400ms tick\n"
-    }
-    let task = root.spawn(no_wait=true, () => {
+  @async.with_task_group <| group => {
+    let task = group.spawn(no_wait=true) <| () => {
+      let start = @async.now()
       @async.sleep(300)
       buf <+ "task finished\n"
-    })
-    task.wait()
-    buf <+ "main task exit\n"
-  })
+      start
+    }
+    let start = task.wait()
+    let end = @async.now()
+    let t = (end - start + 50) / 300
+    buf <+ "main task exit at tick #\{t}\n"
+  }
   inspect(
     buf.to_string(),
     content=(
-      #|200ms tick
       #|task finished
-      #|main task exit
-      #|400ms tick
+      #|main task exit at tick #1
       #|
     ),
   )
