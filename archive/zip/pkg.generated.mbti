@@ -6,7 +6,7 @@ import {
 }
 
 // Values
-pub fn read(BytesView, limits? : ReadLimits, cancelled? : () -> Bool) -> Archive raise ZipError
+pub fn read_all(BytesView, limits? : ReadLimits, cancelled? : () -> Bool) -> Archive raise ZipError
 
 pub fn write(Archive, preserve? : Bool, max_output_bytes? : Int32, level? : Int32, fast_store? : Bool) -> Bytes raise ZipError
 
@@ -66,7 +66,11 @@ pub(all) enum DirectoryStep {
 type Entry
 pub fn Entry::compression(Self) -> Compression
 pub fn Entry::crc32(Self) -> UInt32
+pub fn Entry::creator_system(Self) -> Int32
 pub fn Entry::data(Self) -> BytesView
+pub fn Entry::dos_date(Self) -> Int32
+pub fn Entry::dos_time(Self) -> Int32
+pub fn Entry::external_attributes(Self) -> UInt32
 pub fn Entry::name(Self) -> String
 
 type EntryReadLimits
@@ -125,7 +129,7 @@ pub(all) enum ZipErrorKind {
   InvalidUtf8
   UnsupportedFeature
   InvalidDeflate
-  InvalidRead
+  InvalidRead(expected~ : Int32, actual~ : Int32)
   InvalidEntryIndex(Int32)
   SizeMismatch
   ChecksumMismatch

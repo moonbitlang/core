@@ -25,6 +25,10 @@ priv struct MemoryEntryMeta {
   flags : Int32
   method_id : Int32
   crc : UInt32
+  dos_date : Int32
+  dos_time : Int32
+  creator_system : Int32
+  external_attributes : UInt32
   compressed_size : Int32
   uncompressed_size : Int32
   local_offset : Int32
@@ -433,6 +437,10 @@ fn parse_central_record(
     flags: entry.flags,
     method_id: entry.method_id,
     crc: entry.crc,
+    dos_date: entry.dos_date,
+    dos_time: entry.dos_time,
+    creator_system: entry.creator_system,
+    external_attributes: entry.external_attributes,
     // Only the eager in-memory adapter narrows file sizes and positions.
     compressed_size: entry.compressed_size.to_int_checked(),
     uncompressed_size: entry.uncompressed_size.to_int_checked(),
@@ -575,6 +583,10 @@ fn decode_entry(
     data,
     compression,
     crc32: meta.crc,
+    dos_date: meta.dos_date,
+    dos_time: meta.dos_time,
+    creator_system: meta.creator_system,
+    external_attributes: meta.external_attributes,
     data_descriptor: meta.data_descriptor,
     compressed_size: meta.compressed_size,
     source,
@@ -623,7 +635,7 @@ fn read_impl(
 /// across parsing, decoding, and CRC-32 verification. Every decoded entry must
 /// match its stored CRC-32. Failures carry a stable `ZipErrorKind`
 /// plus a diagnostic.
-pub fn read(
+pub fn read_all(
   bytes : BytesView,
   limits~ : ReadLimits = ReadLimits(),
   cancelled~ : () -> Bool = () => false,

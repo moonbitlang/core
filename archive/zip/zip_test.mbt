@@ -79,8 +79,14 @@ test "zip round-trips store and deflate entries" {
     Bytes::from_array(Array::make(1024, b'z')),
     compression=Store,
   )
+  for entry in archive.entries() {
+    @test.assert_eq(entry.dos_date(), 0)
+    @test.assert_eq(entry.dos_time(), 0)
+    @test.assert_eq(entry.creator_system(), 0)
+    @test.assert_eq(entry.external_attributes(), 0U)
+  }
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.entries().length(), 2)
   @test.assert_eq(
     parsed.get("deflated.txt"),
@@ -102,7 +108,7 @@ test "zip round-trips empty and zero-length payloads" {
   archive.add("empty.txt", b"")
   archive.add("b.txt", b"")
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.get("empty.txt"), Some(b""))
   @test.assert_eq(parsed.entries().length(), 2)
 }
@@ -115,7 +121,7 @@ test "zip write with max_output_bytes sizes a data-descriptor entry correctly" {
   writer.write(b"limited descriptor payload")
   writer.end_entry()
   writer.finish()
-  let archive = @zip.read(output.to_bytes())
+  let archive = @zip.read_all(output.to_bytes())
   let exact = @zip.write(archive)
   @test.assert_eq(@zip.write(archive, max_output_bytes=exact.length()), exact)
 }
@@ -126,7 +132,7 @@ test "zip write with preserve=true re-emits a read archive byte-for-byte" {
   archive.add("a.txt", b"alpha")
   archive.add("b.txt", b"beta beta beta", compression=Store)
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   let rewritten = @zip.write(parsed, preserve=true)
   @test.assert_eq(rewritten, bytes)
 }
@@ -140,11 +146,11 @@ test "zip write with preserve=true round-trips a data-descriptor entry byte-for-
   writer.end_entry()
   writer.finish()
   let bytes = output.to_bytes()
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   let rewritten = @zip.write(parsed, preserve=true)
   @test.assert_eq(rewritten, bytes)
   @test.assert_eq(
-    @zip.read(rewritten).get("desc.txt"),
+    @zip.read_all(rewritten).get("desc.txt"),
     Some(b"streamed payload"),
   )
 }
@@ -155,11 +161,11 @@ test "zip write with preserve=true keeps unchanged payloads and applies replacem
   archive.add("keep.txt", b"keep me", compression=Store)
   archive.add("replace.txt", b"old payload", compression=Store)
   let original = @zip.write(archive)
-  let parsed = @zip.read(original)
+  let parsed = @zip.read_all(original)
   @test.assert_eq(parsed.replace("replace.txt", b"new payload"), true)
   @test.assert_eq(parsed.get("keep.txt"), Some(b"keep me"))
   let rewritten = @zip.write(parsed, preserve=true)
-  let reparsed = @zip.read(rewritten)
+  let reparsed = @zip.read_all(rewritten)
   @test.assert_eq(reparsed.get("keep.txt"), Some(b"keep me"))
   @test.assert_eq(reparsed.get("replace.txt"), Some(b"new payload"))
   @test.assert_eq(reparsed.entries().length(), 2)
@@ -168,7 +174,7 @@ test "zip write with preserve=true keeps unchanged payloads and applies replacem
 
 ///|
 test "zip write with preserve=true round-trips a zip64 archive byte-for-byte" {
-  let bytes = @zip.write(@zip.read(py_zip64), preserve=true)
+  let bytes = @zip.write(@zip.read_all(py_zip64), preserve=true)
   @test.assert_eq(bytes, py_zip64)
 }
 
@@ -178,10 +184,10 @@ test "zip write with preserve=true patches end-record counts after entry removal
   archive.add("a.txt", b"a", compression=Store)
   archive.add("b.txt", b"b", compression=Store)
   archive.add("c.txt", b"c", compression=Store)
-  let parsed = @zip.read(@zip.write(archive))
+  let parsed = @zip.read_all(@zip.write(archive))
   @test.assert_eq(parsed.remove("b.txt"), true)
   let rewritten = @zip.write(parsed, preserve=true)
-  let reparsed = @zip.read(rewritten)
+  let reparsed = @zip.read_all(rewritten)
   @test.assert_eq(reparsed.entries().length(), 2)
   @test.assert_eq(reparsed.get("a.txt"), Some(b"a"))
   @test.assert_eq(reparsed.get("c.txt"), Some(b"c"))
@@ -192,10 +198,10 @@ test "zip set_comment invalidates the preserved trailer" {
   let archive = @zip.Archive()
   archive.add("a.txt", b"x")
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   parsed.set_comment(b"new comment")
   let rewritten = @zip.write(parsed, preserve=true)
-  @test.assert_eq(@zip.read(rewritten).comment(), b"new comment")
+  @test.assert_eq(@zip.read_all(rewritten).comment(), b"new comment")
 }
 
 ///|
@@ -231,23 +237,39 @@ test "zip Archive::clone preserves source records for byte-preserving writes" {
   writer.end_entry()
   writer.finish()
   let bytes = output.to_bytes()
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   let fork = parsed.clone()
   @test.assert_eq(@zip.write(fork, preserve=true), bytes)
 }
 
 ///|
-test "zip reads a python-produced archive" {
-  let parsed = @zip.read(py_mini)
+test "zip reads and retains Python entry metadata when replacing content" {
+  let parsed = @zip.read_all(py_mini)
   @test.assert_eq(parsed.entries().length(), 1)
   @test.assert_eq(parsed.get("a.txt"), Some(b"hi"))
   @test.assert_eq(parsed.entries()[0].compression(), Deflate)
   @test.assert_eq(parsed.entries()[0].crc32(), @checksum.crc32(b"hi"))
+  @test.assert_eq(@zip.write(parsed, preserve=true), py_mini)
+  let original = parsed.entries()[0]
+  let payload = b"replacement with a different length"
+  @test.assert_eq(parsed.replace("a.txt", payload), true)
+  for preserve in [false, true] {
+    let bytes = @zip.write(parsed, preserve~)
+    let reread = @zip.read_all(bytes)
+    @test.assert_eq(reread.get("a.txt"), Some(payload))
+    @test.assert_eq(zip_test_field(bytes, 10, 4), 0x5d1c81e6)
+    for entry in [original, parsed.entries()[0], reread.entries()[0]] {
+      @test.assert_eq(entry.dos_date(), 0x5d1c)
+      @test.assert_eq(entry.dos_time(), 0x81e6)
+      @test.assert_eq(entry.creator_system(), 3)
+      @test.assert_eq(entry.external_attributes(), 0x01800000U)
+    }
+  }
 }
 
 ///|
 test "zip reads a python-produced data-descriptor archive" {
-  let parsed = @zip.read(py_descriptor)
+  let parsed = @zip.read_all(py_descriptor)
   @test.assert_eq(parsed.entries().length(), 1)
   @test.assert_eq(parsed.get("desc.txt"), Some(b"descriptor entry payload"))
   @test.assert_eq(
@@ -376,7 +398,7 @@ fn range_bytes_255_times_3() -> Bytes {
 
 ///|
 test "zip reads a realistic python archive" {
-  let parsed = @zip.read(py_complex)
+  let parsed = @zip.read_all(py_complex)
   @test.assert_eq(parsed.entries().length(), 4)
   @test.assert_eq(parsed.get("dir/"), Some(b""))
   @test.assert_eq(
@@ -392,7 +414,7 @@ test "zip reads a realistic python archive" {
 
 ///|
 test "zip reads a handcrafted zip64 archive" {
-  let parsed = @zip.read(py_zip64)
+  let parsed = @zip.read_all(py_zip64)
   @test.assert_eq(parsed.entries().length(), 1)
   @test.assert_eq(
     parsed.get("big.bin"),
@@ -425,7 +447,7 @@ let lying_zip64 : Bytes = [
 
 ///|
 test "zip rejects a lying zip64 size that exceeds the Int range" {
-  try ignore(@zip.read(lying_zip64)) catch {
+  try ignore(@zip.read_all(lying_zip64)) catch {
     ZipError(kind, _) =>
       match kind {
         UnsupportedFeature => ()
@@ -443,7 +465,7 @@ test "zip writes and reads back a zip64 trailer" {
     archive.add("e\{i}", b"", compression=Store)
   }
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.entries().length(), 65_536)
 }
 
@@ -457,7 +479,7 @@ test "zip remove and replace" {
   @test.assert_eq(archive.get("a.txt"), None)
   @test.assert_eq(archive.replace("b.txt", b"bb"), true)
   @test.assert_eq(archive.replace("missing", b"x"), false)
-  let parsed = @zip.read(@zip.write(archive))
+  let parsed = @zip.read_all(@zip.write(archive))
   @test.assert_eq(parsed.entries().length(), 1)
   @test.assert_eq(parsed.get("b.txt"), Some(b"bb"))
 }
@@ -465,7 +487,7 @@ test "zip remove and replace" {
 ///|
 test "zip package-size limit" {
   try
-    ignore(@zip.read(py_mini, limits=ReadLimits(max_package_bytes=50)))
+    ignore(@zip.read_all(py_mini, limits=ReadLimits(max_package_bytes=50)))
   catch {
     ZipError(kind, _) =>
       match kind {
@@ -479,7 +501,7 @@ test "zip package-size limit" {
 
 ///|
 test "zip entry-count limit" {
-  try ignore(@zip.read(py_mini, limits=ReadLimits(max_entries=0))) catch {
+  try ignore(@zip.read_all(py_mini, limits=ReadLimits(max_entries=0))) catch {
     ZipError(kind, _) =>
       match kind {
         LimitExceeded(kind=Entries, limit=_, observed=_) => ()
@@ -497,7 +519,7 @@ test "zip per-entry and total uncompressed limits" {
     archive.add("first", b"abc", compression~)
     archive.add("second", b"def", compression~)
     let bytes = @zip.write(archive)
-    let parsed = @zip.read(
+    let parsed = @zip.read_all(
       bytes,
       limits=ReadLimits(
         max_entry_uncompressed_bytes=3,
@@ -507,14 +529,14 @@ test "zip per-entry and total uncompressed limits" {
     @test.assert_eq(parsed.get("first"), Some(b"abc"))
     @test.assert_eq(parsed.get("second"), Some(b"def"))
     let ZipError(kind, _) = @test.expect_error(() => {
-      @zip.read(bytes, limits=ReadLimits(max_entry_uncompressed_bytes=2))
+      @zip.read_all(bytes, limits=ReadLimits(max_entry_uncompressed_bytes=2))
     })
     guard kind
       is LimitExceeded(kind=EntryUncompressedBytes, limit=_, observed=_) else {
       @test.fail("expected the per-entry limit")
     }
     let ZipError(kind, _) = @test.expect_error(() => {
-      @zip.read(bytes, limits=ReadLimits(max_total_uncompressed_bytes=5))
+      @zip.read_all(bytes, limits=ReadLimits(max_total_uncompressed_bytes=5))
     })
     guard kind
       is LimitExceeded(kind=TotalUncompressedBytes, limit=_, observed=_) else {
@@ -543,7 +565,7 @@ test "zip directory-byte limit" {
 
 ///|
 test "zip read honours cancellation" {
-  try ignore(@zip.read(py_mini, cancelled=() => true)) catch {
+  try ignore(@zip.read_all(py_mini, cancelled=() => true)) catch {
     ZipError(kind, _) =>
       match kind {
         Cancelled => ()
@@ -573,7 +595,7 @@ test "zip write with max_output_bytes matches write and rejects oversize" {
 
 ///|
 test "zip rejects non-archive input" {
-  try ignore(@zip.read(b"not a zip archive at all")) catch {
+  try ignore(@zip.read_all(b"not a zip archive at all")) catch {
     ZipError(kind, _) =>
       match kind {
         MissingEndOfCentral => ()
@@ -589,7 +611,7 @@ test "zip rejects corrupted fields with the correct error category" {
   let archive = @zip.Archive()
   archive.add("a.txt", b"abc", compression=Store)
   let valid = @zip.write(archive)
-  @test.assert_eq(@zip.read(valid).get("a.txt"), Some(b"abc"))
+  @test.assert_eq(@zip.read_all(valid).get("a.txt"), Some(b"abc"))
   // Stored payload starts after the 30-byte local header and five-byte name.
   let central = 38
   @test.assert_eq(valid[central:central + 4], b"PK\x01\x02")
@@ -608,7 +630,7 @@ test "zip rejects corrupted fields with the correct error category" {
       damaged[at] = byte
     }
     let ZipError(kind, _) = @test.expect_error(() => {
-      @zip.read(Bytes::from_array(damaged))
+      @zip.read_all(Bytes::from_array(damaged))
     })
     @test.assert_eq(kind, expected)
   }
@@ -637,7 +659,7 @@ let optional_zip64 : Bytes = [
 
 ///|
 test "optional ZIP64 end records preserve ordinary classic fields" {
-  let archive = @zip.read(optional_zip64)
+  let archive = @zip.read_all(optional_zip64)
   @test.assert_eq(archive.get("x"), Some(b"0123456789"))
   @test.assert_eq(@zip.write(archive, preserve=true), optional_zip64)
   let end = optional_zip64.length() - 22
@@ -647,7 +669,7 @@ test "optional ZIP64 end records preserve ordinary classic fields" {
     let bytes = optional_zip64.to_array()
     bytes[offset] = b'\xff'
     let ZipError(_, _) = @test.expect_error(() => {
-      @zip.read(Bytes::from_array(bytes))
+      @zip.read_all(Bytes::from_array(bytes))
     })
   }
 }
@@ -656,7 +678,7 @@ test "optional ZIP64 end records preserve ordinary classic fields" {
 test "optional ZIP64 trailers remain consistent after removal and replacement" {
   let replacement = Bytes::make(1000, b'x')
   for remove in [true, false] {
-    let archive = @zip.read(optional_zip64)
+    let archive = @zip.read_all(optional_zip64)
     if remove {
       @test.assert_eq(archive.remove("x"), true)
     } else {
@@ -669,7 +691,7 @@ test "optional ZIP64 trailers remain consistent after removal and replacement" {
     let count = if remove { 0 } else { 1 }
     @test.assert_eq(zip_test_field(rewritten, end + 8, 2), count)
     @test.assert_eq(zip_test_field(rewritten, end + 10, 2), count)
-    let reparsed = @zip.read(rewritten)
+    let reparsed = @zip.read_all(rewritten)
     @test.assert_eq(reparsed.entries().length(), count)
     let source = archive_range_source(rewritten)
     let directory = drive_directory_ranges(
@@ -694,13 +716,13 @@ test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
     archive.add("x", b"", compression=Store)
   }
   let classic = @zip.write(archive)
-  let parsed = @zip.read(classic)
+  let parsed = @zip.read_all(classic)
   @test.assert_eq(parsed.entries().length(), 65534)
   parsed.add("last", b"", compression=Store)
   // Cover fresh serialization and promotion of a preserved classic trailer.
   for preserve in [false, true] {
     let bytes = @zip.write(parsed, preserve~)
-    @test.assert_eq(@zip.read(bytes).entries().length(), 65535)
+    @test.assert_eq(@zip.read_all(bytes).entries().length(), 65535)
     let directory = drive_directory_ranges(
       DirectoryReader(bytes.length().to_uint64()),
       archive_range_source(bytes),

@@ -307,7 +307,7 @@ chunk, local metadata, the codec workspace, and the caller's output buffer.
 `Done` verifies the local header against the directory, exact compressed and
 decoded sizes, CRC-32, and any classic or ZIP64 data descriptor. Output produced
 earlier remains unverified; discard partial output on failure.
-Like `read`, zero-length Deflate entries with zero compressed bytes are accepted;
+Like `read_all`, zero-length Deflate entries with zero compressed bytes are accepted;
 CRC-32 and any data descriptor are still checked.
 Unsupported methods and encrypted entries remain listable but cannot be opened.
 `InvalidEntryIndex` identifies an invalid index, `SizeMismatch` an inconsistent
@@ -327,21 +327,25 @@ test "README zip round-trip" {
   let archive = @zip.Archive()
   archive.add("hello.txt", b"hello, zip")
   let bytes = @zip.write(archive)
-  let parsed = @zip.read(bytes)
+  let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.get("hello.txt"), Some(b"hello, zip"))
 }
 ```
 
 Supported features include STORED and DEFLATE entries, ZIP64, data descriptors,
-UTF-8 names, and archive comments. `read` accepts `ReadLimits` to bound archive
+UTF-8 names, and archive comments. `read_all` accepts `ReadLimits` to bound archive
 size (including the complete retained source), entry count, and decompressed sizes, plus a
 `cancelled` callback. Exceeding a limit raises
 `ZipError(LimitExceeded(kind~, limit~, observed=actual), message)`; limit and actual values
 are `UInt64` on both memory and directory paths.
 
-`read` verifies each entry's CRC-32, raising `ChecksumMismatch` for a damaged
+`read_all` verifies each entry's CRC-32, raising `ChecksumMismatch` for a damaged
 payload. Cancellation remains `Cancelled` throughout parsing, decoding and
 checksum verification.
+
+`Entry` exposes `dos_date`, `dos_time`, `creator_system`, and `external_attributes`.
+These fields survive `replace` and are written back in both write modes.
+`read_all` retains a copy of the archive plus all decoded payloads in memory.
 
 `write(archive, preserve=true)` reuses unchanged source records; an unmodified
 archive round-trips byte-for-byte, including prefixes, gaps and directory order.
@@ -367,7 +371,7 @@ test "README incremental ZIP writer" {
   writer.write(b"def")
   writer.end_entry()
   writer.finish()
-  let archive = @zip.read(output.to_bytes())
+  let archive = @zip.read_all(output.to_bytes())
   @test.assert_eq(archive.get("chunked.txt"), Some(b"abcdef"))
 }
 ```

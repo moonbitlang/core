@@ -145,16 +145,13 @@ test "zip zip64 end record rejects malformed trailers" {
 ///|
 fn descriptor_meta(crc~ : UInt32) -> MemoryEntryMeta {
   {
+    ..base_meta(),
     name: "",
     name_len: 0,
-    flags: 0,
-    method_id: 0,
     crc,
     compressed_size: 4,
     uncompressed_size: 4,
-    local_offset: 0,
     central_record: b"",
-    central_zip64_offset_position: None,
     data_descriptor: true,
   }
 }
@@ -220,17 +217,9 @@ test "zip data-descriptor sizing matches and rejects ambiguous or bad layouts" {
   // When CRC, sizes, and signature all share one value, both layouts match.
   let sig_int = DATA_DESCRIPTOR_SIG.reinterpret_as_int()
   let ambiguous_meta : MemoryEntryMeta = {
-    name: "",
-    name_len: 0,
-    flags: 0,
-    method_id: 0,
-    crc: DATA_DESCRIPTOR_SIG,
+    ..descriptor_meta(crc=DATA_DESCRIPTOR_SIG),
     compressed_size: sig_int,
     uncompressed_size: sig_int,
-    local_offset: 0,
-    central_record: b"",
-    central_zip64_offset_position: None,
-    data_descriptor: true,
   }
   let ambiguous = {
     let buf : Array[Byte] = []
@@ -292,6 +281,10 @@ fn base_meta() -> MemoryEntryMeta {
     flags: 0,
     method_id: 0,
     crc: 0x11111111U,
+    dos_date: 0,
+    dos_time: 0,
+    creator_system: 0,
+    external_attributes: 0,
     compressed_size: 3,
     uncompressed_size: 3,
     local_offset: 0,
@@ -748,7 +741,7 @@ test "zip entry names and output limits are checked" {
     InvalidArgument,
   )
   expect_zip_kind(
-    () => ignore(read(write(small), limits=ReadLimits(max_entries=-1))),
+    () => ignore(read_all(write(small), limits=ReadLimits(max_entries=-1))),
     InvalidArgument,
   )
   @test.assert_eq(
@@ -810,7 +803,7 @@ test "zip matching raw names preserve empty and Unicode names" {
     let archive = Archive()
     archive.add(name, b"payload", compression=Store)
     let encoded = write(archive)
-    let decoded = read(encoded)
+    let decoded = read_all(encoded)
     @test.assert_eq(decoded.entries()[0].name(), name)
     @test.assert_eq(decoded.entries()[0].data().to_owned(), b"payload")
     @test.assert_eq(write(decoded, preserve=true), encoded)
@@ -917,7 +910,13 @@ test "zip local order sorts source offsets and keeps new entries stable" {
 test "ZIP64 sizing agrees with emitted headers and descriptors" {
   let archive = Archive()
   archive.add("a", b"", compression=Store)
-  let entry = archive.entries()[0]
+  let entry = {
+    ..archive.entries()[0],
+    dos_date: 0x5d1c,
+    dos_time: 0x81e6,
+    creator_system: 3,
+    external_attributes: 0x01800000U,
+  }
   let counting = Output::counting(None)
   let output = Output::writing(None)
   for out in [counting, output] {
@@ -933,9 +932,13 @@ test "ZIP64 sizing agrees with emitted headers and descriptors" {
   let bytes = output.finish()
   @test.assert_eq(counting.size, bytes.length())
   @test.assert_eq(bytes.length(), 150)
+  @test.assert_eq(read_u32_le_at_raw(bytes, 10), 0x5d1c81e6U)
   @test.assert_eq(read_u32_le_at_raw(bytes, 51), DATA_DESCRIPTOR_SIG)
   @test.assert_eq(read_u32_le_at_raw(bytes, 75), CENTRAL_HEADER_SIG)
+  @test.assert_eq(read_u16_le_at(bytes, 79), 0x032d)
+  @test.assert_eq(read_u32_le_at_raw(bytes, 87), 0x5d1c81e6U)
   @test.assert_eq(read_u16_le_at(bytes, 105), 28)
+  @test.assert_eq(read_u32_le_at_raw(bytes, 113), 0x01800000U)
 }
 
 ///|
