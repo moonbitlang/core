@@ -79,7 +79,9 @@ fn cov_expect_gunzip_error(
   input : Bytes,
   expected_kind : @gzip.GzipErrorKind,
 ) -> Unit raise {
-  let GzipError(kind, _) = @test.expect_error(() => @gzip.decompress(input))
+  let GzipError(kind, _) = @test.expect_error(() => {
+    @gzip.decompress(input, cancelled=() => false)
+  })
   @test.assert_eq(kind, expected_kind)
 }
 
@@ -238,4 +240,58 @@ test "gzip coverage: end after a clean member boundary" {
   assert_true(status is Done)
   @test.assert_eq(consumed, 0)
   @test.assert_eq(produced, 0)
+}
+
+///|
+test "gzip output limit counts all members" {
+  let encoded = @gzip.compress(b"hello", level=0)
+  let input = encoded + encoded + b"TRAILING"
+  @test.assert_eq(
+    @gzip.decompress(input, max_output=10, cancelled=() => false),
+    b"hellohello",
+  )
+  let GzipError(kind, _) = @test.expect_error(() => {
+    @gzip.decompress(input, max_output=6)
+  })
+  @test.assert_eq(kind, OutputLimitExceeded(limit=6UL, observed=10UL))
+  let empty = @gzip.compress(b"")
+  @test.assert_eq(@gzip.decompress(empty + empty, max_output=0), b"")
+  let GzipError(kind, _) = @test.expect_error(() => {
+    @gzip.decompress(input, max_output=-1)
+  })
+  @test.assert_eq(kind, InvalidArgument)
+}
+
+///|
+test "gzip cancels at entry during decoding and during checksum" {
+  let input = @gzip.compress(Bytes::make(20000, b'x'))
+  for cancel_at in [1, 4, 10] {
+    let mut polls = 0
+    let GzipError(kind, _) = @test.expect_error(() => {
+      @gzip.decompress(input, max_output=20000, cancelled=() => {
+        polls += 1
+        polls == cancel_at
+      })
+    })
+    @test.assert_eq(kind, Cancelled)
+    @test.assert_eq(polls, cancel_at)
+  }
+}
+
+///|
+test "gzip cancels in long headers and between empty members" {
+  let empty = @gzip.compress(b"")
+  let named = cov_reheader(empty, 8, Bytes::make(20000, b'n') + b"\x00")
+  @test.assert_eq(@gzip.decompress(named, max_output=0), b"")
+  for (input, cancel_at) in [(named, 3), (empty + empty, 5)] {
+    let mut polls = 0
+    let GzipError(kind, _) = @test.expect_error(() => {
+      @gzip.decompress(input, max_output=0, cancelled=() => {
+        polls += 1
+        polls == cancel_at
+      })
+    })
+    @test.assert_eq(kind, Cancelled)
+    @test.assert_eq(polls, cancel_at)
+  }
 }

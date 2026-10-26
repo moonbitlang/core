@@ -41,7 +41,7 @@ For whole-buffer callers that already own their output storage, use the direct
 buffer API. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
 for a negative input length or an unrepresentable bound);
 compression returns `None` if its encoded output does not fit, while decompression
-raises `OutputLimitExceeded` if its decoded output does not fit. Reuse
+raises `OutputLimitExceeded(limit~, observed~)` if its decoded output does not fit. Reuse
 `Compressor` and `Decompressor` across streams to retain their workspace.
 
 ```mbt check
@@ -92,10 +92,6 @@ test "README prefix decode" {
   @test.assert_eq(rest.to_owned(), b"what follows")
 }
 ```
-
-`decompress` neither bounds its output nor takes a cancellation callback; with
-untrusted input use `decompress_into`, which reports its consumption the same
-way, or the streaming `IncrementalDecoder`.
 
 The streaming API is a pure push state machine. It owns no I/O object, so both
 synchronous and asynchronous callers can supply input and drain output:
@@ -177,29 +173,18 @@ test "README streaming IncrementalEncoder" {
 - Raw failures expose a stable `InflateErrorKind` (`Truncated`, `Corrupt`,
   `TrailingData`, `OutputLimitExceeded`, `Cancelled`, or `InvalidArgument`)
   alongside diagnostic text; gzip/zlib similarly expose `GzipErrorKind`/`ZlibErrorKind`.
-- One-shot decoding (`inflate_all`, `inflate_exact`)
-  accepts an optional `cancelled` callback, polled at entry and then every
-  ~4-8 KiB of decoded output; returning `true` raises
-  `InflateError(Cancelled, _)`, so untrusted-input loops can react to
-  cancellation without streaming plumbing.
 
 ### Exact and bounded one-shot decoding
 
-`inflate_all` remains the convenient trusted-input API: it accepts a raw
-DEFLATE prefix and grows its output without a limit. Use `inflate_exact` when the
-input must contain exactly one raw stream. Both accept `max_output` to bound
-the decoded size:
+`inflate_all` and `Decompressor::decompress` accept a raw DEFLATE prefix;
+`inflate_exact` rejects trailing bytes. These and gzip/zlib `decompress` accept
+`max_output` and `cancelled`. gzip counts output across all members.
 
 ```mbt check
 ///|
 test "README exact and limited inflate" {
   let source = b"bounded convenience API"
   let compressed = @flate.deflate_all(source)
-  @test.assert_eq(@flate.inflate_exact(compressed), source)
-  @test.assert_eq(
-    @flate.inflate_all(compressed, max_output=source.length()),
-    source,
-  )
   @test.assert_eq(
     @flate.inflate_exact(compressed, max_output=source.length()),
     source,
@@ -207,17 +192,20 @@ test "README exact and limited inflate" {
 }
 ```
 
-`inflate_exact` combines exact framing with optional bounds: `max_output` caps
-the decoded size (raising `OutputLimitExceeded` before any oversized result is
-returned; a negative limit raises `InvalidArgument`), and `preallocated=true`
-replays the deterministic decode a second time into one exactly sized allocation. The
-preallocated mode trades roughly double the decode work for a peak memory of
-about one decoded output (instead of a growing buffer plus a final copy), which
-matters for very large single streams. The default stays single-pass for
-callers that do not need the memory bound. Called with the input alone,
-`inflate_exact` runs on the in-memory decoder of `inflate_all`; a limit, a
-callback or `preallocated` selects the stepping decoder, which gives the same
-result and the same error for a malformed, truncated or extended stream.
+Omitting `max_output` permits output up to the capacity of `Bytes`; negative
+limits raise `InvalidArgument`. `OutputLimitExceeded(limit~, observed~)` carries
+`UInt64` counts. `observed` includes the rejected chunk or match, not necessarily
+the complete decoded size or bytes written. For `*_into`, the limit is the
+output buffer's capacity.
+
+A `cancelled` callback returning true raises `Cancelled`. It is polled regularly
+during decoding and, for gzip/zlib, checksum verification; gzip also polls while
+scanning headers and joining members. A failed `Decompressor` remains reusable
+with `last_consumed()` reset to zero.
+
+`inflate_exact(preallocated=true)` counts and validates first, then decodes into
+one exactly sized allocation. It trades a second decode pass for lower peak
+memory; the default grows the output in one pass.
 
 ## ZIP container
 
@@ -348,7 +336,7 @@ Supported features include STORED and DEFLATE entries, ZIP64, data descriptors,
 UTF-8 names, and archive comments. `read` accepts `ReadLimits` to bound archive
 size (including the complete retained source), entry count, and decompressed sizes, plus a
 `cancelled` callback. Exceeding a limit raises
-`ZipError(LimitExceeded(kind, limit, actual), message)`; limit and actual values
+`ZipError(LimitExceeded(kind~, limit~, observed=actual), message)`; limit and actual values
 are `UInt64` on both memory and directory paths.
 
 `read` verifies each entry's CRC-32, raising `ChecksumMismatch` for a damaged
@@ -493,10 +481,6 @@ compress-once, serve-forever artifacts.
 Read-only inputs accept `BytesView`; existing `Bytes` values convert at the
 call site without copying. `Compressor::compress` and `compress_into` reuse
 workspace for repeated streams.
-
-Both `inflate_all` and `inflate_exact` take a plain optional integer ceiling:
-`max_output=n`. Omit it for unbounded output. `inflate_all` accepts a raw stream
-prefix; `inflate_exact` rejects trailing bytes.
 
 ZIP writing uses `write(archive, preserve=true, max_output_bytes=n)` for
 byte-preserving, bounded output. The options are independent. Construct read

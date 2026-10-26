@@ -193,7 +193,10 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
   let ZipError(kind, _) = @test.expect_error(() => {
     directory.open_entry(0, limits=EntryReadLimits(max_output_bytes=9UL))
   })
-  @test.assert_eq(kind, LimitExceeded(EntryUncompressedBytes, 9UL, 10UL))
+  @test.assert_eq(
+    kind,
+    LimitExceeded(kind=EntryUncompressedBytes, limit=9UL, observed=10UL),
+  )
   let ZipError(kind, _) = @test.expect_error(() => directory.open_entry(1))
   @test.assert_eq(kind, InvalidEntryIndex(1))
 
@@ -276,7 +279,7 @@ test "ZIP readers report observed per-entry and cumulative output limits" {
     let bytes = zip_with_underreported_size(compression)
     for (limits, expected_kind, ceiling, full_size) in cases {
       let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes, limits~))
-      guard kind is LimitExceeded(resource, limit, actual) else {
+      guard kind is LimitExceeded(kind=resource, limit~, observed=actual) else {
         @test.fail("expected a decoded-output limit error")
       }
       @test.assert_eq(resource, expected_kind)
@@ -298,7 +301,8 @@ test "ZIP readers report observed per-entry and cumulative output limits" {
   let ZipError(kind, _) = @test.expect_error(() => {
     drive_entry_ranges(reader, source, 16)
   })
-  guard kind is LimitExceeded(EntryUncompressedBytes, 5UL, actual) else {
+  guard kind
+    is LimitExceeded(kind=EntryUncompressedBytes, limit=5UL, observed=actual) else {
     @test.fail("expected the entry output limit")
   }
   assert_true(actual > 5UL && actual <= 10UL)

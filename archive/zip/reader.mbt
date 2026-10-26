@@ -133,9 +133,9 @@ fn check_sizes(
   guard uncompressed_size <= entry_limit else {
     raise ZipError(
       LimitExceeded(
-        EntryUncompressedBytes,
-        entry_limit.to_uint64(),
-        uncompressed_size.to_uint64(),
+        kind=EntryUncompressedBytes,
+        limit=entry_limit.to_uint64(),
+        observed=uncompressed_size.to_uint64(),
       ),
       "zip: entry exceeds the per-entry uncompressed limit",
     )
@@ -143,9 +143,9 @@ fn check_sizes(
   guard used_total >= 0 && uncompressed_size <= total_limit - used_total else {
     raise ZipError(
       LimitExceeded(
-        TotalUncompressedBytes,
-        total_limit.to_uint64(),
-        used_total.to_uint64() + uncompressed_size.to_uint64(),
+        kind=TotalUncompressedBytes,
+        limit=total_limit.to_uint64(),
+        observed=used_total.to_uint64() + uncompressed_size.to_uint64(),
       ),
       "zip: entries exceed the total uncompressed limit",
     )
@@ -179,7 +179,11 @@ fn inflate_entry(
     check_cancelled(cancelled)
     guard total <= max_output.to_uint64() else {
       raise ZipError(
-        LimitExceeded(limit_kind, reported_limit.to_uint64(), previous + total),
+        LimitExceeded(
+          kind=limit_kind,
+          limit=reported_limit.to_uint64(),
+          observed=previous + total,
+        ),
         "zip: decompressed size limit exceeded",
       )
     }
@@ -292,9 +296,9 @@ fn validate_central_bounds(
   guard entry_count <= limits.max_entries else {
     raise ZipError(
       LimitExceeded(
-        Entries,
-        limits.max_entries.to_uint64(),
-        entry_count.to_uint64(),
+        kind=Entries,
+        limit=limits.max_entries.to_uint64(),
+        observed=entry_count.to_uint64(),
       ),
       "zip: entry count exceeds its limit",
     )
@@ -328,9 +332,9 @@ fn parse_end_of_central(
   guard bytes.length() <= limits.max_package_bytes else {
     raise ZipError(
       LimitExceeded(
-        PackageBytes,
-        limits.max_package_bytes.to_uint64(),
-        bytes.length().to_uint64(),
+        kind=PackageBytes,
+        limit=limits.max_package_bytes.to_uint64(),
+        observed=bytes.length().to_uint64(),
       ),
       "zip: package exceeds the input size limit",
     )
@@ -550,9 +554,9 @@ fn decode_entry(
   guard data.length() <= total_limit - actual_total else {
     raise ZipError(
       LimitExceeded(
-        TotalUncompressedBytes,
-        total_limit.to_uint64(),
-        actual_total.to_uint64() + data.length().to_uint64(),
+        kind=TotalUncompressedBytes,
+        limit=total_limit.to_uint64(),
+        observed=actual_total.to_uint64() + data.length().to_uint64(),
       ),
       "zip: entries exceed the total uncompressed limit",
     )

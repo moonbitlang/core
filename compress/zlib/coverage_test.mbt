@@ -17,7 +17,9 @@ fn expect_one_shot_zlib_error(
   input : Bytes,
   expected_kind : @zlib.ZlibErrorKind,
 ) -> Unit raise {
-  let ZlibError(kind, _) = @test.expect_error(() => @zlib.decompress(input))
+  let ZlibError(kind, _) = @test.expect_error(() => {
+    @zlib.decompress(input, cancelled=() => false)
+  })
   @test.assert_eq(kind, expected_kind)
 }
 
@@ -180,4 +182,36 @@ test "coverage: streaming Adler mismatch after backpressure" {
     }
   })
   @test.assert_eq(kind, ChecksumMismatch)
+}
+
+///|
+test "zlib output limit reports counts and accepts the exact boundary" {
+  let source = Bytes::make(20000, b'x')
+  let input = @zlib.compress(source)
+  @test.assert_eq(@zlib.decompress(input, max_output=20000), source)
+  let ZlibError(kind, _) = @test.expect_error(() => {
+    @zlib.decompress(input, max_output=19999)
+  })
+  @test.assert_eq(kind, OutputLimitExceeded(limit=19999UL, observed=20000UL))
+  @test.assert_eq(@zlib.decompress(@zlib.compress(b""), max_output=0), b"")
+  let ZlibError(kind, _) = @test.expect_error(() => {
+    @zlib.decompress(input, max_output=-1)
+  })
+  @test.assert_eq(kind, InvalidArgument)
+}
+
+///|
+test "zlib cancels at entry during decoding and during checksum" {
+  let input = @zlib.compress(Bytes::make(20000, b'x'))
+  for cancel_at in [1, 4, 10] {
+    let mut polls = 0
+    let ZlibError(kind, _) = @test.expect_error(() => {
+      @zlib.decompress(input, max_output=20000, cancelled=() => {
+        polls += 1
+        polls == cancel_at
+      })
+    })
+    @test.assert_eq(kind, Cancelled)
+    @test.assert_eq(polls, cancel_at)
+  }
 }

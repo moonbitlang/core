@@ -110,7 +110,13 @@ test "decoded short matches reject insufficient capacity before copying" {
     d.bit_count = 5 // fixed distance symbol 0: distance 1
     let err = @test.expect_error(() => d.decode_match(length + 254, None))
     guard err is InflateError(kind, _)
-    @test.assert_eq(kind, OutputLimitExceeded)
+    @test.assert_eq(
+      kind,
+      OutputLimitExceeded(
+        limit=length.to_uint64(),
+        observed=length.to_uint64() + 1UL,
+      ),
+    )
     @test.assert_eq(d.out.length, 1)
     for byte in storage {
       @test.assert_eq(byte, b'x')
