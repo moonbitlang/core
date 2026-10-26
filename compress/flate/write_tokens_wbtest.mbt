@@ -104,7 +104,7 @@ test "wide token writer matches the bytewise writer in every sink" {
       for capacity in [size + 9, size, size - 1, size / 2, 0] {
         guard capacity >= 0 else { continue }
         assert_token_writers_agree(
-          () => BitWriter::into(FixedArray::make(capacity, b'\xA5')),
+          () => BitWriter::into(FixedArray::make(capacity, b'\xA5').mut_view()),
           3,
           tokens,
           ll_val,
@@ -174,8 +174,10 @@ test "bulk byte writes count like single bytes in every sink" {
   let bytes = FixedArray::makei(40, i => (i * 7 + 1).to_byte())
   for length in [0, 1, 5, 40] {
     for capacity in [0, 1, 4, 5, 6, 64] {
-      let bulk = BitWriter::into(FixedArray::make(capacity, b'\xA5'))
-      let single = BitWriter::into(FixedArray::make(capacity, b'\xA5'))
+      let bulk = BitWriter::into(FixedArray::make(capacity, b'\xA5').mut_view())
+      let single = BitWriter::into(
+        FixedArray::make(capacity, b'\xA5').mut_view(),
+      )
       bulk.write_byte(b'\x11')
       single.write_byte(b'\x11')
       bulk.write_array(bytes, length)

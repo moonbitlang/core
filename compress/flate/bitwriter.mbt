@@ -21,6 +21,8 @@ priv struct BitWriter {
   mut bitbuf : Int32
   mut bit_count : Int32 // bits currently held in `bitbuf`, not yet flushed to a byte
   mut direct_output : FixedArray[Byte]?
+  direct_start : Int32
+  mut direct_capacity : Int32
   growable : Bool
   mut direct_pos : Int32
   mut overflowed : Bool
@@ -33,6 +35,8 @@ fn BitWriter::BitWriter() -> BitWriter {
     bitbuf: 0,
     bit_count: 0,
     direct_output: None,
+    direct_start: 0,
+    direct_capacity: 0,
     direct_pos: 0,
     growable: false,
     overflowed: false,
@@ -42,12 +46,14 @@ fn BitWriter::BitWriter() -> BitWriter {
 ///|
 /// Create a bit writer that emits directly into `output`. Writes past its end
 /// are recorded so the caller can report capacity exhaustion after encoding.
-fn BitWriter::into(output : FixedArray[Byte]) -> BitWriter {
+fn BitWriter::into(output : MutArrayView[Byte]) -> BitWriter {
   {
     out: [],
     bitbuf: 0,
     bit_count: 0,
-    direct_output: Some(output),
+    direct_output: Some(output_storage(output)),
+    direct_start: output.start_offset(),
+    direct_capacity: output.length(),
     direct_pos: 0,
     growable: false,
     overflowed: false,
@@ -58,7 +64,7 @@ fn BitWriter::into(output : FixedArray[Byte]) -> BitWriter {
 /// Reusable, geometrically growing output for complete in-memory streams.
 /// Unlike the caller-owned fixed buffer this can expand without recompressing.
 fn BitWriter::growing(output : FixedArray[Byte]) -> BitWriter {
-  { ..BitWriter::into(output), growable: true, }
+  { ..BitWriter::into(output.mut_view()), growable: true, }
 }
 
 ///|
@@ -92,6 +98,7 @@ fn BitWriter::grow(
     len=self.direct_pos,
   )
   self.direct_output = Some(grown)
+  self.direct_capacity = grown.length()
   grown
 }
 
@@ -102,8 +109,8 @@ fn BitWriter::grow(
 #inline
 fn BitWriter::write_byte(self : BitWriter, byte : Byte) -> Unit {
   if self.direct_output is Some(output) {
-    if self.direct_pos < output.length() {
-      output[self.direct_pos] = byte
+    if self.direct_pos < self.direct_capacity {
+      output[self.direct_start + self.direct_pos] = byte
       self.direct_pos += 1
     } else if self.growable {
       let required = bitwriter_output_length(self.direct_pos, 1)
@@ -128,15 +135,16 @@ fn BitWriter::write_bytes(
   length : Int32,
 ) -> Unit {
   if self.direct_output is Some(output) {
-    let output = if self.growable && length > output.length() - self.direct_pos {
+    let output = if self.growable &&
+      length > self.direct_capacity - self.direct_pos {
       self.grow(output, bitwriter_output_length(self.direct_pos, length))
     } else {
       output
     }
-    let count = length.min((output.length() - self.direct_pos).max(0))
+    let count = length.min((self.direct_capacity - self.direct_pos).max(0))
     if count > 0 {
       output.blit_from_bytes(
-        self.direct_pos,
+        self.direct_start + self.direct_pos,
         input.data(),
         input.start_offset() + offset,
         count,
@@ -183,14 +191,19 @@ fn BitWriter::write_array(
   length : Int32,
 ) -> Unit {
   if self.direct_output is Some(output) {
-    let output = if self.growable && length > output.length() - self.direct_pos {
+    let output = if self.growable &&
+      length > self.direct_capacity - self.direct_pos {
       self.grow(output, bitwriter_output_length(self.direct_pos, length))
     } else {
       output
     }
-    let count = length.min((output.length() - self.direct_pos).max(0))
+    let count = length.min((self.direct_capacity - self.direct_pos).max(0))
     if count > 0 {
-      bytes.blit_to(output, len=count, dst_offset=self.direct_pos)
+      bytes.blit_to(
+        output,
+        len=count,
+        dst_offset=self.direct_start + self.direct_pos,
+      )
     }
     self.direct_pos += count
     if count < length {
@@ -243,3 +256,8 @@ fn BitWriter::flush(self : BitWriter) -> Unit {
     self.bit_count = 0
   }
 }
+
+///|
+/// Access only the initialized range described by the view. The backing may
+/// also contain an Array's spare capacity, which callers must never touch.
+fn output_storage(output : MutArrayView[Byte]) -> FixedArray[Byte] = "%arrayview.buf"

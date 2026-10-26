@@ -22,7 +22,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
       let stopped = FixedArray::make(9017, b'\xA5')
       let mut calls = 0
       let error = @test.expect_error(() => {
-        decoder.decompress_into(input, stopped, cancelled=() => {
+        decoder.decompress_into(input, stopped.mut_view(), cancelled=() => {
           calls += 1
           calls == 2
         })
@@ -37,7 +37,10 @@ test "omitted cancellation preserves output and resets explicit callback state" 
         @test.assert_eq(stopped[i], b'\xA5')
       }
       let output = FixedArray::make(9017, b'\xA5')
-      @test.assert_eq(decoder.decompress_into(input, output).produced, 9000)
+      @test.assert_eq(
+        decoder.decompress_into(input, output.mut_view()).produced,
+        9000,
+      )
       @test.assert_eq(calls, 2)
       for i in 0..<9000 {
         @test.assert_eq(output[i], source[i])
@@ -47,7 +50,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
       }
       calls = 0
       @test.assert_eq(
-        decoder.decompress_into(input, output, cancelled=() => {
+        decoder.decompress_into(input, output.mut_view(), cancelled=() => {
           calls += 1
           false
         }).produced,
@@ -57,11 +60,11 @@ test "omitted cancellation preserves output and resets explicit callback state" 
     }
     @test.assert_eq(inflate_prefix(input), source)
     let output = FixedArray::make(9000, b'\xA5')
-    let result = inflate_into(input + b"TRAILER", output)
+    let result = inflate_into(input + b"TRAILER", output.mut_view())
     @test.assert_eq(result.consumed, input.length())
     @test.assert_eq(result.produced, 9000)
     let mut one_shot_calls = 0
-    let result = inflate_into(input, output, cancelled=() => {
+    let result = inflate_into(input, output.mut_view(), cancelled=() => {
       one_shot_calls += 1
       false
     })
@@ -70,7 +73,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
     @test.assert_eq(Bytes::from_array(output), source)
     @test.assert_eq(one_shot_calls, 3)
     let error = @test.expect_error(() => {
-      decoder.decompress_into(input, FixedArray::make(4095, b'\xA5'))
+      decoder.decompress_into(input, FixedArray::make(4095, b'\xA5').mut_view())
     })
     guard error is InflateError(kind, _)
     guard kind is OutputLimitExceeded(limit~, observed~) else {
@@ -86,7 +89,7 @@ test "literal fast path preserves capacity growth and cancellation" {
   for capacity in [0, 1, 2, 17] {
     let storage = FixedArray::make(capacity, b'\xA5')
     let decoder = MemDecoder(b"", () => false)
-    decoder.out = DecodeOutput::into(storage)
+    decoder.out = DecodeOutput::into(storage.mut_view())
     decoder.next_cancel = 4096
     for i in 0..<capacity {
       decoder.push(i.to_byte())
@@ -121,7 +124,9 @@ test "literal fast path preserves capacity growth and cancellation" {
       calls += 1
       true
     })
-    decoder.out = DecodeOutput::into(FixedArray::make(capacity, b'\xA5'))
+    decoder.out = DecodeOutput::into(
+      FixedArray::make(capacity, b'\xA5').mut_view(),
+    )
     decoder.next_cancel = 1
     let error = @test.expect_error(() => decoder.push(b'x'))
     guard error is InflateError(kind, _)
@@ -197,7 +202,7 @@ test "decoded short matches preserve exact length for near and distant history" 
       let storage = FixedArray::make(distance + length + 7, b'\xA5')
       storage.blit_from_bytes(0, history, 0, distance)
       let decoder = MemDecoder(b"", () => false)
-      decoder.out = DecodeOutput::into(storage)
+      decoder.out = DecodeOutput::into(storage.mut_view())
       decoder.out.length = distance
       decoder.next_cancel = distance + length + 1
       let code = 257 + len_to_idx[length]

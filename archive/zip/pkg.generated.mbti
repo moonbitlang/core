@@ -78,7 +78,7 @@ pub fn EntryReadLimits::EntryReadLimits(max_output_bytes? : UInt64) -> Self
 
 type EntryReader
 pub fn EntryReader::last_produced(Self) -> Int32
-pub fn EntryReader::step(Self, BytesView, FixedArray[Byte]) -> EntryStep raise ZipError
+pub fn EntryReader::step(Self, BytesView, MutArrayView[Byte]) -> EntryStep raise ZipError
 pub fn EntryReader::total_consumed(Self) -> UInt64
 pub fn EntryReader::total_produced(Self) -> UInt64
 

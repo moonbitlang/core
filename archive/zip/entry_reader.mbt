@@ -152,7 +152,7 @@ pub fn Directory::open_entry(
 pub fn EntryReader::step(
   self : EntryReader,
   input : BytesView,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
 ) -> EntryStep raise ZipError {
   self.step_produced = 0
   if self.phase is Failed(kind, message) {
@@ -191,7 +191,7 @@ pub fn EntryReader::total_produced(self : EntryReader) -> UInt64 {
 fn EntryReader::step_active(
   self : EntryReader,
   input : BytesView,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
 ) -> EntryStep raise ZipError {
   match self.phase {
     Initial => {
@@ -361,7 +361,7 @@ fn EntryReader::request_payload(self : EntryReader) -> EntryStep {
 ///|
 fn EntryReader::record_output(
   self : EntryReader,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
   produced : Int32,
   consumed : Int32,
 ) -> Unit raise ZipError {
@@ -385,7 +385,10 @@ fn EntryReader::record_output(
       "zip: decoded size exceeds central directory size",
     )
   }
-  self.crc.update(borrowed_zip_buffer_bytes(output)[:produced])
+  let start = output.start_offset()
+  self.crc.update(
+    borrowed_zip_buffer_bytes(zip_output_storage(output))[start:start + produced],
+  )
   self.produced = actual
   self.consumed += consumed.to_uint64()
   self.pending_pos += consumed
@@ -395,14 +398,11 @@ fn EntryReader::record_output(
 ///|
 fn EntryReader::read_payload(
   self : EntryReader,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
 ) -> EntryStep raise ZipError {
   guard output.length() != 0 else { return NeedMoreOutput }
   if self.inflater is Some(inflater) {
-    let status_result = inflater.step(
-      self.pending[self.pending_pos:],
-      output.mut_view(),
-    ) catch {
+    let status_result = inflater.step(self.pending[self.pending_pos:], output) catch {
       error => raise wrap_inflate_error(error)
     }
     let status = status_result.status
@@ -425,8 +425,8 @@ fn EntryReader::read_payload(
     }
   } else {
     let count = (self.pending.length() - self.pending_pos).min(output.length())
-    output.blit_from_bytesview(
-      0,
+    zip_output_storage(output).blit_from_bytesview(
+      output.start_offset(),
       self.pending[self.pending_pos:self.pending_pos + count],
     )
     self.record_output(output, count, count)

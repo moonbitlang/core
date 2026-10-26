@@ -44,7 +44,7 @@ test "decoded output sizes reject overflow before allocation or mutation" {
   for
     (out, limit) in [
       (DecodeOutput(1), maximum),
-      (DecodeOutput::into([b'\x00']), 1),
+      (DecodeOutput::into([b'\x00'].mut_view()), 1),
     ] {
     out.append_byte(b'a')
     let err = @test.expect_error(() => out.ensure_capacity(maximum))

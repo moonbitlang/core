@@ -37,8 +37,7 @@ test "README raw DEFLATE round-trip" {
 }
 ```
 
-For whole-buffer callers that already own their output storage, use the direct
-buffer API. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
+The direct-buffer APIs accept `MutArrayView[Byte]`, including slices of arrays. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
 for a negative input length or an unrepresentable bound);
 compression returns `None` if its encoded output does not fit, while decompression
 raises `OutputLimitExceeded(limit~, observed~)` if its decoded output does not fit. Reuse
@@ -53,14 +52,14 @@ test "README caller-buffer DEFLATE" {
     @flate.deflate_bound(source.length()),
     b'\x00',
   )
-  guard compressor.compress_into(source, compressed_buffer)
+  guard compressor.compress_into(source, compressed_buffer.mut_view())
     is Some(compressed_len) else {
     @test.fail("deflate_bound was too small")
   }
   let compressed = Bytes::from_array(compressed_buffer[:compressed_len])
   let decompressor = @flate.Decompressor()
   let output = FixedArray::make(source.length(), b'\x00')
-  let decoded = decompressor.decompress_into(compressed, output)
+  let decoded = decompressor.decompress_into(compressed, output.mut_view())
   @test.assert_eq(decoded.consumed, compressed.length())
   @test.assert_eq(Bytes::from_array(output[:decoded.produced]), source)
 }
@@ -280,7 +279,7 @@ fn extract_entry(
   let output = FixedArray::make(65536, b'\x00')
   let mut input : Bytes = b""
   for ;; {
-    let status = reader.step(input, output)
+    let status = reader.step(input, output.mut_view())
     let produced = reader.last_produced()
     if produced > 0 {
       emit(Bytes::from_array(output[:produced]))

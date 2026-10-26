@@ -56,18 +56,21 @@ test "fast store output respects capacities bounds and codec reuse" {
     @test.assert_eq(
       codec.compress_into(
         input,
-        FixedArray::make(expected.length() - 1, b'\x00'),
+        FixedArray::make(expected.length() - 1, b'\x00').mut_view(),
       ),
       None,
     )
     let output = FixedArray::make(expected.length() + 7, b'\xA5')
-    @test.assert_eq(codec.compress_into(input, output), Some(expected.length()))
+    @test.assert_eq(
+      codec.compress_into(input, output.mut_view()),
+      Some(expected.length()),
+    )
     @test.assert_eq(Bytes::from_array(output[:expected.length()]), expected)
     for i in expected.length()..<output.length() {
       @test.assert_eq(output[i], b'\xA5')
     }
     @test.assert_eq(
-      deflate_into(input, output, fast_store=true),
+      deflate_into(input, output.mut_view(), fast_store=true),
       Some(expected.length()),
     )
     @test.assert_eq(codec.compress(input), expected)

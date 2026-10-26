@@ -47,7 +47,7 @@ test "Decompressor returns both byte counts and preserves trailing input" {
       let input = around[3:3 + raw.length() + tail.length()]
       for slack in [0, 300] {
         let output = FixedArray::make(plain.length() + slack, b'\xA5')
-        let result = decoder.decompress_into(input, output)
+        let result = decoder.decompress_into(input, output.mut_view())
         @test.assert_eq(result.produced, plain.length())
         @test.assert_eq(result.consumed, raw.length())
         @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
@@ -79,7 +79,7 @@ test "Decompressor results survive reuse and failures" {
       @test.assert_eq(previous.consumed, raw.length())
       let InflateError(kind, _) = @test.expect_error(() => {
         if fixed {
-          ignore(decoder.decompress_into(input, output))
+          ignore(decoder.decompress_into(input, output.mut_view()))
         } else {
           ignore(decoder.decompress(input))
         }
@@ -88,7 +88,7 @@ test "Decompressor results survive reuse and failures" {
       @test.assert_eq(previous.data, plain)
       @test.assert_eq(previous.consumed, raw.length())
       @test.assert_eq(
-        decoder.decompress_into(raw, output).produced,
+        decoder.decompress_into(raw, output.mut_view()).produced,
         plain.length(),
       )
       @test.assert_eq(Bytes::from_array(output), plain)
@@ -101,7 +101,7 @@ test "Decompressor results survive reuse and failures" {
       }
       let InflateError(kind, _) = @test.expect_error(() => {
         if fixed {
-          ignore(decoder.decompress_into(raw, output, cancelled~))
+          ignore(decoder.decompress_into(raw, output.mut_view(), cancelled~))
         } else {
           ignore(decoder.decompress(raw, max_output=plain.length(), cancelled~))
         }
@@ -120,10 +120,13 @@ test "Decompressor can be reused after truncated prefixes" {
   let raw = b"\x4A\x04\x04\x02\x00\xFD\xFF\x62\x63"
   let behind = raw + raw
   for cut in 0..<raw.length() {
-    @test.assert_eq(decoder.decompress_into(behind, output).produced, 3)
+    @test.assert_eq(
+      decoder.decompress_into(behind, output.mut_view()).produced,
+      3,
+    )
     @test.assert_eq(Bytes::from_array(output[:3]), b"abc")
     let InflateError(kind, _) = @test.expect_error(() => {
-      decoder.decompress_into(behind[:cut], output)
+      decoder.decompress_into(behind[:cut], output.mut_view())
     })
     @test.assert_eq(kind, Truncated)
   }
@@ -141,7 +144,7 @@ test "decompress and decompress_into take turns on one decompressor" {
       for fixed in [true, false] {
         let InflateError(kind, _) = @test.expect_error(() => {
           if fixed {
-            ignore(decoder.decompress_into(raw, short))
+            ignore(decoder.decompress_into(raw, short.mut_view()))
           } else {
             ignore(decoder.decompress(raw, max_output=short.length()))
           }
@@ -158,7 +161,7 @@ test "decompress and decompress_into take turns on one decompressor" {
     @test.assert_eq(decoder.decompress(raw).data, plain)
     let output = FixedArray::make(plain.length(), b'\x00')
     @test.assert_eq(
-      decoder.decompress_into(raw, output).produced,
+      decoder.decompress_into(raw, output.mut_view()).produced,
       plain.length(),
     )
     @test.assert_eq(Bytes::from_array(output), plain)
