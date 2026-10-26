@@ -127,7 +127,9 @@ struct IncrementalDecoder {
 ///|
 /// Create a fresh decompressor positioned at the start of a DEFLATE stream.
 /// If supplied, `dictionary` preloads the history window with its final 32 KiB.
-pub fn IncrementalDecoder::IncrementalDecoder(dictionary? : BytesView) -> IncrementalDecoder {
+pub fn IncrementalDecoder::IncrementalDecoder(
+  dictionary? : BytesView,
+) -> IncrementalDecoder {
   let empty_out = FixedArray::make(0, b'\x00')
   let inflater : IncrementalDecoder = {
     mode: AtBlock,
@@ -172,7 +174,10 @@ pub fn IncrementalDecoder::is_finished(self : IncrementalDecoder) -> Bool {
 
 ///|
 /// Preload the history window with the final 32 KiB of a preset dictionary.
-fn IncrementalDecoder::preload_dictionary(self : IncrementalDecoder, dict : BytesView) -> Unit {
+fn IncrementalDecoder::preload_dictionary(
+  self : IncrementalDecoder,
+  dict : BytesView,
+) -> Unit {
   let start = (dict.length() - WINDOW_SIZE).max(0)
   // Construction and reset both start with an empty history window.
   self.window.blit_from_bytesview(0, dict[start:])
@@ -186,7 +191,10 @@ fn IncrementalDecoder::preload_dictionary(self : IncrementalDecoder, dict : Byte
 /// entries). The stale window contents are unreachable afterwards: any
 /// distance reaching past the new stream's start is rejected (`dist > wpos`).
 /// Pass `dictionary` to preload the fresh stream's history window.
-pub fn IncrementalDecoder::reset(self : IncrementalDecoder, dictionary? : BytesView) -> Unit {
+pub fn IncrementalDecoder::reset(
+  self : IncrementalDecoder,
+  dictionary? : BytesView,
+) -> Unit {
   self.mode = AtBlock
   self.bitbuf = 0
   self.bit_count = 0
@@ -232,7 +240,10 @@ fn IncrementalDecoder::next_fill_byte(self : IncrementalDecoder) -> Byte? {
 }
 
 ///|
-fn IncrementalDecoder::fill(self : IncrementalDecoder, n : Int32) -> Unit raise NeedInput {
+fn IncrementalDecoder::fill(
+  self : IncrementalDecoder,
+  n : Int32,
+) -> Unit raise NeedInput {
   while self.bit_count < n {
     guard self.next_fill_byte() is Some(b) else { raise NeedInput }
     self.bitbuf = self.bitbuf | (b.to_int() << self.bit_count)
@@ -241,7 +252,10 @@ fn IncrementalDecoder::fill(self : IncrementalDecoder, n : Int32) -> Unit raise 
 }
 
 ///|
-fn IncrementalDecoder::read_bits(self : IncrementalDecoder, n : Int32) -> Int32 raise NeedInput {
+fn IncrementalDecoder::read_bits(
+  self : IncrementalDecoder,
+  n : Int32,
+) -> Int32 raise NeedInput {
   self.fill(n)
   let v = self.bitbuf & ((1 << n) - 1)
   self.bitbuf = self.bitbuf >> n
@@ -250,7 +264,10 @@ fn IncrementalDecoder::read_bits(self : IncrementalDecoder, n : Int32) -> Int32 
 }
 
 ///|
-fn IncrementalDecoder::huff_sym(self : IncrementalDecoder, h : HuffmanDecoder) -> Int32 raise {
+fn IncrementalDecoder::huff_sym(
+  self : IncrementalDecoder,
+  h : HuffmanDecoder,
+) -> Int32 raise {
   let mut n = h.min
   for ;; {
     self.fill(n)
@@ -351,7 +368,9 @@ fn IncrementalDecoder::enter_huffman_mode(
 ///|
 /// Read the next block's header (and, for dynamic blocks, its Huffman tables).
 /// Atomic w.r.t. input: raises `NeedInput` to be retried from the block start.
-fn IncrementalDecoder::parse_block_header(self : IncrementalDecoder) -> Unit raise {
+fn IncrementalDecoder::parse_block_header(
+  self : IncrementalDecoder,
+) -> Unit raise {
   self.fill(3)
   self.final_block = (self.bitbuf & 1) == 1
   let btype = (self.bitbuf >> 1) & 3
@@ -396,7 +415,9 @@ fn IncrementalDecoder::next_stored_byte(self : IncrementalDecoder) -> Byte? {
 /// Preserve the unconsumed tail of an incomplete atomic unit. Every byte from
 /// the external view is then either permanently decoded or owned here, so the
 /// public call may report that complete view as consumed.
-fn IncrementalDecoder::stage_incomplete_input(self : IncrementalDecoder) -> Unit {
+fn IncrementalDecoder::stage_incomplete_input(
+  self : IncrementalDecoder,
+) -> Unit {
   let kept = self.staged_input[self.staged_pos:].to_owned()
   kept.push_iter(self.view[self.in_pos:].iter())
   self.staged_input = kept
@@ -431,7 +452,10 @@ fn IncrementalDecoder::release_step_views(self : IncrementalDecoder) -> Unit {
 ///|
 /// Advance the absolute window cursor after a bounded batch write.
 #inline
-fn IncrementalDecoder::advance_window(self : IncrementalDecoder, count : Int32) -> Unit {
+fn IncrementalDecoder::advance_window(
+  self : IncrementalDecoder,
+  count : Int32,
+) -> Unit {
   self.wpos = self.wpos + count
   if !self.filled && self.wpos >= WINDOW_SIZE {
     self.filled = true
@@ -823,7 +847,10 @@ fn IncrementalDecoder::mark_cursor(self : IncrementalDecoder) -> CursorMark {
 
 ///|
 #inline
-fn IncrementalDecoder::rewind_cursor(self : IncrementalDecoder, mark : CursorMark) -> Unit {
+fn IncrementalDecoder::rewind_cursor(
+  self : IncrementalDecoder,
+  mark : CursorMark,
+) -> Unit {
   self.bitbuf = mark.bitbuf
   self.bit_count = mark.bit_count
   self.staged_pos = mark.staged_pos
@@ -853,7 +880,9 @@ fn IncrementalDecoder::retry_or_raise(
 /// The step-local input/output cursors already live on `self`, so returning
 /// only `Status` avoids allocating an internal three-tuple that `step` would
 /// immediately unpack and discard.
-fn IncrementalDecoder::run_step(self : IncrementalDecoder) -> Status raise InflateError {
+fn IncrementalDecoder::run_step(
+  self : IncrementalDecoder,
+) -> Status raise InflateError {
   for ;; {
     match self.mode {
       Done => return Done

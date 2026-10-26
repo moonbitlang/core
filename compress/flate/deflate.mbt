@@ -126,7 +126,10 @@ fn IncrementalEncoder::preload_dictionary(
 /// With no `dictionary`, the history is cleared. Supplying one immediately
 /// preloads its last 32 KB for the new stream; the decoder must use the same
 /// preset dictionary.
-pub fn IncrementalEncoder::reset(self : IncrementalEncoder, dictionary? : BytesView) -> Unit {
+pub fn IncrementalEncoder::reset(
+  self : IncrementalEncoder,
+  dictionary? : BytesView,
+) -> Unit {
   self.finder.reset_stream(self.pending_end)
   self.parse_pos = 0
   self.pending_end = 0
@@ -155,7 +158,10 @@ pub fn IncrementalEncoder::is_finished(self : IncrementalEncoder) -> Bool {
 /// Latch a caller-supplied control action once its input view has been fully
 /// accepted. `Finish` is sticky until the final block is emitted; `SyncFlush`
 /// is sticky until the flush is produced. Later input is left unconsumed.
-fn IncrementalEncoder::latch_action(self : IncrementalEncoder, action : DeflateAction) -> Unit {
+fn IncrementalEncoder::latch_action(
+  self : IncrementalEncoder,
+  action : DeflateAction,
+) -> Unit {
   match action {
     Finish => {
       self.end_requested = true

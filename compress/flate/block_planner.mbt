@@ -28,7 +28,10 @@ fn IncrementalEncoder::pending_bytes(deflater : IncrementalEncoder) -> Int32 {
 ///|
 /// Append `input` to the ring with bulk copies into both mirrored halves,
 /// split at the ring wrap.
-fn IncrementalEncoder::push_pending(deflater : IncrementalEncoder, input : BytesView) -> Unit {
+fn IncrementalEncoder::push_pending(
+  deflater : IncrementalEncoder,
+  input : BytesView,
+) -> Unit {
   let mut rest = input
   while rest.length() > 0 {
     let offset = deflater.pending_end & STREAM_RING_MASK
@@ -59,7 +62,9 @@ fn IncrementalEncoder::write_stored_pending(
 // The final three bytes of an earlier accepted chunk could not yet form a
 // 4-byte hash. Insert them once new lookahead makes them hashable; all older
 // history is already present in the persistent chain.
-fn IncrementalEncoder::chain_ready_history(deflater : IncrementalEncoder) -> Unit {
+fn IncrementalEncoder::chain_ready_history(
+  deflater : IncrementalEncoder,
+) -> Unit {
   let ready_end = deflater.parse_pos.min((deflater.pending_end - 3).max(0))
   while deflater.hashed_through < ready_end {
     deflater.finder.insert_window_pos(
@@ -157,7 +162,10 @@ fn IncrementalEncoder::emit_capped(deflater : IncrementalEncoder) -> Unit {
 ///|
 /// Level 0 bypasses parsing entirely and writes buffered bytes straight out of
 /// the ring. With no matches, neither matchfinder nor history needs updates.
-fn IncrementalEncoder::emit_stored_all(deflater : IncrementalEncoder, is_final~ : Bool) -> Unit {
+fn IncrementalEncoder::emit_stored_all(
+  deflater : IncrementalEncoder,
+  is_final~ : Bool,
+) -> Unit {
   deflater.write_stored_pending(is_final~)
   deflater.parse_pos = 0
   deflater.pending_end = 0
