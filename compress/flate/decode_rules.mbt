@@ -97,7 +97,7 @@ fn fixed_distance_symbol(bits5 : Int32) -> Int32 {
 }
 
 ///|
-/// Decode one dynamic-Huffman block header, shared by the streaming `Inflater`
+/// Decode one dynamic-Huffman block header, shared by the streaming `IncrementalDecoder`
 /// and the in-memory `MemDecoder` so both interpret HLIT/HDIST/HCLEN and the
 /// code-length run-length encoding identically. `read_bits` and `huff_sym`
 /// come from the caller's bit reader and raise only `InflateError`; the

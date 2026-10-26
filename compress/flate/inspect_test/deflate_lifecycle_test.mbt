@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-/// `reset()` reuses one engine across independent streams: the Deflater's
-/// output matches a fresh compressor's, and the Inflater decodes a second
+/// `reset()` reuses one engine across independent streams: the IncrementalEncoder's
+/// output matches a fresh compressor's, and the IncrementalDecoder decodes a second
 /// stream cleanly after the first.
 test "reset reuses engines across streams" {
   let s1 = b"first stream payload, first stream payload"
   let s2 = b"second stream: completely different bytes!!"
-  let d = @flate.Deflater()
+  let d = @flate.IncrementalEncoder()
 
   let obuf = FixedArray::make(4096, b'\x00')
   let st1_result = d.step(s1, obuf.mut_view(), action=Finish)
@@ -35,7 +35,7 @@ test "reset reuses engines across streams" {
     Bytes::from_array(obuf[:st2_result.produced]),
     @flate.deflate_all(s2),
   )
-  let inf = @flate.Inflater()
+  let inf = @flate.IncrementalDecoder()
 
   let dbuf = FixedArray::make(4096, b'\x00')
   let ist1_result = inf.step(@flate.deflate_all(s1), dbuf.mut_view())
@@ -65,7 +65,7 @@ test "reset reuses engines across streams" {
 test "preset dictionary: raw deflate round-trip" {
   let dict = b"the quick brown fox jumps over the lazy dog"
   let msg = b"the quick brown fox jumps over the lazy dog, again and again!"
-  let d = @flate.Deflater(dictionary=dict)
+  let d = @flate.IncrementalEncoder(dictionary=dict)
   let obuf = FixedArray::make(4096, b'\x00')
   let st_result = d.step(msg, obuf.mut_view(), action=Finish)
   assert_true(st_result.status is Done)
@@ -73,13 +73,13 @@ test "preset dictionary: raw deflate round-trip" {
   // The dictionary must actually pay: smaller than dictionary-less output.
   assert_true(compressed.length() < @flate.deflate_all(msg).length())
   // With the dictionary: decodes to the message.
-  let inf = @flate.Inflater(dictionary=dict)
+  let inf = @flate.IncrementalDecoder(dictionary=dict)
   let dbuf = FixedArray::make(4096, b'\x00')
   let ist_result = inf.step(compressed, dbuf.mut_view())
   assert_true(ist_result.status is Done)
   @test.assert_eq(Bytes::from_array(dbuf[:ist_result.produced]), msg)
   // Without the dictionary, the first reference reaches before the stream.
-  let inf2 = @flate.Inflater()
+  let inf2 = @flate.IncrementalDecoder()
   let InflateError(kind, _) = @test.expect_error(() => {
     inf2.step(compressed, dbuf.mut_view())
   })

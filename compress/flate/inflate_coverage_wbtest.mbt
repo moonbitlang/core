@@ -43,7 +43,7 @@ fn coverage_dynamic_header(
 fn expect_corrupt_stream(data : Bytes) -> Unit raise {
   let InflateError(kind, _) = @test.expect_error(() => inflate_all(data))
   @test.assert_eq(kind, Corrupt)
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
   let InflateError(kind, _) = @test.expect_error(() => {
     inflater.step(data, output.mut_view())
@@ -62,14 +62,14 @@ test "Huffman decoders read ten-bit canonical codes" {
   // Symbols 9 and 10 have canonical codes 1022 and 1023. Their transmitted
   // (bit-reversed) forms are respectively 0x1ff and 0x3ff.
   let code9 : Bytes = [0xFF, 0x01]
-  let stream9 = Inflater()
+  let stream9 = IncrementalDecoder()
   stream9.view = code9
   @test.assert_eq(stream9.huff_sym(h), 9)
   let memory9 = MemDecoder(code9, () => false)
   @test.assert_eq(memory9.huff_sym(h), 9)
 
   let code10 : Bytes = [0xFF, 0x03]
-  let stream10 = Inflater()
+  let stream10 = IncrementalDecoder()
   stream10.view = code10
   @test.assert_eq(stream10.huff_sym(h), 10)
   let memory10 = MemDecoder(code10, () => false)
@@ -214,7 +214,7 @@ test "stored header truncation stages streaming input" {
   let truncated : Bytes = [0x01]
   let InflateError(kind, _) = @test.expect_error(() => inflate_all(truncated))
   @test.assert_eq(kind, Truncated)
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
   let status_result = inflater.step(truncated, output.mut_view())
   let status = status_result.status
@@ -232,7 +232,7 @@ test "stored header truncation stages streaming input" {
 /// Stored-byte reads may resume from an owned atomic tail. Once part of that
 /// tail is permanent, compaction must retain only the unread suffix.
 test "stored input drains and compacts a partial staged tail" {
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   inflater.staged_input = [b'\xAA', b'\xBB', b'\xCC']
   inflater.staged_pos = 0
   assert_true(inflater.next_stored_byte() == Some(b'\xAA'))
@@ -258,7 +258,7 @@ test "fixed-symbol truncation suspends only the streaming inflater" {
   let truncated : Bytes = [0x03]
   let InflateError(kind, _) = @test.expect_error(() => inflate_all(truncated))
   @test.assert_eq(kind, Truncated)
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
   let status_result = inflater.step(truncated, output.mut_view())
   let status = status_result.status

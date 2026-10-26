@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Streaming zlib (RFC 1950) compressor: a push-based, suspendable state machine
-// wrapping the `@flate.Deflater`. It emits the 2-byte header, then the raw
+// wrapping the `@flate.IncrementalEncoder`. It emits the 2-byte header, then the raw
 // DEFLATE stream block-by-block, then the 4-byte big-endian Adler-32 trailer,
 // accumulating the checksum incrementally. The one-shot `compress` remains
 // for in-memory use.
@@ -35,7 +35,7 @@ priv enum EncMode {
 /// Streaming zlib compressor (RFC 1950). Feed input and drain compressed output
 /// with `step`, finalize with `action=Finish`; binds no I/O trait.
 struct Encoder {
-  def : @flate.Deflater
+  def : @flate.IncrementalEncoder
   mut adler : @checksum.Adler32
   mut mode : EncMode
   mut stage : FixedArray[Byte]
@@ -58,9 +58,9 @@ pub fn Encoder::Encoder(
   fast_store~ : Bool = false,
 ) -> Encoder {
   let def = if dictionary is Some(dict) {
-    @flate.Deflater(level~, dictionary=dict, fast_store~)
+    @flate.IncrementalEncoder(level~, dictionary=dict, fast_store~)
   } else {
-    Deflater(level~, fast_store~)
+    IncrementalEncoder(level~, fast_store~)
   }
   {
     def,
@@ -181,7 +181,7 @@ pub fn Encoder::step(
         let p = st_result.produced
         op = op + p
         if st is NeedMoreInput {
-          // Deflater returns NeedMoreInput only after a requested sync flush
+          // IncrementalEncoder returns NeedMoreInput only after a requested sync flush
           // (including its marker) has been fully emitted.
           if self.pending_action is SyncFlush {
             self.pending_action = Continue

@@ -96,7 +96,7 @@ fn inflate_differential_stream_bytes(
   schedule_seed : UInt32,
   one_byte_only : Bool,
 ) -> Bytes raise {
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let rng = InflateDifferentialRng(schedule_seed)
   let output = FixedArray::make(23, b'\x00')
   let decoded = @buffer.Buffer()
@@ -195,7 +195,7 @@ fn inflate_differential_flip(
 }
 
 ///|
-test "inflate_all and streaming Inflater agree under deterministic fuzz" {
+test "inflate_all and streaming IncrementalDecoder agree under deterministic fuzz" {
   let sources = inflate_differential_sources()
   let levels : ReadOnlyArray[_] = [0, 1, 6, 9]
   let mut schedule_seed = 0xD1FF2026U
@@ -276,7 +276,7 @@ test "inflate_all and streaming Inflater agree under deterministic fuzz" {
 /// Arbitrary raw bytes exercise malformed states that mutations around streams
 /// produced by our own compressor may never reach. The seed is part of every
 /// corpus label so a failing case is exactly reproducible.
-test "inflate_all and streaming Inflater agree on deterministic raw noise" {
+test "inflate_all and streaming IncrementalDecoder agree on deterministic raw noise" {
   let corpus_rng = InflateDifferentialRng(0xBAD5EEDU)
   let mut schedule_seed = 0x51A7E202U
   for case_index in 0..<128 {

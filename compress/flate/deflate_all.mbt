@@ -13,12 +13,12 @@
 // limitations under the License.
 
 // One-shot DEFLATE compression: the whole input in, a complete raw DEFLATE
-// stream out. The counterpart to the streaming `Deflater` (deflate.mbt) for
+// stream out. The counterpart to the streaming `IncrementalEncoder` (deflate.mbt) for
 // when all input is already in hand.
 
 ///|
 /// A reusable, whole-buffer raw DEFLATE compressor. Unlike the suspendable
-/// `Deflater`, it reads the input directly and writes one complete stream into
+/// `IncrementalEncoder`, it reads the input directly and writes one complete stream into
 /// either a caller-provided buffer or reusable growable output storage.
 struct Compressor {
   level : Int32
@@ -135,7 +135,7 @@ fn Compressor::encode(
 ///|
 /// Compress bytes into a complete raw DEFLATE stream held entirely in memory.
 /// The whole input is tokenized directly, advancing a single offset and a
-/// session-owned fixed matchfinder; unlike `Deflater`, no input staging ring
+/// session-owned fixed matchfinder; unlike `IncrementalEncoder`, no input staging ring
 /// is needed. Opt-in `fast_store` may emit stored blocks after a heuristic
 /// check; false (the default) preserves normal compression behavior.
 pub fn deflate_all(

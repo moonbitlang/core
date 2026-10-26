@@ -25,7 +25,7 @@ fn fast_stream_run(
   room : Int32,
   fixed : Bool,
 ) -> Result[(Bytes, Int32), InflateErrorKind] {
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = if fixed {
     FixedArray::make(room, b'\x00').mut_view()
   } else {
@@ -97,8 +97,8 @@ fn assert_calls_agree(
   room : Int32,
   fixed : Bool,
 ) -> Result[(Bytes, Int32), InflateErrorKind] raise {
-  let whole = Inflater()
-  let pieces = Inflater()
+  let whole = IncrementalDecoder()
+  let pieces = IncrementalDecoder()
   let output = if fixed {
     FixedArray::make(room, b'\x00').mut_view()
   } else {
@@ -305,7 +305,7 @@ test "fast loop marks the window full by what a call wrote" {
     writer.write_bits(20000 - 16385, 13)
     writer.write_rcode(fixed_ll_val[256], fixed_ll_len[256])
   })
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   inflater.wpos = -30000
   let output = FixedArray::make(40000, b'\x00')
   let first_result = inflater.step(stream, output.mut_view())

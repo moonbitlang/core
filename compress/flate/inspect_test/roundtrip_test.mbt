@@ -24,11 +24,11 @@ test "round-trip: repetitive data actually compresses" {
 /// A final-input request is accepted only after older output is drained. The
 /// caller re-presents an unconsumed suffix with `action=Finish`; once accepted, the
 /// request remains sticky and later protocol input is left untouched.
-test "Deflater finalization preserves unconsumed input under backpressure" {
+test "IncrementalEncoder finalization preserves unconsumed input under backpressure" {
   let prefix = Bytes::from_array(Array::make(17000, b'\x5A'))
   let final_input = b"terminal-state payload"
   let after_end = b"belongs to the next protocol state"
-  let def = @flate.Deflater(level=0)
+  let def = @flate.IncrementalEncoder(level=0)
   let no_output = FixedArray::make(0, b'\x00')
   let compressed = @buffer.Buffer()
   let prefix_status_result = def.step(prefix, no_output.mut_view())

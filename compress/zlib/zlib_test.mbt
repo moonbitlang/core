@@ -354,7 +354,7 @@ test "streaming zlib Encoder latches flush across header backpressure" {
     }
   }
   assert_true(flushed)
-  // More than just CMF/FLG proves that the latched request reached Deflater.
+  // More than just CMF/FLG proves that the latched request reached IncrementalEncoder.
   assert_true(compressed.length() > 2)
   let mut sent_second = false
   for _ in 0..<4096 {

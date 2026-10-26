@@ -23,7 +23,7 @@ test "preset dictionaries retain exactly the final 32 KiB" {
   }
   let dictionary = Bytes::from_array(dictionary_bytes)
   let message = Bytes::from_array(message_bytes)
-  let deflater = @flate.Deflater(dictionary~)
+  let deflater = @flate.IncrementalEncoder(dictionary~)
   let compressed_buffer = FixedArray::make(4096, b'\x00')
   let deflate_status_result = deflater.step(
     message,
@@ -37,7 +37,7 @@ test "preset dictionaries retain exactly the final 32 KiB" {
   // A correct final-32-KiB dictionary turns the 512-byte suffix into a match.
   assert_true(compressed_size < 100)
   let compressed = Bytes::from_array(compressed_buffer[:compressed_size])
-  let inflater = @flate.Inflater(dictionary~)
+  let inflater = @flate.IncrementalDecoder(dictionary~)
   let output = FixedArray::make(1024, b'\x00')
   let inflate_status_result = inflater.step(compressed, output.mut_view())
   let produced = inflate_status_result.produced

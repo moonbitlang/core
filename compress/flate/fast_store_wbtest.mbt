@@ -78,7 +78,7 @@ test "fast store output respects capacities bounds and codec reuse" {
 
 ///|
 test "stored streaming blocks remain searchable as history" {
-  let d = Deflater(fast_store=true)
+  let d = IncrementalEncoder(fast_store=true)
   let input = fast_store_noise(DEFLATE_BLOCK_SIZE)
   for byte in input {
     d.push_pending(Bytes::make(1, byte))
@@ -105,7 +105,7 @@ test "stored streaming blocks remain searchable as history" {
 
 ///|
 fn append_fast_store_stream(
-  encoder : Deflater,
+  encoder : IncrementalEncoder,
   input : Bytes,
   action : DeflateAction,
   result : Array[Byte],
@@ -144,7 +144,7 @@ test "fast store transitions across sync flush backpressure and reset" {
   let text = Bytes::makei(12000, i => b"ordinary repeated text "[i % 23])
   for pair in [(noise, text), (text, noise)] {
     let (first, last) = pair
-    let fast = Deflater(fast_store=true)
+    let fast = IncrementalEncoder(fast_store=true)
     let encoded : Array[Byte] = []
     append_fast_store_stream(fast, first, SyncFlush, encoded)
     append_fast_store_stream(fast, last, Finish, encoded)
@@ -155,8 +155,8 @@ test "fast store transitions across sync flush backpressure and reset" {
     @test.assert_eq(inflate_all(Bytes::from_array(encoded)), noise)
     let defaults : Array[Byte] = []
     let explicit : Array[Byte] = []
-    let normal = Deflater()
-    let disabled = Deflater(fast_store=false)
+    let normal = IncrementalEncoder()
+    let disabled = IncrementalEncoder(fast_store=false)
     append_fast_store_stream(normal, first, SyncFlush, defaults)
     append_fast_store_stream(normal, last, Finish, defaults)
     append_fast_store_stream(disabled, first, SyncFlush, explicit)

@@ -70,7 +70,7 @@ struct EntryReader {
   central_offset : UInt64
   max_output : UInt64
   crc : @checksum.Crc32
-  mut inflater : @flate.Inflater?
+  mut inflater : @flate.IncrementalDecoder?
   mut phase : EntryPhase
   mut payload_offset : UInt64
   mut descriptor_zip64 : Bool
@@ -121,7 +121,7 @@ pub fn Directory::open_entry(
     max_output: limits.max_output_bytes,
     crc: Crc32(),
     inflater: if compression is Deflate {
-      Some(Inflater())
+      Some(IncrementalDecoder())
     } else {
       None
     },

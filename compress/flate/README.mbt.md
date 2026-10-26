@@ -95,16 +95,16 @@ test "README prefix decode" {
 
 `decompress` neither bounds its output nor takes a cancellation callback; with
 untrusted input use `decompress_into`, which reports its consumption the same
-way, or the streaming `Inflater`.
+way, or the streaming `IncrementalDecoder`.
 
 The streaming API is a pure push state machine. It owns no I/O object, so both
 synchronous and asynchronous callers can supply input and drain output:
 
 ```mbt check
 ///|
-test "README streaming Deflater" {
+test "README streaming IncrementalEncoder" {
   let source = b"small buffers exercise suspension and resume"
-  let encoder = @flate.Deflater()
+  let encoder = @flate.IncrementalEncoder()
   let chunk = FixedArray::make(3, b'\x00')
   let compressed = @buffer.Buffer()
   let mut first = true
@@ -141,7 +141,7 @@ test "README streaming Deflater" {
   and its output buffer may already contain partial output.
 - `NeedMoreOutput` preserves all pending work. Resume with another non-empty
   output view; one byte is sufficient.
-- `Inflater` owns the bounded tail of an incomplete atomic unit. On
+- `IncrementalDecoder` owns the bounded tail of an incomplete atomic unit. On
   `NeedMoreInput`, feed the next non-overlapping chunk; no growing replay window
   is required.
 - Encoders take one `DeflateAction`: `Continue`, `SyncFlush`, or `Finish`.
@@ -155,7 +155,7 @@ test "README streaming Deflater" {
   zlib checksum the produced range and drain pending body input before
   accepting more, so output can be produced while `result.consumed` is zero.
   Re-present the unaccepted input on the next call.
-- Raw `Inflater` callers own input completion: `NeedMoreInput` after the
+- Raw `IncrementalDecoder` callers own input completion: `NeedMoreInput` after the
   input source is exhausted means the stream is truncated. On `NeedMoreOutput`,
   keep calling `step` with the unconsumed suffix and fresh output space, even
   if the suffix is empty; stop at `Done`.
@@ -167,7 +167,7 @@ test "README streaming Deflater" {
   the zlib `Encoder` (`reset(dictionary?)`), or create a new wrapper, before
   reuse. A reset encoder produces exactly the bytes of a freshly constructed
   one with the same options and driving schedule, while reusing its workspace.
-- Configure a raw preset dictionary through `Deflater(...)`/`Inflater(...)`, or
+- Configure a raw preset dictionary through `IncrementalEncoder(...)`/`IncrementalDecoder(...)`, or
   while starting a fresh stream through `reset(dictionary=...)`; dictionary
   selection cannot be mutated after a stream begins.
 - gzip/zlib decoders may accept transport read-ahead beyond their trailer;
@@ -448,7 +448,7 @@ let codec = @flate.Compressor(level=6, fast_store=true)
 let raw = @flate.deflate_all(input, fast_store=true)
 
 ///|
-let stream = @flate.Deflater(level=6, fast_store=true)
+let stream = @flate.IncrementalEncoder(level=6, fast_store=true)
 
 ///|
 let archive_bytes = @zip.write(archive, fast_store=true)
@@ -470,7 +470,7 @@ lossless, and the normal output bounds and output limits still apply.
 ## Effort tiers
 
 All standard DEFLATE on the wire. Levels 0-9 are available on
-`deflate_all` / `Deflater`. The default level 6 uses distance-aware lazy
+`deflate_all` / `IncrementalEncoder`. The default level 6 uses distance-aware lazy
 matching and a sampled minimum match length; the other levels retain their
 zlib-derived tuning. Whole-buffer compression uses 65,535-byte block targets,
 while streaming keeps its bounded 16 KiB input blocks. `deflate_all_split`

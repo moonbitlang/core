@@ -79,7 +79,7 @@ test "fast store propagates through gzip zlib and their streaming encoders" {
     @zlib.compress_optimal(input, fast_store=true),
     @zlib.compress(input, level=0),
   )
-  let raw = @flate.Deflater(fast_store=true)
+  let raw = @flate.IncrementalEncoder(fast_store=true)
   let bytes = optional_store_stream(input, (src, dst, action) => {
     raw.step(src, dst, action~)
   })

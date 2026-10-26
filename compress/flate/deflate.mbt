@@ -16,7 +16,7 @@
 const DEFLATE_BLOCK_SIZE : Int32 = 16384
 
 // Streaming DEFLATE compressor (RFC 1951), the push-based counterpart to
-// `Inflater`. Unlike a one-shot `deflate_all`, it emits the stream as a
+// `IncrementalDecoder`. Unlike a one-shot `deflate_all`, it emits the stream as a
 // sequence of blocks while input arrives, so memory is bounded and output is
 // produced incrementally.
 //
@@ -44,7 +44,7 @@ fn clamp_level(level : Int32) -> Int32 {
 ///|
 /// Streaming DEFLATE compressor : a push-based, suspendable state
 /// machine. It emits the stream block-by-block as input arrives, and chooses fixed- or dynamic-Huffman per block.
-struct Deflater {
+struct IncrementalEncoder {
   pending : FixedArray[Byte] // mirrored 64 KiB input ring
   mut parse_pos : Int32 // first un-emitted absolute byte position
   mut pending_end : Int32 // one past the last accepted absolute position
@@ -72,11 +72,11 @@ struct Deflater {
 /// the decoder must use the same preset dictionary. Optional `fast_store`
 /// samples each block and may skip compression; it is off by default and
 /// may increase output size, including when a dictionary could help.
-pub fn Deflater::Deflater(
+pub fn IncrementalEncoder::IncrementalEncoder(
   level~ : Int32 = 6,
   dictionary? : BytesView,
   fast_store~ : Bool = false,
-) -> Deflater {
+) -> IncrementalEncoder {
   let lv = clamp_level(level)
   let deflater = {
     pending: FixedArray::make(STREAM_RING_STORAGE_SIZE, b'\x00'),
@@ -107,8 +107,8 @@ pub fn Deflater::Deflater(
 ///|
 /// Preload the match window from a constructor or reset dictionary. The
 /// persistent matchfinder receives the final 32 KiB once, as history only.
-fn Deflater::preload_dictionary(
-  self : Deflater,
+fn IncrementalEncoder::preload_dictionary(
+  self : IncrementalEncoder,
   dictionary : BytesView,
 ) -> Unit {
   let start = (dictionary.length() - WINDOW_SIZE).max(0)
@@ -126,7 +126,7 @@ fn Deflater::preload_dictionary(
 /// With no `dictionary`, the history is cleared. Supplying one immediately
 /// preloads its last 32 KB for the new stream; the decoder must use the same
 /// preset dictionary.
-pub fn Deflater::reset(self : Deflater, dictionary? : BytesView) -> Unit {
+pub fn IncrementalEncoder::reset(self : IncrementalEncoder, dictionary? : BytesView) -> Unit {
   self.finder.reset_stream(self.pending_end)
   self.parse_pos = 0
   self.pending_end = 0
@@ -147,7 +147,7 @@ pub fn Deflater::reset(self : Deflater, dictionary? : BytesView) -> Unit {
 
 ///|
 /// Whether the final compressed stream has been fully emitted.
-pub fn Deflater::is_finished(self : Deflater) -> Bool {
+pub fn IncrementalEncoder::is_finished(self : IncrementalEncoder) -> Bool {
   self.done
 }
 
@@ -155,7 +155,7 @@ pub fn Deflater::is_finished(self : Deflater) -> Bool {
 /// Latch a caller-supplied control action once its input view has been fully
 /// accepted. `Finish` is sticky until the final block is emitted; `SyncFlush`
 /// is sticky until the flush is produced. Later input is left unconsumed.
-fn Deflater::latch_action(self : Deflater, action : DeflateAction) -> Unit {
+fn IncrementalEncoder::latch_action(self : IncrementalEncoder, action : DeflateAction) -> Unit {
   match action {
     Finish => {
       self.end_requested = true
@@ -169,8 +169,8 @@ fn Deflater::latch_action(self : Deflater, action : DeflateAction) -> Unit {
 ///|
 /// Copy compressed bytes already produced into the caller's buffer, returning
 /// the new write position.
-fn Deflater::drain_output(
-  self : Deflater,
+fn IncrementalEncoder::drain_output(
+  self : IncrementalEncoder,
   output : MutArrayView[Byte],
   write_pos : Int32,
   out_end : Int32,
@@ -193,8 +193,8 @@ fn Deflater::drain_output(
 /// Accept up to `capacity` bytes of `input` into `pending` and latch `action`
 /// the instant its complete view is accepted — before emitting that block can
 /// return through output backpressure — returning the new consumed count.
-fn Deflater::accept_input(
-  self : Deflater,
+fn IncrementalEncoder::accept_input(
+  self : IncrementalEncoder,
   input : BytesView,
   consumed : Int32,
   input_end : Int32,
@@ -236,8 +236,8 @@ fn Deflater::accept_input(
 /// backpressure once accepted. `Continue` only accepts input. An empty `output`
 /// may accept at most one bounded block window before returning
 /// `NeedMoreOutput`.
-pub fn Deflater::step(
-  self : Deflater,
+pub fn IncrementalEncoder::step(
+  self : IncrementalEncoder,
   input : BytesView,
   output : MutArrayView[Byte],
   action~ : DeflateAction = Continue,

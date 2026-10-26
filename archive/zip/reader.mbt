@@ -163,7 +163,7 @@ fn inflate_entry(
   cancelled : () -> Bool,
 ) -> Bytes raise ZipError {
   check_cancelled(cancelled)
-  let inflater = @flate.Inflater()
+  let inflater = @flate.IncrementalDecoder()
   let scratch = FixedArray::make(8192, b'\x00')
   // For a total-output limit, max_output is the remaining allowance.
   let previous = (reported_limit - max_output).to_uint64()

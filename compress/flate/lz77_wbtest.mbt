@@ -477,7 +477,7 @@ test "dual hash separates long matches from a nearer three-byte prefix" {
 
 ///|
 test "streaming dual hash backfills a fourth byte exactly once" {
-  let d = Deflater(dictionary=b"abc")
+  let d = IncrementalEncoder(dictionary=b"abc")
   d.push_pending(Bytes::make(1, b'd'))
   d.chain_ready_history()
   @test.assert_eq(chain_previous(d.finder.prev, 0), -1)
@@ -585,7 +585,7 @@ test "three-byte tails remain matchable after arbitrary fourth bytes" {
 
 ///|
 test "stream bases retain rebase headroom and discard prior dictionaries" {
-  let d = Deflater(dictionary=b"abcabcabcabcabcabc")
+  let d = IncrementalEncoder(dictionary=b"abcabcabcabcabcabc")
   d.finder.position_base = (1 << 29) - 8
   d.reset()
   @test.assert_eq(d.finder.position_base, 0)
@@ -606,7 +606,7 @@ test "stream bases retain rebase headroom and discard prior dictionaries" {
 
 ///|
 test "stream rebasing preserves nonzero stamped heads and relative links" {
-  let d = Deflater()
+  let d = IncrementalEncoder()
   let base = 1 << 28
   let position = (1 << 30) + 17
   let offset = (position / STREAM_RING_SIZE - 1) * STREAM_RING_SIZE

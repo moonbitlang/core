@@ -66,7 +66,7 @@ test "decoded output growth stays representable at the doubling boundary" {
 
 ///|
 test "rebasing preserves live match distances and pending ring bytes" {
-  let d = Deflater()
+  let d = IncrementalEncoder()
   let position = (1 << 30) + 17
   let offset = (position / STREAM_RING_SIZE - 1) * STREAM_RING_SIZE
   d.parse_pos = position
@@ -156,7 +156,7 @@ test "streaming lazy match commits lookahead beyond a one-byte token range" {
 
 ///|
 test "stored decoder drains prefetched bytes before staged and external input" {
-  let d = Inflater()
+  let d = IncrementalDecoder()
   let output = FixedArray::make(3, b'\x00')
   d.mode = InStored
   d.final_block = true
