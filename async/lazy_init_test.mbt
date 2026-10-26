@@ -15,48 +15,38 @@
 ///|
 async test "lazy init basic" {
   let log = []
-  let start = @async.now()
-  fn current_tick() -> Int32 {
-    (@async.now() - start + 20).to_int() / 200
-  }
-
   let x = @async.Lazy(() => {
-    log.push("lazy init started at tick \{current_tick()}")
+    log.push("lazy init started")
     @async.sleep(200)
-    log.push("lazy init completed at tick \{current_tick()}")
+    log.push("lazy init completed")
   })
-  @async.sleep(200)
   x.wait()
-  log.push("got lazy init result at tick \{current_tick()}")
-  x.wait()
-  log.push("got lazy init result again at tick \{current_tick()}")
+  log.push("wait#1 got lazy init result")
+  @async.with_timeout(0, () => x.wait())
   json_inspect(log, content=[
-    "lazy init started at tick 1", "lazy init completed at tick 2", "got lazy init result at tick 2",
-    "got lazy init result again at tick 2",
+    "lazy init started", "lazy init completed", "wait#1 got lazy init result",
   ])
 }
 
 ///|
 async test "lazy init failure" {
+  let mut failed = false
   let x : @async.Lazy[Unit] = Lazy(() => {
     @async.sleep(200)
+    failed = true
     raise Failure::Failure("msg")
   })
-  let start = @async.now()
-  fn current_tick() -> Int32 {
-    (@async.now() - start + 20).to_int() / 200
-  }
-
   let result = @test.expect_error_async(() => x.wait())
-  inspect(current_tick(), content="1")
+  assert_true(failed)
   debug_inspect(
     result,
     content=(
       #|Failure("msg")
     ),
   )
-  let result = @test.expect_error_async(() => x.wait())
-  inspect(current_tick(), content="1")
+  let result = @test.expect_error_async(() => {
+    @async.with_timeout(0, () => x.wait())
+  })
   debug_inspect(
     result,
     content=(
@@ -68,72 +58,66 @@ async test "lazy init failure" {
 ///|
 async test "lazy init cancelled" {
   let log = []
-  let start = @async.now()
-  fn current_tick() -> Int32 {
-    (@async.now() - start + 20).to_int() / 200
-  }
-
   let x = @async.Lazy(() => {
-    log.push("lazy init started at tick \{current_tick()}")
+    log.push("lazy init started")
     match @async.handle_cancellation(() => @async.sleep(400)) {
       None => {
-        log.push("lazy init cancelled at tick \{current_tick()}")
+        log.push("lazy init cancelled")
         @coroutine.check_cancellation()
       }
-      Some(_) => log.push("lazy init completed at tick \{current_tick()}")
+      Some(_) => log.push("lazy init completed")
     }
   })
   debug_inspect(@async.with_timeout_opt(200, () => x.wait()), content="None")
   @async.sleep(100)
   // the previous attempt is already cancelled,
   // this `wait` will trigger a new attempt
+  log.push("attempting second wait on lazy init")
   x.wait()
   json_inspect(log, content=[
-    "lazy init started at tick 0", "lazy init cancelled at tick 1", "lazy init started at tick 1",
-    "lazy init completed at tick 3",
+    "lazy init started", "lazy init cancelled", "attempting second wait on lazy init",
+    "lazy init started", "lazy init completed",
   ])
 }
 
 ///|
 async test "lazy init multiple waiters 1" {
   let log = []
-  let start = @async.now()
-  fn current_tick() -> Int32 {
-    (@async.now() - start + 20).to_int() / 200
-  }
-
+  let cond = @async.Cond()
   let x = @async.Lazy(() => {
-    log.push("lazy init started at tick \{current_tick()}")
-    match @async.handle_cancellation(() => @async.sleep(400)) {
-      None => log.push("lazy init cancelled at tick \{current_tick()}")
-      Some(_) => log.push("lazy init completed at tick \{current_tick()}")
-    }
+    log.push("lazy init started")
+    cond.wait()
+    assert_false(@async.is_being_cancelled())
+    @async.sleep(200)
+    log.push("lazy init completed")
   })
   @async.with_task_group(group => {
     group.spawn_bg() <| () => {
       x.wait()
-      log.push("got lazy init value at tick \{current_tick()}")
+      log.push("second wait got lazy init value")
     }
     debug_inspect(@async.with_timeout_opt(200, () => x.wait()), content="None")
+    log.push("first wait timeout")
+    cond.signal()
   })
   json_inspect(log, content=[
-    "lazy init started at tick 0", "lazy init completed at tick 2", "got lazy init value at tick 2",
+    "lazy init started", "first wait timeout", "lazy init completed", "second wait got lazy init value",
   ])
 }
 
 ///|
 async test "lazy init multiple waiters 2" {
   let log = []
-  let start = @async.now()
-  fn current_tick() -> Int32 {
-    (@async.now() - start + 20).to_int() / 200
-  }
+  let cond = @async.Cond()
 
   let x = @async.Lazy(() => {
-    log.push("lazy init started at tick \{current_tick()}")
-    match @async.handle_cancellation(() => @async.sleep(600)) {
-      None => log.push("lazy init cancelled at tick \{current_tick()}")
-      Some(_) => log.push("lazy init completed at tick \{current_tick()}")
+    log.push("lazy init started")
+    match @async.handle_cancellation(() => cond.wait()) {
+      None => {
+        @async.protect_from_cancel(() => @async.sleep(50))
+        log.push("lazy init cancelled")
+      }
+      Some(_) => log.push("lazy init completed")
     }
   })
   @async.with_task_group() <| group => {
@@ -142,15 +126,18 @@ async test "lazy init multiple waiters 2" {
         @async.with_timeout_opt(200, () => x.wait()),
         content="None",
       )
+      log.push("first wait cancelled")
     }
     group.spawn_bg() <| () => {
       debug_inspect(
         @async.with_timeout_opt(400, () => x.wait()),
         content="None",
       )
+      log.push("second wait cancelled")
     }
   }
+  @async.sleep(200)
   json_inspect(log, content=[
-    "lazy init started at tick 0", "lazy init cancelled at tick 2",
+    "lazy init started", "first wait cancelled", "second wait cancelled", "lazy init cancelled",
   ])
 }
