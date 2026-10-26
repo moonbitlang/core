@@ -1,4 +1,4 @@
-# Condition Variable (`@moonbitlang/async/cond_var`)
+# Condition Variable (`@moonbitlang/core/async/cond_var`)
 
 A condition variable is a **notification primitive**. Tasks call
 `wait()` to park themselves; other tasks call `signal()` to wake one

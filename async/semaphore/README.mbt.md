@@ -1,4 +1,4 @@
-# Semaphore (`@moonbitlang/async/semaphore`)
+# Semaphore (`@moonbitlang/core/async/semaphore`)
 
 A counting semaphore for limiting concurrency, building mutexes, and
 signaling between tasks. A `Semaphore` holds an integer count of
@@ -8,7 +8,7 @@ every higher-level pattern (mutex, bounded concurrency, one-shot
 signal, count-down latch) is just a different choice of `size`,
 `initial_value`, and *who* calls `release`.
 
-Because `moonbitlang/async` is single-threaded and cooperative, you
+Because `moonbitlang/core/async` is single-threaded and cooperative, you
 do **not** need a semaphore to protect ordinary in-memory state —
 any code stretch without a suspension point is already atomic.
 Reach for `Semaphore` when you need to:

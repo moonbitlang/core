@@ -1,6 +1,6 @@
 # WebSocket API for MoonBit Async Library
 
-This module provides RFC 6455-compliant WebSocket client and server support for `moonbitlang/async`.
+This module provides RFC 6455-compliant WebSocket client and server support for `moonbitlang/core/async`.
 
 ## Features
 
