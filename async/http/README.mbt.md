@@ -22,23 +22,24 @@ Sometimes, the simple one-time `@http.get_xxx` etc. is insufficient,
 for example you need to reuse the same connection for multiple requests,
 or the request/response body is very large and need to be processed lazily.
 In this case, you can use the `@http.Client` type.
-`@http.Client` can be created via `@http.Client(uri)`.
+`@http.Client` can be created via `@http.Client()`.
 
 The workflow of performing a request with `@http.Client` is:
 
-1. initiate the request via `client.request(..)`
-1. send the request body by using `@http.Client` as a `@io.BinaryWriter`.
+1. initiate the request via `client.request(..)`.
+   The client will find or allocate a network connection to fulfill the request,
+   send the requset header and return that connection
+1. send the request body by using the connection as a `@io.BinaryWriter`.
    Text payload can also be written through `client.text` as an `@io.TextWriter`.
 1. complete the request and obtain response header from the server
-  via `client.end_request()`
-1. read the response body by using `@http.Client` as a `@io.BinaryReader`.
+   via `conn.end_request()`
+1. read the response body by using the connection as a `@io.BinaryReader`.
    You can also ignore the body via `client.skip_response_body()`.
    Text responses can be read through `client.text` as an `@io.TextReader`.
 
-The helpers `client.get(..)`, `client.put_text(..)` etc.
-can be used to perform step (1)-(3) above.
-For a one-shot streaming request, `@http.get_stream()`, `@http.post_stream()` etc.
-can be used to perform client creation plus step (1) above.
+The helpers `client.get(..)` etc. can be used to perform step (1)-(3) above.
+For a one-shot streaming request, `@http.get_stream()` can be used to perform client creation plus `client.get(..)`.
+There are also `client.get_{binary,text,json}()`, which automatically collect response body into specified format.
 
 A complete example:
 
@@ -46,11 +47,12 @@ A complete example:
 ///|
 #cfg(any(target="native", target="js"))
 async test {
-  let client = @http.Client("https://www.moonbitlang.com")
+  let client = @http.Client()
   defer client.close()
-  let response = client..request(Get, "/").end_request()
+  let (response, conn) = client.get("https://www.moonbitlang.com")
+  defer conn.close()
   inspect(response.code, content="200")
-  let body = client.text.read_all()
+  let body = conn.text.read_all()
   assert_true(body.has_prefix("<!doctype html>"))
 }
 ```

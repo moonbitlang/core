@@ -36,7 +36,7 @@ pub suberror UriParseError {
 } derive(@debug.Debug, @json.ToJson)
 
 ///|
-fn resolve_url(uri : String) -> (Protocol, String, StringView) raise {
+fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
   guard uri.find("://") is Some(protocol_len) else { raise InvalidFormat }
   let protocol = match uri[:protocol_len] {
     "http" => Http
