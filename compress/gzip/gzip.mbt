@@ -135,15 +135,15 @@ pub fn compress_optimal(
 ///|
 /// Inflate the raw DEFLATE member starting at `input[q:]` with the in-memory
 /// decoder, which ignores what follows the member's final block; afterwards
-/// `decoder.last_consumed()` is the compressed byte count, where the 8-byte
-/// trailer begins. The caller reuses one decoder across members.
+/// The consumed count locates the 8-byte trailer. The caller reuses one
+/// decoder across members.
 fn inflate_member(
   input : BytesView,
   q : Int32,
   decoder : @flate.Decompressor,
   max_output : Int32,
   cancelled : (() -> Bool)?,
-) -> Bytes raise GzipError {
+) -> @flate.Decompressed raise GzipError {
   decoder.decompress(input[q:], max_output~, cancelled?) catch {
     // All remaining input was handed over, yet the stream did not end.
     InflateError(Truncated, _) => raise GzipError(Truncated, "gzip: truncated")
@@ -235,8 +235,9 @@ fn gunzip_decode_member(
   }
   let q = gunzip_optional_fields_end(input, p + 10, flg, cancelled)
   guard q <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
-  let payload = inflate_member(input, q, decoder, max_output, cancelled)
-  let trailer = q + decoder.last_consumed()
+  let result = inflate_member(input, q, decoder, max_output, cancelled)
+  let payload = result.data
+  let trailer = q + result.consumed
   guard trailer <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
   guard crc32_cancellable(payload, cancelled) == u32_le(input, trailer) else {
     raise GzipError(ChecksumMismatch, "gzip: CRC-32 mismatch")

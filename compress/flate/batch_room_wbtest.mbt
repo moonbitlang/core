@@ -16,7 +16,7 @@
 /// Outputs around every capacity the first allocation and its doublings can
 /// have: the batch, the checked tail and the growth between them give the
 /// source back, with and without a callback, whose cadence does not move.
-test "inflate_all preserves output across growth and cancellation boundaries" {
+test "inflate_prefix preserves output across growth and cancellation boundaries" {
   let text = inflate_differential_pattern(
     b"a growing output, token by token. ", 9000,
   )
@@ -34,16 +34,16 @@ test "inflate_all preserves output across growth and cancellation boundaries" {
     ] {
     let plain = source[:size].to_owned()
     let compressed = deflate_all(plain)
-    guard inflate_all(compressed) == plain else {
-      fail("inflate_all differs at \{size} bytes")
+    guard inflate_prefix(compressed) == plain else {
+      fail("inflate_prefix differs at \{size} bytes")
     }
     let mut polls = 0
-    let polled = inflate_all(compressed, cancelled=() => {
+    let polled = inflate_prefix(compressed, cancelled=() => {
       polls += 1
       false
     })
     guard polled == plain && polls == 1 + size / 4096 else {
-      fail("inflate_all with a callback: \{polls} polls at \{size} bytes")
+      fail("inflate_prefix with a callback: \{polls} polls at \{size} bytes")
     }
   }
 }

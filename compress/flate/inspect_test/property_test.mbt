@@ -131,11 +131,11 @@ test "property: optimal and split parsers round-trip" {
   @quickcheck.check(
     (input : Compressible) => {
       let data = input.0
-      if @flate.inflate_all(@flate.deflate_all_optimal(data, iterations=4)) !=
+      if @flate.inflate_prefix(@flate.deflate_all_optimal(data, iterations=4)) !=
         data {
         return false
       }
-      if @flate.inflate_all(@flate.deflate_all_split(data)) != data {
+      if @flate.inflate_prefix(@flate.deflate_all_split(data)) != data {
         return false
       }
       true
@@ -157,7 +157,7 @@ test "property: compressible data round-trips across boundaries" {
       let source = data.0
       let levels = [0, 1, 6, 9]
       for level in levels {
-        if @flate.inflate_all(@flate.deflate_all(source, level~)) != source {
+        if @flate.inflate_prefix(@flate.deflate_all(source, level~)) != source {
           return false
         }
       }

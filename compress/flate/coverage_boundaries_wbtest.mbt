@@ -120,7 +120,7 @@ test "rebasing preserves live match distances and pending ring bytes" {
   d.record_chained_positions(d.parse_pos - 3)
   @test.assert_eq(d.hashed_through, d.parse_pos - 2)
   d.write_stored_pending(is_final=true)
-  @test.assert_eq(inflate_all(Bytes::from_array(d.w.out)), b"abc")
+  @test.assert_eq(inflate_prefix(Bytes::from_array(d.w.out)), b"abc")
 }
 
 ///|
@@ -138,7 +138,7 @@ test "stored ring blocks split at LEN limit and preserve wrapped bytes" {
     let expected = Bytes::makei(length, i => {
       ring[(start + i) & STREAM_RING_MASK]
     })
-    @test.assert_eq(inflate_all(Bytes::from_array(w.out)), expected)
+    @test.assert_eq(inflate_prefix(Bytes::from_array(w.out)), expected)
     @test.assert_eq(w.out.length(), length + 5 * stored_block_count(length))
   }
 }

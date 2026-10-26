@@ -283,7 +283,7 @@ fn no_cancellation() -> Bool {
 ///|
 /// A DEFLATE Huffman code is at most 15 bits. The one-shot decoder can keep a
 /// 24-bit reservoir because it is allowed to consume trailing bytes after the
-/// final block, as documented by `inflate_all`'s prefix semantics.
+/// final block, as documented by `inflate_prefix`'s prefix semantics.
 const HUFFMAN_FAST_BITS : Int32 = 15
 
 ///|
@@ -950,7 +950,7 @@ fn MemDecoder::copy_stored(
 ) -> Unit raise InflateError {
   let mut remaining = length
   while remaining > 0 {
-    // Preserve `inflate_all`'s cancellation cadence while copying each chunk
+    // Preserve `inflate_prefix`'s cancellation cadence while copying each chunk
     // through the core bulk-copy primitive.
     let until_cancel = if self.poll_cancel {
       self.next_cancel - self.out.length
@@ -1047,7 +1047,7 @@ fn MemDecoder::consumed(self : MemDecoder) -> Int32 {
 /// a negative ceiling raises `InvalidArgument`.
 /// If supplied, `cancelled` is polled at entry and every 4096 produced bytes
 /// (8192 with `max_output`); returning `true` raises `InflateError(Cancelled, _)`.
-pub fn inflate_all(
+pub fn inflate_prefix(
   input : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
@@ -1073,26 +1073,16 @@ pub fn inflate_all(
 /// A reusable, whole-buffer raw DEFLATE decompressor. It decodes the stream at
 /// the front of its input, into caller-owned storage (`decompress_into`) or
 /// into new `Bytes` (`decompress`). `decompress_into` returns both byte counts;
-/// `last_consumed` also reports the input consumed by either method. Huffman
-/// and dynamic-header workspace is retained across streams.
+/// `decompress` returns owned data and the input consumed. Huffman and
+/// dynamic-header workspace is retained across streams.
 struct Decompressor {
   decoder : MemDecoder
-  mut consumed : Int32 // input the latest successful call took
 }
 
 ///|
 /// Create a reusable whole-buffer decompressor.
 pub fn Decompressor::Decompressor() -> Decompressor {
-  { decoder: MemDecoder(b"", () => false), consumed: 0, }
-}
-
-///|
-/// Number of input bytes the latest `decompress_into` or `decompress` took:
-/// the DEFLATE stream up to and including the byte that holds the last bit of
-/// its final block. `input[last_consumed():]` is what the call ignored, a
-/// container's trailer for one. Zero initially and after a call raises.
-pub fn Decompressor::last_consumed(self : Decompressor) -> Int32 {
-  self.consumed
+  { decoder: MemDecoder(b"", () => false), }
 }
 
 ///|
@@ -1106,12 +1096,10 @@ pub fn Decompressor::decompress_into(
   output : FixedArray[Byte],
   cancelled? : () -> Bool,
 ) -> DecompressResult raise InflateError {
-  self.consumed = 0
   self.decoder.reset_into(input, output, cancelled)
   defer self.decoder.clear_call_references()
   self.decoder.run()
-  self.consumed = self.decoder.consumed()
-  { consumed: self.consumed, produced: self.decoder.out.length, }
+  { consumed: self.decoder.consumed(), produced: self.decoder.out.length, }
 }
 
 ///|
@@ -1120,18 +1108,17 @@ const PREFIX_OUTPUT_CAPACITY : Int32 = 16384
 
 ///|
 /// Decode a raw DEFLATE prefix into new `Bytes`, reusing decoder workspace.
-/// `last_consumed()` locates trailing bytes; `inflate_exact` rejects them.
+/// The result records consumed input bytes; `inflate_exact` rejects trailing bytes.
 /// `max_output` caps output storage (default: `Bytes` capacity); exceeding it
 /// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
 /// `cancelled` is polled at entry and every 4096 decoded bytes; true raises
-/// `Cancelled`. After any error, `last_consumed()` is zero and reuse is allowed.
+/// `Cancelled`. The decoder can be reused after any error.
 pub fn Decompressor::decompress(
   self : Decompressor,
   input : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
-) -> Bytes raise InflateError {
-  self.consumed = 0
+) -> Decompressed raise InflateError {
   let limit = max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE)
   guard limit >= 0 else {
     raise InflateError(InvalidArgument, "max_output must be non-negative")
@@ -1142,25 +1129,18 @@ pub fn Decompressor::decompress(
   decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY), limit~)
   defer decoder.clear_call_references()
   decoder.run()
-  self.consumed = decoder.consumed()
-  decoder.out.to_bytes()
+  { data: decoder.out.to_bytes(), consumed: decoder.consumed(), }
 }
 
 ///|
-/// One-shot convenience form of `Decompressor::decompress_into`. It creates a
-/// decompressor for this call and returns only the produced count. Use
-/// `Decompressor::decompress_into` to obtain both counts and reuse workspace.
+/// One-shot form of `Decompressor::decompress_into`, returning both byte counts.
+/// Use a `Decompressor` to reuse workspace across calls.
 pub fn inflate_into(
   input : BytesView,
   output : FixedArray[Byte],
   cancelled? : () -> Bool,
-) -> Int32 raise InflateError {
-  let decoder = Decompressor()
-  if cancelled is Some(callback) {
-    decoder.decompress_into(input, output, cancelled=callback).produced
-  } else {
-    decoder.decompress_into(input, output).produced
-  }
+) -> DecompressResult raise InflateError {
+  Decompressor().decompress_into(input, output, cancelled?)
 }
 
 ///|
@@ -1218,21 +1198,21 @@ fn inflate_streaming_all(
 /// `max_output` caps decoded bytes (default: `Bytes` capacity); exceeding it
 /// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
 /// `cancelled` is polled at entry and every 8192 decoded bytes; true raises
-/// `Cancelled`. `preallocated=true` validates and counts first, then decodes
+/// `Cancelled`. `two_pass=true` validates and counts first, then decodes
 /// into one exactly sized allocation: roughly twice the work for lower peak
 /// memory. The default grows the output in one pass.
 pub fn inflate_exact(
   input : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
-  preallocated~ : Bool = false,
+  two_pass~ : Bool = false,
 ) -> Bytes raise InflateError {
   if max_output is Some(limit) {
     guard limit >= 0 else {
       raise InflateError(InvalidArgument, "max_output must be non-negative")
     }
   }
-  guard max_output is Some(_) || cancelled is Some(_) || preallocated else {
+  guard max_output is Some(_) || cancelled is Some(_) || two_pass else {
     let decoder = MemDecoder(input, no_cancellation)
     decoder.set_cancellation(None)
     decoder.run()
@@ -1242,7 +1222,7 @@ pub fn inflate_exact(
     return decoder.out.to_bytes()
   }
   let cancelled = cancelled.unwrap_or(no_cancellation)
-  if preallocated {
+  if two_pass {
     inflate_preallocated(input, max_output, cancelled)
   } else {
     inflate_streaming_all(input, max_output, true, cancelled)
@@ -1306,7 +1286,7 @@ fn validate_preallocation_size(
 }
 
 ///|
-/// `inflate_exact` with `preallocated=true`: validate and count in one pass
+/// `inflate_exact` with `two_pass=true`: validate and count in one pass
 /// over an 8 KiB scratch, then replay the deterministic decode into one exact
 /// allocation (the same `IncrementalDecoder` is reused via `reset`).
 fn inflate_preallocated(

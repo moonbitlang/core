@@ -18,7 +18,7 @@
 /// no further input.
 test "reserved HLIT wins over a truncated HDIST" {
   let data : Bytes = [0xFD]
-  let InflateError(kind, _) = @test.expect_error(() => inflate_all(data))
+  let InflateError(kind, _) = @test.expect_error(() => inflate_prefix(data))
   @test.assert_eq(kind, Corrupt)
   let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
