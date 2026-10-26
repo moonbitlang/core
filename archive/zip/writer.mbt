@@ -261,7 +261,8 @@ fn Output::write_local_record(
     buf.unsafe_write_uint16_le(start + 4, version.to_uint16())
     buf.unsafe_write_uint16_le(start + 6, flags.to_uint16())
     buf.unsafe_write_uint16_le(start + 8, method_id.to_uint16())
-    buf.unsafe_write_uint32_le(start + 10, 0)
+    buf.unsafe_write_uint16_le(start + 10, entry.dos_time.to_uint16())
+    buf.unsafe_write_uint16_le(start + 12, entry.dos_date.to_uint16())
     buf.unsafe_write_uint32_le(start + 14, if use_descriptor { 0 } else { crc })
     buf.unsafe_write_uint32_le(start + 18, comp_field)
     buf.unsafe_write_uint32_le(start + 22, uncomp_field)
@@ -318,6 +319,7 @@ fn Output::write_central_record(
   }
   let needs_zip64_entry = needs_zip64_sizes || needs_zip64_offset
   let version = if needs_zip64_entry { 45 } else { 20 }
+  let version_made_by = (entry.creator_system << 8) | version
   let flags = FLAG_UTF8 |
     (if use_descriptor { FLAG_DATA_DESCRIPTOR } else { 0 })
   let central_extra = build_zip64_extra(
@@ -348,11 +350,12 @@ fn Output::write_central_record(
   if output.buf is Some(buf) {
     // grow reserves all 46 bytes; the generated extra is at most 28 bytes.
     buf.unsafe_write_uint32_le(start, CENTRAL_HEADER_SIG)
-    buf.unsafe_write_uint16_le(start + 4, version.to_uint16())
+    buf.unsafe_write_uint16_le(start + 4, version_made_by.to_uint16())
     buf.unsafe_write_uint16_le(start + 6, version.to_uint16())
     buf.unsafe_write_uint16_le(start + 8, flags.to_uint16())
     buf.unsafe_write_uint16_le(start + 10, method_id.to_uint16())
-    buf.unsafe_write_uint32_le(start + 12, 0)
+    buf.unsafe_write_uint16_le(start + 12, entry.dos_time.to_uint16())
+    buf.unsafe_write_uint16_le(start + 14, entry.dos_date.to_uint16())
     buf.unsafe_write_uint32_le(start + 16, entry.crc32)
     buf.unsafe_write_uint32_le(start + 20, comp_field)
     buf.unsafe_write_uint32_le(start + 24, uncomp_field)
@@ -360,7 +363,7 @@ fn Output::write_central_record(
     buf.unsafe_write_uint16_le(start + 30, central_extra.length().to_uint16())
     buf.unsafe_write_uint32_le(start + 32, 0)
     buf.unsafe_write_uint16_le(start + 36, 0)
-    buf.unsafe_write_uint32_le(start + 38, 0)
+    buf.unsafe_write_uint32_le(start + 38, entry.external_attributes)
     buf.unsafe_write_uint32_le(start + 42, offset_field)
   }
   output.write_bytes(name_bytes)
@@ -821,6 +824,8 @@ fn write_impl(
 
 ///|
 /// Serialize `archive` into a ZIP byte stream.
+/// Entry DOS date/time, creator system and external attributes are retained
+/// regardless of `preserve`.
 ///
 /// By default every entry is encoded fresh. With `preserve=true`, unchanged
 /// entries reuse their source records with updated offsets. A pristine archive

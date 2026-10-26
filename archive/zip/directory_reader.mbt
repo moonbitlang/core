@@ -102,7 +102,7 @@ pub fn DirectoryReader::advance(
 fn expect_range_input(input : BytesView, length : Int32) -> Unit raise ZipError {
   guard input.length() == length else {
     raise ZipError(
-      InvalidRead,
+      InvalidRead(expected=length, actual=input.length()),
       "zip: response length differs from requested range",
     )
   }

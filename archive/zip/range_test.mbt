@@ -130,7 +130,7 @@ test "range protocol errors latch and empty output suspends extraction" {
     @test.fail("expected initial tail request")
   }
   let ZipError(kind, _) = @test.expect_error(() => directory_reader.advance(b""))
-  @test.assert_eq(kind, InvalidRead)
+  @test.assert_eq(kind, InvalidRead(expected=range.length(), actual=0))
   let ZipError(repeated, _) = @test.expect_error(() => {
     directory_reader.advance(source(range))
   })
@@ -144,7 +144,7 @@ test "range protocol errors latch and empty output suspends extraction" {
     @test.fail("expected local-header request")
   }
   let ZipError(kind, _) = @test.expect_error(() => reader.step(b"", []))
-  @test.assert_eq(kind, InvalidRead)
+  @test.assert_eq(kind, InvalidRead(expected=header.length(), actual=0))
   let ZipError(repeated, _) = @test.expect_error(() => {
     reader.step(source(header), [])
   })
@@ -245,7 +245,7 @@ test "ZIP readers reject incomplete DEFLATE after output suspension" {
   }
   for changed in [missing_end, short_payload] {
     let bytes = Bytes::from_array(changed)
-    let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes))
+    let ZipError(kind, _) = @test.expect_error(() => @zip.read_all(bytes))
     @test.assert_eq(kind, Truncated)
     let source = archive_range_source(bytes)
     let directory = drive_directory_ranges(
@@ -278,7 +278,9 @@ test "ZIP readers report observed per-entry and cumulative output limits" {
   for compression in [@zip.Store, Deflate] {
     let bytes = zip_with_underreported_size(compression)
     for (limits, expected_kind, ceiling, full_size) in cases {
-      let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes, limits~))
+      let ZipError(kind, _) = @test.expect_error(() => {
+        @zip.read_all(bytes, limits~)
+      })
       guard kind is LimitExceeded(kind=resource, limit~, observed=actual) else {
         @test.fail("expected a decoded-output limit error")
       }
@@ -391,7 +393,7 @@ test "memory and range readers agree on decoded size mismatches" {
       DirectoryReader(bytes.length().to_uint64()),
       source,
     )
-    let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes))
+    let ZipError(kind, _) = @test.expect_error(() => @zip.read_all(bytes))
     @test.assert_eq(kind, SizeMismatch)
     let ZipError(kind, _) = @test.expect_error(() => {
       drive_entry_ranges(directory.open_entry(1), source, 3)
@@ -423,7 +425,7 @@ test "memory and range readers agree on local size mismatches" {
       DirectoryReader(bytes.length().to_uint64()),
       source,
     )
-    let ZipError(kind, _) = @test.expect_error(() => @zip.read(bytes))
+    let ZipError(kind, _) = @test.expect_error(() => @zip.read_all(bytes))
     @test.assert_eq(kind, SizeMismatch)
     let ZipError(kind, _) = @test.expect_error(() => {
       drive_entry_ranges(directory.open_entry(0), source, 3)

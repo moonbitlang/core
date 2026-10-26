@@ -73,7 +73,7 @@ struct DirectoryEntry {
 }
 
 ///|
-/// The entry name, decoded using the same UTF-8 policy as `read`.
+/// The entry name, decoded using the same UTF-8 policy as `read_all`.
 pub fn DirectoryEntry::name(self : DirectoryEntry) -> String {
   self.name
 }
