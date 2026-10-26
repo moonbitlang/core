@@ -13,6 +13,154 @@
 // limitations under the License.
 
 ///|
+async test "send_request target determines Host" {
+  @async.with_task_group() <| group => {
+    let (reader, writer) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer writer.close()
+      let sender = Sender::new(writer, headers={
+        "X-Persistent": "café",
+        "hOsT": "proxy.example:8080",
+        "Proxy-Authorization": "Basic test",
+      })
+      for
+        (meth, target) in [
+          (Connect, "origin.example:443"),
+          (Get, "http://first.example/a"),
+          (Get, "http://bare.example"),
+          (Get, "http://empty.example:/path"),
+          (Get, "https://empty.example:/path"),
+          (Get, "http://[::1]:/path"),
+          (Get, "HtTpS://second.example:8443?key=value"),
+          (Get, "http://[::1]:8081/"),
+          (Connect, "[fe80::1%25eth0]:443"),
+          (Get, "/back-to-proxy"),
+          (Options, "*"),
+        ] {
+        ignore(sender.send_request(meth, target, extra_headers=Map([])))
+        sender.end_body()
+      }
+    }
+    defer reader.close()
+    let sent = @utf8.decode(reader.read_all())
+    let requests = []
+    for head in sent.split("\r\n\r\n") {
+      if head.is_empty() {
+        continue
+      }
+      assert_true(head.contains("\r\nProxy-Authorization: Basic test"))
+      assert_true(head.contains("\r\nX-Persistent: café"))
+      let hosts = head
+        .split("\r\n")
+        .filter(line => line.to_lower().has_prefix("host: "))
+        .to_array()
+      @debug.assert_eq(hosts.length(), 1)
+      requests.push(
+        (head.split("\r\n").next().unwrap().to_owned(), hosts[0][6:].to_owned()),
+      )
+    }
+    @json.json_inspect(requests, content=[
+      ["CONNECT origin.example:443 HTTP/1.1", "origin.example:443"],
+      ["GET http://first.example/a HTTP/1.1", "first.example"],
+      ["GET http://bare.example HTTP/1.1", "bare.example"],
+      ["GET http://empty.example:/path HTTP/1.1", "empty.example:"],
+      ["GET https://empty.example:/path HTTP/1.1", "empty.example:"],
+      ["GET http://[::1]:/path HTTP/1.1", "[::1]:"],
+      [
+        "GET HtTpS://second.example:8443?key=value HTTP/1.1", "second.example:8443",
+      ],
+      ["GET http://[::1]:8081/ HTTP/1.1", "[::1]:8081"],
+      ["CONNECT [fe80::1%25eth0]:443 HTTP/1.1", "[fe80::1%25eth0]:443"],
+      ["GET /back-to-proxy HTTP/1.1", "proxy.example:8080"],
+      ["OPTIONS * HTTP/1.1", "proxy.example:8080"],
+    ])
+  }
+}
+
+///|
+async test "send_request generated Host replaces extra Host" {
+  @async.with_task_group() <| group => {
+    let (reader, writer) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer writer.close()
+      let sender = Sender::new(writer)
+      ignore(
+        sender.send_request(Get, "http://origin.example/", extra_headers={
+          "HOST": "wrong.example",
+          "X-Request": "kept",
+        }),
+      )
+      sender.end_body()
+    }
+    defer reader.close()
+    inspect(
+      reader.read_all() |> @bytes_util.ascii_to_string,
+      content=(
+        #|GET http://origin.example/ HTTP/1.1\r
+        #|Host: origin.example\r
+        #|X-Request: kept\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|
+      ),
+    )
+  }
+}
+
+///|
+async test "send_request rejects invalid target authority before writing" {
+  @async.with_task_group() <| group => {
+    let (reader, writer) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer writer.close()
+      let sender = Sender::new(writer, headers={ "Host": "proxy.example" })
+      for
+        (meth, target) in [
+          (Get, "http:///path"),
+          (Get, "http://user:password@origin.example/path"),
+          (Get, "http://origin.example/path#fragment"),
+          (Get, "http://bad host/path"),
+          (Get, "http://origin.example\r\nInjected:yes/path"),
+          (Connect, "origin.example"),
+          (Connect, "origin.example:"),
+          (Connect, "[::1]:"),
+          (Connect, "origin.example:0"),
+          (Connect, "origin.example:65536"),
+          (Connect, "origin.example:abc"),
+          (Connect, "/path"),
+          (Connect, "user@origin.example:443"),
+          (Connect, "origin.example:443?query"),
+          (Connect, "[::1:443"),
+          (Connect, "::1:443"),
+        ] {
+        let rejected = try {
+          ignore(sender.send_request(meth, target, extra_headers=Map([])))
+          false
+        } catch {
+          InvalidFormat => true
+          error => raise error
+        }
+        assert_true(rejected, msg=target)
+        @debug.assert_eq(sender.send_len, 0)
+      }
+      ignore(sender.send_request(Get, "/still-clean", extra_headers=Map([])))
+      sender.end_body()
+    }
+    defer reader.close()
+    inspect(
+      reader.read_all() |> @bytes_util.ascii_to_string,
+      content=(
+        #|GET /still-clean HTTP/1.1\r
+        #|Host: proxy.example\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|
+      ),
+    )
+  }
+}
+
+///|
 async test "send_request basic" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.pipe()
