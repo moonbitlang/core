@@ -1,4 +1,4 @@
-# Shell-Style Scripting (`@moonbitlang/async/shell`)
+# Shell-Style Scripting (`@moonbitlang/core/async/shell`)
 
 `@shell` is a small, shell-free process EDSL: everything you use a shell for —
 running commands, pipes, redirects, exit-code logic, glob expansion — as a
@@ -16,7 +16,7 @@ than being truncated by an operating-system argv boundary.
 
 The package supports the `native` and `wasm` targets. On `wasm`, process
 creation is delegated through the host operations used by
-`moonbitlang/async/process`.
+`moonbitlang/core/async/process`.
 
 ## The whole API
 

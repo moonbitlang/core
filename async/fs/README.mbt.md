@@ -1,4 +1,4 @@
-# File System API (`@moonbitlang/async/fs`)
+# File System API (`@moonbitlang/core/async/fs`)
 
 Asynchronous file system operations for MoonBit. This package provides comprehensive APIs for working with files, directories, and file metadata.
 

@@ -1,4 +1,4 @@
-# Process Management (`@moonbitlang/async/process`)
+# Process Management (`@moonbitlang/core/async/process`)
 
 Asynchronous process spawning and management for MoonBit with support for pipes, environment variables, and I/O redirection.
 

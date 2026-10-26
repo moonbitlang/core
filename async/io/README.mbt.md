@@ -1,4 +1,4 @@
-# Asynchronous I/O (`@moonbitlang/async/io`)
+# Asynchronous I/O (`@moonbitlang/core/async/io`)
 
 This package defines asynchronous byte and text streams for MoonBit. Binary I/O
 uses `BinaryReader` and `BinaryWriter`; text I/O uses `TextReader` and
