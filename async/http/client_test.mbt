@@ -18,7 +18,7 @@ async test "responses with null Web API bodies are empty readable streams" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {
     let port = test_server(group, log)
-    let client = @http.Client("http://127.0.0.1:\{port}")
+    let client = @http.ClientConnection("http://127.0.0.1:\{port}")
     defer client.close()
     let requests : ReadOnlyArray[(@http.RequestMethod, _, _)] = [
       (Get, "/no-content", 204),
@@ -49,7 +49,7 @@ async test "request streaming" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {
     let port = test_server(group, log)
-    async fn fetch_response(client : @http.Client) {
+    async fn fetch_response(client : @http.ClientConnection) {
       while client.text.read() is Some(data) {
         log.write_string("client received: \{data}")
       }
@@ -170,7 +170,7 @@ async test "request streaming" {
 
 ///|
 async test "multiple request" {
-  let client = @http.Client("https://www.moonbitlang.com")
+  let client = @http.ClientConnection("https://www.moonbitlang.com")
   defer client.close()
   let response1 = client.get("/")
   inspect(response1.code, content="200")
@@ -225,7 +225,7 @@ async test "1XX response" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {
     let port = test_server(group, log)
-    let client = @http.Client("http://127.0.0.1:\{port}")
+    let client = @http.ClientConnection("http://127.0.0.1:\{port}")
     defer client.close()
     let response = client
       ..request(Get, "/informational")

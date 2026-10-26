@@ -34,7 +34,7 @@ async test "bad client" {
       })
     }
     async fn test_bad_frames(frames : Array[Bytes]) {
-      let http_client = @http.Client("http://127.0.0.1:\{port}")
+      let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
       defer http_client.close()
       let ws_client = @websocket.from_http_client(http_client, "/")
       defer ws_client.close()

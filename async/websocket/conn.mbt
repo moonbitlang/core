@@ -25,7 +25,7 @@ priv trait Transport: @io.BinaryReader + @io.BinaryWriter {
 }
 
 ///|
-impl Transport for @http.Client with fn close(self) {
+impl Transport for @http.ClientConnection with fn close(self) {
   self.close()
 }
 

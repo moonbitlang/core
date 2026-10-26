@@ -32,7 +32,9 @@ async test "passthrough mode" {
         log.push("server received: \{packet}")
       }
     }
-    let client = @http.Client("http://127.0.0.1:\{server_addr.port()}")
+    let client = @http.ClientConnection(
+      "http://127.0.0.1:\{server_addr.port()}",
+    )
     defer client.close()
     let response = client..request(Connect, "/path").end_request()
     inspect(response.code, content="200")
@@ -119,7 +121,7 @@ async test "proxied https request" {
     }
     let (_, result) = @http.get_text(
       "https://www.moonbitlang.com",
-      proxy=Client("http://127.0.0.1:\{port}"),
+      proxy=ClientConnection("http://127.0.0.1:\{port}"),
     )
     assert_true(result.has_prefix("<!doctype html>"))
   }
@@ -139,7 +141,7 @@ async test "proxied http request" {
     }
     let (_, result) = @http.get_text(
       "http://www.example.org",
-      proxy=Client("http://127.0.0.1:\{port}"),
+      proxy=ClientConnection("http://127.0.0.1:\{port}"),
     )
     assert_true(result.has_prefix("<!doctype html>"))
   }
@@ -176,7 +178,7 @@ async test "proxied misc request" {
       })
     }
     async fn proxy() {
-      @http.Client("http://127.0.0.1:\{proxy_server_addr.port()}")
+      @http.ClientConnection("http://127.0.0.1:\{proxy_server_addr.port()}")
     }
 
     let _ = @http.get_text("http://127.0.0.1:\{port}", proxy=proxy())
@@ -208,7 +210,7 @@ async test "proxy error" {
       @test.expect_error_async(() => {
         @http.get_binary(
           "https://www.moonbitlang.com",
-          proxy=Client("http://127.0.0.1:\{port}"),
+          proxy=ClientConnection("http://127.0.0.1:\{port}"),
         )
       }),
       content=(

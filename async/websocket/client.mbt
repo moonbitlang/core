@@ -25,12 +25,12 @@
 /// Some headers are reserved for the WebSocket protocol
 /// and must NOT be set in `extra_headers`:
 ///
-/// - those headers set by `@http.Client`, see `@http.Client::new`
+/// - those headers set by `@http.ClientConnection`, see `@http.ClientConnection(..)`
 /// - `Connection`, `Upgrade`
 /// - `Sec-WebSocket-Key`, `Sec-WebSocket,Version`
 #as_free_fn
 pub async fn Conn::from_http_client(
-  conn : @http.Client,
+  conn : @http.ClientConnection,
   path : StringView,
   extra_headers~ : @http.Headers = Map([]),
 ) -> Conn {
@@ -90,31 +90,31 @@ pub async fn Conn::from_http_client(
 /// Some headers are reserved for the WebSocket protocol
 /// and must NOT be set in `extra_headers`:
 ///
-/// - those headers set by `@http.Client`, see `@http.Client::new`
+/// - those headers set by `@http.ClientConnection`, see `@http.ClientConnection(..)`
 /// - `Connection`, `Upgrade`
 /// - `Sec-WebSocket-Key`, `Sec-WebSocket,Version`
 ///
 /// If `proxy` is present, the websocket client will tunnel traffic through the proxy.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection(..)` for more details.
 ///
 /// Example:
 /// ```moonbit no-check
-/// let ws = Client::connect("ws://example.com/endpoint")
+/// let ws = Conn::connect("ws://example.com/endpoint")
 /// ```
 #as_free_fn
 pub async fn Conn::connect(
   url : String,
   headers~ : @http.Headers = Map([]),
-  proxy? : @http.Client,
+  proxy? : @http.ClientConnection,
 ) -> Conn {
   guard url.find("://") is Some(protocol_len) else {
-    abort("`@websocket.Client::connect()`: invalid URL: missing protocol")
+    abort("`@websocket.Conn::connect()`: invalid URL: missing protocol")
   }
   let http_protocol = match url[:protocol_len] {
     "ws" => "http"
     "wss" => "https"
     protocol =>
-      abort("`@websocket.Client::connect()`: invalid protocol \{protocol}")
+      abort("`@websocket.Conn::connect()`: invalid protocol \{protocol}")
   }
   let url = url[protocol_len + 3:]
   let (host, path) = if url.find("/") is Some(i) {
@@ -123,6 +123,6 @@ pub async fn Conn::connect(
     (url, "/")
   }
   let path : StringView = if path == "" { "/" } else { path }
-  let conn = @http.Client("\{http_protocol}://\{host}", proxy?)
+  let conn = @http.ClientConnection("\{http_protocol}://\{host}", proxy?)
   Conn::from_http_client(conn, path, extra_headers=headers)
 }
