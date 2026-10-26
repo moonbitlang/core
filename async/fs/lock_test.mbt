@@ -110,6 +110,7 @@ async test "flock exclusive vs exclusive blocking" {
     debug_inspect(events.try_get(), content="None")
     file.lock(Exclusive)
     defer file.unlock()
+    @async.sleep(50)
     debug_inspect(events.try_get(), content="Some(Release)")
   }
 }
@@ -143,6 +144,7 @@ async test "flock shared vs exclusive blocking" {
     debug_inspect(events.try_get(), content="None")
     file.lock(Exclusive)
     defer file.unlock()
+    @async.sleep(50)
     debug_inspect(events.try_get(), content="Some(Release)")
   }
 }
@@ -176,6 +178,7 @@ async test "flock exclusive vs shared blocking" {
     debug_inspect(events.try_get(), content="None")
     file.lock(Shared)
     defer file.unlock()
+    @async.sleep(50)
     debug_inspect(events.try_get(), content="Some(Release)")
   }
 }
