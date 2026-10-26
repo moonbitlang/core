@@ -43,7 +43,7 @@ fn drive_entry_ranges(
   let output = storage.mut_view(start=1, end=output_size + 1)
   let decoded = @buffer.Buffer()
   for input = (b"" : BytesView) {
-    let status = reader.step(input, output.mut_view())
+    let status = reader.step(input, output)
     guard storage[0] == b'\xA5' && storage[output_size + 1] == b'\xA5' else {
       abort("entry reader wrote outside its output view")
     }
