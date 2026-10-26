@@ -70,6 +70,17 @@ pub impl Hash for CaseInsensitiveString
 pub impl Show for CaseInsensitiveString
 pub impl @debug.Debug for CaseInsensitiveString
 
+type Client
+pub fn Client::Client(headers? : Map[CaseInsensitiveString, String]) -> Self
+pub fn Client::close(Self) -> Unit
+pub async fn Client::get(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (Response, ClientConnection)
+pub async fn Client::get_binary(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (Response, Bytes)
+pub async fn Client::get_json(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (Response, Json)
+pub async fn Client::get_text(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (Response, String)
+pub async fn Client::post(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
+pub async fn Client::put(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
+pub async fn Client::request(Self, RequestMethod, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
+
 pub struct ClientConnection {
   text : @io.Utf8TextView
   // private fields
