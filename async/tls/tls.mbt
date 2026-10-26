@@ -14,7 +14,7 @@
 
 ///|
 /// TLS related error
-pub suberror TlsError {
+suberror TlsError {
   TlsError(String)
 } derive(@debug.Debug, @json.ToJson)
 
