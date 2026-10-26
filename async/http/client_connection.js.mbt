@@ -69,7 +69,7 @@ priv struct OngoingRequest {
 
 ///|
 /// Simple HTTP client which connect to a remote host, backed by JavaScript fetch API
-pub struct Client {
+pub struct ClientConnection {
   /// A builtin text view for reading UTF-8 response bodies
   /// and writing UTF-8 request payloads
   text : @io.Utf8TextView
@@ -81,11 +81,11 @@ pub struct Client {
 }
 
 ///|
-/// Close a HTTP client and release underlying resource.
+/// Close a HTTP client connection and release underlying resource.
 /// In particular close the underlying TCP connection.
 /// This function is idempotent: it is safe to call `.close()` multiple times,
 /// only the first `.close()` call takes effect.
-pub fn Client::close(self : Client) -> Unit {
+pub fn ClientConnection::close(self : ClientConnection) -> Unit {
   self.text.close()
   self.request = None
   if self.response_body is Some(response_body) {
@@ -94,13 +94,15 @@ pub fn Client::close(self : Client) -> Unit {
 }
 
 ///|
-fn Client::connect(
+fn ClientConnection::connect(
   host : String,
   headers~ : Headers = Map([]),
   protocol~ : Protocol = Https,
-  proxy? : Client,
-) -> Client {
+  proxy? : ClientConnection,
+  trust~ : @tls.TrustedRoot = SystemRoot,
+) -> ClientConnection {
   ignore(proxy)
+  ignore(trust)
   let client = {
     text: @io.Utf8TextView::new_uninitialized(),
     host,
@@ -134,24 +136,23 @@ fn Client::connect(
 #warnings("-unused_async")
 #alias(new, deprecated)
 #label_migration(trust, fill=false, msg="`trust` is unsupported on JS backend")
-pub async fn Client::Client(
+pub async fn ClientConnection::ClientConnection(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
   trust~ : @tls.TrustedRoot = SystemRoot,
-) -> Client {
+) -> ClientConnection {
   ignore(proxy)
-  ignore(trust)
   let (protocol, host, path) = resolve_url(uri)
   guard path is "/" else { raise InvalidFormat }
-  Client::connect(host, protocol~, headers~, proxy?)
+  ClientConnection::connect(host, protocol~, headers~, proxy?, trust~)
 }
 
 ///|
-pub impl @io.BinaryWriter for Client
+pub impl @io.BinaryWriter for ClientConnection
 
 ///|
-impl @io.BinaryWriterImpl for Client with fn raw_write_impl(
+impl @io.BinaryWriterImpl for ClientConnection with fn raw_write_impl(
   self,
   buf,
   offset~,
@@ -163,34 +164,34 @@ impl @io.BinaryWriterImpl for Client with fn raw_write_impl(
 }
 
 ///|
-impl @io.BinaryWriterImpl for Client with fn get_controller(self) {
+impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
   guard! self.request is Some(request)
   request.ctrl
 }
 
 ///|
-pub extend Client with @io.BinaryWriter::{write, write_reader}
+pub extend ClientConnection with @io.BinaryWriter::{write, write_reader}
 
 ///|
 /// Currently, HTTP client does not support streaming request body writing on JS backend.
 /// So request body is always buffered and `.flush()` has no effect at all.
 #warnings("-unused_async")
-pub async fn Client::flush(_ : Client) -> Unit {
+pub async fn ClientConnection::flush(_ : ClientConnection) -> Unit {
   // no need to flush in JS backend
   ()
 }
 
 ///|
-pub impl @io.BinaryReader for Client
+pub impl @io.BinaryReader for ClientConnection
 
 ///|
-impl @io.BinaryReaderImpl for Client with fn get_controller(self) {
+impl @io.BinaryReaderImpl for ClientConnection with fn get_controller(self) {
   guard! self.response_body is Some(stream)
   @io.BinaryReaderImpl::get_controller(stream as &@io.BinaryReader)
 }
 
 ///|
-impl @io.BinaryReaderImpl for Client with fn raw_read_impl(
+impl @io.BinaryReaderImpl for ClientConnection with fn raw_read_impl(
   self,
   buf,
   offset~,
@@ -206,7 +207,7 @@ impl @io.BinaryReaderImpl for Client with fn raw_read_impl(
 }
 
 ///|
-pub extend Client with @io.BinaryReader::{
+pub extend ClientConnection with @io.BinaryReader::{
   read_into,
   read,
   read_at_least,
@@ -227,7 +228,7 @@ pub extend Client with @io.BinaryReader::{
 /// Should be called immediately after request body is fully sent.
 ///
 /// Only the header of the response will be received and returned,
-/// the response body can be read through `Client` as an `@io.BinaryReader`,
+/// the response body can be read through `ClientConnection` as an `@io.BinaryReader`,
 /// or through `client.text` as an `@io.TextReader`.
 ///
 /// If the body of the last response is still not consumed,
@@ -235,15 +236,15 @@ pub extend Client with @io.BinaryReader::{
 ///
 /// `on_informational_response` is not supported on JS backend,
 /// and will be silently ignored.
-pub async fn Client::end_request(
-  self : Client,
+pub async fn ClientConnection::end_request(
+  self : ClientConnection,
   on_informational_response? : async (Response) -> Unit,
 ) -> Response {
   ignore(on_informational_response)
   guard! self.request is Some(request)
   self.request = None
   let abort_controller = @js_async.AbortController::new()
-  let js_response = Client::request_ffi(
+  let js_response = ClientConnection::request_ffi(
     request.uri,
     request.meth,
     headers=request.headers,
@@ -266,7 +267,7 @@ pub async fn Client::end_request(
 }
 
 ///|
-extern "js" fn Client::request_ffi(
+extern "js" fn ClientConnection::request_ffi(
   uri : String,
   meth : String,
   headers~ : JsHeaders,
@@ -289,7 +290,7 @@ extern "js" fn Client::request_ffi(
 ///|
 /// Send a HTTP request to the server.
 /// Only the header of the request will be sent,
-/// the request body can be sent through `Client` as an `@io.BinaryWriter`,
+/// the request body can be sent through `ClientConnection` as an `@io.BinaryWriter`,
 /// or through `client.text` as an `@io.TextWriter`.
 /// Once request body has been sent,
 /// `end_request` must be called to complete the request and obtain response from the server.
@@ -297,14 +298,14 @@ extern "js" fn Client::request_ffi(
 /// After performing a request,
 /// the next request MUST NOT be made before the request is completed via `end_request`.
 ///
-/// In addition to headers in `Client::new`,
+/// In addition to headers in `ClientConnection::new`,
 /// extra HTTP headers can be passed via `extra_headers`.
 /// The headers mentioned in
 /// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_request_header
 /// must not be set in `extra_headers`.
 #warnings("-unused_async")
-pub async fn Client::request(
-  self : Client,
+pub async fn ClientConnection::request(
+  self : ClientConnection,
   meth : RequestMethod,
   path : StringView,
   extra_headers~ : Headers = Map([]),
@@ -352,9 +353,9 @@ pub async fn Client::request(
 }
 
 ///|
-/// Perform a `GET` request to the server, see `Client::request` for more details.
-pub async fn Client::get(
-  self : Client,
+/// Perform a `GET` request to the server, see `ClientConnection::request` for more details.
+pub async fn ClientConnection::get(
+  self : ClientConnection,
   path : String,
   extra_headers~ : Headers = Map([]),
 ) -> Response {
@@ -363,9 +364,9 @@ pub async fn Client::get(
 
 ///|
 /// Perform a `PUT` request to the server with binary payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_binary(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_binary(
+  self : ClientConnection,
   path : String,
   body : BytesView,
   extra_headers~ : Headers = Map([]),
@@ -375,9 +376,9 @@ pub async fn Client::put_binary(
 
 ///|
 /// Perform a `PUT` request to the server with UTF-8 encoded text payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_text(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_text(
+  self : ClientConnection,
   path : String,
   body : StringView,
   extra_headers~ : Headers = Map([]),
@@ -389,9 +390,9 @@ pub async fn Client::put_text(
 
 ///|
 /// Perform a `PUT` request to the server with UTF-8 encoded text JSON payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_json(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_json(
+  self : ClientConnection,
   path : String,
   body : Json,
   extra_headers~ : Headers = Map([]),
@@ -403,9 +404,9 @@ pub async fn Client::put_json(
 
 ///|
 /// Perform a `POST` request to the server with binary payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_binary(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_binary(
+  self : ClientConnection,
   path : String,
   body : BytesView,
   extra_headers~ : Headers = Map([]),
@@ -415,9 +416,9 @@ pub async fn Client::post_binary(
 
 ///|
 /// Perform a `POST` request to the server with UTF-8 encoded text payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_text(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_text(
+  self : ClientConnection,
   path : String,
   body : StringView,
   extra_headers~ : Headers = Map([]),
@@ -429,9 +430,9 @@ pub async fn Client::post_text(
 
 ///|
 /// Perform a `POST` request to the server with UTF-8 encoded text JSON payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_json(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_json(
+  self : ClientConnection,
   path : String,
   body : Json,
   extra_headers~ : Headers = Map([]),

@@ -79,19 +79,19 @@ fn resolve_host(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection(..)` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn request_binary(
   uri : String,
   meth : RequestMethod,
   headers : Headers,
   body : BytesView,
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Bytes) {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, headers~, protocol~, proxy?)
+  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
   defer client.close()
   let response = client..request(meth, path)..write(body).end_request()
   (response, client.read_all())
@@ -103,19 +103,19 @@ pub async fn request_binary(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection(..)` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn request_text(
   uri : String,
   meth : RequestMethod,
   headers : Headers,
   body : StringView,
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, String) {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, headers~, protocol~, proxy?)
+  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
   defer client.close()
   client.request(meth, path)
   client.text.write(body)
@@ -129,19 +129,19 @@ pub async fn request_text(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection(..)` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn request_json(
   uri : String,
   meth : RequestMethod,
   headers : Headers,
   body : Json?,
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Json) {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, headers~, protocol~, proxy?)
+  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
   defer client.close()
   client.request(meth, path)
   if body is Some(body) {
@@ -157,14 +157,14 @@ pub async fn request_json(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection::new` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn get_binary(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Bytes) {
   request_binary(uri, Get, headers, b"", proxy?)
 }
@@ -175,14 +175,14 @@ pub async fn get_binary(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection::new` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn get_text(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, String) {
   request_text(uri, Get, headers, "", proxy?)
 }
@@ -193,14 +193,14 @@ pub async fn get_text(
 /// The HTTP response message and the whole response body will be returned.
 ///
 /// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.Client::new` for more details.
+/// See `@http.ClientConnection::new` for more details.
 /// `proxy` is not supported on JavaScript backend.
 ///
-/// See `Client::request` for more details.
+/// See `ClientConnection::request` for more details.
 pub async fn get_json(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Json) {
   request_json(uri, Get, headers, None, proxy?)
 }
@@ -211,7 +211,7 @@ pub async fn put_binary(
   uri : String,
   content : BytesView,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Bytes) {
   request_binary(uri, Put, headers, content, proxy?)
 }
@@ -222,7 +222,7 @@ pub async fn put_text(
   uri : String,
   content : StringView,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, String) {
   request_text(uri, Put, headers, content, proxy?)
 }
@@ -233,7 +233,7 @@ pub async fn put_json(
   uri : String,
   content : Json,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Json) {
   request_json(uri, Put, headers, Some(content), proxy?)
 }
@@ -244,7 +244,7 @@ pub async fn post_binary(
   uri : String,
   content : BytesView,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Bytes) {
   request_binary(uri, Post, headers, content, proxy?)
 }
@@ -255,7 +255,7 @@ pub async fn post_text(
   uri : String,
   content : StringView,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, String) {
   request_text(uri, Post, headers, content, proxy?)
 }
@@ -266,7 +266,7 @@ pub async fn post_json(
   uri : String,
   content : Json,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
 ) -> (Response, Json) {
   request_json(uri, Post, headers, Some(content), proxy?)
 }
@@ -278,17 +278,17 @@ pub async fn post_json(
 /// and `client` is the HTTP client that performs the request.
 /// `client` can be used to read the content of response body
 /// via `@io.BinaryReader` or `@io.TextReader` interface.
-/// See `@http.Client` and its `.text` field for more details.
+/// See `@http.ClientConnection` and its `.text` field for more details.
 ///
 /// Note that the returned client must be manually closed via `.close()`
 /// to close the underlying connection used for the request.
 pub async fn get_stream(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
-) -> (Response, Client) {
+  proxy? : ClientConnection,
+) -> (Response, ClientConnection) {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, headers~, protocol~, proxy?)
+  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
   errdefer client.close()
   let response = client..request(Get, path).end_request()
   (response, client)
@@ -299,25 +299,25 @@ pub async fn get_stream(
 /// The return value `client` is the HTTP client that performs the request,
 /// it can be used to write the content of request body via `@io.BinaryWriter`.
 /// Text content can be written via `client.text` through the `@io.TextWriter` interface as well.
-/// See `@http.Client` and its `.text` field for more details.
+/// See `@http.ClientConnection` and its `.text` field for more details.
 ///
-/// Notice that writing to `@http.Client` is buffered,
+/// Notice that writing to `@http.ClientConnection` is buffered,
 /// so if you need to send data to the server immediately, `.flush()` must be called.
 /// After writing all the content, `.end_request()` must be called
 /// to complete the request and obtain response from the server.
 /// After that, the response body from the server can be obtained 
 /// by using `client` as `@io.BinaryReader` or `client.text` as `@io.TextReader`.
-/// See `@http.Client` and its `.text` field for more details.
+/// See `@http.ClientConnection` and its `.text` field for more details.
 ///
 /// Note that the returned `client` must be manually closed via `.close()`
 /// to close the underlying connection used for the request.
 pub async fn put_stream(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
-) -> Client {
+  proxy? : ClientConnection,
+) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, protocol~, headers~, proxy?)
+  let client = ClientConnection::connect(host, protocol~, headers~, proxy?)
   errdefer client.close()
   client.request(Put, path)
   client
@@ -328,25 +328,25 @@ pub async fn put_stream(
 /// The return value `client` is the HTTP client that performs the request,
 /// it can be used to write the content of request body via `@io.BinaryWriter`.
 /// Text content can be written via `client.text` through the `@io.TextWriter` interface as well.
-/// See `@http.Client` and its `.text` field for more details.
+/// See `@http.ClientConnection` and its `.text` field for more details.
 ///
-/// Notice that writing to `@http.Client` is buffered,
+/// Notice that writing to `@http.ClientConnection` is buffered,
 /// so if you need to send data to the server immediately, `.flush()` must be called.
 /// After writing all the content, `.end_request()` must be called
 /// to complete the request and obtain response from the server.
 /// After that, the response body from the server can be obtained 
 /// by using `client` as `@io.BinaryReader` or `client.text` as `@io.TextReader`.
-/// See `@http.Client` and its `.text` field for more details.
+/// See `@http.ClientConnection` and its `.text` field for more details.
 ///
 /// Note that the returned `client` must be manually closed via `.close()`
 /// to close the underlying connection used for the request.
 pub async fn post_stream(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
-) -> Client {
+  proxy? : ClientConnection,
+) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
-  let client = Client::connect(host, protocol~, headers~, proxy?)
+  let client = ClientConnection::connect(host, protocol~, headers~, proxy?)
   errdefer client.close()
   client.request(Post, path)
   client

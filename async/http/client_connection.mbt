@@ -15,12 +15,12 @@
 ///|
 priv enum ClientTransport {
   Plain(@socket.Tcp)
-  Proxy(Client)
+  Proxy(ClientConnection)
 }
 
 ///|
 /// Simple HTTP client which connect to a remote host via TCP
-pub struct Client {
+pub struct ClientConnection {
   /// A builtin text view for reading UTF-8 encoded response body
   /// and writing UTF-8 encoded request payload directly
   text : @io.Utf8TextView
@@ -40,13 +40,13 @@ pub suberror ProxyError {
 } derive(@debug.Debug, @json.ToJson)
 
 ///|
-async fn Client::connect(
+async fn ClientConnection::connect(
   host : StringView,
   headers~ : Headers = Map([]),
   protocol~ : Protocol = Https,
-  proxy? : Client,
+  proxy? : ClientConnection,
   trust~ : @tls.TrustedRoot = SystemRoot,
-) -> Client {
+) -> ClientConnection {
   let (hostname, port) = resolve_host(host, protocol~)
   let transport = if proxy is Some(proxy) {
     errdefer proxy.close()
@@ -119,15 +119,15 @@ async fn Client::connect(
 /// Using another HTTP client as proxy allows advanced features such as
 /// proxy authentication and https `CONNECT` proxy.
 #alias(new, deprecated)
-pub async fn Client::Client(
+pub async fn ClientConnection::ClientConnection(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : Client,
+  proxy? : ClientConnection,
   trust? : @tls.TrustedRoot,
-) -> Client {
+) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
   guard path is "/" else { raise InvalidFormat }
-  Client::connect(host, protocol~, headers~, proxy?, trust?)
+  ClientConnection::connect(host, protocol~, headers~, proxy?, trust?)
 }
 
 ///|
@@ -143,7 +143,7 @@ fn ClientTransport::close(self : ClientTransport) -> Unit {
 /// In particular close the underlying TCP connection.
 /// This function is idempotent: it is safe to call `.close()` multiple times,
 /// only the first `.close()` call takes effect.
-pub fn Client::close(self : Client) -> Unit {
+pub fn ClientConnection::close(self : ClientConnection) -> Unit {
   if self.tls is Some(tls) {
     tls.close()
   }
@@ -152,10 +152,10 @@ pub fn Client::close(self : Client) -> Unit {
 }
 
 ///|
-pub impl @io.BinaryReader for Client
+pub impl @io.BinaryReader for ClientConnection
 
 ///|
-impl @io.BinaryReaderImpl for Client with fn raw_read_impl(
+impl @io.BinaryReaderImpl for ClientConnection with fn raw_read_impl(
   self,
   buf,
   offset~,
@@ -165,12 +165,12 @@ impl @io.BinaryReaderImpl for Client with fn raw_read_impl(
 }
 
 ///|
-impl @io.BinaryReaderImpl for Client with fn get_controller(self) {
+impl @io.BinaryReaderImpl for ClientConnection with fn get_controller(self) {
   @io.BinaryReaderImpl::get_controller(self.reader)
 }
 
 ///|
-pub extend Client with @io.BinaryReader::{
+pub extend ClientConnection with @io.BinaryReader::{
   read_into,
   read,
   read_at_least,
@@ -192,7 +192,7 @@ pub extend Client with @io.BinaryReader::{
 /// and BEFORE reading the next response, otherwise this method will crash immediately.
 ///
 /// If the message is not chunk encoded, an empty header map will be returned.
-pub fn Client::trailer(self : Client) -> Headers {
+pub fn ClientConnection::trailer(self : ClientConnection) -> Headers {
   self.reader.trailer.unwrap()
 }
 
@@ -201,12 +201,12 @@ pub fn Client::trailer(self : Client) -> Headers {
 /// All writer API must be called after `send_request`.
 /// `end_request` must be called after all content of response body has been sent.
 ///
-/// Writing to `@http.Client` MAY be buffered,
+/// Writing to `@http.ClientConnection` MAY be buffered,
 /// call `flush` manually to ensure data is delivered to the remote peer.
-pub impl @io.BinaryWriter for Client
+pub impl @io.BinaryWriter for ClientConnection
 
 ///|
-impl @io.BinaryWriterImpl for Client with fn raw_write_impl(
+impl @io.BinaryWriterImpl for ClientConnection with fn raw_write_impl(
   self,
   buf,
   offset~,
@@ -217,22 +217,25 @@ impl @io.BinaryWriterImpl for Client with fn raw_write_impl(
 }
 
 ///|
-impl @io.BinaryWriterImpl for Client with fn get_controller(self) {
+impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
   @io.BinaryWriterImpl::get_controller(self.sender)
 }
 
 ///|
-pub impl @io.BinaryWriter for Client with fn write_reader(self, reader) {
+pub impl @io.BinaryWriter for ClientConnection with fn write_reader(
+  self,
+  reader,
+) {
   guard! !(self.sender.mode is SendingHeader)
   self.sender.write_reader(reader)
 }
 
 ///|
-pub extend Client with @io.BinaryWriter::{write, write_reader}
+pub extend ClientConnection with @io.BinaryWriter::{write, write_reader}
 
 ///|
 /// Flush buffered data in the request body being sent, if any.
-pub async fn Client::flush(self : Client) -> Unit {
+pub async fn ClientConnection::flush(self : ClientConnection) -> Unit {
   self.sender.flush()
 }
 
@@ -242,7 +245,7 @@ pub async fn Client::flush(self : Client) -> Unit {
 /// Should be called immediately after request body is fully sent.
 ///
 /// Only the header of the response will be received and returned,
-/// the response body can be read through `Client` as an `@io.BinaryReader`,
+/// the response body can be read through `ClientConnection` as an `@io.BinaryReader`,
 /// or through `client.text` as an `@io.TextReader`.
 ///
 /// If the body of the last response is still not consumed,
@@ -253,8 +256,8 @@ pub async fn Client::flush(self : Client) -> Unit {
 /// and the returned response is always the final response (or `101`).
 /// `on_informational_response`, if present,
 /// will be invoked for every skipped `1XX` informational response.
-pub async fn Client::end_request(
-  self : Client,
+pub async fn ClientConnection::end_request(
+  self : ClientConnection,
   on_informational_response? : async (Response) -> Unit,
 ) -> Response {
   self.sender.end_body()
@@ -279,7 +282,7 @@ pub async fn Client::end_request(
 ///|
 /// Send a HTTP request to the server.
 /// Only the header of the request will be sent,
-/// the request body can be sent through `Client` as an `@io.BinaryWriter`,
+/// the request body can be sent through `ClientConnection` as an `@io.BinaryWriter`,
 /// or through `client.text` as an `@io.TextWriter`.
 /// Once request body has been sent,
 /// `end_request` must be called to complete the request and obtain response from the server.
@@ -287,7 +290,7 @@ pub async fn Client::end_request(
 /// After performing a request,
 /// the next request MUST NOT be made before the request is completed via `end_request`.
 ///
-/// In addition to headers in `Client::connect`,
+/// In addition to headers in `ClientConnection::connect`,
 /// extra HTTP headers can be passed via `extra_headers`.
 /// The following headers is automatically set by `request`,
 /// and must not be specified in `extra_headers`:
@@ -305,8 +308,8 @@ pub async fn Client::end_request(
 /// The request body can still be sent incrementally,
 /// but if the actual body being sent is shorter and longer than the provided length,
 /// an error will be raised.
-pub async fn Client::request(
-  self : Client,
+pub async fn ClientConnection::request(
+  self : ClientConnection,
   meth : RequestMethod,
   path : StringView,
   extra_headers~ : Headers = Map([]),
@@ -318,14 +321,16 @@ pub async fn Client::request(
 ///|
 /// Skip the body of the response currently being produced,
 /// so that the next request can be made.
-pub async fn Client::skip_response_body(self : Client) -> Unit {
+pub async fn ClientConnection::skip_response_body(
+  self : ClientConnection,
+) -> Unit {
   self.reader.skip_body()
 }
 
 ///|
 /// Perform a `GET` request to the server, see `Client::request` for more details.
-pub async fn Client::get(
-  self : Client,
+pub async fn ClientConnection::get(
+  self : ClientConnection,
   path : String,
   extra_headers~ : Headers = Map([]),
 ) -> Response {
@@ -334,9 +339,9 @@ pub async fn Client::get(
 
 ///|
 /// Perform a `PUT` request to the server with binary payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_binary(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_binary(
+  self : ClientConnection,
   path : String,
   body : BytesView,
   extra_headers~ : Headers = Map([]),
@@ -346,9 +351,9 @@ pub async fn Client::put_binary(
 
 ///|
 /// Perform a `PUT` request to the server with UTF-8 encoded text payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_text(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_text(
+  self : ClientConnection,
   path : String,
   body : StringView,
   extra_headers~ : Headers = Map([]),
@@ -360,9 +365,9 @@ pub async fn Client::put_text(
 
 ///|
 /// Perform a `PUT` request to the server with UTF-8 encoded text JSON payload.
-/// See `Client::request` for more details.
-pub async fn Client::put_json(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::put_json(
+  self : ClientConnection,
   path : String,
   body : Json,
   extra_headers~ : Headers = Map([]),
@@ -374,9 +379,9 @@ pub async fn Client::put_json(
 
 ///|
 /// Perform a `POST` request to the server with binary payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_binary(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_binary(
+  self : ClientConnection,
   path : String,
   body : BytesView,
   extra_headers~ : Headers = Map([]),
@@ -386,9 +391,9 @@ pub async fn Client::post_binary(
 
 ///|
 /// Perform a `POST` request to the server with UTF-8 encoded text payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_text(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_text(
+  self : ClientConnection,
   path : String,
   body : StringView,
   extra_headers~ : Headers = Map([]),
@@ -400,9 +405,9 @@ pub async fn Client::post_text(
 
 ///|
 /// Perform a `POST` request to the server with UTF-8 encoded text JSON payload.
-/// See `Client::request` for more details.
-pub async fn Client::post_json(
-  self : Client,
+/// See `ClientConnection::request` for more details.
+pub async fn ClientConnection::post_json(
+  self : ClientConnection,
   path : String,
   body : Json,
   extra_headers~ : Headers = Map([]),
@@ -425,7 +430,9 @@ pub async fn Client::post_json(
 /// the client must be in a clean state
 /// (i.e. not in the middle of sending a request).
 /// Unread data from the body of the last response will be discarded.
-pub async fn Client::enter_passthrough_mode(self : Client) -> Unit {
+pub async fn ClientConnection::enter_passthrough_mode(
+  self : ClientConnection,
+) -> Unit {
   guard! self.sender.mode is SendingHeader
   self.reader.enter_passthrough_mode()
   self.sender.enter_passthrough_mode()

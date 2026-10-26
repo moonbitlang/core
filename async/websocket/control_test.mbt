@@ -26,7 +26,7 @@ async test "ping auto-reply" {
       defer ws.close()
       inspect(ws.recv().text.read_all(), content="1234")
     }
-    let http_client = @http.Client("http://127.0.0.1:\{port}")
+    let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
     let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
@@ -52,7 +52,7 @@ async test "pong ignored" {
       inspect(ws.recv().text.read_all(), content="1234")
       ws.send_text("1234")
     }
-    let http_client = @http.Client("http://127.0.0.1:\{port}")
+    let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
     let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
@@ -83,7 +83,7 @@ async test "ping auto-reply race-with-write" {
         ws.end_message()
       }
     }
-    let http_client = @http.Client("http://127.0.0.1:\{port}")
+    let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
     @async.sleep(200)
@@ -127,7 +127,7 @@ async test "close test" {
         ws.end_message()
       }
     }
-    let http_client = @http.Client("http://127.0.0.1:\{port}")
+    let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
     @async.sleep(200)

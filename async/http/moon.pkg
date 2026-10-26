@@ -35,8 +35,8 @@ import {
 
 options(
   targets: {
-    "client.js.mbt": [ "js" ],
-    "client.mbt": [ "native", "wasm" ],
+    "client_connection.js.mbt": [ "js" ],
+    "client_connection.mbt": [ "native", "wasm" ],
     "client_test.mbt": [ "native", "js", "wasm" ],
     "cookie.mbt": [ "native", "js", "wasm" ],
     "cookie_wbtest.mbt": [ "native", "wasm" ],
