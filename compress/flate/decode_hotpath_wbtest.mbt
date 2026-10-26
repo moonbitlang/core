@@ -55,17 +55,19 @@ test "omitted cancellation preserves output and resets explicit callback state" 
       )
       @test.assert_eq(calls, 3)
     }
-    @test.assert_eq(inflate_all(input), source)
+    @test.assert_eq(inflate_prefix(input), source)
     let output = FixedArray::make(9000, b'\xA5')
-    @test.assert_eq(inflate_into(input, output), 9000)
+    let result = inflate_into(input + b"TRAILER", output)
+    @test.assert_eq(result.consumed, input.length())
+    @test.assert_eq(result.produced, 9000)
     let mut one_shot_calls = 0
-    @test.assert_eq(
-      inflate_into(input, output, cancelled=() => {
-        one_shot_calls += 1
-        false
-      }),
-      9000,
-    )
+    let result = inflate_into(input, output, cancelled=() => {
+      one_shot_calls += 1
+      false
+    })
+    @test.assert_eq(result.consumed, input.length())
+    @test.assert_eq(result.produced, 9000)
+    @test.assert_eq(Bytes::from_array(output), source)
     @test.assert_eq(one_shot_calls, 3)
     let error = @test.expect_error(() => {
       decoder.decompress_into(input, FixedArray::make(4095, b'\xA5'))

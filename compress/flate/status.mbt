@@ -55,7 +55,7 @@ pub(all) struct StepResult {
   consumed : Int32
   /// Number of bytes written to this call's output view.
   produced : Int32
-}
+} derive(Eq, @debug.Debug)
 
 ///|
 /// Byte counts from a successful whole-buffer decompression call.
@@ -65,4 +65,11 @@ pub struct DecompressResult {
   consumed : Int32
   /// Decompressed bytes written to the caller's buffer.
   produced : Int32
-}
+} derive(Eq, @debug.Debug)
+
+///|
+/// Owned output and the compressed prefix consumed by a whole-buffer decode.
+pub struct Decompressed {
+  data : Bytes
+  consumed : Int32
+} derive(Eq, @debug.Debug)

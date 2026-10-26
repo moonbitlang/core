@@ -83,7 +83,7 @@ fn inflate_differential_sources() -> Array[Bytes] {
 
 ///|
 fn inflate_differential_one_shot(input : Bytes) -> InflateDifferentialOutcome {
-  try inflate_all(input) catch {
+  try inflate_prefix(input) catch {
     InflateError(kind, _) => InflateDifferentialErr(kind)
   } noraise {
     decoded => InflateDifferentialOk(decoded)
@@ -195,7 +195,7 @@ fn inflate_differential_flip(
 }
 
 ///|
-test "inflate_all and streaming IncrementalDecoder agree under deterministic fuzz" {
+test "inflate_prefix and streaming IncrementalDecoder agree under deterministic fuzz" {
   let sources = inflate_differential_sources()
   let levels : ReadOnlyArray[_] = [0, 1, 6, 9]
   let mut schedule_seed = 0xD1FF2026U
@@ -276,7 +276,7 @@ test "inflate_all and streaming IncrementalDecoder agree under deterministic fuz
 /// Arbitrary raw bytes exercise malformed states that mutations around streams
 /// produced by our own compressor may never reach. The seed is part of every
 /// corpus label so a failing case is exactly reproducible.
-test "inflate_all and streaming IncrementalDecoder agree on deterministic raw noise" {
+test "inflate_prefix and streaming IncrementalDecoder agree on deterministic raw noise" {
   let corpus_rng = InflateDifferentialRng(0xBAD5EEDU)
   let mut schedule_seed = 0x51A7E202U
   for case_index in 0..<128 {
@@ -298,7 +298,7 @@ fn inflate_differential_exact_kind(
   input : Bytes,
   preallocated : Bool,
 ) -> InflateErrorKind? {
-  try ignore(inflate_exact(input, preallocated~)) catch {
+  try ignore(inflate_exact(input, two_pass=preallocated)) catch {
     InflateError(kind, _) => Some(kind)
   } noraise {
     _ => None
@@ -317,7 +317,7 @@ test "preallocated inflate_exact matches the grow path" {
       let source = sources[source_index]
       let compressed = deflate_all(source, level~)
       let corpus = "source-\{source_index}/level-\{level}"
-      @test.assert_eq(inflate_exact(compressed, preallocated=true), source)
+      @test.assert_eq(inflate_exact(compressed, two_pass=true), source)
       let framed = compressed + b"TAIL"
       let default_outcome = inflate_differential_exact_kind(framed, false)
       let preallocated_outcome = inflate_differential_exact_kind(framed, true)
