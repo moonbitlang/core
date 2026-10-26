@@ -811,15 +811,14 @@ async test "watch debounce" {
     @fs.rename("\{watched_path}/file", "\{path}/file")
     let start = @async.now()
     // Refresh the watcher with other events until max debounce delay exceeds
-    while @async.now() - start < 650 {
+    while @async.now() - start < 750 {
       @async.sleep(200)
-      // If we are too close to the deadline, don't perform refreshing,
-      // to avoid an extra modification event from appearing in the result
-      if @async.now() - start < 550 {
-        @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
-      }
+      @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
     }
     @fs.rename("\{path}/file", "\{watched_path}/file2")
+    // Do an extra modification so that there is always a modification event
+    // in the second list.
+    @fs.write_text("\{watched_path}/another_file", "1234", sync=Full)
     @async.sleep(600)
   }
   inspect(
@@ -832,7 +831,7 @@ async test "watch debounce" {
       #|watcher received: [Create("file")]
       #|rename exceed max debounce delay
       #|watcher received: [Modify("another_file"), Remove("file")]
-      #|watcher received: [Create("file2")]
+      #|watcher received: [Modify("another_file"), Create("file2")]
       #|
     ),
   )
