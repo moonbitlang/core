@@ -77,6 +77,7 @@ pub fn Encoder::reset(self : Encoder) -> Unit {
   self.stage_pos = 0
   self.pending_action = Continue
 }
+
 ///|
 /// Whether the complete gzip stream has been emitted.
 pub fn Encoder::is_finished(self : Encoder) -> Bool {
@@ -176,4 +177,3 @@ pub fn Encoder::step(
     }
   }
 }
-
