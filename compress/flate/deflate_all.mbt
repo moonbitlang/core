@@ -17,13 +17,24 @@
 // when all input is already in hand.
 
 ///|
+/// Whole-buffer compression strategy. Levels are clamped to 0-9;
+/// level 0 emits stored blocks only.
+pub(all) enum Strategy {
+  /// Fixed-cadence blocks with the selected compression level.
+  Standard(level~ : Int32)
+  /// Content-driven block splitting after a single tokenization pass.
+  Split(level~ : Int32)
+  /// Iterated optimal parsing and splitting; iterations are clamped to at least 1.
+  Optimal(iterations~ : Int32)
+} derive(Eq, @debug.Debug)
+
+///|
 /// A reusable, whole-buffer raw DEFLATE compressor. Unlike the suspendable
 /// `IncrementalEncoder`, it reads the input directly and writes one complete stream into
 /// either a caller-provided buffer or reusable growable output storage.
 struct Compressor {
-  level : Int32
+  strategy : Strategy
   fast_store : Bool
-  cfg : LevelConfig
   finder : MatchFinder
   tokens : Array[Int32]
   mut output : FixedArray[Byte]
@@ -32,19 +43,20 @@ struct Compressor {
 }
 
 ///|
-/// Create a reusable whole-buffer compressor. `level` 0-9 is clamped, with
-/// level 0 selecting stored blocks only. `fast_store` defaults to false; when
-/// enabled, sampled high-diversity inputs may bypass compression and use stored
-/// blocks. It trades compression ratio for speed without changing the data.
+/// Create a reusable whole-buffer compressor with the selected strategy.
+/// `fast_store` may bypass parsing and use stored blocks for sampled inputs.
 pub fn Compressor::Compressor(
-  level~ : Int32 = 6,
+  strategy~ : Strategy = Standard(level=6),
   fast_store~ : Bool = false,
 ) -> Compressor {
-  let level = clamp_level(level)
+  let strategy = match strategy {
+    Standard(level~) => Standard(level=clamp_level(level))
+    Split(level~) => Split(level=clamp_level(level))
+    Optimal(iterations~) => Optimal(iterations=iterations.max(1))
+  }
   {
-    level,
+    strategy,
     fast_store,
-    cfg: level_configs[level],
     finder: MatchFinder(input_size=0),
     tokens: [],
     output: [],
@@ -54,22 +66,30 @@ pub fn Compressor::Compressor(
 }
 
 ///|
-/// A conservative output capacity for `deflate_into` or
-/// `Compressor::compress_into`. The returned value covers the fixed 16 KiB
-/// minimum block cadence and final bit padding for a non-negative input length.
-/// Panics if the input length is negative or the bound cannot fit in `Int`.
-pub fn deflate_bound(input_size : Int32) -> Int32 {
+/// An output capacity sufficient for the selected strategy, with or without
+/// `fast_store`. Panics for negative input sizes or an unrepresentable bound.
+pub fn deflate_bound(
+  input_size : Int32,
+  strategy~ : Strategy = Standard(level=6),
+) -> Int32 {
   guard input_size >= 0 else { abort("negative DEFLATE input size") }
-  let block_count = if input_size == 0 {
-    1
-  } else {
-    (input_size - 1) / DEFLATE_BLOCK_SIZE + 1
+  let size = input_size.to_int64()
+  // Every planned block costs at most its stored encoding, plus one byte
+  // for alignment. Stored segments may themselves split at 65535 bytes.
+  // Split has at most seven parts per chunk (including match overhang);
+  // Optimal caps each master chunk at OPTIMAL_MAX_BLOCKS parts.
+  let max_blocks = match strategy {
+    Standard(_) => (size + 65534L) / 65535L
+    Split(_) => (size + 65534L) / 65535L * 7L
+    Optimal(_) =>
+      (size + OPTIMAL_MASTER_BLOCK.to_int64() - 1L) /
+      OPTIMAL_MASTER_BLOCK.to_int64() *
+      OPTIMAL_MAX_BLOCKS.to_int64()
   }
-  let overhead = 5 * block_count + 1
-  guard input_size <= 0x7fffffff - overhead else {
-    abort("DEFLATE output capacity overflow")
-  }
-  input_size + overhead
+  let blocks = max_blocks.min(size).max(1L)
+  let bound = size + 5L * (size / 65535L + blocks) + blocks + 1L
+  guard bound <= 0x7fff_ffffL else { abort("DEFLATE output capacity overflow") }
+  bound.to_int()
 }
 
 ///|
@@ -103,27 +123,29 @@ fn Compressor::encode(
   input : BytesView,
   w : BitWriter,
 ) -> Int32? {
-  let n = input.length()
-  // Level 0 or an explicit heuristic decision bypasses parsing entirely.
-  guard self.level != 0 && !(self.fast_store && should_fast_store(input)) else {
-    w.write_stored(input, 0, n, is_final=true)
-    w.flush()
-    if w.overflowed {
-      None
-    } else {
-      Some(w.direct_pos)
+  let level = match self.strategy {
+    Standard(level~) | Split(level~) => level
+    Optimal(_) => 9
+  }
+  if level == 0 || (self.fast_store && should_fast_store(input)) {
+    w.write_stored(input, 0, input.length(), is_final=true)
+  } else {
+    self.finder.reset_for_input(input)
+    match self.strategy {
+      Standard(_) =>
+        encode_blocks(
+          input,
+          self.finder,
+          level_configs[level],
+          self.tokens,
+          self.ll_freq,
+          self.d_freq,
+          w,
+        )
+      Split(_) => self.encode_split(input, w, level_configs[level])
+      Optimal(iterations~) => self.encode_optimal(input, w, iterations)
     }
   }
-  self.finder.reset_for_input(input)
-  encode_blocks(
-    input,
-    self.finder,
-    self.cfg,
-    self.tokens,
-    self.ll_freq,
-    self.d_freq,
-    w,
-  )
   w.flush()
   if w.overflowed {
     None
@@ -134,37 +156,15 @@ fn Compressor::encode(
 
 ///|
 /// Compress bytes into a complete raw DEFLATE stream held entirely in memory.
-/// The whole input is tokenized directly, advancing a single offset and a
-/// session-owned fixed matchfinder; unlike `IncrementalEncoder`, no input staging ring
-/// is needed. Opt-in `fast_store` may emit stored blocks after a heuristic
-/// check; false (the default) preserves normal compression behavior.
+/// Defaults to `Standard(level=6)`. Opt-in `fast_store` may bypass any strategy
+/// and emit stored blocks after a heuristic check, trading compression ratio
+/// for speed; it is disabled by default.
 pub fn deflate_all(
   input : BytesView,
-  level~ : Int32 = 6,
+  strategy~ : Strategy = Standard(level=6),
   fast_store~ : Bool = false,
 ) -> Bytes {
-  let lv = clamp_level(level)
-  let w = BitWriter()
-  let n = input.length()
-  // Level 0 or an explicit heuristic decision bypasses parsing entirely.
-  guard lv != 0 && !(fast_store && should_fast_store(input)) else {
-    w.write_stored(input, 0, n, is_final=true)
-    w.flush()
-    return Bytes::from_array(w.out)
-  }
-  let cfg = level_configs[lv]
-  let long_hash_bits = long_hash_bits_for_input(input)
-  let finder = MatchFinder(input_size=n, long_hash_bits~)
-  // Reuse token and frequency storage across blocks. A whole-buffer stream
-  // can span several legal blocks; reallocating these fixed workspaces for
-  // every block only adds GC pressure and does not improve the parse.
-  let tokens : Array[Int32] = []
-  let ll_freq = FixedArray::make(MAX_NUM_LIT, 0)
-  let d_freq = FixedArray::make(MAX_NUM_DIST, 0)
-  finder.reset_for_input(input, long_hash_bits~)
-  encode_blocks(input, finder, cfg, tokens, ll_freq, d_freq, w)
-  w.flush()
-  Bytes::from_array(w.out)
+  Compressor(strategy~, fast_store~).compress(input)
 }
 
 ///|
@@ -174,10 +174,10 @@ pub fn deflate_all(
 pub fn deflate_into(
   input : BytesView,
   output : MutArrayView[Byte],
-  level~ : Int32 = 6,
+  strategy~ : Strategy = Standard(level=6),
   fast_store~ : Bool = false,
 ) -> Int32? {
-  Compressor(level~, fast_store~).compress_into(input, output)
+  Compressor(strategy~, fast_store~).compress_into(input, output)
 }
 
 ///|

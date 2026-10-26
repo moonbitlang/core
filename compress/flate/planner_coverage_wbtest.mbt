@@ -15,14 +15,26 @@
 ///|
 test "compression levels clamp at both public boundaries" {
   let source = b"level clamping must be deterministic deterministic"
-  @test.assert_eq(deflate_all(source, level=-7), deflate_all(source, level=0))
-  @test.assert_eq(deflate_all(source, level=99), deflate_all(source, level=9))
+  @test.assert_eq(
+    deflate_all(source),
+    deflate_all(source, strategy=Standard(level=6)),
+  )
+  @test.assert_eq(
+    deflate_all(source, strategy=Standard(level=-7)),
+    deflate_all(source, strategy=Standard(level=0)),
+  )
+  @test.assert_eq(
+    deflate_all(source, strategy=Standard(level=99)),
+    deflate_all(source, strategy=Standard(level=9)),
+  )
   let low = IncrementalEncoder(level=-7)
   let high = IncrementalEncoder(level=99)
   @test.assert_eq(low.level, 0)
   @test.assert_eq(high.level, 9)
   @test.assert_eq(
-    inflate_prefix(deflate_all_optimal(b"iteration clamp", iterations=0)),
+    inflate_prefix(
+      deflate_all(b"iteration clamp", strategy=Optimal(iterations=0)),
+    ),
     b"iteration clamp",
   )
 }
@@ -69,7 +81,7 @@ test "optimal planner crosses its master-block boundary" {
   let source = Bytes::from_array(
     Array::make(OPTIMAL_MASTER_BLOCK + MIN_LOOKAHEAD + 1, b'\x41'),
   )
-  let compressed = deflate_all_optimal(source, iterations=1)
+  let compressed = deflate_all(source, strategy=Optimal(iterations=1))
   @test.assert_eq(inflate_prefix(compressed), source)
 }
 

@@ -203,7 +203,7 @@ test "inflate_prefix and streaming IncrementalDecoder agree under deterministic 
     let source = sources[source_index]
     for level_index in 0..<levels.length() {
       let level = levels[level_index]
-      let compressed = deflate_all(source, level~)
+      let compressed = deflate_all(source, strategy=Standard(level~))
       let corpus = "source-\{source_index}/level-\{level}"
       let expected = InflateDifferentialOk(source)
       let one_shot = inflate_differential_one_shot(compressed)
@@ -315,7 +315,7 @@ test "preallocated inflate_exact matches the grow path" {
     let level = [0, 1, 6, 9][level_index]
     for source_index in 0..<sources.length() {
       let source = sources[source_index]
-      let compressed = deflate_all(source, level~)
+      let compressed = deflate_all(source, strategy=Standard(level~))
       let corpus = "source-\{source_index}/level-\{level}"
       @test.assert_eq(inflate_exact(compressed, two_pass=true), source)
       let framed = compressed + b"TAIL"

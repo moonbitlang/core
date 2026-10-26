@@ -31,11 +31,13 @@ test "decompress decodes a python-produced zlib stream" {
 
 ///|
 /// Optimal (zopfli-style) zlib round-trips and is no larger than level 6.
-test "compress_optimal round-trips and is no larger than level 6" {
+test "Split and Optimal strategies round-trip and are no larger than level 6" {
   let payload = b"the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. pack my box with five dozen liquor jugs."
-  let opt = @zlib.compress_optimal(payload)
-  @test.assert_eq(@zlib.decompress(opt), payload)
-  assert_true(opt.length() <= @zlib.compress(payload, level=6).length())
+  for strategy in [@zlib.Strategy::Split(level=6), Optimal(iterations=15)] {
+    let encoded = @zlib.compress(payload, strategy~)
+    @test.assert_eq(@zlib.decompress(encoded), payload)
+    assert_true(encoded.length() <= @zlib.compress(payload).length())
+  }
 }
 
 ///|
@@ -443,7 +445,7 @@ test "streaming zlib Encoder leaves input unconsumed after end is latched" {
 ///|
 test "streaming zlib Decoder drains large pending input one byte at a time" {
   let source = Bytes::from_array(Array::make(8192, b'\xA5'))
-  let compressed = @zlib.compress(source, level=0)
+  let compressed = @zlib.compress(source, strategy=Standard(level=0))
   let dec = @zlib.Decoder()
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
@@ -562,7 +564,7 @@ test "streaming zlib Decoder preserves input after the trailer" {
 ///|
 test "streaming zlib checksum survives output reuse before a split trailer" {
   let source = Bytes::makei(12003, i => (i * 71 + i / 13).to_byte())
-  let stream = @zlib.compress(source, level=0)
+  let stream = @zlib.compress(source, strategy=Standard(level=0))
   let body_end = stream.length() - 4
   let decoder = @zlib.Decoder()
   let padded = Array::make(263, b'\xA5')

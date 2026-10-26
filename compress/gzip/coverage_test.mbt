@@ -171,7 +171,10 @@ test "gzip coverage: truncated raw body and trailer" {
     Truncated,
   )
   // A level-zero stored body needs far more than the eight visible bytes.
-  let stored = @gzip.compress(Bytes::make(100, b'A'), level=0)
+  let stored = @gzip.compress(
+    Bytes::make(100, b'A'),
+    strategy=Standard(level=0),
+  )
   cov_expect_gunzip_error(cov_prefix(stored, 18), Truncated)
 }
 
@@ -244,7 +247,7 @@ test "gzip coverage: end after a clean member boundary" {
 
 ///|
 test "gzip output limit counts all members" {
-  let encoded = @gzip.compress(b"hello", level=0)
+  let encoded = @gzip.compress(b"hello", strategy=Standard(level=0))
   let input = encoded + encoded + b"TRAILING"
   @test.assert_eq(
     @gzip.decompress(input, max_output=10, cancelled=() => false),

@@ -175,7 +175,7 @@ test "streaming calls report what careful calls report" {
   let rng = InflateDifferentialRng(0x7EACE5U)
   for source in fast_stream_sources() {
     for level in [0, 1, 6] {
-      let compressed = deflate_all(source, level~)
+      let compressed = deflate_all(source, strategy=Standard(level~))
       let framed = compressed +
         b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
       let schedules = [

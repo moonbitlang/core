@@ -37,9 +37,10 @@ test "README raw DEFLATE round-trip" {
 }
 ```
 
-The direct-buffer APIs accept `MutArrayView[Byte]`, including slices of arrays. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
-for a negative input length or an unrepresentable bound);
-compression returns `None` if its encoded output does not fit, while decompression
+The direct-buffer APIs accept `MutArrayView[Byte]`, including slices of arrays.
+Pass the same strategy to `deflate_bound` and compression; the bound panics
+for a negative input length or an unrepresentable result.
+Compression returns `None` if its encoded output does not fit, while decompression
 raises `OutputLimitExceeded(limit~, observed~)` if its decoded output does not fit. Reuse
 `Compressor` and `Decompressor` across streams to retain their workspace.
 
@@ -47,7 +48,7 @@ raises `OutputLimitExceeded(limit~, observed~)` if its decoded output does not f
 ///|
 test "README caller-buffer DEFLATE" {
   let source = b"direct input and caller-owned output"
-  let compressor = @flate.Compressor(level=6)
+  let compressor = @flate.Compressor(strategy=Standard(level=6))
   let compressed_buffer = FixedArray::make(
     @flate.deflate_bound(source.length()),
     b'\x00',
@@ -432,7 +433,7 @@ existing calls retain their normal compression behavior.
 
 ```moonbit nocheck
 ///|
-let codec = @flate.Compressor(level=6, fast_store=true)
+let codec = @flate.Compressor(strategy=Standard(level=6), fast_store=true)
 
 ///|
 let raw = @flate.deflate_all(input, fast_store=true)
@@ -444,7 +445,7 @@ let stream = @flate.IncrementalEncoder(level=6, fast_store=true)
 let archive_bytes = @zip.write(archive, fast_store=true)
 ```
 
-The option is also available on `deflate_into`, split/optimal convenience APIs,
+The option is also available on all `deflate_all` strategies, `deflate_into`,
 gzip/zlib compression functions and streaming encoders, all ZIP serialization
 functions, and `zip.Writer`. Whole-buffer APIs classify the entire input;
 streaming encoders decide per block and retain stored bytes as match history.
@@ -459,24 +460,19 @@ lossless, and the normal output bounds and output limits still apply.
 
 ## Effort tiers
 
-All standard DEFLATE on the wire. Levels 0-9 are available on
-`deflate_all` / `IncrementalEncoder`. The default level 6 uses distance-aware lazy
-matching and a sampled minimum match length; the other levels retain their
-zlib-derived tuning. Whole-buffer compression uses 65,535-byte block targets,
-while streaming keeps its bounded 16 KiB input blocks. `deflate_all_split`
-tokenizes each input range once with the full 32 KB history and cuts blocks
-where the literal/match observation distribution drifts (libdeflate's
-observation-divergence splitter, `split_plan.mbt`), arbitrating each chunk
-against fixed-cadence cuts using estimated block costs. `deflate_all_optimal`
-adds zopfli-style iterated optimal parsing (`optimal_parse.mbt`) plus
-content-driven block splitting (`optimal_plan.mbt`). Both paths use the shared
-block writer. Output size depends on the input and chosen parsing strategy.
+`deflate_all`, `deflate_into`, `Compressor`, and gzip/zlib `compress` share
+`strategy`, defaulting to `Standard(level=6)`:
 
-The containers expose both tiers: `@gzip.compress` / `@zlib.compress` and their
-streaming `Encoder`s take `level` 0-9; `@gzip.compress_optimal` /
-`@zlib.compress_optimal` apply the offline zopfli path (one-shot only — a
-streaming encoder cannot suspend a whole-input optimal parse), for
-compress-once, serve-forever artifacts.
+- `Standard(level=...)`: fixed-cadence blocks with zlib-derived level tuning.
+- `Split(level=...)`: tokenize once, then choose content-driven block cuts.
+- `Optimal(iterations=...)`: iterated optimal parsing and content-driven splitting.
+
+Levels are clamped to 0-9; iterations to at least 1. All strategies produce
+standard DEFLATE. Output size depends on the input and chosen strategy.
+`IncrementalEncoder` retains its `level` parameter and bounded 16 KiB input blocks.
+
+gzip/zlib re-export `Strategy`, `Status`, `StepResult`, and `DeflateAction`.
+Their streaming encoders take `level` 0-9 and support `reset`.
 
 ## API conventions
 

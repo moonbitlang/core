@@ -28,20 +28,24 @@ test "fast store remains opt in across compression entry points" {
   let input = Bytes::makei(32768, i => (i % 251).to_byte())
   for level in [0, 1, 6, 9] {
     @test.assert_eq(
-      deflate_all(input, level~),
-      deflate_all(input, level~, fast_store=false),
+      deflate_all(input, strategy=Standard(level~)),
+      deflate_all(input, strategy=Standard(level~), fast_store=false),
     )
     @test.assert_eq(
-      inflate_prefix(deflate_all(input, level~, fast_store=true)),
+      inflate_prefix(
+        deflate_all(input, strategy=Standard(level~), fast_store=true),
+      ),
       input,
     )
   }
   @test.assert_eq(
-    inflate_prefix(deflate_all_split(input, fast_store=true)),
+    inflate_prefix(deflate_all(input, strategy=Split(level=6), fast_store=true)),
     input,
   )
   @test.assert_eq(
-    inflate_prefix(deflate_all_optimal(input, iterations=1, fast_store=true)),
+    inflate_prefix(
+      deflate_all(input, strategy=Optimal(iterations=1), fast_store=true),
+    ),
     input,
   )
 }

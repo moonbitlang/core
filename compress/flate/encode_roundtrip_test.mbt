@@ -230,7 +230,7 @@ fn assert_decodes(
 test "deflate round trips: one-shot and streaming, levels 0-9" {
   for (_, data) in roundtrip_corpus() {
     for level in 0..<=9 {
-      assert_decodes(@flate.deflate_all(data, level~), data)
+      assert_decodes(@flate.deflate_all(data, strategy=Standard(level~)), data)
       assert_decodes(
         roundtrip_stream(data, level, data.length() + 1, 65536),
         data,
@@ -262,17 +262,27 @@ test "deflate round trips: chunking, flushes and dictionaries" {
 
 ///|
 test "deflate round trips: whole-buffer encoders" {
-  let compressor = @flate.Compressor(level=6)
+  let compressor = @flate.Compressor(strategy=Standard(level=6))
   for (_, data) in roundtrip_corpus() {
     assert_decodes(compressor.compress(data), data)
     let output = FixedArray::make(@flate.deflate_bound(data.length()), b'\x00')
-    let length = @flate.deflate_into(data, output.mut_view(), level=6).unwrap()
+    let length = @flate.deflate_into(
+      data,
+      output.mut_view(),
+      strategy=Standard(level=6),
+    ).unwrap()
     assert_decodes(Bytes::makei(length, i => output[i]), data)
     for level in [1, 6, 9] {
-      assert_decodes(@flate.deflate_all_split(data, level~), data)
+      assert_decodes(@flate.deflate_all(data, strategy=Split(level~)), data)
     }
-    assert_decodes(@flate.deflate_all_optimal(data, iterations=2), data)
-    assert_decodes(@flate.deflate_all(data, level=6, fast_store=true), data)
+    assert_decodes(
+      @flate.deflate_all(data, strategy=Optimal(iterations=2)),
+      data,
+    )
+    assert_decodes(
+      @flate.deflate_all(data, strategy=Standard(level=6), fast_store=true),
+      data,
+    )
   }
 }
 

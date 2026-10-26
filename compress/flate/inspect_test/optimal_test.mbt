@@ -15,7 +15,7 @@
 ///|
 /// Compare round-trip output and encoded size on repeated text containing
 /// the lazy-matching pattern "abcde abcdef".
-test "deflate_all_optimal round-trips and beats greedy" {
+test "Optimal strategy round-trips and beats greedy" {
   let unit = b"optimal parsing pays where greedy grabs too early: abcde abcdef. "
   let arr : Array[Byte] = []
   for _r in 0..<120 {
@@ -24,7 +24,7 @@ test "deflate_all_optimal round-trips and beats greedy" {
     }
   }
   let src = Bytes::from_array(arr)
-  let opt = @flate.deflate_all_optimal(src, iterations=8)
+  let opt = @flate.deflate_all(src, strategy=Optimal(iterations=8))
   @test.assert_eq(@flate.inflate_prefix(opt), src)
   assert_true(opt.length() <= @flate.deflate_all(src).length())
 }
@@ -32,7 +32,7 @@ test "deflate_all_optimal round-trips and beats greedy" {
 ///|
 /// On this mixed text and pseudo-random input, compare the optimal output
 /// with level 9, allowing 16 bytes of additional output.
-test "deflate_all_optimal splits heterogeneous data" {
+test "Optimal strategy splits heterogeneous data" {
   let arr : Array[Byte] = []
   let text = b"a stretch of plain compressible text, over and over again. "
   for _r in 0..<80 {
@@ -48,7 +48,10 @@ test "deflate_all_optimal splits heterogeneous data" {
     arr.push((x & 0xFF).reinterpret_as_int().to_byte())
   }
   let src = Bytes::from_array(arr)
-  let opt = @flate.deflate_all_optimal(src, iterations=5)
+  let opt = @flate.deflate_all(src, strategy=Optimal(iterations=5))
   @test.assert_eq(@flate.inflate_prefix(opt), src)
-  assert_true(opt.length() <= @flate.deflate_all(src, level=9).length() + 16)
+  assert_true(
+    opt.length() <=
+    @flate.deflate_all(src, strategy=Standard(level=9)).length() + 16,
+  )
 }

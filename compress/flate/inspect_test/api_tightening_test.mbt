@@ -88,7 +88,7 @@ fn inflate_exact_sources() -> Array[Bytes] {
 test "inflate_exact preallocated and grow paths agree" {
   for source in inflate_exact_sources() {
     for level in [0, 1, 6] {
-      let compressed = @flate.deflate_all(source, level~)
+      let compressed = @flate.deflate_all(source, strategy=Standard(level~))
       @test.assert_eq(@flate.inflate_exact(compressed, two_pass=true), source)
       @test.assert_eq(@flate.inflate_exact(compressed), source)
     }
@@ -97,7 +97,10 @@ test "inflate_exact preallocated and grow paths agree" {
 
 ///|
 test "preallocated inflate_exact rejects truncation after output suspension" {
-  let compressed = @flate.deflate_all(Bytes::make(8194, b'x'), level=0)
+  let compressed = @flate.deflate_all(
+    Bytes::make(8194, b'x'),
+    strategy=Standard(level=0),
+  )
   let InflateError(kind, _) = @test.expect_error(() => {
     @flate.inflate_exact(compressed[:compressed.length() - 1], two_pass=true)
   })
@@ -164,7 +167,7 @@ test "preallocated inflate_exact honors cancellation in both passes" {
 test "inflate_prefix honours entry and mid-stream cancellation with or without a limit" {
   let source = Bytes::make(20000, b'X')
   for level in [0, 6] {
-    let compressed = @flate.deflate_all(source, level~)
+    let compressed = @flate.deflate_all(source, strategy=Standard(level~))
     for limit in [None, Some(source.length())] {
       for cancel_at in [1, 3] {
         let mut polls = 0

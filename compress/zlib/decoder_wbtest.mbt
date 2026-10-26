@@ -78,7 +78,7 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
     }
   })
   for level in [0, 6] {
-    let compressed = compress(source, level~)
+    let compressed = compress(source, strategy=Standard(level~))
     let damaged = compressed.to_fixedarray()
     damaged[compressed.length() - 1] = damaged[compressed.length() - 1] ^
       b'\x01'

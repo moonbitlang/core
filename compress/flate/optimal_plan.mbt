@@ -258,19 +258,22 @@ priv struct OptimalChunk {
 }
 
 ///|
-fn optimal_parse_chunk(
+fn Compressor::optimal_parse_chunk(
+  self : Compressor,
   input : BytesView,
-  finder : MatchFinder,
   pos : Int32,
   target : Int32,
   iterations : Int32,
 ) -> OptimalChunk {
-  let gtoks : Array[Int32] = []
-  let greedy_ll_freq = FixedArray::make(286, 0)
-  let greedy_d_freq = FixedArray::make(30, 0)
+  let gtoks = self.tokens
+  let greedy_ll_freq = self.ll_freq
+  let greedy_d_freq = self.d_freq
+  gtoks.clear()
+  greedy_ll_freq.fill(0)
+  greedy_d_freq.fill(0)
   let processed = tokenize(
     input,
-    finder,
+    self.finder,
     pos,
     target,
     level_configs[9],
@@ -332,39 +335,21 @@ fn emit_optimal_chunk(
 }
 
 ///|
-/// Compress with zopfli-style effort: content-driven block splitting plus
-/// iterated optimal parsing, with a second splitting pass over the optimal
-/// tokens (blocksplittinglast). `iterations` is the squeeze count per block,
-/// clamped to at least 1; the default is 15.
-/// `fast_store` is disabled by default. Enabling it can bypass this strategy
-/// for heuristically incompressible input, trading output size for speed.
-pub fn deflate_all_optimal(
+/// Iterated optimal parsing, followed by a second block-splitting pass.
+fn Compressor::encode_optimal(
+  self : Compressor,
   input : BytesView,
-  iterations~ : Int32 = 15,
-  fast_store~ : Bool = false,
-) -> Bytes {
-  guard !fast_store || !should_fast_store(input) else {
-    return deflate_all(input, level=0)
-  }
-  let iters = iterations.max(1)
-  let w = BitWriter()
+  w : BitWriter,
+  iterations : Int32,
+) -> Unit {
   let n = input.length()
-  guard n != 0 else {
-    w.emit_empty_block(input)
-    w.flush()
-    return Bytes::from_array(w.out)
-  }
+  guard n != 0 else { return w.emit_empty_block(input) }
   let mut pos = 0
-  let long_hash_bits = long_hash_bits_for_input(input)
-  let finder = MatchFinder(input_size=n, long_hash_bits~)
-  finder.reset_for_input(input, long_hash_bits~)
   for ;; {
     let target = next_block_target(pos, n, OPTIMAL_MASTER_BLOCK)
-    let chunk = optimal_parse_chunk(input, finder, pos, target, iters)
+    let chunk = self.optimal_parse_chunk(input, pos, target, iterations)
     emit_optimal_chunk(w, input, chunk, pos, n)
     pos = chunk.chunk_end
     guard pos < n else { break }
   }
-  w.flush()
-  Bytes::from_array(w.out)
 }

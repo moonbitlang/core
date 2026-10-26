@@ -70,7 +70,10 @@ test "zlib encoder round trips" {
       roundtrip_input(200000, 3, 6),
     ] {
     for level in [0, 1, 6, 9] {
-      assert_eq(@zlib.decompress(@zlib.compress(data, level~)), data)
+      assert_eq(
+        @zlib.decompress(@zlib.compress(data, strategy=Standard(level~))),
+        data,
+      )
       assert_eq(
         @zlib.decompress(roundtrip_zlib_stream(data, level, 32768)),
         data,

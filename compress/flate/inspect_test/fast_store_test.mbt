@@ -57,27 +57,31 @@ test "fast store propagates through gzip zlib and their streaming encoders" {
   )
   @test.assert_eq(
     @gzip.compress(input, fast_store=true),
-    @gzip.compress(input, level=0),
+    @gzip.compress(input, strategy=Standard(level=0)),
   )
   @test.assert_eq(
     @zlib.compress(input, fast_store=true),
-    @zlib.compress(input, level=0),
+    @zlib.compress(input, strategy=Standard(level=0)),
   )
   @test.assert_eq(
-    @gzip.decompress(@gzip.compress_optimal(input, fast_store=true)),
+    @gzip.decompress(
+      @gzip.compress(input, strategy=Optimal(iterations=15), fast_store=true),
+    ),
     input,
   )
   @test.assert_eq(
-    @zlib.decompress(@zlib.compress_optimal(input, fast_store=true)),
+    @zlib.decompress(
+      @zlib.compress(input, strategy=Optimal(iterations=15), fast_store=true),
+    ),
     input,
   )
   @test.assert_eq(
-    @gzip.compress_optimal(input, fast_store=true),
-    @gzip.compress(input, level=0),
+    @gzip.compress(input, strategy=Optimal(iterations=15), fast_store=true),
+    @gzip.compress(input, strategy=Standard(level=0)),
   )
   @test.assert_eq(
-    @zlib.compress_optimal(input, fast_store=true),
-    @zlib.compress(input, level=0),
+    @zlib.compress(input, strategy=Optimal(iterations=15), fast_store=true),
+    @zlib.compress(input, strategy=Standard(level=0)),
   )
   let raw = @flate.IncrementalEncoder(fast_store=true)
   let bytes = optional_store_stream(input, (src, dst, action) => {

@@ -16,7 +16,7 @@
 test "omitted cancellation preserves output and resets explicit callback state" {
   let source = Bytes::makei(9000, i => (i % 23).to_byte())
   for level in [0, 6] {
-    let input = deflate_all(source, level~)
+    let input = deflate_all(source, strategy=Standard(level~))
     let decoder = Decompressor()
     for _ in 0..<2 {
       let stopped = FixedArray::make(9017, b'\xA5')

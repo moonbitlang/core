@@ -661,7 +661,7 @@ fn prepare_archive(
       Store => { compressed_size: entry.data.length(), compressed: None, }
       Deflate => {
         let codec = compressor.unwrap_or_else(() => {
-          let codec = @flate.Compressor(level~, fast_store~)
+          let codec = @flate.Compressor(strategy=Standard(level~), fast_store~)
           compressor = Some(codec)
           codec
         })

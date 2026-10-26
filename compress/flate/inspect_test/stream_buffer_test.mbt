@@ -16,7 +16,7 @@
 test "fixed streaming output views match offset array views across history wraps" {
   let source = Bytes::from_array(Array::makei(140000, i => (i % 257).to_byte()))
   for level in [0, 6] {
-    let compressed = @flate.deflate_all(source, level~)
+    let compressed = @flate.deflate_all(source, strategy=Standard(level~))
     for capacity in [1, 257, 32768, 65536] {
       let fixed = @flate.IncrementalDecoder()
       let viewed = @flate.IncrementalDecoder()
