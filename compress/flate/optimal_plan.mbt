@@ -265,22 +265,8 @@ fn Compressor::optimal_parse_chunk(
   target : Int32,
   iterations : Int32,
 ) -> OptimalChunk {
+  let processed = self.tokenize(input, pos, target, level_configs[9])
   let gtoks = self.tokens
-  let greedy_ll_freq = self.ll_freq
-  let greedy_d_freq = self.d_freq
-  gtoks.clear()
-  greedy_ll_freq.fill(0)
-  greedy_d_freq.fill(0)
-  let processed = tokenize(
-    input,
-    self.finder,
-    pos,
-    target,
-    level_configs[9],
-    gtoks,
-    greedy_ll_freq,
-    greedy_d_freq,
-  )
   let chunk_end = processed // a boundary match may overhang `target`
   let gtok_pos = token_positions(gtoks, pos, chunk_end)
   let bounds1 = plan_split_points(gtoks, gtok_pos)
@@ -305,7 +291,7 @@ fn emit_optimal_chunk(
   input : BytesView,
   chunk : OptimalChunk,
   pos : Int32,
-  n : Int32,
+  is_final~ : Bool,
 ) -> Unit {
   let all = chunk.tokens
   let all_pos = token_positions(all, pos, chunk.chunk_end)
@@ -329,7 +315,7 @@ fn emit_optimal_chunk(
       all[lo:hi],
       ll_freq,
       d_freq,
-      is_final=all_pos[hi] == n,
+      is_final=is_final && hi == all.length(),
     )
   }
 }
@@ -339,17 +325,23 @@ fn emit_optimal_chunk(
 fn Compressor::encode_optimal(
   self : Compressor,
   input : BytesView,
+  pos : Int32,
+  target : Int32,
   w : BitWriter,
   iterations : Int32,
-) -> Unit {
-  let n = input.length()
-  guard n != 0 else { return w.emit_empty_block(input) }
-  let mut pos = 0
-  for ;; {
-    let target = next_block_target(pos, n, OPTIMAL_MASTER_BLOCK)
-    let chunk = self.optimal_parse_chunk(input, pos, target, iterations)
-    emit_optimal_chunk(w, input, chunk, pos, n)
-    pos = chunk.chunk_end
-    guard pos < n else { break }
+  is_final~ : Bool,
+) -> Int32 {
+  guard pos < input.length() else {
+    w.emit_empty_block(input)
+    return pos
   }
+  let chunk = self.optimal_parse_chunk(input, pos, target, iterations)
+  emit_optimal_chunk(
+    w,
+    input,
+    chunk,
+    pos,
+    is_final=is_final && chunk.chunk_end == input.length(),
+  )
+  chunk.chunk_end
 }

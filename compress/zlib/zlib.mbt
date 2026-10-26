@@ -94,12 +94,15 @@ fn adler32_cancellable(
 
 ///|
 /// Wrap a raw DEFLATE stream `deflated` of `input` in the zlib header/trailer.
-fn zlib_frame(input : BytesView, deflated : Bytes) -> Bytes {
+fn zlib_frame(
+  input : BytesView,
+  deflated : Bytes,
+  dictionary : BytesView?,
+) -> Bytes {
   let out = @buffer.Buffer()
-  // CMF=0x78 (CM=8 deflate, CINFO=7 -> 32K window); FLG=0x01 makes the
-  // 16-bit header a multiple of 31 with FLEVEL=0 and no preset dictionary.
-  out.write_byte(b'\x78')
-  out.write_byte(b'\x01')
+  for byte in zlib_header(dictionary) {
+    out.write_byte(byte)
+  }
   out.write_bytes(deflated)
   let adler = @checksum.adler32(input)
   out.write_uint_be(adler)
@@ -108,22 +111,30 @@ fn zlib_frame(input : BytesView, deflated : Bytes) -> Bytes {
 
 ///|
 /// Compress a complete zlib stream with the selected DEFLATE strategy.
+/// `dictionary` seeds the history; its full Adler-32 is stored as DICTID.
 /// `fast_store` may bypass the strategy for sampled inputs, trading ratio for speed.
 pub fn compress(
   input : BytesView,
   strategy~ : @flate.Strategy = Standard(level=6),
+  dictionary? : BytesView,
   fast_store~ : Bool = false,
 ) -> Bytes {
-  zlib_frame(input, @flate.deflate_all(input, strategy~, fast_store~))
+  zlib_frame(
+    input,
+    @flate.deflate_all(input, strategy~, dictionary?, fast_store~),
+    dictionary,
+  )
 }
 
 ///|
 /// Decode zlib data and verify its Adler-32 trailer. `max_output` caps decoded
 /// bytes (default: `Bytes` capacity); exceeding it raises `OutputLimitExceeded`,
-/// a negative value `InvalidArgument`. `cancelled` is polled at entry, every
+/// a negative value `InvalidArgument`. Supply `dictionary` for an FDICT stream.
+/// `cancelled` is polled at entry, every
 /// 8 KiB decoded and every 4 KiB checksummed; true raises `Cancelled`.
 pub fn decompress(
   input : BytesView,
+  dictionary? : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
 ) -> Bytes raise ZlibError {
@@ -144,29 +155,90 @@ pub fn decompress(
   guard (cmf * 256 + flg) % 31 == 0 else {
     raise ZlibError(InvalidHeader, "zlib: bad header check")
   }
-  guard (flg & 0x20) == 0 else {
-    raise ZlibError(
-      DictionaryRequired,
-      "zlib: preset dictionary required (use the streaming Decoder)",
-    )
+  let dict = if (flg & 0x20) != 0 {
+    guard dictionary is Some(dict) else {
+      raise ZlibError(DictionaryRequired, "zlib: preset dictionary required")
+    }
+    guard n >= 10 else {
+      raise ZlibError(Truncated, "zlib: truncated dictionary ID")
+    }
+    guard adler32_cancellable(dict, cancelled) == u32_be(input, 2) else {
+      raise ZlibError(DictionaryMismatch, "zlib: dictionary ID mismatch")
+    }
+    Some(dict)
+  } else {
+    None
   }
-  let out = @flate.inflate_exact(input[2:n - 4], max_output?, cancelled?) catch {
-    InflateError(Truncated, _) =>
-      raise ZlibError(Truncated, "zlib: truncated DEFLATE stream")
-    InflateError(TrailingData, _) =>
-      raise ZlibError(
-        TrailingData,
-        "zlib: data between DEFLATE stream and trailer",
-      )
-    InflateError(OutputLimitExceeded(limit~, observed~), message) =>
-      raise ZlibError(OutputLimitExceeded(limit~, observed~), message)
-    InflateError(Cancelled, message) => raise ZlibError(Cancelled, message)
-    InflateError(InvalidArgument, message) =>
-      raise ZlibError(InvalidArgument, message)
-    InflateError(_, message) => raise ZlibError(InvalidDeflate, message)
+  let out = match dict {
+    None =>
+      @flate.inflate_exact(input[2:n - 4], max_output?, cancelled?) catch {
+        error => raise wrap_inflate_error(error)
+      }
+    Some(dictionary) =>
+      inflate_dictionary(input[6:n - 4], dictionary, max_output, cancelled)
   }
   guard adler32_cancellable(out, cancelled) == u32_be(input, n - 4) else {
     raise ZlibError(ChecksumMismatch, "zlib: Adler-32 mismatch")
   }
   out
+}
+
+///|
+/// The dictionary path uses the incremental engine's seeded history.
+fn inflate_dictionary(
+  input : BytesView,
+  dictionary : BytesView,
+  max_output : Int32?,
+  cancelled : (() -> Bool)?,
+) -> Bytes raise ZlibError {
+  let decoder = @flate.IncrementalDecoder(dictionary~)
+  let scratch = FixedArray::make(8192, b'\x00')
+  let output = @buffer.Buffer()
+  let limit = max_output.unwrap_or(0x7fff_ffff)
+  let mut pos = 0
+  for ;; {
+    if cancelled is Some(callback) && callback() {
+      raise ZlibError(Cancelled, "zlib: cancelled by caller")
+    }
+    let result = decoder.step(input[pos:], scratch.mut_view()) catch {
+      error => raise wrap_inflate_error(error)
+    }
+    pos += result.consumed
+    guard result.produced <= limit - output.length() else {
+      raise ZlibError(
+        OutputLimitExceeded(
+          limit=limit.to_uint64(),
+          observed=output.length().to_uint64() + result.produced.to_uint64(),
+        ),
+        "zlib: decoded output exceeds its byte limit",
+      )
+    }
+    output.write_bytes(Bytes::from_array(scratch[:result.produced]))
+    match result.status {
+      Done => {
+        guard pos == input.length() else {
+          raise ZlibError(TrailingData, "zlib: trailing DEFLATE data")
+        }
+        return output.to_bytes()
+      }
+      NeedMoreOutput => ()
+      NeedMoreInput =>
+        raise ZlibError(Truncated, "zlib: truncated DEFLATE data")
+    }
+  }
+}
+
+///|
+fn wrap_inflate_error(error : @flate.InflateError) -> ZlibError {
+  let InflateError(kind, message) = error
+  match kind {
+    Truncated => ZlibError(Truncated, "zlib: truncated DEFLATE stream")
+    TrailingData =>
+      ZlibError(TrailingData, "zlib: data between DEFLATE stream and trailer")
+    OutputLimitExceeded(limit~, observed~) =>
+      ZlibError(OutputLimitExceeded(limit~, observed~), message)
+    Cancelled => ZlibError(Cancelled, message)
+    InvalidArgument => ZlibError(InvalidArgument, message)
+    _ => ZlibError(InvalidDeflate, message)
+  }
 }

@@ -6,11 +6,11 @@ import {
 }
 
 // Values
-pub fn deflate_all(BytesView, strategy? : Strategy, fast_store? : Bool) -> Bytes
+pub fn deflate_all(BytesView, strategy? : Strategy, dictionary? : BytesView, fast_store? : Bool) -> Bytes
 
 pub fn deflate_bound(Int32, strategy? : Strategy) -> Int32
 
-pub fn deflate_into(BytesView, MutArrayView[Byte], strategy? : Strategy, fast_store? : Bool) -> Int32?
+pub fn deflate_into(BytesView, MutArrayView[Byte], strategy? : Strategy, dictionary? : BytesView, fast_store? : Bool) -> Int32?
 
 pub fn inflate_exact(BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Bytes raise InflateError
 
@@ -25,7 +25,7 @@ pub suberror InflateError {
 
 // Types and methods
 type Compressor
-pub fn Compressor::Compressor(strategy? : Strategy, fast_store? : Bool) -> Self
+pub fn Compressor::Compressor(strategy? : Strategy, dictionary? : BytesView, fast_store? : Bool) -> Self
 pub fn Compressor::compress(Self, BytesView) -> Bytes
 pub fn Compressor::compress_into(Self, BytesView, MutArrayView[Byte]) -> Int32?
 

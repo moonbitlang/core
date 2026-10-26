@@ -177,7 +177,9 @@ test "README streaming IncrementalEncoder" {
 
 `inflate_prefix` and `Decompressor::decompress` accept a raw DEFLATE prefix;
 `inflate_exact` rejects trailing bytes. These and gzip/zlib `decompress` accept
-`max_output` and `cancelled`. gzip counts output across all members.
+`max_output` and `cancelled`. gzip counts output across all members; zlib
+accepts `dictionary` on both `compress` and `decompress`. The compressor uses
+the last 32 KiB as history and records the full dictionary checksum.
 
 ```mbt check
 ///|
@@ -470,6 +472,8 @@ lossless, and the normal output bounds and output limits still apply.
 Levels are clamped to 0-9; iterations to at least 1. All strategies produce
 standard DEFLATE. Output size depends on the input and chosen strategy.
 `IncrementalEncoder` retains its `level` parameter and bounded 16 KiB input blocks.
+All raw whole-buffer compression entry points accept `dictionary`; `Compressor`
+owns its last 32 KiB and reuses it for each stream. The output bound is unchanged.
 
 gzip/zlib re-export `Strategy`, `Status`, `StepResult`, and `DeflateAction`.
 Their streaming encoders take `level` 0-9 and support `reset`.

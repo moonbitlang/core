@@ -7,9 +7,9 @@ import {
 }
 
 // Values
-pub fn compress(BytesView, strategy? : @flate.Strategy, fast_store? : Bool) -> Bytes
+pub fn compress(BytesView, strategy? : @flate.Strategy, dictionary? : BytesView, fast_store? : Bool) -> Bytes
 
-pub fn decompress(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
+pub fn decompress(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
 
 // Errors
 pub suberror ZlibError {

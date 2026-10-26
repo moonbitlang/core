@@ -140,6 +140,29 @@ test "streaming zlib Decoder: empty" {
 test "zlib preset dictionary round-trip" {
   let dict = b"common preamble shared by both sides of the protocol"
   let msg = b"common preamble shared by both sides of the protocol -- payload"
+  for
+    strategy in [
+      @zlib.Strategy::Standard(level=0),
+      Standard(level=6),
+      Split(level=6),
+      Optimal(iterations=1),
+    ] {
+    for dictionary in [dict, b""] {
+      let encoded = @zlib.compress(msg, strategy~, dictionary~)
+      @test.assert_eq(@zlib.decompress(encoded, dictionary~), msg)
+      let ZlibError(kind, _) = @test.expect_error(() => {
+        @zlib.decompress(encoded)
+      })
+      @test.assert_eq(kind, DictionaryRequired)
+    }
+    @test.assert_eq(
+      @zlib.decompress(
+        @zlib.compress(msg, strategy~, dictionary=dict, fast_store=true),
+        dictionary=dict,
+      ),
+      msg,
+    )
+  }
   let enc = @zlib.Encoder(dictionary=dict)
   let obuf = FixedArray::make(4096, b'\x00')
   let out = @buffer.Buffer()
@@ -158,6 +181,35 @@ test "zlib preset dictionary round-trip" {
     }
   }
   let z = out.to_bytes()
+  @test.assert_eq(
+    @zlib.decompress(z, dictionary=dict, max_output=msg.length()),
+    msg,
+  )
+  let ZlibError(missing, _) = @test.expect_error(() => @zlib.decompress(z))
+  @test.assert_eq(missing, DictionaryRequired)
+  let ZlibError(wrong, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=b"wrong")
+  })
+  @test.assert_eq(wrong, DictionaryMismatch)
+  let ZlibError(limited, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=dict, max_output=msg.length() - 1)
+  })
+  @test.assert_eq(
+    limited,
+    OutputLimitExceeded(
+      limit=(msg.length() - 1).to_uint64(),
+      observed=msg.length().to_uint64(),
+    ),
+  )
+  let mut polls = 0
+  let ZlibError(cancelled, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=dict, cancelled=() => {
+      polls += 1
+      polls == 4
+    })
+  })
+  @test.assert_eq(cancelled, Cancelled)
+
   // With the right dictionary: decodes and verifies the trailer.
   let dec = @zlib.Decoder(dictionary=dict)
   let dbuf = FixedArray::make(4096, b'\x00')
