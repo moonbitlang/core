@@ -35,7 +35,7 @@ priv enum EncMode {
 /// Streaming gzip compressor.
 struct Encoder {
   def : @flate.IncrementalEncoder
-  crc : @checksum.Crc32
+  mut crc : @checksum.Crc32
   mut isize : UInt32 // total input length, mod 2^32 (gzip ISIZE)
   mut mode : EncMode
   mut stage : FixedArray[Byte] // header or trailer bytes being drained
@@ -66,6 +66,17 @@ pub fn Encoder::Encoder(
   }
 }
 
+///|
+/// Start a fresh gzip stream, preserving compression options and reusing buffers.
+pub fn Encoder::reset(self : Encoder) -> Unit {
+  self.def.reset()
+  self.crc = Crc32()
+  self.isize = 0
+  self.mode = Header
+  self.stage = gzip_header_bytes
+  self.stage_pos = 0
+  self.pending_action = Continue
+}
 ///|
 /// Whether the complete gzip stream has been emitted.
 pub fn Encoder::is_finished(self : Encoder) -> Bool {
@@ -165,3 +176,4 @@ pub fn Encoder::step(
     }
   }
 }
+

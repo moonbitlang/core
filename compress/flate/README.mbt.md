@@ -164,9 +164,9 @@ test "README streaming IncrementalEncoder" {
   truncation themselves. After a raw decoder error, discard or reset it;
   container decoder instances stably rethrow the same error.
 - Once `Done` is returned, new input is not consumed; reset the raw engine or
-  the zlib `Encoder` (`reset(dictionary?)`), or create a new wrapper, before
-  reuse. A reset encoder produces exactly the bytes of a freshly constructed
-  one with the same options and driving schedule, while reusing its workspace.
+  gzip/zlib encoder before reuse, or create a new decoder wrapper. A reset
+  encoder produces the same bytes as a fresh one with the same options and
+  driving schedule, while reusing its workspace.
 - Configure a raw preset dictionary through `IncrementalEncoder(...)`/`IncrementalDecoder(...)`, or
   while starting a fresh stream through `reset(dictionary=...)`; dictionary
   selection cannot be mutated after a stream begins.

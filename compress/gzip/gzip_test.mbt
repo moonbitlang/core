@@ -210,6 +210,17 @@ test "streaming gzip Encoder round-trips through decompress" {
     }
   }
   @test.assert_eq(@gzip.decompress(out.to_bytes()), src)
+  enc.reset()
+  assert_false(enc.is_finished())
+  ignore(enc.step(b"discard", [].mut_view(), action=Finish))
+  enc.reset()
+  let fresh = FixedArray::make(64, b'\x00')
+  let result = enc.step(b"new stream", fresh.mut_view(), action=Finish)
+  assert_true(result.status is Done)
+  @test.assert_eq(
+    @gzip.decompress(Bytes::from_array(fresh[:result.produced])),
+    b"new stream",
+  )
 }
 
 ///|
