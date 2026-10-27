@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
 
+# Only supersede runs for the same PR; other events remain independent.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 env:
   MOON_COVE_REPORT_ENABLED: "1"
   MOON_WASM_NEW_ALLOCATOR: "1"
