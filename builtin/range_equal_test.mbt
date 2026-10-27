@@ -130,6 +130,85 @@ test "String range equality agrees with code unit comparison" {
 }
 
 ///|
+test "StringView range equality uses view-relative starts" {
+  let left = "xxhelloworld!"[2:12]
+  let right = "yyyworldhello?"[3:13]
+  inspect(
+    left.range_equal(right, start=0, other_start=5, len=5),
+    content="true",
+  )
+  inspect(
+    left.range_equal(right, start=5, other_start=0, len=5),
+    content="true",
+  )
+  inspect(
+    left.range_equal(right, start=0, other_start=0, len=5),
+    content="false",
+  )
+  let repeated = "xabcabcy"[1:7]
+  inspect(
+    repeated.range_equal(repeated, start=0, other_start=3, len=3),
+    content="true",
+  )
+  inspect(
+    left.range_equal(right, start=10, other_start=10, len=0),
+    content="true",
+  )
+  let empty = "prefix:suffix"[7:7]
+  inspect(
+    empty.range_equal(empty, start=0, other_start=0, len=0),
+    content="true",
+  )
+}
+
+///|
+test "StringView range equality permits boundaries inside surrogate pairs" {
+  let left = "x😀y"[1:3]
+  let right = "zz😁w"[2:4]
+  inspect(
+    left.range_equal(right, start=0, other_start=0, len=1),
+    content="true",
+  )
+  inspect(
+    left.range_equal(right, start=1, other_start=1, len=1),
+    content="false",
+  )
+  inspect(
+    left.range_equal(right, start=1, other_start=1, len=0),
+    content="true",
+  )
+  inspect(
+    left.range_equal("q😀"[1:], start=1, other_start=1, len=1),
+    content="true",
+  )
+  inspect(
+    "xabcdef😀y"[1:9].range_equal("abcdefg", start=0, other_start=0, len=7),
+    content="false",
+  )
+}
+
+///|
+test "StringView range equality agrees with code unit comparison" {
+  let left = "prefix:A😀B中😁C:suffix"[7:15]
+  let right = "xxZ😀B文😁Dyy"[2:10]
+  for start in 0..<=left.length() {
+    for other_start in 0..<=right.length() {
+      let max_len = (left.length() - start).min(right.length() - other_start)
+      for len in 0..<=max_len {
+        let mut expected = true
+        for i in 0..<len {
+          if left[start + i] != right[other_start + i] {
+            expected = false
+            break
+          }
+        }
+        assert_eq(left.range_equal(right, start~, other_start~, len~), expected)
+      }
+    }
+  }
+}
+
+///|
 test "range equality through the public view APIs" {
   let text = "0123456789abcdef中文😀0123456789abcdef中文😀"
   let half = text.length() / 2

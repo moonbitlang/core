@@ -1462,6 +1462,7 @@ pub fn StringView::make(Int32, Char) -> Self
 pub fn StringView::offset_of_nth_char(Self, Int32) -> Int32?
 pub fn StringView::pad_end(Self, Int32, Char) -> String
 pub fn StringView::pad_start(Self, Int32, Char) -> String
+pub fn StringView::range_equal(Self, start~ : Int32, Self, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn StringView::repeat(Self, Int32) -> Self
 pub fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self

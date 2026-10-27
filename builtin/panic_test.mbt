@@ -68,6 +68,66 @@ test "panic String range_equal overflowing other offset" {
 }
 
 ///|
+test "panic StringView range_equal negative start within backing string" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=-1, other_start=0, len=1) |> ignore
+}
+
+///|
+test "panic StringView range_equal negative other start within backing string" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=0, other_start=-1, len=1) |> ignore
+}
+
+///|
+test "panic StringView range_equal negative length" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=0, other_start=0, len=-1) |> ignore
+}
+
+///|
+test "panic StringView range_equal self range past view within backing string" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=1, other_start=0, len=3) |> ignore
+}
+
+///|
+test "panic StringView range_equal other range past view within backing string" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=0, other_start=1, len=3) |> ignore
+}
+
+///|
+test "panic StringView range_equal empty self range past view" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=4, other_start=0, len=0) |> ignore
+}
+
+///|
+test "panic StringView range_equal empty other range past view" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=0, other_start=4, len=0) |> ignore
+}
+
+///|
+test "panic StringView range_equal overflowing length" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=1, other_start=1, len=2147483647) |> ignore
+}
+
+///|
+test "panic StringView range_equal overflowing self start" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=2147483647, other_start=0, len=1) |> ignore
+}
+
+///|
+test "panic StringView range_equal overflowing other start" {
+  let view = "xabcy"[1:4]
+  view.range_equal(view, start=0, other_start=2147483647, len=1) |> ignore
+}
+
+///|
 test "panic array_swap" {
   [1, 2, 3].swap(1, 5)
 }
