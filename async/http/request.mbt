@@ -74,6 +74,34 @@ fn resolve_host(
 }
 
 ///|
+/// Perform a generic HTTP request to `uri`. Return the connection assigned for this request.
+/// The caller should first write request body to the connection through the `@io.BinaryWriter` interface
+/// (or through the `@io.TextWriter` interface using the builtin `.text` view),
+/// then call `.end_request()` to finish the request and obtain server response,
+/// and finally read response message body through the `@io.BinaryReader` interface
+/// (or through the `@io.TextReader` interface using the builtin `.text` view) on the connection.
+/// 
+/// The returned connection must be closed after finishing the request.
+///
+/// For requests with short message body,
+/// `@http.request_binary`/`@http.request_text`/`@http.request_json` can be used to
+/// automatically collect request/response body.
+///
+/// For common request methods, `@http.get`, `@http.post` etc. can be used instead.
+pub async fn request(
+  meth : RequestMethod,
+  uri : StringView,
+  headers~ : Headers = {},
+  proxy? : ClientConnection,
+) -> ClientConnection {
+  let (protocol, host, path) = resolve_url(uri)
+  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
+  errdefer client.close()
+  client.request(meth, path)
+  client
+}
+
+///|
 /// Perform a single HTTP request to `uri` with binary payload/response.
 /// Supported protocols are `http://` and `https://`.
 /// The HTTP response message and the whole response body will be returned.
@@ -84,17 +112,16 @@ fn resolve_host(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn request_binary(
-  uri : String,
   meth : RequestMethod,
-  headers : Headers,
+  uri : StringView,
   body : BytesView,
+  headers~ : Headers = {},
   proxy? : ClientConnection,
 ) -> (Response, Bytes) {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
-  defer client.close()
-  let response = client..request(meth, path)..write(body).end_request()
-  (response, client.read_all())
+  let conn = request(meth, uri, headers~, proxy?)
+  defer conn.close()
+  let response = conn..write(body).end_request()
+  (response, conn.read_all())
 }
 
 ///|
@@ -108,19 +135,17 @@ pub async fn request_binary(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn request_text(
-  uri : String,
   meth : RequestMethod,
-  headers : Headers,
+  uri : StringView,
   body : StringView,
+  headers~ : Headers,
   proxy? : ClientConnection,
 ) -> (Response, String) {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
-  defer client.close()
-  client.request(meth, path)
-  client.text.write(body)
-  let response = client.end_request()
-  (response, client.text.read_all())
+  let conn = request(meth, uri, headers~, proxy?)
+  defer conn.close()
+  conn.text.write(body)
+  let response = conn.end_request()
+  (response, conn.text.read_all())
 }
 
 ///|
@@ -134,21 +159,19 @@ pub async fn request_text(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn request_json(
-  uri : String,
   meth : RequestMethod,
-  headers : Headers,
+  uri : StringView,
   body : Json?,
+  headers~ : Headers,
   proxy? : ClientConnection,
 ) -> (Response, Json) {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
-  defer client.close()
-  client.request(meth, path)
+  let conn = request(meth, uri, headers~, proxy?)
+  defer conn.close()
   if body is Some(body) {
-    client.text.write(body.stringify())
+    conn.text.write(body.stringify())
   }
-  let response = client.end_request()
-  (response, @json.parse(client.text.read_all()))
+  let response = conn.end_request()
+  (response, @json.parse(conn.text.read_all()))
 }
 
 ///|
@@ -162,11 +185,11 @@ pub async fn request_json(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn get_binary(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Bytes) {
-  request_binary(uri, Get, headers, b"", proxy?)
+  request_binary(Get, uri, b"", headers~, proxy?)
 }
 
 ///|
@@ -180,11 +203,11 @@ pub async fn get_binary(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn get_text(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, String) {
-  request_text(uri, Get, headers, "", proxy?)
+  request_text(Get, uri, "", headers~, proxy?)
 }
 
 ///|
@@ -198,77 +221,77 @@ pub async fn get_text(
 ///
 /// See `ClientConnection::request` for more details.
 pub async fn get_json(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Json) {
-  request_json(uri, Get, headers, None, proxy?)
+  request_json(Get, uri, None, headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_binary`, but performs a `PUT` request instead.
 pub async fn put_binary(
-  uri : String,
+  uri : StringView,
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Bytes) {
-  request_binary(uri, Put, headers, content, proxy?)
+  request_binary(Put, uri, content, headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_text`, but performs a `PUT` request instead.
 pub async fn put_text(
-  uri : String,
+  uri : StringView,
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, String) {
-  request_text(uri, Put, headers, content, proxy?)
+  request_text(Put, uri, content, headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_json`, but performs a `PUT` request instead.
 pub async fn put_json(
-  uri : String,
+  uri : StringView,
   content : Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Json) {
-  request_json(uri, Put, headers, Some(content), proxy?)
+  request_json(Put, uri, Some(content), headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_binary`, but performs a `POST` request instead.
 pub async fn post_binary(
-  uri : String,
+  uri : StringView,
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Bytes) {
-  request_binary(uri, Post, headers, content, proxy?)
+  request_binary(Post, uri, content, headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_text`, but performs a `POST` request instead.
 pub async fn post_text(
-  uri : String,
+  uri : StringView,
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, String) {
-  request_text(uri, Post, headers, content, proxy?)
+  request_text(Post, uri, content, headers~, proxy?)
 }
 
 ///|
 /// Similar to `get_json`, but performs a `POST` request instead.
 pub async fn post_json(
-  uri : String,
+  uri : StringView,
   content : Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, Json) {
-  request_json(uri, Post, headers, Some(content), proxy?)
+  request_json(Post, uri, Some(content), headers~, proxy?)
 }
 
 ///|
@@ -282,15 +305,13 @@ pub async fn post_json(
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
 pub async fn get(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (Response, ClientConnection) {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
-  errdefer client.close()
-  let response = client..request(Get, path).end_request()
-  (response, client)
+  let conn = request(Get, uri, headers~, proxy?)
+  errdefer conn.close()
+  (conn.end_request(), conn)
 }
 
 ///|
@@ -311,15 +332,11 @@ pub async fn get(
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
 pub async fn put(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> ClientConnection {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, protocol~, headers~, proxy?)
-  errdefer client.close()
-  client.request(Put, path)
-  client
+  request(Put, uri, headers~, proxy?)
 }
 
 ///|
@@ -340,13 +357,9 @@ pub async fn put(
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
 pub async fn post(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> ClientConnection {
-  let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, protocol~, headers~, proxy?)
-  errdefer client.close()
-  client.request(Post, path)
-  client
+  request(Post, uri, headers~, proxy?)
 }
