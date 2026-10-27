@@ -13,6 +13,39 @@
 // limitations under the License.
 
 ///|
+test "Strategy constructors preserve defaults and explicit tuning" {
+  @debug.debug_inspect(@flate.Strategy::split(), content="Split(level=6)")
+  @debug.debug_inspect(
+    @flate.Strategy::split(level=0),
+    content="Split(level=0)",
+  )
+  @debug.debug_inspect(
+    @flate.Strategy::optimal(),
+    content="Optimal(iterations=15)",
+  )
+  @debug.debug_inspect(
+    @flate.Strategy::optimal(iterations=2),
+    content="Optimal(iterations=2)",
+  )
+  @debug.debug_inspect(@gzip.Strategy::split(), content="Split(level=6)")
+  @debug.debug_inspect(
+    @gzip.Strategy::optimal(),
+    content="Optimal(iterations=15)",
+  )
+  @debug.debug_inspect(@zlib.Strategy::split(), content="Split(level=6)")
+  @debug.debug_inspect(
+    @zlib.Strategy::optimal(),
+    content="Optimal(iterations=15)",
+  )
+  let input = b"default strategy default strategy"
+  for strategy in [@flate.Strategy::split(), @flate.Strategy::optimal()] {
+    assert_eq(@flate.inflate_exact(@flate.deflate_all(input, strategy~)), input)
+    assert_eq(@gzip.decompress(@gzip.compress(input, strategy~)), input)
+    assert_eq(@zlib.decompress(@zlib.compress(input, strategy~)), input)
+  }
+}
+
+///|
 /// Compare round-trip output and encoded size on repeated text containing
 /// the lazy-matching pattern "abcde abcdef".
 test "Optimal strategy round-trips and beats greedy" {

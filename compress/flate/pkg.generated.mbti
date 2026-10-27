@@ -95,6 +95,8 @@ pub(all) enum Strategy {
   Optimal(iterations~ : Int32)
 } derive(Eq, @debug.Debug)
 pub fn Strategy::equal(Self, Self) -> Bool
+pub fn Strategy::optimal(iterations? : Int32) -> Self
+pub fn Strategy::split(level? : Int32) -> Self
 
 // Type aliases
 

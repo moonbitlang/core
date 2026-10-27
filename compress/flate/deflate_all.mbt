@@ -29,6 +29,18 @@ pub(all) enum Strategy {
 } derive(Eq, @debug.Debug)
 
 ///|
+/// Select content-driven splitting with compression level 6 by default.
+pub fn Strategy::split(level~ : Int32 = 6) -> Strategy {
+  Split(level~)
+}
+
+///|
+/// Select optimal parsing and splitting with 15 iterations by default.
+pub fn Strategy::optimal(iterations~ : Int32 = 15) -> Strategy {
+  Optimal(iterations~)
+}
+
+///|
 /// A reusable, whole-buffer raw DEFLATE compressor. Unlike the suspendable
 /// `IncrementalEncoder`, it reads the input directly and writes one complete stream into
 /// either a caller-provided buffer or reusable growable output storage.
