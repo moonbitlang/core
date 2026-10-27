@@ -427,8 +427,7 @@ fn[T : Logger] write_byte_hex(logger : T, byte : Byte) -> Unit {
 
 ///|
 /// Writes the bytes with printable ASCII kept as-is and everything else
-/// rendered as `\xHH`, without the surrounding `b"`/`"`. Shared by `Show`,
-/// which adds the quotes, and `ToJson`, which does not.
+/// rendered as `\xHH`, without the surrounding `b"`/`"` added by `Show`.
 fn[T : Logger] BytesView::escape_to(self : BytesView, logger : T) -> Unit {
   for byte in self {
     if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
@@ -678,20 +677,4 @@ pub fn BytesView::to_owned(self : BytesView) -> Bytes {
   let bytes = FixedArray::make(self.length(), (0 : Byte))
   bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.length())
   unsafe_to_bytes(bytes)
-}
-
-///|
-pub impl ToJson for BytesView with fn to_json(self) -> Json {
-  let sb = StringBuilder()
-  self.escape_to(sb)
-  Json::string(sb.to_string())
-}
-
-///|
-/// Converts a `Bytes` value to a JSON representation.
-/// The representation is picked for easier debugging.
-/// Printable ASCII characters (from space to tilde, excluding '"' and '\') are output as-is.
-/// All other bytes are represented as \xHH, where HH is the two-digit hexadecimal value of the byte.
-pub impl ToJson for Bytes with fn to_json(self : Bytes) -> Json {
-  BytesView::to_json(self)
 }

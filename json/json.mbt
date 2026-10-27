@@ -578,12 +578,6 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
 }
 
 ///|
-/// Useful for json interpolation
-pub impl ToJson for Json with fn to_json(self) {
-  self
-}
-
-///|
 /// Inspect JSON value with snapshot-friendly formatting.
 #callsite(autofill(args_loc, loc))
 pub fn json_inspect(

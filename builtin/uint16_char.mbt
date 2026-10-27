@@ -203,11 +203,6 @@ pub impl Default for UInt16 with fn default() {
 }
 
 ///|
-pub impl ToJson for UInt16 with fn to_json(self : UInt16) -> Json {
-  Json::number(self.to_int().to_double())
-}
-
-///|
 /// Convert to `uint`.
 pub fn UInt16::to_uint(self : UInt16) -> UInt32 {
   self.to_int().reinterpret_as_uint()

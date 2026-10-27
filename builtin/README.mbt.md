@@ -271,6 +271,7 @@ test "string builder" {
 
 ## JSON Support
 
+The `json` package provides `Json` and `ToJson`, re-exported by the prelude.
 Basic JSON operations:
 
 ```mbt check

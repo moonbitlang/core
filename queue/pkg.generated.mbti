@@ -44,9 +44,9 @@ pub impl[A] Default for Queue[A]
 pub impl[A : Eq] Eq for Queue[A]
 #deprecated
 pub impl[A : Show] Show for Queue[A]
-pub impl[A : ToJson] ToJson for Queue[A]
 pub impl[A : @debug.Debug] @debug.Debug for Queue[A]
 pub impl[A : @json.FromJson] @json.FromJson for Queue[A]
+pub impl[A : @json.ToJson] @json.ToJson for Queue[A]
 
 // Type aliases
 

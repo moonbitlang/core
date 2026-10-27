@@ -3,6 +3,7 @@ package "moonbitlang/core/priority_queue"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -37,8 +38,8 @@ pub fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
 pub impl[K] Default for PriorityQueue[K]
 #deprecated
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
-pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
 pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A]
+pub impl[A : @json.ToJson + Compare] @json.ToJson for PriorityQueue[A]
 
 // Type aliases
 

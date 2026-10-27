@@ -161,10 +161,10 @@ pub async fn request_text(
 pub async fn request_json(
   meth : RequestMethod,
   uri : StringView,
-  body : Json?,
+  body : @json.Json?,
   headers~ : Headers,
   proxy? : ClientConnection,
-) -> (ResponseHeader, Json) {
+) -> (ResponseHeader, @json.Json) {
   let conn = request(meth, uri, headers~, proxy?)
   defer conn.close()
   if body is Some(body) {
@@ -224,7 +224,7 @@ pub async fn get_json(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Json) {
+) -> (ResponseHeader, @json.Json) {
   request_json(Get, uri, None, headers~, proxy?)
 }
 
@@ -254,10 +254,10 @@ pub async fn put_text(
 /// Similar to `get_json`, but performs a `PUT` request instead.
 pub async fn put_json(
   uri : StringView,
-  content : Json,
+  content : @json.Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Json) {
+) -> (ResponseHeader, @json.Json) {
   request_json(Put, uri, Some(content), headers~, proxy?)
 }
 
@@ -287,10 +287,10 @@ pub async fn post_text(
 /// Similar to `get_json`, but performs a `POST` request instead.
 pub async fn post_json(
   uri : StringView,
-  content : Json,
+  content : @json.Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Json) {
+) -> (ResponseHeader, @json.Json) {
   request_json(Post, uri, Some(content), headers~, proxy?)
 }
 

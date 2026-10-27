@@ -58,9 +58,9 @@ pub impl[K] Default for SortedSet[K]
 pub impl[V : Eq] Eq for SortedSet[V]
 #deprecated
 pub impl[V : Show] Show for SortedSet[V]
-pub impl[V : ToJson] ToJson for SortedSet[V]
 pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V]
 pub impl[V : @json.FromJson + Compare] @json.FromJson for SortedSet[V]
+pub impl[V : @json.ToJson] @json.ToJson for SortedSet[V]
 
 // Type aliases
 
