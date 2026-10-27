@@ -49,7 +49,11 @@ pub fn pipe(
 ///|
 // mute unused warning
 #cfg(not(platform="windows"))
-let _unused : Unit = ignore(@env_util.current_process)
+let _unused : Unit = {
+  ignore(@env_util.current_process)
+  ignore((_ : @os_string.OsString) => ())
+  ignore((_ : @ref.Ref[Int32]) => ())
+}
 
 ///|
 /// Create a new Windows name pipe server. If `is_async` is `true`, the server would be overlapped.

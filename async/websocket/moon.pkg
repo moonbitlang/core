@@ -1,5 +1,9 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/debug",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/cmp",
@@ -13,16 +17,24 @@ import {
 }
 
 import {
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/test",
   "moonbitlang/core/async",
   "moonbitlang/core/async/socket",
   "moonbitlang/core/async/process",
-  "moonbitlang/core/async/internal/test_util",
 } for "test"
 
 import {
-  "moonbitlang/core/test",
   "moonbitlang/core/async/internal/test_util",
+} for "wbtest"
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/test",
 } for "wbtest"
 
 options(

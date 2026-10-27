@@ -87,5 +87,5 @@ pub fn OsString::from_string(str : StringView) -> OsString {
 pub let empty : OsString = from_string("")
 
 ///|
-#cfg(any(not(target="native"), platform="windows"))
+#cfg(all(target="native", platform="windows"))
 let _unused_import : Unit = ignore(@utf8.encode(""))

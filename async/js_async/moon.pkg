@@ -1,11 +1,16 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/ref",
-  "moonbitlang/core/async/internal/coroutine",
-  "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/io",
 }
 
+#cfg(target="js")
+import {
+  "moonbitlang/core/ref",
+  "moonbitlang/core/async/internal/coroutine",
+  "moonbitlang/core/async/internal/event_loop",
+}
+
+#cfg(target="js")
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/encoding/utf8",

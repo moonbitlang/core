@@ -1,15 +1,23 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/env",
+}
+
+#cfg(any(target="native", target="wasm", target="js"))
+import {
+  "moonbitlang/core/async/internal/coroutine",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/set",
   "moonbitlang/core/ref",
   "moonbitlang/core/deque",
   "moonbitlang/core/sorted_set",
   "moonbitlang/core/cmp",
-  "moonbitlang/core/env",
   "moonbitlang/core/debug",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/async/os_error",
-  "moonbitlang/core/async/internal/coroutine",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/async/internal/c_buffer",
   "moonbitlang/core/internal/os_string",
@@ -20,15 +28,27 @@ import {
 
 import {
   "moonbitlang/core/async",
-  "moonbitlang/core/async/pipe",
-  "moonbitlang/core/async/fs",
   "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/async/fs",
+} for "test"
+
+#cfg(target="native")
+import {
+  "moonbitlang/core/async/pipe",
 } for "test"
 
 import {
   "moonbitlang/core/json",
-  "moonbitlang/core/async",
   "moonbitlang/core/async/internal/test_util",
+} for "wbtest"
+
+#cfg(any(target="native", target="wasm", target="js"))
+import {
+  "moonbitlang/core/async",
 } for "wbtest"
 
 options(

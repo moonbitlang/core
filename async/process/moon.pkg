@@ -1,11 +1,14 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/coroutine",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/internal/os_string",
-  "moonbitlang/core/async/internal/c_buffer",
   "moonbitlang/core/async/stdio",
   "moonbitlang/core/async",
   "moonbitlang/core/async/io",
@@ -14,12 +17,21 @@ import {
   "moonbitlang/core/async/os_error",
 }
 
+#cfg(target="native")
+import {
+  "moonbitlang/core/async/internal/c_buffer",
+}
+
+import {
+  "moonbitlang/core/string",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/env",
-  "moonbitlang/core/string",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/async/internal/test_util",
   "moonbitlang/core/encoding/utf8",
 } for "test"
 

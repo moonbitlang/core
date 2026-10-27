@@ -13,11 +13,6 @@
 // limitations under the License.
 
 ///|
-// Package imports are shared across target-specific files. Native event-loop
-// files need `@c_buffer`, while the wasm target does not otherwise touch it.
-let _target_specific_imports : Unit = ignore(@c_buffer.Buffer::is_null)
-
-///|
 priv enum PlatformEventLoopExtra {
   Unix(UnixEventLoopExtra)
   Windows(WindowsEventLoopExtra)

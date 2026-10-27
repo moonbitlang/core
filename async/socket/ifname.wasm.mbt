@@ -47,6 +47,3 @@ pub fn if_indextoname(index : UInt32, context~ : String) -> String raise {
   defer name.free()
   name.decode_as_os_string()
 }
-
-///|
-let _unused_ifname_import : Unit = ignore(@ref.Ref(0))
