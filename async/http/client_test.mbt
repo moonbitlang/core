@@ -172,10 +172,10 @@ async test "request streaming" {
 async test "multiple request" {
   let client = @http.ClientConnection("https://www.moonbitlang.com")
   defer client.close()
-  let response1 = client.get("/")
+  let response1 = client..request(Get, "/").end_request()
   inspect(response1.code, content="200")
   assert_true(client.text.read_all().has_prefix("<!doctype html>"))
-  let response2 = client.get("/download")
+  let response2 = client..request(Get, "/download").end_request()
   inspect(response2.code, content="200")
   assert_true(client.text.read_all().has_prefix("<!doctype html>"))
 }
