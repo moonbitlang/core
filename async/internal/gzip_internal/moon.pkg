@@ -7,7 +7,11 @@ import {
 
 import {
   "moonbitlang/core/test",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/async/internal/test_util",
 } for "test"

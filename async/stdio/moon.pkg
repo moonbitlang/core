@@ -1,15 +1,23 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/async/io",
 }
 
 import {
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/process",
-  "moonbitlang/core/async/internal/test_util",
 } for "test"
 
 options(

@@ -138,7 +138,7 @@ async test "read dir" {
   }).wait()
   json_inspect(files, content=[
     "deprecated.mbt", "js_async.mbt", "js_async_test.mbt", "moon.pkg", "pkg.generated.mbti",
-    "readable_stream.mbt", "readable_stream_test.mbt", "unimplemented.mbt", "unimplemented_test.mbt",
+    "readable_stream.mbt", "readable_stream_test.mbt", "unimplemented.mbt",
   ])
 }
 

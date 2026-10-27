@@ -13,26 +13,6 @@
 // limitations under the License.
 
 ///|
-#coverage.skip
-let _ignore_unused_import : Unit = {
-  let _ : (@deque.Deque[Int32]) -> Unit = ignore
-  let _ : (@sorted_set.SortedSet[Int32]) -> Unit = ignore
-  ignore(@cmp.minimum(0, 0))
-  ignore(@debug.to_string(0))
-  ignore(@c_buffer.unimplemented)
-  ignore(@fd_util.unimplemented)
-  ignore(@os_error.unimplemented)
-  ignore(@coroutine.is_being_cancelled)
-  ignore((_ : @env_util.Platform) => ())
-  let _ : (&@external_loop_integration.ExternalEventLoop) -> Unit = ignore
-  ignore(@utf8.encode(""))
-  ignore(@errno_util.unimplemented)
-  ignore((_ : @set.Set[Int32]) => ())
-  ignore((_ : @ref.Ref[Int32]) => ())
-  ignore((_ : @os_string.OsString) => ())
-}
-
-///|
 /// Get current time since Unix EPOCH in milliseconds.
 /// The event loop uses the same timer as `now()` for timers.
 pub fn now() -> Int64 {

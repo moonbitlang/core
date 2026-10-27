@@ -55,10 +55,3 @@ pub async fn build_test_program(name : String) -> String {
   }
   "\{cwd}/_build/test_programs/native/debug/build/\{name}/\{name}.exe"
 }
-
-///|
-#cfg(not(any(target="native", target="wasm")))
-let _unused_import : Unit = {
-  ignore(@process.unimplemented)
-  ignore(@env.now())
-}

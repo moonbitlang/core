@@ -13,14 +13,6 @@
 // limitations under the License.
 
 ///|
-#coverage.skip
-let _ignore_unused_import : Unit = {
-  ignore(@ref.Ref(0))
-  ignore(@coroutine.Coroutine::wake)
-  ignore(@event_loop.Timer::new)
-}
-
-///|
 /// A JavaScript promise that resolves to a value of type `X`
 #external
 #internal(unimplemented, "unimplemented in native backend")

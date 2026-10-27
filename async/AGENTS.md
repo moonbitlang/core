@@ -36,9 +36,11 @@ and some unique JS integration features. But most other API are not supported.
 Code under this library should type check without any warning under all backends,
 although some APIs may be backend specific.
 Run `moon check --target all` for a complete check.
-Due to the lack of target-specific import in the build system,
-currently unused import warning caused by target-specific import must be suppressed manually.
-The warning suppression code usually lies in `unimplemented.mbt`/`unimplemented_test.mbt`/`unimplemented_wbtest.mbt`.
+Imports only needed on some backends go in a conditional import block in `moon.pkg`,
+e.g. `#cfg(any(target="native", target="wasm")) import { ... }`,
+so they don't cause unused import warnings on other backends.
+Import conditions only support `target`, so an import that is unused on some `platform`
+(e.g. only used on Windows) still needs a `#cfg(platform=...)` item that references it to mute the warning.
 
 ## Runtime stub
 C/Wasm runtime stubs for this runtime are not managed under the `moonbitlang/core` repository.

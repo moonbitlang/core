@@ -39,10 +39,6 @@ const PEM_BEGIN = "-----BEGIN CERTIFICATE-----"
 const PEM_END = "-----END CERTIFICATE-----"
 
 ///|
-// Wasm TLS dispatches server credential shape from the host runtime platform.
-let _target_specific_imports : Unit = ignore(@event_loop.platform)
-
-///|
 fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
   let certs = []
   for chunk in pem.split(PEM_BEGIN) {

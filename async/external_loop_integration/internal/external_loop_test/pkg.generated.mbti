@@ -2,7 +2,6 @@
 package "moonbitlang/core/async/external_loop_integration/internal/external_loop_test"
 
 // Values
-pub let unimplemented : Unit
 
 // Errors
 

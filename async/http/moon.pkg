@@ -1,35 +1,59 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
-  "moonbitlang/core/set",
-  "moonbitlang/core/cmp",
   "moonbitlang/core/int",
   "moonbitlang/core/string",
-  "moonbitlang/core/buffer",
-  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/json",
+}
+
+#cfg(any(target="native", target="wasm", target="js"))
+import {
+  "moonbitlang/core/buffer",
   "moonbitlang/core/async/io",
-  "moonbitlang/core/async/socket",
   "moonbitlang/core/async/tls",
-  "moonbitlang/core/async/js_async",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/set",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async/socket",
   "moonbitlang/core/async/internal/gzip_internal" @gzip,
 }
 
+#cfg(target="js")
+import {
+  "moonbitlang/core/async/js_async",
+}
+
+import {
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm", target="js"))
+import {
+  "moonbitlang/core/async",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/test",
-  "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/gzip" @gzip_stream,
-  "moonbitlang/core/async/internal/test_util",
 } for "test"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/async/internal/test_util",
+} for "wbtest"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/test",
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/internal/bytes_util",
-  "moonbitlang/core/async/internal/test_util",
   "moonbitlang/core/async/gzip" @gzip_stream,
 } for "wbtest"
 

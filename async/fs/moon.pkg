@@ -1,10 +1,14 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/int",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
   "moonbitlang/core/set",
   "moonbitlang/core/random",
-  "moonbitlang/core/int",
   "moonbitlang/core/cmp",
   "moonbitlang/core/async/os_error",
   "moonbitlang/core/async/io",
@@ -18,13 +22,21 @@ import {
 }
 
 import {
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/test",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/debug",
   "moonbitlang/core/env",
-  "moonbitlang/core/internal/os_string",
   "moonbitlang/core/async/process",
-  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(target="native")
+import {
+  "moonbitlang/core/internal/os_string",
 } for "test"
 
 max_concurrent_tests = 3

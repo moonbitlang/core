@@ -1,9 +1,17 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/ref",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/debug",
   "moonbitlang/core/async/types",
   "moonbitlang/core/async/os_error",
+}
+
+#cfg(target="native")
+import {
+  "moonbitlang/core/ref",
   "moonbitlang/core/async/internal/env_util",
   "moonbitlang/core/internal/os_string",
 }

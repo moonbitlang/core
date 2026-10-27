@@ -1,5 +1,9 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/env",
   "moonbitlang/core/async/process",
 }
