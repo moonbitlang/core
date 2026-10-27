@@ -757,10 +757,10 @@ pub fn StringView::get_view(
 /// ```mbt check
 /// test {
 ///   let s = "ab😀cd"
-///   inspect(s.view(end=3), content="ab") // 3 splits 😀: snapped to 2
-///   inspect(s.view(start=3), content="cd") // snapped to 4
-///   inspect(s.view(end=100), content="ab😀cd") // clamped
-///   inspect(s.view(start=3, end=3), content="") // inside the pair
+///   inspect(s.clamped_view(end=3), content="ab") // 3 splits 😀: snapped to 2
+///   inspect(s.clamped_view(start=3), content="cd") // snapped to 4
+///   inspect(s.clamped_view(end=100), content="ab😀cd") // clamped
+///   inspect(s.clamped_view(start=3, end=3), content="") // inside the pair
 /// }
 /// ```
 #alias("_[_:_]")
@@ -797,7 +797,7 @@ pub fn String::clamped_view(
 ///|
 /// Returns the largest well-formed sub-view contained in the requested range
 /// of this view; offsets are relative to the view. Total like
-/// `String::view`: clamps out-of-range offsets, snaps
+/// `String::clamped_view`: clamps out-of-range offsets, snaps
 /// surrogate-splitting offsets inward, and yields an empty view for an
 /// inverted range.
 /// Also available as `view[start:end]`, with UTF-16 code-unit offsets relative
@@ -809,8 +809,8 @@ pub fn String::clamped_view(
 /// ```mbt check
 /// test {
 ///   let v = "xx ab😀cd".exact_view(start=3)
-///   inspect(v.view(end=3), content="ab")
-///   inspect(v.view(start=3), content="cd")
+///   inspect(v.clamped_view(end=3), content="ab")
+///   inspect(v.clamped_view(start=3), content="cd")
 /// }
 /// ```
 #alias("_[_:_]")
@@ -1101,99 +1101,57 @@ pub impl Add for StringView with fn add(self, other) {
 }
 
 ///|
-/// Creates a view using raw UTF-16 code-unit offsets relative to this view.
+/// Legacy bounds-checked view using raw UTF-16 code-unit offsets relative to this view.
 ///
-/// Requires `0 <= start <= end <= self.length()`; panics otherwise.
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
 /// Omitted bounds default to the start and end of this view. Surrogate
-/// boundaries are not checked or adjusted. This can preserve split surrogate
-/// pairs for raw code-unit operations; the caller is responsible for ensuring
-/// well-formed UTF-16 when passing the result to character-based APIs. Use
-/// `exact_view(start~, end~)` to validate text boundaries, or `view` to clamp.
-/// Bounds checks are retained; only surrogate checks are skipped.
-pub fn StringView::unsafe_view(
-  self : StringView,
-  start~ : Int32 = 0,
-  end? : Int32,
-) -> StringView {
-  let end = if end is Some(o) { o } else { self.length() }
-  guard start >= 0 && start <= end && end <= self.length() else {
-    abort("Invalid index for View")
-  }
-  StringView::make_view(self.str(), self.start() + start, self.start() + end)
-}
-
-///|
-/// Creates a view using raw UTF-16 code-unit offsets.
-///
-/// Requires `0 <= start <= end <= self.length()`; panics otherwise.
-/// Omitted bounds default to the start and end of this string. Surrogate
-/// boundaries are not checked or adjusted. This can preserve split surrogate
-/// pairs for raw code-unit operations; the caller is responsible for ensuring
-/// well-formed UTF-16 when passing the result to character-based APIs. Use
-/// `exact_view(start~, end~)` to validate text boundaries, or `view` to clamp.
-/// Bounds checks are retained; only surrogate checks are skipped.
-pub fn String::unsafe_view(
-  self : String,
-  start~ : Int32 = 0,
-  end? : Int32,
-) -> StringView {
-  let end = if end is Some(o) { o } else { self.length() }
-  guard start >= 0 && start <= end && end <= self.length() else {
-    abort("Invalid index for View")
-  }
-  StringView::make_view(self, start, end)
-}
-
-///|
-/// Returns a clamped view, equivalent to `self[start:end]`.
-/// Bounds are UTF-16 code-unit offsets relative to this string.
-/// Out-of-range bounds are clamped, surrogate-splitting bounds snap inward,
-/// and an inverted range yields an empty view. See `String::clamped_view`.
-/// Use `String::exact_view` when invalid bounds should panic.
-///
-/// `start_offset` and `end_offset` are compatibility labels required by
-/// compiler-generated `lexmatch`/`lexscan` calls. When supplied, they override
-/// `start` and `end`, respectively. Prefer `start` and `end` in new code.
-// The slicing operator requires exactly three parameters, so it shares the
-// clamped_view implementation rather than aliasing this compatibility wrapper.
-pub fn String::view(
-  self : String,
-  start~ : Int32 = 0,
-  end? : Int32,
-  start_offset? : Int32,
-  end_offset? : Int32,
-) -> StringView {
-  let start = start_offset.unwrap_or(start)
-  let end = match end_offset {
-    Some(_) => end_offset
-    None => end
-  }
-  self.clamped_view(start~, end?)
-}
-
-///|
-/// Returns a clamped view, equivalent to `self[start:end]`.
-/// Bounds are UTF-16 code-unit offsets relative to this view.
-/// Out-of-range bounds are clamped, surrogate-splitting bounds snap inward,
-/// and an inverted range yields an empty view. See `StringView::clamped_view`.
-/// Use `StringView::exact_view` when invalid bounds should panic.
-///
-/// `start_offset` and `end_offset` are compatibility labels required by
-/// compiler-generated `lexmatch`/`lexscan` calls. When supplied, they override
-/// `start` and `end`, respectively. Prefer `start` and `end` in new code.
-// The slicing operator requires exactly three parameters, so it shares the
-// clamped_view implementation rather than aliasing this compatibility wrapper.
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries, or `clamped_view` for clamped slicing.
+/// New raw code-unit algorithms can use `unsafe_view` with validated bounds.
+// The compiler generates calls to view for lexmatch/lexscan. Adding
+// #deprecated here currently warns on those generated calls. Keep the legacy
+// method until compiler lowering uses unsafe_view(start~, end~).
 pub fn StringView::view(
   self : StringView,
-  start~ : Int32 = 0,
-  end? : Int32,
-  start_offset? : Int32,
+  start_offset~ : Int32 = 0,
   end_offset? : Int32,
 ) -> StringView {
-  let start = start_offset.unwrap_or(start)
-  let end = match end_offset {
-    Some(_) => end_offset
-    None => end
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
   }
-  self.clamped_view(start~, end?)
+  StringView::make_view(
+    self.str(),
+    self.start() + start_offset,
+    self.start() + end_offset,
+  )
+}
+
+///|
+/// Legacy bounds-checked view using raw UTF-16 code-unit offsets.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this string. Surrogate
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries, or `clamped_view` for clamped slicing.
+/// New raw code-unit algorithms can use `unsafe_view` with validated bounds.
+// The compiler generates calls to view for lexmatch/lexscan. Adding
+// #deprecated here currently warns on those generated calls. Keep the legacy
+// method until compiler lowering uses unsafe_view(start~, end~).
+pub fn String::view(
+  self : String,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
+  }
+  StringView::make_view(self, start_offset, end_offset)
 }

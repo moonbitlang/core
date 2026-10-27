@@ -116,12 +116,11 @@ pub fn[T] UninitializedArray::exact_view(
 ///   for i in 0..<3 {
 ///     arr[i] = i + 1
 ///   }
-///   json_inspect(arr.view(start=1, end=10).to_owned(), content=[2, 3])
+///   json_inspect(arr.clamped_view(start=1, end=10).to_owned(), content=[2, 3])
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-pub fn[T] UninitializedArray::view(
+pub fn[T] UninitializedArray::clamped_view(
   self : UninitializedArray[T],
   start~ : Int32 = 0,
   end? : Int32,

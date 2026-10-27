@@ -368,6 +368,7 @@ pub fn[T] FixedArray::mut_view(
 /// * `end` : The ending index in the current view (exclusive). Defaults to the
 /// length of the current view.
 #intrinsic("%mutarrayview.view")
+#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] MutArrayView::exact_view(
   self : MutArrayView[T],
@@ -396,12 +397,11 @@ pub fn[T] MutArrayView::exact_view(
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4)
-///   json_inspect(view.view(start=1, end=10).to_owned(), content=[3, 4])
+///   json_inspect(view.clamped_view(start=1, end=10).to_owned(), content=[3, 4])
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-pub fn[T] MutArrayView::view(
+pub fn[T] MutArrayView::clamped_view(
   self : MutArrayView[T],
   start~ : Int32 = 0,
   end? : Int32,

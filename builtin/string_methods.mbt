@@ -1710,7 +1710,7 @@ pub fn StringView::split(
 ) -> Iter[StringView] {
   let sep_len = sep.length()
   if sep_len == 0 {
-    return self.iter().map(c => c.to_string().view())
+    return self.iter().map(c => c.to_string())
   }
   let mut remaining = Some(self)
   Iter::new(() => {

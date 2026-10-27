@@ -234,7 +234,7 @@ fn try_parse_ipv4(input : String) -> (UInt32, Int32) raise InvalidAddr {
   let port_str = input[last_colon + 1:]
   let port = parse_port(port_str)
   // Parse the IP address
-  let (a, b, c, d) = parse_ipv4_to_bytes(ip_str.view())
+  let (a, b, c, d) = parse_ipv4_to_bytes(ip_str)
   let ip = (a << 24) | (b << 16) | (c << 8) | d
   (ip, port)
 }

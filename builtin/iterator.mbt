@@ -931,15 +931,15 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
 /// ```mbt check
 /// test {
 ///   debug_inspect(
-///     [1, 2, 3].iter().view(start=1, end=10).collect(),
+///     [1, 2, 3].iter().clamped_view(start=1, end=10).collect(),
 ///     content="[2, 3]",
 ///   )
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-#alias(sub, deprecated="Use `view` instead")
-pub fn[X] Iter::view(
+#alias(view, deprecated="Use `clamped_view` instead")
+#alias(sub, deprecated="Use `clamped_view` instead")
+pub fn[X] Iter::clamped_view(
   self : Iter[X],
   start~ : Int32 = 0,
   end? : Int32,
