@@ -338,6 +338,59 @@ pub fn StringView::any(
 }
 
 ///|
+/// Compares two UTF-16 code unit ranges for equality.
+///
+/// `start` and `other_start` are relative to their respective views, and `len`
+/// counts code units, not Unicode characters. Range boundaries may fall inside
+/// surrogate pairs: this only compares code units and does not construct a
+/// string or a `StringView`.
+///
+/// # Panics
+/// Panics if either start or `len` is negative, or if either range extends
+/// beyond its view. An empty range at the end of a view is valid.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let left = "xhello!"[1:6]
+///   let right = "yyhello?"[2:7]
+///   inspect(
+///     left.range_equal(right, start=0, other_start=0, len=5),
+///     content="true",
+///   )
+/// }
+/// ```
+#borrow(self, other)
+pub fn StringView::range_equal(
+  self : StringView,
+  start~ : Int32,
+  other : StringView,
+  other_start~ : Int32,
+  len~ : Int32,
+) -> Bool {
+  let self_len = self.length()
+  let other_len = other.length()
+  // Validate view-relative ranges before adding the backing string offsets.
+  guard len >= 0 &&
+    start >= 0 &&
+    start <= self_len &&
+    other_start >= 0 &&
+    other_start <= other_len &&
+    len <= self_len - start &&
+    len <= other_len - other_start else {
+    abort("StringView::range_equal: invalid range")
+  }
+  self
+  .str()
+  .unsafe_range_equal(
+    other.str(),
+    start=self.start() + start,
+    other_start=other.start() + other_start,
+    len~,
+  )
+}
+
+///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
 pub impl Eq for StringView with fn equal(self, other) {
