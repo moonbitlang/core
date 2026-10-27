@@ -87,7 +87,10 @@ test "unpaired surrogates encode as U+FFFD" {
   )
   // A high surrogate at the end of the view has nothing to pair with.
   let text = String::from_array([high, low])
-  inspect(@percent.encode(text.unsafe_view(end=1)), content="%EF%BF%BD")
+  inspect(
+    @percent.encode(text.unsafe_view(start=0, end=1)),
+    content="%EF%BF%BD",
+  )
   inspect(@percent.encode(text), content="%F0%90%80%80")
 }
 

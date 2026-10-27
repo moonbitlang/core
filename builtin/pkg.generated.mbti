@@ -618,7 +618,7 @@ pub fn String::trim_start(String, chars? : StringView) -> StringView
 pub fn String::unsafe_char_at(String, Int32) -> Char
 pub fn String::unsafe_range_equal(String, start~ : Int32, String, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn String::unsafe_substring(String, start~ : Int32, end~ : Int32) -> String
-pub fn String::unsafe_view(String, start? : Int32, end? : Int32) -> StringView
+pub fn String::unsafe_view(String, start~ : Int32, end~ : Int32) -> StringView
 pub fn String::view(String, start_offset? : Int32, end_offset? : Int32) -> StringView
 pub impl Add for String
 pub impl Compare for String
@@ -751,7 +751,7 @@ pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 pub fn[T] FixedArray::stable_sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T] FixedArray::swap(Self[T], Int32, Int32) -> Unit
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int32, Self[A], Int32, Int32) -> Unit
-pub fn[T] FixedArray::unsafe_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] FixedArray::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView[T]
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int32, UInt16) -> Unit
 pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int32, UInt16) -> Unit
 pub fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int32, UInt32) -> Unit
@@ -825,7 +825,7 @@ pub fn[T] ReadOnlyArray::search_by(Self[T], (T) -> Bool raise?) -> Int32? raise?
 pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
-pub fn[T] ReadOnlyArray::unsafe_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] ReadOnlyArray::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView[T]
 pub fn[T] ReadOnlyArray::windows(Self[T], Int32) -> Array[ArrayView[T]]
 pub impl[T : Compare] Compare for ReadOnlyArray[T]
 pub impl[T] Default for ReadOnlyArray[T]
@@ -884,7 +884,7 @@ pub fn Bytes::to_array(Bytes) -> Array[Byte]
 pub fn Bytes::to_fixedarray(Bytes, len? : Int32) -> FixedArray[Byte]
 pub fn Bytes::to_string(Bytes) -> String
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, length? : Int32) -> String
-pub fn Bytes::unsafe_view(Bytes, start? : Int32, end? : Int32) -> BytesView
+pub fn Bytes::unsafe_view(Bytes, start~ : Int32, end~ : Int32) -> BytesView
 pub impl Add for Bytes
 pub impl Compare for Bytes
 pub impl Default for Bytes
@@ -1020,7 +1020,7 @@ pub fn[A] Array::truncate(Self[A], Int32) -> Unit
 pub fn[A] Array::unsafe_blit_fixed(Self[A], Int32, FixedArray[A], Int32, Int32) -> Unit
 pub fn[T] Array::unsafe_get(Self[T], Int32) -> T
 pub fn[T] Array::unsafe_set(Self[T], Int32, T) -> Unit
-pub fn[T] Array::unsafe_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] Array::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView[T]
 pub fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
 pub fn[T] Array::windows(Self[T], Int32) -> Self[ArrayView[T]]
 pub fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
@@ -1097,7 +1097,7 @@ pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(Self[T]) -> Array[T]
-pub fn[T] ArrayView::unsafe_view(Self[T], start? : Int32, end? : Int32) -> Self[T]
+pub fn[T] ArrayView::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> Self[T]
 pub fn[T] ArrayView::windows(Self[T], Int32) -> Array[Self[T]]
 pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
@@ -1301,7 +1301,7 @@ pub fn[T] MutArrayView::start_offset(Self[T]) -> Int32
 pub fn[T] MutArrayView::to_owned(Self[T]) -> Array[T]
 pub fn[T] MutArrayView::unsafe_get(Self[T], Int32) -> T
 pub fn[T] MutArrayView::unsafe_set(Self[T], Int32, T) -> Unit
-pub fn[T] MutArrayView::unsafe_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] MutArrayView::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView[T]
 pub impl[T : Compare] Compare for MutArrayView[T]
 pub impl[T : Eq] Eq for MutArrayView[T]
 pub impl[A : Hash] Hash for MutArrayView[A]
@@ -1370,7 +1370,7 @@ pub fn[T] UninitializedArray::make(Int32) -> Self[T]
 pub fn[T] UninitializedArray::make_and_blit(Self[T], allocate_len~ : Int32, len~ : Int32, src_offset? : Int32, dst_offset? : Int32) -> Self[T]
 #alias("_[_]=_")
 pub fn[T] UninitializedArray::set(Self[T], Int32, T) -> Unit
-pub fn[T] UninitializedArray::unsafe_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
+pub fn[T] UninitializedArray::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView[T]
 
 pub type BytesView
 #alias("_[_]")
@@ -1408,7 +1408,7 @@ pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
 #alias(to_bytes, deprecated)
 pub fn BytesView::to_owned(Self) -> Bytes
 pub fn BytesView::to_string(Self) -> String
-pub fn BytesView::unsafe_view(Self, start? : Int32, end? : Int32) -> Self
+pub fn BytesView::unsafe_view(Self, start~ : Int32, end~ : Int32) -> Self
 pub impl Compare for BytesView
 pub impl Eq for BytesView
 pub impl Hash for BytesView
@@ -1511,7 +1511,7 @@ pub fn StringView::trim_start(Self, chars? : Self) -> Self
 #deprecated
 pub fn StringView::unsafe_charcode_at(Self, Int32) -> Int32
 pub fn StringView::unsafe_get(Self, Int32) -> UInt16
-pub fn StringView::unsafe_view(Self, start? : Int32, end? : Int32) -> Self
+pub fn StringView::unsafe_view(Self, start~ : Int32, end~ : Int32) -> Self
 pub fn StringView::view(Self, start_offset? : Int32, end_offset? : Int32) -> Self
 pub impl Add for StringView
 pub impl Compare for StringView

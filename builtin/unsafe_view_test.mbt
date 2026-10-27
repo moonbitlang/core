@@ -36,7 +36,10 @@ test "unsafe_view agrees with exact_view on every valid array range" {
           raw.unsafe_view(start~, end~),
         ] {
         assert_eq(result.to_owned(), expected)
-        assert_eq(result.unsafe_view().to_owned(), expected)
+        assert_eq(
+          result.unsafe_view(start=0, end=result.length()).to_owned(),
+          expected,
+        )
       }
       assert_eq(nested.unsafe_view(start~, end~).start_offset(), 1 + start)
       assert_eq(mutable.unsafe_view(start~, end~).start_offset(), 1 + start)
@@ -44,19 +47,22 @@ test "unsafe_view agrees with exact_view on every valid array range" {
   }
   for
     result in [
-      arr.unsafe_view(),
-      fixed.unsafe_view(),
-      ro.unsafe_view(),
-      nested.unsafe_view(),
-      mutable.unsafe_view(),
-      raw.unsafe_view(),
+      arr.unsafe_view(start=0, end=3),
+      fixed.unsafe_view(start=0, end=3),
+      ro.unsafe_view(start=0, end=3),
+      nested.unsafe_view(start=0, end=3),
+      mutable.unsafe_view(start=0, end=3),
+      raw.unsafe_view(start=0, end=3),
     ] {
     assert_eq(result.to_owned(), [1, 2, 3])
-    assert_eq(result.unsafe_view(start=1).to_owned(), [2, 3])
-    assert_eq(result.unsafe_view(end=2).to_owned(), [1, 2])
-    assert_eq(result.unsafe_view(start=1).unsafe_view(end=1).to_owned(), [2])
+    assert_eq(result.unsafe_view(start=1, end=3).to_owned(), [2, 3])
+    assert_eq(result.unsafe_view(start=0, end=2).to_owned(), [1, 2])
+    assert_eq(
+      result.unsafe_view(start=1, end=3).unsafe_view(start=0, end=1).to_owned(),
+      [2],
+    )
   }
-  let shared = arr.unsafe_view(start=1)
+  let shared = arr.unsafe_view(start=1, end=3)
   arr[1] = 20
   json_inspect(shared.to_owned(), content=[20, 3])
 }
@@ -73,12 +79,12 @@ test "unsafe_view agrees with exact_view on valid byte ranges" {
       assert_eq(nested.unsafe_view(start~, end~).start_offset(), 1 + start)
     }
   }
-  inspect(bytes.unsafe_view().to_owned(), content="b\"abc\"")
-  inspect(nested.unsafe_view().to_owned(), content="b\"abc\"")
-  inspect(bytes.unsafe_view(start=1).to_owned(), content="b\"bc\"")
-  inspect(bytes.unsafe_view(end=2).to_owned(), content="b\"ab\"")
+  inspect(bytes.unsafe_view(start=0, end=3).to_owned(), content="b\"abc\"")
+  inspect(nested.unsafe_view(start=0, end=3).to_owned(), content="b\"abc\"")
+  inspect(bytes.unsafe_view(start=1, end=3).to_owned(), content="b\"bc\"")
+  inspect(bytes.unsafe_view(start=0, end=2).to_owned(), content="b\"ab\"")
   inspect(
-    nested.unsafe_view(start=1).unsafe_view(end=1).to_owned(),
+    nested.unsafe_view(start=1, end=3).unsafe_view(start=0, end=1).to_owned(),
     content="b\"b\"",
   )
 }
@@ -106,11 +112,14 @@ test "unsafe_view preserves every valid raw UTF-16 range" {
       }
     }
   }
-  inspect(text.unsafe_view(), content="ab😀cd")
-  inspect(nested.unsafe_view(), content="ab😀cd")
-  inspect(text.unsafe_view(start=2), content="😀cd")
-  inspect(text.unsafe_view(end=4), content="ab😀")
-  inspect(nested.unsafe_view(start=2).unsafe_view(end=2), content="😀")
+  inspect(text.unsafe_view(start=0, end=6), content="ab😀cd")
+  inspect(nested.unsafe_view(start=0, end=6), content="ab😀cd")
+  inspect(text.unsafe_view(start=2, end=6), content="😀cd")
+  inspect(text.unsafe_view(start=0, end=4), content="ab😀")
+  inspect(
+    nested.unsafe_view(start=2, end=6).unsafe_view(start=0, end=2),
+    content="😀",
+  )
 }
 
 ///|
@@ -123,19 +132,19 @@ test "unsafe_view supports empty containers" {
   )
   for
     result in [
-      arr.unsafe_view(),
-      fixed.unsafe_view(),
-      ro.unsafe_view(),
-      arr[:].unsafe_view(),
-      arr.mut_view().unsafe_view(),
-      raw.unsafe_view(),
+      arr.unsafe_view(start=0, end=0),
+      fixed.unsafe_view(start=0, end=0),
+      ro.unsafe_view(start=0, end=0),
+      arr[:].unsafe_view(start=0, end=0),
+      arr.mut_view().unsafe_view(start=0, end=0),
+      raw.unsafe_view(start=0, end=0),
     ] {
     assert_eq(result.length(), 0)
   }
-  inspect(b"".unsafe_view().length(), content="0")
-  inspect(b""[:].unsafe_view().length(), content="0")
-  inspect("".unsafe_view().length(), content="0")
-  inspect(""[:].unsafe_view().length(), content="0")
+  inspect(b"".unsafe_view(start=0, end=0).length(), content="0")
+  inspect(b""[:].unsafe_view(start=0, end=0).length(), content="0")
+  inspect("".unsafe_view(start=0, end=0).length(), content="0")
+  inspect(""[:].unsafe_view(start=0, end=0).length(), content="0")
 }
 
 ///|

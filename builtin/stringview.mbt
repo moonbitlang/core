@@ -27,12 +27,9 @@ fn StringView::end(self : StringView) -> Int32 = "%stringview.end"
 ///|
 /// Builds the view `str[start:end]` without any checks.
 ///
-/// Every `String` and `StringView` must be well-formed UTF-16: each surrogate
-/// is part of a pair, and no view starts or ends inside one. The caller must
-/// ensure `0 <= start <= end <= str.length()` and that neither `start` nor
-/// `end` falls between the two halves of a surrogate pair. For a well-formed
-/// `str`, a boundary at an end of a well-formed view, or next to a
-/// non-surrogate code unit, always qualifies.
+/// The caller must ensure `0 <= start <= end <= str.length()`.
+/// Raw code-unit algorithms may preserve split surrogate pairs. Before using
+/// character-based APIs, the caller must ensure the view is well-formed UTF-16.
 fn StringView::make_view(
   str : String,
   start : Int32,
