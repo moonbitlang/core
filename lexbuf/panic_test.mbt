@@ -81,3 +81,8 @@ test "panic StringScanner rejects a cursor past the end" {
 test "panic StringScanner rejects a cursor inside a surrogate pair" {
   @lexbuf.StringScanner("\u{1F600}", cursor=1) |> ignore
 }
+
+///|
+test "panic StringScanner rejects a cursor inside a pair of a sliced view" {
+  @lexbuf.StringScanner("\u{1F600}a\u{1F600}b"[2:], cursor=2) |> ignore
+}
