@@ -9,35 +9,37 @@ import {
 }
 
 // Values
-pub async fn get(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, ClientConnection)
+pub async fn get(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, ClientConnection)
 
-pub async fn get_binary(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
+pub async fn get_binary(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
-pub async fn get_json(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
+pub async fn get_json(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
 
-pub async fn get_text(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
+pub async fn get_text(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
 
-pub async fn post(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
+pub async fn post(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
-pub async fn post_binary(String, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
+pub async fn post_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
-pub async fn post_json(String, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
+pub async fn post_json(StringView, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
 
-pub async fn post_text(String, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
+pub async fn post_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
 
-pub async fn put(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
+pub async fn put(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
-pub async fn put_binary(String, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
+pub async fn put_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
-pub async fn put_json(String, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
+pub async fn put_json(StringView, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
 
-pub async fn put_text(String, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
+pub async fn put_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
 
-pub async fn request_binary(String, RequestMethod, Map[CaseInsensitiveString, String], BytesView, proxy? : ClientConnection) -> (Response, Bytes)
+pub async fn request(RequestMethod, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
-pub async fn request_json(String, RequestMethod, Map[CaseInsensitiveString, String], Json?, proxy? : ClientConnection) -> (Response, Json)
+pub async fn request_binary(RequestMethod, StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
-pub async fn request_text(String, RequestMethod, Map[CaseInsensitiveString, String], StringView, proxy? : ClientConnection) -> (Response, String)
+pub async fn request_json(RequestMethod, StringView, Json?, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
+
+pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
 
 // Errors
 pub suberror HttpProtocolError {
