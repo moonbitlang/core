@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn encode_int(value : Int32, base~ : Int32) -> Bytes {
   let len = for x = value, len = 1; x >= base; {
     continue x / base, len + 1
@@ -54,11 +55,13 @@ fn is_token_char(c : UInt16) -> Bool {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn is_VCHAR(c : UInt16) -> Bool {
   c is (0x21..<=0x7E | ' ' | '\t' | 0x80..<=0xFF)
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn is_valid_http_header_field_name(name : StringView) -> Bool {
   for c in name.code_units() {
     guard is_token_char(c) else { return false }
@@ -68,6 +71,7 @@ fn is_valid_http_header_field_name(name : StringView) -> Bool {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn trim_OWS(input : ArrayView[UInt16]) -> ArrayView[UInt16] {
   for input = input {
     match input {
@@ -78,6 +82,7 @@ fn trim_OWS(input : ArrayView[UInt16]) -> ArrayView[UInt16] {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn validate_token(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise {
   guard input is [first, .. input] && is_token_char(first) else {
     raise BadRequest
@@ -91,6 +96,7 @@ fn validate_token(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise {
 
 ///|
 /// Validate a quoted string, `input` should not contain the first character
+#cfg(any(target="native", target="wasm"))
 fn validate_quoted_string(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise {
   for input = input; input is [first, .. rest]; input = rest {
     match first {
@@ -109,6 +115,7 @@ fn validate_quoted_string(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise 
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn validate_chunk_extension(extension : StringView) -> Unit raise {
   guard extension.code_units() is [';', .. start] else { raise BadRequest }
   for rest = start {

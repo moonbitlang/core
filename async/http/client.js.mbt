@@ -326,6 +326,13 @@ pub async fn Client::request(
     Options => "OPTIONS"
     Trace => "TRACE"
     Patch => "PATCH"
+    Extension(ext) => {
+      guard ext.length() > 0 else { raise InvalidMethod(ext) }
+      for c in ext.code_units() {
+        guard is_token_char(c) else { raise InvalidMethod(ext) }
+      }
+      ext
+    }
   }
   let headers = JsHeaders::new()
   for k, v in self.headers {

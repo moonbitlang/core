@@ -271,6 +271,40 @@ async test "multiple request" {
 }
 
 ///|
+async test "read_request extension method" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer w.close()
+      w.write(b"PROPFIND / HTTP/1.1\r\n\r\n")
+    }
+    defer r.close()
+    let input = Reader::new(r)
+    let request = input.read_request()
+    inspect(request.meth, content="PROPFIND")
+  }
+}
+
+///|
+async test "read_request invalid extension method" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer w.close()
+      w.write(b"方法 / HTTP/1.1\r\n\r\n")
+    }
+    defer r.close()
+    let input = Reader::new(r)
+    @debug.debug_inspect(
+      @test.expect_error_async(() => input.read_request()),
+      content=(
+        #|BadRequest
+      ),
+    )
+  }
+}
+
+///|
 async test "empty header value" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.pipe()
