@@ -184,7 +184,6 @@ pub fn String::unsafe_substring(
 ///   )
 /// }
 /// ```
-#borrow(self, other)
 pub fn String::range_equal(
   self : String,
   start~ : Int32,
@@ -245,7 +244,6 @@ pub fn String::range_equal(
 /// wasm-only `all_true` helpers in `simd.mbt` and the `#cfg(target="wasm")`
 /// tests of the vector helpers in `range_equal_wbtest.mbt`, then drop
 /// `#cfg(not(target="wasm"))` from the scalar definition below.
-#borrow(self, other)
 #cfg(target="wasm")
 #intrinsic("%string.unsafe_range_equal")
 pub fn String::unsafe_range_equal(
@@ -280,7 +278,6 @@ pub fn String::unsafe_range_equal(
 /// valid. Violating these requirements causes undefined behavior.
 ///
 /// Use `range_equal` to check the range bounds.
-#borrow(self, other)
 #cfg(not(target="wasm"))
 #intrinsic("%string.unsafe_range_equal")
 pub fn String::unsafe_range_equal(
@@ -303,7 +300,6 @@ pub fn String::unsafe_range_equal(
 /// eight code units per step; a remainder of one to seven units is covered by
 /// one more load of the last eight units of each range, which overlaps the
 /// previous block and stays inside both ranges because `len >= 8`.
-#borrow(left, right)
 #cfg(target="wasm")
 fn string_range_equal_simd(
   left : String,
