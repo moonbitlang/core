@@ -52,6 +52,6 @@ options(
     "send_wbtest.mbt": [ "native", "wasm" ],
     "server.mbt": [ "native", "wasm" ],
     "types.mbt": [ "native", "js", "wasm" ],
-    "utils.mbt": [ "native", "wasm" ],
+    "utils.mbt": [ "native", "js", "wasm" ],
   },
 )

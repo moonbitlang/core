@@ -388,7 +388,13 @@ async fn Reader::read_request(self : Reader) -> Request {
     b"OPTIONS" => Options
     b"TRACE" => Trace
     b"PATCH" => Patch
-    _ => raise BadRequest
+    name => {
+      guard name.length() > 0 else { raise BadRequest }
+      for c in name {
+        guard is_token_char(c.to_uint16()) else { raise BadRequest }
+      }
+      Extension(@utf8.decode(name))
+    }
   }
   let request_line = request_line[meth_len + 1:]
   guard request_line.find(b" ") is Some(path_len) else { raise BadRequest }

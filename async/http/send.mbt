@@ -350,6 +350,14 @@ async fn Sender::send_request(
     Options => self.write(b"OPTIONS ")
     Trace => self.write(b"TRACE ")
     Patch => self.write(b"PATCH ")
+    Extension(ext) => {
+      guard ext.length() > 0 else { raise InvalidMethod(ext) }
+      for c in ext.code_units() {
+        guard is_token_char(c) else { raise InvalidMethod(ext) }
+      }
+      self.write(@utf8.encode(ext))
+      self.write(b" ")
+    }
   }
   let content_length = self
     ..write(@utf8.encode(path))

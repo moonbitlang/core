@@ -142,3 +142,13 @@ pub extend Cookie with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend Cookie with @json.ToJson::{to_json}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend InvalidMethod with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend InvalidMethod with @json.ToJson::{to_json}

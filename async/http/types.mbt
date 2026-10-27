@@ -24,6 +24,7 @@ pub(all) enum RequestMethod {
   Options
   Trace
   Patch
+  Extension(String)
 } derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
 
 ///|
@@ -38,11 +39,19 @@ pub impl Show for RequestMethod with fn to_string(self) {
     Options => "OPTIONS"
     Trace => "TRACE"
     Patch => "PATCH"
+    Extension(meth) => meth
   }
 }
 
 ///|
 pub extend RequestMethod with Show::{to_string}
+
+///|
+/// Error raised when an invalid extension method (i.e. not valid HTTP method name)
+/// is supplied when sending a HTTP request
+pub(all) suberror InvalidMethod {
+  InvalidMethod(String)
+} derive(@debug.Debug, @json.ToJson)
 
 ///|
 /// Type for HTTP headers. The names of headers are case insensitive.

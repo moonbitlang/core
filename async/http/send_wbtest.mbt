@@ -341,6 +341,50 @@ async test "send_request stream2" {
 }
 
 ///|
+async test "send_request extension method" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer w.close()
+      let sender = Sender::new(w)
+      let _ = sender.send_request(Extension("PROPFIND"), "/", extra_headers={})
+      sender.end_body()
+    }
+    defer r.close()
+    inspect(
+      r.read_all() |> @bytes_util.ascii_to_string,
+      content=(
+        #|PROPFIND / HTTP/1.1\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|
+      ),
+    )
+  }
+}
+
+///|
+async test "send_request invalid extension method" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer w.close()
+      let sender = Sender::new(w)
+      @debug.debug_inspect(
+        @test.expect_error_async(() => {
+          sender.send_request(Extension("bad/method"), "/", extra_headers={})
+        }),
+        content=(
+          #|InvalidMethod("bad/method")
+        ),
+      )
+    }
+    defer r.close()
+    let _ = r.read_all()
+  }
+}
+
+///|
 async test "send invalid header" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.pipe()
