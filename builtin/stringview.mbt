@@ -360,7 +360,6 @@ pub fn StringView::any(
 ///   )
 /// }
 /// ```
-#borrow(self, other)
 pub fn StringView::range_equal(
   self : StringView,
   start~ : Int32,
