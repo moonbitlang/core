@@ -255,7 +255,7 @@ fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int32) -> Unit {
   // either NULL or the elements earlier removals left behind, and leaving them
   // with the old buffer is what releases the latter when that buffer dies.
   let len = self.len
-  let copy_len = if len < new_capacity { len } else { new_capacity }
+  let copy_len = len.min(new_capacity)
   let new_buf = UninitializedArray::make_and_blit(
     old_buf,
     allocate_len=new_capacity,

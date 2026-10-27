@@ -576,7 +576,7 @@ fn BytesView::bytesview_lexical_compare_impl(
 ) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
-  let min_len = if self_len < other_len { self_len } else { other_len }
+  let min_len = self_len.min(other_len)
   // Avoid v128 setup for the common case where long inputs differ immediately.
   if min_len >= 16 {
     let x = self.unsafe_get(0)
@@ -627,7 +627,7 @@ fn BytesView::bytesview_lexical_compare_impl(
 ) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
-  let min_len = if self_len < other_len { self_len } else { other_len }
+  let min_len = self_len.min(other_len)
   // Same `x != y`-first loop as `StringView::lexical_compare`
   for i in 0..<min_len {
     let x = self.unsafe_get(i)

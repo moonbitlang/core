@@ -980,7 +980,7 @@ pub fn Bytes::repeat(self : Self, count : Int32) -> Bytes {
   arr.blit_from_bytes(0, self, 0, len)
   for filled = len; filled < total; {
     let remaining = total - filled
-    let copy_len = if filled < remaining { filled } else { remaining }
+    let copy_len = filled.min(remaining)
     let src = unsafe_to_bytes(arr)
     arr.blit_from_bytes(filled, src, 0, copy_len)
     continue filled + copy_len

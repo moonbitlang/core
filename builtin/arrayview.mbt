@@ -1711,7 +1711,7 @@ pub fn[T : Compare] ArrayView::lexical_compare(
 ) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
-  let min_len = if self_len < other_len { self_len } else { other_len }
+  let min_len = self_len.min(other_len)
   for i in 0..<min_len {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     if cmp != 0 {

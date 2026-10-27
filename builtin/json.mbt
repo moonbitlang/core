@@ -231,11 +231,7 @@ pub(open) trait ToJson {
 
 ///|
 pub impl ToJson for Bool with fn to_json(self : Bool) -> Json {
-  if self {
-    true
-  } else {
-    false
-  }
+  Json::boolean(self)
 }
 
 ///|

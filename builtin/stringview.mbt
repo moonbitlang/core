@@ -462,7 +462,7 @@ pub fn StringView::lexical_compare(
 ) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
-  let min_len = if self_len < other_len { self_len } else { other_len }
+  let min_len = self_len.min(other_len)
 
   // Compare code unit by code unit up to the minimum length. Test `x != y` and
   // order only on a mismatch: `x.compare(y) != 0` would compute the -1/0/1
@@ -538,7 +538,7 @@ pub fn StringView::compare_ignore_ascii_case(
 ) -> Int32 {
   let self_len = self.length()
   let other_len = other.length()
-  let min_len = if self_len < other_len { self_len } else { other_len }
+  let min_len = self_len.min(other_len)
   for i in 0..<min_len {
     let a = ascii_fold_lower_u16(self.unsafe_get(i))
     let b = ascii_fold_lower_u16(other.unsafe_get(i))
