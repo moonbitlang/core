@@ -146,7 +146,7 @@ character when `i` falls inside its surrogate pair.
 
 `clamped_view(start~, end~)` is the named form of bracket slicing.
 `unsafe_view(start~, end~)` performs neither bounds checks nor surrogate-boundary
-checks or adjustments. The caller must ensure `0 <= start <= end <= length()`;
+checks or adjustments. Both labeled bounds are required. The caller must ensure `0 <= start <= end <= length()`;
 invalid bounds can cause undefined behavior. Raw code-unit algorithms may use
 it to preserve split pairs, but must ensure well-formed UTF-16 before passing
 results to character-based APIs.

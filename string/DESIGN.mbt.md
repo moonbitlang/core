@@ -6,9 +6,9 @@
   characters outside the Basic Multilingual Plane (such as emojis) are
   represented using surrogate pairs - two 16-bit code units.
 
-* **Well-formedness**: every `String` and `StringView` must be well-formed
-  UTF-16: each surrogate is part of a pair, and no view starts or ends between
-  the two halves of a pair. Library code may rely on this contract without
+* **Well-formedness**: character-based APIs require well-formed UTF-16:
+  each surrogate is part of a pair, and no view starts or ends between the
+  two halves of a pair. These APIs may rely on this contract without
   re-checking it; for example, `escape` copies unescaped runs without
   re-validating their boundaries. The checked APIs (`exact_view`, `get_view`,
   the clamping `s[i:j]`) enforce it. Unchecked APIs leave it to the caller:
@@ -17,7 +17,8 @@
   retains numeric bounds checks but does not check surrogate boundaries,
   and `unsafe_to_char` must not be given a surrogate code point, so a
   supplementary character has to be written as one `Char`, never as two
-  halves. An ill-formed string or view is outside the contract.
+  halves. Raw code-unit algorithms may use `unsafe_view` to preserve split
+  pairs, but must ensure well-formed UTF-16 before using character-based APIs.
 
 * **Char vs Charcode**: MoonBit distinguishes between:
   - `Charcode`: A UTF-16 code unit (type `UInt16`)
@@ -75,8 +76,8 @@ test "unsafe vs safe" {
   surrogate boundaries, while `clamped_view` trims split pairs inward. Unsafe
   APIs can still build an ill-formed string (e.g.,
   `"🍎".unsafe_substring(start=1, end=2)` starts at the second half of a
-  surrogate pair); that breaks the well-formedness contract above, and the
-  library's behavior on such strings is unspecified.
+  surrogate pair). Such results can be used in raw code-unit algorithms;
+  character-based APIs have unspecified behavior on ill-formed strings.
 
 * **View**: A `StringView` represents a window into a string. Slice syntax and
   `clamped_view` trim split surrogate boundaries inward, while `exact_view`
