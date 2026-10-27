@@ -9,27 +9,27 @@ import {
 }
 
 // Values
+pub async fn get(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, ClientConnection)
+
 pub async fn get_binary(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
 pub async fn get_json(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
 
-pub async fn get_stream(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, ClientConnection)
-
 pub async fn get_text(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
+
+pub async fn post(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
 pub async fn post_binary(String, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
 pub async fn post_json(String, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
 
-pub async fn post_stream(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
-
 pub async fn post_text(String, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
+
+pub async fn put(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
 pub async fn put_binary(String, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Bytes)
 
 pub async fn put_json(String, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, Json)
-
-pub async fn put_stream(String, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
 
 pub async fn put_text(String, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (Response, String)
 

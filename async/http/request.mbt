@@ -272,17 +272,16 @@ pub async fn post_json(
 }
 
 ///|
-/// Similar to `@http.get_xxx`, but allow reading response body streamingly.
-/// A pair `(response, client)` will be returned,
-/// where `response` is the response header from the server,
-/// and `client` is the HTTP client that performs the request.
-/// `client` can be used to read the content of response body
-/// via `@io.BinaryReader` or `@io.TextReader` interface.
-/// See `@http.ClientConnection` and its `.text` field for more details.
+/// Performs a `GET` request to the target URL.
+/// Return the response header and the connection assigned for this request.
+/// Response body can be obtained by reading from the connection via the `@io.BinaryReader` interface,
+/// or through the `@io.TextReader` interface using the builtin `.text` view on the connection.
+/// For requests with simple, short response message,
+/// `@http.get_binary`/`@http.get_text`/`@http.get_json` can be used to collect the body automatically.
 ///
-/// Note that the returned client must be manually closed via `.close()`
-/// to close the underlying connection used for the request.
-pub async fn get_stream(
+/// The returned connection must be manually closed via `.close()`
+/// after the caller no longer need to use it.
+pub async fn get(
   uri : String,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
@@ -295,23 +294,23 @@ pub async fn get_stream(
 }
 
 ///|
-/// Similar to `@http.put_xxx`, but allow writing request body streamingly.
-/// The return value `client` is the HTTP client that performs the request,
-/// it can be used to write the content of request body via `@io.BinaryWriter`.
-/// Text content can be written via `client.text` through the `@io.TextWriter` interface as well.
-/// See `@http.ClientConnection` and its `.text` field for more details.
+/// Performs a `PUT` request to the target URL.
+/// Return the connection assigned for this request.
+/// Request body can be written through the `@io.BinaryWriter` interface on the connection,
+/// or through the `@io.TextWriter` interface using the builtin `.text` view on the connection.
 ///
-/// Notice that writing to `@http.ClientConnection` is buffered,
-/// so if you need to send data to the server immediately, `.flush()` must be called.
-/// After writing all the content, `.end_request()` must be called
-/// to complete the request and obtain response from the server.
-/// After that, the response body from the server can be obtained 
-/// by using `client` as `@io.BinaryReader` or `client.text` as `@io.TextReader`.
-/// See `@http.ClientConnection` and its `.text` field for more details.
+/// When the request body is completely written, `end_request()` should be called on the connection
+/// to terminate the request and obtain response header from the server.
+/// After receiving the response header,
+/// response body can be obtained by reading from the connection via the `@io.BinaryReader` interface,
+/// or through the `@io.TextReader` interface using the builtin `.text` view on the connection.
 ///
-/// Note that the returned `client` must be manually closed via `.close()`
-/// to close the underlying connection used for the request.
-pub async fn put_stream(
+/// For requests with simple, short message body,
+/// `@http.put_binary`/`@http.put_text`/`@http.put_json` can be used to collect the body automatically.
+///
+/// The returned connection must be manually closed via `.close()`
+/// after the caller no longer need to use it.
+pub async fn put(
   uri : String,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
@@ -324,23 +323,23 @@ pub async fn put_stream(
 }
 
 ///|
-/// Similar to `@http.post_xxx`, but allow writing request body streamingly.
-/// The return value `client` is the HTTP client that performs the request,
-/// it can be used to write the content of request body via `@io.BinaryWriter`.
-/// Text content can be written via `client.text` through the `@io.TextWriter` interface as well.
-/// See `@http.ClientConnection` and its `.text` field for more details.
+/// Performs a `POST` request to the target URL.
+/// Return the connection assigned for this request.
+/// Request body can be written through the `@io.BinaryWriter` interface on the connection,
+/// or through the `@io.TextWriter` interface using the builtin `.text` view on the connection.
 ///
-/// Notice that writing to `@http.ClientConnection` is buffered,
-/// so if you need to send data to the server immediately, `.flush()` must be called.
-/// After writing all the content, `.end_request()` must be called
-/// to complete the request and obtain response from the server.
-/// After that, the response body from the server can be obtained 
-/// by using `client` as `@io.BinaryReader` or `client.text` as `@io.TextReader`.
-/// See `@http.ClientConnection` and its `.text` field for more details.
+/// When the request body is completely written, `end_request()` should be called on the connection
+/// to terminate the request and obtain response header from the server.
+/// After receiving the response header,
+/// response body can be obtained by reading from the connection via the `@io.BinaryReader` interface,
+/// or through the `@io.TextReader` interface using the builtin `.text` view on the connection.
 ///
-/// Note that the returned `client` must be manually closed via `.close()`
-/// to close the underlying connection used for the request.
-pub async fn post_stream(
+/// For requests with simple, short message body,
+/// `@http.post_binary`/`@http.post_text`/`@http.post_json` can be used to collect the body automatically.
+///
+/// The returned connection must be manually closed via `.close()`
+/// after the caller no longer need to use it.
+pub async fn post(
   uri : String,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
