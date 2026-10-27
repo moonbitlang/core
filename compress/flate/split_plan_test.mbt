@@ -138,7 +138,7 @@ test "Split strategy never worse than fixed cadence" {
         split.length() <= fixed.length(),
         msg="split larger than fixed on \{name} L\{level}: \{split.length()} > \{fixed.length()}",
       )
-      @test.assert_eq(@flate.inflate(split, mode=Prefix).data, data)
+      @test.assert_eq(@flate.inflate_prefix(split).data, data)
     }
   }
 }

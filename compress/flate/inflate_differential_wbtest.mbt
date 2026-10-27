@@ -83,7 +83,7 @@ fn inflate_differential_sources() -> Array[Bytes] {
 
 ///|
 fn inflate_differential_one_shot(input : Bytes) -> InflateDifferentialOutcome {
-  try inflate(input, mode=Prefix).data catch {
+  try inflate_prefix(input).data catch {
     InflateError(kind, _) => InflateDifferentialErr(kind)
   } noraise {
     decoded => InflateDifferentialOk(decoded)
@@ -298,7 +298,7 @@ fn inflate_differential_exact_kind(
   input : Bytes,
   preallocated : Bool,
 ) -> InflateErrorKind? {
-  try ignore(inflate(input, two_pass=preallocated)) catch {
+  try ignore(inflate_exact(input, two_pass=preallocated)) catch {
     InflateError(kind, _) => Some(kind)
   } noraise {
     _ => None
@@ -317,7 +317,7 @@ test "preallocated exact inflate matches the grow path" {
       let source = sources[source_index]
       let compressed = deflate_all(source, strategy=Standard(level~))
       let corpus = "source-\{source_index}/level-\{level}"
-      @test.assert_eq(inflate(compressed, two_pass=true).data, source)
+      @test.assert_eq(inflate_exact(compressed, two_pass=true), source)
       let framed = compressed + b"TAIL"
       let default_outcome = inflate_differential_exact_kind(framed, false)
       let preallocated_outcome = inflate_differential_exact_kind(framed, true)

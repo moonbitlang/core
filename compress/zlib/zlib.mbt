@@ -170,14 +170,14 @@ pub fn decompress(
     None
   }
   let payload_start = if dict is Some(_) { 6 } else { 2 }
-  let out = (@flate.inflate(
-      input[payload_start:n - 4],
-      dictionary?=dict,
-      max_output?,
-      cancelled?,
-    ) catch {
-      error => raise wrap_inflate_error(error)
-    }).data
+  let out = @flate.inflate_exact(
+    input[payload_start:n - 4],
+    dictionary?=dict,
+    max_output?,
+    cancelled?,
+  ) catch {
+    error => raise wrap_inflate_error(error)
+  }
   guard adler32_cancellable(out, cancelled) == u32_be(input, n - 4) else {
     raise ZlibError(ChecksumMismatch, "zlib: Adler-32 mismatch")
   }

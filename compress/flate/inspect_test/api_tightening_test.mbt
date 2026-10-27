@@ -32,21 +32,17 @@ test "bounded prefix inflate enforces its decoded-size boundary" {
   let source = b"bounded one-shot inflate"
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(
-    @flate.inflate(compressed, mode=Prefix, max_output=source.length()).data,
+    @flate.inflate_prefix(compressed, max_output=source.length()).data,
     source,
   )
-  // Prefix mode permits trailing input even with an output limit;
-  // the default Exact mode rejects trailing bytes.
+  // Prefix decoding permits trailing input even with an output limit;
+  // inflate_exact rejects trailing bytes.
   @test.assert_eq(
-    @flate.inflate(
-      compressed + b"TRAILING",
-      mode=Prefix,
-      max_output=source.length(),
-    ).data,
+    @flate.inflate_prefix(compressed + b"TRAILING", max_output=source.length()).data,
     source,
   )
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate(compressed, mode=Prefix, max_output=source.length() - 1)
+    @flate.inflate_prefix(compressed, max_output=source.length() - 1)
   })
   @test.assert_eq(
     kind,
@@ -56,16 +52,16 @@ test "bounded prefix inflate enforces its decoded-size boundary" {
     ),
   )
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate(compressed, mode=Prefix, max_output=-1)
+    @flate.inflate_prefix(compressed, max_output=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
   let empty = @flate.deflate_all(b"")
-  @test.assert_eq(@flate.inflate(empty, mode=Prefix, max_output=0).data, b"")
+  @test.assert_eq(@flate.inflate_prefix(empty, max_output=0).data, b"")
   // Large output forces buffer growth without weakening the decoded-size limit.
   let large = Bytes::from_array(Array::make(20000, b'X'))
   let large_compressed = @flate.deflate_all(large)
   @test.assert_eq(
-    @flate.inflate(large_compressed, mode=Prefix, max_output=large.length()).data,
+    @flate.inflate_prefix(large_compressed, max_output=large.length()).data,
     large,
   )
 }
@@ -92,8 +88,8 @@ test "inflate preallocated and grow paths agree" {
   for source in inflate_sources() {
     for level in [0, 1, 6] {
       let compressed = @flate.deflate_all(source, strategy=Standard(level~))
-      @test.assert_eq(@flate.inflate(compressed, two_pass=true).data, source)
-      @test.assert_eq(@flate.inflate(compressed).data, source)
+      @test.assert_eq(@flate.inflate_exact(compressed, two_pass=true), source)
+      @test.assert_eq(@flate.inflate_exact(compressed), source)
     }
   }
 }
@@ -105,7 +101,7 @@ test "preallocated inflate rejects truncation after output suspension" {
     strategy=Standard(level=0),
   )
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate(compressed[:compressed.length() - 1], two_pass=true)
+    @flate.inflate_exact(compressed[:compressed.length() - 1], two_pass=true)
   })
   @test.assert_eq(kind, Truncated)
 }
@@ -114,19 +110,19 @@ test "preallocated inflate rejects truncation after output suspension" {
 test "inflate enforces max_output on both paths" {
   let source = Bytes::from_array(Array::make(20000, b'X'))
   let compressed = @flate.deflate_all(source)
-  @test.assert_eq(@flate.inflate(compressed, max_output=20000).data, source)
+  @test.assert_eq(@flate.inflate_exact(compressed, max_output=20000), source)
   @test.assert_eq(
-    @flate.inflate(compressed, max_output=20000, two_pass=true).data,
+    @flate.inflate_exact(compressed, max_output=20000, two_pass=true),
     source,
   )
   for preallocated in [false, true] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(compressed, max_output=19999, two_pass=preallocated)
+      @flate.inflate_exact(compressed, max_output=19999, two_pass=preallocated)
     })
     @test.assert_eq(kind, OutputLimitExceeded(limit=19999UL, observed=20000UL))
   }
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate(compressed, max_output=-1)
+    @flate.inflate_exact(compressed, max_output=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
 }
@@ -135,7 +131,9 @@ test "inflate enforces max_output on both paths" {
 test "inflate entry cancellation raises Cancelled on both paths" {
   for preallocated in [false, true] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(b"\x03\x00", two_pass=preallocated, cancelled=() => true)
+      @flate.inflate_exact(b"\x03\x00", two_pass=preallocated, cancelled=() => {
+        true
+      })
     })
     @test.assert_eq(kind, Cancelled)
   }
@@ -151,7 +149,7 @@ test "preallocated inflate honors cancellation in both passes" {
   for cancel_at in [3, 6] {
     let mut calls = 0
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(
+      @flate.inflate_exact(
         compressed,
         cancelled=() => {
           calls = calls + 1
@@ -173,7 +171,7 @@ test "prefix inflate honours entry and mid-stream cancellation with or without a
       for cancel_at in [1, 3] {
         let mut polls = 0
         let InflateError(kind, _) = @test.expect_error(() => {
-          @flate.inflate(compressed, mode=Prefix, max_output?=limit, cancelled=() => {
+          @flate.inflate_prefix(compressed, max_output?=limit, cancelled=() => {
             polls += 1
             polls == cancel_at
           })

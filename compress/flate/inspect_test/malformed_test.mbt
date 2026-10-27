@@ -23,7 +23,7 @@ test "prefix inflate rejects malformed block structure with the correct category
       (b"\x05\x00\x00\x00\x00", Corrupt), // empty code-length alphabet
     ] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(input, mode=Prefix)
+      @flate.inflate_prefix(input)
     })
     @test.assert_eq(kind, expected)
   }

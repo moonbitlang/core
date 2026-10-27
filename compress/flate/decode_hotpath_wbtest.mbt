@@ -58,7 +58,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
       )
       @test.assert_eq(calls, 3)
     }
-    @test.assert_eq(inflate(input, mode=Prefix).data, source)
+    @test.assert_eq(inflate_prefix(input).data, source)
     let output = FixedArray::make(9000, b'\xA5')
     let result = Decompressor().decompress_into(
       input + b"TRAILER",

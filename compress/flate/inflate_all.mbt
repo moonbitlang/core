@@ -1141,14 +1141,37 @@ pub fn Decompressor::decompress(
 }
 
 ///|
-/// Decode one stream and report its input boundary; two_pass trades a second pass for exact output allocation.
-pub fn inflate(
+/// Decode exactly one stream, rejecting trailing input; two_pass uses an exactly sized output allocation.
+pub fn inflate_exact(
   input : BytesView,
-  mode~ : InputMode = Exact,
   dictionary? : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
   two_pass~ : Bool = false,
+) -> Bytes raise InflateError {
+  inflate_allocated(input, Exact, dictionary, max_output, cancelled, two_pass).data
+}
+
+///|
+/// Decode a stream prefix and return its consumed boundary; two_pass uses an exactly sized output allocation.
+pub fn inflate_prefix(
+  input : BytesView,
+  dictionary? : BytesView,
+  max_output? : Int32,
+  cancelled? : () -> Bool,
+  two_pass~ : Bool = false,
+) -> Decompressed raise InflateError {
+  inflate_allocated(input, Prefix, dictionary, max_output, cancelled, two_pass)
+}
+
+///|
+fn inflate_allocated(
+  input : BytesView,
+  mode : InputMode,
+  dictionary : BytesView?,
+  max_output : Int32?,
+  cancelled : (() -> Bool)?,
+  two_pass : Bool,
 ) -> Decompressed raise InflateError {
   if max_output is Some(limit) {
     guard limit >= 0 else {

@@ -84,15 +84,27 @@ test "whole-buffer dictionary decoding supports both input modes and output form
           (if mode is Prefix { b"TRAILER" } else { b"" })
         let input = framed[3:]
         for two_pass in [false, true] {
-          let result = @flate.inflate(
-            input,
-            mode~,
-            dictionary=dict,
-            two_pass~,
-            max_output=plain.length(),
-          )
-          assert_eq(result.data, plain)
-          assert_eq(result.consumed, raw.length())
+          match mode {
+            Exact => {
+              let result = @flate.inflate_exact(
+                input,
+                dictionary=dict,
+                two_pass~,
+                max_output=plain.length(),
+              )
+              assert_eq(result, plain)
+            }
+            Prefix => {
+              let result = @flate.inflate_prefix(
+                input,
+                dictionary=dict,
+                two_pass~,
+                max_output=plain.length(),
+              )
+              assert_eq(result.data, plain)
+              assert_eq(result.consumed, raw.length())
+            }
+          }
         }
         let result = decoder.decompress(input, mode~, max_output=plain.length())
         assert_eq(result.data, plain)
@@ -131,7 +143,9 @@ test "dictionary decoders preserve history across errors but not prior output" {
   let raw = @flate.deflate_all(plain, dictionary~)
   let decoder = @flate.Decompressor(dictionary~)
   let output = FixedArray::make(plain.length(), b'\x00')
-  let InflateError(missing, _) = @test.expect_error(() => @flate.inflate(raw))
+  let InflateError(missing, _) = @test.expect_error(() => {
+    @flate.inflate_exact(raw)
+  })
   @debug.debug_inspect(missing, content="Corrupt")
   for fixed in [false, true] {
     for
@@ -175,9 +189,8 @@ test "dictionary decoders preserve history across errors but not prior output" {
   }
   for two_pass in [false, true] {
     let empty = @flate.deflate_all(b"", dictionary~)
-    let result = @flate.inflate(
+    let result = @flate.inflate_prefix(
       empty + b"tail",
-      mode=Prefix,
       dictionary~,
       max_output=0,
       two_pass~,
@@ -185,17 +198,17 @@ test "dictionary decoders preserve history across errors but not prior output" {
     assert_eq(result.data, b"")
     assert_eq(result.consumed, empty.length())
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(raw, dictionary~, max_output=-1, two_pass~)
+      @flate.inflate_exact(raw, dictionary~, max_output=-1, two_pass~)
     })
     assert_eq(kind, InvalidArgument)
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate(raw, dictionary~, max_output=1, two_pass~)
+      @flate.inflate_exact(raw, dictionary~, max_output=1, two_pass~)
     })
     assert_true(kind is OutputLimitExceeded(_))
     for cancel_at in [1, 2, 5] {
       let mut polls = 0
       let InflateError(kind, _) = @test.expect_error(() => {
-        @flate.inflate(raw, dictionary~, two_pass~, cancelled=() => {
+        @flate.inflate_exact(raw, dictionary~, two_pass~, cancelled=() => {
           polls += 1
           polls == cancel_at
         })

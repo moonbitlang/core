@@ -181,24 +181,20 @@ test "decompress and decompress_into take turns on one decompressor" {
 }
 
 ///|
-test "whole-buffer input modes agree on exact and prefix boundaries" {
+test "whole-buffer exact and prefix functions have distinct return contracts" {
   let decoder = @flate.Decompressor()
   for (raw, plain) in consumed_streams() {
     let framed = b"PAD" + raw + b"TRAILER"
     let input = framed[3:]
     for two_pass in [false, true] {
-      let result = @flate.inflate(input, mode=Prefix, two_pass~)
+      let result : @flate.Decompressed = @flate.inflate_prefix(input, two_pass~)
       assert_eq(result.data, plain)
       assert_eq(result.consumed, raw.length())
       assert_eq(input[result.consumed:].to_owned(), b"TRAILER")
-      let exact = @flate.inflate(raw, two_pass~)
-      assert_eq(exact, result)
+      let exact : Bytes = @flate.inflate_exact(raw, two_pass~)
+      assert_eq(exact, result.data)
       let InflateError(kind, _) = @test.expect_error(() => {
-        @flate.inflate(input, two_pass~)
-      })
-      assert_eq(kind, TrailingData)
-      let InflateError(kind, _) = @test.expect_error(() => {
-        @flate.inflate(input, mode=Exact, two_pass~)
+        @flate.inflate_exact(input, two_pass~)
       })
       assert_eq(kind, TrailingData)
     }

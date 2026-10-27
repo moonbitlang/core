@@ -32,24 +32,19 @@ test "fast store remains opt in across compression entry points" {
       deflate_all(input, strategy=Standard(level~), fast_store=false),
     )
     @test.assert_eq(
-      inflate(
+      inflate_prefix(
         deflate_all(input, strategy=Standard(level~), fast_store=true),
-        mode=Prefix,
       ).data,
       input,
     )
   }
   @test.assert_eq(
-    inflate(
-      deflate_all(input, strategy=Split(level=6), fast_store=true),
-      mode=Prefix,
-    ).data,
+    inflate_prefix(deflate_all(input, strategy=Split(level=6), fast_store=true)).data,
     input,
   )
   @test.assert_eq(
-    inflate(
+    inflate_prefix(
       deflate_all(input, strategy=Optimal(iterations=1), fast_store=true),
-      mode=Prefix,
     ).data,
     input,
   )
@@ -87,7 +82,7 @@ test "fast store output respects capacities bounds and codec reuse" {
       codec.compress(b"abcabcabcabc"),
       deflate_all(b"abcabcabcabc"),
     )
-    @test.assert_eq(inflate(codec.compress(b""), mode=Prefix).data, b"")
+    @test.assert_eq(inflate_prefix(codec.compress(b"")).data, b"")
   }
 }
 
@@ -164,16 +159,13 @@ test "fast store transitions across sync flush backpressure and reset" {
     append_fast_store_stream(fast, first, SyncFlush, encoded)
     append_fast_store_stream(fast, last, Finish, encoded)
     @test.assert_eq(
-      inflate(Bytes::from_array(encoded), mode=Prefix).data,
+      inflate_prefix(Bytes::from_array(encoded)).data,
       first + last,
     )
     fast.reset()
     encoded.clear()
     append_fast_store_stream(fast, noise, Finish, encoded)
-    @test.assert_eq(
-      inflate(Bytes::from_array(encoded), mode=Prefix).data,
-      noise,
-    )
+    @test.assert_eq(inflate_prefix(Bytes::from_array(encoded)).data, noise)
     let defaults : Array[Byte] = []
     let explicit : Array[Byte] = []
     let normal = IncrementalEncoder()

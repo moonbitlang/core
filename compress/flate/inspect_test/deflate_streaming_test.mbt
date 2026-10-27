@@ -30,7 +30,7 @@ test "deflate_all stores incompressible data" {
   // 70000 bytes split into ~16 KB blocks, each falling back to stored at
   // ~5 bytes of framing -> at most input + a few dozen bytes.
   assert_true(out.length() <= src.length() + 64)
-  @test.assert_eq(@flate.inflate(out, mode=Prefix).data, src)
+  @test.assert_eq(@flate.inflate_prefix(out).data, src)
 }
 
 ///|
@@ -78,10 +78,7 @@ test "IncrementalEncoder sync flush makes the prefix decodable" {
       break
     }
   }
-  @test.assert_eq(
-    @flate.inflate(out.to_bytes(), mode=Prefix).data,
-    part1 + part2,
-  )
+  @test.assert_eq(@flate.inflate_prefix(out.to_bytes()).data, part1 + part2)
 }
 
 ///|

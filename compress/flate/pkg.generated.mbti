@@ -10,7 +10,9 @@ pub fn deflate_all(BytesView, strategy? : Strategy, dictionary? : BytesView, fas
 
 pub fn deflate_bound(Int32, strategy? : Strategy) -> Int32
 
-pub fn inflate(BytesView, mode? : InputMode, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
+pub fn inflate_exact(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Bytes raise InflateError
+
+pub fn inflate_prefix(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
 
 // Errors
 pub suberror InflateError {

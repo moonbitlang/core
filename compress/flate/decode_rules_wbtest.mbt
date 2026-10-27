@@ -18,9 +18,7 @@
 /// no further input.
 test "reserved HLIT wins over a truncated HDIST" {
   let data : Bytes = [0xFD]
-  let InflateError(kind, _) = @test.expect_error(() => {
-    inflate(data, mode=Prefix)
-  })
+  let InflateError(kind, _) = @test.expect_error(() => inflate_prefix(data))
   @test.assert_eq(kind, Corrupt)
   let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
@@ -72,7 +70,7 @@ test "dictionary matches cross into output and resume batched decoding" {
       let raw = dictionary_token_stream(tokens)
       let plain = Bytes::from_array(expected)
       for two_pass in [false, true] {
-        let result = inflate(raw + b"tail", dictionary~, mode=Prefix, two_pass~)
+        let result = inflate_prefix(raw + b"tail", dictionary~, two_pass~)
         @test.assert_eq(result.data, plain)
         @test.assert_eq(result.consumed, raw.length())
       }

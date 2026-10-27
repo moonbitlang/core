@@ -34,11 +34,11 @@ test "prefix inflate preserves output across growth and cancellation boundaries"
     ] {
     let plain = source[:size].to_owned()
     let compressed = deflate_all(plain)
-    guard inflate(compressed, mode=Prefix).data == plain else {
+    guard inflate_prefix(compressed).data == plain else {
       fail("prefix inflate differs at \{size} bytes")
     }
     let mut polls = 0
-    let polled = inflate(compressed, mode=Prefix, cancelled=() => {
+    let polled = inflate_prefix(compressed, cancelled=() => {
         polls += 1
         false
       }).data
