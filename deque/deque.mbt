@@ -192,10 +192,7 @@ test "add_empty" {
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int32) -> Deque[A] {
   let len = arr.length()
-  let capacity = match capacity {
-    Some(capacity) => capacity.max(len)
-    None => len
-  }
+  let capacity = capacity.unwrap_or(len).max(len)
   let buf = UninitializedArray::make(capacity)
   for i, x in arr {
     buf[i] = x
@@ -462,9 +459,9 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int32, value : A) -> Unit {
     self.head = new_head
   } else {
     // Shift back elements right
-    for i = self.len; i > index; i = i - 1 {
-      let from = (self.head + i - 1) % cap
-      let to = (self.head + i) % cap
+    for i in self.len>..index {
+      let from = (self.head + i) % cap
+      let to = (self.head + i + 1) % cap
       self.buf[to] = self.buf[from]
     }
   }
@@ -1485,7 +1482,7 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
     return
   }
   let kept_len = for cur in back; idx = idx, kept_len = kept_len {
-    let idx = if idx == cap { 0 } else { idx }
+    let idx = wrap_index(idx, cap)
     if f(cur) is Some(v) {
       buf[idx] = v
       continue idx + 1, kept_len + 1
@@ -1542,7 +1539,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
     return
   }
   let kept_len = for cur in back; idx = idx, kept_len = kept_len {
-    let idx = if idx == cap { 0 } else { idx }
+    let idx = wrap_index(idx, cap)
     if f(cur) {
       buf[idx] = cur
       continue idx + 1, kept_len + 1
