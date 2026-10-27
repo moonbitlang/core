@@ -37,6 +37,12 @@ test "resolve_url" {
     ),
   )
   @debug.debug_inspect(
+    to_owned(resolve_url("https://www.example.org//path?next=/a")),
+    content=(
+      #|(Https, "www.example.org", "//path?next=/a")
+    ),
+  )
+  @debug.debug_inspect(
     @test.expect_error(() => to_owned(resolve_url("ftp://www.example.org"))),
     content=(
       #|UnsupportedProtocol("ftp")

@@ -1,0 +1,48 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/compress/zlib"
+
+import {
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn compress(BytesView, level? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn compress_optimal(BytesView, iterations? : Int32, fast_store? : Bool) -> Bytes
+
+pub fn decompress(BytesView) -> Bytes raise ZlibError
+
+// Errors
+pub suberror ZlibError {
+  ZlibError(ZlibErrorKind, String)
+}
+
+// Types and methods
+type Decoder
+pub fn Decoder::Decoder(dictionary? : BytesView) -> Self
+pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
+pub fn Decoder::is_finished(Self) -> Bool
+pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
+pub fn Decoder::unused_input(Self) -> Bytes
+
+type Encoder
+pub fn Encoder::Encoder(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
+pub fn Encoder::is_finished(Self) -> Bool
+pub fn Encoder::reset(Self, dictionary? : BytesView) -> Unit
+pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
+
+pub(all) enum ZlibErrorKind {
+  Truncated
+  InvalidHeader
+  DictionaryRequired
+  DictionaryMismatch
+  InvalidDeflate
+  ChecksumMismatch
+  TrailingData
+} derive(Eq, @debug.Debug)
+pub fn ZlibErrorKind::equal(Self, Self) -> Bool
+
+// Type aliases
+
+// Traits
