@@ -57,7 +57,7 @@ async test "request streaming" {
 
     {
       log <+ "client sending GET request\n"
-      let (response, client) = @http.get_stream(
+      let (response, client) = @http.get(
         "http://127.0.0.1:\{port}/get-streaming",
       )
       defer client.close()
@@ -66,7 +66,7 @@ async test "request streaming" {
     }
     {
       log <+ "client sending PUT request\n"
-      let client = @http.put_stream("http://127.0.0.1:\{port}/put-streaming")
+      let client = @http.put("http://127.0.0.1:\{port}/put-streaming")
       defer client.close()
       @async.sleep(100)
       log <+ "client: sending PUT data part 1\n"
@@ -80,7 +80,7 @@ async test "request streaming" {
     }
     {
       log <+ "client sending POST request\n"
-      let client = @http.post_stream("http://127.0.0.1:\{port}/post-streaming")
+      let client = @http.post("http://127.0.0.1:\{port}/post-streaming")
       defer client.close()
       @async.sleep(100)
       log <+ "client: sending POST data part 1\n"
@@ -197,11 +197,11 @@ async test "user agent" {
       })
     }
     {
-      let (response, client) = @http.get_stream("http://127.0.0.1:\{port}")
+      let (response, client) = @http.get("http://127.0.0.1:\{port}")
       defer client.close()
       inspect(response.code, content="200")
     }
-    let (response, client) = @http.get_stream("http://127.0.0.1:\{port}", headers={
+    let (response, client) = @http.get("http://127.0.0.1:\{port}", headers={
       "User-Agent": "my-custom-UA/4.2",
     })
     defer client.close()
