@@ -69,9 +69,22 @@ async test "Process::wait" {
 async test "Process::try_wait" {
   let sleep = sleep_prog.wait()
   @async.with_task_group() <| group => {
-    let child = @process.spawn(group, sleep, ["200", "-exit-code", "42"])
+    let child = @process.spawn(
+      group,
+      sleep,
+      stdout=@process.read_from_process(),
+      ["200", "-exit-code", "42", "-print-after-sleep", "end"],
+    )
+    defer child.stdout.close()
     debug_inspect(child.try_wait(), content="None")
-    @async.sleep(400)
+    debug_inspect(
+      child.stdout.text.read().map(msg => msg.trim().to_owned()),
+      content=(
+        #|Some("end")
+      ),
+    )
+    // give some time for the child process to cleanup itself
+    @async.sleep(300)
     debug_inspect(child.try_wait(), content="Some(42)")
   }
 }
