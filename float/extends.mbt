@@ -47,13 +47,6 @@ pub extend Float with Sub::{sub}
 // --- deprecated: compatibility methods ---
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-// Bootstrap: json depends on this package, so use the builtin trait here.
-#warnings("-deprecated")
-pub extend Float with @builtin.ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Float with Compare::{op_ge, op_gt, op_le, op_lt}

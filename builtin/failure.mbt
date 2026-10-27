@@ -39,7 +39,7 @@
 #warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
-} derive(ToJson, Show)
+} derive(Show)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.

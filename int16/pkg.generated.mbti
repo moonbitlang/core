@@ -58,7 +58,6 @@ pub impl Shl for Int16
 pub impl Show for Int16
 pub impl Shr for Int16
 pub impl Sub for Int16
-pub impl ToJson for Int16
 
 // Type aliases
 

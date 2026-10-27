@@ -1824,7 +1824,7 @@ pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
 /// ```
 pub impl[A : @json.ToJson] @json.ToJson for Deque[A] with fn to_json(
   self : Deque[A],
-) -> Json {
+) -> @json.Json {
   [
     for x in self => x
   ]

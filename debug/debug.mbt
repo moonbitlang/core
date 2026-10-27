@@ -166,27 +166,6 @@ pub impl[K : Debug, V : Debug] Debug for Map[K, V] with fn to_repr(self) {
 }
 
 ///|
-pub impl Debug for Json with fn to_repr(self) {
-  match self {
-    Null => Repr::ctor("Null", [])
-    True => Repr::ctor("True", [])
-    False => Repr::ctor("False", [])
-    Number(number, repr~) =>
-      match repr {
-        None => Repr::ctor("Number", [(None, Repr(number))])
-        Some(_) =>
-          Repr::ctor("Number", [
-            (None, Repr(number)),
-            (Some("repr"), Repr(repr)),
-          ])
-      }
-    String(string) => Repr::ctor("String", [(None, Repr(string))])
-    Array(array) => Repr::ctor("Array", [(None, Repr(array))])
-    Object(object) => Repr::ctor("Object", [(None, Repr(object))])
-  }
-}
-
-///|
 pub impl Debug for SourceLoc with fn to_repr(self) {
   Repr::opaque_("SourceLoc", Repr::string(self.to_string()))
 }

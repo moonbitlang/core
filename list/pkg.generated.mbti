@@ -55,7 +55,7 @@ pub fn[A] List::from_iter(Iter[A]) -> Self[A]
 pub fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
 #as_free_fn(deprecated)
 #deprecated
-pub fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+pub fn[A : @json.FromJson] List::from_json(@json.Json) -> Self[A] raise @json.JsonDecodeError
 #alias(is_prefix, deprecated)
 pub fn[A : Eq] List::has_prefix(Self[A], Self[A]) -> Bool
 #alias(is_suffix, deprecated)
@@ -120,9 +120,9 @@ pub impl[A : Eq] Eq for List[A]
 pub impl[A : Hash] Hash for List[A]
 #deprecated
 pub impl[A : Show] Show for List[A]
-pub impl[A : ToJson] ToJson for List[A]
 pub impl[A : @debug.Debug] @debug.Debug for List[A]
 pub impl[A : @json.FromJson] @json.FromJson for List[A]
+pub impl[A : @json.ToJson] @json.ToJson for List[A]
 
 // Type aliases
 

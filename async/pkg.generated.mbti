@@ -7,6 +7,7 @@ import {
   "moonbitlang/core/async/semaphore",
   "moonbitlang/core/async/types",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -43,16 +44,16 @@ pub async fn[X] with_timeout_opt(Int32, async () -> X) -> X?
 // Errors
 pub(all) suberror BreakFromSpawnLoop
 
-pub suberror TimeoutError derive(ToJson, @debug.Debug)
+pub suberror TimeoutError derive(@debug.Debug, @json.ToJson)
 #deprecated
 pub impl Show for TimeoutError
 
-pub suberror TimerCancelled derive(ToJson, @debug.Debug)
+pub suberror TimerCancelled derive(@debug.Debug, @json.ToJson)
 #deprecated
 pub impl Show for TimerCancelled
 
 #alias(TaskCancelled, deprecated)
-pub suberror WaitedTaskAlreadyCancelled derive(ToJson, @debug.Debug)
+pub suberror WaitedTaskAlreadyCancelled derive(@debug.Debug, @json.ToJson)
 
 // Types and methods
 type Lazy[X]

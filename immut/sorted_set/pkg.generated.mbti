@@ -35,7 +35,7 @@ pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn(deprecated)
 #deprecated
-pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+pub fn[A : @json.FromJson + Compare] SortedSet::from_json(@json.Json) -> Self[A] raise @json.JsonDecodeError
 pub fn[A : Hash] SortedSet::hash(Self[A]) -> Int32
 #alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
@@ -76,9 +76,9 @@ pub impl[A : Hash] Hash for SortedSet[A]
 #deprecated
 pub impl[A : Show] Show for SortedSet[A]
 pub impl[A : Compare] Sub for SortedSet[A]
-pub impl[A : ToJson] ToJson for SortedSet[A]
 pub impl[K : @debug.Debug] @debug.Debug for SortedSet[K]
 pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A]
+pub impl[A : @json.ToJson] @json.ToJson for SortedSet[A]
 
 // Type aliases
 

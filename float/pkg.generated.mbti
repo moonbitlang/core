@@ -84,7 +84,6 @@ pub impl Mul for Float
 pub impl Neg for Float
 pub impl Show for Float
 pub impl Sub for Float
-pub impl ToJson for Float
 
 // Type aliases
 
