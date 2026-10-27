@@ -128,7 +128,7 @@ test "string comparison" {
 String views provide efficient substring operations without copying. A
 `String` stores UTF-16 code units, and a view is just a `{str, start, end}`
 window into those units. A character outside the Basic Multilingual Plane is
-stored as a surrogate pair. Both `s[start:end]` and `s.view(start~, end~)` clamp bounds
+stored as a surrogate pair. The `s[start:end]` slice syntax clamps both bounds
 to `[0, s.length()]` and trims split surrogate pairs inward: the start moves
 forward and the end moves backward. Negative offsets clamp to zero, and an
 inverted range produces an empty view. `StringView` uses the same rules with
@@ -144,15 +144,18 @@ panic, or `s.get_view(start~, end~)` to receive `None` for an invalid range.
 For a lossless split, use `s.split_at(i)`; `s[:i]` and `s[i:]` both exclude a
 character when `i` falls inside its surrogate pair.
 
-The `clamped_view(start~, end~)` name remains available with the same behavior.
-The old `sub` name is deprecated in favor of `exact_view`. For compatibility
-with compiler-generated `lexmatch`/`lexscan` calls, `view` also accepts
-`start_offset`/`end_offset`; these override `start`/`end` and use the same
-clamping rules. Prefer `start`/`end` in new code.
+`clamped_view(start~, end~)` is the named form of bracket slicing.
+`unsafe_view(start~, end~)` performs neither bounds checks nor surrogate-boundary
+checks or adjustments. The caller must ensure `0 <= start <= end <= length()`;
+invalid bounds can cause undefined behavior. Raw code-unit algorithms may use
+it to preserve split pairs, but must ensure well-formed UTF-16 before passing
+results to character-based APIs.
 
-Use `unsafe_view(start~, end~)` only for raw UTF-16 code-unit operations. It
-checks numeric bounds but skips surrogate-boundary checks and adjustments.
-Its caller must ensure well-formed UTF-16 before using character-based APIs.
+The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
+method retains its `start_offset`/`end_offset` labels and its numeric bounds
+checks, without checking surrogate boundaries. It will be deprecated after
+compiler-generated `lexmatch`/`lexscan` calls migrate to `unsafe_view`.
+New code should choose `clamped_view`, `exact_view`, or `unsafe_view` explicitly.
 
 ```d2
 direction: right

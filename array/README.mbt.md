@@ -92,15 +92,20 @@ test "sorting" {
 ## Array Views
 
 Array views provide a lightweight way to work with array slices. The
-`arr[start:end]` syntax and `arr.view(start~, end~)` clamp each bound to
-`[0, arr.length()]`; negative
+`arr[start:end]` syntax clamps each bound to `[0, arr.length()]`; negative
 bounds clamp to zero and inverted ranges produce empty views. Omitting either
 bound uses the corresponding end of the array. These rules also apply to
 `FixedArray`, `ReadOnlyArray`, `ArrayView`, and `MutArrayView`, with offsets
 relative to the current view. Use `arr.exact_view(start~, end~)` to require valid
 bounds, or `arr.get_view(start~, end~)` to return `None` for invalid bounds on
-types that provide it. `clamped_view` remains an alias for `view`. The old
-`sub` name is deprecated in favor of `exact_view`.
+types that provide it. The old `view` and `sub` names are deprecated in favor
+of `exact_view`.
+
+For bounds already validated by the caller, `unsafe_view(start~, end~)` creates
+an unchecked view. It requires `0 <= start <= end <= length()`; invalid bounds
+can cause undefined behavior. This explicit clamped/strict/unchecked split also
+applies to `UninitializedArray`, whose viewed elements must be initialized before
+reading. `mut_view` remains a separate, bounds-checked mutable-view operation.
 
 ```mbt check
 ///|

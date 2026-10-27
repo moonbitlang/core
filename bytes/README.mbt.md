@@ -90,10 +90,13 @@ test "bytes conversion" {
 
 ## Working with Views
 
-Use `bytes.view(start~, end~)` to clamp bounds, `bytes.exact_view(start~, end~)`
-to validate them, or `bytes.get_view(start~, end~)` to return `None` for invalid
-bounds. These methods are also available on `BytesView`. `clamped_view` remains
-an alias for `view`. The old `sub` name is deprecated in favor of `exact_view`.
+Use `bytes.exact_view(start~, end~)` to validate bounds, `bytes.get_view(start~, end~)`
+to return `None` for invalid bounds, or `bytes.clamped_view(start~, end~)` to clamp
+them. These methods are also available on `BytesView`. The old `view` and `sub`
+names are deprecated in favor of `exact_view`.
+For bounds already validated by the caller, `unsafe_view(start~, end~)` skips
+all bounds checks. It requires `0 <= start <= end <= length()`; violating that
+precondition can cause undefined behavior.
 
 Views provide a way to work with portions of bytes and interpret them as various numeric types:
 

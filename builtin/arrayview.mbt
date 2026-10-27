@@ -270,6 +270,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int32) -> T {
 /// }
 /// ```
 #intrinsic("%array.view")
+#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] Array::exact_view(
   self : Array[T],
@@ -363,6 +364,7 @@ pub fn[T] Array::get_view(
 /// }
 /// ```
 #intrinsic("%arrayview.view")
+#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] ArrayView::exact_view(
   self : ArrayView[T],
@@ -455,19 +457,19 @@ pub fn[T] ArrayView::get_view(
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   debug_inspect(
-///     arr.view(start=3, end=10),
+///     arr.clamped_view(start=3, end=10),
 ///     content=(
 ///       #|<ArrayView: [4, 5]>
 ///     ),
 ///   )
 ///   debug_inspect(
-///     arr.view(start=-2, end=2),
+///     arr.clamped_view(start=-2, end=2),
 ///     content=(
 ///       #|<ArrayView: [1, 2]>
 ///     ),
 ///   )
 ///   debug_inspect(
-///     arr.view(start=4, end=1),
+///     arr.clamped_view(start=4, end=1),
 ///     content=(
 ///       #|<ArrayView: []>
 ///     ),
@@ -475,8 +477,7 @@ pub fn[T] ArrayView::get_view(
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-pub fn[T] Array::view(
+pub fn[T] Array::clamped_view(
   self : Array[T],
   start~ : Int32 = 0,
   end? : Int32,
@@ -494,7 +495,7 @@ pub fn[T] Array::view(
 ///|
 /// Creates a new view into a portion of the array view, clamping the requested
 /// range instead of rejecting it. The indices are relative to the start of the
-/// current view; same contract as `Array::view`.
+/// current view; same contract as `Array::clamped_view`.
 /// Also available as `view[start:end]`. Use `ArrayView::exact_view` to validate bounds.
 ///
 /// Example:
@@ -503,13 +504,13 @@ pub fn[T] Array::view(
 /// test {
 ///   let view = [1, 2, 3, 4, 5][1:4] // [2, 3, 4]
 ///   debug_inspect(
-///     view.view(start=1, end=10),
+///     view.clamped_view(start=1, end=10),
 ///     content=(
 ///       #|<ArrayView: [3, 4]>
 ///     ),
 ///   )
 ///   debug_inspect(
-///     view.view(start=3, end=1),
+///     view.clamped_view(start=3, end=1),
 ///     content=(
 ///       #|<ArrayView: []>
 ///     ),
@@ -517,8 +518,7 @@ pub fn[T] Array::view(
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-pub fn[T] ArrayView::view(
+pub fn[T] ArrayView::clamped_view(
   self : ArrayView[T],
   start~ : Int32 = 0,
   end? : Int32,
@@ -567,6 +567,7 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 /// }
 /// ```
 #intrinsic("%fixedarray.view")
+#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] FixedArray::exact_view(
   self : FixedArray[T],
@@ -640,7 +641,7 @@ pub fn[T] FixedArray::get_view(
 
 ///|
 /// Creates a view of a portion of the fixed array, clamping the requested
-/// range instead of rejecting it. Same contract as `Array::view`.
+/// range instead of rejecting it. Same contract as `Array::clamped_view`.
 /// Also available as `arr[start:end]`. Use `FixedArray::exact_view` to validate bounds.
 ///
 /// Example:
@@ -649,13 +650,13 @@ pub fn[T] FixedArray::get_view(
 /// test {
 ///   let arr : FixedArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
-///     arr.view(start=3, end=10),
+///     arr.clamped_view(start=3, end=10),
 ///     content=(
 ///       #|<ArrayView: [4, 5]>
 ///     ),
 ///   )
 ///   debug_inspect(
-///     arr.view(start=4, end=1),
+///     arr.clamped_view(start=4, end=1),
 ///     content=(
 ///       #|<ArrayView: []>
 ///     ),
@@ -663,8 +664,7 @@ pub fn[T] FixedArray::get_view(
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(clamped_view)
-pub fn[T] FixedArray::view(
+pub fn[T] FixedArray::clamped_view(
   self : FixedArray[T],
   start~ : Int32 = 0,
   end? : Int32,

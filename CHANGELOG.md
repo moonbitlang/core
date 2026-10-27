@@ -6,6 +6,8 @@
 
 #### Added
 
+- Added `unsafe_view(start~, end~)` for built-in arrays, bytes, strings, and their views. It skips validation and requires valid bounds. `clamped_view` remains the named form of bracket slicing, `exact_view` remains strict, and legacy `view` behavior is preserved. String `view` deprecation awaits compiler migration.
+
 - Added `@cmp.Bound` (`Included`, `Excluded`, `Unbounded`) and `SortedMap::range_bounds`, `rev_range_bounds` and `rev_range` for bounded iteration.
 - Added `eprintln` for writing a line to standard error (#4222).
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
@@ -13,7 +15,6 @@
 
 #### Changed
 
-- **BREAKING**: `view(start~, end~)` now clamps bounds consistently across built-in sliceable types, matching bracket slicing. `clamped_view` remains available; use `exact_view` for strict bounds. String views snap split surrogate boundaries inward; use `unsafe_view` for bounds-checked raw UTF-16 slicing.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed
