@@ -73,10 +73,7 @@ fn ParseContext::lex_value(
       let s = ctx.lex_string()
       return String(s)
     }
-    Some(c) => {
-      let shift = -c.utf16_len()
-      ctx.invalid_char(shift~)
-    }
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
