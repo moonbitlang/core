@@ -27,7 +27,10 @@ async test "Only_V4 server" {
   let port = 8344
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let server = @socket.TcpServer(@socket.Addr::parse("0.0.0.0:\{port}"))
+    let server = @socket.TcpServer(
+      @socket.Addr::parse("0.0.0.0:\{port}"),
+      reuse_addr=true,
+    )
     root.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((conn, addr) => {
         let addr_str = addr.to_string()
@@ -86,6 +89,7 @@ async test "Only_V6 server" {
     let server = @socket.TcpServer(
       @socket.Addr::parse("[::]:\{port}"),
       dual_stack=false,
+      reuse_addr=true,
     )
     root.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((conn, addr) => {
