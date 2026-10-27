@@ -156,6 +156,58 @@ pub fn String::unsafe_substring(
 }
 
 ///|
+/// Compares two UTF-16 code unit ranges for equality.
+///
+/// Offsets and `len` count code units, not Unicode characters. Range boundaries
+/// may fall inside surrogate pairs: this only compares code units and does not
+/// construct a string or a `StringView`.
+///
+/// # Panics
+/// Panics if either offset or `len` is negative, or if either range extends
+/// beyond its string. An empty range at the end of a string is valid.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(
+///     "xhello".range_equal("hello!", self_off=1, other_off=0, len=5),
+///     content="true",
+///   )
+///   // These characters share their leading surrogate, but not their trailing one.
+///   inspect(
+///     "😀".range_equal("😁", self_off=0, other_off=0, len=1),
+///     content="true",
+///   )
+///   inspect(
+///     "😀".range_equal("😁", self_off=1, other_off=1, len=1),
+///     content="false",
+///   )
+/// }
+/// ```
+#borrow(self, other)
+pub fn String::range_equal(
+  self : String,
+  self_off~ : Int32,
+  other : String,
+  other_off~ : Int32,
+  len~ : Int32,
+) -> Bool {
+  let self_len = self.length()
+  let other_len = other.length()
+  // Validate offsets before subtracting, avoiding overflow in offset + len.
+  guard len >= 0 &&
+    self_off >= 0 &&
+    self_off <= self_len &&
+    other_off >= 0 &&
+    other_off <= other_len &&
+    len <= self_len - self_off &&
+    len <= other_len - other_off else {
+    abort("String::range_equal: invalid range")
+  }
+  self.unsafe_range_equal(other, self_off~, other_off~, len~)
+}
+
+///|
 /// **UNSAFE**: Compares two UTF-16 code unit ranges for equality without bounds
 /// checking.
 ///
@@ -165,6 +217,12 @@ pub fn String::unsafe_substring(
 /// - **No bounds checking**: caller must ensure both ranges
 ///   `[self_off, self_off + len)` and `[other_off, other_off + len)` are fully
 ///   within their respective strings.
+/// - Both offsets and `len` must be nonnegative. An empty range at the end of
+///   a string is valid.
+///
+/// Range boundaries may fall inside surrogate pairs: this only compares code
+/// units and does not construct a string or a `StringView`. Use `range_equal`
+/// to check the range bounds.
 ///
 /// # Parameters
 /// - `self`, `other`: the two strings
@@ -190,7 +248,7 @@ pub fn String::unsafe_substring(
 #borrow(self, other)
 #cfg(target="wasm")
 #intrinsic("%string.unsafe_range_equal")
-fn String::unsafe_range_equal(
+pub fn String::unsafe_range_equal(
   self : String,
   self_off~ : Int32,
   other : String,
@@ -209,10 +267,23 @@ fn String::unsafe_range_equal(
 }
 
 ///|
+/// Compares two UTF-16 code unit ranges for equality without bounds checking.
+///
+/// Offsets and `len` count code units, not Unicode characters. Range boundaries
+/// may fall inside surrogate pairs: this only compares code units and does not
+/// construct a string or a `StringView`.
+///
+/// # Safety
+/// Both offsets and `len` must be nonnegative, and both ranges
+/// `[self_off, self_off + len)` and `[other_off, other_off + len)` must be fully
+/// within their respective strings. An empty range at the end of a string is
+/// valid. Violating these requirements causes undefined behavior.
+///
+/// Use `range_equal` to check the range bounds.
 #borrow(self, other)
 #cfg(not(target="wasm"))
 #intrinsic("%string.unsafe_range_equal")
-fn String::unsafe_range_equal(
+pub fn String::unsafe_range_equal(
   self : String,
   self_off~ : Int32,
   other : String,

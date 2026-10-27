@@ -577,6 +577,7 @@ pub fn String::make(Int32, Char) -> String
 pub fn String::offset_of_nth_char(String, Int32, start_offset? : Int32, end_offset? : Int32) -> Int32?
 pub fn String::pad_end(String, Int32, Char) -> String
 pub fn String::pad_start(String, Int32, Char) -> String
+pub fn String::range_equal(String, self_off~ : Int32, String, other_off~ : Int32, len~ : Int32) -> Bool
 pub fn String::repeat(String, Int32) -> String
 pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
@@ -615,6 +616,7 @@ pub fn String::trim_space(String) -> StringView
 pub fn String::trim_start(String, chars? : StringView) -> StringView
 #deprecated
 pub fn String::unsafe_char_at(String, Int32) -> Char
+pub fn String::unsafe_range_equal(String, self_off~ : Int32, String, other_off~ : Int32, len~ : Int32) -> Bool
 pub fn String::unsafe_substring(String, start~ : Int32, end~ : Int32) -> String
 pub fn String::view(String, start_offset? : Int32, end_offset? : Int32) -> StringView
 pub impl Add for String
