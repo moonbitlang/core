@@ -17,36 +17,36 @@ async test "ReadableStream roundtrip" {
   let log = []
   let (r, w) = @js_async.JsReadableStream::new_pipe()
   let r = @js_async.ReadableStream::from_js(r)
+  let start_reading = @async.Cond()
   @async.with_task_group() <| group => {
-    let start = @async.now()
-    fn tick() {
-      ((@async.now() - start).to_int() + 50) / 200
-    }
     group.spawn_bg() <| () => {
       defer w.close()
       async fn write(msg : String) {
         w.write(@utf8.encode(msg))
-        log.push("writer: \{msg} at tick #\{tick()}")
+        log.push("writer: \{msg}")
       }
       write("message1")
       write("message2")
+      group.spawn_bg() <| () => {
+        @async.sleep(200)
+        start_reading.signal()
+      }
       // there should be back pressure here
       write("message3")
-      @async.sleep(400)
+      @async.sleep(200)
       write("message4")
     }
     group.spawn_bg() <| () => {
       defer r.close()
-      @async.sleep(200)
+      start_reading.wait()
       while r.read() is Some(data) {
-        log.push("reader: \{@utf8.decode(data)} at tick #\{tick()}")
+        log.push("reader: \{@utf8.decode(data)}")
       }
     }
   }
   json_inspect(log, content=[
-    "writer: message1 at tick #0", "writer: message2 at tick #0", "reader: message1 at tick #1",
-    "writer: message3 at tick #1", "reader: message2 at tick #1", "reader: message3 at tick #1",
-    "writer: message4 at tick #3", "reader: message4 at tick #3",
+    "writer: message1", "writer: message2", "reader: message1", "writer: message3",
+    "reader: message2", "reader: message3", "writer: message4", "reader: message4",
   ])
 }
 

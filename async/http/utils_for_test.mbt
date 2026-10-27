@@ -81,7 +81,7 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
           log.write_string("server: sending \{meth} response part 1\n")
           conn.text.write("\{meth} response part 1\n")
           conn.flush()
-          @async.sleep(100)
+          @async.sleep(300)
           log.write_string("server: sending \{meth} response part 2\n")
           conn.text.write("\{meth} response part 2\n")
           conn.flush()
@@ -90,7 +90,7 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
           conn
           ..send_response(100, "CONTINUE", extra_headers={ "Info": "round1" })
           .end_response()
-          @async.sleep(100)
+          @async.sleep(300)
           conn
           ..send_response(100, "CONTINUE", extra_headers={ "Info": "round2" })
           .end_response()
