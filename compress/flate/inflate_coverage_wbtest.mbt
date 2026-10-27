@@ -41,7 +41,9 @@ fn coverage_dynamic_header(
 ///|
 /// Both decoder implementations must reject the same complete malformed stream.
 fn expect_corrupt_stream(data : Bytes) -> Unit raise {
-  let InflateError(kind, _) = @test.expect_error(() => inflate_prefix(data))
+  let InflateError(kind, _) = @test.expect_error(() => {
+    inflate(data, mode=Prefix)
+  })
   @test.assert_eq(kind, Corrupt)
   let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
@@ -212,7 +214,9 @@ test "both inflaters reject a back-reference before the window" {
 /// the incomplete atomic tail so the caller may drop the supplied byte.
 test "stored header truncation stages streaming input" {
   let truncated : Bytes = [0x01]
-  let InflateError(kind, _) = @test.expect_error(() => inflate_prefix(truncated))
+  let InflateError(kind, _) = @test.expect_error(() => {
+    inflate(truncated, mode=Prefix)
+  })
   @test.assert_eq(kind, Truncated)
   let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
@@ -256,7 +260,9 @@ test "both inflaters reject a stored length mismatch" {
 /// mode but leaves its first Huffman symbol incomplete.
 test "fixed-symbol truncation suspends only the streaming inflater" {
   let truncated : Bytes = [0x03]
-  let InflateError(kind, _) = @test.expect_error(() => inflate_prefix(truncated))
+  let InflateError(kind, _) = @test.expect_error(() => {
+    inflate(truncated, mode=Prefix)
+  })
   @test.assert_eq(kind, Truncated)
   let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')

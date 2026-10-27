@@ -87,7 +87,7 @@ test "fast store propagates through gzip zlib and their streaming encoders" {
   let bytes = optional_store_stream(input, (src, dst, action) => {
     raw.step(src, dst, action~)
   })
-  @test.assert_eq(@flate.inflate_prefix(bytes), input)
+  @test.assert_eq(@flate.inflate(bytes, mode=Prefix).data, input)
   @test.assert_eq(bytes.length() > input.length(), true)
   let gzip = @gzip.Encoder(fast_store=true)
   let bytes = optional_store_stream(input, (src, dst, action) => {

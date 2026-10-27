@@ -131,7 +131,7 @@ pub fn compress(
 /// bytes (default: `Bytes` capacity); exceeding it raises `OutputLimitExceeded`,
 /// a negative value `InvalidArgument`. Supply `dictionary` for an FDICT stream.
 /// `cancelled` is polled at entry, every
-/// 8 KiB decoded and every 4 KiB checksummed; true raises `Cancelled`.
+/// 4 KiB decoded or checksummed; true raises `Cancelled`.
 pub fn decompress(
   input : BytesView,
   dictionary? : BytesView,
@@ -169,63 +169,19 @@ pub fn decompress(
   } else {
     None
   }
-  let out = match dict {
-    None =>
-      @flate.inflate_exact(input[2:n - 4], max_output?, cancelled?) catch {
-        error => raise wrap_inflate_error(error)
-      }
-    Some(dictionary) =>
-      inflate_dictionary(input[6:n - 4], dictionary, max_output, cancelled)
-  }
+  let payload_start = if dict is Some(_) { 6 } else { 2 }
+  let out = (@flate.inflate(
+      input[payload_start:n - 4],
+      dictionary?=dict,
+      max_output?,
+      cancelled?,
+    ) catch {
+      error => raise wrap_inflate_error(error)
+    }).data
   guard adler32_cancellable(out, cancelled) == u32_be(input, n - 4) else {
     raise ZlibError(ChecksumMismatch, "zlib: Adler-32 mismatch")
   }
   out
-}
-
-///|
-/// The dictionary path uses the incremental engine's seeded history.
-fn inflate_dictionary(
-  input : BytesView,
-  dictionary : BytesView,
-  max_output : Int32?,
-  cancelled : (() -> Bool)?,
-) -> Bytes raise ZlibError {
-  let decoder = @flate.IncrementalDecoder(dictionary~)
-  let scratch = FixedArray::make(8192, b'\x00')
-  let output = @buffer.Buffer()
-  let limit = max_output.unwrap_or(0x7fff_ffff)
-  let mut pos = 0
-  for ;; {
-    if cancelled is Some(callback) && callback() {
-      raise ZlibError(Cancelled, "zlib: cancelled by caller")
-    }
-    let result = decoder.step(input[pos:], scratch.mut_view()) catch {
-      error => raise wrap_inflate_error(error)
-    }
-    pos += result.consumed
-    guard result.produced <= limit - output.length() else {
-      raise ZlibError(
-        OutputLimitExceeded(
-          limit=limit.to_uint64(),
-          observed=output.length().to_uint64() + result.produced.to_uint64(),
-        ),
-        "zlib: decoded output exceeds its byte limit",
-      )
-    }
-    output.write_bytes(Bytes::from_array(scratch[:result.produced]))
-    match result.status {
-      Done => {
-        guard pos == input.length() else {
-          raise ZlibError(TrailingData, "zlib: trailing DEFLATE data")
-        }
-        return output.to_bytes()
-      }
-      NeedMoreOutput => ()
-      NeedMoreInput =>
-        raise ZlibError(Truncated, "zlib: truncated DEFLATE data")
-    }
-  }
 }
 
 ///|

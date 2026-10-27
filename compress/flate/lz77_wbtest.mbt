@@ -554,7 +554,7 @@ test "reused compressors preserve output across failed and empty generations" {
     )
     let compressed = codec.compress(input)
     @test.assert_eq(compressed, deflate_all(input))
-    @test.assert_eq(inflate_prefix(compressed), input)
+    @test.assert_eq(inflate(compressed, mode=Prefix).data, input)
   }
 }
 

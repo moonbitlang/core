@@ -33,7 +33,7 @@ no ownership conversion at the call site:
 test "README raw DEFLATE round-trip" {
   let source = b"runtime-agnostic streaming compression"
   let compressed = @flate.deflate_all(source)
-  @test.assert_eq(@flate.inflate_prefix(compressed), source)
+  @test.assert_eq(@flate.inflate(compressed, mode=Prefix).data, source)
 }
 ```
 
@@ -68,15 +68,16 @@ test "README caller-buffer DEFLATE" {
 
 `deflate_into` and `inflate_into` are single-use convenience forms of these methods.
 `inflate_into` and `Decompressor::decompress_into` return `DecompressResult` with
-`consumed` and `produced`. Trailing bytes are ignored; `consumed` locates their
-start. Use the streaming APIs when input or output must suspend.
+`consumed` and `produced`. The default `mode=Exact` rejects trailing bytes;
+use `mode=Prefix` to leave them unread, with `consumed` locating their start.
+Use the streaming APIs when input or output must suspend.
 
 `Compressor::compress(input)` returns independent `Bytes` and reuses its
 workspace across calls, without requiring a caller-owned output buffer.
 `Decompressor::decompress(input)` is its counterpart: the output grows as in
-`inflate_prefix`, returning owned `data` and the input `consumed`. That is how
-to read a stream of unknown length from the front of a buffer and go on behind
-it:
+`inflate`, returning `Decompressed` with owned `data` and the input `consumed`.
+Pass `mode=Prefix` to read a stream of unknown length from the front of a
+buffer and go on behind it:
 
 ```mbt check
 ///|
@@ -85,7 +86,7 @@ test "README prefix decode" {
   let payload = b"the stream ends with its final block"
   let record = @flate.deflate_all(payload) + b"what follows"
   let decompressor = @flate.Decompressor()
-  let result = decompressor.decompress(record)
+  let result = decompressor.decompress(record, mode=Prefix)
   @test.assert_eq(result.data, payload)
   let rest = record[result.consumed:]
   @test.assert_eq(rest.to_owned(), b"what follows")
@@ -121,7 +122,10 @@ test "README streaming IncrementalEncoder" {
       break
     }
   }
-  @test.assert_eq(@flate.inflate_prefix(compressed.to_bytes()), source)
+  @test.assert_eq(
+    @flate.inflate(compressed.to_bytes(), mode=Prefix).data,
+    source,
+  )
 }
 ```
 
@@ -175,8 +179,25 @@ test "README streaming IncrementalEncoder" {
 
 ### Exact and bounded one-shot decoding
 
-`inflate_prefix` and `Decompressor::decompress` accept a raw DEFLATE prefix;
-`inflate_exact` rejects trailing bytes. These and gzip/zlib `decompress` accept
+`inflate` and the reusable `Decompressor` methods default to `mode=Exact`,
+which rejects trailing bytes with `TrailingData`. Set `mode=Prefix` to stop at
+the first final block and use the returned `consumed` count to find the suffix.
+The whole-buffer signatures are:
+
+```text
+inflate(input, mode?=Exact, dictionary?, max_output?, cancelled?, two_pass?=false) -> Decompressed
+inflate_into(input, output, mode?=Exact, dictionary?, cancelled?) -> DecompressResult
+Decompressor::decompress(self, input, mode?=Exact, max_output?, cancelled?) -> Decompressed
+Decompressor::decompress_into(self, input, output, mode?=Exact, cancelled?) -> DecompressResult
+```
+
+`Decompressed` contains owned `data` and `consumed`; `DecompressResult` contains
+`consumed` and `produced`. All four calls raise `InflateError` on failure.
+Construct `Decompressor(dictionary=...)` to own the dictionary's final 32 KiB
+and reuse it independently for each stream. Dictionary history is not part of
+returned data, output limits, or produced counts. Raw DEFLATE has no dictionary
+checksum; a wrong dictionary is not guaranteed to be detected.
+`inflate`, `Decompressor::decompress`, and gzip/zlib `decompress` accept
 `max_output` and `cancelled`. gzip counts output across all members; zlib
 accepts `dictionary` on both `compress` and `decompress`. The compressor uses
 the last 32 KiB as history and records the full dictionary checksum.
@@ -187,7 +208,7 @@ test "README exact and limited inflate" {
   let source = b"bounded convenience API"
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(
-    @flate.inflate_exact(compressed, max_output=source.length()),
+    @flate.inflate(compressed, max_output=source.length()).data,
     source,
   )
 }
@@ -197,14 +218,15 @@ Omitting `max_output` permits output up to the capacity of `Bytes`; negative
 limits raise `InvalidArgument`. `OutputLimitExceeded(limit~, observed~)` carries
 `UInt64` counts. `observed` includes the rejected chunk or match, not necessarily
 the complete decoded size or bytes written. For `*_into`, the limit is the
-output buffer's capacity.
+output buffer's capacity. These calls are not transactional: an error, including
+`TrailingData`, may leave bytes written inside the supplied output view.
 
 A `cancelled` callback returning true raises `Cancelled`. It is polled regularly
 during decoding and, for gzip/zlib, checksum verification; gzip also polls while
 scanning headers and joining members. A failed `Decompressor` remains reusable
 and returned results remain independent of later calls.
 
-`inflate_exact(two_pass=true)` counts and validates first, then decodes into
+`inflate(two_pass=true)` counts and validates first, then decodes into
 one exactly sized allocation. It trades a second decode pass for lower peak
 memory; the default grows the output in one pass.
 
@@ -412,10 +434,10 @@ across its encoding and decoding paths:
 | Streaming decompression | `inflate.mbt` |
 | Shared decoding tables and validation | `huffman_table.mbt`, `tables.mbt`, `decode_rules.mbt` |
 
-Unbounded `inflate_prefix` uses the direct `MemDecoder` path, and so does
-`inflate_exact` called with the input alone. Bounded `inflate_prefix`, and
-`inflate_exact` with a limit, a callback or `two_pass`, drive the streaming
-inflater.
+One-pass `inflate` uses the direct `MemDecoder` path for every combination of
+mode, dictionary, output limit, and cancellation callback. `inflate(two_pass=true)`
+drives `IncrementalDecoder` to count and validate, then decode into one exactly
+sized allocation.
 `Decompressor::decompress_into` uses the direct decoder with caller-owned
 output, `Decompressor::decompress` with an output that grows.
 Differential tests compare one-shot and streaming decoding across randomized

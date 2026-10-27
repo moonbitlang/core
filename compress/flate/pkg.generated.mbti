@@ -12,11 +12,9 @@ pub fn deflate_bound(Int32, strategy? : Strategy) -> Int32
 
 pub fn deflate_into(BytesView, MutArrayView[Byte], strategy? : Strategy, dictionary? : BytesView, fast_store? : Bool) -> Int32?
 
-pub fn inflate_exact(BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Bytes raise InflateError
+pub fn inflate(BytesView, mode? : InputMode, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
 
-pub fn inflate_into(BytesView, MutArrayView[Byte], cancelled? : () -> Bool) -> DecompressResult raise InflateError
-
-pub fn inflate_prefix(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise InflateError
+pub fn inflate_into(BytesView, MutArrayView[Byte], mode? : InputMode, dictionary? : BytesView, cancelled? : () -> Bool) -> DecompressResult raise InflateError
 
 // Errors
 pub suberror InflateError {
@@ -42,9 +40,9 @@ pub struct Decompressed {
 pub fn Decompressed::equal(Self, Self) -> Bool
 
 type Decompressor
-pub fn Decompressor::Decompressor() -> Self
-pub fn Decompressor::decompress(Self, BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Decompressed raise InflateError
-pub fn Decompressor::decompress_into(Self, BytesView, MutArrayView[Byte], cancelled? : () -> Bool) -> DecompressResult raise InflateError
+pub fn Decompressor::Decompressor(dictionary? : BytesView) -> Self
+pub fn Decompressor::decompress(Self, BytesView, mode? : InputMode, max_output? : Int32, cancelled? : () -> Bool) -> Decompressed raise InflateError
+pub fn Decompressor::decompress_into(Self, BytesView, MutArrayView[Byte], mode? : InputMode, cancelled? : () -> Bool) -> DecompressResult raise InflateError
 
 pub(all) enum DeflateAction {
   Continue
@@ -74,6 +72,12 @@ pub(all) enum InflateErrorKind {
   InvalidArgument
 } derive(Eq, @debug.Debug)
 pub fn InflateErrorKind::equal(Self, Self) -> Bool
+
+pub(all) enum InputMode {
+  Exact
+  Prefix
+} derive(Eq, @debug.Debug)
+pub fn InputMode::equal(Self, Self) -> Bool
 
 pub(all) enum Status {
   Done

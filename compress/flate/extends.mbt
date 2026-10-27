@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+pub extend InputMode with Eq::{equal}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend InputMode with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend InputMode with @debug.Debug::{to_repr}
+
+///|
 pub extend InflateErrorKind with Eq::{equal}
 
 ///|

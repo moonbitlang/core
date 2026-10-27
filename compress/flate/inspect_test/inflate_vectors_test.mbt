@@ -73,6 +73,6 @@ test "inflate standard stored fixed and dynamic vectors" {
       (v_dynamic_text, dynamic_plain),
       (v_stored_seq, Bytes::makei(60, i => i.to_byte())),
     ] {
-    @test.assert_eq(@flate.inflate_prefix(compressed), plain)
+    @test.assert_eq(@flate.inflate(compressed, mode=Prefix).data, plain)
   }
 }

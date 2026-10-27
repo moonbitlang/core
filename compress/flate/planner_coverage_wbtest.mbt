@@ -32,9 +32,10 @@ test "compression levels clamp at both public boundaries" {
   @test.assert_eq(low.level, 0)
   @test.assert_eq(high.level, 9)
   @test.assert_eq(
-    inflate_prefix(
+    inflate(
       deflate_all(b"iteration clamp", strategy=Optimal(iterations=0)),
-    ),
+      mode=Prefix,
+    ).data,
     b"iteration clamp",
   )
 }
@@ -82,7 +83,7 @@ test "optimal planner crosses its master-block boundary" {
     Array::make(OPTIMAL_MASTER_BLOCK + MIN_LOOKAHEAD + 1, b'\x41'),
   )
   let compressed = deflate_all(source, strategy=Optimal(iterations=1))
-  @test.assert_eq(inflate_prefix(compressed), source)
+  @test.assert_eq(inflate(compressed, mode=Prefix).data, source)
 }
 
 ///|
@@ -120,5 +121,8 @@ test "split planner cuts and resets observations across literal-class changes" {
     start = end
   }
   writer.flush()
-  @test.assert_eq(inflate_prefix(Bytes::from_array(writer.out)), data)
+  @test.assert_eq(
+    inflate(Bytes::from_array(writer.out), mode=Prefix).data,
+    data,
+  )
 }

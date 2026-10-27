@@ -39,7 +39,7 @@ test "Strategy constructors preserve defaults and explicit tuning" {
   )
   let input = b"default strategy default strategy"
   for strategy in [@flate.Strategy::split(), @flate.Strategy::optimal()] {
-    assert_eq(@flate.inflate_exact(@flate.deflate_all(input, strategy~)), input)
+    assert_eq(@flate.inflate(@flate.deflate_all(input, strategy~)).data, input)
     assert_eq(@gzip.decompress(@gzip.compress(input, strategy~)), input)
     assert_eq(@zlib.decompress(@zlib.compress(input, strategy~)), input)
   }
@@ -58,7 +58,7 @@ test "Optimal strategy round-trips and beats greedy" {
   }
   let src = Bytes::from_array(arr)
   let opt = @flate.deflate_all(src, strategy=Optimal(iterations=8))
-  @test.assert_eq(@flate.inflate_prefix(opt), src)
+  @test.assert_eq(@flate.inflate(opt, mode=Prefix).data, src)
   assert_true(opt.length() <= @flate.deflate_all(src).length())
 }
 
@@ -82,7 +82,7 @@ test "Optimal strategy splits heterogeneous data" {
   }
   let src = Bytes::from_array(arr)
   let opt = @flate.deflate_all(src, strategy=Optimal(iterations=5))
-  @test.assert_eq(@flate.inflate_prefix(opt), src)
+  @test.assert_eq(@flate.inflate(opt, mode=Prefix).data, src)
   assert_true(
     opt.length() <=
     @flate.deflate_all(src, strategy=Standard(level=9)).length() + 16,

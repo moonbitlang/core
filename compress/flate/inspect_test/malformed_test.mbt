@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "inflate_prefix rejects malformed block structure with the correct category" {
+test "prefix inflate rejects malformed block structure with the correct category" {
   for
     (input, expected) in [
       (b"", @flate.Truncated),
@@ -23,7 +23,7 @@ test "inflate_prefix rejects malformed block structure with the correct category
       (b"\x05\x00\x00\x00\x00", Corrupt), // empty code-length alphabet
     ] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_prefix(input)
+      @flate.inflate(input, mode=Prefix)
     })
     @test.assert_eq(kind, expected)
   }

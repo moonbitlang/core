@@ -47,7 +47,11 @@ test "Decompressor returns both byte counts and preserves trailing input" {
       let input = around[3:3 + raw.length() + tail.length()]
       for slack in [0, 300] {
         let output = FixedArray::make(plain.length() + slack, b'\xA5')
-        let result = decoder.decompress_into(input, output.mut_view())
+        let result = decoder.decompress_into(
+          input,
+          output.mut_view(),
+          mode=Prefix,
+        )
         @test.assert_eq(result.produced, plain.length())
         @test.assert_eq(result.consumed, raw.length())
         @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
@@ -55,7 +59,11 @@ test "Decompressor returns both byte counts and preserves trailing input" {
           @test.assert_eq(output[i], b'\xA5')
         }
       }
-      let result = decoder.decompress(input, max_output=plain.length())
+      let result = decoder.decompress(
+        input,
+        mode=Prefix,
+        max_output=plain.length(),
+      )
       @test.assert_eq(result.data, plain)
       @test.assert_eq(result.consumed, raw.length())
     }
@@ -121,7 +129,7 @@ test "Decompressor can be reused after truncated prefixes" {
   let behind = raw + raw
   for cut in 0..<raw.length() {
     @test.assert_eq(
-      decoder.decompress_into(behind, output.mut_view()).produced,
+      decoder.decompress_into(behind, output.mut_view(), mode=Prefix).produced,
       3,
     )
     @test.assert_eq(Bytes::from_array(output[:3]), b"abc")
@@ -136,7 +144,7 @@ test "Decompressor can be reused after truncated prefixes" {
 test "decompress and decompress_into take turns on one decompressor" {
   let decoder = @flate.Decompressor()
   for (raw, plain) in consumed_streams() {
-    let result = decoder.decompress(raw + b"behind")
+    let result = decoder.decompress(raw + b"behind", mode=Prefix)
     @test.assert_eq(result.data, plain)
     @test.assert_eq(result.consumed, raw.length())
     if plain.length() > 0 {
@@ -170,4 +178,47 @@ test "decompress and decompress_into take turns on one decompressor" {
     decoder.decompress(b"", max_output=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
+}
+
+///|
+test "whole-buffer input modes agree on exact and prefix boundaries" {
+  let decoder = @flate.Decompressor()
+  for (raw, plain) in consumed_streams() {
+    let framed = b"PAD" + raw + b"TRAILER"
+    let input = framed[3:]
+    for two_pass in [false, true] {
+      let result = @flate.inflate(input, mode=Prefix, two_pass~)
+      assert_eq(result.data, plain)
+      assert_eq(result.consumed, raw.length())
+      assert_eq(input[result.consumed:].to_owned(), b"TRAILER")
+      let exact = @flate.inflate(raw, two_pass~)
+      assert_eq(exact, result)
+      let InflateError(kind, _) = @test.expect_error(() => {
+        @flate.inflate(input, two_pass~)
+      })
+      assert_eq(kind, TrailingData)
+      let InflateError(kind, _) = @test.expect_error(() => {
+        @flate.inflate(input, mode=Exact, two_pass~)
+      })
+      assert_eq(kind, TrailingData)
+    }
+    let output = FixedArray::make(plain.length(), b'\x00')
+    let InflateError(kind, _) = @test.expect_error(() => {
+      @flate.inflate_into(input, output.mut_view())
+    })
+    assert_eq(kind, TrailingData)
+    let counts = @flate.inflate_into(input, output.mut_view(), mode=Prefix)
+    assert_eq(counts.consumed, raw.length())
+    assert_eq(counts.produced, plain.length())
+    assert_eq(Bytes::from_array(output), plain)
+    let InflateError(kind, _) = @test.expect_error(() => {
+      decoder.decompress(input)
+    })
+    assert_eq(kind, TrailingData)
+    let InflateError(kind, _) = @test.expect_error(() => {
+      decoder.decompress_into(input, output.mut_view())
+    })
+    assert_eq(kind, TrailingData)
+    assert_eq(decoder.decompress(raw).data, plain)
+  }
 }
