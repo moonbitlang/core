@@ -21,12 +21,14 @@
 /// same value can be passed to successive `lexscan` expressions.
 ///
 /// Both `data` offsets and `cursor` are measured in UTF-16 code units. The
-/// cursor is relative to `data`: it starts at `0` and remains in the range
-/// `0..=data.length()`. A `StringView` slice is therefore a valid input, and
-/// scanning it does not read outside the slice.
+/// cursor is relative to `data`: it is in the range `0..=data.length()` and
+/// never inside a surrogate pair. A `StringView` slice is therefore a valid
+/// input, and scanning it does not read outside the slice.
+///
+/// Create a scanner with `StringScanner(data)`, which checks the cursor.
 ///
 /// ```mbt nocheck
-/// let scanner = @lexbuf.StringScanner::{ data: "hello 42"[:], cursor: 0, }
+/// let scanner = @lexbuf.StringScanner("hello 42")
 ///
 /// let token = lexscan scanner {
 ///   re"^[a-z]+" as word => word
@@ -39,4 +41,47 @@ pub(all) struct StringScanner {
   data : StringView
   /// The relative offset of the next code unit to scan, in UTF-16 code units.
   mut cursor : Int32
+}
+
+///|
+/// Creates a scanner over `data` that starts at `cursor`, a UTF-16 code-unit
+/// offset relative to `data` (`0` by default).
+///
+/// # Panics
+///
+/// - If `cursor` is outside `0..=data.length()`.
+/// - If `cursor` is inside a surrogate pair of `data`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let scanner = @lexbuf.StringScanner("ab\u{1F600}c", cursor=2)
+///   inspect(scanner.cursor, content="2")
+/// }
+/// ```
+pub fn StringScanner::StringScanner(
+  data : StringView,
+  cursor~ : Int32 = 0,
+) -> StringScanner {
+  guard cursor >= 0 && cursor <= data.length() else {
+    abort("StringScanner: cursor is out of range")
+  }
+  guard cursor == data.length() ||
+    !data.unsafe_get(cursor).is_trailing_surrogate() else {
+    abort("StringScanner: cursor is inside a surrogate pair")
+  }
+  { data, cursor, }
+}
+
+///|
+/// Compiler protocol: sets the cursor without checking it. Generated `lexscan`
+/// code calls this to commit the end of a match, which is always in range and
+/// at a character boundary.
+#doc(hidden)
+pub fn StringScanner::__unsafe_set_cursor(
+  self : StringScanner,
+  cursor : Int32,
+) -> Unit {
+  self.cursor = cursor
 }
