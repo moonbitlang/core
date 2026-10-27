@@ -588,7 +588,7 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
+pub fn Buffer::write_int16_be(self : Buffer, value : @int16.Int16) -> Unit {
   self.write_uint16_be(value.reinterpret_as_uint16())
 }
 
@@ -615,7 +615,7 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
+pub fn Buffer::write_int16_le(self : Buffer, value : @int16.Int16) -> Unit {
   self.write_uint16_le(value.reinterpret_as_uint16())
 }
 
@@ -698,7 +698,7 @@ pub fn Buffer::write_double_le(self : Buffer, value : Double) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_float_be(self : Buffer, value : Float) -> Unit {
+pub fn Buffer::write_float_be(self : Buffer, value : @float.Float) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
@@ -726,7 +726,7 @@ pub fn Buffer::write_float_be(self : Buffer, value : Float) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
+pub fn Buffer::write_float_le(self : Buffer, value : @float.Float) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }
 

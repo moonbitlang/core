@@ -25,7 +25,7 @@ pub impl Debug for Int32 with fn to_repr(self) {
 }
 
 ///|
-pub impl Debug for Int16 with fn to_repr(self) {
+pub impl Debug for @int16.Int16 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
@@ -55,7 +55,7 @@ pub impl Debug for Double with fn to_repr(self) {
 }
 
 ///|
-pub impl Debug for Float with fn to_repr(self) {
+pub impl Debug for @float.Float with fn to_repr(self) {
   Repr::float(self)
 }
 

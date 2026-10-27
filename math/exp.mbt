@@ -25,22 +25,22 @@
 //
 
 ///|
-fn top12(x : Float) -> UInt32 {
+fn top12(x : @float.Float) -> UInt32 {
   x.reinterpret_as_uint() >> 20
 }
 
 ///|
-fn __math_xflowf(sign : UInt32, y : Float) -> Float {
+fn __math_xflowf(sign : UInt32, y : @float.Float) -> @float.Float {
   return (if sign != 0 { -y } else { y }) * y
 }
 
 ///|
-fn __math_oflowf(sign : UInt32) -> Float {
+fn __math_oflowf(sign : UInt32) -> @float.Float {
   return __math_xflowf(sign, 0x1.0p97)
 }
 
 ///|
-fn __math_uflowf(sign : UInt32) -> Float {
+fn __math_uflowf(sign : UInt32) -> @float.Float {
   return __math_xflowf(sign, 0x1.0p-95)
 }
 
@@ -105,7 +105,7 @@ let exp2f_data : Exp2fData = {
 ///   inspect(@math.expf(@float.neg_infinity), content="0")
 /// }
 /// ```
-pub fn expf(x : Float) -> Float {
+pub fn expf(x : @float.Float) -> @float.Float {
   let xd = x.to_double()
   let abstop = top12(x) & 0x7ff
   if abstop >= top12(88.0) {
@@ -135,7 +135,7 @@ pub fn expf(x : Float) -> Float {
   let y = exp2f_data.poly_scaled[2] * r + 1
   let y = z * r2 + y
   let y = y * s
-  Float::from_double(y)
+  @float.Float::from_double(y)
 }
 
 ///|
@@ -175,13 +175,13 @@ pub fn expf(x : Float) -> Float {
 ///   inspect(@math.expm1f(@float.neg_infinity), content="-1")
 /// }
 /// ```
-pub fn expm1f(x : Float) -> Float {
-  let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
-  let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
-  let inv_ln2 : Float = 1.4426950216e+00 // 0x3fb8aa3b
+pub fn expm1f(x : @float.Float) -> @float.Float {
+  let float_ln2_hi : @float.Float = 6.9314575195e-01 // 0x3f317200
+  let float_ln2_lo : @float.Float = 1.4286067653e-06 // 0x35bfbe8e
+  let inv_ln2 : @float.Float = 1.4426950216e+00 // 0x3fb8aa3b
   let mut x = x
-  let q1 : Float = -3.3333212137e-2 // -0x888868.0p-28
-  let q2 : Float = 1.5807170421e-3 //  0xcf3010.0p-33
+  let q1 : @float.Float = -3.3333212137e-2 // -0x888868.0p-28
+  let q2 : @float.Float = 1.5807170421e-3 //  0xcf3010.0p-33
   let mut hx = x.reinterpret_as_uint()
   let sign = hx >> 31 != 0
   hx = hx & 0x7fffffff
@@ -202,9 +202,9 @@ pub fn expm1f(x : Float) -> Float {
     }
   }
   let mut k : Int32 = 0
-  let mut hi : Float = 0
-  let mut lo : Float = 0
-  let mut c : Float = 0
+  let mut hi : @float.Float = 0
+  let mut lo : @float.Float = 0
+  let mut c : @float.Float = 0
   // argument reduction
   if hx > 0x3eb17218 {
     // if  |x| > 0.5 ln2
@@ -221,8 +221,8 @@ pub fn expm1f(x : Float) -> Float {
       }
     } else {
       k = (inv_ln2 * x + (if sign { -0.5 } else { 0.5 })).to_int()
-      hi = x - Float::from_int(k) * float_ln2_hi // t*ln2_hi is exact here
-      lo = Float::from_int(k) * float_ln2_lo
+      hi = x - @float.Float::from_int(k) * float_ln2_hi // t*ln2_hi is exact here
+      lo = @float.Float::from_int(k) * float_ln2_lo
     }
     x = hi - lo
     c = hi - x - lo
@@ -258,7 +258,7 @@ pub fn expm1f(x : Float) -> Float {
     }
     return @float.Float(1.0) + @float.Float(2.0) * (x - e)
   }
-  let twopk = Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
+  let twopk = @float.Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
   if !(k is (0..<=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
@@ -269,7 +269,7 @@ pub fn expm1f(x : Float) -> Float {
     }
     return y - 1.0
   }
-  let uf = Float::reinterpret_from_int((0x7f - k) << 23) // 2^-k
+  let uf = @float.Float::reinterpret_from_int((0x7f - k) << 23) // 2^-k
   if k < 23 {
     (x - e + (@float.Float(1.0) - uf)) * twopk
   } else {

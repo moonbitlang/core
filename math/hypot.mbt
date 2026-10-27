@@ -106,7 +106,7 @@ pub fn hypot(x : Double, y : Double) -> Double {
 ///   inspect(@math.hypotf(99, 20), content="101")
 /// }
 /// ```
-pub fn hypotf(x : Float, y : Float) -> Float {
+pub fn hypotf(x : @float.Float, y : @float.Float) -> @float.Float {
   if x.is_inf() || y.is_inf() {
     return @float.infinity
   }
@@ -114,5 +114,5 @@ pub fn hypotf(x : Float, y : Float) -> Float {
   // underflow, so no scaling or compensated arithmetic is needed.
   let x = x.to_double()
   let y = y.to_double()
-  Float::from_double((x * x + y * y).sqrt())
+  @float.Float::from_double((x * x + y * y).sqrt())
 }

@@ -38,7 +38,7 @@ enum Repr {
   /// 64-bit floating-point literal leaf.
   DoubleLit(Double)
   /// 32-bit floating-point literal leaf.
-  FloatLit(Float)
+  FloatLit(@float.Float)
   /// Boolean literal leaf.
   BoolLit(Bool)
   /// Character literal leaf.
@@ -202,7 +202,7 @@ pub fn Repr::double(x : Double) -> Repr {
 ///|
 /// Construct a `FloatLit` leaf.
 #doc(hidden)
-pub fn Repr::float(x : Float) -> Repr {
+pub fn Repr::float(x : @float.Float) -> Repr {
   FloatLit(x)
 }
 

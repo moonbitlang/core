@@ -84,7 +84,7 @@ pub fn scalbn(x : Double, exp : Int32) -> Double {
 ///   inspect(@math.scalbnf(-2, 128), content="-Infinity")
 /// }
 /// ```
-pub fn scalbnf(y : Float, exp : Int32) -> Float {
+pub fn scalbnf(y : @float.Float, exp : Int32) -> @float.Float {
   let mut y = y
   let mut n = exp
   if n > 127 {
@@ -109,7 +109,7 @@ pub fn scalbnf(y : Float, exp : Int32) -> Float {
     }
   }
   let u = (0x7f + n) << 23
-  return y * Float::reinterpret_from_int(u)
+  return y * @float.Float::reinterpret_from_int(u)
 }
 
 ///|

@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/int16",
+  "moonbitlang/core/float",
   "moonbitlang/core/debug",
   "moonbitlang/core/int",
   "moonbitlang/core/quickcheck/shrink",

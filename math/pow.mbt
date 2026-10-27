@@ -68,46 +68,46 @@
 ///   inspect(@math.powf(1.0, -1.0), content="1")
 /// }
 /// ```
-pub fn powf(base : Float, exponent : Float) -> Float {
-  let huge : Float = 1.0e30
-  let tiny : Float = 1.0e-30
-  let cp : Float = 9.6179670095e-01 // 0x3f76384f =2/(3ln2) */
-  let cp_h : Float = 9.6191406250e-01 // 0x3f764000 =12b cp */
-  let cp_l : Float = -1.1736857402e-04 // 0xb8f623c6 =tail of cp_h */
-  let lg2 : Float = 6.9314718246e-01 // 0x3f317218 */
-  let lg2_h : Float = 6.93145752e-01 // 0x3f317200 */
-  let lg2_l : Float = 1.42860654e-06 // 0x35bfbe8c */
-  let ovt : Float = 4.2995665694e-08 // -(128-log2(ovfl+.5ulp)) */
-  let ivln2 : Float = 1.4426950216e+00 // 0x3f317218 */
-  let ivln2_h : Float = 1.4426879883e+00 // 0x3f317218 */
-  let ivln2_l : Float = 7.0526075433e-06 // 0x35bfbe8c */
-  let l1 : Float = 6.0000002384e-01 // 0x3f19999a */
-  let l2 : Float = 4.2857143283e-01 // 0x3edb6db7 */
-  let l3 : Float = 3.3333334327e-01 // 0x3eaaaaab */
-  let l4 : Float = 2.7272811532e-01 // 0x3e8ba305 */
-  let l5 : Float = 2.3066075146e-01 // 0x3e6c3255 */
-  let l6 : Float = 2.0697501302e-01 // 0x3e53f142 */
-  let p1 : Float = 1.6666667163e-01 // 0x3e2aaaab */
-  let p2 : Float = -2.7777778450e-03 // 0xbb360b61 */
-  let p3 : Float = 6.6137559770e-05 // 0x388ab355 */
-  let p4 : Float = -1.6533901999e-06 // 0xb5ddea0e */
-  let p5 : Float = 4.1381369442e-08 // 0x3331bb4c */
-  let mut z : Float = 0
-  let mut ax : Float = 0
-  let mut z_h : Float = 0
-  let mut z_l : Float = 0
-  let mut p_h : Float = 0
-  let mut p_l : Float = 0
-  let mut y1 : Float = 0
-  let mut t1 : Float = 0
-  let mut t2 : Float = 0
-  let mut r : Float = 0
-  let mut s : Float = 0
-  let mut sn : Float = 0
-  let mut t : Float = 0
-  let mut u : Float = 0
-  let mut v : Float = 0
-  let mut w : Float = 0
+pub fn powf(base : @float.Float, exponent : @float.Float) -> @float.Float {
+  let huge : @float.Float = 1.0e30
+  let tiny : @float.Float = 1.0e-30
+  let cp : @float.Float = 9.6179670095e-01 // 0x3f76384f =2/(3ln2) */
+  let cp_h : @float.Float = 9.6191406250e-01 // 0x3f764000 =12b cp */
+  let cp_l : @float.Float = -1.1736857402e-04 // 0xb8f623c6 =tail of cp_h */
+  let lg2 : @float.Float = 6.9314718246e-01 // 0x3f317218 */
+  let lg2_h : @float.Float = 6.93145752e-01 // 0x3f317200 */
+  let lg2_l : @float.Float = 1.42860654e-06 // 0x35bfbe8c */
+  let ovt : @float.Float = 4.2995665694e-08 // -(128-log2(ovfl+.5ulp)) */
+  let ivln2 : @float.Float = 1.4426950216e+00 // 0x3f317218 */
+  let ivln2_h : @float.Float = 1.4426879883e+00 // 0x3f317218 */
+  let ivln2_l : @float.Float = 7.0526075433e-06 // 0x35bfbe8c */
+  let l1 : @float.Float = 6.0000002384e-01 // 0x3f19999a */
+  let l2 : @float.Float = 4.2857143283e-01 // 0x3edb6db7 */
+  let l3 : @float.Float = 3.3333334327e-01 // 0x3eaaaaab */
+  let l4 : @float.Float = 2.7272811532e-01 // 0x3e8ba305 */
+  let l5 : @float.Float = 2.3066075146e-01 // 0x3e6c3255 */
+  let l6 : @float.Float = 2.0697501302e-01 // 0x3e53f142 */
+  let p1 : @float.Float = 1.6666667163e-01 // 0x3e2aaaab */
+  let p2 : @float.Float = -2.7777778450e-03 // 0xbb360b61 */
+  let p3 : @float.Float = 6.6137559770e-05 // 0x388ab355 */
+  let p4 : @float.Float = -1.6533901999e-06 // 0xb5ddea0e */
+  let p5 : @float.Float = 4.1381369442e-08 // 0x3331bb4c */
+  let mut z : @float.Float = 0
+  let mut ax : @float.Float = 0
+  let mut z_h : @float.Float = 0
+  let mut z_l : @float.Float = 0
+  let mut p_h : @float.Float = 0
+  let mut p_l : @float.Float = 0
+  let mut y1 : @float.Float = 0
+  let mut t1 : @float.Float = 0
+  let mut t2 : @float.Float = 0
+  let mut r : @float.Float = 0
+  let mut s : @float.Float = 0
+  let mut sn : @float.Float = 0
+  let mut t : @float.Float = 0
+  let mut u : @float.Float = 0
+  let mut v : @float.Float = 0
+  let mut w : @float.Float = 0
   let mut i : Int32 = 0
   let mut j : Int32 = 0
   let mut k : Int32 = 0
@@ -119,10 +119,10 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   let mut iy : Int32 = 0
   let mut i_s : Int32 = 0
   let (x, y) = (base, exponent)
-  let bp : ReadOnlyArray[Float] = [1.0, 1.5]
-  let dp_h : ReadOnlyArray[Float] = [0.0, 5.84960938e-01] // 0x3f15c000 */
-  let dp_l : ReadOnlyArray[Float] = [0.0, 1.56322085e-06] // 0x35d1cfdc */
-  let two24 : Float = 16777216.0
+  let bp : ReadOnlyArray[@float.Float] = [1.0, 1.5]
+  let dp_h : ReadOnlyArray[@float.Float] = [0.0, 5.84960938e-01] // 0x3f15c000 */
+  let dp_l : ReadOnlyArray[@float.Float] = [0.0, 1.56322085e-06] // 0x35d1cfdc */
+  let two24 : @float.Float = 16777216.0
   hx = x.reinterpret_as_int()
   hy = y.reinterpret_as_int()
   ix = hx & 0x7fffffff
@@ -239,14 +239,14 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     v = t * ivln2_l - w * ivln2
     t1 = u + v
     i_s = t1.reinterpret_as_int()
-    t1 = Float::reinterpret_from_int(i_s & 0xfffff000)
+    t1 = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
     t2 = v - (t1 - u)
   } else {
-    let mut s2 : Float = 0
-    let mut s_h : Float = 0
-    let mut s_l : Float = 0
-    let mut t_h : Float = 0
-    let mut t_l : Float = 0
+    let mut s2 : @float.Float = 0
+    let mut s_h : @float.Float = 0
+    let mut s_l : @float.Float = 0
+    let mut t_h : @float.Float = 0
+    let mut t_l : @float.Float = 0
     n = 0
     // take care subnormal number
     if ix < 0x00800000 {
@@ -269,7 +269,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
       n += 1
       ix -= 0x00800000
     }
-    ax = Float::reinterpret_from_int(ix)
+    ax = @float.Float::reinterpret_from_int(ix)
 
     // compute s = s_h+s_l = (x-1)/(x+1) or (x-1.5)/(x+1.5)
     u = ax - bp[k]
@@ -277,10 +277,10 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     s = u * v
     s_h = s
     i_s = s_h.reinterpret_as_int()
-    s_h = Float::reinterpret_from_int(i_s & 0xfffff000)
+    s_h = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
     // t_h=ax+bp[k] High
     i_s = (((ix.reinterpret_as_uint() >> 1) & 0xfffff000) | 0x20000000).reinterpret_as_int()
-    t_h = Float::reinterpret_from_uint(
+    t_h = @float.Float::reinterpret_from_uint(
       i_s.reinterpret_as_uint() + 0x00400000 + (k.reinterpret_as_uint() << 21),
     )
     t_l = ax - (t_h - bp[k])
@@ -292,7 +292,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     s2 = s_h * s_h
     t_h = @float.Float(3.0) + s2 + r
     i_s = t_h.reinterpret_as_int()
-    t_h = Float::reinterpret_from_int(i_s & 0xfffff000)
+    t_h = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
     t_l = r - (t_h - 3.0 - s2)
     // u+v = s*(1+...)
     u = s_h * t_h
@@ -300,21 +300,21 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // 2/(3log2)*(s+...)
     p_h = u + v
     i_s = p_h.reinterpret_as_int()
-    p_h = Float::reinterpret_from_int(i_s & 0xfffff000)
+    p_h = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
     p_l = v - (p_h - u)
     z_h = cp_h * p_h // cp_h+cp_l = 2/(3*log2)
     z_l = cp_l * p_h + p_l * cp + dp_l[k]
     // log2(ax) = (s+..)*2/(3*log2) = n + dp_h + z_h + z_l
-    t = Float::from_int(n)
+    t = @float.Float::from_int(n)
     t1 = z_h + z_l + dp_h[k] + t
     i_s = t1.reinterpret_as_int()
-    t1 = Float::reinterpret_from_int(i_s & 0xfffff000)
+    t1 = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
     t2 = z_l - (t1 - t - dp_h[k] - z_h)
   }
 
   // split up y into y1+y2 and compute (y1+y2)*(t1+t2)
   i_s = y.reinterpret_as_int()
-  y1 = Float::reinterpret_from_int(i_s & 0xfffff000)
+  y1 = @float.Float::reinterpret_from_int(i_s & 0xfffff000)
   p_l = (y - y1) * t1 + y * t2
   p_h = y1 * t1
   z = p_l + p_h
@@ -348,7 +348,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // if |z| > 0.5, set n = [z+0.5]
     n = j + (0x00800000 >> (k + 1))
     k = ((n & 0x7fffffff) >> 23) - 0x7f // new k for n
-    t = Float::reinterpret_from_int(n & (0x007fffff >> k).lnot())
+    t = @float.Float::reinterpret_from_int(n & (0x007fffff >> k).lnot())
     n = ((n & 0x007fffff) | 0x00800000) >> (23 - k)
     if j < 0 {
       n = -n
@@ -357,7 +357,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   }
   t = p_l + p_h
   i_s = t.reinterpret_as_int()
-  t = Float::reinterpret_from_int(i_s & 0xffff8000)
+  t = @float.Float::reinterpret_from_int(i_s & 0xffff8000)
   u = t * lg2_h
   v = (p_l - (t - p_h)) * lg2 + t * lg2_l
   z = u + v
@@ -372,7 +372,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // subnormal output
     z = scalbnf(z, n)
   } else {
-    z = Float::reinterpret_from_int(j)
+    z = @float.Float::reinterpret_from_int(j)
   }
   sn * z
 }

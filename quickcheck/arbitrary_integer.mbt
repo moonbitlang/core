@@ -142,8 +142,10 @@ fn gen_integer_bits(
 }
 
 ///|
-pub impl Arbitrary for Int16 with fn arbitrary(_, rs) {
-  Int16::reinterpret_from_uint16(gen_integer_bits(16, true, rs).to_uint16())
+pub impl Arbitrary for @int16.Int16 with fn arbitrary(_, rs) {
+  @int16.Int16::reinterpret_from_uint16(
+    gen_integer_bits(16, true, rs).to_uint16(),
+  )
 }
 
 ///|

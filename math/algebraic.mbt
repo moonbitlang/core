@@ -40,7 +40,7 @@
 ///   inspect(@math.cbrtf(1000), content="10")
 /// }
 /// ```
-pub fn cbrtf(x : Float) -> Float {
+pub fn cbrtf(x : @float.Float) -> @float.Float {
   let b1 : UInt32 = 709958130 // B1 = (127-127.0/3-0.03306235651)*2**23 */
   let b2 : UInt32 = 642849266 // B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
   let mut ui : UInt32 = x.reinterpret_as_uint()
@@ -71,7 +71,7 @@ pub fn cbrtf(x : Float) -> Float {
   // without causing overflow or underflow.
   //
   let dx = x.to_double()
-  let t = Float::reinterpret_from_uint(ui).to_double()
+  let t = @float.Float::reinterpret_from_uint(ui).to_double()
   let r = t * t * t
   let t = t * (dx + dx + r) / (dx + r + r)
 
@@ -83,5 +83,5 @@ pub fn cbrtf(x : Float) -> Float {
   let t = t * (dx + dx + r) / (dx + r + r)
 
   // rounding to 24 bits is perfect in round-to-nearest mode
-  Float::from_double(t)
+  @float.Float::from_double(t)
 }

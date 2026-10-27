@@ -17,10 +17,10 @@
 pub const PI = 0x3.243F6A8885A308CA8A54
 
 ///|
-const SIN_SWITCHOVER : Float = 201.15625
+const SIN_SWITCHOVER : @float.Float = 201.15625
 
 ///|
-const COS_SWITCHOVER : Float = 142.90625
+const COS_SWITCHOVER : @float.Float = 142.90625
 
 ///|
 fn mulh(a : UInt32, b : UInt32) -> UInt32 {
@@ -39,16 +39,19 @@ fn mul(a : UInt32, b : UInt32) -> (UInt32, UInt32) {
 }
 
 ///|
-fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int32) {
+fn trig_reduce(
+  x : @float.Float,
+  switch_over : @float.Float,
+) -> (@float.Float, Int32) {
   if x.abs() <= switch_over {
-    let mut j : Float = 0.0
-    let mut r : Float = 0.0
-    j = x * Float::reinterpret_from_int(0x3f22f983) +
-      Float::reinterpret_from_int(0x4b40_0000)
-    j = Float::from_int(j.reinterpret_as_int() - 0x4b40_0000)
-    r = x - j * Float::reinterpret_from_int(0x3fc90f80)
-    r -= j * Float::reinterpret_from_int(0x37354440)
-    r -= j * Float::reinterpret_from_int(0x2c34611a)
+    let mut j : @float.Float = 0.0
+    let mut r : @float.Float = 0.0
+    j = x * @float.Float::reinterpret_from_int(0x3f22f983) +
+      @float.Float::reinterpret_from_int(0x4b40_0000)
+    j = @float.Float::from_int(j.reinterpret_as_int() - 0x4b40_0000)
+    r = x - j * @float.Float::reinterpret_from_int(0x3fc90f80)
+    r -= j * @float.Float::reinterpret_from_int(0x37354440)
+    r -= j * @float.Float::reinterpret_from_int(0x2c34611a)
     return (r, j.to_int())
   }
   let xispos = x > 0.0
@@ -110,35 +113,35 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int32) {
     r = r ^ 0x8000_0000
     q = -q
   }
-  let r = Float::reinterpret_from_uint(r)
+  let r = @float.Float::reinterpret_from_uint(r)
   return (r, q)
 }
 
 ///|
-fn sinf_poly(x : Float) -> Float {
+fn sinf_poly(x : @float.Float) -> @float.Float {
   let s = x * x
-  let mut r = Float::reinterpret_from_int(0x3640_5000)
-  r = r * s - Float::reinterpret_from_int(0x3950_3486)
-  r = r * s + Float::reinterpret_from_int(0x3c08_88c1)
-  r = r * s - Float::reinterpret_from_int(0x3e2a_aaab)
+  let mut r = @float.Float::reinterpret_from_int(0x3640_5000)
+  r = r * s - @float.Float::reinterpret_from_int(0x3950_3486)
+  r = r * s + @float.Float::reinterpret_from_int(0x3c08_88c1)
+  r = r * s - @float.Float::reinterpret_from_int(0x3e2a_aaab)
   let t = x * s
   r = r * t + x
   r
 }
 
 ///|
-fn cosf_poly(x : Float) -> Float {
+fn cosf_poly(x : @float.Float) -> @float.Float {
   let s = x * x
-  let mut r = Float::reinterpret_from_int(0x37cd_4000)
-  r = r * s - Float::reinterpret_from_int(0x3ab6_077d)
-  r = r * s + Float::reinterpret_from_int(0x3d2a_aaa8)
-  r = r * s - Float::reinterpret_from_int(0x3f00_0000)
-  r = r * s + Float::reinterpret_from_int(0x3f80_0000)
+  let mut r = @float.Float::reinterpret_from_int(0x37cd_4000)
+  r = r * s - @float.Float::reinterpret_from_int(0x3ab6_077d)
+  r = r * s + @float.Float::reinterpret_from_int(0x3d2a_aaa8)
+  r = r * s - @float.Float::reinterpret_from_int(0x3f00_0000)
+  r = r * s + @float.Float::reinterpret_from_int(0x3f80_0000)
   r
 }
 
 ///|
-fn sin_cos_core(x : Float, q : Int32) -> Float {
+fn sin_cos_core(x : @float.Float, q : Int32) -> @float.Float {
   let mut r = if (q & 1) != 0 { cosf_poly(x) } else { sinf_poly(x) }
   if (q & 2) != 0 {
     r = -r
@@ -147,7 +150,7 @@ fn sin_cos_core(x : Float, q : Int32) -> Float {
 }
 
 ///|
-fn tanf_poly(x : Float, odd : Bool) -> Float {
+fn tanf_poly(x : @float.Float, odd : Bool) -> @float.Float {
   let x = x.to_double()
   let coef : ReadOnlyArray[Double] = [
     0.333331395030791399758, // 0x15554d3418c99f.0p-54 */
@@ -164,7 +167,7 @@ fn tanf_poly(x : Float, odd : Bool) -> Float {
   let s = z * x
   let u = coef[0] + z * coef[1]
   r = x + s * u + s * w * (t + w * r)
-  Float::from_double(if odd { -1.0 / r } else { r })
+  @float.Float::from_double(if odd { -1.0 / r } else { r })
 }
 
 ///|
@@ -198,7 +201,7 @@ fn tanf_poly(x : Float, odd : Bool) -> Float {
 ///   inspect(@math.sinf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn sinf(x : Float) -> Float {
+pub fn sinf(x : @float.Float) -> @float.Float {
   if x.is_nan() || x.is_inf() {
     return @float.not_a_number
   }
@@ -240,7 +243,7 @@ pub fn sinf(x : Float) -> Float {
 ///   inspect(@math.cosf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn cosf(x : Float) -> Float {
+pub fn cosf(x : @float.Float) -> @float.Float {
   if x.is_nan() || x.is_inf() {
     return @float.not_a_number
   }
@@ -282,7 +285,7 @@ pub fn cosf(x : Float) -> Float {
 ///   inspect(@math.tanf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn tanf(x : Float) -> Float {
+pub fn tanf(x : @float.Float) -> @float.Float {
   if x.is_nan() || x.is_inf() {
     return @float.not_a_number
   }
@@ -327,16 +330,16 @@ pub fn tanf(x : Float) -> Float {
 ///   inspect(@math.asinf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn asinf(x : Float) -> Float {
+pub fn asinf(x : @float.Float) -> @float.Float {
   let x1p120 = 0x3870000000000000UL.reinterpret_as_double()
   let pio2 : Double = 1.570796326794896558e+00
 
   // coefficients for R(x^2)
-  let ps0 : Float = 1.6666586697e-01
-  let ps1 : Float = -4.2743422091e-02
-  let ps2 : Float = -8.6563630030e-03
-  let qs2 : Float = -7.0662963390e-01
-  fn r(z : Float) -> Float {
+  let ps0 : @float.Float = 1.6666586697e-01
+  let ps1 : @float.Float = -4.2743422091e-02
+  let ps2 : @float.Float = -8.6563630030e-03
+  let qs2 : @float.Float = -7.0662963390e-01
+  fn r(z : @float.Float) -> @float.Float {
     let p = z * (ps0 + z * (ps1 + z * ps2))
     let q = z * qs2 + 1.0
     p / q
@@ -346,7 +349,7 @@ pub fn asinf(x : Float) -> Float {
   let ix = hx & 0x7fffffff
   if ix >= 0x3f800000 {
     if ix == 0x3f800000 {
-      return Float::from_double(x.to_double() * pio2 + x1p120)
+      return @float.Float::from_double(x.to_double() * pio2 + x1p120)
     }
     return @float.not_a_number // asin(|x|>1) is NaN
   }
@@ -358,7 +361,7 @@ pub fn asinf(x : Float) -> Float {
   }
   let z = (@float.Float(1.0) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
-  let x = Float::from_double(pio2 - 2.0 * (s + s * r(z).to_double()))
+  let x = @float.Float::from_double(pio2 - 2.0 * (s + s * r(z).to_double()))
   if hx >> 31 != 0 {
     -x
   } else {
@@ -400,16 +403,16 @@ pub fn asinf(x : Float) -> Float {
 ///   inspect(@math.acosf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn acosf(x : Float) -> Float {
-  let pio2_hi : Float = 1.5707962513
-  let pio2_lo : Float = 7.5497894159e-08
-  let ps0 : Float = 1.6666586697e-01
-  let ps1 : Float = -4.2743422091e-02
-  let ps2 : Float = -8.6563630030e-03
-  let qs1 : Float = -7.0662963390e-01
-  let one : Float = 1.0
-  let two : Float = 2.0
-  fn r(z : Float) -> Float {
+pub fn acosf(x : @float.Float) -> @float.Float {
+  let pio2_hi : @float.Float = 1.5707962513
+  let pio2_lo : @float.Float = 7.5497894159e-08
+  let ps0 : @float.Float = 1.6666586697e-01
+  let ps1 : @float.Float = -4.2743422091e-02
+  let ps2 : @float.Float = -8.6563630030e-03
+  let qs1 : @float.Float = -7.0662963390e-01
+  let one : @float.Float = 1.0
+  let two : @float.Float = 2.0
+  fn r(z : @float.Float) -> @float.Float {
     let p = z * (ps0 + z * (ps1 + z * ps2))
     let q = z * qs1 + 1.0
     p / q
@@ -441,7 +444,9 @@ pub fn acosf(x : Float) -> Float {
   let z = (one - x) * 0.5
   let s = z.sqrt()
   // musl acosf.c: SET_FLOAT_WORD(df, hx & 0xfffff000), which makes df*df exact
-  let df = Float::reinterpret_from_uint(s.reinterpret_as_uint() & 0xfffff000)
+  let df = @float.Float::reinterpret_from_uint(
+    s.reinterpret_as_uint() & 0xfffff000,
+  )
   let c = (z - df * df) / (s + df)
   let w = r(z) * s + c
   two * (df + w)
@@ -490,14 +495,14 @@ pub fn acosf(x : Float) -> Float {
 ///   )
 /// }
 /// ```
-pub fn atanf(x : Float) -> Float {
-  let atanhi : ReadOnlyArray[Float] = [
+pub fn atanf(x : @float.Float) -> @float.Float {
+  let atanhi : ReadOnlyArray[@float.Float] = [
     4.6364760399e-01, 7.8539812565e-01, 9.8279368877e-01, 1.5707962513e+00,
   ]
-  let atanlo : ReadOnlyArray[Float] = [
+  let atanlo : ReadOnlyArray[@float.Float] = [
     5.0121582440e-09, 3.7748947079e-08, 3.4473217170e-08, 7.5497894159e-08,
   ]
-  let a_t : ReadOnlyArray[Float] = [
+  let a_t : ReadOnlyArray[@float.Float] = [
     3.3333328366e-01, -1.9999158382e-01, 1.4253635705e-01, -1.0648017377e-01, 6.1687607318e-02,
   ]
   let ix = x.reinterpret_as_int()
@@ -505,8 +510,8 @@ pub fn atanf(x : Float) -> Float {
   let ix = ix & 0x7fffffff
   let mut id = 0
   let mut x = x
-  let one : Float = 1.0
-  let two : Float = 2.0
+  let one : @float.Float = 1.0
+  let two : @float.Float = 2.0
   if ix >= 0x4c800000 {
     if x.is_nan() {
       return x
@@ -634,13 +639,13 @@ pub fn atanf(x : Float) -> Float {
 ///   )
 /// }
 /// ```
-pub fn atan2f(y : Float, x : Float) -> Float {
+pub fn atan2f(y : @float.Float, x : @float.Float) -> @float.Float {
   if x.is_nan() || y.is_nan() {
     return @float.not_a_number
   }
-  let pi : Float = 3.1415927410e+00
-  let pi_lo : Float = -8.7422776573e-08
-  let zero : Float = 0.0
+  let pi : @float.Float = 3.1415927410e+00
+  let pi_lo : @float.Float = -8.7422776573e-08
+  let zero : @float.Float = 0.0
   let ix = x.reinterpret_as_uint()
   let iy = y.reinterpret_as_uint()
   if ix == 0x3f800000 {

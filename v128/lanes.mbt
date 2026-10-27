@@ -125,7 +125,7 @@ fn i8_signed(value : Byte) -> Int32 {
 
 ///|
 fn i16_signed(value : UInt16) -> Int32 {
-  Int16::reinterpret_from_uint16(value).to_int()
+  @int16.Int16::reinterpret_from_uint16(value).to_int()
 }
 
 ///|
@@ -176,7 +176,7 @@ fn i8_abs(value : Byte) -> Byte {
 
 ///|
 fn i16_abs(value : UInt16) -> UInt16 {
-  Int16::abs(Int16::reinterpret_from_uint16(value)).reinterpret_as_uint16()
+  @int16.Int16::abs(@int16.Int16::reinterpret_from_uint16(value)).reinterpret_as_uint16()
 }
 
 ///|
