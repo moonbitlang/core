@@ -22,6 +22,7 @@ pub(all) struct StringScanner {
   data : StringView
   mut cursor : Int32
 }
+pub fn StringScanner::StringScanner(StringView, cursor? : Int32) -> Self
 
 // Type aliases
 

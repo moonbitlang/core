@@ -66,3 +66,18 @@ test "panic AsyncLexbuf rejects refill with unread input" {
     lexbuf.__refill()
   })
 }
+
+///|
+test "panic StringScanner rejects a negative cursor" {
+  @lexbuf.StringScanner("abc", cursor=-1) |> ignore
+}
+
+///|
+test "panic StringScanner rejects a cursor past the end" {
+  @lexbuf.StringScanner("abc", cursor=4) |> ignore
+}
+
+///|
+test "panic StringScanner rejects a cursor inside a surrogate pair" {
+  @lexbuf.StringScanner("\u{1F600}", cursor=1) |> ignore
+}
