@@ -42,16 +42,15 @@ test "find_string_special_long agrees with the scalar reference" {
   // Every start and end of a backing string of near-miss units with a few
   // special units, so ranges end both just before and a few units before a
   // special unit, and long clean runs reach the SIMD blocks.
-  let units = []
-  for i in 0..<64 {
-    units.push(
+  let units = [
+    for i in 0..<64 => {
       if i is (5 | 26 | 27 | 43 | 52 | 63) {
         special_units[i % special_units.length()]
       } else {
         near_miss_units[i * 7 % near_miss_units.length()]
-      },
-    )
-  }
+      }
+    }
+  ]
   let backing = string_of_units(units)
   for start in 0..<=backing.length() {
     for end in start..<=backing.length() {
