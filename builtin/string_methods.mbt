@@ -204,8 +204,8 @@ pub fn StringView::has_suffix(self : StringView, str : StringView) -> Bool {
   .str()
   .unsafe_range_equal(
     str.str(),
-    self_off=self.start() + start,
-    other_off=str.start(),
+    start=self.start() + start,
+    other_start=str.start(),
     len=str_len,
   )
 }
@@ -246,8 +246,8 @@ pub fn StringView::has_prefix(self : StringView, str : StringView) -> Bool {
   .str()
   .unsafe_range_equal(
     str.str(),
-    self_off=self.start(),
-    other_off=str.start(),
+    start=self.start(),
+    other_start=str.start(),
     len=str_len,
   )
 }

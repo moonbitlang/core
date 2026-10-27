@@ -170,16 +170,16 @@ pub fn String::unsafe_substring(
 /// ```mbt check
 /// test {
 ///   inspect(
-///     "xhello".range_equal("hello!", self_off=1, other_off=0, len=5),
+///     "xhello".range_equal("hello!", start=1, other_start=0, len=5),
 ///     content="true",
 ///   )
 ///   // These characters share their leading surrogate, but not their trailing one.
 ///   inspect(
-///     "😀".range_equal("😁", self_off=0, other_off=0, len=1),
+///     "😀".range_equal("😁", start=0, other_start=0, len=1),
 ///     content="true",
 ///   )
 ///   inspect(
-///     "😀".range_equal("😁", self_off=1, other_off=1, len=1),
+///     "😀".range_equal("😁", start=1, other_start=1, len=1),
 ///     content="false",
 ///   )
 /// }
@@ -187,24 +187,24 @@ pub fn String::unsafe_substring(
 #borrow(self, other)
 pub fn String::range_equal(
   self : String,
-  self_off~ : Int32,
+  start~ : Int32,
   other : String,
-  other_off~ : Int32,
+  other_start~ : Int32,
   len~ : Int32,
 ) -> Bool {
   let self_len = self.length()
   let other_len = other.length()
   // Validate offsets before subtracting, avoiding overflow in offset + len.
   guard len >= 0 &&
-    self_off >= 0 &&
-    self_off <= self_len &&
-    other_off >= 0 &&
-    other_off <= other_len &&
-    len <= self_len - self_off &&
-    len <= other_len - other_off else {
+    start >= 0 &&
+    start <= self_len &&
+    other_start >= 0 &&
+    other_start <= other_len &&
+    len <= self_len - start &&
+    len <= other_len - other_start else {
     abort("String::range_equal: invalid range")
   }
-  self.unsafe_range_equal(other, self_off~, other_off~, len~)
+  self.unsafe_range_equal(other, start~, other_start~, len~)
 }
 
 ///|
@@ -215,7 +215,7 @@ pub fn String::range_equal(
 ///
 /// # Safety
 /// - **No bounds checking**: caller must ensure both ranges
-///   `[self_off, self_off + len)` and `[other_off, other_off + len)` are fully
+///   `[start, start + len)` and `[other_start, other_start + len)` are fully
 ///   within their respective strings.
 /// - Both offsets and `len` must be nonnegative. An empty range at the end of
 ///   a string is valid.
@@ -226,7 +226,7 @@ pub fn String::range_equal(
 ///
 /// # Parameters
 /// - `self`, `other`: the two strings
-/// - `self_off`, `other_off`: starting code unit offsets
+/// - `start`, `other_start`: starting code unit offsets
 /// - `len`: number of code units to compare
 ///
 /// This is the shared intrinsic-backed primitive for view/owned equality
@@ -250,16 +250,16 @@ pub fn String::range_equal(
 #intrinsic("%string.unsafe_range_equal")
 pub fn String::unsafe_range_equal(
   self : String,
-  self_off~ : Int32,
+  start~ : Int32,
   other : String,
-  other_off~ : Int32,
+  other_start~ : Int32,
   len~ : Int32,
 ) -> Bool {
   if len >= 8 {
-    return string_range_equal_simd(self, self_off, other, other_off, len)
+    return string_range_equal_simd(self, start, other, other_start, len)
   }
   for i in 0..<len {
-    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+    guard self.unsafe_get(start + i) == other.unsafe_get(other_start + i) else {
       return false
     }
   }
@@ -275,7 +275,7 @@ pub fn String::unsafe_range_equal(
 ///
 /// # Safety
 /// Both offsets and `len` must be nonnegative, and both ranges
-/// `[self_off, self_off + len)` and `[other_off, other_off + len)` must be fully
+/// `[start, start + len)` and `[other_start, other_start + len)` must be fully
 /// within their respective strings. An empty range at the end of a string is
 /// valid. Violating these requirements causes undefined behavior.
 ///
@@ -285,13 +285,13 @@ pub fn String::unsafe_range_equal(
 #intrinsic("%string.unsafe_range_equal")
 pub fn String::unsafe_range_equal(
   self : String,
-  self_off~ : Int32,
+  start~ : Int32,
   other : String,
-  other_off~ : Int32,
+  other_start~ : Int32,
   len~ : Int32,
 ) -> Bool {
   for i in 0..<len {
-    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+    guard self.unsafe_get(start + i) == other.unsafe_get(other_start + i) else {
       return false
     }
   }
