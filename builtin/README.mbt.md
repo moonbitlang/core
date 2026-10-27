@@ -212,8 +212,9 @@ ranges producing empty views. String slices use UTF-16 code-unit offsets and
 trim split surrogate pairs inward. Use the named `exact_view` methods to require
 valid bounds; `split_at` provides a lossless string split. The explicit
 `clamped_view` methods are the named form of bracket slicing. Arrays, bytes,
-strings, and their views also provide `unsafe_view(start~, end~)`, which skips
-validation and requires the caller to supply valid bounds. `Iter` retains its
+strings, and their views also provide `unsafe_view(start~, end~)`. Both labeled
+bounds are required; the method skips validation, so the caller must supply
+valid bounds. `Iter` retains its
 lazy `clamped_view` operation: it has no exact or unchecked random-access view.
 
 ```mbt check

@@ -14,7 +14,7 @@
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -24,16 +24,15 @@
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] Array::unsafe_view(
   self : Array[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   ArrayView::make(self.buffer(), start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this view; omitted bounds select its start and end.
+/// Offsets are relative to this view; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -43,16 +42,15 @@ pub fn[T] Array::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] ArrayView::unsafe_view(
   self : ArrayView[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   ArrayView::make(self.buf(), self.start() + start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -62,10 +60,9 @@ pub fn[T] ArrayView::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] FixedArray::unsafe_view(
   self : FixedArray[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   ArrayView::make(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
@@ -75,7 +72,7 @@ pub fn[T] FixedArray::unsafe_view(
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -85,16 +82,15 @@ pub fn[T] FixedArray::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] ReadOnlyArray::unsafe_view(
   self : ReadOnlyArray[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   self.unsafe_reinterpret_to_fixed_array().unsafe_view(start~, end~)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this view; omitted bounds select its start and end.
+/// Offsets are relative to this view; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -104,16 +100,15 @@ pub fn[T] ReadOnlyArray::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] MutArrayView::unsafe_view(
   self : MutArrayView[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   ArrayView::make(self.buf(), self.start() + start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -126,16 +121,15 @@ pub fn[T] MutArrayView::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn[T] UninitializedArray::unsafe_view(
   self : UninitializedArray[T],
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> ArrayView[T] {
-  let end = end.unwrap_or(self.length())
   ArrayView::make(self, start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -145,16 +139,15 @@ pub fn[T] UninitializedArray::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn Bytes::unsafe_view(
   self : Bytes,
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> BytesView {
-  let end = end.unwrap_or(self.length())
   BytesView::make(self, start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this view; omitted bounds select its start and end.
+/// Offsets are relative to this view; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -164,16 +157,15 @@ pub fn Bytes::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn BytesView::unsafe_view(
   self : BytesView,
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> BytesView {
-  let end = end.unwrap_or(self.length())
   BytesView::make(self.bytes(), self.start() + start, end - start)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this container; omitted bounds select its start and end.
+/// Offsets are relative to this container; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -187,16 +179,15 @@ pub fn BytesView::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn String::unsafe_view(
   self : String,
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> StringView {
-  let end = end.unwrap_or(self.length())
   StringView::make_view(self, start, end)
 }
 
 ///|
 /// Creates a view without checking or clamping bounds.
-/// Offsets are relative to this view; omitted bounds select its start and end.
+/// Offsets are relative to this view; both labeled bounds are required.
 ///
 /// # Safety
 ///
@@ -210,9 +201,8 @@ pub fn String::unsafe_view(
 /// (also available as `self[start:end]`) to clamp them.
 pub fn StringView::unsafe_view(
   self : StringView,
-  start~ : Int32 = 0,
-  end? : Int32,
+  start~ : Int32,
+  end~ : Int32,
 ) -> StringView {
-  let end = end.unwrap_or(self.length())
   StringView::make_view(self.str(), self.start() + start, self.start() + end)
 }

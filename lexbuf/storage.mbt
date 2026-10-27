@@ -139,13 +139,15 @@ fn LexbufStorage::get_stringview(
     )
   }
   let builder = StringBuilder(size_hint=(end - start) * 2)
-  builder.write_view(first_chunk.unsafe_view(start=start - first_start))
+  builder.write_view(
+    first_chunk.unsafe_view(start=start - first_start, end=first_chunk.length()),
+  )
   for index in (first + 1)..<self.chunks.length() {
     let chunk = self.chunks.unsafe_get(index)
     let chunk_start = self.chunk_starts.unsafe_get(index)
     let chunk_end = chunk_start + chunk.length()
     if end <= chunk_end {
-      builder.write_view(chunk.unsafe_view(end=end - chunk_start))
+      builder.write_view(chunk.unsafe_view(start=0, end=end - chunk_start))
       break
     }
     builder.write_string(chunk)
