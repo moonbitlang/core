@@ -109,10 +109,8 @@ test "fast store propagates through gzip zlib and their streaming encoders" {
   @test.assert_eq(bytes.length() > 4096, true)
   let decoder = @zlib.Decoder(dictionary~)
   let output = FixedArray::make(4096, b'\x00')
-  @test.assert_eq(
-    decoder.step(bytes, output.mut_view(), end_of_input=true).status,
-    Done,
-  )
+  @test.assert_eq(decoder.step(bytes, output.mut_view()).status, Done)
+  @test.assert_eq(decoder.check_end(), Done)
   @test.assert_eq(Bytes::from_array(output), input[:4096].to_owned())
 }
 

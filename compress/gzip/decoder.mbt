@@ -412,11 +412,11 @@ fn Decoder::flush_output_checksum(decoder : Decoder) -> Unit {
 /// output backpressure. Pending body input is drained before accepting more,
 /// so a call can produce output without consuming new input.
 /// Input is borrowed only for this call; any retained suffix is copied.
-/// Set `end_of_input=true` for the final input view, or an empty view after EOF.
-/// Repeat the flag with any unaccepted suffix. Once the complete final view
-/// is accepted, EOF remains latched while output is drained; later input is
-/// not accepted. Incomplete input raises `Truncated`. A multi-member stream
-/// needs this EOF signal to establish that no further member will follow.
+/// Once all source input has been accepted, call `check_end` to declare EOF.
+/// It returns `Done`, requests output space, or raises a truncation error.
+/// Drain pending output through `step` with empty input; EOF stays latched.
+/// A multi-member stream needs this signal to establish that no further
+/// member will follow. After EOF or `Done`, later input is not accepted.
 /// Concatenated multi-member streams (RFC 1952 §2.2) decode in full; their
 /// payloads are joined. If the final accepted view also contains non-gzip
 /// bytes, retrieve that read-ahead after `Done` with `unused_input()`. On
@@ -427,7 +427,22 @@ pub fn Decoder::step(
   self : Decoder,
   input : BytesView,
   output : MutArrayView[Byte],
-  end_of_input~ : Bool = false,
+) -> @flate.StepResult raise GzipError {
+  self.step_impl(input, output, end_of_input=false)
+}
+
+///|
+/// Declare EOF after all input is accepted; NeedMoreOutput requires draining with step.
+pub fn Decoder::check_end(self : Decoder) -> @flate.Status raise GzipError {
+  self.step_impl(b"", [].mut_view(), end_of_input=true).status
+}
+
+///|
+fn Decoder::step_impl(
+  self : Decoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+  end_of_input~ : Bool,
 ) -> @flate.StepResult raise GzipError {
   if self.failure_kind is Some(kind) {
     raise GzipError(kind, self.failure_message)

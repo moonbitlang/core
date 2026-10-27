@@ -312,32 +312,41 @@ test "malformed DEFLATE errors are wrapped as ZlibError" {
 test "streaming zlib Decoder reports truncation at end" {
   let output = FixedArray::make(256, b'\x00')
   let header = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    header.step(b"\x78", output.mut_view(), end_of_input=true)
-  })
+  let result = header.step(b"\x78", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => header.check_end())
   @test.assert_eq(kind, Truncated)
 
   let dictid = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    dictid.step(b"\x78\x20\x00\x00", output.mut_view(), end_of_input=true)
-  })
+  let result = dictid.step(b"\x78\x20\x00\x00", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78\x20\x00\x00".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => dictid.check_end())
   @test.assert_eq(kind, Truncated)
 
   let body = @zlib.Decoder()
+  let result = body.step(b"\x78\x01\x03", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78\x01\x03".length())
+  assert_true(result.status is NeedMoreInput)
   let ZlibError(kind, _) = @test.expect_error(() => {
-    body.step(b"\x78\x01\x03", output.mut_view(), end_of_input=true)
+    let mut status = body.check_end()
+    for _ in 0..<8 {
+      if status is Done {
+        break
+      }
+      status = body.step(b"", output.mut_view()).status
+    }
   })
   @test.assert_eq(kind, Truncated)
 
   let encoded = @zlib.compress(b"truncated checksum trailer")
   let trailer = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    trailer.step(
-      encoded[:encoded.length() - 1],
-      output.mut_view(),
-      end_of_input=true,
-    )
-  })
+  let result = trailer.step(encoded[:encoded.length() - 1], output.mut_view())
+  @test.assert_eq(result.consumed, encoded.length() - 1)
+  @test.assert_eq(result.produced, b"truncated checksum trailer".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => trailer.check_end())
   @test.assert_eq(kind, Truncated)
 }
 
@@ -349,17 +358,15 @@ test "streaming zlib Decoder latches end across output backpressure" {
   let encoded = @zlib.compress(source)
   let decoder = @zlib.Decoder()
   let no_output = FixedArray::make(0, b'\x00')
-  let initial_status_result = decoder.step(
-    encoded,
-    no_output.mut_view(),
-    end_of_input=true,
-  )
+  let initial_status_result = decoder.step(encoded, no_output.mut_view())
   let initial_status = initial_status_result.status
   let initial_consumed = initial_status_result.consumed
   let initial_produced = initial_status_result.produced
   assert_true(initial_status is NeedMoreOutput)
   @test.assert_eq(initial_consumed, encoded.length())
   @test.assert_eq(initial_produced, 0)
+  assert_true(decoder.check_end() is NeedMoreOutput)
+  assert_true(decoder.check_end() is NeedMoreOutput)
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
   let mut first_resume = true
@@ -381,6 +388,8 @@ test "streaming zlib Decoder latches end across output backpressure" {
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), source)
   @test.assert_eq(decoder.unused_input(), b"")
+  assert_true(decoder.check_end() is Done)
+  assert_true(decoder.check_end() is Done)
 }
 
 ///|
@@ -647,9 +656,12 @@ test "streaming zlib checksum survives output reuse before a split trailer" {
   @test.assert_eq(decoded.to_bytes(), source)
   for i in 0..<4 {
     let input = stream[body_end + i:body_end + i + 1]
-    let result = decoder.step(input, output, end_of_input=i == 3)
+    let result = decoder.step(input, output)
     @test.assert_eq(result.status, if i == 3 { Done } else { NeedMoreInput })
+    @test.assert_eq(result.consumed, 1)
+    @test.assert_eq(result.produced, 0)
   }
+  assert_true(decoder.check_end() is Done)
   @test.assert_eq(padded[2], b'\xA5')
   @test.assert_eq(padded[260], b'\xA5')
 }

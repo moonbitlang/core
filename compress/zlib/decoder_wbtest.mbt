@@ -50,7 +50,7 @@ test "zlib failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let ZlibError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.step(malformed, output.mut_view(), end_of_input=true)
+    decoder.step(malformed, output.mut_view())
   })
 
   let pending_pos = decoder.pending_pos
@@ -62,8 +62,44 @@ test "zlib failed state freezes decoder cursors" {
   assert_true(first_kind == InvalidDeflate)
   assert_true(repeated_kind == first_kind)
   @test.assert_eq(repeated_error, first_error)
+  let ZlibError(end_kind, end_error) = @test.expect_error(() => {
+    decoder.check_end()
+  })
+  @test.assert_eq(end_kind, first_kind)
+  @test.assert_eq(end_error, first_error)
   @test.assert_eq(decoder.pending_pos, pending_pos)
   @test.assert_eq(decoder.pending.length(), pending_length)
+}
+
+///|
+test "zlib check_end truncation freezes decoder cursors and latches failure" {
+  let decoder = Decoder()
+  let output = FixedArray::make(8, b'\xA5')
+  let result = decoder.step(b"\x78", output.mut_view())
+  @test.assert_eq(result.consumed, 1)
+  @test.assert_eq(result.produced, 0)
+  assert_true(result.status is NeedMoreInput)
+  assert_false(decoder.ending)
+  let ZlibError(first_kind, first_error) = @test.expect_error(() => {
+    decoder.check_end()
+  })
+  @test.assert_eq(first_kind, Truncated)
+  assert_true(decoder.ending)
+  let pending_pos = decoder.pending_pos
+  let pending_length = decoder.pending.length()
+  for _ in 0..<2 {
+    let ZlibError(kind, error) = @test.expect_error(() => decoder.check_end())
+    @test.assert_eq(kind, first_kind)
+    @test.assert_eq(error, first_error)
+    let ZlibError(kind, error) = @test.expect_error(() => {
+      decoder.step(b"must not be accepted", output.mut_view())
+    })
+    @test.assert_eq(kind, first_kind)
+    @test.assert_eq(error, first_error)
+    @test.assert_eq(decoder.pending_pos, pending_pos)
+    @test.assert_eq(decoder.pending.length(), pending_length)
+    @test.assert_eq(output, FixedArray::make(8, b'\xA5'))
+  }
 }
 
 ///|
@@ -86,6 +122,7 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
       (stream, expected_error) in [
         (compressed, None),
         (Bytes::from_array(damaged), Some(ChecksumMismatch)),
+        (compressed[:compressed.length() - 1].to_owned(), Some(Truncated)),
       ] {
       for (chunk, room) in [(1 << 20, 32768), (33, 7)] {
         let fixed = Decoder()
@@ -98,23 +135,13 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try
-            fixed.step(
-              input,
-              output.mut_view(),
-              end_of_input=end == stream.length(),
-            )
-          catch {
+          let status = try fixed.step(input, output.mut_view()) catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))
           }
           let other = try
-            viewed.step(
-              input,
-              padded.mut_view(start=3, end=room + 3),
-              end_of_input=end == stream.length(),
-            )
+            viewed.step(input, padded.mut_view(start=3, end=room + 3))
           catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
@@ -132,6 +159,28 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
               @test.assert_eq(output[:count], padded[3:3 + count])
               decoded.write_bytes(Bytes::from_array(output[:count]))
               position += consumed
+              if position == stream.length() {
+                let end_status = try fixed.check_end() catch {
+                  ZlibError(kind, _) => Err(kind)
+                } noraise {
+                  status => Ok(status)
+                }
+                let other_end = try viewed.check_end() catch {
+                  ZlibError(kind, _) => Err(kind)
+                } noraise {
+                  status => Ok(status)
+                }
+                @test.assert_eq(end_status, other_end)
+                match end_status {
+                  Err(kind) => {
+                    verdict = Some(kind)
+                    break
+                  }
+                  Ok(Done) => break
+                  Ok(NeedMoreOutput) => ()
+                  Ok(NeedMoreInput) => @test.fail("EOF must not request input")
+                }
+              }
               if status is Done {
                 break
               }

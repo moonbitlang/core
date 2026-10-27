@@ -93,7 +93,23 @@ fn cov_expect_decoder_error(
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(65536, b'\x00')
   let GzipError(kind, _) = @test.expect_error(() => {
-    decoder.step(input, output.mut_view(), end_of_input=true)
+    let decoded = @buffer.Buffer()
+    let mut position = 0
+    let mut ending = false
+    for _ in 0..<100000 {
+      let result = decoder.step(input[position:], output.mut_view())
+      position += result.consumed
+      decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+      let status = if position == input.length() && !ending {
+        ending = true
+        decoder.check_end()
+      } else {
+        result.status
+      }
+      if status is Done {
+        break
+      }
+    }
   })
   @test.assert_eq(kind, expected_kind)
 }
@@ -153,12 +169,11 @@ test "gzip coverage: streaming FEXTRA has buffered remainder" {
   let framed = cov_reheader(base, 4, b"\x01\x00\xAA")
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
-  let status_result = decoder.step(framed, output.mut_view(), end_of_input=true)
-  let status = status_result.status
+  let status_result = decoder.step(framed, output.mut_view())
   let consumed = status_result.consumed
   let produced = status_result.produced
-  assert_true(status is Done)
   @test.assert_eq(consumed, framed.length())
+  assert_true(decoder.check_end() is Done)
   @test.assert_eq(Bytes::from_array(output[0:produced].to_owned()), payload)
 }
 
@@ -210,16 +225,13 @@ test "gzip coverage: subsequent member boundaries" {
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
   let combined = cov_join([first_member, partial_magic])
-  let status_result = decoder.step(
-    combined,
-    output.mut_view(),
-    end_of_input=true,
-  )
+  let status_result = decoder.step(combined, output.mut_view())
   let status = status_result.status
   let consumed = status_result.consumed
   let produced = status_result.produced
   assert_true(status is Done)
   @test.assert_eq(consumed, combined.length())
+  assert_true(decoder.check_end() is Done)
   @test.assert_eq(Bytes::from_array(output[0:produced].to_owned()), payload)
   @test.assert_eq(decoder.unused_input(), partial_magic)
 }
@@ -240,13 +252,12 @@ test "gzip coverage: end after a clean member boundary" {
     Bytes::from_array(output[0:first_produced].to_owned()),
     payload,
   )
-  let status_result = decoder.step(b"", output.mut_view(), end_of_input=true)
-  let status = status_result.status
-  let consumed = status_result.consumed
-  let produced = status_result.produced
-  assert_true(status is Done)
-  @test.assert_eq(consumed, 0)
-  @test.assert_eq(produced, 0)
+  assert_true(decoder.check_end() is Done)
+  assert_true(decoder.check_end() is Done)
+  @test.assert_eq(
+    Bytes::from_array(output[0:first_produced].to_owned()),
+    payload,
+  )
 }
 
 ///|
