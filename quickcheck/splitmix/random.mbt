@@ -25,7 +25,7 @@ let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
 let double_ulp : Double = 1.0 / (1L << 53).to_double()
 
 ///|
-let float_ulp : Float = 1.0F / Float::from_int64(1L << 24)
+let float_ulp : @float.Float = 1.0F / @float.Float::from_int64(1L << 24)
 
 ///|
 /// Create a new RandomState from an optional seed.
@@ -135,9 +135,9 @@ pub fn RandomState::next_positive_int(self : RandomState) -> Int32 {
 
 ///|
 /// Get the next random number as a float in [0, 1)
-pub fn RandomState::next_float(self : RandomState) -> Float {
+pub fn RandomState::next_float(self : RandomState) -> @float.Float {
   let u = self.next_uint64()
-  Float::from_uint64(u >> 40) * float_ulp
+  @float.Float::from_uint64(u >> 40) * float_ulp
 }
 
 ///|

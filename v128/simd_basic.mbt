@@ -108,7 +108,12 @@ pub fn i64x2_const(a0 : UInt64, a1 : UInt64) -> V128 {
 #intrinsic("%v128.v128_const_f32x4")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn f32x4_const(a0 : Float, a1 : Float, a2 : Float, a3 : Float) -> V128 {
+pub fn f32x4_const(
+  a0 : @float.Float,
+  a1 : @float.Float,
+  a2 : @float.Float,
+  a3 : @float.Float,
+) -> V128 {
   i32x4_const(
     a0.reinterpret_as_uint(),
     a1.reinterpret_as_uint(),
@@ -167,7 +172,7 @@ pub fn i64x2_splat(value : UInt64) -> V128 {
 #intrinsic("%v128.f32x4_splat")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn f32x4_splat(value : Float) -> V128 {
+pub fn f32x4_splat(value : @float.Float) -> V128 {
   f32x4_const(value, value, value, value)
 }
 
@@ -239,8 +244,8 @@ pub fn i64x2_extract_lane(value : V128, lane : Int32) -> UInt64 {
 #intrinsic("%v128.f32x4_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-pub fn f32x4_extract_lane(value : V128, lane : Int32) -> Float {
-  Float::reinterpret_from_uint(u32_lane(value, lane))
+pub fn f32x4_extract_lane(value : V128, lane : Int32) -> @float.Float {
+  @float.Float::reinterpret_from_uint(u32_lane(value, lane))
 }
 
 ///|
@@ -342,7 +347,7 @@ pub fn i64x2_replace_lane(
 #doc(hidden)
 pub fn f32x4_replace_lane(
   value : V128,
-  replacement : Float,
+  replacement : @float.Float,
   lane : Int32,
 ) -> V128 {
   i32x4_replace_lane(value, replacement.reinterpret_as_uint(), lane)

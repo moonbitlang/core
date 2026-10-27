@@ -47,7 +47,7 @@ pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Float with fn arbitrary(_, rs) {
+pub impl Arbitrary for @float.Float with fn arbitrary(_, rs) {
   rs.next_float()
 }
 

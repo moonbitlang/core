@@ -55,8 +55,8 @@ pub impl Shrink for Int64 with fn shrink(x) {
 }
 
 ///|
-pub impl Shrink for Int16 with fn shrink(x) {
-  Shrink::shrink(x.to_int()).map(Int16::from_int)
+pub impl Shrink for @int16.Int16 with fn shrink(x) {
+  Shrink::shrink(x.to_int()).map(@int16.Int16::from_int)
 }
 
 ///|
@@ -158,9 +158,11 @@ pub impl Shrink for Double with fn shrink(x) {
 }
 
 ///|
-pub impl Shrink for Float with fn shrink(x) {
+pub impl Shrink for @float.Float with fn shrink(x) {
   // Narrowing a smaller Double can round back to the original Float.
-  shrink_decimal(x.to_double()).map(Float::from_double).filter(y => y != x)
+  shrink_decimal(x.to_double())
+  .map(@float.Float::from_double)
+  .filter(y => y != x)
 }
 
 ///|

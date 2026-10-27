@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn pack_f32x4_by(f : (Int32) -> Float) -> V128 {
+fn pack_f32x4_by(f : (Int32) -> @float.Float) -> V128 {
   pack_u32x4_by(i => f(i).reinterpret_as_uint())
 }
 
@@ -23,7 +23,7 @@ fn pack_f64x2_by(f : (Int32) -> Double) -> V128 {
 }
 
 ///|
-fn f32x4_map(value : V128, f : (Float) -> Float) -> V128 {
+fn f32x4_map(value : V128, f : (@float.Float) -> @float.Float) -> V128 {
   pack_f32x4_by(i => f(f32x4_extract_lane(value, i)))
 }
 
@@ -33,7 +33,11 @@ fn f64x2_map(value : V128, f : (Double) -> Double) -> V128 {
 }
 
 ///|
-fn f32x4_zip(value : V128, other : V128, f : (Float, Float) -> Float) -> V128 {
+fn f32x4_zip(
+  value : V128,
+  other : V128,
+  f : (@float.Float, @float.Float) -> @float.Float,
+) -> V128 {
   pack_f32x4_by(i => {
     f(f32x4_extract_lane(value, i), f32x4_extract_lane(other, i))
   })
@@ -54,7 +58,7 @@ fn f64x2_zip(
 fn f32x4_compare(
   value : V128,
   other : V128,
-  f : (Float, Float) -> Bool,
+  f : (@float.Float, @float.Float) -> Bool,
 ) -> V128 {
   pack_u32x4_by(i => {
     bool_to_u32_mask(
@@ -77,7 +81,7 @@ fn f64x2_compare(
 }
 
 ///|
-fn f32_nearest_even(value : Float) -> Float {
+fn f32_nearest_even(value : @float.Float) -> @float.Float {
   if value.is_nan() || value.is_inf() || value == 0.0F {
     value
   } else {
@@ -121,13 +125,13 @@ fn f64_nearest_even(value : Double) -> Double {
 ///|
 /// Wasm `min` semantics: NaN in either operand propagates, and
 /// `min(-0.0, +0.0)` is `-0.0`.
-fn f32_min(value : Float, other : Float) -> Float {
+fn f32_min(value : @float.Float, other : @float.Float) -> @float.Float {
   if value.is_nan() {
     value
   } else if other.is_nan() {
     other
   } else if value == other {
-    Float::reinterpret_from_uint(
+    @float.Float::reinterpret_from_uint(
       value.reinterpret_as_uint() | other.reinterpret_as_uint(),
     )
   } else if value < other {
@@ -140,13 +144,13 @@ fn f32_min(value : Float, other : Float) -> Float {
 ///|
 /// Wasm `max` semantics: NaN in either operand propagates, and
 /// `max(-0.0, +0.0)` is `+0.0`.
-fn f32_max(value : Float, other : Float) -> Float {
+fn f32_max(value : @float.Float, other : @float.Float) -> @float.Float {
   if value.is_nan() {
     value
   } else if other.is_nan() {
     other
   } else if value == other {
-    Float::reinterpret_from_uint(
+    @float.Float::reinterpret_from_uint(
       value.reinterpret_as_uint() & other.reinterpret_as_uint(),
     )
   } else if value > other {
@@ -189,7 +193,7 @@ fn f64_max(value : Double, other : Double) -> Double {
 ///|
 /// Wasm `pmin(z1, z2)` is `z2 < z1 ? z2 : z1`: the first operand wins on
 /// ties and NaN.
-fn f32_pmin(value : Float, other : Float) -> Float {
+fn f32_pmin(value : @float.Float, other : @float.Float) -> @float.Float {
   if other < value {
     other
   } else {
@@ -198,7 +202,7 @@ fn f32_pmin(value : Float, other : Float) -> Float {
 }
 
 ///|
-fn f32_pmax(value : Float, other : Float) -> Float {
+fn f32_pmax(value : @float.Float, other : @float.Float) -> @float.Float {
   if value < other {
     other
   } else {
@@ -225,12 +229,12 @@ fn f64_pmax(value : Double, other : Double) -> Double {
 }
 
 ///|
-fn f32_trunc_sat_s(value : Float) -> UInt32 {
+fn f32_trunc_sat_s(value : @float.Float) -> UInt32 {
   value.to_int().reinterpret_as_uint()
 }
 
 ///|
-fn f32_trunc_sat_u(value : Float) -> UInt32 {
+fn f32_trunc_sat_u(value : @float.Float) -> UInt32 {
   value.to_double().to_uint()
 }
 
@@ -481,7 +485,9 @@ pub fn f32x4_ge(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_convert_i32x4_s(value : V128) -> V128 {
-  pack_f32x4_by(i => Float::from_int(u32_lane(value, i).reinterpret_as_int()))
+  pack_f32x4_by(i => {
+    @float.Float::from_int(u32_lane(value, i).reinterpret_as_int())
+  })
 }
 
 ///|
@@ -490,7 +496,7 @@ pub fn f32x4_convert_i32x4_s(value : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f32x4_convert_i32x4_u(value : V128) -> V128 {
-  pack_f32x4_by(i => Float::from_uint(u32_lane(value, i)))
+  pack_f32x4_by(i => @float.Float::from_uint(u32_lane(value, i)))
 }
 
 ///|
@@ -500,8 +506,8 @@ pub fn f32x4_convert_i32x4_u(value : V128) -> V128 {
 #doc(hidden)
 pub fn f32x4_demote_f64x2_zero(value : V128) -> V128 {
   f32x4_const(
-    Float::from_double(f64x2_extract_lane(value, 0)),
-    Float::from_double(f64x2_extract_lane(value, 1)),
+    @float.Float::from_double(f64x2_extract_lane(value, 0)),
+    @float.Float::from_double(f64x2_extract_lane(value, 1)),
     0.0F,
     0.0F,
   )

@@ -164,7 +164,7 @@ pub impl Step for UInt64 with fn step_one() {
 }
 
 ///|
-pub impl Step for Float with fn direction(self) {
+pub impl Step for @float.Float with fn direction(self) {
   if self > @float.Float(0.0) {
     1
   } else if self < @float.Float(0.0) {
@@ -175,7 +175,7 @@ pub impl Step for Float with fn direction(self) {
 }
 
 ///|
-pub impl Step for Float with fn step_one() {
+pub impl Step for @float.Float with fn step_one() {
   @float.Float(1.0)
 }
 
@@ -184,7 +184,7 @@ pub impl Step for Float with fn step_one() {
 /// `Float`. `k` never reaches `COUNTER_LIMIT` here: the enumeration stops as
 /// soon as an element fails to move strictly past the previous one, and
 /// there are fewer than 2^32 `Float`s.
-pub impl Step for Float with fn enumerate(from, to, step, inclusive) {
+pub impl Step for @float.Float with fn enumerate(from, to, step, inclusive) {
   let from_d = from.to_double()
   let step_d = step.to_double()
   let dir = direction_of(step)
@@ -197,7 +197,7 @@ pub impl Step for Float with fn enumerate(from, to, step, inclusive) {
     guard !done else { None }
     guard in_range(dir, i, to) || (inclusive && i == to) else { None }
     let value = i
-    let next = Float::from_double(from_d + k * step_d)
+    let next = @float.Float::from_double(from_d + k * step_d)
     k = k + 1.0
     if progresses(dir, i, next) {
       i = next
@@ -273,7 +273,7 @@ pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
 }
 
 ///|
-pub impl Step for Int16 with fn direction(self) {
+pub impl Step for @int16.Int16 with fn direction(self) {
   if self > @int16.Int16(0) {
     1
   } else if self < @int16.Int16(0) {
@@ -284,7 +284,7 @@ pub impl Step for Int16 with fn direction(self) {
 }
 
 ///|
-pub impl Step for Int16 with fn step_one() {
+pub impl Step for @int16.Int16 with fn step_one() {
   @int16.Int16(1)
 }
 

@@ -248,11 +248,12 @@ test "double" {
 /// bound has magnitude below `4 * @float.min_positive`.
 pub fn Rand::float(
   self : Rand,
-  min~ : Float = 0.0F,
-  max~ : Float = 1.0F,
-) -> Float {
+  min~ : @float.Float = 0.0F,
+  max~ : @float.Float = 1.0F,
+) -> @float.Float {
   if min == 0.0F && max == 1.0F {
-    Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
+    @float.Float::from_uint(self.uint() << 8 >> 8) /
+    @float.Float::from_uint(1U << 24)
   } else {
     self.float_in_range(min~, max~)
   }
@@ -306,11 +307,11 @@ fn split_uint64_for_double(value : UInt64) -> (Double, Double) {
 
 ///|
 /// Returns the spacing from `anchor` to the adjacent value toward zero.
-fn float_gamma(anchor : Float) -> Float {
+fn float_gamma(anchor : @float.Float) -> @float.Float {
   if anchor == 0.0F {
-    Float::reinterpret_from_uint(1U)
+    @float.Float::reinterpret_from_uint(1U)
   } else {
-    let toward_zero = Float::reinterpret_from_uint(
+    let toward_zero = @float.Float::reinterpret_from_uint(
       anchor.reinterpret_as_uint() - 1,
     )
     (anchor - toward_zero).abs()
@@ -320,8 +321,11 @@ fn float_gamma(anchor : Float) -> Float {
 ///|
 /// Splitting by four leaves `high` below 2^24 for every binary32 interval, so
 /// conversion to `Float` is exact.
-fn split_uint64_for_float(value : UInt64) -> (Float, Float) {
-  (Float::from_uint64(value >> 2), Float::from_uint64(value & 0x3))
+fn split_uint64_for_float(value : UInt64) -> (@float.Float, @float.Float) {
+  (
+    @float.Float::from_uint64(value >> 2),
+    @float.Float::from_uint64(value & 0x3),
+  )
 }
 
 ///|
@@ -361,7 +365,11 @@ fn Rand::double_in_range(self : Rand, min~ : Double, max~ : Double) -> Double {
 
 ///|
 /// Implements the non-unit `Float` interval path.
-fn Rand::float_in_range(self : Rand, min~ : Float, max~ : Float) -> Float {
+fn Rand::float_in_range(
+  self : Rand,
+  min~ : @float.Float,
+  max~ : @float.Float,
+) -> @float.Float {
   guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
     abort("Rand::float: bounds must be finite")
   }

@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-fn k_expo2f(x : Float) -> Float {
+fn k_expo2f(x : @float.Float) -> @float.Float {
   let k = 235
-  let k_ln2 = Float::reinterpret_from_int(0x4322e3bc)
+  let k_ln2 = @float.Float::reinterpret_from_int(0x4322e3bc)
   // note that k is odd and scale*scale overflows */
-  let scale = Float::reinterpret_from_int((0x7f + k / 2) << 23)
+  let scale = @float.Float::reinterpret_from_int((0x7f + k / 2) << 23)
   // exp(x - k ln2) * 2**(k-1) */
   expf(x - k_ln2) * scale * scale
 }
@@ -61,15 +61,15 @@ fn k_expo2f(x : Float) -> Float {
 ///   inspect(@math.sinhf(@float.neg_infinity), content="-Infinity")
 /// }
 /// ```
-pub fn sinhf(x : Float) -> Float {
-  let mut h : Float = 0.5
+pub fn sinhf(x : @float.Float) -> @float.Float {
+  let mut h : @float.Float = 0.5
   let mut ix = x.reinterpret_as_uint()
   if ix >> 31 != 0 {
     h = -h
   }
   // |x|
   ix = ix & 0x7fffffff
-  let absx = Float::reinterpret_from_uint(ix)
+  let absx = @float.Float::reinterpret_from_uint(ix)
   let w = ix
 
   // |x| < log(FLT_MAX)
@@ -127,11 +127,11 @@ pub fn sinhf(x : Float) -> Float {
 ///   inspect(@math.coshf(@float.neg_infinity), content="Infinity")
 /// }
 /// ```
-pub fn coshf(x : Float) -> Float {
+pub fn coshf(x : @float.Float) -> @float.Float {
   let mut x = x
   let mut ix = x.reinterpret_as_uint()
   ix = ix & 0x7fffffff
-  x = Float::reinterpret_from_uint(ix)
+  x = @float.Float::reinterpret_from_uint(ix)
   let w = ix
 
   // |x| < log(2)
@@ -193,11 +193,11 @@ pub fn coshf(x : Float) -> Float {
 ///   inspect(@math.tanhf(@float.neg_infinity), content="-1")
 /// }
 /// ```
-pub fn tanhf(x : Float) -> Float {
+pub fn tanhf(x : @float.Float) -> @float.Float {
   let mut ix = x.reinterpret_as_uint()
   let sign = ix >> 31 != 0
   ix = ix & 0x7fffffff
-  let x = Float::reinterpret_from_uint(ix)
+  let x = @float.Float::reinterpret_from_uint(ix)
   let w = ix
   let tt = if w > 0x3f0c9f54 {
     // |x| > log(3)/2 ~= 0.5493 or nan
@@ -270,12 +270,12 @@ pub fn tanhf(x : Float) -> Float {
 ///   inspect(@math.asinhf(@float.neg_infinity), content="-Infinity")
 /// }
 /// ```
-pub fn asinhf(x : Float) -> Float {
+pub fn asinhf(x : @float.Float) -> @float.Float {
   let u = x.reinterpret_as_uint()
   let i = u & 0x7fffffff
   let sign = u >> 31 != 0
-  let ln2 : Float = 0.693147180559945309417232121458176568
-  let x = Float::reinterpret_from_uint(i)
+  let ln2 : @float.Float = 0.693147180559945309417232121458176568
+  let x = @float.Float::reinterpret_from_uint(i)
   let x = if i >= 0x3f800000U + (12U << 23) {
     // |x| >= 0x1p12 or inf or nan
     lnf(x) + ln2
@@ -337,8 +337,8 @@ pub fn asinhf(x : Float) -> Float {
 ///   inspect(@math.acoshf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn acoshf(x : Float) -> Float {
-  let ln2 : Float = 0.693147180559945309417232121458176568
+pub fn acoshf(x : @float.Float) -> @float.Float {
+  let ln2 : @float.Float = 0.693147180559945309417232121458176568
   let u = x.reinterpret_as_uint()
   let a = u & 0x7fffffffU
   if a < 0x3f800000U + (1U << 23) {
@@ -397,11 +397,11 @@ pub fn acoshf(x : Float) -> Float {
 ///   inspect(@math.atanhf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn atanhf(x : Float) -> Float {
+pub fn atanhf(x : @float.Float) -> @float.Float {
   let u = x.reinterpret_as_uint()
   let sign = u >> 31 != 0
   let u = u & 0x7fffffff
-  let x = Float::reinterpret_from_uint(u)
+  let x = @float.Float::reinterpret_from_uint(u)
   let x = if u < 0x3f800000U - (1U << 23) {
     if u < 0x3f800000U - (32U << 23) {
       x

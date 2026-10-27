@@ -93,7 +93,7 @@ let logf_data : LogfData = {
 ///   inspect(@math.lnf(0), content="-Infinity")
 /// }
 /// ```
-pub fn lnf(x : Float) -> Float {
+pub fn lnf(x : @float.Float) -> @float.Float {
   let mut ix : UInt32 = x.reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
@@ -117,14 +117,14 @@ pub fn lnf(x : Float) -> Float {
   let iz = ix - (tmp & 0xff800000U)
   let invc = logf_data.invc[i]
   let logc = logf_data.logc[i]
-  let z = Float::reinterpret_from_uint(iz).to_double()
+  let z = @float.Float::reinterpret_from_uint(iz).to_double()
   let r = z * invc - 1
   let y0 = logc + k.to_double() * logf_data.ln2
   let r2 = r * r
   let y = logf_data.poly[1] * r + logf_data.poly[2]
   let y = logf_data.poly[0] * r2 + y
   let y = y * r2 + (y0 + r)
-  Float::from_double(y)
+  @float.Float::from_double(y)
 }
 
 ///|
@@ -160,18 +160,18 @@ pub fn lnf(x : Float) -> Float {
 ///   inspect(@math.ln_1pf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
-pub fn ln_1pf(x : Float) -> Float {
-  let lg1_f : Float = 0.66666662693
-  let lg2_f : Float = 0.40000972152
-  let lg3_f : Float = 0.28498786688
-  let lg4_f : Float = 0.24279078841
-  let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
-  let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
+pub fn ln_1pf(x : @float.Float) -> @float.Float {
+  let lg1_f : @float.Float = 0.66666662693
+  let lg2_f : @float.Float = 0.40000972152
+  let lg3_f : @float.Float = 0.28498786688
+  let lg4_f : @float.Float = 0.24279078841
+  let float_ln2_hi : @float.Float = 6.9314575195e-01 // 0x3f317200
+  let float_ln2_lo : @float.Float = 1.4286067653e-06 // 0x35bfbe8e
   let mut ui : UInt32 = x.reinterpret_as_uint()
-  let mut f : Float = 0
-  let mut c : Float = 0
+  let mut f : @float.Float = 0
+  let mut c : @float.Float = 0
   let mut iu : UInt32 = 0
-  let one : Float = 1.0
+  let one : @float.Float = 1.0
   let mut k = 1
   if ui < 0x3ed413d0 || ui >> 31 > 0 {
     if ui >= 0xbf800000 {
@@ -197,15 +197,15 @@ pub fn ln_1pf(x : Float) -> Float {
     iu += 0x3f800000U - 0x3f3504f3U
     k = (iu >> 23).reinterpret_as_int() - 0x7f
     if k < 25 {
-      let fui = Float::reinterpret_from_uint(ui)
+      let fui = @float.Float::reinterpret_from_uint(ui)
       c = if k >= 2 { one - (fui - x) } else { x - (fui - 1.0) }
-      c /= Float::reinterpret_from_uint(ui)
+      c /= @float.Float::reinterpret_from_uint(ui)
     } else {
       c = 0.0
     }
     iu = (iu & 0x007fffff) + 0x3f3504f3
     ui = iu
-    f = Float::reinterpret_from_uint(ui) - 1.0
+    f = @float.Float::reinterpret_from_uint(ui) - 1.0
   }
   let s = f / (f + 2.0)
   let z = s * s
@@ -214,6 +214,6 @@ pub fn ln_1pf(x : Float) -> Float {
   let t2 = z * (lg1_f + w * lg3_f)
   let r = t2 + t1
   let hfsq = f * f * 0.5
-  let dk = Float::from_int(k)
+  let dk = @float.Float::from_int(k)
   s * (hfsq + r) + (dk * float_ln2_lo + c) - hfsq + f + dk * float_ln2_hi
 }

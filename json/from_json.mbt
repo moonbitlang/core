@@ -126,13 +126,13 @@ pub impl FromJson for Double with fn from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Float with fn from_json(json, path) {
+pub impl FromJson for @float.Float with fn from_json(json, path) {
   match json {
     String("NaN") => @float.not_a_number
     String("Infinity") => @float.infinity
     String("-Infinity") => @float.neg_infinity
     Number(n, ..) if n != @double.infinity && n != @double.neg_infinity =>
-      Float::from_double(n)
+      @float.Float::from_double(n)
     _ => decode_error(path, "Float::from_json: expected number")
   }
 }
