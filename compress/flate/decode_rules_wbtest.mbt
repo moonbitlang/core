@@ -77,10 +77,9 @@ test "dictionary matches cross into output and resume batched decoding" {
         @test.assert_eq(result.consumed, raw.length())
       }
       let output = FixedArray::make(plain.length() + 20, b'\xA5')
-      let counts = inflate_into(
+      let counts = Decompressor(dictionary~).decompress_into(
         raw,
         output.mut_view(start=5, end=5 + plain.length()),
-        dictionary~,
       )
       @test.assert_eq(counts.produced, plain.length())
       @test.assert_eq(counts.consumed, raw.length())

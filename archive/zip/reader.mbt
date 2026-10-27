@@ -202,7 +202,11 @@ fn inflate_entry(
     break total.to_int()
   }
   let output = FixedArray::make(size, b'\x00')
-  let result = @flate.inflate_into(compressed, output.mut_view(), cancelled~) catch {
+  let result = @flate.Decompressor().decompress_into(
+    compressed,
+    output.mut_view(),
+    cancelled~,
+  ) catch {
     err => raise wrap_inflate_error(err)
   }
   guard result.produced == size else {

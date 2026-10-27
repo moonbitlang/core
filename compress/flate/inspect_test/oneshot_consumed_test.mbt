@@ -204,10 +204,14 @@ test "whole-buffer input modes agree on exact and prefix boundaries" {
     }
     let output = FixedArray::make(plain.length(), b'\x00')
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_into(input, output.mut_view())
+      @flate.Decompressor().decompress_into(input, output.mut_view())
     })
     assert_eq(kind, TrailingData)
-    let counts = @flate.inflate_into(input, output.mut_view(), mode=Prefix)
+    let counts = @flate.Decompressor().decompress_into(
+      input,
+      output.mut_view(),
+      mode=Prefix,
+    )
     assert_eq(counts.consumed, raw.length())
     assert_eq(counts.produced, plain.length())
     assert_eq(Bytes::from_array(output), plain)

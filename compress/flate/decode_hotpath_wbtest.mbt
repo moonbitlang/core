@@ -60,7 +60,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
     }
     @test.assert_eq(inflate(input, mode=Prefix).data, source)
     let output = FixedArray::make(9000, b'\xA5')
-    let result = inflate_into(
+    let result = Decompressor().decompress_into(
       input + b"TRAILER",
       output.mut_view(),
       mode=Prefix,
@@ -68,7 +68,7 @@ test "omitted cancellation preserves output and resets explicit callback state" 
     @test.assert_eq(result.consumed, input.length())
     @test.assert_eq(result.produced, 9000)
     let mut one_shot_calls = 0
-    let result = inflate_into(input, output.mut_view(), cancelled=() => {
+    let result = Decompressor().decompress_into(input, output.mut_view(), cancelled=() => {
       one_shot_calls += 1
       false
     })

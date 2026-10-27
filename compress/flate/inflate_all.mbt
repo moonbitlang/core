@@ -1141,18 +1141,6 @@ pub fn Decompressor::decompress(
 }
 
 ///|
-/// Decode into a caller-owned view with its capacity as the output limit; errors may leave output written.
-pub fn inflate_into(
-  input : BytesView,
-  output : MutArrayView[Byte],
-  mode~ : InputMode = Exact,
-  dictionary? : BytesView,
-  cancelled? : () -> Bool,
-) -> DecompressResult raise InflateError {
-  Decompressor(dictionary?).decompress_into(input, output, mode~, cancelled?)
-}
-
-///|
 /// Decode one stream and report its input boundary; two_pass trades a second pass for exact output allocation.
 pub fn inflate(
   input : BytesView,

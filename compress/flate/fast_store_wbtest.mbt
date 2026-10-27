@@ -79,7 +79,7 @@ test "fast store output respects capacities bounds and codec reuse" {
       @test.assert_eq(output[i], b'\xA5')
     }
     @test.assert_eq(
-      deflate_into(input, output.mut_view(), fast_store=true),
+      Compressor(fast_store=true).compress_into(input, output.mut_view()),
       Some(expected.length()),
     )
     @test.assert_eq(codec.compress(input), expected)

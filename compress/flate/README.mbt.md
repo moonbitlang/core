@@ -66,8 +66,10 @@ test "README caller-buffer DEFLATE" {
 }
 ```
 
-`deflate_into` and `inflate_into` are single-use convenience forms of these methods.
-`inflate_into` and `Decompressor::decompress_into` return `DecompressResult` with
+Use `Compressor(...).compress_into(input, output)` or
+`Decompressor(...).decompress_into(input, output)` for a single call, and retain
+the object to reuse workspace across calls.
+`Decompressor::decompress_into` returns `DecompressResult` with
 `consumed` and `produced`. The default `mode=Exact` rejects trailing bytes;
 use `mode=Prefix` to leave them unread, with `consumed` locating their start.
 Use the streaming APIs when input or output must suspend.
@@ -186,13 +188,12 @@ The whole-buffer signatures are:
 
 ```text
 inflate(input, mode?=Exact, dictionary?, max_output?, cancelled?, two_pass?=false) -> Decompressed
-inflate_into(input, output, mode?=Exact, dictionary?, cancelled?) -> DecompressResult
 Decompressor::decompress(self, input, mode?=Exact, max_output?, cancelled?) -> Decompressed
 Decompressor::decompress_into(self, input, output, mode?=Exact, cancelled?) -> DecompressResult
 ```
 
 `Decompressed` contains owned `data` and `consumed`; `DecompressResult` contains
-`consumed` and `produced`. All four calls raise `InflateError` on failure.
+`consumed` and `produced`. All three calls raise `InflateError` on failure.
 Construct `Decompressor(dictionary=...)` to own the dictionary's final 32 KiB
 and reuse it independently for each stream. Dictionary history is not part of
 returned data, output limits, or produced counts. Raw DEFLATE has no dictionary
@@ -469,7 +470,7 @@ let stream = @flate.IncrementalEncoder(level=6, fast_store=true)
 let archive_bytes = @zip.write(archive, fast_store=true)
 ```
 
-The option is also available on all `deflate_all` strategies, `deflate_into`,
+The option is also available on all `deflate_all` strategies, `Compressor`,
 gzip/zlib compression functions and streaming encoders, all ZIP serialization
 functions, and `zip.Writer`. Whole-buffer APIs classify the entire input;
 streaming encoders decide per block and retain stored bytes as match history.
@@ -484,7 +485,7 @@ lossless, and the normal output bounds and output limits still apply.
 
 ## Effort tiers
 
-`deflate_all`, `deflate_into`, `Compressor`, and gzip/zlib `compress` share
+`deflate_all`, `Compressor`, and gzip/zlib `compress` share
 `strategy`, defaulting to `Standard(level=6)`:
 
 - `Standard(level=...)`: fixed-cadence blocks with zlib-derived level tuning.

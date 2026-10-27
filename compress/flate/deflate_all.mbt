@@ -261,20 +261,6 @@ pub fn deflate_all(
 }
 
 ///|
-/// One-shot convenience form of `Compressor::compress_into`. It creates a
-/// compressor for this call; use `Compressor` when encoding many streams.
-/// Optional `fast_store` has the same opt-in speed/ratio trade-off as `deflate_all`.
-pub fn deflate_into(
-  input : BytesView,
-  output : MutArrayView[Byte],
-  strategy~ : Strategy = Standard(level=6),
-  dictionary? : BytesView,
-  fast_store~ : Bool = false,
-) -> Int32? {
-  Compressor(strategy~, dictionary?, fast_store~).compress_into(input, output)
-}
-
-///|
 /// Cap the span before adding it to an absolute input position. Callers supply
 /// `0 <= pos <= end` and a positive block size, including near the Int32 limit.
 #inline

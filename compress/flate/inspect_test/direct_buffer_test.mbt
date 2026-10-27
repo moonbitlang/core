@@ -92,7 +92,7 @@ test "caller-buffer codecs match one-shot streams and reuse workspace" {
       )
       @test.assert_eq(compressor.compress(source), compressed)
       @test.assert_eq(
-        @flate.deflate_into(source, output, strategy~),
+        @flate.Compressor(strategy~).compress_into(source, output),
         Some(length),
       )
       @test.assert_eq(Bytes::from_array(output[:length]), compressed)

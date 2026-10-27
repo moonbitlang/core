@@ -103,7 +103,11 @@ test "whole-buffer dictionary decoding supports both input modes and output form
           let counts = if reusable {
             decoder.decompress_into(input, view, mode~)
           } else {
-            @flate.inflate_into(input, view, mode~, dictionary=dict)
+            @flate.Decompressor(dictionary=dict).decompress_into(
+              input,
+              view,
+              mode~,
+            )
           }
           assert_eq(counts.consumed, raw.length())
           assert_eq(counts.produced, plain.length())
