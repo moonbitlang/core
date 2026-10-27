@@ -875,7 +875,6 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 /// }
 /// ```
 #intrinsic("%readonlyarray.view")
-#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] ReadOnlyArray::exact_view(
   self : ReadOnlyArray[T],
@@ -923,7 +922,7 @@ pub fn[T] ReadOnlyArray::get_view(
 
 ///|
 /// Creates a view of a subarray, clamping the requested range instead of
-/// rejecting it. Same contract as `Array::clamped_view`.
+/// rejecting it. Same contract as `Array::view`.
 /// Also available as `arr[start:end]`. Use `ReadOnlyArray::exact_view` to validate bounds.
 ///
 /// # Example
@@ -931,13 +930,13 @@ pub fn[T] ReadOnlyArray::get_view(
 /// test {
 ///   let arr : ReadOnlyArray[Int32] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
-///     arr.clamped_view(start=3, end=10),
+///     arr.view(start=3, end=10),
 ///     content=(
 ///       #|<ArrayView: [4, 5]>
 ///     ),
 ///   )
 ///   debug_inspect(
-///     arr.clamped_view(start=4, end=1),
+///     arr.view(start=4, end=1),
 ///     content=(
 ///       #|<ArrayView: []>
 ///     ),
@@ -945,15 +944,16 @@ pub fn[T] ReadOnlyArray::get_view(
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn[T] ReadOnlyArray::clamped_view(
+#alias(clamped_view)
+pub fn[T] ReadOnlyArray::view(
   self : ReadOnlyArray[T],
   start~ : Int32 = 0,
   end? : Int32,
 ) -> ArrayView[T] {
   let fixed = self.unsafe_reinterpret_to_fixed_array()
   match end {
-    None => fixed.clamped_view(start~)
-    Some(end) => fixed.clamped_view(start~, end~)
+    None => fixed.view(start~)
+    Some(end) => fixed.view(start~, end~)
   }
 }
 

@@ -83,7 +83,7 @@ fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
       i += 1
       continue
     }
-    builder.write_view(text.view(start_offset=literal_start, end_offset=i))
+    builder.write_view(text.unsafe_view(start=literal_start, end=i))
     // Collect the maximal run of well-formed escapes into `bytes`.
     bytes.reset()
     let mut resume_after_percent = false
@@ -115,6 +115,6 @@ fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
     }
     literal_start = i
   }
-  builder.write_view(text.view(start_offset=literal_start, end_offset=length))
+  builder.write_view(text.unsafe_view(start=literal_start, end=length))
   Some(builder.to_string())
 }

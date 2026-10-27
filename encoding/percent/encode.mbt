@@ -58,11 +58,11 @@ pub fn encode(text : StringView) -> String {
         i += 1
         continue
       }
-      builder.write_view(text.view(start_offset=literal_start, end_offset=i))
+      builder.write_view(text.unsafe_view(start=literal_start, end=i))
       write_escape(builder, unit)
       i += 1
     } else {
-      builder.write_view(text.view(start_offset=literal_start, end_offset=i))
+      builder.write_view(text.unsafe_view(start=literal_start, end=i))
       if unit < 0x800 {
         write_escape(builder, 0xC0 | (unit >> 6))
         write_escape(builder, 0x80 | (unit & 0x3F))
@@ -95,6 +95,6 @@ pub fn encode(text : StringView) -> String {
     }
     literal_start = i
   }
-  builder.write_view(text.view(start_offset=literal_start, end_offset=length))
+  builder.write_view(text.unsafe_view(start=literal_start, end=length))
   builder.to_string()
 }

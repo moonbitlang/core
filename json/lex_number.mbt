@@ -243,7 +243,7 @@ fn ParseContext::lex_integer_end(
       // infinity sentinel.
       // The lexer leaves the first non-number character unconsumed, so
       // these offsets delimit only the ASCII number token.
-      let s = ctx.input.view(start_offset=start, end_offset=end)
+      let s = ctx.input.unsafe_view(start~, end~)
       try {
         let value = @internal/strconv.parse_double(s)
         return { value, repr: Some(s), }
@@ -380,10 +380,7 @@ fn ParseContext::lex_number_end(
   let number = ctx.lex_number_value(start, end)
   if ctx.preserve_number_repr {
     // The offsets delimit the ASCII number token, excluding any lookahead.
-    {
-      value: number.value,
-      repr: Some(ctx.input.view(start_offset=start, end_offset=end)),
-    }
+    { value: number.value, repr: Some(ctx.input.unsafe_view(start~, end~)), }
   } else {
     number
   }
@@ -441,7 +438,7 @@ fn ParseContext::lex_number_value(
       return { value: fast, repr: None, }
     }
   }
-  let s = ctx.input.view(start_offset=start, end_offset=end)
+  let s = ctx.input.unsafe_view(start~, end~)
   try {
     let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation
