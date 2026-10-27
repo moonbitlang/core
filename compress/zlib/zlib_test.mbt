@@ -313,26 +313,30 @@ test "streaming zlib Decoder reports truncation at end" {
   let output = FixedArray::make(256, b'\x00')
   let header = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    header.finish(b"\x78", output.mut_view())
+    header.step(b"\x78", output.mut_view(), end_of_input=true)
   })
   @test.assert_eq(kind, Truncated)
 
   let dictid = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    dictid.finish(b"\x78\x20\x00\x00", output.mut_view())
+    dictid.step(b"\x78\x20\x00\x00", output.mut_view(), end_of_input=true)
   })
   @test.assert_eq(kind, Truncated)
 
   let body = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    body.finish(b"\x78\x01\x03", output.mut_view())
+    body.step(b"\x78\x01\x03", output.mut_view(), end_of_input=true)
   })
   @test.assert_eq(kind, Truncated)
 
   let encoded = @zlib.compress(b"truncated checksum trailer")
   let trailer = @zlib.Decoder()
   let ZlibError(kind, _) = @test.expect_error(() => {
-    trailer.finish(encoded[:encoded.length() - 1], output.mut_view())
+    trailer.step(
+      encoded[:encoded.length() - 1],
+      output.mut_view(),
+      end_of_input=true,
+    )
   })
   @test.assert_eq(kind, Truncated)
 }
@@ -345,7 +349,11 @@ test "streaming zlib Decoder latches end across output backpressure" {
   let encoded = @zlib.compress(source)
   let decoder = @zlib.Decoder()
   let no_output = FixedArray::make(0, b'\x00')
-  let initial_status_result = decoder.finish(encoded, no_output.mut_view())
+  let initial_status_result = decoder.step(
+    encoded,
+    no_output.mut_view(),
+    end_of_input=true,
+  )
   let initial_status = initial_status_result.status
   let initial_consumed = initial_status_result.consumed
   let initial_produced = initial_status_result.produced
@@ -639,11 +647,7 @@ test "streaming zlib checksum survives output reuse before a split trailer" {
   @test.assert_eq(decoded.to_bytes(), source)
   for i in 0..<4 {
     let input = stream[body_end + i:body_end + i + 1]
-    let result = if i == 3 {
-      decoder.finish(input, output)
-    } else {
-      decoder.step(input, output)
-    }
+    let result = decoder.step(input, output, end_of_input=i == 3)
     @test.assert_eq(result.status, if i == 3 { Done } else { NeedMoreInput })
   }
   @test.assert_eq(padded[2], b'\xA5')

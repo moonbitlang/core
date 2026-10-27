@@ -19,9 +19,8 @@ pub suberror GzipError {
 // Types and methods
 type Decoder
 pub fn Decoder::Decoder(multistream? : Bool) -> Self
-pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise GzipError
 pub fn Decoder::is_finished(Self) -> Bool
-pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise GzipError
+pub fn Decoder::step(Self, BytesView, MutArrayView[Byte], end_of_input? : Bool) -> @flate.StepResult raise GzipError
 pub fn Decoder::unused_input(Self) -> Bytes
 
 type Encoder

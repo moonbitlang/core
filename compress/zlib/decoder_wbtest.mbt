@@ -50,7 +50,7 @@ test "zlib failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let ZlibError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.finish(malformed, output.mut_view())
+    decoder.step(malformed, output.mut_view(), end_of_input=true)
   })
 
   let pending_pos = decoder.pending_pos
@@ -98,24 +98,24 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try {
-            if end == stream.length() {
-              fixed.finish(input, output.mut_view())
-            } else {
-              fixed.step(input, output.mut_view())
-            }
-          } catch {
+          let status = try
+            fixed.step(
+              input,
+              output.mut_view(),
+              end_of_input=end == stream.length(),
+            )
+          catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))
           }
-          let other = try {
-            if end == stream.length() {
-              viewed.finish(input, padded.mut_view(start=3, end=room + 3))
-            } else {
-              viewed.step(input, padded.mut_view(start=3, end=room + 3))
-            }
-          } catch {
+          let other = try
+            viewed.step(
+              input,
+              padded.mut_view(start=3, end=room + 3),
+              end_of_input=end == stream.length(),
+            )
+          catch {
             ZlibError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))

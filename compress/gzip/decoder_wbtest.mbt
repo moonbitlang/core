@@ -32,7 +32,7 @@ test "gzip header FNAME bytes are discarded, not retained" {
   let plain = b"body after a long filename"
   let normal = compress(plain)
   let rest = b"\x00" + normal[10:].to_owned()
-  let result = decoder.finish(rest, output.mut_view())
+  let result = decoder.step(rest, output.mut_view(), end_of_input=true)
   @test.assert_eq(result.status, Done)
   @test.assert_eq(result.consumed, rest.length())
   @test.assert_eq(Bytes::from_array(output[:result.produced]), plain)
@@ -81,7 +81,7 @@ test "gzip failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let GzipError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.finish(malformed, output.mut_view())
+    decoder.step(malformed, output.mut_view(), end_of_input=true)
   })
 
   let pending_pos = decoder.pending_pos
@@ -133,24 +133,24 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try {
-            if end == stream.length() {
-              fixed.finish(input, output.mut_view())
-            } else {
-              fixed.step(input, output.mut_view())
-            }
-          } catch {
+          let status = try
+            fixed.step(
+              input,
+              output.mut_view(),
+              end_of_input=end == stream.length(),
+            )
+          catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))
           }
-          let other = try {
-            if end == stream.length() {
-              viewed.finish(input, padded.mut_view(start=3, end=room + 3))
-            } else {
-              viewed.step(input, padded.mut_view(start=3, end=room + 3))
-            }
-          } catch {
+          let other = try
+            viewed.step(
+              input,
+              padded.mut_view(start=3, end=room + 3),
+              end_of_input=end == stream.length(),
+            )
+          catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))

@@ -93,7 +93,7 @@ fn cov_expect_decoder_error(
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(65536, b'\x00')
   let GzipError(kind, _) = @test.expect_error(() => {
-    decoder.finish(input, output.mut_view())
+    decoder.step(input, output.mut_view(), end_of_input=true)
   })
   @test.assert_eq(kind, expected_kind)
 }
@@ -153,7 +153,7 @@ test "gzip coverage: streaming FEXTRA has buffered remainder" {
   let framed = cov_reheader(base, 4, b"\x01\x00\xAA")
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
-  let status_result = decoder.finish(framed, output.mut_view())
+  let status_result = decoder.step(framed, output.mut_view(), end_of_input=true)
   let status = status_result.status
   let consumed = status_result.consumed
   let produced = status_result.produced
@@ -210,7 +210,11 @@ test "gzip coverage: subsequent member boundaries" {
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(256, b'\x00')
   let combined = cov_join([first_member, partial_magic])
-  let status_result = decoder.finish(combined, output.mut_view())
+  let status_result = decoder.step(
+    combined,
+    output.mut_view(),
+    end_of_input=true,
+  )
   let status = status_result.status
   let consumed = status_result.consumed
   let produced = status_result.produced
@@ -236,7 +240,7 @@ test "gzip coverage: end after a clean member boundary" {
     Bytes::from_array(output[0:first_produced].to_owned()),
     payload,
   )
-  let status_result = decoder.finish(b"", output.mut_view())
+  let status_result = decoder.step(b"", output.mut_view(), end_of_input=true)
   let status = status_result.status
   let consumed = status_result.consumed
   let produced = status_result.produced

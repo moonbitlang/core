@@ -160,10 +160,13 @@ test "README streaming IncrementalEncoder" {
   input source is exhausted means the stream is truncated. On `NeedMoreOutput`,
   keep calling `step` with the unconsumed suffix and fresh output space, even
   if the suffix is empty; stop at `Done`.
-- gzip/zlib decoders accept the final input chunk through `finish`; repeat
-  with any unconsumed suffix and fresh output space until `Done`. They report
-  truncation themselves. After a raw decoder error, discard or reset it;
-  container decoder instances stably rethrow the same error.
+- gzip/zlib decoders accept `step(input, output, end_of_input=true)` for the
+  final input chunk, or an empty input once the source reports EOF. Repeat the
+  flag with any unaccepted suffix; once the entire final chunk is accepted,
+  EOF stays latched while output is drained, even if later calls omit the flag.
+  Input completion is a caller signal, while `Done` is the decoder's result;
+  incomplete input raises a truncation error. After a raw decoder error, discard
+  or reset it; container decoder instances stably rethrow the same error.
 - Once `Done` is returned, new input is not consumed; reset the raw engine or
   gzip/zlib encoder before reuse, or create a new decoder wrapper. A reset
   encoder produces the same bytes as a fresh one with the same options and
