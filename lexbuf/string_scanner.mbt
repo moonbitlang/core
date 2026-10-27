@@ -21,11 +21,13 @@
 /// same value can be passed to successive `lexscan` expressions.
 ///
 /// Both `data` offsets and `cursor` are measured in UTF-16 code units. The
-/// cursor is relative to `data`: it is in the range `0..=data.length()` and
-/// never inside a surrogate pair. A `StringView` slice is therefore a valid
-/// input, and scanning it does not read outside the slice.
+/// cursor is relative to `data` and in the range `0..=data.length()`. A
+/// `StringView` slice is therefore a valid input, and scanning it does not
+/// read outside the slice.
 ///
-/// Create a scanner with `StringScanner(data)`, which checks the cursor.
+/// Create a scanner with `StringScanner(data)`. It checks that the cursor is
+/// in range and not inside a surrogate pair, and `lexscan` only moves the
+/// cursor to the end of a match, so the cursor stays at a character boundary.
 ///
 /// ```mbt nocheck
 /// let scanner = @lexbuf.StringScanner("hello 42")
@@ -75,9 +77,9 @@ pub fn StringScanner::StringScanner(
 }
 
 ///|
-/// Compiler protocol: sets the cursor without checking it. Generated `lexscan`
-/// code calls this to commit the end of a match, which is always in range and
-/// at a character boundary.
+/// Compiler protocol: sets the cursor without checking it. Intended for
+/// generated `lexscan` code, which commits the end of a match. The caller must
+/// keep `cursor` in `0..=self.data.length()` and at a character boundary.
 #doc(hidden)
 pub fn StringScanner::__unsafe_set_cursor(
   self : StringScanner,

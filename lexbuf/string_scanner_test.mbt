@@ -19,7 +19,8 @@ test "StringScanner starts at a character boundary" {
   inspect(@lexbuf.StringScanner(data, cursor=2).cursor, content="2")
   inspect(@lexbuf.StringScanner(data, cursor=4).cursor, content="4")
   inspect(@lexbuf.StringScanner(data, cursor=5).cursor, content="5")
-  inspect(@lexbuf.StringScanner(""[:]).cursor, content="0")
+  inspect(@lexbuf.StringScanner("").cursor, content="0")
+  inspect(@lexbuf.StringScanner("\u{1F600}", cursor=2).cursor, content="2")
 }
 
 ///|
@@ -31,6 +32,15 @@ test "StringScanner cursor is relative to a sliced view" {
   }
   inspect(word, content="b")
   inspect(scanner.cursor, content="2")
+}
+
+///|
+test "StringScanner checks the cursor against a sliced view" {
+  // "a😀b": a at 0, the pair at 1 and 2, b at 3.
+  let data = "\u{1F600}a\u{1F600}b"[2:]
+  for cursor in [0, 1, 3, 4] {
+    assert_eq(@lexbuf.StringScanner(data, cursor~).cursor, cursor)
+  }
 }
 
 ///|
