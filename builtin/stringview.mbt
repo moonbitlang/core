@@ -350,8 +350,8 @@ pub impl Eq for StringView with fn equal(self, other) {
   .str()
   .unsafe_range_equal(
     other.str(),
-    self_off=self.start(),
-    other_off=other.start(),
+    start=self.start(),
+    other_start=other.start(),
     len~,
   )
 }
@@ -384,7 +384,7 @@ pub fn StringView::equal_to_string(self : StringView, other : String) -> Bool {
   if physical_equal(self.str(), other) && self.start() == 0 {
     return true
   }
-  self.str().unsafe_range_equal(other, self_off=self.start(), other_off=0, len~)
+  self.str().unsafe_range_equal(other, start=self.start(), other_start=0, len~)
 }
 
 ///|

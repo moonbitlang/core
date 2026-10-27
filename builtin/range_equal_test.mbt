@@ -19,40 +19,40 @@
 ///|
 test "String range equality basics and empty ranges" {
   inspect(
-    "xhello".range_equal("hello!", self_off=1, other_off=0, len=5),
+    "xhello".range_equal("hello!", start=1, other_start=0, len=5),
     content="true",
   )
   inspect(
-    "xhello".unsafe_range_equal("hello!", self_off=1, other_off=0, len=5),
+    "xhello".unsafe_range_equal("hello!", start=1, other_start=0, len=5),
     content="true",
   )
   inspect(
-    "hello".range_equal("hallo", self_off=0, other_off=0, len=5),
+    "hello".range_equal("hallo", start=0, other_start=0, len=5),
     content="false",
   )
   inspect(
-    "hello".unsafe_range_equal("hallo", self_off=0, other_off=0, len=5),
+    "hello".unsafe_range_equal("hallo", start=0, other_start=0, len=5),
     content="false",
   )
   inspect(
-    "abcabc".range_equal("abcabc", self_off=0, other_off=3, len=3),
+    "abcabc".range_equal("abcabc", start=0, other_start=3, len=3),
     content="true",
   )
   inspect(
-    "abcabc".unsafe_range_equal("abcabc", self_off=0, other_off=3, len=3),
+    "abcabc".unsafe_range_equal("abcabc", start=0, other_start=3, len=3),
     content="true",
   )
-  inspect("".range_equal("", self_off=0, other_off=0, len=0), content="true")
+  inspect("".range_equal("", start=0, other_start=0, len=0), content="true")
   inspect(
-    "".unsafe_range_equal("", self_off=0, other_off=0, len=0),
-    content="true",
-  )
-  inspect(
-    "abc".range_equal("xy", self_off=3, other_off=2, len=0),
+    "".unsafe_range_equal("", start=0, other_start=0, len=0),
     content="true",
   )
   inspect(
-    "abc".unsafe_range_equal("xy", self_off=3, other_off=2, len=0),
+    "abc".range_equal("xy", start=3, other_start=2, len=0),
+    content="true",
+  )
+  inspect(
+    "abc".unsafe_range_equal("xy", start=3, other_start=2, len=0),
     content="true",
   )
 }
@@ -61,45 +61,45 @@ test "String range equality basics and empty ranges" {
 test "String range equality permits boundaries inside surrogate pairs" {
   // U+1F600 and U+1F601 share the high surrogate D83D, but differ in the low one.
   inspect(
-    "😀".range_equal("😁", self_off=0, other_off=0, len=1),
+    "😀".range_equal("😁", start=0, other_start=0, len=1),
     content="true",
   )
   inspect(
-    "😀".unsafe_range_equal("😁", self_off=0, other_off=0, len=1),
+    "😀".unsafe_range_equal("😁", start=0, other_start=0, len=1),
     content="true",
   )
   inspect(
-    "😀".range_equal("😁", self_off=1, other_off=1, len=1),
+    "😀".range_equal("😁", start=1, other_start=1, len=1),
     content="false",
   )
   inspect(
-    "😀".unsafe_range_equal("😁", self_off=1, other_off=1, len=1),
+    "😀".unsafe_range_equal("😁", start=1, other_start=1, len=1),
     content="false",
   )
   // Start inside the same surrogate pair at different absolute offsets.
   inspect(
-    "😀".range_equal("x😀", self_off=1, other_off=2, len=1),
+    "😀".range_equal("x😀", start=1, other_start=2, len=1),
     content="true",
   )
   inspect(
-    "😀".unsafe_range_equal("x😀", self_off=1, other_off=2, len=1),
+    "😀".unsafe_range_equal("x😀", start=1, other_start=2, len=1),
     content="true",
   )
   inspect(
-    "😀".range_equal("😁", self_off=1, other_off=1, len=0),
+    "😀".range_equal("😁", start=1, other_start=1, len=0),
     content="true",
   )
   inspect(
-    "😀".unsafe_range_equal("😁", self_off=1, other_off=1, len=0),
+    "😀".unsafe_range_equal("😁", start=1, other_start=1, len=0),
     content="true",
   )
   // A failed literal comparison may end halfway through an input character.
   inspect(
-    "abcdef😀".range_equal("abcdefg", self_off=0, other_off=0, len=7),
+    "abcdef😀".range_equal("abcdefg", start=0, other_start=0, len=7),
     content="false",
   )
   inspect(
-    "abcdef😀".unsafe_range_equal("abcdefg", self_off=0, other_off=0, len=7),
+    "abcdef😀".unsafe_range_equal("abcdefg", start=0, other_start=0, len=7),
     content="false",
   )
 }
@@ -108,23 +108,20 @@ test "String range equality permits boundaries inside surrogate pairs" {
 test "String range equality agrees with code unit comparison" {
   let left = "prefix:A😀B中😁C:suffix"
   let right = "prefix:Z😀B文😁D:suffix"
-  for self_off in 0..<=left.length() {
-    for other_off in 0..<=right.length() {
-      let max_len = (left.length() - self_off).min(right.length() - other_off)
+  for start in 0..<=left.length() {
+    for other_start in 0..<=right.length() {
+      let max_len = (left.length() - start).min(right.length() - other_start)
       for len in 0..<=max_len {
         let mut expected = true
         for i in 0..<len {
-          if left[self_off + i] != right[other_off + i] {
+          if left[start + i] != right[other_start + i] {
             expected = false
             break
           }
         }
+        assert_eq(left.range_equal(right, start~, other_start~, len~), expected)
         assert_eq(
-          left.range_equal(right, self_off~, other_off~, len~),
-          expected,
-        )
-        assert_eq(
-          left.unsafe_range_equal(right, self_off~, other_off~, len~),
+          left.unsafe_range_equal(right, start~, other_start~, len~),
           expected,
         )
       }

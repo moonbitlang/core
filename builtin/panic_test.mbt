@@ -19,52 +19,52 @@ test "panic abort" {
 
 ///|
 test "panic String range_equal negative self offset" {
-  "abc".range_equal("abc", self_off=-1, other_off=0, len=1) |> ignore
+  "abc".range_equal("abc", start=-1, other_start=0, len=1) |> ignore
 }
 
 ///|
 test "panic String range_equal negative other offset" {
-  "abc".range_equal("abc", self_off=0, other_off=-1, len=1) |> ignore
+  "abc".range_equal("abc", start=0, other_start=-1, len=1) |> ignore
 }
 
 ///|
 test "panic String range_equal negative length" {
-  "abc".range_equal("abc", self_off=0, other_off=0, len=-1) |> ignore
+  "abc".range_equal("abc", start=0, other_start=0, len=-1) |> ignore
 }
 
 ///|
 test "panic String range_equal self range out of bounds" {
-  "abc".range_equal("abcd", self_off=1, other_off=0, len=3) |> ignore
+  "abc".range_equal("abcd", start=1, other_start=0, len=3) |> ignore
 }
 
 ///|
 test "panic String range_equal other range out of bounds" {
-  "abcd".range_equal("abc", self_off=0, other_off=1, len=3) |> ignore
+  "abcd".range_equal("abc", start=0, other_start=1, len=3) |> ignore
 }
 
 ///|
 test "panic String range_equal empty self range past end" {
-  "abc".range_equal("", self_off=4, other_off=0, len=0) |> ignore
+  "abc".range_equal("", start=4, other_start=0, len=0) |> ignore
 }
 
 ///|
 test "panic String range_equal empty other range past end" {
-  "".range_equal("abc", self_off=0, other_off=4, len=0) |> ignore
+  "".range_equal("abc", start=0, other_start=4, len=0) |> ignore
 }
 
 ///|
 test "panic String range_equal overflowing length" {
-  "abc".range_equal("abc", self_off=1, other_off=1, len=2147483647) |> ignore
+  "abc".range_equal("abc", start=1, other_start=1, len=2147483647) |> ignore
 }
 
 ///|
 test "panic String range_equal overflowing self offset" {
-  "abc".range_equal("abc", self_off=2147483647, other_off=0, len=1) |> ignore
+  "abc".range_equal("abc", start=2147483647, other_start=0, len=1) |> ignore
 }
 
 ///|
 test "panic String range_equal overflowing other offset" {
-  "abc".range_equal("abc", self_off=0, other_off=2147483647, len=1) |> ignore
+  "abc".range_equal("abc", start=0, other_start=2147483647, len=1) |> ignore
 }
 
 ///|

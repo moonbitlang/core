@@ -182,7 +182,7 @@ fn check_bytes_range_equal(
 test "String::unsafe_range_equal plants a mismatch at every position" {
   check_string_range_equal(
     (l, lo, r, ro, len) => {
-      l.unsafe_range_equal(self_off=lo, r, other_off=ro, len~)
+      l.unsafe_range_equal(start=lo, r, other_start=ro, len~)
     },
     0,
     41,
@@ -203,10 +203,10 @@ test "Bytes::unsafe_range_equal plants a mismatch at every position" {
 ///|
 test "unsafe_range_equal on empty and same-buffer ranges" {
   let s = "abcabcabcabcabcabcabcabc"
-  assert_true(s.unsafe_range_equal(self_off=0, s, other_off=0, len=0))
-  assert_true(s.unsafe_range_equal(self_off=24, "", other_off=0, len=0))
-  assert_true(s.unsafe_range_equal(self_off=0, s, other_off=3, len=21))
-  assert_false(s.unsafe_range_equal(self_off=0, s, other_off=1, len=20))
+  assert_true(s.unsafe_range_equal(start=0, s, other_start=0, len=0))
+  assert_true(s.unsafe_range_equal(start=24, "", other_start=0, len=0))
+  assert_true(s.unsafe_range_equal(start=0, s, other_start=3, len=21))
+  assert_false(s.unsafe_range_equal(start=0, s, other_start=1, len=20))
   let b = b"abcabcabcabcabcabcabcabcabcabcabcabc"
   assert_true(b.unsafe_range_equal(self_off=0, b, other_off=0, len=0))
   assert_true(b.unsafe_range_equal(self_off=36, b"", other_off=0, len=0))
