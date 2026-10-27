@@ -1,5 +1,9 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(target="native")
+import {
   "moonbitlang/core/encoding/utf8",
 }
 

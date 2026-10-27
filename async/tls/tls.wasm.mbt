@@ -682,13 +682,6 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
 
 ///|
 let _unused : Unit = {
-  ignore(@bytes_util.ascii_to_string)
-  ignore(@os_error.check_errno)
   ignore((tls : Tls) => tls.is_client)
   ignore((transport : Transport) => transport.flush_write())
-  ignore((_ : @fs.File) => ())
-  ignore(@errno_util.errno_to_string)
-  ignore(@cmp.minimum(1, 2))
-  ignore(@ref.Ref(0))
-  ignore((_ : @lazy.Lazy[Int32]) => ())
 }

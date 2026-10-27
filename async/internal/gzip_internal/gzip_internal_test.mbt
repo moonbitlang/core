@@ -354,10 +354,3 @@ async test "gzip decode min output source file" {
   let data2 = decode(compressed, expected_len=data.length(), output_step=Min)
   assert_eq(data, data2)
 }
-
-///|
-#cfg(not(any(target="native", target="wasm")))
-let _unused : Unit = {
-  ignore(@async.sleep)
-  ignore(@fs.unimplemented)
-}

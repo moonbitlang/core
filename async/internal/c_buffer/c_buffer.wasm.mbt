@@ -110,6 +110,3 @@ pub fn Buffer::decode_as_os_string(
   fill_string(os_str, offset, len, str, str_len)
   str
 }
-
-///|
-let _unused_import : Unit = ignore(@utf8.encode(""))

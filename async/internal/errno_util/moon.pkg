@@ -1,5 +1,9 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/async/internal/env_util",
   "moonbitlang/core/async/internal/c_buffer",
 }

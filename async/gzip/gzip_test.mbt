@@ -237,10 +237,3 @@ async test "node compatibility on generated binary data" {
   let input = Bytes::makei(65536 + 257, i => ((i * 73 + 19) & 0xff).to_byte())
   assert_node_compatibility(input)
 }
-
-///|
-#cfg(not(any(target="native", target="wasm")))
-let _unused : Unit = {
-  ignore(@fs.unimplemented)
-  ignore(@process.unimplemented)
-}

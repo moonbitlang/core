@@ -90,5 +90,5 @@ async test "prevent NUL command injection" {
 }
 
 ///|
-#cfg(target="wasm")
-let _wasm_unused_string_import : Unit = ignore(() => @string.parse_int(""))
+#cfg(all(target="native", not(platform="windows")))
+let _ignore_string_import : Unit = ignore(() => @string.parse_int("0"))

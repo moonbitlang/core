@@ -1,5 +1,9 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(target="native")
+import {
   "moonbitlang/core/env",
   "moonbitlang/core/async/cond_var",
   "moonbitlang/core/async/external_loop_integration",

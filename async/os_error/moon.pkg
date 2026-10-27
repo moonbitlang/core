@@ -1,16 +1,24 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/debug",
   "moonbitlang/core/json",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/async/internal/env_util",
   "moonbitlang/core/async/internal/errno_util" @errno,
 }
 
 import {
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
   "moonbitlang/core/test",
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/async/internal/test_util",
 } for "test"
 
 options(
