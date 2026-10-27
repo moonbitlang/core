@@ -17,39 +17,16 @@ async test {
 Use `@http.get_text()` to get a UTF-8-decoded `String`,
 `@http.get_binary()` to get raw `Bytes`, or `@http.get_json()` to get `Json`.
 
-## Generic HTTP client
-Sometimes, the simple one-time `@http.get_xxx` etc. is insufficient,
-for example you need to reuse the same connection for multiple requests,
-or the request/response body is very large and need to be processed lazily.
-In this case, you can use the `@http.Client` type.
-`@http.Client` can be created via `@http.Client()`.
+## Streaming message body
 
-The workflow of performing a request with `@http.Client` is:
-
-1. initiate the request via `client.request(..)`.
-   The client will find or allocate a network connection to fulfill the request,
-   send the requset header and return that connection
-1. send the request body by using the connection as a `@io.BinaryWriter`.
-   Text payload can also be written through `client.text` as an `@io.TextWriter`.
-1. complete the request and obtain response header from the server
-   via `conn.end_request()`
-1. read the response body by using the connection as a `@io.BinaryReader`.
-   You can also ignore the body via `client.skip_response_body()`.
-   Text responses can be read through `client.text` as an `@io.TextReader`.
-
-The helpers `client.get(..)` etc. can be used to perform step (1)-(3) above.
-For a one-shot streaming request, `@http.get_stream()` can be used to perform client creation plus `client.get(..)`.
-There are also `client.get_{binary,text,json}()`, which automatically collect response body into specified format.
-
-A complete example:
+For HTTP messages with large body, collecting the whole body in memory could be a bad idea.
+The `@http` package also provide convenient API for manipulating message body streamingly:
 
 ```moonbit check
 ///|
 #cfg(any(target="native", target="js"))
 async test {
-  let client = @http.Client()
-  defer client.close()
-  let (response, conn) = client.get("https://www.moonbitlang.com")
+  let (response, conn) = @http.get("https://www.moonbitlang.com")
   defer conn.close()
   inspect(response.code, content="200")
   let body = conn.text.read_all()
@@ -57,10 +34,41 @@ async test {
 }
 ```
 
-All HTTP client API, including the simple request helpers `@http.get_xxx` etc.,
-are supported on JavaScript backend using `fetch` API,
-meaning that you can use these API in browser environment.
-Notice that some feature, such as proxy, is not supported on JavaScript backend.
+Here, `@http.get(url)` performs a `GET` request to URL,
+and returns the response header from the server,
+plus the HTTP connection assigned for this request.
+The content of response body can be read from the connection through the `@io.BinaryReader` interface,
+or through the `@io.TextReader` interface using the `.text` view on the connection.
+The connection must be closed via `.close()` after finishing the request.
+
+`@http.put` and `@http.post` work similarly, except that the response header will not be returned immediately.
+`@http.put` and `@http.post` only returns the HTTP connection for the request.
+The caller should first write the content of request body
+through the `@io.BinaryWriter` interface on the connection
+(or through the `@io.TextWriter` interface via `.text`).
+After finishing the request body, `.end_request` should be invoked on the connection
+to finish the request and obtain response header from the server.
+After `.end_request`, body of response message can be read from the connection as in the `@http.get` case above.
+
+## Generic HTTP client
+When performing multiple requests to the same host,
+sharing and reusing HTTP connection can save a lot of resource.
+The generic `@http.Client` type provides connection pool backed HTTP client support.
+A HTTP client can be created via `@http.Client(..)` and must be closed via `.close()`.
+Users can perform requests through the client via `.request(..)`, `.get(..)` etc.,
+the semantic of these methods are similar to `@http.request(..)`, `@http.get(..)` etc.,
+except that they can reuse the client's existing connections to save resource.
+Multiple requests can be performed on the same client concurrently,
+the client will automatically create new connection if necessary to fulfill requests.
+
+> note: currently the `@http.Client` is just a placeholder that create a new connection for every request.
+> Proper connection pool support will be implemented in the near future.
+
+## JavaScript compatibility
+All HTTP client API, including the toplevel `@http.xxx` helpers and the generic `@http.Client` type,
+has browser-compatible JavaScript backend support using `fetch` API,
+Notice that some feature, such as proxy and streaming request body building,
+are not supported on JavaScript backend due to limitation of `fetch` API.
 
 ## Writing HTTP servers
 The recommended way to create HTTP servers is `@http.Server::run_forever(..)`.
