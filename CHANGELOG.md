@@ -13,6 +13,7 @@
 
 #### Changed
 
+- **BREAKING**: `view(start~, end~)` now clamps bounds consistently across built-in sliceable types, matching bracket slicing. `clamped_view` remains available; use `exact_view` for strict bounds. String views snap split surrogate boundaries inward; use `unsafe_view` for bounds-checked raw UTF-16 slicing.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed

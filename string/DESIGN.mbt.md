@@ -11,8 +11,9 @@
   the two halves of a pair. Library code may rely on this contract without
   re-checking it; for example, `escape` copies unescaped runs without
   re-validating their boundaries. The checked APIs (`exact_view`, `get_view`,
-  the clamping `s[i:j]`) enforce it. Unchecked APIs leave it to the caller:
-  `view` takes raw code-unit offsets and does not check surrogate boundaries,
+  the clamping `view`/`clamped_view` and `s[i:j]`) preserve valid boundaries.
+  APIs without surrogate checks leave it to the caller:
+  `unsafe_view` checks numeric bounds but does not check surrogate boundaries,
   and `unsafe_to_char` must not be given a surrogate code point, so a
   supplementary character has to be written as one `Char`, never as two
   halves. An ill-formed string or view is outside the contract.
@@ -31,7 +32,8 @@
     the i-th UTF-16 code unit (charcode) for efficiency and consistency with
     other APIs. The return type of `s[i]` is `UInt16`, which reminds you that it
     returns the charcode.
-  - The slice operator `s[i:j]` uses UTF-16 code-unit indices. It clamps both
+  - The slice operator `s[i:j]`, equivalent to `s.view(start=i, end=j)`, uses
+    UTF-16 code-unit indices. It clamps both
     bounds to `[0, s.length()]`, trims split surrogate pairs inward, and
     returns an empty view for an inverted range. Negative bounds clamp to
     zero. Use `s.exact_view(start=i, end=j)` to require valid bounds and surrogate
@@ -70,16 +72,17 @@ test "unsafe vs safe" {
 ```
 
 * **Validity**: Strings store UTF-16 code units. `exact_view` validates bounds and
-  surrogate boundaries, while `clamped_view` trims split pairs inward. Unsafe
+  surrogate boundaries, while `view` and `clamped_view` trim split pairs inward. Unsafe
   APIs can still build an ill-formed string (e.g.,
   `"🍎".unsafe_substring(start=1, end=2)` starts at the second half of a
   surrogate pair); that breaks the well-formedness contract above, and the
   library's behavior on such strings is unspecified.
 
 * **View**: A `StringView` represents a window into a string. Slice syntax and
-  `exact_view` preserve character boundaries, while the `view` method takes raw
-  UTF-16 offsets without checking them, so its caller must not split a
-  surrogate pair. Views are
+  `view` clamp bounds and trim split surrogate pairs inward; `exact_view`
+  rejects invalid bounds and split surrogate pairs. `unsafe_view` checks numeric
+  bounds but skips surrogate-boundary checks and adjustments. Its caller must
+  ensure well-formed UTF-16 before using character-based APIs. Views are
   designed to be more performant than creating new String instances when working
   with substrings.
 
@@ -128,7 +131,7 @@ test "view conversion" {
       `String`, returns `String`. This preserves type consistency and user
       intent.
 
-  - **Unicode Safety and Validity**: Use slice syntax or `exact_view` to avoid
-    splitting surrogate pairs. These operations validate the boundaries, not
+  - **Unicode Safety and Validity**: Use slice syntax, `view`, or `exact_view` to avoid
+    splitting surrogate pairs. These operations adjust or validate the boundaries, not
     every code unit inside the input. A view can still contain invalid UTF-16
-    inherited from an unchecked string or a raw `view` call.
+    inherited from an unchecked string or an `unsafe_view` call.
