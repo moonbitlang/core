@@ -29,8 +29,6 @@ pub fn inspect(&Show, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) 
 #deprecated
 pub fn not(Bool) -> Bool
 
-pub let null : Json
-
 pub fn[T : Eq] op_notequal(T, T) -> Bool
 
 pub fn[T] panic() -> T
@@ -47,7 +45,7 @@ pub(all) suberror BenchError {
 
 pub(all) suberror Failure {
   Failure(String)
-} derive(Show, ToJson)
+} derive(Show)
 pub fn Failure::to_string(Self) -> String
 
 pub(all) suberror InspectError {
@@ -69,7 +67,6 @@ pub impl Default for Unit
 pub impl Eq for Unit
 pub impl Hash for Unit
 pub impl Show for Unit
-pub impl ToJson for Unit
 
 pub type Bool
 pub fn Bool::compare(Bool, Bool) -> Int32
@@ -88,7 +85,6 @@ pub impl Default for Bool
 pub impl Eq for Bool
 pub impl Hash for Bool
 pub impl Show for Bool
-pub impl ToJson for Bool
 
 pub type Byte
 pub fn Byte::Byte(Byte) -> Byte
@@ -136,7 +132,6 @@ pub impl Shl for Byte
 pub impl Show for Byte
 pub impl Shr for Byte
 pub impl Sub for Byte
-pub impl ToJson for Byte
 
 pub type Char
 pub fn Char::compare(Char, Char) -> Int32
@@ -174,7 +169,6 @@ pub impl Default for Char
 pub impl Eq for Char
 pub impl Hash for Char
 pub impl Show for Char
-pub impl ToJson for Char
 
 #alias(Int32)
 pub type Int
@@ -244,7 +238,6 @@ pub impl Shl for Int32
 pub impl Show for Int32
 pub impl Shr for Int32
 pub impl Sub for Int32
-pub impl ToJson for Int32
 
 pub type Int64
 pub fn Int64::Int64(Int64) -> Int64
@@ -305,7 +298,6 @@ pub impl Shl for Int64
 pub impl Show for Int64
 pub impl Shr for Int64
 pub impl Sub for Int64
-pub impl ToJson for Int64
 
 #alias(UInt32)
 pub type UInt
@@ -361,7 +353,6 @@ pub impl Shl for UInt32
 pub impl Show for UInt32
 pub impl Shr for UInt32
 pub impl Sub for UInt32
-pub impl ToJson for UInt32
 
 pub type UInt16
 pub fn UInt16::UInt16(UInt16) -> UInt16
@@ -404,7 +395,6 @@ pub impl Shl for UInt16
 pub impl Show for UInt16
 pub impl Shr for UInt16
 pub impl Sub for UInt16
-pub impl ToJson for UInt16
 
 pub type UInt64
 pub fn UInt64::UInt64(UInt64) -> UInt64
@@ -460,7 +450,6 @@ pub impl Shl for UInt64
 pub impl Show for UInt64
 pub impl Shr for UInt64
 pub impl Sub for UInt64
-pub impl ToJson for UInt64
 
 pub type Double
 pub fn Double::Double(Double) -> Double
@@ -519,7 +508,6 @@ pub impl Mul for Double
 pub impl Neg for Double
 pub impl Show for Double
 pub impl Sub for Double
-pub impl ToJson for Double
 
 pub type String
 pub fn String::add(String, String) -> String
@@ -627,7 +615,6 @@ pub impl Default for String
 pub impl Eq for String
 pub impl Hash for String
 pub impl Show for String
-pub impl ToJson for String
 pub impl ToStringView for String
 
 pub type V128
@@ -675,7 +662,6 @@ pub impl[X : Eq] Eq for X?
 pub impl[X : Hash] Hash for X?
 #deprecated
 pub impl[X : Show] Show for X?
-pub impl[T : ToJson] ToJson for T?
 
 pub type FixedArray[T]
 pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
@@ -766,7 +752,6 @@ pub impl[T : Eq] Eq for FixedArray[T]
 pub impl[T : Hash] Hash for FixedArray[T]
 #deprecated
 pub impl[X : Show] Show for FixedArray[X]
-pub impl[X : ToJson] ToJson for FixedArray[X]
 
 pub type ReadOnlyArray[T]
 #alias(every)
@@ -834,7 +819,6 @@ pub impl[T : Eq] Eq for ReadOnlyArray[T]
 pub impl[T : Hash] Hash for ReadOnlyArray[T]
 #deprecated
 pub impl[T : Show] Show for ReadOnlyArray[T]
-pub impl[T : ToJson] ToJson for ReadOnlyArray[T]
 
 pub type Bytes
 pub fn Bytes::add(Bytes, Bytes) -> Bytes
@@ -892,12 +876,10 @@ pub impl Default for Bytes
 pub impl Eq for Bytes
 pub impl Hash for Bytes
 pub impl Show for Bytes
-pub impl ToJson for Bytes
 
 pub type Error
 pub fn Error::to_string(Self) -> String
 pub impl Show for Error
-pub impl ToJson for Error
 
 pub(all) struct ArgsLoc(Array[SourceLoc?])
 pub fn ArgsLoc::to_json(Self) -> String
@@ -1035,7 +1017,6 @@ pub impl[T : Eq] Eq for Array[T]
 pub impl[T : Hash] Hash for Array[T]
 #deprecated
 pub impl[X : Show] Show for Array[X]
-pub impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
 pub fn[T] ArrayView::add(Self[T], Self[T]) -> Self[T]
@@ -1111,7 +1092,6 @@ pub impl[T : Eq] Eq for ArrayView[T]
 pub impl[A : Hash] Hash for ArrayView[A]
 #deprecated
 pub impl[X : Show] Show for ArrayView[X]
-pub impl[X : ToJson] ToJson for ArrayView[X]
 
 pub type FuncRef[T]
 
@@ -1187,7 +1167,6 @@ pub fn[X, Y] Iter::zip(Self[X], Self[Y]) -> Self[(X, Y)]
 pub impl[T] Add for Iter[T]
 #deprecated
 pub impl[X : Show] Show for Iter[X]
-pub impl[X : ToJson] ToJson for Iter[X]
 
 #alias(Iterator2, deprecated)
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
@@ -1200,27 +1179,6 @@ pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int32) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
-
-pub enum Json {
-  Null
-  True
-  False
-  Number(Double, repr~ : String?)
-  String(String)
-  Array(Array[Json])
-  Object(Map[String, Json])
-}
-pub fn[T : ToJson] Json::Json(T) -> Self
-pub fn Json::array(Array[Self]) -> Self
-pub fn Json::boolean(Bool) -> Self
-pub fn Json::empty_object() -> Self
-pub fn Json::equal(Self, Self) -> Bool
-pub fn Json::null() -> Self
-pub fn Json::number(Double, repr? : String) -> Self
-pub fn Json::object(Map[String, Self]) -> Self
-pub fn Json::string(String) -> Self
-pub impl Default for Json
-pub impl Eq for Json
 
 type Map[K, V]
 #alias(from_array)
@@ -1272,7 +1230,6 @@ pub impl[K, V] Default for Map[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 #deprecated
 pub impl[K : Show, V : Show] Show for Map[K, V]
-pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
 type MutArrayView[T]
 #alias("_[_]")
@@ -1339,7 +1296,6 @@ pub impl[T : Eq, E : Eq] Eq for Result[T, E]
 pub impl[T : Hash, E : Hash] Hash for Result[T, E]
 #deprecated
 pub impl[T : Show, E : Show] Show for Result[T, E]
-pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
 
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
@@ -1419,7 +1375,6 @@ pub impl Compare for BytesView
 pub impl Eq for BytesView
 pub impl Hash for BytesView
 pub impl Show for BytesView
-pub impl ToJson for BytesView
 
 pub type StringView
 pub fn StringView::add(Self, Self) -> Self
@@ -1526,7 +1481,6 @@ pub impl Default for StringView
 pub impl Eq for StringView
 pub impl Hash for StringView
 pub impl Show for StringView
-pub impl ToJson for StringView
 pub impl ToStringView for StringView
 
 // Type aliases
@@ -1682,26 +1636,6 @@ pub(open) trait Shr {
 pub(open) trait Sub {
   fn sub(Self, Self) -> Self
 }
-
-#deprecated
-pub(open) trait ToJson {
-  fn to_json(Self) -> Json
-}
-pub impl[A : ToJson, B : ToJson] ToJson for (A, B)
-pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for (A, B, C, D, E)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] ToJson for (A, B, C, D, E, F)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] ToJson for (A, B, C, D, E, F, G)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] ToJson for (A, B, C, D, E, F, G, H)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] ToJson for (A, B, C, D, E, F, G, H, I)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
-pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 
 pub trait ToStringView {
   fn to_string_view(Self) -> StringView

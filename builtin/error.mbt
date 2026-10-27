@@ -20,7 +20,3 @@ pub fn Error::to_string(self : Error) -> String = "%error.to_string"
 pub impl Show for Error with fn to_string(self) {
   Error::to_string(self)
 }
-
-///|
-/// Returns the JSON representation of this error.
-pub impl ToJson for Error with fn to_json(self) = "%error.to_json"

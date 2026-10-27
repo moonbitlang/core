@@ -54,12 +54,12 @@ pub fn[T] ignore(T) -> Unit
 pub fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
 #callsite(autofill(args_loc, loc))
-pub fn json_inspect(&@builtin.ToJson, content? : @builtin.Json, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
+pub fn json_inspect(&@json.ToJson, content? : @json.Json, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
 #deprecated
 pub fn not(Bool) -> Bool
 
-pub let null : @builtin.Json
+pub let null : @json.Json
 
 pub fn[T] panic() -> T
 
@@ -137,7 +137,7 @@ pub using @builtin {type Iter as Iterator}
 #deprecated
 pub using @builtin {type Iter2 as Iterator2}
 
-pub using @builtin {type Json}
+pub using @json {type Json}
 
 pub using @lazy {type Lazy}
 
@@ -221,6 +221,6 @@ pub using @builtin {trait Shr}
 
 pub using @builtin {trait Sub}
 
-pub using @builtin {trait ToJson}
+pub using @json {trait ToJson}
 
 // Traits

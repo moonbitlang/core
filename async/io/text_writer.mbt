@@ -21,7 +21,7 @@
 /// `write_json()` writes the text representation of a JSON object to the underlying stream.
 pub(open) trait TextWriter {
   async fn write(Self, StringView) -> Unit
-  async fn write_json(Self, Json) -> Unit
+  async fn write_json(Self, @json.Json) -> Unit
 }
 
 ///|

@@ -51,9 +51,9 @@ pub fn[K : Eq + Hash, V] VectorMap::update(Self[K, V], K, (V?) -> V? raise?) -> 
 pub fn[K, V] VectorMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Eq, V : Eq] Eq for VectorMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for VectorMap[K, V]
-pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V]
 pub impl[K : @json.FromJson + Eq + Hash, V : @json.FromJson] @json.FromJson for VectorMap[K, V]
+pub impl[K : @json.ToJson, V : @json.ToJson] @json.ToJson for VectorMap[K, V]
 
 // Type aliases
 

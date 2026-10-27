@@ -391,9 +391,6 @@ pub extend Int64 with Sub::{sub}
 pub extend Iter with Add::{add}
 
 ///|
-pub extend Json with Eq::{equal}
-
-///|
 pub extend Map with Eq::{equal}
 
 ///|
@@ -776,11 +773,6 @@ pub extend Array with Hash::{hash_combine}
 pub extend Array with Show::{to_string, output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Array with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend ArrayView with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -799,11 +791,6 @@ pub extend ArrayView with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend ArrayView with Show::{to_string, output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ArrayView with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -831,11 +818,6 @@ pub extend Bool with Hash::{hash_combine}
 pub extend Bool with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bool with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Byte with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -854,11 +836,6 @@ pub extend Byte with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Byte with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Byte with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -886,11 +863,6 @@ pub extend Bytes with Hash::{hash_combine}
 pub extend Bytes with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bytes with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend BytesView with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -909,11 +881,6 @@ pub extend BytesView with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend BytesView with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend BytesView with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -941,11 +908,6 @@ pub extend Char with Hash::{hash_combine}
 pub extend Char with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Char with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Double with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -971,16 +933,6 @@ pub extend Double with Hash::{hash_combine}
 pub extend Double with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Double with ToJson::{to_json}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Error with ToJson::{to_json}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Error with Show::{output}
@@ -989,11 +941,6 @@ pub extend Error with Show::{output}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Failure with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Failure with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1021,11 +968,6 @@ pub extend FixedArray with Hash::{hash_combine}
 pub extend FixedArray with Show::{to_string, output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend FixedArray with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Int32 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1049,11 +991,6 @@ pub extend Int32 with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Int32 with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int32 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1081,29 +1018,9 @@ pub extend Int64 with Hash::{hash_combine}
 pub extend Int64 with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int64 with ToJson::{to_json}
-
-///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Iter with Show::{to_string, output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Iter with ToJson::{to_json}
-
-///|
-#deprecated("Use `Default::default` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Json with Default::{default}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Json with Eq::{not_equal}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1119,11 +1036,6 @@ pub extend Map with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Map with Show::{to_string, output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Map with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1171,11 +1083,6 @@ pub extend Option with Hash::{hash_combine}
 pub extend Option with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Option with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend ReadOnlyArray with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1201,11 +1108,6 @@ pub extend ReadOnlyArray with Hash::{hash_combine}
 pub extend ReadOnlyArray with Show::{to_string, output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ReadOnlyArray with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Result with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1224,11 +1126,6 @@ pub extend Result with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Result with Show::{to_string, output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Result with ToJson::{to_json}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
@@ -1261,11 +1158,6 @@ pub extend String with Hash::{hash_combine}
 pub extend String with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend String with ToJson::{to_json}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend StringBuilder with Show::{output}
@@ -1296,11 +1188,6 @@ pub extend StringView with Hash::{hash_combine}
 pub extend StringView with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend StringView with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple10 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1314,11 +1201,6 @@ pub extend Tuple10 with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple10 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple10 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1336,11 +1218,6 @@ pub extend Tuple11 with Eq::{not_equal}
 pub extend Tuple11 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple11 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple12 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1354,11 +1231,6 @@ pub extend Tuple12 with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple12 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple12 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1376,11 +1248,6 @@ pub extend Tuple13 with Eq::{not_equal}
 pub extend Tuple13 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple13 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple14 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1394,11 +1261,6 @@ pub extend Tuple14 with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple14 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple14 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1416,11 +1278,6 @@ pub extend Tuple15 with Eq::{not_equal}
 pub extend Tuple15 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple15 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple16 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1434,11 +1291,6 @@ pub extend Tuple16 with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple16 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple16 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1461,11 +1313,6 @@ pub extend Tuple2 with Hash::{hash_combine}
 pub extend Tuple2 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple2 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple3 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1484,11 +1331,6 @@ pub extend Tuple3 with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple3 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple3 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1511,11 +1353,6 @@ pub extend Tuple4 with Hash::{hash_combine}
 pub extend Tuple4 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple4 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple5 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1534,11 +1371,6 @@ pub extend Tuple5 with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple5 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple5 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1561,11 +1393,6 @@ pub extend Tuple6 with Hash::{hash_combine}
 pub extend Tuple6 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple6 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple7 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1586,11 +1413,6 @@ pub extend Tuple7 with Hash::{hash_combine}
 pub extend Tuple7 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple7 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple8 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1606,11 +1428,6 @@ pub extend Tuple8 with Eq::{not_equal}
 pub extend Tuple8 with Show::{to_string, output}
 
 ///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple8 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple9 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1624,11 +1441,6 @@ pub extend Tuple9 with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple9 with Show::{to_string, output}
-
-///|
-#deprecated("Use `ToJson::to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple9 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1656,11 +1468,6 @@ pub extend UInt32 with Hash::{hash_combine}
 pub extend UInt32 with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt32 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend UInt16 with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1684,11 +1491,6 @@ pub extend UInt16 with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend UInt16 with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt16 with ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -1716,11 +1518,6 @@ pub extend UInt64 with Hash::{hash_combine}
 pub extend UInt64 with Show::{output}
 
 ///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt64 with ToJson::{to_json}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend Unit with Compare::{op_lt, op_le, op_ge, op_gt}
@@ -1744,11 +1541,6 @@ pub extend Unit with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Unit with Show::{output}
-
-///|
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Unit with ToJson::{to_json}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)

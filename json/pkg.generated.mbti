@@ -2,28 +2,27 @@
 package "moonbitlang/core/json"
 
 import {
-  "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn[T : FromJson] from_json(@builtin.Json, path? : JsonPath) -> T raise JsonDecodeError
+pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
 #callsite(autofill(args_loc, loc))
-pub fn json_inspect(&@builtin.ToJson, content? : @builtin.Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+pub fn json_inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
-pub let null : @builtin.Json
+pub let null : Json
 
-pub fn parse(StringView, max_nesting_depth? : Int32, reject_duplicate_keys? : Bool, preserve_number_repr? : Bool) -> @builtin.Json raise ParseError
+pub fn parse(StringView, max_nesting_depth? : Int32, reject_duplicate_keys? : Bool, preserve_number_repr? : Bool) -> Json raise ParseError
 
-pub fn[T : @builtin.ToJson] to_json(T) -> @builtin.Json
+pub fn[T : ToJson] to_json(T) -> Json
 
 pub fn valid(StringView) -> Bool
 
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, @builtin.ToJson, @debug.Debug)
+} derive(Eq, Show, @debug.Debug, ToJson)
 pub fn JsonDecodeError::equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
 
@@ -34,64 +33,83 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DuplicateKey(Position, String)
   DepthLimitExceeded
-} derive(Eq, @builtin.ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug, ToJson)
 pub fn ParseError::equal(Self, Self) -> Bool
 pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
 
 // Types and methods
+pub enum Json {
+  Null
+  True
+  False
+  Number(Double, repr~ : String?)
+  String(String)
+  Array(Array[Json])
+  Object(Map[String, Json])
+}
+pub fn[T : ToJson] Json::Json(T) -> Self
+pub fn Json::array(Array[Self]) -> Self
+#deprecated
+pub fn Json::as_array(Self) -> Array[Self]?
+#deprecated
+pub fn Json::as_bool(Self) -> Bool?
+#deprecated
+pub fn Json::as_null(Self) -> Unit?
+#deprecated
+pub fn Json::as_number(Self) -> Double?
+#deprecated
+pub fn Json::as_object(Self) -> Map[String, Self]?
+#deprecated
+pub fn Json::as_string(Self) -> String?
+pub fn Json::boolean(Bool) -> Self
+pub fn Json::empty_object() -> Self
+pub fn Json::equal(Self, Self) -> Bool
+#deprecated
+pub fn Json::item(Self, Int32) -> Self?
+pub fn Json::null() -> Self
+pub fn Json::number(Double, repr? : String) -> Self
+pub fn Json::object(Map[String, Self]) -> Self
+pub fn Json::string(String) -> Self
+pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int32, replacer? : Replacer) -> String
+pub fn Json::transform(Self, Replacer) -> Self
+#deprecated
+pub fn Json::value(Self, String) -> Self?
+pub impl Default for Json
+pub impl Eq for Json
+#deprecated
+pub impl Show for Json
+pub impl @debug.Debug for Json
+pub impl FromJson for Json
+pub impl ToJson for Json
+
 type JsonPath derive(Eq, @debug.Debug)
 pub fn JsonPath::add_index(Self, Int32) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
 pub fn JsonPath::equal(Self, Self) -> Bool
 pub fn JsonPath::to_string(Self) -> String
 pub impl Show for JsonPath
-pub impl @builtin.ToJson for JsonPath
+pub impl ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int32
   column : Int32
-} derive(Eq, @builtin.ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug, ToJson)
 pub fn Position::equal(Self, Self) -> Bool
 
 pub struct Replacer {
   // private fields
 } derive(@debug.Debug)
 #alias(new, deprecated)
-pub fn Replacer::Replacer((String, @builtin.Json) -> @builtin.Json?) -> Self
+pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
 
-#deprecated
-pub fn @builtin.Json::as_array(Self) -> Array[Self]?
-#deprecated
-pub fn @builtin.Json::as_bool(Self) -> Bool?
-#deprecated
-pub fn @builtin.Json::as_null(Self) -> Unit?
-#deprecated
-pub fn @builtin.Json::as_number(Self) -> Double?
-#deprecated
-pub fn @builtin.Json::as_object(Self) -> Map[String, Self]?
-#deprecated
-pub fn @builtin.Json::as_string(Self) -> String?
-#deprecated
-pub fn @builtin.Json::item(Self, Int32) -> Self?
-pub fn @builtin.Json::stringify(Self, escape_slash? : Bool, indent? : Int32, replacer? : Replacer) -> String
-pub fn @builtin.Json::transform(Self, Replacer) -> Self
-#deprecated
-pub fn @builtin.Json::value(Self, String) -> Self?
-#deprecated
-pub impl Show for @builtin.Json
-pub impl @builtin.ToJson for @builtin.Json
-
 // Type aliases
-pub using @builtin {type Json}
-
-pub using @builtin {trait ToJson}
 
 // Traits
 pub(open) trait FromJson {
-  fn from_json(@builtin.Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 pub impl FromJson for Unit
 pub impl FromJson for Bool
@@ -108,7 +126,6 @@ pub impl[X : FromJson] FromJson for FixedArray[X]
 pub impl FromJson for Bytes
 pub impl[X : FromJson] FromJson for Array[X]
 pub impl[X : FromJson] FromJson for ArrayView[X]
-pub impl FromJson for @builtin.Json
 pub impl[V : FromJson] FromJson for Map[String, V]
 pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
 pub impl[A : FromJson, B : FromJson] FromJson for (A, B)
@@ -127,3 +144,48 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 pub impl FromJson for StringView
+
+pub(open) trait ToJson {
+  fn to_json(Self) -> Json
+}
+pub impl ToJson for Unit
+pub impl ToJson for Bool
+pub impl ToJson for Byte
+pub impl ToJson for Char
+pub impl ToJson for Int32
+pub impl ToJson for Int16
+pub impl ToJson for Int64
+pub impl ToJson for UInt32
+pub impl ToJson for UInt16
+pub impl ToJson for UInt64
+pub impl ToJson for Float
+pub impl ToJson for Double
+pub impl ToJson for String
+pub impl[T : ToJson] ToJson for T?
+pub impl[X : ToJson] ToJson for FixedArray[X]
+pub impl[T : ToJson] ToJson for ReadOnlyArray[T]
+pub impl ToJson for Bytes
+pub impl ToJson for Error
+pub impl[X : ToJson] ToJson for Array[X]
+pub impl[X : ToJson] ToJson for ArrayView[X]
+pub impl ToJson for Failure
+pub impl[X : ToJson] ToJson for Iter[X]
+pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
+pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
+pub impl[A : ToJson, B : ToJson] ToJson for (A, B)
+pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for (A, B, C, D, E)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] ToJson for (A, B, C, D, E, F)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] ToJson for (A, B, C, D, E, F, G)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] ToJson for (A, B, C, D, E, F, G, H)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] ToJson for (A, B, C, D, E, F, G, H, I)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
+pub impl ToJson for BytesView
+pub impl ToJson for StringView

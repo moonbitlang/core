@@ -1088,11 +1088,6 @@ pub fn StringView::make(length : Int32, value : Char) -> StringView {
 }
 
 ///|
-pub impl ToJson for StringView with fn to_json(self) {
-  String::to_json(self.to_owned())
-}
-
-///|
 pub impl Add for StringView with fn add(self, other) {
   [..self, ..other]
 }

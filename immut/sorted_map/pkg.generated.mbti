@@ -39,7 +39,7 @@ pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn(deprecated)
 #deprecated
-pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
+pub fn[V : @json.FromJson] SortedMap::from_json(@json.Json) -> Self[String, V] raise @json.JsonDecodeError
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int32
@@ -75,9 +75,9 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V]
 #deprecated
 pub impl[K : Show, V : Show] Show for SortedMap[K, V]
-pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V]
 pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V]
+pub impl[K : Show, V : @json.ToJson] @json.ToJson for SortedMap[K, V]
 
 // Type aliases
 

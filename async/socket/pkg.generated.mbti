@@ -4,16 +4,17 @@ package "moonbitlang/core/async/socket"
 import {
   "moonbitlang/core/async/io",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
 
 // Errors
-pub suberror InvalidAddr derive(ToJson, @debug.Debug)
+pub suberror InvalidAddr derive(@debug.Debug, @json.ToJson)
 
 pub suberror ResolveHostnameError {
   ResolveHostnameError(String)
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 pub fn ResolveHostnameError::to_string(Self) -> String
 pub impl Show for ResolveHostnameError
 

@@ -74,13 +74,6 @@ pub impl[X : Show] Show for Iter[X] with fn output(self, logger) {
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Iter[X] with fn to_json(self) {
-  [
-    for x in self => x
-  ]
-}
-
-///|
 /// Iterates over each element in the iterator, applying the function `f` to each element.
 ///
 /// # Type Parameters
