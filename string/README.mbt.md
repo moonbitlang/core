@@ -128,7 +128,7 @@ test "string comparison" {
 String views provide efficient substring operations without copying. A
 `String` stores UTF-16 code units, and a view is just a `{str, start, end}`
 window into those units. A character outside the Basic Multilingual Plane is
-stored as a surrogate pair. The `s[start:end]` slice syntax clamps both bounds
+stored as a surrogate pair. Both `s[start:end]` and `s.view(start~, end~)` clamp bounds
 to `[0, s.length()]` and trims split surrogate pairs inward: the start moves
 forward and the end moves backward. Negative offsets clamp to zero, and an
 inverted range produces an empty view. `StringView` uses the same rules with
@@ -144,9 +144,15 @@ panic, or `s.get_view(start~, end~)` to receive `None` for an invalid range.
 For a lossless split, use `s.split_at(i)`; `s[:i]` and `s[i:]` both exclude a
 character when `i` falls inside its surrogate pair.
 
-The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
-method keeps its `start_offset`/`end_offset` labels and takes raw UTF-16 offsets
-without checking surrogate boundaries, so its caller must not split a pair.
+The `clamped_view(start~, end~)` name remains available with the same behavior.
+The old `sub` name is deprecated in favor of `exact_view`. For compatibility
+with compiler-generated `lexmatch`/`lexscan` calls, `view` also accepts
+`start_offset`/`end_offset`; these override `start`/`end` and use the same
+clamping rules. Prefer `start`/`end` in new code.
+
+Use `unsafe_view(start~, end~)` only for raw UTF-16 code-unit operations. It
+checks numeric bounds but skips surrogate-boundary checks and adjustments.
+Its caller must ensure well-formed UTF-16 before using character-based APIs.
 
 ```d2
 direction: right

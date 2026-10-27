@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+test "StringScanner lexscan preserves Unicode captures in a nested view" {
+  let scanner = @lexbuf.StringScanner::{ data: "xxa😀byy"[2:6], cursor: 1, }
+  let captured = lexscan scanner {
+    re"^😀+" as token => token
+    _ => ""
+  }
+  inspect(captured, content="😀")
+  inspect(scanner.cursor, content="3")
+}
+
+///|
 test "Lexbuf retains captures across chunks and commits lookahead" {
   let chunks = [|"ab", "cd", "!"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
@@ -85,6 +96,21 @@ test "Lexbuf retains a token across many chunks" {
   lexbuf.__commit_to(chunk_count - 1)
   inspect(captured.length(), content="4096")
   inspect(lexbuf.__unsafe_code_unit_at(chunk_count - 1), content="120")
+}
+
+///|
+test "Lexbuf preserves UTF-16 captures within a chunk" {
+  let chunks = [|"a😀b"|]
+  let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
+  lexbuf.__refill()
+  lexbuf.__retain_from_cursor()
+  lexbuf.__advance(4)
+  let head = lexbuf.__get_stringview(0, 2)
+  inspect(head.length(), content="2")
+  inspect(head.code_unit_at(1).to_int(), content="55357")
+  let tail = lexbuf.__get_stringview(2, 4)
+  inspect(tail.length(), content="2")
+  inspect(tail.code_unit_at(0).to_int(), content="56832")
 }
 
 ///|

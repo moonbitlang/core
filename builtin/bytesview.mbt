@@ -179,7 +179,6 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int32) -> Byte {
 /// }
 /// ```
 #intrinsic("%bytes.view")
-#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn Bytes::exact_view(
   self : Bytes,
@@ -257,7 +256,6 @@ pub fn BytesView::get_view(
 /// }
 /// ```
 #intrinsic("%bytesview.view")
-#alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn BytesView::exact_view(
   self : BytesView,
@@ -292,17 +290,14 @@ pub fn BytesView::exact_view(
 /// ```mbt check
 /// test {
 ///   let bs = b"\x00\x01\x02\x03\x04\x05"
-///   inspect(bs.clamped_view(start=4, end=100).length(), content="2")
-///   inspect(bs.clamped_view(start=-2, end=2).length(), content="2")
-///   inspect(bs.clamped_view(start=4, end=1).length(), content="0")
+///   inspect(bs.view(start=4, end=100).length(), content="2")
+///   inspect(bs.view(start=-2, end=2).length(), content="2")
+///   inspect(bs.view(start=4, end=1).length(), content="0")
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn Bytes::clamped_view(
-  self : Bytes,
-  start~ : Int32 = 0,
-  end? : Int32,
-) -> BytesView {
+#alias(clamped_view)
+pub fn Bytes::view(self : Bytes, start~ : Int32 = 0, end? : Int32) -> BytesView {
   let len = self.length()
   let lo = clamp_offset(start, len)
   let hi = match end {
@@ -316,7 +311,7 @@ pub fn Bytes::clamped_view(
 ///|
 /// Returns a sub-view of the view between `start` and `end`, clamping the
 /// requested range instead of rejecting it. Offsets are relative to the view;
-/// same contract as `Bytes::clamped_view`.
+/// same contract as `Bytes::view`.
 /// Also available as `view[start:end]`. Use `BytesView::exact_view` to validate bounds.
 ///
 /// # Example
@@ -324,12 +319,13 @@ pub fn Bytes::clamped_view(
 /// ```mbt check
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[1:4]
-///   inspect(bv.clamped_view(start=1, end=100).length(), content="2")
-///   inspect(bv.clamped_view(start=3, end=1).length(), content="0")
+///   inspect(bv.view(start=1, end=100).length(), content="2")
+///   inspect(bv.view(start=3, end=1).length(), content="0")
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn BytesView::clamped_view(
+#alias(clamped_view)
+pub fn BytesView::view(
   self : BytesView,
   start~ : Int32 = 0,
   end? : Int32,

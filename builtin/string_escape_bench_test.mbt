@@ -104,7 +104,7 @@ test "bench String::escape long unicode" (it : @bench.T) {
 
 ///|
 test "bench StringView::escape long plain view" (it : @bench.T) {
-  let view = escape_bench_long_plain.view(start_offset=1, end_offset=4000)
+  let view = escape_bench_long_plain.unsafe_view(start=1, end=4000)
   it.bench(fn() { it.keep(view.escape()) })
 }
 
