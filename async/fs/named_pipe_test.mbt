@@ -120,39 +120,43 @@ async test "named pipe" {
 #cfg(platform="windows")
 async test "named pipe multiple client" {
   let log = []
+  let context = "named pipe test"
+  let path = "\\\\.\\pipe\\moonbitlang_async_named_pipe_multiple_client_test"
+  let w = @fd_util.create_named_pipe_server(
+    @os_string.from_string(path),
+    is_async=true,
+  )
+  if !@fd_util.fd_is_valid(w) {
+    @os_error.check_errno(context)
+  }
+  let w = @event_loop.IoHandle::from_fd(w, kind=Pipe)
+  defer w.close()
   @async.with_task_group() <| group => {
-    let context = "named pipe test"
-    let path = "\\\\.\\pipe\\moonbitlang_async_named_pipe_multiple_client_test"
-    let w = @fd_util.create_named_pipe_server(
-      @os_string.from_string(path),
-      is_async=true,
-    )
-    if !@fd_util.fd_is_valid(w) {
-      @os_error.check_errno(context)
-    }
     for i in 1..<=2 {
       group.spawn_bg() <| () => {
         @async.sleep(i * 50)
         let r = @fs.open(path, mode=ReadOnly)
         defer r.close()
         log.push("client #\{i} connected")
+        ignore(
+          w.write(
+            b"abcd",
+            offset=0,
+            len=4,
+            context="writing to named pipe server",
+          ),
+        )
         inspect(@utf8.decode(r.read_exactly(4)), content="abcd")
+        if i is 1 {
+          @async.sleep(300)
+          log.push("server disconnecting")
+          @fd_util.disconnect_named_pipe_server(w.fd())
+          @async.sleep(100)
+          log.push("server connecting again")
+          @fd_util.connect_named_pipe_server_sync(w.fd())
+        }
       }
     }
-    let w = @event_loop.IoHandle::from_fd(w, kind=Pipe)
-    defer w.close()
-    // wait for the client to connect
-    @async.sleep(100)
-    ignore(w.write(b"abcd", offset=0, len=4, context=""))
-    @async.sleep(100)
-    log.push("server disconnecting")
-    @fd_util.disconnect_named_pipe_server(w.fd())
-    @async.sleep(100)
-    log.push("server connecting again")
-    @fd_util.connect_named_pipe_server_sync(w.fd())
-    // wait for the client to connect
-    @async.sleep(100)
-    ignore(w.write(b"abcd", offset=0, len=4, context=""))
   }
   json_inspect(log, content=[
     "client #1 connected", "server disconnecting", "server connecting again", "client #2 connected",

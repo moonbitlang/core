@@ -1,4 +1,4 @@
-# Async Queue (`@moonbitlang/async/aqueue`)
+# Async Queue (`@moonbitlang/core/async/aqueue`)
 
 An asynchronous, single-process queue for passing values between tasks
 in the same task group. `@aqueue.Queue` is the fundamental primitive

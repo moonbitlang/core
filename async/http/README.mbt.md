@@ -1,4 +1,4 @@
-HTTP support for `moonbitlang/async`.
+HTTP support for `moonbitlang/core/async`.
 
 ## Making simple HTTP request
 

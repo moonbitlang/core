@@ -81,3 +81,39 @@ test "parse cookie failure" {
     ),
   )
 }
+
+///|
+test "parse cookie preserves empty attributes" {
+  @debug.debug_inspect(Cookie::parse("Cookie=value").extensions, content="[]")
+  @debug.debug_inspect(
+    Cookie::parse("Cookie=value;").extensions,
+    content=(
+      #|[""]
+    ),
+  )
+  @debug.debug_inspect(
+    Cookie::parse("Cookie=value;; secure; ;").extensions,
+    content=(
+      #|["", "", ""]
+    ),
+  )
+}
+
+///|
+test "parse cookie preserves equals in values" {
+  inspect(Cookie::parse("Cookie=a=b==").value, content="a=b==")
+  let cookie = Cookie::parse("Cookie=a=b==; path=/a=b; extension=x=y")
+  inspect(cookie.value, content="a=b==")
+  @debug.debug_inspect(
+    cookie.path,
+    content=(
+      #|Some("/a=b")
+    ),
+  )
+  @debug.debug_inspect(
+    cookie.extensions,
+    content=(
+      #|["extension=x=y"]
+    ),
+  )
+}

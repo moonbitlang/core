@@ -45,11 +45,10 @@ fn resolve_url(uri : String) -> (Protocol, String, StringView) raise {
   }
   let uri = uri[protocol_len + 3:]
   let (host, path) = if uri.find("/") is Some(i) {
-    (uri[:i], uri[i:])
+    uri.split_at(i)
   } else {
     (uri, "/")
   }
-  let path : StringView = if path == "" { "/" } else { path }
   (protocol, host.to_owned(), path)
 }
 

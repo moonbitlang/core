@@ -197,7 +197,7 @@ pub fn expm1f(x : Float) -> Float {
       return -1.0
     }
     if hx > 0x42b17217 {
-      x *= Float(0x1.0p127)
+      x *= @float.Float(0x1.0p127)
       return x
     }
   }
@@ -237,11 +237,11 @@ pub fn expm1f(x : Float) -> Float {
   }
 
   // x is now in primary range
-  let hfx = Float(0.5) * x
+  let hfx = @float.Float(0.5) * x
   let hxs = x * hfx
-  let r1 = Float(1.0) + hxs * (q1 + hxs * q2)
-  let t = Float(3.0) - r1 * hfx
-  let mut e = hxs * ((r1 - t) / (Float(6.0) - x * t))
+  let r1 = @float.Float(1.0) + hxs * (q1 + hxs * q2)
+  let t = @float.Float(3.0) - r1 * hfx
+  let mut e = hxs * ((r1 - t) / (@float.Float(6.0) - x * t))
   if k == 0 {
     // c is 0
     return x - (x * e - hxs)
@@ -250,20 +250,20 @@ pub fn expm1f(x : Float) -> Float {
   e -= hxs
   // exp(x) ~ 2^k (x_reduced - e + 1)
   if k == -1 {
-    return Float(0.5) * (x - e) - 0.5
+    return @float.Float(0.5) * (x - e) - 0.5
   }
   if k == 1 {
     if x < -0.25 {
-      return -Float(2.0) * (e - (x + 0.5))
+      return -@float.Float(2.0) * (e - (x + 0.5))
     }
-    return Float(1.0) + Float(2.0) * (x - e)
+    return @float.Float(1.0) + @float.Float(2.0) * (x - e)
   }
   let twopk = Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
   if !(k is (0..<=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
     if k == 128 {
-      y = y * 2.0 * Float(0x1.0p127)
+      y = y * 2.0 * @float.Float(0x1.0p127)
     } else {
       y *= twopk
     }
@@ -271,7 +271,7 @@ pub fn expm1f(x : Float) -> Float {
   }
   let uf = Float::reinterpret_from_int((0x7f - k) << 23) // 2^-k
   if k < 23 {
-    (x - e + (Float(1.0) - uf)) * twopk
+    (x - e + (@float.Float(1.0) - uf)) * twopk
   } else {
     (x - (e + uf) + 1.0) * twopk
   }

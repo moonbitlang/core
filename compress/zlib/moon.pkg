@@ -1,0 +1,15 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/compress/flate",
+  "moonbitlang/core/internal/checksum",
+}
+
+import {
+  "moonbitlang/core/test",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"

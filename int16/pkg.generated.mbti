@@ -16,6 +16,7 @@ pub let min_value : Int16
 
 // Types and methods
 pub type Int16
+pub fn Int16::Int16(Int16) -> Int16
 pub fn Int16::abs(Int16) -> Int16
 pub fn Int16::add(Int16, Int16) -> Int16
 pub fn Int16::compare(Int16, Int16) -> Int32
