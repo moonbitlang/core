@@ -67,7 +67,7 @@ pub impl Debug for Bool with fn to_repr(self) {
 ///|
 pub impl Debug for Byte with fn to_repr(self) {
   // Use hex to make byte sequences easier to read.
-  Repr::literal("0x" + self.to_hex())
+  Repr::literal("0x\{self.to_hex()}")
 }
 
 ///|

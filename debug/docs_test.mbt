@@ -162,10 +162,7 @@ fn numbers_repr(value : Numbers) -> Repr {
 test "docs: threshold controls single-line vs multi-line" {
   let sample : Numbers = { xs: [1, 2, 3], }
   let r = numbers_repr(sample)
-  let compact = render(r)
-  let expanded = render(r)
-  @builtin.inspect(compact, content="[1, 2, 3]")
-  @builtin.inspect(expanded, content="[1, 2, 3]")
+  @builtin.inspect(render(r), content="[1, 2, 3]")
 }
 
 ///|

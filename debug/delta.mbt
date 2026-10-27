@@ -144,10 +144,7 @@ fn pretty_print_delta(
   compact_threshold~ : Int32 = default_threshold,
   use_ansi~ : Bool = true,
 ) -> String {
-  let max_depth : Int32? = match max_depth {
-    Some(_) => max_depth
-    None => Some(default_max_depth)
-  }
+  let max_depth : Int32? = Some(max_depth.unwrap_or(default_max_depth))
   let delta = prune_delta(max_depth, d)
   print_content(render_delta(compact_threshold, use_ansi, delta).no_wrap())
 }

@@ -207,10 +207,7 @@ fn Repr::render_repr(self : Repr, threshold : Int32) -> Content {
 /// always uses the internal default of `70`, keeping a node on one line when
 /// every line of its compacted form fits within that many characters.
 pub fn render(r : Repr, max_depth? : Int32) -> String {
-  let max_depth : Int32? = match max_depth {
-    Some(_) => max_depth
-    None => Some(default_max_depth)
-  }
+  let max_depth : Int32? = Some(max_depth.unwrap_or(default_max_depth))
   let threshold = default_threshold
   let info = r.prune_info(max_depth~)
   print_content(info.render_repr(threshold).no_wrap())
