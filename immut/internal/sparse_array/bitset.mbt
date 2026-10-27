@@ -65,8 +65,7 @@ fn Bitset::remove(self : Bitset, idx : Int32) -> Bitset {
 /// Calculate the size of a bitset
 #alias(size, deprecated)
 fn Bitset::length(self : Bitset) -> Int32 {
-  let Bitset(self) = self
-  self.popcnt()
+  self.0.popcnt()
 }
 
 ///|

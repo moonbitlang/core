@@ -307,7 +307,7 @@ pub fn[X] SparseArray::each(
   self : SparseArray[X],
   f : (X) -> Unit raise?,
 ) -> Unit raise? {
-  for i in 0..<self.elem_info.length() {
-    f(self.data[i])
+  for x in self.data {
+    f(x)
   }
 }
