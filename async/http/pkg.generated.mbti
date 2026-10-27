@@ -93,17 +93,10 @@ pub async fn ClientConnection::drop_exactly(Self, Int32) -> Unit
 pub async fn ClientConnection::end_request(Self, on_informational_response? : async (Response) -> Unit) -> Response
 pub async fn ClientConnection::enter_passthrough_mode(Self) -> Unit
 pub async fn ClientConnection::flush(Self) -> Unit
-pub async fn ClientConnection::get(Self, String, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
 pub async fn ClientConnection::peek(Self) -> BytesView?
 pub async fn ClientConnection::peek_at_least(Self, Int32) -> BytesView
 pub async fn ClientConnection::peek_exactly(Self, Int32) -> BytesView
 pub async fn ClientConnection::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn ClientConnection::post_binary(Self, String, BytesView, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
-pub async fn ClientConnection::post_json(Self, String, Json, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
-pub async fn ClientConnection::post_text(Self, String, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
-pub async fn ClientConnection::put_binary(Self, String, BytesView, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
-pub async fn ClientConnection::put_json(Self, String, Json, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
-pub async fn ClientConnection::put_text(Self, String, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> Response
 pub async fn ClientConnection::read(Self) -> Bytes?
 pub async fn ClientConnection::read_all(Self) -> Bytes
 pub async fn ClientConnection::read_at_least(Self, Int32) -> Bytes
