@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+// Keep the prelude spellings in JSON examples and tests.
+#warnings("-unqualified_local_using")
+using @json {type Json, null}
+
+///|
 test "Json default value" {
   let j = (Default::default() : Json)
   debug_inspect(j, content="False")
@@ -264,4 +269,22 @@ test "Json constructor" {
 test "Json constructor is idempotent" {
   let j : Json = [1, 2]
   debug_inspect(Json(j), content="Array([Number(1), Number(2)])")
+}
+
+///|
+test "debug repr for json" {
+  @debug.debug_inspect(Json::null(), content="Null")
+  @debug.debug_inspect(Json(true), content="True")
+  @debug.debug_inspect(
+    Json::number(@double.infinity, repr="1e999999999"),
+    content=(
+      #|Number(Infinity, repr=Some("1e999999999"))
+    ),
+  )
+  @debug.debug_inspect(
+    Json::object({ "nested": Json::array([Json::number(1.0), Json::null()]) }),
+    content=(
+      #|Object({ "nested": Array([Number(1), Null]) })
+    ),
+  )
 }

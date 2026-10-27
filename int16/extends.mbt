@@ -82,10 +82,3 @@ pub extend Int16 with Hash::{hash_combine}
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Int16 with Show::{output}
-
-///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
-#doc(hidden)
-// Bootstrap: json depends on this package, so use the builtin trait here.
-#warnings("-deprecated")
-pub extend Int16 with @builtin.ToJson::{to_json}

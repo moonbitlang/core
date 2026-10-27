@@ -522,11 +522,6 @@ fn Char::escape_to(self : Char, logger : &Logger, quote~ : Bool = true) -> Unit 
 }
 
 ///|
-pub impl ToJson for Char with fn to_json(self : Char) -> Json {
-  Json::string(self.to_string())
-}
-
-///|
 /// Returns the number of UTF-16 code units required to encode this character.
 ///
 /// Parameters:

@@ -33,7 +33,7 @@ pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {
 #as_free_fn(deprecated="Use `@json.from_json` instead")
 #deprecated("Use `@json.from_json` instead")
 pub fn[V : @json.FromJson] SortedMap::from_json(
-  json : Json,
+  json : @json.Json,
 ) -> SortedMap[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

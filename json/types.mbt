@@ -13,10 +13,6 @@
 // limitations under the License.
 
 ///|
-// Keep the builtin identities while compilers transition to the json package.
-pub using @builtin {type Json, null}
-
-///|
 /// Type `Position` used by this package APIs.
 pub(all) struct Position {
   line : Int32 // 1-based
@@ -25,8 +21,6 @@ pub(all) struct Position {
 
 ///|
 /// Error type `ParseError`.
-// Older compilers expand this derive through deprecated String::to_json.
-#warnings("-deprecated")
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof

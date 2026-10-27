@@ -46,7 +46,7 @@ pub fn[A] List::tail(self : List[A]) -> List[A] {
 #as_free_fn(deprecated="Use `@json.from_json` instead")
 #deprecated("Use `@json.from_json` instead")
 pub fn[A : @json.FromJson] List::from_json(
-  json : Json,
+  json : @json.Json,
 ) -> List[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

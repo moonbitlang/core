@@ -16,7 +16,7 @@
 pub impl[K : Show, V : @json.ToJson] @json.ToJson for HashMap[K, V] with fn to_json(
   self,
 ) {
-  Json::object(
+  @json.Json::object(
     Map(
       capacity=self.length(),
       [

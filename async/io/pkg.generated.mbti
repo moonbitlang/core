@@ -3,15 +3,16 @@ package "moonbitlang/core/async/io"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
 pub fn pipe() -> (PipeRead, PipeWrite)
 
 // Errors
-pub suberror PipeClosed derive(ToJson, @debug.Debug)
+pub suberror PipeClosed derive(@debug.Debug, @json.ToJson)
 
-pub(all) suberror ReaderClosed derive(ToJson, @debug.Debug)
+pub(all) suberror ReaderClosed derive(@debug.Debug, @json.ToJson)
 
 // Types and methods
 type BinaryReaderController
@@ -80,14 +81,14 @@ pub async fn Utf8TextView::read(Self) -> String?
 pub async fn Utf8TextView::read_all(Self) -> String
 pub async fn Utf8TextView::read_until(Self, StringView, include_delimiter? : Bool) -> String?
 pub async fn Utf8TextView::write(Self, StringView) -> Unit
-pub async fn Utf8TextView::write_json(Self, Json) -> Unit
+pub async fn Utf8TextView::write_json(Self, @json.Json) -> Unit
 pub impl TextReader for Utf8TextView
 pub impl TextWriter for Utf8TextView
 
 type Utf8Writer
 pub fn[W : BinaryWriter] Utf8Writer::Utf8Writer(W) -> Self
 pub async fn Utf8Writer::write(Self, StringView) -> Unit
-pub async fn Utf8Writer::write_json(Self, Json) -> Unit
+pub async fn Utf8Writer::write_json(Self, @json.Json) -> Unit
 pub impl TextWriter for Utf8Writer
 
 // Type aliases
@@ -132,5 +133,5 @@ pub(open) trait TextReader {
 
 pub(open) trait TextWriter {
   async fn write(Self, StringView) -> Unit
-  async fn write_json(Self, Json) -> Unit
+  async fn write_json(Self, @json.Json) -> Unit
 }

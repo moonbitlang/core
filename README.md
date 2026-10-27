@@ -14,13 +14,13 @@ Almost every package in this repository sits on top of `builtin`, which is
 available in every MoonBit program without an import (`builtin` itself
 bootstraps on the tiny `abort` package). `prelude` is opened automatically
 and re-exports the commonly used names from `builtin` plus a few companions
-(`Debug`, `BigInt`, `Ref`, `Lazy`, test assertions, …). Everything else is an
+(`Debug`, `Json`, `ToJson`, `BigInt`, `Ref`, `Lazy`, test assertions, …). Everything else is an
 ordinary package imported as `moonbitlang/core/<pkg>` and used via `@<pkg>`:
 
 ```mermaid
 graph BT
-  builtin["<b>builtin</b> (implicitly available, no import)<br/>Array · FixedArray · Map · String · Bytes · views<br/>Iter · StringBuilder · Json<br/>traits: Eq · Compare · Hash · Show · ToJson · Default"]
-  prelude["<b>prelude</b> — auto-opened re-exports<br/>from builtin, debug, test, bigint, …"] --> builtin
+  builtin["<b>builtin</b> (implicitly available, no import)<br/>Array · FixedArray · Map · String · Bytes · views<br/>Iter · StringBuilder<br/>traits: Eq · Compare · Hash · Show · Default"]
+  prelude["<b>prelude</b> — auto-opened re-exports<br/>from builtin, json, debug, test, bigint, …"] --> builtin
   values["<b>value types</b><br/>bool · byte · char · unit · option · result<br/>error · ref · tuple · cmp · range · lazy"] --> builtin
   numbers["<b>numerics</b><br/>int · uint · int16 · uint16 · int64 · uint64<br/>double · float · bigint · v128 · math"] --> builtin
   text["<b>text & binary</b><br/>string · bytes · buffer · encoding/*<br/>lexbuf"] --> builtin

@@ -15,6 +15,9 @@
 // --- promoted: kept as regular methods (blessed public API) ---
 
 ///|
+pub extend Json with Eq::{equal}
+
+///|
 pub extend JsonDecodeError with Eq::{equal}
 
 ///|
@@ -51,6 +54,21 @@ pub extend Json with Show::{to_string, output}
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Json with ToJson::{to_json}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Json with Default::{default}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Json with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Json with @debug.Debug::{to_repr}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
