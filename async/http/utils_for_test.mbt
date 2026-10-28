@@ -73,16 +73,16 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
         }
         "/get-streaming" | "/put-streaming" | "/post-streaming" => {
           let meth = @debug.to_string(request.meth).to_upper()
-          log.write_string("server received request: \{meth} \{request.path}\n")
+          log <+ "server received request: \{meth} \{request.path}\n"
           while conn.text.read() is Some(data) {
-            log.write_string("server received: \{data}")
+            log <+ "server received: \{data}"
           }
           conn.send_response(200, "OK")
-          log.write_string("server: sending \{meth} response part 1\n")
+          log <+ "server: sending \{meth} response part 1\n"
           conn.text.write("\{meth} response part 1\n")
           conn.flush()
           @async.sleep(300)
-          log.write_string("server: sending \{meth} response part 2\n")
+          log <+ "server: sending \{meth} response part 2\n"
           conn.text.write("\{meth} response part 2\n")
           conn.flush()
         }

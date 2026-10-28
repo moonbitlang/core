@@ -185,7 +185,7 @@ async test "read_request stream" {
     log_request(request, log)
     while input.read() is Some(data) {
       let data = @utf8.decode(data)
-      log.write_string("received \{data} from body\n")
+      log <+ "received \{data} from body\n"
     }
   }
   inspect(
@@ -240,9 +240,8 @@ async test "multiple request" {
     let input = Reader::new(r)
     let request = input.read_request()
     log_request(request, log)
-    log
-    ..write_string(@utf8.decode(input.read_all()))
-    .write_string("\n\n=========\n\n")
+    let body = @utf8.decode(input.read_all())
+    log <+ "\{body}\n\n=========\n\n"
     let request = input.read_request()
     log_request(request, log)
     log.write_string(@utf8.decode(input.read_all()))

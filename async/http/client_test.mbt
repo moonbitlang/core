@@ -51,7 +51,7 @@ async test "request streaming" {
     let port = test_server(group, log)
     async fn fetch_response(client : @http.ClientConnection) {
       while client.text.read() is Some(data) {
-        log.write_string("client received: \{data}")
+        log <+ "client received: \{data}"
       }
     }
 
