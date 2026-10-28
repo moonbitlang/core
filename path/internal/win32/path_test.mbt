@@ -424,6 +424,24 @@ test "relative unicode case folding" {
 }
 
 ///|
+test "relative uses full Unicode lowercase mappings" {
+  inspect(@win32.relative("C:\\ΟΣ", base="C:\\ος"), content="")
+  inspect(@win32.relative("C:\\ΟΣ\\File", base="C:\\ος"), content="File")
+  inspect(@win32.relative("C:\\ΟΣ", base="C:\\οσ"), content="..\\ΟΣ")
+  inspect(@win32.relative("C:\\İ", base="C:\\i\u{0307}"), content="")
+  inspect(@win32.relative("C:\\İ\\File", base="C:\\i\u{0307}"), content="File")
+  inspect(@win32.relative("C:\\İ", base="C:\\i"), content="..\\İ")
+  inspect(
+    @win32.relative("C:\\AΣ\u{0301}", base="C:\\aς\u{0301}"),
+    content="",
+  )
+  inspect(
+    @win32.relative("C:\\AΣ\u{0301}B", base="C:\\aσ\u{0301}b"),
+    content="",
+  )
+}
+
+///|
 test "resolve absolute fixtures" {
   inspect(@win32.resolve("C:\\a\\.\\b"), content="C:\\a\\b")
   inspect(@win32.resolve("C:\\a\\..\\b"), content="C:\\b")

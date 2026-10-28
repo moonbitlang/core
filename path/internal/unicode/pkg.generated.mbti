@@ -2,7 +2,7 @@
 package "moonbitlang/core/path/internal/unicode"
 
 // Values
-pub fn to_lowercase(Char) -> Char
+pub fn lowercase(StringView) -> String
 
 // Errors
 

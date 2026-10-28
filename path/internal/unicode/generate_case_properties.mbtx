@@ -1,0 +1,54 @@
+import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+}
+
+// Regenerate with the Unicode 17.0.0 DerivedCoreProperties.txt input:
+// moon run --target js path/internal/unicode/generate_case_properties.mbtx INPUT > path/internal/unicode/case_properties.mbt
+// Source: https://www.unicode.org/Public/17.0.0/ucd/DerivedCoreProperties.txt
+extern "js" fn read_text(path : String) -> String =
+  #| path => require("node:fs").readFileSync(path, "utf8")
+
+fn main raise {
+  let args = @env.args()
+  let input = read_text(args[args.length() - 1])
+  guard input.has_prefix("# DerivedCoreProperties-17.0.0.txt") else {
+    fail("expected Unicode 17.0.0 DerivedCoreProperties.txt")
+  }
+  println("// Generated from Unicode 17.0.0 DerivedCoreProperties.txt.")
+  println("// Copyright © 2025 Unicode, Inc. See UNICODE-LICENSE.txt.")
+  println("// Regenerate with generate_case_properties.mbtx; do not edit by hand.")
+  for (property, name) in [
+    ("Cased", "cased_ranges"), ("Case_Ignorable", "case_ignorable_ranges"),
+  ] {
+    let ranges : Array[(Int, Int)] = []
+    for line in input.split("\n") {
+      guard line.split_once(";") is Some((code, tail)) else { continue }
+      guard tail.split_once("#") is Some((prop, _)) else { continue }
+      guard prop.trim() == property else { continue }
+      let (start, end) = match code.trim().split_once("..") {
+        Some((start, end)) => (
+          @string.parse_int(start, base=16), @string.parse_int(end, base=16),
+        )
+        None => {
+          let value = @string.parse_int(code.trim(), base=16)
+          (value, value)
+        }
+      }
+      match ranges.last() {
+        Some((previous_start, previous_end)) if previous_end + 1 == start =>
+          ranges[ranges.length() - 1] = (previous_start, end)
+        _ => ranges.push((start, end))
+      }
+    }
+    guard !ranges.is_empty() else { fail("missing property \{property}") }
+    println("")
+    println("///|")
+    println("// Inclusive [start, end] pairs stored consecutively.")
+    println("let \{name} : ReadOnlyArray[Int32] = [")
+    for (start, end) in ranges {
+      println("  0x\{start.to_string(radix=16)}, 0x\{end.to_string(radix=16)},")
+    }
+    println("]")
+  }
+}

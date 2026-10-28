@@ -268,5 +268,8 @@ The implementation handles various Windows-specific edge cases:
 - `normalize` preserves trailing separators where semantically important; `resolve` removes trailing separators except regular roots
 - All Windows path prefix types are properly recognized
 - The functions follow Node `path.win32` behavior for this package's existing API surface
+- `relative` compares names using Unicode default string lowercasing, including
+  contextual Greek sigma and expanding `İ` to `i` plus a combining dot. This
+  does not change `Path` equality, which compares the original strings exactly.
 
 This makes the package reliable for real-world path manipulation in Windows environments, handling the complexity of Windows path formats while providing a clean, consistent API.

@@ -201,9 +201,9 @@ let explicit_maps : ReadOnlyArray[(Char, Char)] = [
 const LOWERCASE_ENTRY_COUNT = 1487
 
 ///|
-/// Unicode simple case folding (lowercase direction), following Node.js
-/// `toLowerCase`.
-pub fn to_lowercase(ch : Char) -> Char {
+// Unicode simple lowercase mapping. Full string lowercasing also handles
+// expansions and context-sensitive mappings in string_lowercase.mbt.
+fn to_lowercase(ch : Char) -> Char {
   lowercase_map.force().get(ch).unwrap_or(ch)
 }
 

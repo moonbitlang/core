@@ -34,6 +34,9 @@ limitations under the License.
 
 includes = ["*.mbt"]
 
+# Generated Unicode data retains its own copyright and UNICODE-LICENSE.txt.
+excludes = ["path/internal/unicode/case_properties.mbt"]
+
 [git]
 ignore = 'auto'
 attrs = 'enable'

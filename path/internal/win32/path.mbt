@@ -332,16 +332,7 @@ fn relative_with_current_dir(
 
 ///|
 fn win_string_equal_ignore_case(left : StringView, right : StringView) -> Bool {
-  let mut li = 0
-  let mut ri = 0
-  while left.get_char(li) is Some(l) && right.get_char(ri) is Some(r) {
-    guard @unicode.to_lowercase(l) == @unicode.to_lowercase(r) else {
-      return false
-    }
-    li += l.utf16_len()
-    ri += r.utf16_len()
-  }
-  left.get_char(li) is None && right.get_char(ri) is None
+  left == right || @unicode.lowercase(left) == @unicode.lowercase(right)
 }
 
 ///|
