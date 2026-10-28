@@ -97,9 +97,9 @@ test "SparseArray::iter" {
     if is_first {
       is_first = false
     } else {
-      buf.write_string(", ")
+      buf <+ ", "
     }
-    buf.write_string(x.to_string())
+    buf <+ "\{x}"
   })
   inspect(buf, content="0, 1, 3, 31")
 }
