@@ -60,7 +60,7 @@ test "incremental ZIP mixes whole files and known or unknown sized entries" {
   assert_true(writer.is_finished())
   assert_false(writer.is_failed())
   @test.assert_eq(writer.position(), bytes.length().to_uint64())
-  let archive = read(bytes)
+  let archive = read_all(bytes)
   @test.assert_eq(archive.entries().length(), 8)
   @test.assert_eq(archive.comment().to_owned(), b"comment")
   for entry in archive.entries() {
@@ -95,7 +95,7 @@ test "incremental ZIP pumps multiple output buffers and reuses the deflater" {
     writer.end_entry()
   }
   writer.finish()
-  let archive = read(out.to_bytes())
+  let archive = read_all(out.to_bytes())
   @test.assert_eq(archive.entries().length(), 2)
   @test.assert_eq(archive.get("first"), Some(payload))
   @test.assert_eq(archive.get("second"), Some(second))
@@ -124,7 +124,7 @@ test "incremental ZIP validates states and allows recovery from size errors" {
     UnsupportedFeature,
   )
   writer.finish()
-  @test.assert_eq(read(out.to_bytes()).get("a").unwrap().to_owned(), b"abc")
+  @test.assert_eq(read_all(out.to_bytes()).get("a").unwrap().to_owned(), b"abc")
 }
 
 ///|

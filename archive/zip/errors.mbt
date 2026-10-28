@@ -47,7 +47,7 @@ pub(all) enum ZipErrorKind {
   InvalidDeflate
   /// A range reader response did not match its requested byte count,
   /// or nonempty input was supplied without an active range request.
-  InvalidRead
+  InvalidRead(expected~ : Int32, actual~ : Int32)
   /// The requested directory entry index is out of bounds.
   InvalidEntryIndex(Int32)
   /// Entry size declarations or decoded sizes are inconsistent, or a `Writer`

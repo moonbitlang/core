@@ -117,7 +117,7 @@ test "ZIP fast store preserves method metadata limits and pristine records" {
   archive.add("stored", b"kept", compression=Store)
   @test.assert_eq(@zip.write(archive), @zip.write(archive, fast_store=false))
   let encoded = @zip.write(archive, fast_store=true)
-  let decoded = @zip.read(encoded)
+  let decoded = @zip.read_all(encoded)
   @test.assert_eq(decoded.get("data").unwrap().to_owned(), input)
   @test.assert_eq(decoded.entries()[0].compression(), Deflate)
   @test.assert_eq(decoded.entries()[1].compression(), Store)
@@ -138,7 +138,10 @@ test "ZIP fast store preserves method metadata limits and pristine records" {
   @test.assert_eq(decoded.replace("data", input), true)
   let rewritten = @zip.write(decoded, fast_store=true, preserve=true)
   @test.assert_eq(rewritten.length() > input.length(), true)
-  @test.assert_eq(@zip.read(rewritten).get("data").unwrap().to_owned(), input)
+  @test.assert_eq(
+    @zip.read_all(rewritten).get("data").unwrap().to_owned(),
+    input,
+  )
   @test.assert_eq(
     @zip.write(
       decoded,
@@ -171,7 +174,7 @@ test "ZIP fast store preserves method metadata limits and pristine records" {
   writer.end_entry()
   writer.finish()
   @test.assert_eq(out.length() > 2 * input.length(), true)
-  let streamed = @zip.read(out.to_bytes())
+  let streamed = @zip.read_all(out.to_bytes())
   @test.assert_eq(streamed.get("whole").unwrap().to_owned(), input)
   @test.assert_eq(streamed.get("chunks").unwrap().to_owned(), input)
   @test.assert_eq(streamed.get("again").unwrap().to_owned(), b"abcabc")

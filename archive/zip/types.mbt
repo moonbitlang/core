@@ -42,7 +42,7 @@ pub struct ReadLimits {
 
 ///|
 /// Construct resource bounds. Omitted ceilings default to the largest `Int`.
-/// Each supplied ceiling must be non-negative; `read` raises `InvalidArgument`
+/// Each supplied ceiling must be non-negative; `read_all` raises `InvalidArgument`
 /// for a negative one and rejects an exceeded ceiling before accepting the
 /// corresponding resource.
 pub fn ReadLimits::ReadLimits(
@@ -70,13 +70,17 @@ priv struct SourceRecord {
 
 ///|
 /// A single archive entry: its decoded payload plus the metadata the central
-/// directory carried for it. Entries produced by `read` retain their source
+/// directory carried for it. Entries produced by `read_all` retain their source
 /// records for byte-preserving rewrites; entries built with `Archive::add` do not.
 struct Entry {
   name : String
   data : Bytes
   compression : Compression
   crc32 : UInt32
+  dos_date : Int32
+  dos_time : Int32
+  creator_system : Int32
+  external_attributes : UInt32
   data_descriptor : Bool
   compressed_size : Int32
   source : SourceRecord?
@@ -106,6 +110,30 @@ pub fn Entry::compression(self : Entry) -> Compression {
 /// an archive, or computed at `add` time for entries created in memory.
 pub fn Entry::crc32(self : Entry) -> UInt32 {
   self.crc32
+}
+
+///|
+/// Packed DOS modification date; zero for newly added entries.
+pub fn Entry::dos_date(self : Entry) -> Int32 {
+  self.dos_date
+}
+
+///|
+/// Packed DOS modification time; zero for newly added entries.
+pub fn Entry::dos_time(self : Entry) -> Int32 {
+  self.dos_time
+}
+
+///|
+/// ZIP host-system identifier; zero (DOS) for newly added entries.
+pub fn Entry::creator_system(self : Entry) -> Int32 {
+  self.creator_system
+}
+
+///|
+/// File attributes interpreted by `creator_system`; zero for newly added entries.
+pub fn Entry::external_attributes(self : Entry) -> UInt32 {
+  self.external_attributes
 }
 
 ///|
@@ -152,6 +180,10 @@ pub fn Archive::add(
     compression,
     data_descriptor: false,
     crc32: @checksum.crc32(data),
+    dos_date: 0,
+    dos_time: 0,
+    creator_system: 0,
+    external_attributes: 0,
     compressed_size: data.length(),
     source: None,
     origin_local_offset: None,
@@ -159,11 +191,9 @@ pub fn Archive::add(
 }
 
 ///|
-/// Replace the payload of the entry named `name`. The entry keeps its method
-/// policy but drops its raw source records (the next write re-encodes it).
-/// Its original position in the archive is retained, so a byte-preserving
-/// write keeps the entry where it was. Returns `false` when no such entry
-/// exists.
+/// Replace the first entry named `name`, retaining its method, position, DOS
+/// date/time, creator system and external attributes. CRC is recomputed and raw
+/// records are discarded for re-encoding. Returns false if the name is absent.
 pub fn Archive::replace(
   self : Archive,
   name : StringView,
@@ -176,14 +206,11 @@ pub fn Archive::replace(
   let entry = self.entries[index]
   let data = data.to_owned()
   self.entries[index] = {
-    name: entry.name,
+    ..entry,
     data,
-    compression: entry.compression,
-    data_descriptor: entry.data_descriptor,
     crc32: @checksum.crc32(data),
     compressed_size: data.length(),
     source: None,
-    origin_local_offset: entry.origin_local_offset,
   }
   true
 }
