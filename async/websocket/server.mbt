@@ -26,7 +26,7 @@
 /// so the user must NOT use or close the HTTP server connection anymore.
 #as_free_fn
 pub async fn Conn::from_http_server(
-  request : @http.Request,
+  request : @http.RequestHeader,
   conn : @http.ServerConnection,
 ) -> Conn {
   errdefer conn.close()

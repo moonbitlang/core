@@ -36,7 +36,7 @@ pub struct ClientConnection {
 ///|
 /// Error raised when the proxy responded with a non-2XX response code
 pub suberror ProxyError {
-  ProxyError(Response)
+  ProxyError(ResponseHeader)
 } derive(@debug.Debug, @json.ToJson)
 
 ///|
@@ -258,8 +258,8 @@ pub async fn ClientConnection::flush(self : ClientConnection) -> Unit {
 /// will be invoked for every skipped `1XX` informational response.
 pub async fn ClientConnection::end_request(
   self : ClientConnection,
-  on_informational_response? : async (Response) -> Unit,
-) -> Response {
+  on_informational_response? : async (ResponseHeader) -> Unit,
+) -> ResponseHeader {
   self.sender.end_body()
   for ;; {
     self.reader.skip_body()

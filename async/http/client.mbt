@@ -92,7 +92,7 @@ pub async fn Client::get(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
-) -> (Response, ClientConnection) {
+) -> (ResponseHeader, ClientConnection) {
   let conn = self.request(Get, url, extra_headers~)
   errdefer conn.close()
   let response = conn.end_request()
@@ -108,7 +108,7 @@ pub async fn Client::get_binary(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
-) -> (Response, Bytes) {
+) -> (ResponseHeader, Bytes) {
   let (response, conn) = self.get(uri, extra_headers~)
   defer conn.close()
   (response, conn.read_all())
@@ -123,7 +123,7 @@ pub async fn Client::get_text(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
-) -> (Response, String) {
+) -> (ResponseHeader, String) {
   let (response, conn) = self.get(uri, extra_headers~)
   defer conn.close()
   (response, conn.text.read_all())
@@ -138,7 +138,7 @@ pub async fn Client::get_json(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
-) -> (Response, Json) {
+) -> (ResponseHeader, Json) {
   let (response, conn) = self.get(uri, extra_headers~)
   defer conn.close()
   (response, @json.parse(conn.text.read_all()))

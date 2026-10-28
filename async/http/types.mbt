@@ -66,7 +66,7 @@ pub type Headers = Map[CaseInsensitiveString, String]
 
 ///|
 /// HTTP request header
-pub(all) struct Request {
+pub(all) struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Headers
@@ -74,7 +74,7 @@ pub(all) struct Request {
 
 ///|
 /// HTTP response header
-pub(all) struct Response {
+pub(all) struct ResponseHeader {
   code : Int32
   reason : String
   headers : Headers

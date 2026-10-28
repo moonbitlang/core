@@ -23,13 +23,13 @@ fn log_headers(headers : Headers, logger : &Logger) -> Unit {
 }
 
 ///|
-fn log_request(req : Request, logger : &Logger) -> Unit {
+fn log_request(req : RequestHeader, logger : &Logger) -> Unit {
   logger <+ "\{@debug.to_string(req.meth)} \{req.path}\n"
   log_headers(req.headers, logger)
 }
 
 ///|
-fn log_response(req : Response, logger : &Logger) -> Unit {
+fn log_response(req : ResponseHeader, logger : &Logger) -> Unit {
   logger <+ "\{req.code} \{req.reason}\n"
   log_headers(req.headers, logger)
 }

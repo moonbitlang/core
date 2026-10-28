@@ -78,7 +78,7 @@ async test "passthrough mode remaining data" {
 ///|
 async fn handle_connect(
   log : Array[String],
-  request : @http.Request,
+  request : @http.RequestHeader,
   conn : @http.ServerConnection,
 ) -> Unit {
   guard request.meth is Connect else {

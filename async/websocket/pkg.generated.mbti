@@ -13,7 +13,7 @@ import {
 pub suberror WebSocketError {
   ConnectionClosed(CloseCode, String?)
   InvalidHandshake(String)
-  HandshakeRejected(String, @http.Response)
+  HandshakeRejected(String, @http.ResponseHeader)
   ProtocolError(String)
 } derive(@debug.Debug)
 
@@ -43,7 +43,7 @@ pub async fn Conn::end_message(Self) -> Unit
 #as_free_fn
 pub async fn Conn::from_http_client(@http.ClientConnection, StringView, extra_headers? : Map[@http.CaseInsensitiveString, String]) -> Self
 #as_free_fn
-pub async fn Conn::from_http_server(@http.Request, @http.ServerConnection) -> Self
+pub async fn Conn::from_http_server(@http.RequestHeader, @http.ServerConnection) -> Self
 pub async fn Conn::ping(Self, msg? : BytesView) -> Unit
 pub async fn Conn::recv(Self) -> Message
 pub async fn Conn::send_binary(Self, BytesView) -> Unit
