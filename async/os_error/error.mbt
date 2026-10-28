@@ -43,10 +43,7 @@ pub fn OsError::wrap_context(err : OsError, f : (String) -> String) -> OsError {
 ///|
 pub impl Show for OsError with fn output(self, logger) -> Unit {
   let OsError(_, raw_code~, context~) = self
-  logger
-  ..write_string(context)
-  ..write_string(": ")
-  .write_string(@errno.errno_to_string(raw_code))
+  logger <+ "\{context}: \{@errno.errno_to_string(raw_code)}"
 }
 
 ///|
