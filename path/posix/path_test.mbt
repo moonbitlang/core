@@ -23,9 +23,6 @@ test "Path division chains and normalizes POSIX paths" {
   inspect(path / "", content="/usr")
   inspect(@posix.Path("") / "", content=".")
   inspect(@posix.Path("") / "/bin", content="/bin")
-  let divide = @posix.Path::div
-  inspect(divide(path, y), content="/usr/local")
-  inspect(path.div(y), content="/usr/local")
 }
 
 ///|

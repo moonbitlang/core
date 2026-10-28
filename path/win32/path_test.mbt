@@ -28,9 +28,6 @@ test "Path division chains and normalizes Windows paths" {
     @win32.Path("//server/share") / "docs",
     content="\\\\server\\share\\docs",
   )
-  let divide = @win32.Path::div
-  inspect(divide(path, y), content="C:\\Users\\alice")
-  inspect(path.div(y), content="C:\\Users\\alice")
 }
 
 ///|

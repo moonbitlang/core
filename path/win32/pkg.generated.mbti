@@ -17,7 +17,6 @@ pub let sep : Char
 pub(all) struct Path(String) derive(Eq, @debug.Debug)
 pub fn Path::basename(Self) -> StringView
 pub fn Path::dirname(Self) -> Self
-pub fn Path::div(Self, Self) -> Self
 pub fn Path::equal(Self, Self) -> Bool
 pub fn Path::extname(Self) -> StringView
 pub fn Path::is_absolute(Self) -> Bool
