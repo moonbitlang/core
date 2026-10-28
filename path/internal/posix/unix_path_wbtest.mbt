@@ -25,7 +25,7 @@ test "resolve only reads cwd for relative paths" {
     resolve_with_current_dir("a/../b/", () => Some("/work")),
     content="/work/b",
   )
-  for path in (["", ".", "../a"] : Array[Path]) {
+  for path in (["", ".", "../a"] : Array[String]) {
     try resolve_with_current_dir(path, unavailable) catch {
       CurrentDirectoryUnavailable => ()
     } noraise {
@@ -49,7 +49,7 @@ test "relative propagates cwd failure only when needed" {
   inspect(calls, content="0")
   for
     (base, path) in (
-      [("relative", "/a"), ("/a", "relative")] : Array[(Path, Path)]) {
+      [("relative", "/a"), ("/a", "relative")] : Array[(String, String)]) {
     try relative_with_current_dir(path, base~, unavailable) catch {
       CurrentDirectoryUnavailable => ()
     } noraise {

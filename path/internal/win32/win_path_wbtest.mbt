@@ -44,7 +44,7 @@ test "fully qualified paths do not read cwd" {
 
 ///|
 test "resolve reports unavailable cwd" {
-  for path in (["", "a", "C:a", "\\a"] : Array[Path]) {
+  for path in (["", "a", "C:a", "\\a"] : Array[String]) {
     try resolve_with_current_dir(path, () => None) catch {
       CurrentDirectoryUnavailable => ()
     } noraise {
@@ -61,7 +61,7 @@ test "resolve reports unavailable cwd" {
 test "relative propagates cwd failure from either argument" {
   for
     (base, path) in (
-      [("relative", "C:\\a"), ("C:\\a", "relative")] : Array[(Path, Path)]) {
+      [("relative", "C:\\a"), ("C:\\a", "relative")] : Array[(String, String)]) {
     try relative_with_current_dir(path, base~, () => None) catch {
       CurrentDirectoryUnavailable => ()
     } noraise {
@@ -234,10 +234,10 @@ test "resolve drive-relative against cwd on another drive" {
 }
 
 ///|
-fn relative_with_cwd(base : Path, path : Path, cwd : String) -> Path {
+fn relative_with_cwd(base : String, path : String, cwd : String) -> String {
   let resolved_from = resolve_with_cwd(base, cwd)
   let resolved_to = resolve_with_cwd(path, cwd)
-  relative_resolved_paths(resolved_from.0, resolved_to.0)
+  relative_resolved_paths(resolved_from, resolved_to)
 }
 
 ///|

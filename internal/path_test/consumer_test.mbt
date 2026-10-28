@@ -12,54 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This package imports only the public path facades, without inheriting their
+// This package imports only the public path facade, without inheriting its
 // dependencies as path/path_test.mbt does. An internal owner for ResolveError
 // must not silently become available through the test package's imports.
 
 ///|
-test "construct, raise, and catch errors through public path aliases" {
+test "construct, raise, and catch errors through the public path alias" {
   fn fail_path() -> Unit raise @path.ResolveError {
     raise CurrentDirectoryUnavailable
   }
-  fn fail_posix() -> Unit raise @posix.ResolveError {
-    raise CurrentDirectoryUnavailable
+  let failure : () -> Unit raise = () => fail_path()
+  try failure() catch {
+    @path.ResolveError::CurrentDirectoryUnavailable => ()
+    _ => fail("expected public path error")
+  } noraise {
+    _ => fail("expected an error")
   }
-  fn fail_win32() -> Unit raise @win32.ResolveError {
-    raise CurrentDirectoryUnavailable
-  }
-  let failures : Array[() -> Unit raise] = [
-    () => fail_path(),
-    () => fail_posix(),
-    () => fail_win32(),
-  ]
-  let mut handled = 0
-  for failure in failures {
-    try failure() catch {
-      @path.ResolveError::CurrentDirectoryUnavailable => handled += 1
-      _ => fail("expected public path error")
-    } noraise {
-      _ => fail("expected an error")
-    }
-    try failure() catch {
-      @posix.ResolveError::CurrentDirectoryUnavailable => handled += 1
-      _ => fail("expected public posix error")
-    } noraise {
-      _ => fail("expected an error")
-    }
-    try failure() catch {
-      @win32.ResolveError::CurrentDirectoryUnavailable => handled += 1
-      _ => fail("expected public win32 error")
-    } noraise {
-      _ => fail("expected an error")
-    }
-  }
-  inspect(handled, content="9")
 }
 
 ///|
-test "resolve signatures share the public error type" {
-  let resolve_posix : (@posix.Path) -> @posix.Path raise @path.ResolveError = @posix.Path::resolve
-  let resolve_win32 : (@win32.Path) -> @win32.Path raise @path.ResolveError = @win32.Path::resolve
-  inspect(resolve_posix("/a/../b"), content="/b")
-  inspect(resolve_win32("C:\\a\\..\\b"), content="C:\\b")
+test "public Path operations require no internal imports" {
+  let path : @path.Path = "a"
+  let joined : @path.Path = path / "b" / "../c.txt"
+  let expected = if @path.sep == '/' { "a/c.txt" } else { "a\\c.txt" }
+  inspect(joined.to_string(), content=expected)
+  inspect(joined.basename(), content="c.txt")
+  inspect(joined.dirname(), content="a")
+  inspect(joined.extname(), content=".txt")
+  inspect(joined == path.join("c.txt"), content="true")
+  inspect(joined.is_absolute(), content="false")
+  let resolve : (@path.Path) -> @path.Path raise @path.ResolveError = @path.Path::resolve
+  let relative : (@path.Path, @path.Path) -> @path.Path raise @path.ResolveError = (
+    path,
+    base,
+  ) => path.relative(base~)
+  let root : @path.Path = if @path.sep == '/' { "/" } else { "C:\\" }
+  let absolute = root / "a" / ".." / "b"
+  inspect(resolve(absolute) == root / "b", content="true")
+  inspect(absolute.normalize() == root / "b", content="true")
+  inspect(relative(absolute, root), content="b")
 }

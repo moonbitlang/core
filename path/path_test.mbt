@@ -14,8 +14,8 @@
 
 ///|
 test "platform packages share ResolveError" {
-  let resolve_posix : (@posix.Path) -> @posix.Path raise @path.ResolveError = @posix.Path::resolve
-  let resolve_win32 : (@win32.Path) -> @win32.Path raise @path.ResolveError = @win32.Path::resolve
+  let resolve_posix : (String) -> String raise @path.ResolveError = @posix.resolve
+  let resolve_win32 : (String) -> String raise @path.ResolveError = @win32.resolve
   inspect(resolve_posix("/a/../b"), content="/b")
   inspect(resolve_win32("C:\\a\\..\\b"), content="C:\\b")
   let error = @posix.ResolveError::CurrentDirectoryUnavailable
@@ -24,8 +24,8 @@ test "platform packages share ResolveError" {
 }
 
 ///|
-test "catch ResolveError through public re-exports" {
-  // Construct and raise the error using only the public package aliases.
+test "catch ResolveError across the public and internal packages" {
+  // Construct and raise the error using the public and internal package aliases.
   // Erase its type to Error so the catch also checks runtime type identity.
   fn fail_path() -> Unit raise @path.ResolveError {
     raise CurrentDirectoryUnavailable

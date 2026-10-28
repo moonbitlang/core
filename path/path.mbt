@@ -16,7 +16,7 @@
 /// Path utilities with the existing MoonBit API surface.
 ///
 /// Behavior follows Node `node:path` for the active platform flavor. The
-/// top-level package dispatches to `@path/posix` or `@path/win32` at runtime.
+/// package selects the POSIX or Windows implementation at runtime.
 
 ///|
 let is_windows : Bool = @ffi.is_windows()
@@ -55,9 +55,9 @@ pub impl Show for Path with fn to_string(path) {
 /// ```
 pub fn Path::basename(path : Path) -> StringView {
   if is_windows {
-    @win32.Path::basename(path.0)
+    @win32.basename(path.0)
   } else {
-    @posix.Path::basename(path.0)
+    @posix.basename(path.0)
   }
 }
 
@@ -72,9 +72,9 @@ pub fn Path::basename(path : Path) -> StringView {
 /// ```
 pub fn Path::dirname(path : Path) -> Path {
   if is_windows {
-    @win32.Path::dirname(path.0).0
+    Path(@win32.dirname(path.0))
   } else {
-    @posix.Path::dirname(path.0).0
+    Path(@posix.dirname(path.0))
   }
 }
 
@@ -90,9 +90,9 @@ pub fn Path::dirname(path : Path) -> Path {
 /// ```
 pub fn Path::extname(path : Path) -> StringView {
   if is_windows {
-    @win32.Path::extname(path.0)
+    @win32.extname(path.0)
   } else {
-    @posix.Path::extname(path.0)
+    @posix.extname(path.0)
   }
 }
 
@@ -111,9 +111,9 @@ pub fn Path::extname(path : Path) -> StringView {
 /// ```
 pub fn Path::is_absolute(path : Path) -> Bool {
   if is_windows {
-    @win32.Path::is_absolute(path.0)
+    @win32.is_absolute(path.0)
   } else {
-    @posix.Path::is_absolute(path.0)
+    @posix.is_absolute(path.0)
   }
 }
 
@@ -125,9 +125,9 @@ pub fn Path::is_absolute(path : Path) -> Bool {
 ///
 pub fn Path::join(lhs : Path, rhs : Path) -> Path {
   if is_windows {
-    @win32.Path::join(lhs.0, rhs.0).0
+    Path(@win32.join(lhs.0, rhs.0))
   } else {
-    Show::to_string(@posix.Path::join(lhs.0, rhs.0))
+    Path(@posix.join(lhs.0, rhs.0))
   }
 }
 
@@ -157,13 +157,11 @@ pub impl Div for Path with fn div(lhs, rhs) {
 /// edge cases:
 ///   1. when path is empty, return `.`
 ///   2. POSIX leading `//` is normalized to `/`, following Node behavior.
-///
-/// See `@path/posix` and `@path/win32` for separator-specific examples.
 pub fn Path::normalize(path : Path) -> Path {
   if is_windows {
-    Show::to_string(@win32.Path::normalize(path.0))
+    Path(@win32.normalize(path.0))
   } else {
-    Show::to_string(@posix.Path::normalize(path.0))
+    Path(@posix.normalize(path.0))
   }
 }
 
@@ -179,14 +177,13 @@ pub fn Path::normalize(path : Path) -> Path {
 ///
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
-/// See `@path/posix` and `@path/win32` for separator-specific examples.
 /// Raises `ResolveError::CurrentDirectoryUnavailable` if either path needs
 /// the current working directory and it cannot be determined.
 pub fn Path::relative(path : Path, base~ : Path) -> Path raise ResolveError {
   if is_windows {
-    @win32.Path::relative(path.0, base=base.0).0
+    Path(@win32.relative(path.0, base=base.0))
   } else {
-    @posix.Path::relative(path.0, base=base.0).0
+    Path(@posix.relative(path.0, base=base.0))
   }
 }
 
@@ -201,9 +198,9 @@ pub fn Path::relative(path : Path, base~ : Path) -> Path raise ResolveError {
 /// current working directory and it cannot be determined.
 pub fn Path::resolve(path : Path) -> Path raise ResolveError {
   if is_windows {
-    Show::to_string(@win32.Path::resolve(path.0))
+    Path(@win32.resolve(path.0))
   } else {
-    Show::to_string(@posix.Path::resolve(path.0))
+    Path(@posix.resolve(path.0))
   }
 }
 
