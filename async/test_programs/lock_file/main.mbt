@@ -51,9 +51,12 @@ async fn main {
     mode=if kind is Shared { ReadOnly } else { ReadWrite },
   )
   defer file.close()
+  guard @stdio.stdin.read() is Some(_)
   file.lock(kind)
-  defer file.unlock()
+  defer {
+    file.unlock()
+    @stdio.stdout.text.write("released lock\n")
+  }
   @stdio.stdout.text.write("acquired lock\n")
-  @async.sleep(duration)
-  @stdio.stdout.text.write("releasing lock\n")
+  guard @stdio.stdin.read() is Some(_)
 }
