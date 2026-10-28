@@ -52,3 +52,20 @@ test "public Path operations require no internal imports" {
   inspect(absolute.normalize() == root / "b", content="true")
   inspect(relative(absolute, root), content="b")
 }
+
+///|
+test "public Windows joins preserve local roots and intentional UNC paths" {
+  // The public API selects the host platform; Windows CI exercises this branch.
+  if @path.sep == '\\' {
+    let root : @path.Path = "\\"
+    inspect(
+      @path.Path::join(root, "foo\\bar").to_string(),
+      content="\\foo\\bar",
+    )
+    inspect((root / "foo\\bar").to_string(), content="\\foo\\bar")
+    inspect(
+      @path.Path::join("//server", "share/file").to_string(),
+      content="\\\\server\\share\\file",
+    )
+  }
+}
