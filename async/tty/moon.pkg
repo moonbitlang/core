@@ -9,8 +9,8 @@ import {
   "moonbitlang/core/async/os_error",
 }
 
-supported_targets = "-all+native+wasm"
+supported_targets = "-all+wasm"
 
 options(
-  targets: { "ffi.native.mbt": [ "native" ], "ffi.wasm.mbt": [ "wasm" ] },
+  targets: { "ffi.wasm.mbt": [ "wasm" ] },
 )
