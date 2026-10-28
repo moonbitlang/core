@@ -90,7 +90,7 @@ async test "worker cancel1" {
     }
     let task = root.spawn(() => {
       match @async.handle_cancellation(() => perform_sleep_job(1000)) {
-        None => log.write_string("sleep cancelled with\n")
+        None => log <+ "sleep cancelled with\n"
         Some(_) => log <+ "done\n"
       }
     })
@@ -124,7 +124,7 @@ async test "worker cancel2" {
     }
     root.spawn_bg(allow_failure=true) <| () => {
       match @async.handle_cancellation(() => perform_sleep_job(1000)) {
-        None => log.write_string("sleep cancelled\n")
+        None => log <+ "sleep cancelled\n"
         Some(_) => log <+ "done\n"
       }
     }

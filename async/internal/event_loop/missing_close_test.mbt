@@ -22,12 +22,12 @@ test "missing_close" {
       root.spawn_bg() <| () => {
         let data = r.read_exactly(4) |> @utf8.decode
         @async.sleep(10)
-        log.write_string("received \{data}\n")
+        log <+ "received \{data}\n"
       }
       root.spawn_bg() <| () => {
         let data = "abcd"
         w.write(@utf8.encode(data))
-        log.write_string("written \{data}\n")
+        log <+ "written \{data}\n"
       }
     }
   }
