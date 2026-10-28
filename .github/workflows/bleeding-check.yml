@@ -40,11 +40,15 @@ jobs:
         uses: ./.github/actions/test
 
       - name: check
-        timeout-minutes: 10
-        run: moon check --deny-warn
+        timeout-minutes: 20
+        run: |
+          moon check --target all --deny-warn
+          moon check --target llvm --deny-warn
 
       - name: moon bundle
-        run: moon bundle --all
+        run: |
+          moon bundle --all
+          moon bundle --target llvm
 
       - name: moon info
         timeout-minutes: 10
