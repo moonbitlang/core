@@ -20,7 +20,7 @@ async test "semaphore mutex" {
     for i in 0..<3 {
       root.spawn_bg() <| () => {
         semaphore.acquire()
-        log.write_string("task \{i} obtained resource\n")
+        log <+ "task \{i} obtained resource\n"
         @async.sleep(300)
         semaphore.release()
       }
@@ -53,7 +53,7 @@ async test "semaphore multiple value" {
     for i in 0..<6 {
       root.spawn_bg() <| () => {
         semaphore.acquire()
-        log.write_string("task \{i} obtained resource\n")
+        log <+ "task \{i} obtained resource\n"
         @async.sleep(300)
         semaphore.release()
       }
