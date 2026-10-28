@@ -579,12 +579,12 @@ impl Show for Decimal with fn output(self, logger) {
   }
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
-    logger.write_string("0.")
+    logger <+ "0."
     for _ in 0..<-self.decimal_point {
       logger.write_char('0')
     }
     for i in 0..<self.digits_num {
-      logger.write_string(self.digits[i].to_int().to_string())
+      logger <+ "\{self.digits[i].to_int()}"
     }
   } else if self.decimal_point < self.digits_num {
     // decimal point in the middle of digits
@@ -592,12 +592,12 @@ impl Show for Decimal with fn output(self, logger) {
       if i == self.decimal_point {
         logger.write_char('.')
       }
-      logger.write_string(self.digits[i].to_int().to_string())
+      logger <+ "\{self.digits[i].to_int()}"
     }
   } else {
     // zeros filling between the digits and the decimal point
     for i in 0..<self.digits_num {
-      logger.write_string(self.digits[i].to_int().to_string())
+      logger <+ "\{self.digits[i].to_int()}"
     }
     for _ in 0..<(self.decimal_point - self.digits_num) {
       logger.write_char('0')
