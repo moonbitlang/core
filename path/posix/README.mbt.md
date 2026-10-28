@@ -167,6 +167,11 @@ test "relative path calculation" {
 
 Convert relative paths to absolute paths and normalize them:
 
+`resolve` and `relative` raise `ResolveError::CurrentDirectoryUnavailable`
+when they need the current working directory and it cannot be determined.
+Absolute paths can be resolved without a current working directory; likewise,
+`relative` needs no current working directory when both paths are absolute.
+
 ```moonbit check
 ///|
 test "path resolution" {

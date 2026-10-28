@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+pub using @error {type ResolveError}
+
+///|
 /// A string wrapper providing POSIX path operations.
 ///
 /// Equality compares the underlying strings exactly, including case and
@@ -191,9 +194,21 @@ fn trim_resolved_trailing_separators(path : Path) -> Path {
 ///   inspect(path.relative(base~), content="../share/doc")
 /// }
 /// ```
-pub fn Path::relative(path : Path, base~ : Path) -> Path {
-  let from = UnixPath::parse(Path::resolve(base).0)
-  let to = UnixPath::parse(Path::resolve(path).0)
+///
+/// Raises `ResolveError::CurrentDirectoryUnavailable` if either path is
+/// relative and the current working directory cannot be determined.
+pub fn Path::relative(path : Path, base~ : Path) -> Path raise ResolveError {
+  relative_with_current_dir(path, base~, @env.current_dir)
+}
+
+///|
+fn relative_with_current_dir(
+  path : Path,
+  base~ : Path,
+  current_dir : () -> String?,
+) -> Path raise ResolveError {
+  let from = UnixPath::parse(resolve_with_current_dir(base, current_dir).0)
+  let to = UnixPath::parse(resolve_with_current_dir(path, current_dir).0)
   guard from.prefix == to.prefix else { "" }
   let mut common = 0
   let limit = @cmp.minimum(from.components.length(), to.components.length())
@@ -219,10 +234,21 @@ pub fn Path::relative(path : Path, base~ : Path) -> Path {
 ///
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
-pub fn Path::resolve(path : Path) -> Path {
+/// Raises `ResolveError::CurrentDirectoryUnavailable` if the path is relative
+/// and the current working directory cannot be determined.
+pub fn Path::resolve(path : Path) -> Path raise ResolveError {
+  resolve_with_current_dir(path, @env.current_dir)
+}
+
+///|
+fn resolve_with_current_dir(
+  path : Path,
+  current_dir : () -> String?,
+) -> Path raise ResolveError {
   let resolved = {
     guard !Path::is_absolute(path) else { Path::normalize(path) }
-    Path::join(@env.current_dir().unwrap(), path) |> Path::normalize
+    guard current_dir() is Some(cwd) else { raise CurrentDirectoryUnavailable }
+    Path::join(cwd, path) |> Path::normalize
   }
   trim_resolved_trailing_separators(resolved)
 }

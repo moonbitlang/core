@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/path/error",
   "moonbitlang/core/path/posix",
   "moonbitlang/core/path/win32",
   "moonbitlang/core/path/internal/ffi",

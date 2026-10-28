@@ -13,6 +13,64 @@
 // limitations under the License.
 
 ///|
+test "fully qualified paths do not read cwd" {
+  let mut calls = 0
+  let unavailable : () -> String? = () => {
+    calls += 1
+    None
+  }
+  inspect(
+    resolve_with_current_dir("C:\\a\\..\\b\\", unavailable),
+    content="C:\\b",
+  )
+  inspect(
+    resolve_with_current_dir("\\\\server\\share\\file\\", unavailable),
+    content="\\\\server\\share\\file",
+  )
+  inspect(
+    resolve_with_current_dir("\\\\?\\C:\\file", unavailable),
+    content="\\\\?\\C:\\file",
+  )
+  inspect(
+    resolve_with_current_dir("\\\\.\\COM1", unavailable),
+    content="\\\\.\\COM1",
+  )
+  inspect(
+    relative_with_current_dir("C:\\a\\c", base="C:\\a\\b", unavailable),
+    content="..\\c",
+  )
+  inspect(calls, content="0")
+}
+
+///|
+test "resolve reports unavailable cwd" {
+  for path in (["", "a", "C:a", "\\a"] : Array[Path]) {
+    try resolve_with_current_dir(path, () => None) catch {
+      CurrentDirectoryUnavailable => ()
+    } noraise {
+      _ => fail("expected CurrentDirectoryUnavailable")
+    }
+  }
+  inspect(
+    resolve_with_current_dir("a", () => Some("C:\\work")),
+    content="C:\\work\\a",
+  )
+}
+
+///|
+test "relative propagates cwd failure from either argument" {
+  for
+    (base, path) in (
+      [("relative", "C:\\a"), ("C:\\a", "relative")] : Array[(Path, Path)]) {
+    try relative_with_current_dir(path, base~, () => None) catch {
+      CurrentDirectoryUnavailable => ()
+    } noraise {
+      _ => fail("expected CurrentDirectoryUnavailable")
+    }
+  }
+}
+
+///|
 test "WinPath verbatim prefixes" {
   inspect(
     WinPath::parse("\\\\?\\GLOBALROOT\\file"),

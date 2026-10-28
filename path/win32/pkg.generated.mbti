@@ -3,6 +3,7 @@ package "moonbitlang/core/path/win32"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/path/error",
 }
 
 // Values
@@ -21,12 +22,13 @@ pub fn Path::extname(Self) -> StringView
 pub fn Path::is_absolute(Self) -> Bool
 pub fn Path::join(Self, Self) -> Self
 pub fn Path::normalize(Self) -> Self
-pub fn Path::relative(Self, base~ : Self) -> Self
-pub fn Path::resolve(Self) -> Self
+pub fn Path::relative(Self, base~ : Self) -> Self raise @error.ResolveError
+pub fn Path::resolve(Self) -> Self raise @error.ResolveError
 pub fn Path::root(Self) -> StringView
 pub fn Path::to_string(Self) -> String
 pub impl Show for Path
 
 // Type aliases
+pub using @error {type ResolveError}
 
 // Traits
