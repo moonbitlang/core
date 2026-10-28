@@ -16,7 +16,7 @@
 async test "resolve mooncakes.io" {
   inspect(
     @socket.Addr::resolve("mooncakes.io", port=443),
-    content="54.188.190.230:443",
+    content="34.219.237.228:443",
   )
 }
 
