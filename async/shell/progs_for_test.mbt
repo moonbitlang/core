@@ -43,7 +43,7 @@ let filter_prog : @async.Lazy[String] = make_test_prog("filter")
 fn distinct_lines(count : Int32) -> String {
   let text = StringBuilder()
   for index in 0..<count {
-    text.write_string("line-\{index}\n")
+    text <+ "line-\{index}\n"
   }
   text.to_string()
 }
