@@ -45,7 +45,7 @@ async test "with_timeout failure" {
       raise Err
     }) catch {
       err => {
-        log.write_string("main task fail with \{@debug.to_string(err)}\n")
+        log <+ "main task fail with \{@debug.to_string(err)}\n"
         raise err
       }
     }
@@ -78,7 +78,7 @@ async test "with_timeout timeout" {
         Some(_) => log <+ "task finished\n"
       }
     }) catch {
-      err => log.write_string("`with_timeout` fail with \{err}\n")
+      err => log <+ "`with_timeout` fail with \{err}\n"
     }
     log <+ "main task finished\n"
   })
@@ -118,13 +118,13 @@ async test "with_timeout nested1" {
       }
       match result {
         None => {
-          log.write_string("inner `with_timeout` cancelled\n")
+          log <+ "inner `with_timeout` cancelled\n"
           @coroutine.raise_cancellation_signal()
         }
         Some(_) => ()
       }
     }) catch {
-      err => log.write_string("outer `with_timeout` fail with \{err}\n")
+      err => log <+ "outer `with_timeout` fail with \{err}\n"
     }
     log <+ "main task finished\n"
   })
@@ -162,10 +162,10 @@ async test "with_timeout nested2" {
           Some(_) => log <+ "task finished after 2s\n"
         }
       }) catch {
-        err => log.write_string("inner `with_timeout` fail with \{err}\n")
+        err => log <+ "inner `with_timeout` fail with \{err}\n"
       }
     }) catch {
-      err => log.write_string("outer `with_timeout` fail with \{err}\n")
+      err => log <+ "outer `with_timeout` fail with \{err}\n"
     }
     log <+ "main task finished\n"
   })
@@ -222,7 +222,7 @@ async test "with_timeout error-on-timeout" {
         @async.sleep(200)
         log <+ "200ms tick\n"
       }
-      defer log.write_string("main task terminates\n")
+      defer log <+ "main task terminates\n"
       @async.with_timeout(100, error=Err) <| () => {
         match @async.handle_cancellation(() => @async.sleep(2000)) {
           None => {
@@ -279,7 +279,7 @@ async test "with_timeout_opt failure" {
       raise Err
     }) catch {
       err => {
-        log.write_string("main task fail with \{@debug.to_string(err)}\n")
+        log <+ "main task fail with \{@debug.to_string(err)}\n"
         raise err
       }
     }

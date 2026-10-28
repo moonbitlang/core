@@ -18,7 +18,7 @@ async test "manual cancel" {
   @async.with_task_group(root => {
     let task = root.spawn(() => {
       match @async.handle_cancellation(() => @async.sleep(300)) {
-        None => buf.write_string("cancelled\n")
+        None => buf <+ "cancelled\n"
         Some(_) => buf <+ "task finished\n"
       }
     })
@@ -57,7 +57,7 @@ async test "error propagation" {
           buf <+ "task 2, tick 2\n"
         }
         match result {
-          None => buf.write_string("task 2 cancelled\n")
+          None => buf <+ "task 2 cancelled\n"
           Some(_) => ()
         }
       }
@@ -87,7 +87,7 @@ async test "multiple scope" {
           }
           ctx.spawn_bg() <| () => {
             match @async.handle_cancellation(() => @async.sleep(400)) {
-              None => buf.write_string("ctx 1 task 2 cancelled\n")
+              None => buf <+ "ctx 1 task 2 cancelled\n"
               Some(_) => buf <+ "ctx 1 task 2 finished\n"
             }
           }
@@ -111,7 +111,7 @@ async test "multiple scope" {
           }
           ctx.spawn_bg() <| () => {
             match @async.handle_cancellation(() => @async.sleep(300)) {
-              None => buf.write_string("ctx 2 task 2 cancelled\n")
+              None => buf <+ "ctx 2 task 2 cancelled\n"
               Some(_) => buf <+ "ctx 2 task 2 finished\n"
             }
           }
@@ -151,10 +151,10 @@ async test "recursive cancel" {
     }
     let task = root.spawn(() => {
       if @async.handle_cancellation(() => @async.sleep(1000)) is None {
-        buf.write_string("first sleep cancelled\n")
+        buf <+ "first sleep cancelled\n"
       }
       if @async.handle_cancellation(() => @async.sleep(1000)) is None {
-        buf.write_string("second sleep cancelled\n")
+        buf <+ "second sleep cancelled\n"
       }
       buf <+ "task finished\n"
     })
@@ -235,7 +235,7 @@ async test "immediately cancelled" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let task = root.spawn(() => {
-      defer log.write_string("task terminated\n")
+      defer log <+ "task terminated\n"
       log <+ "task started\n"
       @async.sleep(100)
       log <+ "task finished\n"

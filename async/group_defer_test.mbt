@@ -18,21 +18,21 @@ async test "group defer basic" {
   @async.with_task_group() <| fn(root) {
     root.add_defer(() => log <+ "first group defer\n")
     root.spawn_bg() <| () => {
-      defer log.write_string("defer for first task\n")
+      defer log <+ "defer for first task\n"
       @async.sleep(200)
       root.add_defer(() => log <+ "third group defer\n")
       @async.sleep(200)
       log <+ "first task finished\n"
     }
     root.spawn_bg() <| () => {
-      defer log.write_string("defer for second task\n")
+      defer log <+ "defer for second task\n"
       @async.sleep(100)
       root.add_defer(() => log <+ "second group defer\n")
       @async.sleep(200)
       log <+ "second task finished\n"
     }
     root.spawn_bg(no_wait=true) <| () => {
-      defer log.write_string("defer for cancelled task\n")
+      defer log <+ "defer for cancelled task\n"
       @async.sleep(1000)
     }
   }
@@ -59,14 +59,14 @@ async test "group defer error" {
     @async.with_task_group(fn(root) {
       root.add_defer(() => log <+ "first group defer\n")
       root.spawn_bg() <| () => {
-        defer log.write_string("defer for first task\n")
+        defer log <+ "defer for first task\n"
         @async.sleep(200)
         root.add_defer(() => log <+ "third group defer\n")
         @async.sleep(200)
         log <+ "first task finished\n"
       }
       root.spawn_bg() <| () => {
-        defer log.write_string("defer for second task\n")
+        defer log <+ "defer for second task\n"
         @async.sleep(100)
         root.add_defer(() => log <+ "second group defer\n")
         @async.sleep(200)
@@ -74,7 +74,7 @@ async test "group defer error" {
         raise Err
       }
       root.spawn_bg(no_wait=true) <| () => {
-        defer log.write_string("defer for cancelled task\n")
+        defer log <+ "defer for cancelled task\n"
         @async.sleep(1000)
       }
     })
@@ -113,7 +113,7 @@ async test "group defer cancelled" {
             log <+ "protected async defer completed\n"
           }
         })
-        defer log.write_string("start group termination\n")
+        defer log <+ "start group termination\n"
         @async.sleep(2000)
       })
     })
