@@ -45,7 +45,7 @@ impl Show for UnixPath with fn output(self : UnixPath, logger : &Logger) -> Unit
     [] =>
       if prefix is None {
         if trailing_separator {
-          logger.write_string("./")
+          logger <+ "./"
         } else {
           logger.write_char('.')
         }
@@ -53,8 +53,7 @@ impl Show for UnixPath with fn output(self : UnixPath, logger : &Logger) -> Unit
     [x, .. xs] => {
       logger.write_view(x)
       for x in xs {
-        logger.write_char('/')
-        logger.write_view(x)
+        logger <+ "/\{x}"
       }
       if trailing_separator {
         logger.write_char('/')
