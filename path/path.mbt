@@ -22,6 +22,9 @@
 let is_windows : Bool = @ffi.is_windows()
 
 ///|
+pub using @error {type ResolveError}
+
+///|
 /// A string wrapper providing path operations.
 ///
 /// Equality compares the underlying strings exactly, including case and
@@ -160,7 +163,9 @@ pub fn Path::normalize(path : Path) -> Path {
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
 /// See `@path/posix` and `@path/win32` for separator-specific examples.
-pub fn Path::relative(path : Path, base~ : Path) -> Path {
+/// Raises `ResolveError::CurrentDirectoryUnavailable` if either path needs
+/// the current working directory and it cannot be determined.
+pub fn Path::relative(path : Path, base~ : Path) -> Path raise ResolveError {
   if is_windows {
     @win32.Path::relative(path.0, base=base.0).0
   } else {
@@ -175,7 +180,9 @@ pub fn Path::relative(path : Path, base~ : Path) -> Path {
 ///
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
-pub fn Path::resolve(path : Path) -> Path {
+/// Raises `ResolveError::CurrentDirectoryUnavailable` if the path needs the
+/// current working directory and it cannot be determined.
+pub fn Path::resolve(path : Path) -> Path raise ResolveError {
   if is_windows {
     Show::to_string(@win32.Path::resolve(path.0))
   } else {

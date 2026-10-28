@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/builtin",
+}
+
+import {
+  "moonbitlang/core/path",
+  "moonbitlang/core/path/posix",
+  "moonbitlang/core/path/win32",
+} for "test"

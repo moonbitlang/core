@@ -13,6 +13,53 @@
 // limitations under the License.
 
 ///|
+test "resolve only reads cwd for relative paths" {
+  let mut calls = 0
+  let unavailable : () -> String? = () => {
+    calls += 1
+    None
+  }
+  inspect(resolve_with_current_dir("/a/../b/", unavailable), content="/b")
+  inspect(calls, content="0")
+  inspect(
+    resolve_with_current_dir("a/../b/", () => Some("/work")),
+    content="/work/b",
+  )
+  for path in (["", ".", "../a"] : Array[Path]) {
+    try resolve_with_current_dir(path, unavailable) catch {
+      CurrentDirectoryUnavailable => ()
+    } noraise {
+      _ => fail("expected CurrentDirectoryUnavailable")
+    }
+  }
+  inspect(calls, content="3")
+}
+
+///|
+test "relative propagates cwd failure only when needed" {
+  let mut calls = 0
+  let unavailable : () -> String? = () => {
+    calls += 1
+    None
+  }
+  inspect(
+    relative_with_current_dir("/a/c", base="/a/b", unavailable),
+    content="../c",
+  )
+  inspect(calls, content="0")
+  for
+    (base, path) in (
+      [("relative", "/a"), ("/a", "relative")] : Array[(Path, Path)]) {
+    try relative_with_current_dir(path, base~, unavailable) catch {
+      CurrentDirectoryUnavailable => ()
+    } noraise {
+      _ => fail("expected CurrentDirectoryUnavailable")
+    }
+  }
+  inspect(calls, content="2")
+}
+
+///|
 test "UnixPath absolute normalization" {
   inspect(UnixPath::parse("/../folder/file"), content="/folder/file")
   inspect(UnixPath::parse("/folder/file"), content="/folder/file")
