@@ -94,7 +94,7 @@ fn rev_find_code_unit_scalar(
 }
 
 ///|
-#cfg(not(any(target="native", target="wasm")))
+#cfg(not(any(target="native", target="wasm", target="js")))
 fn find_code_unit_from_string(
   data : String,
   start : Int32,
@@ -105,7 +105,7 @@ fn find_code_unit_from_string(
 }
 
 ///|
-#cfg(not(any(target="native", target="wasm")))
+#cfg(not(any(target="native", target="wasm", target="js")))
 fn rev_find_code_unit_from_string(
   data : String,
   start : Int32,
@@ -170,6 +170,14 @@ fn rev_find_code_unit_from_string(
     pos
   }
   rev_find_code_unit_scalar(data, start, head_end, code)
+}
+
+///|
+// The caller must ensure `2 <= pattern.length() <= target.length()`.
+#cfg(not(target="js"))
+#inline
+fn find_pattern(target : StringView, pattern : StringView) -> Int32? {
+  find_by_two_anchors(target, pattern)
 }
 
 ///|

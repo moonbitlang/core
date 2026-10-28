@@ -46,6 +46,7 @@ options(
     "panic_nonjs_test.mbt": [ "wasm", "wasm-gc" ],
     "panic_test.mbt": [ "not", "native", "llvm" ],
     "panic_wbtest.mbt": [ "not", "native", "llvm" ],
+    "string_find_js.mbt": [ "js" ],
     "stringbuilder_buffer.mbt": [ "not", "js" ],
     "stringbuilder_buffer_wbtest.mbt": [ "not", "js" ],
     "stringbuilder_concat.mbt": [ "js" ],

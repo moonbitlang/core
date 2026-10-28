@@ -36,7 +36,7 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int32? {
       if pattern_len > self.length() {
         None
       } else {
-        find_by_two_anchors(self, str)
+        find_pattern(self, str)
       }
   }
   // Worst-case linearity: after dense false-anchor candidates the search
