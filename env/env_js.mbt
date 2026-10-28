@@ -35,14 +35,27 @@ extern "js" fn now_internal() -> UInt64 =
   #| }
 
 ///|
-extern "js" fn current_dir_internal() -> String? =
+extern "js" fn current_dir_ffi() -> String =
   #| function() {
-  #|   if (typeof process !== "undefined" && typeof process.cwd === "function") {
-  #|     return process.cwd();
-  #|   } else {
-  #|     return null;
+  #|   try {
+  #|     if (typeof process !== "undefined" && typeof process.cwd === "function") {
+  #|       return process.cwd();
+  #|     }
+  #|   } catch (_) {
+  #|     // For example, the current directory may have been removed.
   #|   }
+  #|   return "";
   #| }
+
+///|
+fn current_dir_internal() -> String? {
+  // As on native, an empty path signals failure. Construct Option in MoonBit
+  // rather than depending on its JavaScript representation at the FFI boundary.
+  match current_dir_ffi() {
+    "" => None
+    cwd => Some(cwd)
+  }
+}
 
 ///|
 fn get_env_var_internal(key : String) -> String? {
