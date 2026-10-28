@@ -16,7 +16,7 @@
 async test "read_exactly" {
   let buf = StringBuilder()
   fn log(msg) {
-    buf..write_string(msg).write_char('\n')
+    buf <+ "\{msg}\n"
   }
 
   @async.with_task_group() <| root => {
@@ -58,7 +58,7 @@ async test "read_exactly" {
 async test "read_exactly failure" {
   let buf = StringBuilder()
   fn log(msg) {
-    buf..write_string(msg).write_char('\n')
+    buf <+ "\{msg}\n"
   }
 
   (@async.with_task_group() <| root => {
