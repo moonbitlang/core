@@ -20,12 +20,12 @@ async test "basic wait" {
     root.spawn_bg() <| () => {
       for i in 0..<2 {
         @async.sleep(750)
-        log.write_string("\{(i + 1) * 750}ms tick\n")
+        log <+ "\{(i + 1) * 750}ms tick\n"
       }
     }
     @async.sleep(10)
     let result = @process.run(test_prog, ["750"])
-    log.write_string("process completed with \{result.exit_code}\n")
+    log <+ "process completed with \{result.exit_code}\n"
   }
   inspect(
     log.to_string(),
@@ -57,7 +57,8 @@ async test "wait_pid" {
     }
     let proc = @process.spawn_orphan(test_prog, ["1000", "-exit-code", "42"])
     defer proc.close()
-    log.write_string("process terminated with \{proc.wait()}\n")
+    let exit_code = proc.wait()
+    log <+ "process terminated with \{exit_code}\n"
   }
   inspect(
     log.to_string(),
