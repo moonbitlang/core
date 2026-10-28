@@ -51,17 +51,14 @@ async fn main {
       let transformed = StringBuilder()
       let mut found = false
       for line in content {
-        transformed..write_stringview(line).write_char('\n')
+        transformed <+ "\{line}\n"
         if !found && line is "options(" {
           found = true
-          transformed..write_string(link_config).write_char('\n')
+          transformed <+ "\{link_config}\n"
         }
       }
       if !found {
-        transformed
-        ..write_string("\noptions(\n")
-        ..write_string(link_config)
-        .write_string("\n)")
+        transformed <+ "\noptions(\n\{link_config}\n)"
       }
       @fs.write_text(full_path, transformed.to_string())
     }
