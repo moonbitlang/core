@@ -102,7 +102,7 @@ async test "cond var broadcast" {
     for i in 0..<3 {
       root.spawn_bg() <| () => {
         cond.wait()
-        log.write_string("task \{i} received signal\n")
+        log <+ "task \{i} received signal\n"
       }
     }
     @async.sleep(100)
@@ -127,7 +127,7 @@ async test "cond var broadcast cancellation" {
     for i in 0..<3 {
       root.spawn_bg(allow_failure=true) <| () => {
         @async.with_timeout(200 * (i + 1), () => cond.wait())
-        log.write_string("task \{i} received signal\n")
+        log <+ "task \{i} received signal\n"
       }
     }
     @async.sleep(500)
