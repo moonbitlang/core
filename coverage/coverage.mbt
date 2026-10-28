@@ -43,7 +43,7 @@ pub impl Show for CoverageCounter with fn output(self, logger) {
   logger.write_char('[')
   for i, v in self {
     if i != 0 {
-      logger.write_string(", ")
+      logger <+ ", "
     }
     Show::output(v, logger)
   }
