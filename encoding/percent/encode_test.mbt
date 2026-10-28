@@ -107,14 +107,14 @@ test "long alternating literal and escaped spans" {
   let builder = StringBuilder()
   let expected = StringBuilder()
   for i in 0..<300 {
-    builder.write_string("ab")
-    expected.write_string("ab")
+    builder <+ "ab"
+    expected <+ "ab"
     if i % 2 == 0 {
-      builder.write_string(" ")
-      expected.write_string("%20")
+      builder <+ " "
+      expected <+ "%20"
     } else {
-      builder.write_string("é")
-      expected.write_string("%C3%A9")
+      builder <+ "é"
+      expected <+ "%C3%A9"
     }
   }
   assert_eq(@percent.encode(builder.to_string()), expected.to_string())
