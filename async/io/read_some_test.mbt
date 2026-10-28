@@ -20,7 +20,7 @@ async test "read basic" {
     defer r.close()
     root.spawn_bg(() => writer(log, w))
     while r.read() is Some(chunk) {
-      log.write_string("received chunk: \{@utf8.decode(chunk)}\n")
+      log <+ "received chunk: \{@utf8.decode(chunk)}\n"
     }
   }
   inspect(
@@ -64,7 +64,7 @@ async test "read_at_least fixed minimum" {
     try {
       for ;; {
         let chunk = r.read_at_least(6)
-        log.write_string("received chunk: \{@utf8.decode(chunk)}\n")
+        log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
       @io.ReaderClosed => ()
@@ -95,7 +95,7 @@ async test "read_at_least increasing minimum" {
     try {
       for min_len = 2; ; min_len = min_len + 2 {
         let chunk = r.read_at_least(min_len)
-        log.write_string("received chunk: \{@utf8.decode(chunk)}\n")
+        log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
       @io.ReaderClosed => ()
