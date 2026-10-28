@@ -105,12 +105,13 @@ test "Path division chains with platform join semantics" {
 
 ///|
 test "node-compatible top-level dispatch smoke" {
+  let path : @path.Path = "a"
   if @path.sep == '/' {
-    inspect(@path.Path::join("a", "/b"), content="a/b")
+    inspect(path / "/b", content="a/b")
     inspect(@path.Path::normalize(""), content=".")
     inspect(@path.Path::extname(".hidden"), content="")
   } else {
-    inspect(@path.Path::join("a", "\\b"), content="a\\b")
+    inspect(path / "\\b", content="a\\b")
     inspect(@path.Path::normalize(""), content=".")
     inspect(@path.Path::extname(".hidden"), content="")
   }

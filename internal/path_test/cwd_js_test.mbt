@@ -58,7 +58,7 @@ test "JS cwd failures are catchable through public path APIs" {
         try
           (root / "a" / ".." / "b").resolve() == root / "b" &&
           (root / "a" / "c").relative(base=root / "a" / "b") ==
-          @path.Path::join("..", "c")
+          @path.Path("..") / "c"
         catch {
           _ => false
         }
