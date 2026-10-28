@@ -552,9 +552,9 @@ fn[T] html_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
     let buf = StringBuilder()
     for c in s {
       match c {
-        '&' => buf.write_string("&amp;")
-        '<' => buf.write_string("&lt;")
-        '>' => buf.write_string("&gt;")
+        '&' => buf <+ "&amp;"
+        '<' => buf <+ "&lt;"
+        '>' => buf <+ "&gt;"
         _ => buf.write_char(c)
       }
     }
