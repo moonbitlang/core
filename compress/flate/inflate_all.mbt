@@ -1108,12 +1108,10 @@ pub fn Decompressor::decompress_into(
 ) -> DecompressResult raise InflateError {
   self.consumed = 0
   self.decoder.reset_into(input, output, cancelled)
-  errdefer self.decoder.clear_call_references()
+  defer self.decoder.clear_call_references()
   self.decoder.run()
   self.consumed = self.decoder.consumed()
-  let length = self.decoder.out.length
-  self.decoder.clear_call_references()
-  { consumed: self.consumed, produced: length, }
+  { consumed: self.consumed, produced: self.decoder.out.length, }
 }
 
 ///|
@@ -1142,12 +1140,10 @@ pub fn Decompressor::decompress(
   decoder.reset_into(input, [], cancelled)
   // Not the caller's storage: an output of its own, which grows.
   decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY), limit~)
-  errdefer decoder.clear_call_references()
+  defer decoder.clear_call_references()
   decoder.run()
   self.consumed = decoder.consumed()
-  let decoded = decoder.out.to_bytes()
-  decoder.clear_call_references()
-  decoded
+  decoder.out.to_bytes()
 }
 
 ///|

@@ -979,13 +979,13 @@ pub fn IncrementalDecoder::step(
   self.out_pos = 0
   self.out = output
   self.out_end = output.length()
+  defer self.release_step_views()
   let status = self.run_step() catch {
     InflateError(kind, message) => {
       self.failure_kind = Some(kind)
       self.failure_message = message
       self.staged_input.clear()
       self.staged_pos = 0
-      self.release_step_views()
       raise InflateError(kind, message)
     }
   }
@@ -998,6 +998,5 @@ pub fn IncrementalDecoder::step(
     self.compact_staged_input()
     decoded_input
   }
-  self.release_step_views()
   { status, consumed, produced, }
 }
