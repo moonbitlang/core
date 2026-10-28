@@ -114,21 +114,11 @@ impl Show for WinPrefix with fn output(self, logger) {
     Root => logger.write_char(BackSlash)
     VerbatimRoot => logger.write_string(VerbatimPrefix)
     DeviceRoot => logger.write_string(DevicePrefix)
-    UNC(hostname~, shared_folder~) => {
-      logger.write_string(UncPrefix)
-      logger.write_string(hostname)
-      logger.write_char(BackSlash)
-      logger.write_string(shared_folder)
-      logger.write_char(BackSlash)
-    }
-    VolumeLetterRoot(letter) => {
-      logger.write_char(letter)
-      logger.write_string(ColonBackslash)
-    }
-    VolumeLetter(letter) => {
-      logger.write_char(letter)
-      logger.write_string(":")
-    }
+    UNC(hostname~, shared_folder~) =>
+      logger <+
+        "\{UncPrefix}\{hostname}\{BackSlash}\{shared_folder}\{BackSlash}"
+    VolumeLetterRoot(letter) => logger <+ "\{letter}\{ColonBackslash}"
+    VolumeLetter(letter) => logger <+ "\{letter}:"
     None => ()
   }
 }
@@ -151,22 +141,15 @@ fn WinPath::output(self : WinPath, logger : &Logger) -> Unit {
       prefix_ends_with_sep = true
     }
     UNC(hostname~, shared_folder~) => {
-      logger.write_string(UncPrefix)
-      logger.write_string(hostname)
-      logger.write_char(BackSlash)
-      logger.write_string(shared_folder)
-      logger.write_char(BackSlash)
+      logger <+
+        "\{UncPrefix}\{hostname}\{BackSlash}\{shared_folder}\{BackSlash}"
       prefix_ends_with_sep = true
     }
     VolumeLetterRoot(letter) => {
-      logger.write_char(letter)
-      logger.write_string(ColonBackslash)
+      logger <+ "\{letter}\{ColonBackslash}"
       prefix_ends_with_sep = true
     }
-    VolumeLetter(letter) => {
-      logger.write_char(letter)
-      logger.write_string(":")
-    }
+    VolumeLetter(letter) => logger <+ "\{letter}:"
     None => ()
   }
   match components {
@@ -174,7 +157,7 @@ fn WinPath::output(self : WinPath, logger : &Logger) -> Unit {
       match prefix {
         None | VolumeLetter(_) =>
           if trailing_separator {
-            logger.write_string(".\\")
+            logger <+ ".\\"
           } else {
             logger.write_char('.')
           }
@@ -188,8 +171,7 @@ fn WinPath::output(self : WinPath, logger : &Logger) -> Unit {
       }
       logger.write_view(x)
       for component in xs {
-        logger.write_char(BackSlash)
-        logger.write_view(component)
+        logger <+ "\{BackSlash}\{component}"
       }
       if trailing_separator {
         logger.write_char(BackSlash)
