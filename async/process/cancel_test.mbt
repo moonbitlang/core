@@ -19,7 +19,7 @@ async test "cancel `@process.run()`" {
   @async.with_task_group() <| root => {
     let (r, w) = @process.read_from_process_shared()
     let task = root.spawn(() => {
-      defer log.write_string("process terminates\n")
+      defer log <+ "process terminates\n"
       defer w.close()
       @process.run(test_prog, ["10000"], stdout=w)
     })
@@ -27,7 +27,7 @@ async test "cancel `@process.run()`" {
       defer r.close()
       while r.text.read() is Some(data) {
         let data = data.replace_all(old="\r\n", new="\n")
-        log.write_string("from process: \{data}")
+        log <+ "from process: \{data}"
       }
     }
     @async.sleep(500)
@@ -116,7 +116,7 @@ async test "orphan process" {
       stdout=@process.read_from_process(),
     )
     let wait_task = group.spawn() <| () => {
-      defer log.write_string("process terminates\n")
+      defer log <+ "process terminates\n"
       let _ = proc.wait()
     }
     defer proc.close()
