@@ -111,7 +111,7 @@ fn Tty::close(self : Tty) -> Unit {
 pub fn Tty::enter_raw_mode(self : Tty) -> Unit raise {
   guard self.state is None else { return }
   let state = FixedArray::make(tty_state_size, b'\x00')
-  if tty_enter_raw(self.tty.input_fd(), self.control_fd, state) < 0 {
+  if tty_enter_raw(self.tty.input_fd(), self.control_fd, 0, state) < 0 {
     @os_error.check_errno("@tty.Tty::enter_raw_mode()")
   }
   self.state = Some(state)

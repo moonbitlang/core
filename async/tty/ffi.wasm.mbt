@@ -34,6 +34,7 @@ fn tty_state_size_ffi() -> Int32 = "moonbitlang/async" "tty/state_size"
 fn tty_enter_raw(
   input : @fd_util.Fd,
   output : @fd_util.Fd,
+  flags : Int32,
   state : FixedArray[Byte],
 ) -> Int32 = "moonbitlang/async" "tty/enter_raw"
 

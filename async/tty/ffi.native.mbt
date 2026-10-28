@@ -26,6 +26,7 @@ extern "C" fn tty_state_size_ffi() -> Int32 = "moonbit_rt_tty_state_size"
 extern "C" fn tty_enter_raw(
   input : @fd_util.Fd,
   output : @fd_util.Fd,
+  flags : Int32,
   state : FixedArray[Byte],
 ) -> Int32 = "moonbit_rt_tty_enter_raw"
 
