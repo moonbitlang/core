@@ -186,14 +186,13 @@ test "zero literals preserve the sign of zero" {
     text.write_char('0')
     let frac_digits = wrap_index(raw_frac, 4)
     if frac_digits > 0 {
-      text.write_char('.')
-      text.write_string("0".repeat(frac_digits))
+      text <+ ".\{"0".repeat(frac_digits)}"
     }
     match wrap_index(raw_exp_kind, 4) {
       0 => ()
-      1 => text.write_string("e\{wrap_index(raw_exp, 400)}")
-      2 => text.write_string("E+\{wrap_index(raw_exp, 400)}")
-      _ => text.write_string("e-\{wrap_index(raw_exp, 400)}")
+      1 => text <+ "e\{wrap_index(raw_exp, 400)}"
+      2 => text <+ "E+\{wrap_index(raw_exp, 400)}"
+      _ => text <+ "e-\{wrap_index(raw_exp, 400)}"
     }
     guard @json.parse(text.to_string()) is Number(n, ..) else { return false }
     n == 0.0 && (n.reinterpret_as_int64() < 0L) == negative
@@ -278,7 +277,7 @@ test "duplicate object keys: last occurrence wins" {
       if i > 0 {
         text.write_char(',')
       }
-      text.write_string("\"\{key}\":\{value}")
+      text <+ "\"\{key}\":\{value}"
       expected[key] = Json::number(value.to_double())
     }
     text.write_char('}')

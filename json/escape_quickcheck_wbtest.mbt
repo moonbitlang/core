@@ -85,18 +85,17 @@ fn model_escape(str : String, escape_slash : Bool) -> String {
   let buf = StringBuilder(size_hint=str.length())
   for code in str.code_units() {
     match code.to_int() {
-      0x22 => buf.write_string("\\\"")
-      0x5C => buf.write_string("\\\\")
+      0x22 => buf <+ "\\\""
+      0x5C => buf <+ "\\\\"
       0x2F => buf.write_string(if escape_slash { "\\/" } else { "/" })
-      0x08 => buf.write_string("\\b")
-      0x09 => buf.write_string("\\t")
-      0x0A => buf.write_string("\\n")
-      0x0C => buf.write_string("\\f")
-      0x0D => buf.write_string("\\r")
+      0x08 => buf <+ "\\b"
+      0x09 => buf <+ "\\t"
+      0x0A => buf <+ "\\n"
+      0x0C => buf <+ "\\f"
+      0x0D => buf <+ "\\r"
       c =>
         if c < 0x20 {
-          buf.write_string("\\u00")
-          buf.write_string(c.to_byte().to_hex())
+          buf <+ "\\u00\{c.to_byte().to_hex()}"
         } else {
           buf.write_char(code.unsafe_to_char())
         }

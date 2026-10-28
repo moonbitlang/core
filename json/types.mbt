@@ -70,9 +70,7 @@ pub impl Show for Json with fn output(self, logger) {
       fn write_contents(cb : &Logger) -> Unit {
         Show::output(n, cb)
         if repr is Some(repr) {
-          cb.write_string(", repr=Some(")
-          Show::output(repr, cb)
-          cb.write_string(")")
+          cb <+ ", repr=Some(\{repr})"
         }
       }
       logger <+ "Number(\{cb => write_contents(cb)})"

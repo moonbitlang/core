@@ -20,7 +20,7 @@ fn make_int_array_json(count : Int32) -> String {
     if i > 0 {
       buf.write_char(',')
     }
-    buf.write_string((i * 2654435).to_string())
+    buf <+ "\{i * 2654435}"
   }
   buf.write_char(']')
   buf.to_string()

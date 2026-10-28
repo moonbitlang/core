@@ -21,9 +21,7 @@ fn lex_string_bench_array(count : Int32, body : (Int32) -> String) -> String {
     if i > 0 {
       buf.write_char(',')
     }
-    buf.write_char('"')
-    buf.write_string(body(i))
-    buf.write_char('"')
+    buf <+ "\"\{body(i)}\""
   }
   buf.write_char(']')
   buf.to_string()
@@ -48,7 +46,7 @@ test "bench json parse object with short keys n=1000" (it : @bench.T) {
     if i > 0 {
       buf.write_char(',')
     }
-    buf.write_string("\"key\{i}\":\"value-\{i}\"")
+    buf <+ "\"key\{i}\":\"value-\{i}\""
   }
   buf.write_char('}')
   let input = buf.to_string()
@@ -102,8 +100,7 @@ test "bench json parse strings dense escapes n=1000" (it : @bench.T) {
   let input = lex_string_bench_array(1000, i => {
     let buf = StringBuilder()
     for j in 0..<16 {
-      buf.write_string(lex_string_bench_text(3, i + j))
-      buf.write_string("\\t")
+      buf <+ "\{lex_string_bench_text(3, i + j)}\\t"
     }
     buf.to_string()
   })
