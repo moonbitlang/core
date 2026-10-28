@@ -156,10 +156,10 @@ test "from_iter empty iterator" {
 ///|
 test "iter" {
   let buf = StringBuilder(size_hint=5)
-  b"abcde".iter().each(x => buf.write_string(x.to_string()))
+  b"abcde".iter().each(x => buf <+ "\{x}")
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   buf.reset()
-  b"abcde".iter().take(2).each(x => buf.write_string(x.to_string()))
+  b"abcde".iter().take(2).each(x => buf <+ "\{x}")
   inspect(buf, content="b'\\x61'b'\\x62'")
 }
 
@@ -170,7 +170,7 @@ test "iter2" {
   b"abcde"
   .iter2()
   .each((i, x) => {
-    buf.write_string(x.to_string())
+    buf <+ "\{x}"
     keys.push(i)
   })
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
