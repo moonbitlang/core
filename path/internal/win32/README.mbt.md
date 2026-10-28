@@ -1,4 +1,7 @@
-# Path Utilities for Windows Systems
+# Internal Windows Path Implementation
+
+This internal package implements string operations for `@path.Path`.
+Applications should import `moonbitlang/core/path`.
 
 This package provides Node-compatible Windows path manipulation utilities. It handles paths using backslashes (`\`) as the output separator and accepts both `/` and `\` as input separators.
 
@@ -22,21 +25,21 @@ Extract the last component of a path or get the directory part:
 ///|
 test "basename and dirname examples" {
   // Get the last component (filename)
-  let path : @win32.Path = "C:\\Users\\user"
-  inspect(path.basename(), content="user")
-  let path : @win32.Path = "project\\src\\main.mbt"
-  inspect(path.basename(), content="main.mbt")
+  let path : String = "C:\\Users\\user"
+  inspect(@win32.basename(path), content="user")
+  let path : String = "project\\src\\main.mbt"
+  inspect(@win32.basename(path), content="main.mbt")
 
   // Get the directory part
-  let path : @win32.Path = "C:\\Users\\user"
-  inspect(path.dirname(), content="C:\\Users")
-  let path : @win32.Path = "project\\src\\main.mbt"
-  inspect(path.dirname(), content="project\\src")
+  let path : String = "C:\\Users\\user"
+  inspect(@win32.dirname(path), content="C:\\Users")
+  let path : String = "project\\src\\main.mbt"
+  inspect(@win32.dirname(path), content="project\\src")
 
   // Handle trailing backslashes
-  let path : @win32.Path = "C:\\Users\\"
-  inspect(path.basename(), content="Users")
-  inspect(path.dirname(), content="C:\\")
+  let path : String = "C:\\Users\\"
+  inspect(@win32.basename(path), content="Users")
+  inspect(@win32.dirname(path), content="C:\\")
 }
 ```
 
@@ -48,17 +51,17 @@ Extract file extensions from paths:
 ///|
 test "extension extraction" {
   // Get file extension including the dot
-  let path : @win32.Path = "document.txt"
-  inspect(path.extname(), content=".txt")
-  let path : @win32.Path = "archive.tar.gz"
-  inspect(path.extname(), content=".gz")
-  let path : @win32.Path = "project\\main.mbt.md"
-  inspect(path.extname(), content=".md")
+  let path : String = "document.txt"
+  inspect(@win32.extname(path), content=".txt")
+  let path : String = "archive.tar.gz"
+  inspect(@win32.extname(path), content=".gz")
+  let path : String = "project\\main.mbt.md"
+  inspect(@win32.extname(path), content=".md")
   // Files without extensions
-  let path : @win32.Path = "README"
-  inspect(path.extname(), content="")
-  let path : @win32.Path = "project\\"
-  inspect(path.extname(), content="")
+  let path : String = "README"
+  inspect(@win32.extname(path), content="")
+  let path : String = "project\\"
+  inspect(@win32.extname(path), content="")
 }
 ```
 
@@ -72,35 +75,35 @@ Windows has various types of absolute paths. The function correctly identifies t
 ///|
 test "absolute path detection" {
   // Standard drive letter paths
-  let path : @win32.Path = "C:\\"
-  json_inspect(path.is_absolute(), content=true)
-  let path : @win32.Path = "D:\\folder\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "C:\\"
+  json_inspect(@win32.is_absolute(path), content=true)
+  let path : String = "D:\\folder\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // UNC paths (network shares)
-  let path : @win32.Path = "\\\\server\\share\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\server\\share\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Verbatim UNC paths
-  let path : @win32.Path = "\\\\?\\UNC\\server\\share\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\?\\UNC\\server\\share\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Verbatim drive letter paths
-  let path : @win32.Path = "\\\\?\\C:\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\?\\C:\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Volume GUID paths
-  let path : @win32.Path = "\\\\?\\Volume{12345678-1234-1234-1234-1234567890ab}\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\?\\Volume{12345678-1234-1234-1234-1234567890ab}\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Device namespace paths
-  let path : @win32.Path = "\\\\.\\COM56"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\.\\COM56"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Verbatim symlink paths
-  let path : @win32.Path = "\\\\?\\GLOBALROOT\\file"
-  json_inspect(path.is_absolute(), content=true)
+  let path : String = "\\\\?\\GLOBALROOT\\file"
+  json_inspect(@win32.is_absolute(path), content=true)
   // Relative paths
-  let path : @win32.Path = "C:folder\\file" // Drive-relative
-  json_inspect(path.is_absolute(), content=false)
-  let path : @win32.Path = "Users\\user"
-  json_inspect(path.is_absolute(), content=false)
-  let path : @win32.Path = ""
-  json_inspect(path.is_absolute(), content=false)
+  let path : String = "C:folder\\file" // Drive-relative
+  json_inspect(@win32.is_absolute(path), content=false)
+  let path : String = "Users\\user"
+  json_inspect(@win32.is_absolute(path), content=false)
+  let path : String = ""
+  json_inspect(@win32.is_absolute(path), content=false)
 }
 ```
 
@@ -114,19 +117,19 @@ Combine path components with proper separator handling:
 ///|
 test "path joining" {
   // Basic joining
-  let path : @win32.Path = "Users"
-  inspect(path.join("user"), content="Users\\user")
-  let path : @win32.Path = "project"
-  inspect(path.join("src"), content="project\\src")
+  let path : String = "Users"
+  inspect(@win32.join(path, "user"), content="Users\\user")
+  let path : String = "project"
+  inspect(@win32.join(path, "src"), content="project\\src")
   // Handle trailing backslashes
-  let path : @win32.Path = "Users\\"
-  inspect(path.join("user"), content="Users\\user")
+  let path : String = "Users\\"
+  inspect(@win32.join(path, "user"), content="Users\\user")
   // Absolute right-hand paths are joined then normalized
-  let path : @win32.Path = "relative"
-  inspect(path.join("\\absolute"), content="relative\\absolute")
-  let path : @win32.Path = "C:\\"
+  let path : String = "relative"
+  inspect(@win32.join(path, "\\absolute"), content="relative\\absolute")
+  let path : String = "C:\\"
   inspect(
-    Show::to_string(path.join("folder").join("file.txt")),
+    @win32.join(@win32.join(path, "folder"), "file.txt"),
     content="C:\\folder\\file.txt",
   )
 }
@@ -142,15 +145,15 @@ Clean up redundant components and resolve `.` and `..`:
 ///|
 test "path normalization" {
   // Remove redundant components
-  let path : @win32.Path = "a\\.\\b\\..\\c\\"
-  inspect(path.normalize(), content="a\\c\\")
-  let path : @win32.Path = "C:\\Users\\..\\Windows"
-  inspect(path.normalize(), content="C:\\Windows")
+  let path : String = "a\\.\\b\\..\\c\\"
+  inspect(@win32.normalize(path), content="a\\c\\")
+  let path : String = "C:\\Users\\..\\Windows"
+  inspect(@win32.normalize(path), content="C:\\Windows")
   // Handle complex cases
-  let path : @win32.Path = "\\a\\b\\..\\..\\c\\."
-  inspect(path.normalize(), content="\\c")
-  let path : @win32.Path = "a\\b\\c\\.."
-  inspect(path.normalize(), content="a\\b")
+  let path : String = "\\a\\b\\..\\..\\c\\."
+  inspect(@win32.normalize(path), content="\\c")
+  let path : String = "a\\b\\c\\.."
+  inspect(@win32.normalize(path), content="a\\b")
 }
 ```
 
@@ -163,23 +166,23 @@ Calculate the relative path between two Windows locations:
 test "relative path calculation" {
   // Same directory level
   let base = "C:\\Users\\user_name"
-  let path : @win32.Path = "C:\\Users\\user_name\\proj_a"
+  let path : String = "C:\\Users\\user_name\\proj_a"
   // inspect(path)
-  inspect(path.relative(base~), content="proj_a")
+  inspect(@win32.relative(path, base~), content="proj_a")
 
   // Go up one level
   let base = "C:\\Users\\user_name\\proj_a"
-  let path : @win32.Path = "C:\\Users\\user_name"
-  inspect(path.relative(base~), content="..")
+  let path : String = "C:\\Users\\user_name"
+  inspect(@win32.relative(path, base~), content="..")
   // Same path
   let base = "C:\\Users\\user_name"
-  let path : @win32.Path = "C:\\Users\\user_name"
-  inspect(path.relative(base~), content="")
+  let path : String = "C:\\Users\\user_name"
+  inspect(@win32.relative(path, base~), content="")
 
   // Sibling directories
   let base = "C:\\Users\\user_name\\proj_a"
-  let path : @win32.Path = "C:\\Users\\user_name\\proj_b"
-  inspect(path.relative(base~), content="..\\proj_b")
+  let path : String = "C:\\Users\\user_name\\proj_b"
+  inspect(@win32.relative(path, base~), content="..\\proj_b")
 }
 ```
 
@@ -199,10 +202,10 @@ or UNC share.
 ///|
 test "path resolution" {
   // Resolve and normalize absolute paths
-  let path : @win32.Path = "C:\\Users\\..\\Windows\\System32"
-  inspect(path.resolve(), content="C:\\Windows\\System32")
-  let path : @win32.Path = "C:\\a\\b\\c\\..\\..\\.."
-  inspect(path.resolve(), content="C:\\")
+  let path : String = "C:\\Users\\..\\Windows\\System32"
+  inspect(@win32.resolve(path), content="C:\\Windows\\System32")
+  let path : String = "C:\\a\\b\\c\\..\\..\\.."
+  inspect(@win32.resolve(path), content="C:\\")
 
   // Note: resolve() with relative paths depends on current working directory
   // and will join with the current directory before normalizing
@@ -212,8 +215,8 @@ test "path resolution" {
 ```mbt nocheck
 ///|
 test {
-  let path : Path = "a\\b\\..\\c"
-  inspect(path.resolve(), content="C:\\current\\working\\directory\\a\\c")
+  let path : String = "a\\b\\..\\c"
+  inspect(@win32.resolve(path), content="C:\\current\\working\\directory\\a\\c")
 }
 ```
 

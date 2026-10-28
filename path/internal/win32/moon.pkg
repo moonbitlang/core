@@ -2,9 +2,9 @@ import {
   "moonbitlang/core/path/error",
   "moonbitlang/core/env",
   "moonbitlang/core/cmp",
+  "moonbitlang/core/path/internal/unicode",
   "moonbitlang/core/builtin",
-  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
-warnings = "-6-3-1-9-15"
+warnings = "-1"

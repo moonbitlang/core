@@ -25,6 +25,7 @@ pub fn Path::normalize(Self) -> Self
 pub fn Path::relative(Self, base~ : Self) -> Self raise @error.ResolveError
 pub fn Path::resolve(Self) -> Self raise @error.ResolveError
 pub fn Path::to_string(Self) -> String
+pub impl Div for Path
 pub impl Show for Path
 
 // Type aliases

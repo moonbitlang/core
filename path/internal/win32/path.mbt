@@ -16,14 +16,6 @@
 pub using @error {type ResolveError}
 
 ///|
-/// A string wrapper providing Windows path operations.
-///
-/// Equality compares the underlying strings exactly, including case and
-/// separators. It does not normalize paths or determine whether they refer to
-/// the same filesystem entry. Unlike `relative`, equality is case-sensitive.
-pub(all) struct Path(String) derive(Eq, @debug.Debug)
-
-///|
 fn is_win_sep(ch : Char) -> Bool {
   ch == '\\' || ch == '/'
 }
@@ -79,16 +71,6 @@ fn current_dir_for_drive_with_cwd(
 }
 
 ///|
-pub impl Show for Path with fn output(path, logger) {
-  logger.write_object(path.0)
-}
-
-///|
-pub impl Show for Path with fn to_string(path) {
-  path.0
-}
-
-///|
 /// Returns the last path component of the given path.
 ///
 /// This follows Node `path.win32.basename`: both `/` and `\` are separators,
@@ -96,13 +78,13 @@ pub impl Show for Path with fn to_string(path) {
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "usr\\local\\"
-///   inspect(path.basename(), content="local")
+///   let path : String = "usr\\local\\"
+///   inspect(@win32.basename(path), content="local")
 /// }
 /// ```
-pub fn Path::basename(path : Path) -> StringView {
+pub fn basename(path : String) -> StringView {
   // strip win drive
-  let mut path = path.0[:]
+  let mut path = path[:]
   if start_with_win_drive(path) {
     path = path[2:]
   }
@@ -123,12 +105,12 @@ pub fn Path::basename(path : Path) -> StringView {
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "usr\\local\\"
-///   inspect(path.dirname(), content="usr")
+///   let path : String = "usr\\local\\"
+///   inspect(@win32.dirname(path), content="usr")
 /// }
 /// ```
-pub fn Path::dirname(path : Path) -> Path {
-  let raw = path.0
+pub fn dirname(path : String) -> String {
+  let raw = path
   guard !raw.is_empty() else { "." }
   let root_end = WinPath::parse(raw).root_end
   guard root_end < raw.length() else { raw }
@@ -161,12 +143,12 @@ pub fn Path::dirname(path : Path) -> Path {
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "archive.tar.gz"
-///   inspect(path.extname(), content=".gz")
+///   let path : String = "archive.tar.gz"
+///   inspect(@win32.extname(path), content=".gz")
 /// }
 /// ```
-pub fn Path::extname(path : Path) -> StringView {
-  let basename = Path::basename(path)
+pub fn extname(path : String) -> StringView {
+  let basename = basename(path)
   if basename == "." || basename == ".." {
     return ""
   }
@@ -183,14 +165,14 @@ pub fn Path::extname(path : Path) -> StringView {
 ///
 /// ```moonbit check
 /// test {
-///   let path1 : @win32.Path = "C:\\Program Files\\App"
-///   let path2 : @win32.Path = "Program Files\\App"
-///   json_inspect(path1.is_absolute(), content=true)
-///   json_inspect(path2.is_absolute(), content=false)
+///   let path1 : String = "C:\\Program Files\\App"
+///   let path2 : String = "Program Files\\App"
+///   json_inspect(@win32.is_absolute(path1), content=true)
+///   json_inspect(@win32.is_absolute(path2), content=false)
 /// }
 /// ```
-pub fn Path::is_absolute(path : Path) -> Bool {
-  match WinPath::parse(path.0).prefix {
+pub fn is_absolute(path : String) -> Bool {
+  match WinPath::parse(path).prefix {
     Root | VerbatimRoot | DeviceRoot | UNC(_) | VolumeLetterRoot(_) => true
     _ => false
   }
@@ -209,14 +191,14 @@ pub fn Path::is_absolute(path : Path) -> Bool {
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "C:\\foo\\bar"
-///   inspect(path.root(), content="C:\\")
-///   let path : @win32.Path = "\\\\server\\share\\file"
-///   inspect(path.root(), content="\\\\server\\share\\")
+///   let path : String = "C:\\foo\\bar"
+///   inspect(@win32.root(path), content="C:\\")
+///   let path : String = "\\\\server\\share\\file"
+///   inspect(@win32.root(path), content="\\\\server\\share\\")
 /// }
 /// ```
-pub fn Path::root(path : Path) -> StringView {
-  path.0[:WinPath::parse(path.0).root_end]
+pub fn root(path : String) -> StringView {
+  path[:WinPath::parse(path).root_end]
 }
 
 ///|
@@ -226,18 +208,16 @@ pub fn Path::root(path : Path) -> StringView {
 ///
 /// ```moonbit check
 /// test {
-///   let path1 : @win32.Path = "C::\\Program Files"
-///   let path2 : @win32.Path = "App"
-///   inspect(path1.join(path2), content="C::\\Program Files\\App")
+///   let path1 : String = "C::\\Program Files"
+///   let path2 : String = "App"
+///   inspect(@win32.join(path1, path2), content="C::\\Program Files\\App")
 /// }
 /// ```
-pub fn Path::join(lhs : Path, rhs : Path) -> Path {
-  let lhs = lhs.0
-  let rhs = rhs.0
+pub fn join(lhs : String, rhs : String) -> String {
   guard !lhs.is_empty() || !rhs.is_empty() else { "." }
-  guard !lhs.is_empty() else { Path::normalize(rhs) }
-  guard !rhs.is_empty() else { Path::normalize(lhs) }
-  Path::normalize(lhs + "\\" + rhs)
+  guard !lhs.is_empty() else { normalize(rhs) }
+  guard !rhs.is_empty() else { normalize(lhs) }
+  normalize(lhs + "\\" + rhs)
 }
 
 ///|
@@ -251,15 +231,15 @@ pub fn Path::join(lhs : Path, rhs : Path) -> Path {
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "C:\\usr\\\\local\\..\\bin\\"
-///   inspect(path.normalize(), content="C:\\usr\\bin\\")
+///   let path : String = "C:\\usr\\\\local\\..\\bin\\"
+///   inspect(@win32.normalize(path), content="C:\\usr\\bin\\")
 ///
-///   let rooted_path : @win32.Path = "/usr//local/../bin/"
-///   inspect(rooted_path.normalize(), content="\\usr\\bin\\")
+///   let rooted_path : String = "/usr//local/../bin/"
+///   inspect(@win32.normalize(rooted_path), content="\\usr\\bin\\")
 /// }
 /// ```
-pub fn Path::normalize(path : Path) -> Path {
-  let raw = path.0
+pub fn normalize(path : String) -> String {
+  let raw = path
   let parsed = WinPath::parse(raw)
   let normalized = Show::to_string(parsed)
   if needs_normalize_drive_guard(raw, normalized, parsed) {
@@ -299,55 +279,55 @@ fn is_regular_win_root(path : WinPath) -> Bool {
 }
 
 ///|
-fn trim_resolved_trailing_separators(path : Path) -> Path {
-  let parsed = WinPath::parse(path.0)
+fn trim_resolved_trailing_separators(path : String) -> String {
+  let parsed = WinPath::parse(path)
   guard !is_regular_win_root(parsed) else { path }
-  let mut raw = path.0[:]
+  let mut raw = path[:]
   while raw is [.. rest, last_char] && is_win_sep(last_char) && !rest.is_empty() {
     raw = rest
   }
-  Path(raw.to_owned())
+  raw.to_owned()
 }
 
 ///|
 /// Returns the relative path from `base` to `path`.
 ///
 /// property: joining `base` with the returned relative path yields
-/// `@path.resolve(path)`.
+/// `resolve(path)`.
 ///
 /// edge cases:
-///  1. when `@path.resolve(base) == @path.resolve(path)`, return empty string
+///  1. when `resolve(base) == resolve(path)`, return empty string
 ///  2. when the resolved paths have no common root boundary, return the resolved target path
 ///
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
 /// ```moonbit check
 /// test {
-///   let path : @win32.Path = "C:\\Users\\Alice\\Documents\\Project"
-///   let base : @win32.Path = "C:\\Users\\Alice"
-///   inspect(path.relative(base~), content="Documents\\Project")
+///   let path : String = "C:\\Users\\Alice\\Documents\\Project"
+///   let base : String = "C:\\Users\\Alice"
+///   inspect(@win32.relative(path, base~), content="Documents\\Project")
 ///
-///   let base : @win32.Path = "/usr/local/bin"
-///   let path : @win32.Path = "/usr/local/share/doc"
-///   inspect(path.relative(base~), content="..\\share\\doc")
+///   let base : String = "/usr/local/bin"
+///   let path : String = "/usr/local/share/doc"
+///   inspect(@win32.relative(path, base~), content="..\\share\\doc")
 /// }
 /// ```
 ///
 /// Raises `ResolveError::CurrentDirectoryUnavailable` if either path needs
 /// the current working directory and it cannot be determined.
-pub fn Path::relative(path : Path, base~ : Path) -> Path raise ResolveError {
+pub fn relative(path : String, base~ : String) -> String raise ResolveError {
   relative_with_current_dir(path, base~, @env.current_dir)
 }
 
 ///|
 fn relative_with_current_dir(
-  path : Path,
-  base~ : Path,
+  path : String,
+  base~ : String,
   current_dir : () -> String?,
-) -> Path raise ResolveError {
+) -> String raise ResolveError {
   let resolved_from = resolve_with_current_dir(base, current_dir)
   let resolved_to = resolve_with_current_dir(path, current_dir)
-  relative_resolved_paths(resolved_from.0, resolved_to.0)
+  relative_resolved_paths(resolved_from, resolved_to)
 }
 
 ///|
@@ -387,7 +367,7 @@ fn split_win_parts(path : StringView) -> Array[StringView] {
 }
 
 ///|
-fn relative_resolved_paths(from_orig : String, to_orig : String) -> Path {
+fn relative_resolved_paths(from_orig : String, to_orig : String) -> String {
   if from_orig == to_orig || win_string_equal_ignore_case(from_orig, to_orig) {
     return ""
   }
@@ -435,18 +415,18 @@ fn relative_resolved_paths(from_orig : String, to_orig : String) -> Path {
 ///
 /// Raises `ResolveError::CurrentDirectoryUnavailable` if the path needs the
 /// current working directory and it cannot be determined.
-pub fn Path::resolve(path : Path) -> Path raise ResolveError {
+pub fn resolve(path : String) -> String raise ResolveError {
   resolve_with_current_dir(path, @env.current_dir)
 }
 
 ///|
 fn resolve_with_current_dir(
-  path : Path,
+  path : String,
   current_dir : () -> String?,
-) -> Path raise ResolveError {
-  match WinPath::parse(path.0).prefix {
+) -> String raise ResolveError {
+  match WinPath::parse(path).prefix {
     VolumeLetterRoot(_) | UNC(_) | VerbatimRoot | DeviceRoot =>
-      trim_resolved_trailing_separators(Path::normalize(path))
+      trim_resolved_trailing_separators(normalize(path))
     _ => {
       guard current_dir() is Some(cwd) else {
         raise CurrentDirectoryUnavailable
@@ -466,30 +446,27 @@ fn cwd_device_for_drive_less_rooted_path(cwd : String) -> String? {
 }
 
 ///|
-fn resolve_with_cwd(path : Path, cwd : String) -> Path {
-  let raw_path = path.0
+fn resolve_with_cwd(path : String, cwd : String) -> String {
+  let raw_path = path
   let parsed = WinPath::parse(raw_path)
   let resolved = match parsed.prefix {
     Root =>
       match cwd_device_for_drive_less_rooted_path(cwd) {
-        Some(device) => Path::normalize("\{device}\{raw_path}")
-        None => Path::normalize(path)
+        Some(device) => normalize("\{device}\{raw_path}")
+        None => normalize(path)
       }
-    VolumeLetterRoot(_) | UNC(_) | VerbatimRoot | DeviceRoot =>
-      Path::normalize(path)
+    VolumeLetterRoot(_) | UNC(_) | VerbatimRoot | DeviceRoot => normalize(path)
     _ =>
       if is_drive_relative(raw_path) {
-        let base = Path::normalize(
-          current_dir_for_drive_with_cwd(raw_path[0:2], cwd),
-        )
+        let base = normalize(current_dir_for_drive_with_cwd(raw_path[0:2], cwd))
         let tail = raw_path[2:]
         if tail.is_empty() {
           base
         } else {
-          Path::join(base, tail.to_owned())
+          join(base, tail.to_owned())
         }
       } else {
-        Path::join(cwd, path)
+        join(cwd, path)
       }
   }
   trim_resolved_trailing_separators(resolved)

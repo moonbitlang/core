@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+#deprecated("Use `/` or `join` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Path with Div::{div}
+
+///|
 pub extend Path with Eq::{equal}
 
 ///|

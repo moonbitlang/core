@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/path/internal/win32"
+
+import {
+  "moonbitlang/core/path/error",
+}
+
+// Values
+pub fn basename(String) -> StringView
+
+pub let delimiter : Char
+
+pub fn dirname(String) -> String
+
+pub fn extname(String) -> StringView
+
+pub fn is_absolute(String) -> Bool
+
+pub fn join(String, String) -> String
+
+pub fn normalize(String) -> String
+
+pub fn relative(String, base~ : String) -> String raise @error.ResolveError
+
+pub fn resolve(String) -> String raise @error.ResolveError
+
+pub fn root(String) -> StringView
+
+pub let sep : Char
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+pub using @error {type ResolveError}
+
+// Traits
