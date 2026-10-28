@@ -18,7 +18,7 @@ async test "no_wait cancelled" {
   @async.with_task_group() <| root => {
     root.spawn_bg(no_wait=true) <| () => {
       match @async.handle_cancellation(() => @async.sleep(1000)) {
-        None => buf.write_string("`no_wait` task cancelled\n")
+        None => buf <+ "`no_wait` task cancelled\n"
         Some(_) => buf <+ "`no_wait` task finished successfully\n"
       }
     }
@@ -41,7 +41,7 @@ async test "no_wait normal exit" {
   @async.with_task_group() <| root => {
     root.spawn_bg(no_wait=true) <| () => {
       match @async.handle_cancellation(() => @async.sleep(100)) {
-        None => buf.write_string("`no_wait` task cancelled\n")
+        None => buf <+ "`no_wait` task cancelled\n"
         Some(_) => buf <+ "`no_wait` task finished successfully\n"
       }
     }

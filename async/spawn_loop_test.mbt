@@ -18,7 +18,7 @@ async test "spawn_loop basic" {
   @async.with_task_group(root => {
     let mut i = 0
     root.spawn_loop() <| () => {
-      log.write_string("tick \{i}\n")
+      log <+ "tick \{i}\n"
       i = i + 1
       if i >= 3 {
         raise @async.BreakFromSpawnLoop
@@ -43,7 +43,7 @@ async test "spawn_loop basic-error" {
     @async.with_task_group(root => {
       let mut i = 0
       root.spawn_loop() <| () => {
-        log.write_string("tick \{i}\n")
+        log <+ "tick \{i}\n"
         i = i + 1
         if i >= 3 {
           raise Err

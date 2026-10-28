@@ -17,7 +17,7 @@ async test "retry immediate" {
   let log = StringBuilder()
   let mut i = 0
   @async.retry(Immediate) <| () => {
-    log.write_string("tick \{i}\n")
+    log <+ "tick \{i}\n"
     i = i + 1
     if i < 3 {
       raise Err
@@ -84,7 +84,7 @@ async test "retry cancelled1" {
   @async.with_timeout(500, () => {
     @async.retry(Immediate) <| () => {
       @async.sleep(200)
-      log.write_string("loop \{i}\n")
+      log <+ "loop \{i}\n"
       i = i + 1
       raise Err
     }
@@ -108,7 +108,7 @@ async test "retry cancelled2" {
   let mut i = 0
   @async.with_timeout(500, () => {
     @async.retry(FixedDelay(200)) <| () => {
-      log.write_string("loop \{i}\n")
+      log <+ "loop \{i}\n"
       i = i + 1
       raise Err
     }
@@ -136,7 +136,7 @@ async test "retry fatal_error" {
 
   let mut i = 0
   async fn worker() {
-    log.write_string("worker run #\{i}\n")
+    log <+ "worker run #\{i}\n"
     i = i + 1
     if i < 3 {
       @async.with_timeout(100, () => @async.sleep(1000))

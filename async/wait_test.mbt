@@ -47,7 +47,7 @@ async test "wait cancelled" {
     })
     root.spawn_bg() <| () => {
       match @async.handle_cancellation(() => task.wait()) {
-        None => buf.write_string("`wait` cancelled\n")
+        None => buf <+ "`wait` cancelled\n"
         Some(_) => ()
       }
     }
@@ -75,11 +75,12 @@ async test "try_wait" {
     })
     root.spawn_bg() <| () => {
       @async.sleep(300)
-      log.write_string("300ms: \{@debug.to_string(task.try_wait())}\n")
+      log <+ "300ms: \{@debug.to_string(task.try_wait())}\n"
       @async.sleep(300)
-      log.write_string("600ms: \{@debug.to_string(task.try_wait())}\n")
+      log <+ "600ms: \{@debug.to_string(task.try_wait())}\n"
     }
-    log.write_string("task finished with \{task.wait()}\n")
+    let result = task.wait()
+    log <+ "task finished with \{result}\n"
   }
   inspect(
     log.to_string(),

@@ -19,7 +19,7 @@ async test "protect_from_cancel" {
     root.spawn_bg() <| () => {
       @async.protect_from_cancel <| () => {
         match @async.handle_cancellation(() => @async.sleep(400)) {
-          None => log.write_string("critial job cancelled\n")
+          None => log <+ "critial job cancelled\n"
           Some(_) => log <+ "critical job finished\n"
         }
       }
@@ -30,7 +30,7 @@ async test "protect_from_cancel" {
     }
     root.spawn_bg() <| () => {
       match @async.handle_cancellation(() => @async.sleep(400)) {
-        None => log.write_string("non-critial job cancelled\n")
+        None => log <+ "non-critial job cancelled\n"
         Some(_) => log <+ "non-critical job finished\n"
       }
     }
@@ -63,7 +63,7 @@ async test "protect_from_cancel wait" {
     @async.with_task_group(group => {
       group.spawn_bg() <| () => {
         @async.sleep(300)
-        log.write_string("trying to cancel the group containing critial job\n")
+        log <+ "trying to cancel the group containing critial job\n"
         raise Err
       }
       @async.protect_from_cancel() <| () => {
@@ -231,7 +231,7 @@ async test "protect_from_cancel in cancellation handler" {
     root.spawn_bg(no_wait=true) <| () => {
       match @async.handle_cancellation(() => @async.sleep(400)) {
         None => {
-          log.write_string("cancelled\n")
+          log <+ "cancelled\n"
           @async.protect_from_cancel() <| () => {
             @async.sleep(200)
             log <+ "critial cancellation handler terminated\n"
@@ -269,7 +269,7 @@ async test "cancel while scheduled" {
       // and it will receive cancellation in this situation
       match @async.handle_cancellation(() => @async.pause()) {
         None => {
-          log.write_string("`pause` cancelled\n")
+          log <+ "`pause` cancelled\n"
           @async.protect_from_cancel() <| () => {
             // Now, due to `protect_from_cancel`,
             // we are allowed to suspend inside cancellation handler.
