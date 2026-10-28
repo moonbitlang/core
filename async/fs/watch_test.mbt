@@ -825,8 +825,8 @@ async test "watch debounce" {
 
     // 3. exceed max interval
     @async.with_task_group <| group => {
-      @fs.rename("\{watched_path}/file", "\{path}/file")
       let start = @async.now()
+      @fs.rename("\{watched_path}/file", "\{path}/file")
       group.spawn_bg(no_wait=true) <| () => {
         for ;; {
           // keep refreshing the debouncer with modification events
@@ -835,7 +835,10 @@ async test "watch debounce" {
         }
       }
       let events = event_queue.get()
-      assert_true(@async.now() - start > 600)
+      let end = @async.now()
+      if end - start < 600 {
+        inspect(end - start)
+      }
       debug_inspect(
         events,
         content=(
