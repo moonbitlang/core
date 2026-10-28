@@ -182,3 +182,28 @@ test "multi-code-unit find agrees with scalar search for every view range" {
     }
   }
 }
+
+///|
+test "find and rev_find with a pattern that is a view" {
+  let pattern = "<ab>"[1:3]
+  debug_inspect("xxabyyab".find(pattern), content="Some(2)")
+  debug_inspect("xxabyyab".rev_find(pattern), content="Some(6)")
+  debug_inspect("xxabyyab"[3:].find(pattern), content="Some(3)")
+  debug_inspect("xxabyyab"[:7].rev_find(pattern), content="Some(2)")
+}
+
+///|
+test "find with patterns around 250 code units" {
+  // On JS, patterns up to 250 code units use the engine's search and longer
+  // ones the two-anchor search; both must agree with the scalar reference.
+  for half in [124, 125, 126, 200] {
+    let pattern = String::make(half, 'a') + "Z" + String::make(half - 1, 'a')
+    let miss = String::make(1000, 'a')
+    let hit = miss + pattern + "b"
+    assert_eq(miss.find(pattern), None)
+    assert_eq(hit.find(pattern), Some(1000))
+    assert_eq(hit[1:].find(pattern), Some(999))
+    assert_eq(hit[:1000 + pattern.length() - 1].find(pattern), None)
+    assert_eq(hit.find(pattern), scalar_find_for_test(hit, pattern))
+  }
+}
