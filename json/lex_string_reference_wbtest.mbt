@@ -260,10 +260,10 @@ fn lex_string_body(seeds : Array[Int32]) -> String {
     match seed & 0x1F {
       0 => buf.write_char('"')
       1 => buf.write_char('\\')
-      2 => buf.write_string("\\n")
-      3 => buf.write_string("\\\"")
-      4 => buf.write_string("\\u0041")
-      5 => buf.write_string("\\uD83D\\uDE00")
+      2 => buf <+ "\\n"
+      3 => buf <+ "\\\""
+      4 => buf <+ "\\u0041"
+      5 => buf <+ "\\uD83D\\uDE00"
       6 => buf.write_char('\n')
       7 => buf.write_char('\u{1F}')
       8 => buf.write_char('\u{00}')
@@ -273,9 +273,9 @@ fn lex_string_body(seeds : Array[Int32]) -> String {
       12 => buf.write_char('\u{225C}')
       13 => buf.write_char('\u{805C}')
       14 => buf.write_char('\u{7F}')
-      15 => buf.write_string("\\x")
-      16 => buf.write_string("\\uD800x")
-      17 => buf.write_string("\\u12")
+      15 => buf <+ "\\x"
+      16 => buf <+ "\\uD800x"
+      17 => buf <+ "\\u12"
       _ => {
         let c = (('a' : Int32) + payload % 26).unsafe_to_char()
         for _ in 0..<(payload % 70) {

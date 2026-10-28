@@ -297,7 +297,7 @@ pub fn Json::stringify(
         match value {
           Object(members) =>
             if members.is_empty() {
-              buf.write_string("{}")
+              buf <+ "{}"
             } else {
               depth += 1
               buf.write_char('{')
@@ -309,7 +309,7 @@ pub fn Json::stringify(
             }
           Array(arr) =>
             if arr.is_empty() {
-              buf.write_string("[]")
+              buf <+ "[]"
             } else {
               depth += 1
               buf.write_char('[')
@@ -328,9 +328,9 @@ pub fn Json::stringify(
               None => buf.write_object(n)
               Some(r) => buf.write_string(r)
             }
-          True => buf.write_string("true")
-          False => buf.write_string("false")
-          Null => buf.write_string("null")
+          True => buf <+ "true"
+          False => buf <+ "false"
+          Null => buf <+ "null"
         }
         continue None
       }
@@ -377,8 +377,7 @@ pub fn Json::stringify(
                 }
                 buf.write_char('\"')
                 write_escaped(buf, k, escape_slash~)
-                buf.write_char('\"')
-                buf.write_char(':')
+                buf <+ "\":"
                 if indent > 0 {
                   buf.write_char(' ')
                 }
@@ -502,18 +501,15 @@ fn write_escaped(
 /// `needs_escape_unit` holds.
 fn write_escape(buf : StringBuilder, code : UInt16) -> Unit {
   match code {
-    '"' => buf.write_string("\\\"")
-    '\\' => buf.write_string("\\\\")
-    '/' => buf.write_string("\\/")
-    '\n' => buf.write_string("\\n")
-    '\r' => buf.write_string("\\r")
-    '\b' => buf.write_string("\\b")
-    '\t' => buf.write_string("\\t")
-    0x0C => buf.write_string("\\f")
-    _ => {
-      buf.write_string("\\u00")
-      buf.write_string(code.to_byte().to_hex())
-    }
+    '"' => buf <+ "\\\""
+    '\\' => buf <+ "\\\\"
+    '/' => buf <+ "\\/"
+    '\n' => buf <+ "\\n"
+    '\r' => buf <+ "\\r"
+    '\b' => buf <+ "\\b"
+    '\t' => buf <+ "\\t"
+    0x0C => buf <+ "\\f"
+    _ => buf <+ "\\u00\{code.to_byte().to_hex()}"
   }
 }
 

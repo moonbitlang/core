@@ -104,11 +104,11 @@ test "nesting beyond the configured depth limit is rejected" {
   // the same for deeply nested objects (a separate depth check)
   let sb = StringBuilder()
   for _ in 0..<9 {
-    sb.write_string("{\"a\":")
+    sb <+ "{\"a\":"
   }
-  sb.write_string("1")
+  sb <+ "1"
   for _ in 0..<9 {
-    sb.write_string("}")
+    sb <+ "}"
   }
   inspect(parse_raises(sb.to_string(), max_nesting_depth=8), content="true")
   // a document within the limit parses fine
