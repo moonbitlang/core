@@ -383,7 +383,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///   let keys = []
 ///   let it = b"abcde"[:].iter2()
 ///   while it.next() is Some((i, x)) {
-///     buf.write_string(x.to_string())
+///     buf <+ "\{x}"
 ///     keys.push(i)
 ///   }
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
@@ -429,8 +429,7 @@ fn[T : Logger] BytesView::escape_to(self : BytesView, logger : T) -> Unit {
     if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
     } else {
-      logger.write_string("\\x")
-      write_byte_hex(logger, byte)
+      logger <+ "\\x\{cb => write_byte_hex(cb, byte)}"
     }
   }
 }

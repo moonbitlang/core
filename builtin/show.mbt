@@ -14,7 +14,7 @@
 
 ///|
 pub impl Show for Unit with fn output(_self, logger) {
-  logger.write_string("()")
+  logger <+ "()"
 }
 
 ///|
@@ -172,28 +172,28 @@ fn StringView::escape_to(
       }
       '\n' => {
         flush_segment(seg, i)
-        logger.write_string("\\n")
+        logger <+ "\\n"
         continue i + 1, i + 1
       }
       '\r' => {
         flush_segment(seg, i)
-        logger.write_string("\\r")
+        logger <+ "\\r"
         continue i + 1, i + 1
       }
       '\b' => {
         flush_segment(seg, i)
-        logger.write_string("\\b")
+        logger <+ "\\b"
         continue i + 1, i + 1
       }
       '\t' => {
         flush_segment(seg, i)
-        logger.write_string("\\t")
+        logger <+ "\\t"
         continue i + 1, i + 1
       }
       code =>
         if code < ' ' {
           flush_segment(seg, i)
-          logger <+ "\\u{\{cb => cb.write_string(code.to_byte().to_hex())}}"
+          logger <+ "\\u{\{code.to_byte().to_hex()}}"
           continue i + 1, i + 1
         } else {
           continue i + 1, seg
@@ -238,11 +238,11 @@ fn StringView::escape_to(
         logger.write_char('\\')
         logger.write_char(c.unsafe_to_char())
       }
-      '\n' => logger.write_string("\\n")
-      '\r' => logger.write_string("\\r")
-      '\b' => logger.write_string("\\b")
-      '\t' => logger.write_string("\\t")
-      code => logger <+ "\\u{\{cb => cb.write_string(code.to_byte().to_hex())}}"
+      '\n' => logger <+ "\\n"
+      '\r' => logger <+ "\\r"
+      '\b' => logger <+ "\\b"
+      '\t' => logger <+ "\\t"
+      code => logger <+ "\\u{\{code.to_byte().to_hex()}}"
     }
     continue i + 1, i + 1
   }
@@ -346,7 +346,7 @@ pub impl[X : Show] Show for X?
 ///|
 pub impl[X : Show] Show for X? with fn output(self, logger) {
   match self {
-    None => logger.write_string("None")
+    None => logger <+ "None"
     Some(arg) =>
       logger <+
         $|Some(\{arg})
