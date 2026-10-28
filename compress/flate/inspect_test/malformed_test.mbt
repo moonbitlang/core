@@ -30,8 +30,8 @@ test "inflate_all rejects malformed block structure with the correct category" {
 }
 
 ///|
-test "streaming Inflater rejects a reserved block immediately" {
-  let inflater = @flate.Inflater()
+test "streaming IncrementalDecoder rejects a reserved block immediately" {
+  let inflater = @flate.IncrementalDecoder()
 
   let output = FixedArray::make(1, b'\x00')
   // A complete non-final stored block leaves the decoder waiting for another
@@ -50,8 +50,8 @@ test "streaming Inflater rejects a reserved block immediately" {
 }
 
 ///|
-test "streaming Inflater keeps corruption errors until reset" {
-  let inflater = @flate.Inflater()
+test "streaming IncrementalDecoder keeps corruption errors until reset" {
+  let inflater = @flate.IncrementalDecoder()
   let output = FixedArray::make(64, b'\x00')
   for input in [([0x07] : Bytes), ([0x01] : Bytes)] {
     let InflateError(kind, _) = @test.expect_error(() => {

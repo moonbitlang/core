@@ -38,10 +38,10 @@ test "deflate_all stores incompressible data" {
 /// everything fed so far (byte-aligned via the empty stored block, ending in
 /// the zlib `00 00 FF FF` marker), and the stream then continues across the
 /// flush point.
-test "Deflater sync flush makes the prefix decodable" {
+test "IncrementalEncoder sync flush makes the prefix decodable" {
   let part1 = b"first message, sent immediately. "
   let part2 = b"second message follows after the flush point."
-  let enc = @flate.Deflater()
+  let enc = @flate.IncrementalEncoder()
   let obuf = FixedArray::make(4096, b'\x00')
   let st1_result = enc.step(part1, obuf.mut_view(), action=SyncFlush)
   let p1 = st1_result.produced
@@ -60,7 +60,7 @@ test "Deflater sync flush makes the prefix decodable" {
   @test.assert_eq(repeat_status_result.produced, 0)
   // The prefix alone already decodes to part1 (stream not finished).
   let prefix = Bytes::from_array(obuf[:p1])
-  let inf = @flate.Inflater()
+  let inf = @flate.IncrementalDecoder()
   let dbuf = FixedArray::make(4096, b'\x00')
   let dst_result = inf.step(prefix, dbuf.mut_view())
   assert_true(dst_result.status is NeedMoreInput)
@@ -85,11 +85,11 @@ test "Deflater sync flush makes the prefix decodable" {
 /// A one-shot flush request can arrive while an earlier block is still waiting
 /// for output space. It must remain pending even when later drain calls no
 /// longer pass `action=SyncFlush`.
-test "Deflater latches sync flush across output backpressure" {
+test "IncrementalEncoder latches sync flush across output backpressure" {
   // Exactly one internal high-water window: the whole view is accepted, then
   // its stored block is backpressured before the empty flush request arrives.
   let src = Bytes::from_array(Array::make(16642, b'\x5A'))
-  let enc = @flate.Deflater(level=0)
+  let enc = @flate.IncrementalEncoder(level=0)
   let no_output = FixedArray::make(0, b'\x00')
   let initial_status_result = enc.step(src, no_output.mut_view())
   assert_true(initial_status_result.status is NeedMoreOutput)
@@ -123,7 +123,7 @@ test "Deflater latches sync flush across output backpressure" {
   @test.assert_eq(flushed[flushed.length() - 3], b'\x00')
   @test.assert_eq(flushed[flushed.length() - 2], b'\xFF')
   @test.assert_eq(flushed[flushed.length() - 1], b'\xFF')
-  let inf = @flate.Inflater()
+  let inf = @flate.IncrementalDecoder()
   let decoded = FixedArray::make(18000, b'\x00')
   let decode_status_result = inf.step(flushed, decoded.mut_view())
   assert_true(decode_status_result.status is NeedMoreInput)

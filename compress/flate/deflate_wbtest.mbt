@@ -15,8 +15,8 @@
 ///|
 /// The block cap keeps both accepted input and generated output bounded even
 /// when a large caller-owned view is paired with no output capacity.
-test "Deflater pending stays bounded after a large feed" {
-  let d = Deflater()
+test "IncrementalEncoder pending stays bounded after a large feed" {
+  let d = IncrementalEncoder()
   let no_output = FixedArray::make(0, b'\x00')
   let arr : Array[Byte] = []
   for i in 0..<200000 {
@@ -51,11 +51,11 @@ test "Deflater pending stays bounded after a large feed" {
 }
 
 ///|
-test "Deflater latches end before a completed view is backpressured" {
+test "IncrementalEncoder latches end before a completed view is backpressured" {
   let source = Bytes::from_array(
     Array::make(DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD, b'\x41'),
   )
-  let deflater = Deflater(level=0)
+  let deflater = IncrementalEncoder(level=0)
   let no_output = FixedArray::make(0, b'\x00')
   let first_status_result = deflater.step(
     source,
@@ -90,11 +90,11 @@ test "Deflater latches end before a completed view is backpressured" {
 }
 
 ///|
-test "Deflater reset clears queued flush and end requests" {
+test "IncrementalEncoder reset clears queued flush and end requests" {
   let source = Bytes::make(17000, b'Z')
   let no_output = FixedArray::make(0, b'\x00')
   for action in [SyncFlush, Finish] {
-    let deflater = Deflater(level=0)
+    let deflater = IncrementalEncoder(level=0)
     @test.assert_eq(
       deflater.step(source, no_output.mut_view()).status,
       NeedMoreOutput,

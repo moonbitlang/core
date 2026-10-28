@@ -48,7 +48,7 @@ fn fixed_batch_stream(count : Int32, seed : UInt32) -> Bytes {
 /// The streaming inflater over all of `input`: bytes and consumed input, or
 /// the error category.
 fn fixed_batch_streaming(input : BytesView) -> (Bytes, Int32, String) {
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = FixedArray::make(700, b'\x00')
   let decoded = @buffer.Buffer()
   let mut used = 0

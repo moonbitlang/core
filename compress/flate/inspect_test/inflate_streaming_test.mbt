@@ -24,7 +24,7 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
       (v_dynamic_text, dynamic_plain),
     ] {
     for (chunk, room) in [(1, 1), (5, 300)] {
-      let inflater = @flate.Inflater()
+      let inflater = @flate.IncrementalDecoder()
       let output = FixedArray::make(room + 6, b'\xA5')
       let decoded = @buffer.Buffer()
       let mut pos = 0
@@ -56,8 +56,8 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
 }
 
 ///|
-test "Inflater resumes after an empty input chunk" {
-  let inflater = @flate.Inflater()
+test "IncrementalDecoder resumes after an empty input chunk" {
+  let inflater = @flate.IncrementalDecoder()
   let output = FixedArray::make(5, b'\x00')
   @test.assert_eq(
     inflater.step(hello_stored[:1], output.mut_view()).status,

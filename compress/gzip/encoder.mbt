@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Streaming gzip compressor: a push-based, suspendable state machine
-// wrapping the `@flate.Deflater`. It emits the 10-byte header, then the raw
+// wrapping the `@flate.IncrementalEncoder`. It emits the 10-byte header, then the raw
 // DEFLATE stream block-by-block, then the 8-byte trailer (CRC-32 and ISIZE,
 // little-endian), accumulating the checksum incrementally so it never holds the
 // whole input. The one-shot `compress` remains for in-memory use.
@@ -26,7 +26,7 @@ let gzip_header_bytes : FixedArray[Byte] = [
 ///|
 priv enum EncMode {
   Header // draining the gzip header
-  Body // draining DEFLATE blocks from the inner Deflater
+  Body // draining DEFLATE blocks from the inner IncrementalEncoder
   Trailer // draining the CRC-32 + ISIZE trailer
   Finished
 }
@@ -34,8 +34,8 @@ priv enum EncMode {
 ///|
 /// Streaming gzip compressor.
 struct Encoder {
-  def : @flate.Deflater
-  crc : @checksum.Crc32
+  def : @flate.IncrementalEncoder
+  mut crc : @checksum.Crc32
   mut isize : UInt32 // total input length, mod 2^32 (gzip ISIZE)
   mut mode : EncMode
   mut stage : FixedArray[Byte] // header or trailer bytes being drained
@@ -56,7 +56,7 @@ pub fn Encoder::Encoder(
   fast_store~ : Bool = false,
 ) -> Encoder {
   {
-    def: Deflater(level~, fast_store~),
+    def: IncrementalEncoder(level~, fast_store~),
     crc: Crc32(),
     isize: 0,
     mode: Header,
@@ -64,6 +64,18 @@ pub fn Encoder::Encoder(
     stage_pos: 0,
     pending_action: Continue,
   }
+}
+
+///|
+/// Start a fresh gzip stream, preserving compression options and reusing buffers.
+pub fn Encoder::reset(self : Encoder) -> Unit {
+  self.def.reset()
+  self.crc = Crc32()
+  self.isize = 0
+  self.mode = Header
+  self.stage = gzip_header_bytes
+  self.stage_pos = 0
+  self.pending_action = Continue
 }
 
 ///|

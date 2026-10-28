@@ -34,7 +34,7 @@ priv enum DecMode {
 ///|
 /// Streaming zlib decompressor
 struct Decoder {
-  inf : @flate.Inflater
+  inf : @flate.IncrementalDecoder
   adler : @checksum.Adler32 // of the decompressed output
   checksum_buffer : FixedArray[Byte] // owned batch storage; empty on direct-view backends
   mut checksum_pending : Int32
@@ -55,7 +55,7 @@ struct Decoder {
 /// is verified against it before use.
 pub fn Decoder::Decoder(dictionary? : BytesView) -> Decoder {
   {
-    inf: Inflater(),
+    inf: IncrementalDecoder(),
     adler: Adler32(),
     checksum_buffer: FixedArray::make(CHECKSUM_BUFFER_SIZE, b'\x00'),
     checksum_pending: 0,

@@ -56,7 +56,7 @@ priv suberror NeedInput
 ///|
 /// Total classification of every error that can cross one atomic streaming
 /// decode boundary. Unknown future error kinds become the stable public
-/// corruption diagnostic instead of leaking through `Inflater::step`.
+/// corruption diagnostic instead of leaking through `IncrementalDecoder::step`.
 priv enum DecoderErrorClass {
   DecoderInputExhausted
   DecoderFailure(InflateErrorKind, String)
@@ -86,7 +86,7 @@ priv enum Mode {
 /// blocks. `step` makes progress with as little as one byte of output room
 /// (the `output` view): a match too large for the buffer is copied in
 /// pieces across calls.
-struct Inflater {
+struct IncrementalDecoder {
   mut mode : Mode
   mut bitbuf : Int32 // LSB-first bit accumulator
   mut bit_count : Int32
@@ -127,9 +127,11 @@ struct Inflater {
 ///|
 /// Create a fresh decompressor positioned at the start of a DEFLATE stream.
 /// If supplied, `dictionary` preloads the history window with its final 32 KiB.
-pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
+pub fn IncrementalDecoder::IncrementalDecoder(
+  dictionary? : BytesView,
+) -> IncrementalDecoder {
   let empty_out = FixedArray::make(0, b'\x00')
-  let inflater : Inflater = {
+  let inflater : IncrementalDecoder = {
     mode: AtBlock,
     bitbuf: 0,
     bit_count: 0,
@@ -166,13 +168,16 @@ pub fn Inflater::Inflater(dictionary? : BytesView) -> Inflater {
 
 ///|
 /// Whether the end of the DEFLATE stream has been reached.
-pub fn Inflater::is_finished(self : Inflater) -> Bool {
+pub fn IncrementalDecoder::is_finished(self : IncrementalDecoder) -> Bool {
   self.mode is Done
 }
 
 ///|
 /// Preload the history window with the final 32 KiB of a preset dictionary.
-fn Inflater::preload_dictionary(self : Inflater, dict : BytesView) -> Unit {
+fn IncrementalDecoder::preload_dictionary(
+  self : IncrementalDecoder,
+  dict : BytesView,
+) -> Unit {
   let start = (dict.length() - WINDOW_SIZE).max(0)
   // Construction and reset both start with an empty history window.
   self.window.blit_from_bytesview(0, dict[start:])
@@ -186,7 +191,10 @@ fn Inflater::preload_dictionary(self : Inflater, dict : BytesView) -> Unit {
 /// entries). The stale window contents are unreachable afterwards: any
 /// distance reaching past the new stream's start is rejected (`dist > wpos`).
 /// Pass `dictionary` to preload the fresh stream's history window.
-pub fn Inflater::reset(self : Inflater, dictionary? : BytesView) -> Unit {
+pub fn IncrementalDecoder::reset(
+  self : IncrementalDecoder,
+  dictionary? : BytesView,
+) -> Unit {
   self.mode = AtBlock
   self.bitbuf = 0
   self.bit_count = 0
@@ -217,7 +225,7 @@ pub fn Inflater::reset(self : Inflater, dictionary? : BytesView) -> Unit {
 
 ///|
 /// Take the next byte from the staged atomic tail or the external view.
-fn Inflater::next_fill_byte(self : Inflater) -> Byte? {
+fn IncrementalDecoder::next_fill_byte(self : IncrementalDecoder) -> Byte? {
   if self.staged_pos < self.staged_input.length() {
     let byte = self.staged_input[self.staged_pos]
     self.staged_pos = self.staged_pos + 1
@@ -232,7 +240,10 @@ fn Inflater::next_fill_byte(self : Inflater) -> Byte? {
 }
 
 ///|
-fn Inflater::fill(self : Inflater, n : Int32) -> Unit raise NeedInput {
+fn IncrementalDecoder::fill(
+  self : IncrementalDecoder,
+  n : Int32,
+) -> Unit raise NeedInput {
   while self.bit_count < n {
     guard self.next_fill_byte() is Some(b) else { raise NeedInput }
     self.bitbuf = self.bitbuf | (b.to_int() << self.bit_count)
@@ -241,7 +252,10 @@ fn Inflater::fill(self : Inflater, n : Int32) -> Unit raise NeedInput {
 }
 
 ///|
-fn Inflater::read_bits(self : Inflater, n : Int32) -> Int32 raise NeedInput {
+fn IncrementalDecoder::read_bits(
+  self : IncrementalDecoder,
+  n : Int32,
+) -> Int32 raise NeedInput {
   self.fill(n)
   let v = self.bitbuf & ((1 << n) - 1)
   self.bitbuf = self.bitbuf >> n
@@ -250,7 +264,10 @@ fn Inflater::read_bits(self : Inflater, n : Int32) -> Int32 raise NeedInput {
 }
 
 ///|
-fn Inflater::huff_sym(self : Inflater, h : HuffmanDecoder) -> Int32 raise {
+fn IncrementalDecoder::huff_sym(
+  self : IncrementalDecoder,
+  h : HuffmanDecoder,
+) -> Int32 raise {
   let mut n = h.min
   for ;; {
     self.fill(n)
@@ -278,7 +295,7 @@ fn Inflater::huff_sym(self : Inflater, h : HuffmanDecoder) -> Int32 raise {
 ///|
 /// Emit one decoded byte to the output buffer and the history window. The
 /// caller guarantees output room before starting a unit / each stored byte.
-fn Inflater::emit(self : Inflater, b : Byte) -> Unit {
+fn IncrementalDecoder::emit(self : IncrementalDecoder, b : Byte) -> Unit {
   // The caller checks `out_pos < out_end` before every emit.
   self.out.unsafe_set(self.out_pos, b)
   self.out_pos = self.out_pos + 1
@@ -305,7 +322,7 @@ fn streaming_header_error(err : Error) -> InflateError {
 }
 
 ///|
-fn Inflater::read_dynamic(self : Inflater) -> Unit raise {
+fn IncrementalDecoder::read_dynamic(self : IncrementalDecoder) -> Unit raise {
   let (nlit, ndist) = decode_dynamic_header(
     n => {
       self.read_bits(n) catch {
@@ -336,8 +353,8 @@ fn Inflater::read_dynamic(self : Inflater) -> Unit raise {
 
 ///|
 /// Install the Huffman tables for a fixed or dynamic block.
-fn Inflater::enter_huffman_mode(
-  self : Inflater,
+fn IncrementalDecoder::enter_huffman_mode(
+  self : IncrementalDecoder,
   hl : HuffmanDecoder,
   hd : HuffmanDecoder?,
   fixed : Bool,
@@ -351,7 +368,9 @@ fn Inflater::enter_huffman_mode(
 ///|
 /// Read the next block's header (and, for dynamic blocks, its Huffman tables).
 /// Atomic w.r.t. input: raises `NeedInput` to be retried from the block start.
-fn Inflater::parse_block_header(self : Inflater) -> Unit raise {
+fn IncrementalDecoder::parse_block_header(
+  self : IncrementalDecoder,
+) -> Unit raise {
   self.fill(3)
   self.final_block = (self.bitbuf & 1) == 1
   let btype = (self.bitbuf >> 1) & 3
@@ -381,7 +400,7 @@ fn Inflater::parse_block_header(self : Inflater) -> Unit raise {
 /// Take the next stored-block byte once byte-aligned: drain the accumulator
 /// first, then the staged tail or input view. Returns None when input is
 /// exhausted.
-fn Inflater::next_stored_byte(self : Inflater) -> Byte? {
+fn IncrementalDecoder::next_stored_byte(self : IncrementalDecoder) -> Byte? {
   if self.bit_count >= 8 {
     let b = (self.bitbuf & 0xFF).to_byte()
     self.bitbuf = self.bitbuf >> 8
@@ -396,7 +415,9 @@ fn Inflater::next_stored_byte(self : Inflater) -> Byte? {
 /// Preserve the unconsumed tail of an incomplete atomic unit. Every byte from
 /// the external view is then either permanently decoded or owned here, so the
 /// public call may report that complete view as consumed.
-fn Inflater::stage_incomplete_input(self : Inflater) -> Unit {
+fn IncrementalDecoder::stage_incomplete_input(
+  self : IncrementalDecoder,
+) -> Unit {
   let kept = self.staged_input[self.staged_pos:].to_owned()
   kept.push_iter(self.view[self.in_pos:].iter())
   self.staged_input = kept
@@ -406,7 +427,7 @@ fn Inflater::stage_incomplete_input(self : Inflater) -> Unit {
 ///|
 /// Drop bytes permanently consumed from the staged atomic tail while retaining
 /// an unconsumed suffix across output backpressure.
-fn Inflater::compact_staged_input(self : Inflater) -> Unit {
+fn IncrementalDecoder::compact_staged_input(self : IncrementalDecoder) -> Unit {
   guard self.staged_pos != 0 else { return }
   guard self.staged_pos < self.staged_input.length() else {
     self.staged_input.clear()
@@ -420,7 +441,7 @@ fn Inflater::compact_staged_input(self : Inflater) -> Unit {
 ///|
 /// Release call-owned views after every success or error so a suspended engine
 /// never pins the caller's network input or mutable output buffer.
-fn Inflater::release_step_views(self : Inflater) -> Unit {
+fn IncrementalDecoder::release_step_views(self : IncrementalDecoder) -> Unit {
   self.view = b""
   self.in_pos = 0
   self.out_pos = 0
@@ -431,7 +452,10 @@ fn Inflater::release_step_views(self : Inflater) -> Unit {
 ///|
 /// Advance the absolute window cursor after a bounded batch write.
 #inline
-fn Inflater::advance_window(self : Inflater, count : Int32) -> Unit {
+fn IncrementalDecoder::advance_window(
+  self : IncrementalDecoder,
+  count : Int32,
+) -> Unit {
   self.wpos = self.wpos + count
   if !self.filled && self.wpos >= WINDOW_SIZE {
     self.filled = true
@@ -443,8 +467,8 @@ fn Inflater::advance_window(self : Inflater, count : Int32) -> Unit {
 /// proves both ranges fit. Native view output uses the same bulk operation
 /// as fixed arrays, including views with a nonzero backing offset.
 #inline
-fn Inflater::write_window_to_output(
-  self : Inflater,
+fn IncrementalDecoder::write_window_to_output(
+  self : IncrementalDecoder,
   start : Int32,
   length : Int32,
 ) -> Unit {
@@ -455,8 +479,8 @@ fn Inflater::write_window_to_output(
 ///|
 #cfg(not(target="js"))
 #inline
-fn Inflater::copy_window_to_view(
-  self : Inflater,
+fn IncrementalDecoder::copy_window_to_view(
+  self : IncrementalDecoder,
   start : Int32,
   length : Int32,
 ) -> Unit {
@@ -471,8 +495,8 @@ fn Inflater::copy_window_to_view(
 /// stored and repeated-match cases; keep this choice inside the engine.
 #cfg(target="js")
 #inline
-fn Inflater::copy_window_to_view(
-  self : Inflater,
+fn IncrementalDecoder::copy_window_to_view(
+  self : IncrementalDecoder,
   start : Int32,
   length : Int32,
 ) -> Unit {
@@ -491,8 +515,8 @@ fn Inflater::copy_window_to_view(
 /// `drain_match` limits each logical copy to one distance window so overlapping
 /// DEFLATE matches retain their forward-copy semantics.
 #inline
-fn Inflater::copy_window_segment(
-  self : Inflater,
+fn IncrementalDecoder::copy_window_segment(
+  self : IncrementalDecoder,
   source : Int32,
   length : Int32,
 ) -> Unit {
@@ -534,7 +558,7 @@ fn use_bulk_match(_distance : Int32) -> Bool {
 /// the remainder in `copy_remaining` for the next `step`. The window is updated
 /// with fixed-array blits (or a fill for distance one), while output writes are
 /// performed once per contiguous segment.
-fn Inflater::drain_match(self : Inflater) -> Unit {
+fn IncrementalDecoder::drain_match(self : IncrementalDecoder) -> Unit {
   let total = self.copy_remaining.min(self.out_end - self.out_pos)
   guard total > 0 else { return }
   let source = (self.wpos - self.copy_dist) & (WINDOW_SIZE - 1)
@@ -591,8 +615,8 @@ fn Inflater::drain_match(self : Inflater) -> Unit {
 /// Copy a byte-aligned stored-block range directly from the current input view
 /// into the circular window, then drain it to output in contiguous segments.
 /// Staged input and bit-buffer bytes are handled by the caller's scalar fallback.
-fn Inflater::copy_stored_view(
-  self : Inflater,
+fn IncrementalDecoder::copy_stored_view(
+  self : IncrementalDecoder,
   source : Int32,
   length : Int32,
 ) -> Unit {
@@ -614,7 +638,7 @@ fn Inflater::copy_stored_view(
 /// Atomic w.r.t. input via `NeedInput`; the caller guarantees room for at least
 /// one byte before calling, and a match too large for the output suspends with
 /// `copy_remaining` set (drained by `drain_match` on the next `step`).
-fn Inflater::decode_unit(self : Inflater) -> Bool raise {
+fn IncrementalDecoder::decode_unit(self : IncrementalDecoder) -> Bool raise {
   let v = self.huff_sym(self.hl.unwrap())
   guard v >= 256 else {
     self.emit(v.to_byte())
@@ -671,7 +695,7 @@ fn Inflater::decode_unit(self : Inflater) -> Bool raise {
 /// `batch_huffman_entry` only looks an entry up, with at least 15 valid bits
 /// in hand, and a zero length is rejected here.
 #cfg(target="native")
-fn Inflater::decode_fast(self : Inflater) -> Unit {
+fn IncrementalDecoder::decode_fast(self : IncrementalDecoder) -> Unit {
   guard self.hl is Some(hl) else { return }
   let input = self.view
   let input_length = input.length()
@@ -794,7 +818,7 @@ fn Inflater::decode_fast(self : Inflater) -> Unit {
 /// decoder's batch; other backends decode every unit with `decode_unit`.
 #cfg(not(target="native"))
 #inline
-fn Inflater::decode_fast(_self : Inflater) -> Unit {
+fn IncrementalDecoder::decode_fast(_self : IncrementalDecoder) -> Unit {
 
 }
 
@@ -812,7 +836,7 @@ priv struct CursorMark {
 
 ///|
 #inline
-fn Inflater::mark_cursor(self : Inflater) -> CursorMark {
+fn IncrementalDecoder::mark_cursor(self : IncrementalDecoder) -> CursorMark {
   {
     bitbuf: self.bitbuf,
     bit_count: self.bit_count,
@@ -823,7 +847,10 @@ fn Inflater::mark_cursor(self : Inflater) -> CursorMark {
 
 ///|
 #inline
-fn Inflater::rewind_cursor(self : Inflater, mark : CursorMark) -> Unit {
+fn IncrementalDecoder::rewind_cursor(
+  self : IncrementalDecoder,
+  mark : CursorMark,
+) -> Unit {
   self.bitbuf = mark.bitbuf
   self.bit_count = mark.bit_count
   self.staged_pos = mark.staged_pos
@@ -834,8 +861,8 @@ fn Inflater::rewind_cursor(self : Inflater, mark : CursorMark) -> Unit {
 /// Translate an error raised by the streaming decoder's bit reader inside one
 /// atomic unit. An exhausted view rewinds to `mark` and suspends; any other
 /// failure becomes the stable `InflateError` it already is.
-fn Inflater::retry_or_raise(
-  self : Inflater,
+fn IncrementalDecoder::retry_or_raise(
+  self : IncrementalDecoder,
   mark : CursorMark,
   err : Error,
 ) -> Status raise InflateError {
@@ -853,7 +880,9 @@ fn Inflater::retry_or_raise(
 /// The step-local input/output cursors already live on `self`, so returning
 /// only `Status` avoids allocating an internal three-tuple that `step` would
 /// immediately unpack and discard.
-fn Inflater::run_step(self : Inflater) -> Status raise InflateError {
+fn IncrementalDecoder::run_step(
+  self : IncrementalDecoder,
+) -> Status raise InflateError {
   for ;; {
     match self.mode {
       Done => return Done
@@ -936,8 +965,8 @@ fn Inflater::run_step(self : Inflater) -> Status raise InflateError {
 /// report a truncated stream. `NeedMoreOutput` still requires draining with
 /// fresh output space, even after all input has been accepted. Once any error
 /// is raised, later calls stably raise the same error until `reset()`.
-pub fn Inflater::step(
-  self : Inflater,
+pub fn IncrementalDecoder::step(
+  self : IncrementalDecoder,
   input : BytesView,
   output : MutArrayView[Byte],
 ) -> StepResult raise InflateError {

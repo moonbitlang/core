@@ -17,8 +17,8 @@ test "compression levels clamp at both public boundaries" {
   let source = b"level clamping must be deterministic deterministic"
   @test.assert_eq(deflate_all(source, level=-7), deflate_all(source, level=0))
   @test.assert_eq(deflate_all(source, level=99), deflate_all(source, level=9))
-  let low = Deflater(level=-7)
-  let high = Deflater(level=99)
+  let low = IncrementalEncoder(level=-7)
+  let high = IncrementalEncoder(level=99)
   @test.assert_eq(low.level, 0)
   @test.assert_eq(high.level, 9)
   @test.assert_eq(

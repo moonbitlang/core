@@ -29,6 +29,7 @@ pub fn Decoder::unused_input(Self) -> Bytes
 type Encoder
 pub fn Encoder::Encoder(level? : Int32, fast_store? : Bool) -> Self
 pub fn Encoder::is_finished(Self) -> Bool
+pub fn Encoder::reset(Self) -> Unit
 pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
 
 pub(all) enum GzipErrorKind {

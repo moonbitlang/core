@@ -48,7 +48,7 @@ struct Writer {
   mut directory : Array[Bytes]
   mut has_zip64 : Bool
   mut compressor : @flate.Compressor?
-  mut deflater : @flate.Deflater?
+  mut deflater : @flate.IncrementalEncoder?
   mut scratch : FixedArray[Byte]
 }
 
@@ -308,7 +308,7 @@ pub fn Writer::begin_entry(
       deflater.reset()
     } else {
       self.deflater = Some(
-        Deflater(level=self.level, fast_store=self.fast_store),
+        IncrementalEncoder(level=self.level, fast_store=self.fast_store),
       )
       self.scratch = FixedArray::make(65536, b'\x00')
     }

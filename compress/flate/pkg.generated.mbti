@@ -51,11 +51,17 @@ pub(all) enum DeflateAction {
 } derive(Eq, @debug.Debug)
 pub fn DeflateAction::equal(Self, Self) -> Bool
 
-type Deflater
-pub fn Deflater::Deflater(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
-pub fn Deflater::is_finished(Self) -> Bool
-pub fn Deflater::reset(Self, dictionary? : BytesView) -> Unit
-pub fn Deflater::step(Self, BytesView, MutArrayView[Byte], action? : DeflateAction) -> StepResult
+type IncrementalDecoder
+pub fn IncrementalDecoder::IncrementalDecoder(dictionary? : BytesView) -> Self
+pub fn IncrementalDecoder::is_finished(Self) -> Bool
+pub fn IncrementalDecoder::reset(Self, dictionary? : BytesView) -> Unit
+pub fn IncrementalDecoder::step(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError
+
+type IncrementalEncoder
+pub fn IncrementalEncoder::IncrementalEncoder(level? : Int32, dictionary? : BytesView, fast_store? : Bool) -> Self
+pub fn IncrementalEncoder::is_finished(Self) -> Bool
+pub fn IncrementalEncoder::reset(Self, dictionary? : BytesView) -> Unit
+pub fn IncrementalEncoder::step(Self, BytesView, MutArrayView[Byte], action? : DeflateAction) -> StepResult
 
 pub(all) enum InflateErrorKind {
   Truncated
@@ -66,12 +72,6 @@ pub(all) enum InflateErrorKind {
   InvalidArgument
 } derive(Eq, @debug.Debug)
 pub fn InflateErrorKind::equal(Self, Self) -> Bool
-
-type Inflater
-pub fn Inflater::Inflater(dictionary? : BytesView) -> Self
-pub fn Inflater::is_finished(Self) -> Bool
-pub fn Inflater::reset(Self, dictionary? : BytesView) -> Unit
-pub fn Inflater::step(Self, BytesView, MutArrayView[Byte]) -> StepResult raise InflateError
 
 pub(all) enum Status {
   Done

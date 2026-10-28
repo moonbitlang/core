@@ -172,8 +172,8 @@ fn roundtrip_stream(
   dictionary? : Bytes,
 ) -> Bytes {
   let deflater = match dictionary {
-    Some(dict) => @flate.Deflater(level~, dictionary=dict)
-    None => Deflater(level~)
+    Some(dict) => @flate.IncrementalEncoder(level~, dictionary=dict)
+    None => IncrementalEncoder(level~)
   }
   let out = FixedArray::make(out_chunk, b'\x00')
   let result = Buffer()
@@ -206,7 +206,7 @@ fn assert_decodes(
   expected : BytesView,
   dictionary? : BytesView,
 ) -> Unit raise {
-  let decoder = @flate.Inflater(dictionary?)
+  let decoder = @flate.IncrementalDecoder(dictionary?)
   let output = FixedArray::make(8192, b'\x00')
   let decoded = Buffer()
   let mut pos = 0
@@ -290,7 +290,7 @@ test "deflate round trips: randomized streaming schedules with reuse" {
     }
     let level = rng.next() % 10
     let fast_store = rng.next() % 4 == 0
-    let deflater = @flate.Deflater(level~, fast_store~)
+    let deflater = @flate.IncrementalEncoder(level~, fast_store~)
     for stream in 0..<3 {
       let mut dictionary : BytesView? = None
       let compressed = Buffer()

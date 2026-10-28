@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-test "Inflater owns only a bounded atomic tail between non-overlapping chunks" {
+test "IncrementalDecoder owns only a bounded atomic tail between non-overlapping chunks" {
   let bytes : Array[Byte] = []
   for i in 0..<4096 {
     bytes.push(((i * 29 + i / 7) & 0x0F).to_byte())
   }
   let source = Bytes::from_array(bytes)
   let compressed = deflate_all(source)
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
   let mut pos = 0
@@ -60,7 +60,7 @@ fn assert_drained_match(
   room : Int32,
   fixed : Bool,
 ) -> Unit raise {
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   for i in 0..<WINDOW_SIZE {
     inflater.window[i] = (i * 151 + i / 13).to_byte()
   }

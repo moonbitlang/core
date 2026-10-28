@@ -19,7 +19,7 @@ const HUFFMAN_CHUNK_BITS : Int32 = 9
 const HUFFMAN_VALUE_SHIFT : Int32 = 4
 
 // Huffman decode tables for the decode pipeline: per-symbol code lengths in,
-// a zlib-style chunked lookup table out. Shared by the streaming `Inflater`
+// a zlib-style chunked lookup table out. Shared by the streaming `IncrementalDecoder`
 // and the in-memory `MemDecoder`.
 
 ///|

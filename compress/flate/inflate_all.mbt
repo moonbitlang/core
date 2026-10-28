@@ -1128,7 +1128,7 @@ const PREFIX_OUTPUT_CAPACITY : Int32 = 16384
 /// The output is unbounded and the call cannot be cancelled: a convenience for
 /// trusted input. To reject bytes after the stream, use `inflate_exact`. For a
 /// prefix decode with a bound, use `decompress_into` (an output of the size
-/// allowed, and a `cancelled` callback) or the streaming `Inflater`; both
+/// allowed, and a `cancelled` callback) or the streaming `IncrementalDecoder`; both
 /// report the input they consumed.
 ///
 /// After an error the decompressor is ready for the next stream as it is, and
@@ -1183,7 +1183,7 @@ fn inflate_streaming_all(
   guard !cancelled() else {
     raise InflateError(Cancelled, "cancelled by caller")
   }
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let scratch = FixedArray::make(INFLATE_SCRATCH_SIZE, b'\x00')
   let decoded : Array[Byte] = []
   let mut input_pos = 0
@@ -1274,7 +1274,7 @@ pub fn inflate_exact(
 /// exceeds it; `exact` rejects bytes after the final block; `cancelled` is
 /// polled once per step and raises `InflateError(Cancelled, _)`.
 fn inflate_drive(
-  inflater : Inflater,
+  inflater : IncrementalDecoder,
   input : BytesView,
   max_output : Int32?,
   exact : Bool,
@@ -1328,7 +1328,7 @@ fn validate_preallocation_size(
 ///|
 /// `inflate_exact` with `preallocated=true`: validate and count in one pass
 /// over an 8 KiB scratch, then replay the deterministic decode into one exact
-/// allocation (the same `Inflater` is reused via `reset`).
+/// allocation (the same `IncrementalDecoder` is reused via `reset`).
 fn inflate_preallocated(
   input : BytesView,
   max_output : Int32?,
@@ -1337,7 +1337,7 @@ fn inflate_preallocated(
   guard !cancelled() else {
     raise InflateError(Cancelled, "cancelled by caller")
   }
-  let inflater = Inflater()
+  let inflater = IncrementalDecoder()
   let size = inflate_drive(inflater, input, max_output, true, cancelled, (
     _scratch,
     _produced,

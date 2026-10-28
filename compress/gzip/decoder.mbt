@@ -24,7 +24,7 @@ const CHECKSUM_BUFFER_SIZE : Int32 = 4096
 const CHECKSUM_BUFFER_SIZE : Int32 = 0
 
 // Streaming gzip (RFC 1952) decompressor: a push-based, suspendable state
-// machine wrapping the `@flate.Inflater`. The variable-length header is parsed
+// machine wrapping the `@flate.IncrementalDecoder`. The variable-length header is parsed
 // with one state per field: FEXTRA, FNAME and FCOMMENT bytes are discarded
 // as they are consumed,
 // so header-phase memory is O(1) even against an adversarial unterminated
@@ -50,7 +50,7 @@ priv enum DecMode {
 /// plaintext with `step`; it verifies the CRC-32 and length trailer. Binds no
 /// I/O trait.
 struct Decoder {
-  inf : @flate.Inflater
+  inf : @flate.IncrementalDecoder
   mut crc : @checksum.Crc32 // of the current member's decompressed output
   checksum_buffer : FixedArray[Byte] // owned batch storage; empty on direct-view backends
   mut checksum_pending : Int32
@@ -77,7 +77,7 @@ struct Decoder {
 /// remain with the caller, as reported by `result.consumed`.
 pub fn Decoder::Decoder(multistream~ : Bool = true) -> Decoder {
   {
-    inf: Inflater(),
+    inf: IncrementalDecoder(),
     crc: Crc32(),
     checksum_buffer: FixedArray::make(CHECKSUM_BUFFER_SIZE, b'\x00'),
     checksum_pending: 0,
