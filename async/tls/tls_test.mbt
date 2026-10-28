@@ -61,7 +61,7 @@ async test "one way" {
       defer server.close()
       while server.read() is Some(data) {
         let data = @utf8.decode(data)
-        log.write_string("server received: \{data}\n")
+        log <+ "server received: \{data}\n"
       } nobreak {
         server.shutdown()
       }
@@ -113,7 +113,7 @@ async test "echo" {
       let server = test_server(server_read_from_client, server_write_to_client)
       defer server.close()
       while server.read() is Some(data) {
-        log.write_string("server received: \{@utf8.decode(data)}\n")
+        log <+ "server received: \{@utf8.decode(data)}\n"
         server.write(data)
       } nobreak {
         server.shutdown()
