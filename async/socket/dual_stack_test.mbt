@@ -37,7 +37,7 @@ async test "Only_V4 server" {
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       })
     }
     async fn client(protocol) {
@@ -57,9 +57,8 @@ async test "Only_V4 server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
@@ -97,7 +96,7 @@ async test "Only_V6 server" {
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       })
     }
     async fn client(protocol) {
@@ -117,9 +116,8 @@ async test "Only_V6 server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
@@ -151,7 +149,7 @@ async test "dual stack server" {
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       })
     }
     async fn client(protocol) {
@@ -167,9 +165,8 @@ async test "dual stack server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
@@ -207,7 +204,7 @@ async test "Only_V4 UDP server" {
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       }
     }
     async fn client(protocol) {
@@ -224,9 +221,8 @@ async test "Only_V4 UDP server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
@@ -266,7 +262,7 @@ async test "Only_V6 UDP server" {
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       }
     }
     async fn client(protocol) {
@@ -283,9 +279,8 @@ async test "Only_V6 UDP server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
@@ -319,7 +314,7 @@ async test "dual stack UDP server" {
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
-        log.write_string("server received \{msg.escape()} from \{ip}\n")
+        log <+ "server received \{msg.escape()} from \{ip}\n"
       }
     }
     async fn client(protocol) {
@@ -336,9 +331,8 @@ async test "dual stack UDP server" {
         value => Ok(value)
       }
       @async.sleep(100)
-      log.write_string(
-        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n",
-      )
+      log <+
+        "client(\{@debug.to_string(protocol)}): \{@debug.to_string(result)}\n"
     }
     // give some time for the server to process the last connection
     @async.sleep(300)
