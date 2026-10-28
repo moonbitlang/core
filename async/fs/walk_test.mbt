@@ -33,9 +33,9 @@ async test "walk parallel" {
   let mut i = 0
   @fs.walk("async/fs/test_directory/dir1", max_concurrency=2, (path, _) => {
     i = i + 1
-    log.write_string("handling \{path}\n")
+    log <+ "handling \{path}\n"
     @async.sleep(if i == 1 { 200 } else { 300 })
-    log.write_string("finished handling \{path}\n")
+    log <+ "finished handling \{path}\n"
   })
   inspect(
     log.to_string(),
@@ -57,7 +57,7 @@ async test "walk failure" {
   debug_inspect(
     @test.expect_error_async <| () => {
       @fs.walk("async/fs/test_directory/dir1", max_concurrency=1, (path, _) => {
-        log.write_string("handling \{path}\n")
+        log <+ "handling \{path}\n"
         raise Failure::Failure("failure when handling directory")
       })
     },
@@ -82,7 +82,7 @@ async test "walk allow_failure" {
     allow_failure=true,
     max_concurrency=1,
     (path, _) => {
-      log.write_string("handling \{path}\n")
+      log <+ "handling \{path}\n"
       raise Failure::Failure("failure when handling directory")
     },
   )
