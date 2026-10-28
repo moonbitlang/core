@@ -1573,7 +1573,7 @@ test "parse/duplicate_group_names" {
   // Many distinct names, each looked up once.
   let many = StringBuilder()
   for i in 0..<10000 {
-    many.write_string("(?<n\{i}>a)")
+    many <+ "(?<n\{i}>a)"
   }
   debug_inspect(
     result(many.to_string()),
