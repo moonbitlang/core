@@ -46,15 +46,13 @@ pub impl Show for Float with fn to_string(self) {
     // Scientific notation: `d.ddde+x`, without `.` for a single digit.
     builder.write_view(digits[:1])
     if length > 1 {
-      builder.write_char('.')
-      builder.write_view(digits[1:])
+      builder <+ ".\{digits[1:]}"
     }
-    builder.write_char('e')
-    builder.write_char(if exp < 0 { '-' } else { '+' })
-    builder.write_string((if exp < 0 { -exp } else { exp }).to_string())
+    builder <+
+      "e\{if exp < 0 { '-' } else { '+' }}\{if exp < 0 { -exp } else { exp }}"
   } else if exp < 0 {
     // The decimal dot is before any of the digits.
-    builder.write_string("0.")
+    builder <+ "0."
     for _ in 0..<(-exp - 1) {
       builder.write_char('0')
     }
@@ -67,9 +65,7 @@ pub impl Show for Float with fn to_string(self) {
     }
   } else {
     // The decimal dot is somewhere between the digits.
-    builder.write_view(digits[:exp + 1])
-    builder.write_char('.')
-    builder.write_view(digits[exp + 1:])
+    builder <+ "\{digits[:exp + 1]}.\{digits[exp + 1:]}"
   }
   builder.to_string()
 }
