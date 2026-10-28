@@ -71,6 +71,17 @@ test "relative propagates cwd failure from either argument" {
 }
 
 ///|
+test "relative handles drive-less root endpoints" {
+  let cwd = () => Some("/work")
+  inspect(relative_with_current_dir("\\", base="\\a", cwd), content="..")
+  inspect(relative_with_current_dir("\\a", base="\\", cwd), content="a")
+  inspect(relative_with_current_dir("\\", base="\\a\\b", cwd), content="..\\..")
+  inspect(relative_with_current_dir("\\", base="\\", cwd), content="")
+  inspect(relative_with_current_dir("C:\\a", base="\\", cwd), content="C:\\a")
+  inspect(relative_with_current_dir("\\", base="C:\\a", cwd), content="\\")
+}
+
+///|
 test "WinPath verbatim prefixes" {
   inspect(
     WinPath::parse("\\\\?\\GLOBALROOT\\file"),

@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/path/error",
+  "moonbitlang/core/path/internal/ffi",
   "moonbitlang/core/env",
   "moonbitlang/core/cmp",
   "moonbitlang/core/builtin",

@@ -236,6 +236,14 @@ test "join node fixtures" {
   inspect(@win32.join("\\", "a"), content="\\a")
   inspect(@win32.join("\\", "\\a"), content="\\a")
   inspect(@win32.join("\\\\", "a"), content="\\a")
+  inspect(@win32.join("\\", "foo\\bar"), content="\\foo\\bar")
+  inspect(@win32.join("\\", "\\foo\\bar"), content="\\foo\\bar")
+  inspect(@win32.join("\\\\", "foo\\bar"), content="\\foo\\bar")
+  inspect(@win32.join("///", "foo/bar"), content="\\foo\\bar")
+  inspect(
+    @win32.join("//server", "share/file"),
+    content="\\\\server\\share\\file",
+  )
   inspect(@win32.join("a\\b", "..\\c"), content="a\\c")
   inspect(@win32.join("C:\\a\\b", "..\\c"), content="C:\\a\\c")
   inspect(@win32.join("C:\\temp", "CON"), content="C:\\temp\\CON")

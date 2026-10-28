@@ -217,7 +217,24 @@ pub fn join(lhs : String, rhs : String) -> String {
   guard !lhs.is_empty() || !rhs.is_empty() else { "." }
   guard !lhs.is_empty() else { normalize(rhs) }
   guard !rhs.is_empty() else { normalize(lhs) }
-  normalize(lhs + "\\" + rhs)
+  let joined = lhs + "\\" + rhs
+  // Only preserve a UNC prefix when lhs starts with exactly two separators
+  // followed by a server name (also preserving verbatim and device prefixes).
+  // Joining a local root to a name must not turn it into a network share.
+  let intentional_unc = lhs.length() > 2 &&
+    is_win_sep_at(lhs, 0) &&
+    is_win_sep_at(lhs, 1) &&
+    !is_win_sep_at(lhs, 2)
+  if intentional_unc {
+    normalize(joined)
+  } else {
+    let leading = skip_win_separators(joined, 0)
+    if leading > 1 {
+      normalize(joined[leading - 1:].to_owned())
+    } else {
+      normalize(joined)
+    }
+  }
 }
 
 ///|
@@ -373,9 +390,14 @@ fn relative_resolved_paths(from_orig : String, to_orig : String) -> String {
   }
   let from_parts = split_win_parts(from_orig)
   let to_parts = split_win_parts(to_orig)
-  if from_parts.is_empty() ||
-    to_parts.is_empty() ||
-    !win_string_equal_ignore_case(from_parts[0], to_parts[0]) {
+  if from_parts.is_empty() || to_parts.is_empty() {
+    // On a POSIX host, resolution can leave drive-less roots. A bare root
+    // contributes no components but still shares a root with paths like \a.
+    guard WinPath::parse(from_orig).prefix is Root &&
+      WinPath::parse(to_orig).prefix is Root else {
+      return to_orig
+    }
+  } else if !win_string_equal_ignore_case(from_parts[0], to_parts[0]) {
     return to_orig
   }
   let mut common = 0
@@ -420,6 +442,7 @@ pub fn resolve(path : String) -> String raise ResolveError {
 }
 
 ///|
+// Keep cwd lazy: fully qualified paths work even when cwd is unavailable.
 fn resolve_with_current_dir(
   path : String,
   current_dir : () -> String?,

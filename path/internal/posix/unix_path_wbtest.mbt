@@ -60,6 +60,43 @@ test "relative propagates cwd failure only when needed" {
 }
 
 ///|
+test "POSIX resolution converts Windows cwd only on Windows" {
+  let windows_cwd = () => Some("C:\\work\\project")
+  let resolved = resolve_with_current_dir("../file", windows_cwd, windows=true)
+  inspect(resolved, content="/work/file")
+  inspect(is_absolute(resolved), content="true")
+  inspect(
+    relative_with_current_dir(
+      "../file",
+      base="/work",
+      windows_cwd,
+      windows=true,
+    ),
+    content="file",
+  )
+  inspect(
+    resolve_with_current_dir("file", () => Some("C:\\"), windows=true),
+    content="/file",
+  )
+  inspect(
+    resolve_with_current_dir(
+      "file",
+      () => Some("\\\\server\\share\\work"),
+      windows=true,
+    ),
+    content="/server/share/work/file",
+  )
+  inspect(
+    resolve_with_current_dir(
+      "file",
+      () => Some("/work/back\\slash"),
+      windows=false,
+    ),
+    content="/work/back\\slash/file",
+  )
+}
+
+///|
 test "UnixPath absolute normalization" {
   inspect(UnixPath::parse("/../folder/file"), content="/folder/file")
   inspect(UnixPath::parse("/folder/file"), content="/folder/file")

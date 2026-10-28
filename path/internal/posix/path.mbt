@@ -186,9 +186,14 @@ fn relative_with_current_dir(
   path : String,
   base~ : String,
   current_dir : () -> String?,
+  windows~ : Bool = @ffi.is_windows(),
 ) -> String raise ResolveError {
-  let from = UnixPath::parse(resolve_with_current_dir(base, current_dir))
-  let to = UnixPath::parse(resolve_with_current_dir(path, current_dir))
+  let from = UnixPath::parse(
+    resolve_with_current_dir(base, current_dir, windows~),
+  )
+  let to = UnixPath::parse(
+    resolve_with_current_dir(path, current_dir, windows~),
+  )
   guard from.prefix == to.prefix else { "" }
   let mut common = 0
   let limit = @cmp.minimum(from.components.length(), to.components.length())
@@ -211,6 +216,7 @@ fn relative_with_current_dir(
 /// 1. if path is already absolute, normalize it and remove non-root trailing separators.
 /// 2. if path is relative, join current working directory and path, normalize it,
 ///    and remove non-root trailing separators.
+///    On Windows, convert cwd backslashes to `/` and remove its drive indicator.
 ///
 /// Warning: cwd is already resolve symbolic link and normalized, but path doesn't.
 ///
@@ -221,13 +227,23 @@ pub fn resolve(path : String) -> String raise ResolveError {
 }
 
 ///|
+// Keep cwd lazy: absolute paths work even when cwd is unavailable.
 fn resolve_with_current_dir(
   path : String,
   current_dir : () -> String?,
+  windows~ : Bool = @ffi.is_windows(),
 ) -> String raise ResolveError {
   let resolved = {
     guard !is_absolute(path) else { normalize(path) }
     guard current_dir() is Some(cwd) else { raise CurrentDirectoryUnavailable }
+    let cwd = if windows {
+      // Match POSIX path semantics on Windows: use forward slashes and drop
+      // the drive indicator. Do not transform backslashes on POSIX hosts.
+      let cwd = cwd.replace_all(old="\\", new="/")
+      cwd[cwd.find("/").unwrap_or(0):].to_owned()
+    } else {
+      cwd
+    }
     join(cwd, path) |> normalize
   }
   trim_resolved_trailing_separators(resolved)

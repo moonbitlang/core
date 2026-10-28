@@ -174,6 +174,9 @@ Convert relative paths to absolute paths and normalize them:
 when they need the current working directory and it cannot be determined.
 Absolute paths can be resolved without a current working directory; likewise,
 `relative` needs no current working directory when both paths are absolute.
+On Windows, the current working directory is converted to POSIX syntax:
+backslashes become `/` and the drive indicator is removed (for example,
+`C:\work` becomes `/work`).
 
 ```moonbit check
 ///|
