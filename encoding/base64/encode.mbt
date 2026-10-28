@@ -69,7 +69,7 @@ fn encode_scalar(bytes : BytesView, padding~ : Bool = true) -> String {
         builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
         builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
         if padding is true {
-          builder.write_string("==")
+          builder <+ "=="
         }
         break
       }
