@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+pub extend Path with Div::{div}
+
+///|
 pub extend Path with Eq::{equal}
 
 ///|

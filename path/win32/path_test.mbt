@@ -13,6 +13,27 @@
 // limitations under the License.
 
 ///|
+test "Path division chains and normalizes Windows paths" {
+  let path : @win32.Path = "C:/Users"
+  let y : @win32.Path = "alice"
+  let z : @win32.Path = "docs"
+  inspect(path / y / z, content="C:\\Users\\alice\\docs")
+  inspect(path / "alice" / "../docs/", content="C:\\Users\\docs\\")
+  inspect(path / "\\docs", content="C:\\Users\\docs")
+  inspect(path / "D:\\docs", content="C:\\Users\\D:\\docs")
+  inspect(path / "", content="C:\\Users")
+  inspect(@win32.Path("") / "", content=".")
+  inspect(@win32.Path("") / "C:/docs", content="C:\\docs")
+  inspect(
+    @win32.Path("//server/share") / "docs",
+    content="\\\\server\\share\\docs",
+  )
+  let divide = @win32.Path::div
+  inspect(divide(path, y), content="C:\\Users\\alice")
+  inspect(path.div(y), content="C:\\Users\\alice")
+}
+
+///|
 test "debug" {
   debug_inspect(@win32.Path::join("a", "b"), content="Path(\"a\\\\b\")")
 }

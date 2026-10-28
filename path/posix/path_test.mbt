@@ -13,6 +13,22 @@
 // limitations under the License.
 
 ///|
+test "Path division chains and normalizes POSIX paths" {
+  let path : @posix.Path = "/usr"
+  let y : @posix.Path = "local"
+  let z : @posix.Path = "bin"
+  inspect(path / y / z, content="/usr/local/bin")
+  inspect(path / "local" / "../bin/", content="/usr/bin/")
+  inspect(path / "/bin", content="/usr/bin")
+  inspect(path / "", content="/usr")
+  inspect(@posix.Path("") / "", content=".")
+  inspect(@posix.Path("") / "/bin", content="/bin")
+  let divide = @posix.Path::div
+  inspect(divide(path, y), content="/usr/local")
+  inspect(path.div(y), content="/usr/local")
+}
+
+///|
 test "debug" {
   debug_inspect(@posix.Path::join("a", "b"), content="Path(\"a/b\")")
 }

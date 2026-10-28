@@ -93,6 +93,20 @@ test "Path::to_string" {
 }
 
 ///|
+test "Path division chains with platform join semantics" {
+  let path : @path.Path = "a"
+  let y : @path.Path = "b"
+  let z : @path.Path = "c"
+  let divide = @path.Path::div
+  inspect(path / y / z == path.join(y).join(z), content="true")
+  inspect(path / "b" / "../c" == path.join("c"), content="true")
+  inspect(path / "/b" == path.join("/b"), content="true")
+  inspect(divide(path, y) == path / y, content="true")
+  inspect(path.div(y) == path / y, content="true")
+  inspect((@path.Path("") / "").to_string(), content=".")
+}
+
+///|
 test "node-compatible top-level dispatch smoke" {
   if @path.sep == '/' {
     inspect(@path.Path::join("a", "/b"), content="a/b")

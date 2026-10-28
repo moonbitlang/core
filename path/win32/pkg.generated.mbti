@@ -17,6 +17,7 @@ pub let sep : Char
 pub(all) struct Path(String) derive(Eq, @debug.Debug)
 pub fn Path::basename(Self) -> StringView
 pub fn Path::dirname(Self) -> Self
+pub fn Path::div(Self, Self) -> Self
 pub fn Path::equal(Self, Self) -> Bool
 pub fn Path::extname(Self) -> StringView
 pub fn Path::is_absolute(Self) -> Bool
@@ -26,6 +27,7 @@ pub fn Path::relative(Self, base~ : Self) -> Self raise @error.ResolveError
 pub fn Path::resolve(Self) -> Self raise @error.ResolveError
 pub fn Path::root(Self) -> StringView
 pub fn Path::to_string(Self) -> String
+pub impl Div for Path
 pub impl Show for Path
 
 // Type aliases

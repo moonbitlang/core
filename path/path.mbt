@@ -132,6 +132,23 @@ pub fn Path::join(lhs : Path, rhs : Path) -> Path {
 }
 
 ///|
+/// Joins two paths, equivalent to `Path::join(lhs, rhs)`.
+///
+/// Each `/` normalizes the result using the active platform's path rules.
+/// Absolute right-hand paths do not replace the left-hand path.
+///
+/// ```mbt check
+/// test {
+///   let path : @path.Path = "usr"
+///   let joined = path / "local" / "bin"
+///   inspect(joined == path.join("local").join("bin"), content="true")
+/// }
+/// ```
+pub impl Div for Path with fn div(lhs, rhs) {
+  lhs.join(rhs)
+}
+
+///|
 /// 1. resolve `.` by directly removing it
 /// 2. resolve `..` by removing the preceding path component if exists, otherwise keep it.
 /// 3. remove redundant slashes or backslashes
