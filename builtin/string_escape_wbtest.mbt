@@ -27,11 +27,11 @@ test "find_escape_code_unit_simd locates every escaped unit in every lane" {
     // Escaped units just before `pos` and one unit after `end`: a scan that
     // looked outside `[pos, end)` would return a wrong index for them.
     let buf = StringBuilder()
-    buf.write_string("\"\\")
+    buf <+ "\"\\"
     for _ in 0..<len {
       buf.write_char('a')
     }
-    buf.write_string("x\n\u{01}")
+    buf <+ "x\n\u{01}"
     let clean = buf.to_string()
     assert_true(find_escape_code_unit_simd(clean, 2, 2 + len) == 2 + len)
     for pos in 0..<len {

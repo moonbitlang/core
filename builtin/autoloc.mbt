@@ -122,10 +122,10 @@ pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   buf.write_char('[')
   for i, item in self {
     if i != 0 {
-      buf.write_string(", ")
+      buf <+ ", "
     }
     match item {
-      None => buf.write_string("null")
+      None => buf <+ "null"
       Some(loc) => buf.write_string(loc.to_json_string())
     }
   }

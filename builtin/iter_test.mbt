@@ -752,7 +752,7 @@ test "each" {
 test "eachi" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder(size_hint=5)
-  iter.eachi((i, x) => exb.write_string((x + i).to_string()))
+  iter.eachi((i, x) => exb <+ "\{x + i}")
   inspect(exb, content="13579")
 }
 
@@ -839,7 +839,7 @@ test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
   let exb = StringBuilder(size_hint=0)
-  tree.iter().each(x => exb.write_string(x.to_string()))
+  tree.iter().each(x => exb <+ "\{x}")
   inspect(exb, content="12345")
 }
 

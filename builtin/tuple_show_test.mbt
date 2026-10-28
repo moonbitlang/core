@@ -13,6 +13,35 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
+test "tuple Show preserves element formatting" {
+  inspect(Show::to_string(("a\n\"b", '\t')), content="(a\n\"b, \t)")
+  inspect(
+    Show::to_string(
+      (
+        "first",
+        2,
+        true,
+        'x',
+        (),
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        (15, "nested"),
+        "last",
+      ),
+    ),
+    content="(first, 2, true, x, (), 6, 7, 8, 9, 10, 11, 12, 13, 14, (15, nested), last)",
+  )
+}
+
+///|
 test "2-tuple Debug" {
   let pair = (42, "hello")
   debug_inspect(pair, content="(42, \"hello\")")

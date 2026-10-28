@@ -504,14 +504,14 @@ fn Char::escape_to(self : Char, logger : &Logger, quote~ : Bool = true) -> Unit 
       logger.write_char('\\')
       logger.write_char(self)
     }
-    '\n' => logger.write_string("\\n")
-    '\r' => logger.write_string("\\r")
-    '\b' => logger.write_string("\\b")
-    '\t' => logger.write_string("\\t")
+    '\n' => logger <+ "\\n"
+    '\r' => logger <+ "\\r"
+    '\b' => logger <+ "\\b"
+    '\t' => logger <+ "\\t"
     ' '..<='~' => logger.write_char(self)
     _ =>
       if !self.is_printable() {
-        logger <+ "\\u{\{cb => cb.write_string(self.to_hex())}}"
+        logger <+ "\\u{\{self.to_hex()}}"
       } else {
         logger.write_char(self)
       }

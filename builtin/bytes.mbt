@@ -770,7 +770,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 ///   let keys = []
 ///   let it = b"abcde".iter2()
 ///   while it.next() is Some((i, x)) {
-///     buf.write_string(x.to_string())
+///     buf <+ "\{x}"
 ///     keys.push(i)
 ///   }
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
