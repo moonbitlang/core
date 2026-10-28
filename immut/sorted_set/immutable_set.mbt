@@ -1033,8 +1033,8 @@ priv enum SplitBis[A] {
 ///|
 impl[T] Show for SplitBis[T] with fn output(self, logger) {
   match self {
-    Found => logger.write_string("Found")
-    NotFound(_) => logger.write_string("NotFound")
+    Found => logger <+ "Found"
+    NotFound(_) => logger <+ "NotFound"
   }
 }
 
