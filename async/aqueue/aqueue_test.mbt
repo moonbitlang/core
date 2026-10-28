@@ -19,14 +19,15 @@ async test "aqueue basic" {
     let queue = @aqueue.Queue(kind=Unbounded)
     root.spawn_bg() <| () => {
       for _ in 0..<6 {
-        log.write_string("get => \{queue.get()}\n")
+        let value = queue.get()
+        log <+ "get => \{value}\n"
       }
     }
     root.spawn_bg() <| () => {
       for x in 0..<6 {
         @async.sleep(70)
         queue.put(x)
-        log.write_string("put(\{x})\n")
+        log <+ "put(\{x})\n"
       }
     }
   }
@@ -58,11 +59,11 @@ async test "aqueue multi-reader" {
     root.spawn_bg() <| () => {
       @async.sleep(70)
       let x = queue.get()
-      log.write_string("task 1: get => \{x}\n")
+      log <+ "task 1: get => \{x}\n"
     }
     root.spawn_bg() <| () => {
       let x = queue.get()
-      log.write_string("task 2: get => \{x}\n")
+      log <+ "task 2: get => \{x}\n"
     }
     @async.sleep(170)
     queue.put(1)
@@ -84,8 +85,8 @@ async test "aqueue cancellation" {
   let queue : @aqueue.Queue[Int32] = Queue(kind=Unbounded)
   @async.with_timeout(350, () => {
     match @async.handle_cancellation(() => queue.get()) {
-      None => log.write_string("`queue.get()` cancelled\n")
-      Some(x) => log.write_string("get => \{x}\n")
+      None => log <+ "`queue.get()` cancelled\n"
+      Some(x) => log <+ "get => \{x}\n"
     }
   }) catch {
     @async.TimeoutError => ()
@@ -106,7 +107,10 @@ async test "aqueue cancellation no_swallow" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {
     let q = @aqueue.Queue(kind=Unbounded)
-    let get_task = group.spawn(() => log.write_string("get() => \{q.get()}\n"))
+    let get_task = group.spawn(() => {
+      let value = q.get()
+      log <+ "get() => \{value}\n"
+    })
     @async.sleep(100)
     q.put(42)
     get_task.cancel()
@@ -130,13 +134,13 @@ async test "aqueue fairness" {
     root.spawn_bg() <| () => {
       for _ in 0..<2 {
         let x = queue.get()
-        log.write_string("task 1: get => \{x}\n")
+        log <+ "task 1: get => \{x}\n"
       }
     }
     root.spawn_bg() <| () => {
       for _ in 0..<2 {
         let x = queue.get()
-        log.write_string("task 2: get => \{x}\n")
+        log <+ "task 2: get => \{x}\n"
       }
     }
     @async.sleep(70)
@@ -167,7 +171,7 @@ async test "aqueue fairness2" {
     root.spawn_bg() <| () => {
       for _ in 0..<2 {
         let x = queue.get()
-        log.write_string("task 1: get => \{x}\n")
+        log <+ "task 1: get => \{x}\n"
         @async.sleep(200)
         queue.put(x + 1)
       }
@@ -176,7 +180,7 @@ async test "aqueue fairness2" {
       @async.sleep(100)
       for _ in 0..<2 {
         let x = queue.get()
-        log.write_string("task 2: get => \{x}\n")
+        log <+ "task 2: get => \{x}\n"
         @async.sleep(200)
         queue.put(x + 1)
       }
