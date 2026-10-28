@@ -460,7 +460,10 @@ test "stored entry limits are checked before entering the owned copy" {
       polls > 1
     })
   })
-  @test.assert_eq(kind, LimitExceeded(TotalUncompressedBytes, 10UL, 15UL))
+  @test.assert_eq(
+    kind,
+    LimitExceeded(kind=TotalUncompressedBytes, limit=10UL, observed=15UL),
+  )
   @test.assert_eq(polls, 1)
 }
 
@@ -795,7 +798,7 @@ test "zip output writes unaligned fields and transfers only written bytes" {
     out.write_u64(0x0102030405060708)
     expect_zip_kind(
       () => out.write_bytes(b"x"),
-      LimitExceeded(OutputBytes, 15, 16),
+      LimitExceeded(kind=OutputBytes, limit=15, observed=16),
     )
     @test.assert_eq(out.finish(), expected)
   }
@@ -881,7 +884,7 @@ test "zip output rejects Int overflow and oversized raw header names" {
   )
   expect_zip_kind(
     () => ignore(write(archive, max_output_bytes=1)),
-    LimitExceeded(OutputBytes, 1, 31),
+    LimitExceeded(kind=OutputBytes, limit=1, observed=31),
   )
 }
 

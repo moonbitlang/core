@@ -22,19 +22,40 @@ test "decoded output sizes reject overflow before allocation or mutation" {
       length + additional,
     )
   }
-  for entry in [(maximum, 1), (1, maximum), (maximum - 1, 2)] {
-    let (length, additional) = entry
-    let err = @test.expect_error(() => {
-      checked_decode_output_length(length, additional)
+  for
+    (length, additional, ceiling) in [
+      (0, 1, 0),
+      (maximum - 10, 20, maximum - 5),
+      (maximum, 1, maximum),
+      (1, maximum, maximum),
+      (maximum - 1, 2, maximum),
+    ] {
+    let InflateError(kind, _) = @test.expect_error(() => {
+      checked_decode_output_length(length, additional, limit=ceiling)
     })
-    guard err is InflateError(kind, _)
-    @test.assert_eq(kind, OutputLimitExceeded)
+    @test.assert_eq(
+      kind,
+      OutputLimitExceeded(
+        limit=ceiling.to_uint64(),
+        observed=length.to_uint64() + additional.to_uint64(),
+      ),
+    )
   }
-  for out in [DecodeOutput(1), DecodeOutput::into([b'\x00'])] {
+  for
+    (out, limit) in [
+      (DecodeOutput(1), maximum),
+      (DecodeOutput::into([b'\x00']), 1),
+    ] {
     out.append_byte(b'a')
     let err = @test.expect_error(() => out.ensure_capacity(maximum))
     guard err is InflateError(kind, _)
-    @test.assert_eq(kind, OutputLimitExceeded)
+    @test.assert_eq(
+      kind,
+      OutputLimitExceeded(
+        limit=limit.to_uint64(),
+        observed=maximum.to_uint64() + 1UL,
+      ),
+    )
     @test.assert_eq(out.length, 1)
     @test.assert_eq(out.storage.length(), 1)
     @test.assert_eq(out.to_bytes(), b"a")

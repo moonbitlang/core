@@ -35,8 +35,9 @@ pub(all) enum InflateErrorKind {
   Corrupt
   /// Exact decoding reached a valid final block before the input boundary.
   TrailingData
-  /// Decoded output would exceed the caller-supplied safety limit.
-  OutputLimitExceeded
+  /// Output ceiling and observed decoded size, including the rejected chunk/match.
+  /// Observed bytes need not have been written or cover the complete stream.
+  OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   /// A caller-supplied cancellation callback requested an early stop.
   Cancelled
   /// A caller-supplied argument is out of range, such as a negative limit.
@@ -978,13 +979,13 @@ pub fn IncrementalDecoder::step(
   self.out_pos = 0
   self.out = output
   self.out_end = output.length()
+  defer self.release_step_views()
   let status = self.run_step() catch {
     InflateError(kind, message) => {
       self.failure_kind = Some(kind)
       self.failure_message = message
       self.staged_input.clear()
       self.staged_pos = 0
-      self.release_step_views()
       raise InflateError(kind, message)
     }
   }
@@ -997,6 +998,5 @@ pub fn IncrementalDecoder::step(
     self.compact_staged_input()
     decoded_input
   }
-  self.release_step_views()
   { status, consumed, produced, }
 }

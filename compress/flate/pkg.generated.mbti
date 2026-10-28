@@ -40,7 +40,7 @@ pub struct DecompressResult {
 
 type Decompressor
 pub fn Decompressor::Decompressor() -> Self
-pub fn Decompressor::decompress(Self, BytesView) -> Bytes raise InflateError
+pub fn Decompressor::decompress(Self, BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise InflateError
 pub fn Decompressor::decompress_into(Self, BytesView, FixedArray[Byte], cancelled? : () -> Bool) -> DecompressResult raise InflateError
 pub fn Decompressor::last_consumed(Self) -> Int32
 
@@ -67,7 +67,7 @@ pub(all) enum InflateErrorKind {
   Truncated
   Corrupt
   TrailingData
-  OutputLimitExceeded
+  OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   Cancelled
   InvalidArgument
 } derive(Eq, @debug.Debug)

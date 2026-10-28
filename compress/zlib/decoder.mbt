@@ -349,16 +349,14 @@ fn Decoder::step_output(
   if self.failure_kind is Some(kind) {
     raise ZlibError(kind, self.failure_message)
   }
-  let result = self.step_active(input, output, end~) catch {
+  defer self.detach_input()
+  self.step_active(input, output, end~) catch {
     ZlibError(kind, message) => {
-      self.detach_input()
       self.failure_kind = Some(kind)
       self.failure_message = message
       raise ZlibError(kind, message)
     }
   }
-  self.detach_input()
-  result
 }
 
 ///|

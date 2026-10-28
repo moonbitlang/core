@@ -71,7 +71,11 @@ test "omitted cancellation preserves output and resets explicit callback state" 
       decoder.decompress_into(input, FixedArray::make(4095, b'\xA5'))
     })
     guard error is InflateError(kind, _)
-    @test.assert_eq(kind, OutputLimitExceeded)
+    guard kind is OutputLimitExceeded(limit~, observed~) else {
+      @test.fail("expected output limit")
+    }
+    @test.assert_eq(limit, 4095UL)
+    assert_true(observed > limit && observed <= source.length().to_uint64())
   }
 }
 
@@ -91,7 +95,13 @@ test "literal fast path preserves capacity growth and cancellation" {
     }
     let error = @test.expect_error(() => decoder.push(b'x'))
     guard error is InflateError(kind, _)
-    @test.assert_eq(kind, OutputLimitExceeded)
+    @test.assert_eq(
+      kind,
+      OutputLimitExceeded(
+        limit=capacity.to_uint64(),
+        observed=capacity.to_uint64() + 1UL,
+      ),
+    )
     @test.assert_eq(decoder.out.length, capacity)
     for i in 0..<capacity {
       @test.assert_eq(storage[i], i.to_byte())

@@ -44,7 +44,13 @@ test "bounded inflate_all enforces its decoded-size boundary" {
   let InflateError(kind, _) = @test.expect_error(() => {
     @flate.inflate_all(compressed, max_output=source.length() - 1)
   })
-  @test.assert_eq(kind, OutputLimitExceeded)
+  @test.assert_eq(
+    kind,
+    OutputLimitExceeded(
+      limit=(source.length() - 1).to_uint64(),
+      observed=source.length().to_uint64(),
+    ),
+  )
   let InflateError(kind, _) = @test.expect_error(() => {
     @flate.inflate_all(compressed, max_output=-1)
   })
@@ -117,7 +123,7 @@ test "inflate_exact enforces max_output on both paths" {
     let InflateError(kind, _) = @test.expect_error(() => {
       @flate.inflate_exact(compressed, max_output=19999, preallocated~)
     })
-    @test.assert_eq(kind, OutputLimitExceeded)
+    @test.assert_eq(kind, OutputLimitExceeded(limit=19999UL, observed=20000UL))
   }
   let InflateError(kind, _) = @test.expect_error(() => {
     @flate.inflate_exact(compressed, max_output=-1)

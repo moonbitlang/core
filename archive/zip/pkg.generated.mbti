@@ -129,7 +129,7 @@ pub(all) enum ZipErrorKind {
   InvalidEntryIndex(Int32)
   SizeMismatch
   ChecksumMismatch
-  LimitExceeded(LimitKind, UInt64, UInt64)
+  LimitExceeded(kind~ : LimitKind, limit~ : UInt64, observed~ : UInt64)
   Cancelled
   InvalidArgument
   InvalidState

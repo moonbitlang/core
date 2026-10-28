@@ -58,7 +58,7 @@ pub(all) enum ZipErrorKind {
   /// A caller-supplied resource limit was exceeded.
   /// The actual value is observed usage when processing stopped, not necessarily
   /// the complete decoded size of an entry that exceeded its output limit.
-  LimitExceeded(LimitKind, UInt64, UInt64)
+  LimitExceeded(kind~ : LimitKind, limit~ : UInt64, observed~ : UInt64)
   /// The caller's cancellation callback returned `true` during a bounded read.
   Cancelled
   /// A caller-supplied argument is out of range, such as a negative limit.

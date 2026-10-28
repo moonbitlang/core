@@ -18,6 +18,7 @@
 ///|
 /// Machine-readable category for a zlib decoding failure. The accompanying
 /// `ZlibError` message remains intended for diagnostics rather than branching.
+/// Output limits, cancellation and invalid limits apply to `decompress` only.
 pub(all) enum ZlibErrorKind {
   /// The input ended before the header, body, DICTID, or trailer completed.
   Truncated
@@ -33,6 +34,13 @@ pub(all) enum ZlibErrorKind {
   ChecksumMismatch
   /// Bytes occur after the raw DEFLATE end and before the expected trailer.
   TrailingData
+  /// The output ceiling and observed decoded size when processing stopped.
+  /// The observed size need not be the complete stream's decoded size.
+  OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
+  /// The caller's cancellation callback returned true.
+  Cancelled
+  /// A caller-supplied output ceiling is negative.
+  InvalidArgument
 } derive(Eq, @debug.Debug)
 
 ///|
@@ -48,6 +56,32 @@ fn u32_be(data : BytesView, off : Int32) -> UInt32 {
   (data[off + 1].to_uint() << 16) |
   (data[off + 2].to_uint() << 8) |
   data[off + 3].to_uint()
+}
+
+///|
+fn check_cancelled(cancelled : (() -> Bool)?) -> Unit raise ZlibError {
+  if cancelled is Some(callback) && callback() {
+    raise ZlibError(Cancelled, "zlib: cancelled by caller")
+  }
+}
+
+///|
+/// Keep the trailer checksum interruptible after decoding has completed.
+fn adler32_cancellable(
+  input : BytesView,
+  cancelled : (() -> Bool)?,
+) -> UInt32 raise ZlibError {
+  guard cancelled is Some(_) else { return @checksum.adler32(input) }
+  let adler = @checksum.Adler32()
+  let mut start = 0
+  while start < input.length() {
+    check_cancelled(cancelled)
+    let end = start + (input.length() - start).min(4096)
+    adler.update(input[start:end])
+    start = end
+  }
+  check_cancelled(cancelled)
+  adler.finish()
 }
 
 ///|
@@ -92,12 +126,19 @@ pub fn compress_optimal(
 }
 
 ///|
-/// Decompress zlib-format `input`, verifying its Adler-32 trailer. The output
-/// grows without bound — a convenience for trusted input; for untrusted input
-/// use the streaming `Decoder` with caller-sized output buffers. Failures carry
-/// a stable `ZlibErrorKind` suitable for programmatic handling plus a
-/// human-readable diagnostic.
-pub fn decompress(input : BytesView) -> Bytes raise ZlibError {
+/// Decode zlib data and verify its Adler-32 trailer. `max_output` caps decoded
+/// bytes (default: `Bytes` capacity); exceeding it raises `OutputLimitExceeded`,
+/// a negative value `InvalidArgument`. `cancelled` is polled at entry, every
+/// 8 KiB decoded and every 4 KiB checksummed; true raises `Cancelled`.
+pub fn decompress(
+  input : BytesView,
+  max_output? : Int32,
+  cancelled? : () -> Bool,
+) -> Bytes raise ZlibError {
+  if max_output is Some(limit) && limit < 0 {
+    raise ZlibError(InvalidArgument, "max_output must be non-negative")
+  }
+  check_cancelled(cancelled)
   let n = input.length()
   guard n >= 6 else { raise ZlibError(Truncated, "zlib: input too short") }
   let cmf = input[0].to_int()
@@ -117,7 +158,7 @@ pub fn decompress(input : BytesView) -> Bytes raise ZlibError {
       "zlib: preset dictionary required (use the streaming Decoder)",
     )
   }
-  let out = @flate.inflate_exact(input[2:n - 4]) catch {
+  let out = @flate.inflate_exact(input[2:n - 4], max_output?, cancelled?) catch {
     InflateError(Truncated, _) =>
       raise ZlibError(Truncated, "zlib: truncated DEFLATE stream")
     InflateError(TrailingData, _) =>
@@ -125,9 +166,14 @@ pub fn decompress(input : BytesView) -> Bytes raise ZlibError {
         TrailingData,
         "zlib: data between DEFLATE stream and trailer",
       )
+    InflateError(OutputLimitExceeded(limit~, observed~), message) =>
+      raise ZlibError(OutputLimitExceeded(limit~, observed~), message)
+    InflateError(Cancelled, message) => raise ZlibError(Cancelled, message)
+    InflateError(InvalidArgument, message) =>
+      raise ZlibError(InvalidArgument, message)
     InflateError(_, message) => raise ZlibError(InvalidDeflate, message)
   }
-  guard @checksum.adler32(out) == u32_be(input, n - 4) else {
+  guard adler32_cancellable(out, cancelled) == u32_be(input, n - 4) else {
     raise ZlibError(ChecksumMismatch, "zlib: Adler-32 mismatch")
   }
   out

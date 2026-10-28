@@ -19,15 +19,18 @@
 priv struct DecodeOutput {
   mut storage : FixedArray[Byte]
   mut length : Int32
-  fixed_capacity : Bool
+  limit : Int32
 }
 
 ///|
-fn DecodeOutput::DecodeOutput(size_hint : Int32) -> DecodeOutput {
+fn DecodeOutput::DecodeOutput(
+  size_hint : Int32,
+  limit~ : Int32 = MAX_DECODE_OUTPUT_SIZE,
+) -> DecodeOutput {
   {
-    storage: FixedArray::make(size_hint.max(1), b'\x00'),
+    storage: FixedArray::make(size_hint.max(1).min(limit), b'\x00'),
     length: 0,
-    fixed_capacity: false,
+    limit,
   }
 }
 
@@ -35,7 +38,7 @@ fn DecodeOutput::DecodeOutput(size_hint : Int32) -> DecodeOutput {
 /// Use caller-owned storage for a one-shot decode. Capacity exhaustion becomes
 /// the existing public `OutputLimitExceeded` failure instead of reallocating.
 fn DecodeOutput::into(storage : FixedArray[Byte]) -> DecodeOutput {
-  { storage, length: 0, fixed_capacity: true, }
+  { storage, length: 0, limit: storage.length(), }
 }
 
 ///|
@@ -48,9 +51,16 @@ const MAX_DECODE_OUTPUT_SIZE : Int32 = 0x7FFFFFFF
 fn checked_decode_output_length(
   length : Int32,
   additional : Int32,
+  limit~ : Int32 = MAX_DECODE_OUTPUT_SIZE,
 ) -> Int32 raise InflateError {
-  guard additional <= MAX_DECODE_OUTPUT_SIZE - length else {
-    raise InflateError(OutputLimitExceeded, "DEFLATE output size overflow")
+  guard additional <= limit - length else {
+    raise InflateError(
+      OutputLimitExceeded(
+        limit=limit.to_uint64(),
+        observed=length.to_uint64() + additional.to_uint64(),
+      ),
+      "decoded output exceeds its byte limit",
+    )
   }
   length + additional
 }
@@ -72,15 +82,15 @@ fn DecodeOutput::ensure_capacity(
   self : DecodeOutput,
   additional : Int32,
 ) -> Unit raise InflateError {
-  let required = checked_decode_output_length(self.length, additional)
+  let required = checked_decode_output_length(
+    self.length,
+    additional,
+    limit=self.limit,
+  )
   guard required > self.storage.length() else { return }
-  guard !self.fixed_capacity else {
-    raise InflateError(
-      OutputLimitExceeded,
-      "decoded output exceeds output buffer",
-    )
-  }
-  let capacity = grown_decode_output_capacity(self.storage.length(), required)
+  let capacity = grown_decode_output_capacity(self.storage.length(), required).min(
+    self.limit,
+  )
   self.storage = FixedArray::make_and_blit(
     self.storage,
     allocate_len=capacity,
@@ -225,7 +235,7 @@ fn reserves_token(capacity : Int32, length : Int32) -> Bool {
 /// replaced.
 #cfg(target="native")
 fn DecodeOutput::reserve_token(self : DecodeOutput) -> Unit {
-  guard !self.fixed_capacity &&
+  guard self.storage.length() < self.limit &&
     reserves_token(self.storage.length(), self.length) else {
     return
   }
@@ -234,7 +244,7 @@ fn DecodeOutput::reserve_token(self : DecodeOutput) -> Unit {
     allocate_len=grown_decode_output_capacity(
       self.storage.length(),
       self.length + 258,
-    ),
+    ).min(self.limit),
     init=b'\x00',
     len=self.length,
   )
@@ -324,8 +334,8 @@ fn MemDecoder::reset_into(
 }
 
 ///|
-/// Release caller-owned storage while keeping only reusable decoding workspace.
-fn MemDecoder::release_buffers(self : MemDecoder) -> Unit {
+/// Clear per-call input, output, and callback references, retaining workspace.
+fn MemDecoder::clear_call_references(self : MemDecoder) -> Unit {
   self.input = b""
   self.out.storage = []
   self.out.length = 0
@@ -1086,12 +1096,10 @@ pub fn Decompressor::last_consumed(self : Decompressor) -> Int32 {
 }
 
 ///|
-/// Decompress `input` into `output`, returning consumed and produced byte counts.
-/// The complete output must fit in `output`; otherwise this raises
-/// `InflateError(OutputLimitExceeded, _)`. As with `inflate_all`, bytes after
-/// the final DEFLATE block are ignored; the returned `consumed` tells where they
-/// start. Reuse one `Decompressor` and output buffer to avoid per-stream
-/// decoder and result-buffer allocation.
+/// Decode a raw DEFLATE prefix into `output`, returning consumed/produced counts.
+/// Trailing bytes are ignored; `consumed` locates their start. The buffer capacity
+/// is the ceiling for `OutputLimitExceeded(limit~, observed~)`. Decoder workspace
+/// and caller-owned output storage can be reused across streams.
 pub fn Decompressor::decompress_into(
   self : Decompressor,
   input : BytesView,
@@ -1100,54 +1108,42 @@ pub fn Decompressor::decompress_into(
 ) -> DecompressResult raise InflateError {
   self.consumed = 0
   self.decoder.reset_into(input, output, cancelled)
-  errdefer self.decoder.release_buffers()
+  defer self.decoder.clear_call_references()
   self.decoder.run()
   self.consumed = self.decoder.consumed()
-  let length = self.decoder.out.length
-  self.decoder.release_buffers()
-  { consumed: self.consumed, produced: length, }
+  { consumed: self.consumed, produced: self.decoder.out.length, }
 }
 
 ///|
-/// First output capacity of `Decompressor::decompress`. Its input may reach
-/// far beyond the stream it decodes, one member of a file of thousands, so the
-/// length of the input is no measure of the output as it is in `inflate_all`:
-/// a call starts with at most this much, and growth does the rest. Allocating
-/// and clearing it is what a call costs before it decodes anything, which
-/// shows on members of a few hundred bytes; doubling from here costs a large
-/// stream nothing that can be measured.
+/// Cap the initial output allocation: input may include many following members.
 const PREFIX_OUTPUT_CAPACITY : Int32 = 16384
 
 ///|
-/// Decompress `input` into new `Bytes` that grow with the output, as
-/// `inflate_all` does, while retaining the Huffman and dynamic-header workspace
-/// across streams. Bytes after the final DEFLATE block are ignored;
-/// `last_consumed` tells where they start, which is how a container finds the
-/// trailer of a member whose length it does not know.
-///
-/// The output is unbounded and the call cannot be cancelled: a convenience for
-/// trusted input. To reject bytes after the stream, use `inflate_exact`. For a
-/// prefix decode with a bound, use `decompress_into` (an output of the size
-/// allowed, and a `cancelled` callback) or the streaming `IncrementalDecoder`; both
-/// report the input they consumed.
-///
-/// After an error the decompressor is ready for the next stream as it is, and
-/// `last_consumed()` is zero.
+/// Decode a raw DEFLATE prefix into new `Bytes`, reusing decoder workspace.
+/// `last_consumed()` locates trailing bytes; `inflate_exact` rejects them.
+/// `max_output` caps output storage (default: `Bytes` capacity); exceeding it
+/// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
+/// `cancelled` is polled at entry and every 4096 decoded bytes; true raises
+/// `Cancelled`. After any error, `last_consumed()` is zero and reuse is allowed.
 pub fn Decompressor::decompress(
   self : Decompressor,
   input : BytesView,
+  max_output? : Int32,
+  cancelled? : () -> Bool,
 ) -> Bytes raise InflateError {
   self.consumed = 0
+  let limit = max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE)
+  guard limit >= 0 else {
+    raise InflateError(InvalidArgument, "max_output must be non-negative")
+  }
   let decoder = self.decoder
-  decoder.reset_into(input, [], None)
+  decoder.reset_into(input, [], cancelled)
   // Not the caller's storage: an output of its own, which grows.
-  decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY))
-  errdefer decoder.release_buffers()
+  decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY), limit~)
+  defer decoder.clear_call_references()
   decoder.run()
   self.consumed = decoder.consumed()
-  let decoded = decoder.out.to_bytes()
-  decoder.release_buffers()
-  decoded
+  decoder.out.to_bytes()
 }
 
 ///|
@@ -1196,12 +1192,13 @@ fn inflate_streaming_all(
     guard !cancelled() else {
       raise InflateError(Cancelled, "cancelled by caller")
     }
-    guard max_output.map_or(true, limit => produced <= limit - decoded.length()) else {
-      raise InflateError(
-        OutputLimitExceeded,
-        "decoded output exceeds max_output",
-      )
-    }
+    ignore(
+      checked_decode_output_length(
+        decoded.length(),
+        produced,
+        limit=max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE),
+      ),
+    )
     decoded.append(scratch[:produced])
     match status {
       Done => {
@@ -1217,28 +1214,13 @@ fn inflate_streaming_all(
 }
 
 ///|
-/// Decompress exactly one raw DEFLATE stream. Unlike `inflate_all`, this rejects
-/// any bytes after the final block.
-///
-/// Optional controls:
-///  - `max_output`: decoded output beyond this size raises
-///    `InflateError(OutputLimitExceeded, _)`. A negative value raises
-///    `InflateError(InvalidArgument, _)`.
-///  - `cancelled`: polled at entry and then once per internal step (every 8192
-///    produced bytes); returning `true` raises `InflateError(Cancelled, _)`.
-///  - `preallocated`: when `true`, decode runs twice — a counting pass that
-///    validates the whole stream, then a second pass filling one exactly sized
-///    allocation. Peak memory stays at roughly one decoded output, at the cost
-///    of roughly double the decode work; the default `false` grows one buffer
-///    in a single pass, trading transient memory for one decode pass.
-///
-/// With none of the three there is nothing to poll, to bound or to count, and
-/// the stream is decoded by the in-memory decoder of `inflate_all` instead of
-/// in steps; the input it consumed tells whether anything follows the final
-/// block. The result and the errors of a malformed, truncated or extended
-/// stream are those of the stepping decoder. An output beyond the 2 GiB that
-/// `Bytes` can hold raises `InflateError(OutputLimitExceeded, _)` on this path,
-/// as it does with `preallocated`.
+/// Decode exactly one raw DEFLATE stream, rejecting trailing bytes.
+/// `max_output` caps decoded bytes (default: `Bytes` capacity); exceeding it
+/// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
+/// `cancelled` is polled at entry and every 8192 decoded bytes; true raises
+/// `Cancelled`. `preallocated=true` validates and counts first, then decodes
+/// into one exactly sized allocation: roughly twice the work for lower peak
+/// memory. The default grows the output in one pass.
 pub fn inflate_exact(
   input : BytesView,
   max_output? : Int32,
@@ -1293,16 +1275,14 @@ fn inflate_drive(
     let consumed = status_result.consumed
     let produced = status_result.produced
     input_pos = input_pos + consumed
-    total = checked_decode_output_length(total, produced)
     guard !cancelled() else {
       raise InflateError(Cancelled, "cancelled by caller")
     }
-    guard max_output.map_or(true, limit => total <= limit) else {
-      raise InflateError(
-        OutputLimitExceeded,
-        "decoded output exceeds max_output",
-      )
-    }
+    total = checked_decode_output_length(
+      total,
+      produced,
+      limit=max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE),
+    )
     emit(scratch, produced)
     guard status is Done else { continue }
     if exact && input_pos != input.length() {

@@ -219,7 +219,8 @@ test "zlib rejects CINFO values above seven" {
 
 ///|
 test "decompress rejects bytes before the Adler trailer" {
-  let valid = @zlib.compress(b"exact DEFLATE extent")
+  let source = b"exact DEFLATE extent"
+  let valid = @zlib.compress(source)
   let malformed : Array[Byte] = []
   for i in 0..<(valid.length() - 4) {
     malformed.push(valid[i])
@@ -229,7 +230,9 @@ test "decompress rejects bytes before the Adler trailer" {
     malformed.push(valid[i])
   }
   let ZlibError(kind, _) = @test.expect_error(() => {
-    @zlib.decompress(Bytes::from_array(malformed))
+    @zlib.decompress(Bytes::from_array(malformed), max_output=source.length(), cancelled=() => {
+      false
+    })
   })
   @test.assert_eq(kind, TrailingData)
 }

@@ -18,6 +18,7 @@
 ///|
 /// Machine-readable category for a gzip decoding failure. The accompanying
 /// `GzipError` message remains intended for diagnostics rather than branching.
+/// Output limits, cancellation and invalid limits apply to `decompress` only.
 pub(all) enum GzipErrorKind {
   /// The input ended before a complete member, header field, body, or trailer.
   Truncated
@@ -29,6 +30,13 @@ pub(all) enum GzipErrorKind {
   ChecksumMismatch
   /// The trailer ISIZE does not match the decompressed payload length.
   LengthMismatch
+  /// The cumulative output ceiling and observed decoded size when stopped.
+  /// The observed size need not be the complete multi-member output size.
+  OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
+  /// The caller's cancellation callback returned true.
+  Cancelled
+  /// A caller-supplied output ceiling is negative.
+  InvalidArgument
 } derive(Eq, @debug.Debug)
 
 ///|
@@ -39,10 +47,42 @@ pub suberror GzipError {
 }
 
 ///|
-/// Preserve the diagnostic of a malformed inner DEFLATE stream.
+/// Preserve resource failures as well as the diagnostic of malformed DEFLATE.
 fn wrap_inflate_error(err : @flate.InflateError) -> GzipError {
-  let InflateError(_, message) = err
-  GzipError(InvalidDeflate, message)
+  let InflateError(kind, message) = err
+  match kind {
+    OutputLimitExceeded(limit~, observed~) =>
+      GzipError(OutputLimitExceeded(limit~, observed~), message)
+    Cancelled => GzipError(Cancelled, message)
+    InvalidArgument => GzipError(InvalidArgument, message)
+    _ => GzipError(InvalidDeflate, message)
+  }
+}
+
+///|
+fn check_cancelled(cancelled : (() -> Bool)?) -> Unit raise GzipError {
+  if cancelled is Some(callback) && callback() {
+    raise GzipError(Cancelled, "gzip: cancelled by caller")
+  }
+}
+
+///|
+/// Poll during checksums as well as during DEFLATE decoding.
+fn crc32_cancellable(
+  input : BytesView,
+  cancelled : (() -> Bool)?,
+) -> UInt32 raise GzipError {
+  guard cancelled is Some(_) else { return @checksum.crc32(input) }
+  let crc = @checksum.Crc32()
+  let mut start = 0
+  while start < input.length() {
+    check_cancelled(cancelled)
+    let end = start + (input.length() - start).min(4096)
+    crc.update(input[start:end])
+    start = end
+  }
+  check_cancelled(cancelled)
+  crc.finish()
 }
 
 ///|
@@ -101,8 +141,10 @@ fn inflate_member(
   input : BytesView,
   q : Int32,
   decoder : @flate.Decompressor,
+  max_output : Int32,
+  cancelled : (() -> Bool)?,
 ) -> Bytes raise GzipError {
-  decoder.decompress(input[q:]) catch {
+  decoder.decompress(input[q:], max_output~, cancelled?) catch {
     // All remaining input was handed over, yet the stream did not end.
     InflateError(Truncated, _) => raise GzipError(Truncated, "gzip: truncated")
     err => raise wrap_inflate_error(err)
@@ -121,9 +163,16 @@ fn gunzip_member_magic(input : BytesView, p : Int32, n : Int32) -> Bool {
 /// Skip a NUL-terminated header field, returning the offset one past the NUL.
 /// An unterminated field (bounded by the input end) still consumes its bytes;
 /// the caller's truncated-input check rejects it.
-fn gunzip_skip_nul_terminated(input : BytesView, q : Int32) -> Int32 {
+fn gunzip_skip_nul_terminated(
+  input : BytesView,
+  q : Int32,
+  cancelled : (() -> Bool)?,
+) -> Int32 raise GzipError {
   let mut q = q
   while q < input.length() && input[q].to_int() != 0 {
+    if (q & 4095) == 0 {
+      check_cancelled(cancelled)
+    }
     q = q + 1
   }
   q + 1
@@ -136,6 +185,7 @@ fn gunzip_optional_fields_end(
   input : BytesView,
   q : Int32,
   flg : Int32,
+  cancelled : (() -> Bool)?,
 ) -> Int32 raise GzipError {
   let header_start = q - 10
   let mut q = q
@@ -144,17 +194,18 @@ fn gunzip_optional_fields_end(
     q = q + 2 + xlen
   }
   if (flg & 8) != 0 { // FNAME (NUL-terminated)
-    q = gunzip_skip_nul_terminated(input, q)
+    q = gunzip_skip_nul_terminated(input, q, cancelled)
   }
   if (flg & 16) != 0 { // FCOMMENT (NUL-terminated)
-    q = gunzip_skip_nul_terminated(input, q)
+    q = gunzip_skip_nul_terminated(input, q, cancelled)
   }
   if (flg & 2) != 0 { // FHCRC
     guard q <= input.length() - 2 else {
       raise GzipError(Truncated, "gzip: truncated header CRC")
     }
     let expected = input[q].to_uint() | (input[q + 1].to_uint() << 8)
-    guard (@checksum.crc32(input[header_start:q]) & 0xffff) == expected else {
+    guard (crc32_cancellable(input[header_start:q], cancelled) & 0xffff) ==
+      expected else {
       raise GzipError(ChecksumMismatch, "gzip: header CRC-16 mismatch")
     }
     q = q + 2
@@ -171,6 +222,8 @@ fn gunzip_decode_member(
   p : Int32,
   n : Int32,
   decoder : @flate.Decompressor,
+  max_output : Int32,
+  cancelled : (() -> Bool)?,
 ) -> (Bytes, Int32) raise GzipError {
   guard n - p >= 18 else { raise GzipError(Truncated, "gzip: truncated") }
   guard input[p + 2].to_int() == 0x08 else {
@@ -180,12 +233,12 @@ fn gunzip_decode_member(
   guard (flg & 0xE0) == 0 else {
     raise GzipError(InvalidHeader, "gzip: reserved flags are set")
   }
-  let q = gunzip_optional_fields_end(input, p + 10, flg)
+  let q = gunzip_optional_fields_end(input, p + 10, flg, cancelled)
   guard q <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
-  let payload = inflate_member(input, q, decoder)
+  let payload = inflate_member(input, q, decoder, max_output, cancelled)
   let trailer = q + decoder.last_consumed()
   guard trailer <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
-  guard @checksum.crc32(payload) == u32_le(input, trailer) else {
+  guard crc32_cancellable(payload, cancelled) == u32_le(input, trailer) else {
     raise GzipError(ChecksumMismatch, "gzip: CRC-32 mismatch")
   }
   guard payload.length().reinterpret_as_uint() == u32_le(input, trailer + 4) else {
@@ -195,20 +248,28 @@ fn gunzip_decode_member(
 }
 
 ///|
-/// Decompress gzip-format `input`, verifying each member's CRC-32 and length
-/// trailer. Concatenated multi-member streams (RFC 1952 §2.2 — e.g. from `pigz`
-/// or appended `.gz` logs) are decoded in full, their payloads joined; trailing
-/// bytes after the last member that do not begin another are ignored, as `gzip
-/// -d` does. The output grows without bound — a convenience for trusted input;
-/// for untrusted input use the streaming `Decoder` with caller-sized output
-/// buffers. Failures carry a stable `GzipErrorKind` suitable for programmatic
-/// handling plus a human-readable diagnostic.
-pub fn decompress(input : BytesView) -> Bytes raise GzipError {
+/// Decode and join gzip members, verifying each CRC-32 and length trailer.
+/// Trailing bytes that do not begin another member are ignored. `max_output`
+/// caps cumulative output (default: `Bytes` capacity); exceeding it raises
+/// `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
+/// `cancelled` is polled at entry, between members and in 4 KiB intervals during
+/// name/comment scanning, decoding, checksumming and joining; true raises `Cancelled`.
+pub fn decompress(
+  input : BytesView,
+  max_output? : Int32,
+  cancelled? : () -> Bool,
+) -> Bytes raise GzipError {
+  let limit = max_output.unwrap_or(0x7fff_ffff)
+  guard limit >= 0 else {
+    raise GzipError(InvalidArgument, "max_output must be non-negative")
+  }
+  check_cancelled(cancelled)
   let n = input.length()
   guard n >= 18 else { raise GzipError(Truncated, "gzip: input too short") }
   let out = @buffer.Buffer()
   let decoder = @flate.Decompressor()
   let mut p = 0
+  let mut total = 0
   for ;; {
     // Stop once no further member begins: clean end or trailing garbage. A
     // complete magic prefix does begin another member, however, so it must be
@@ -218,14 +279,44 @@ pub fn decompress(input : BytesView) -> Bytes raise GzipError {
       guard p == 0 else { break }
       raise GzipError(InvalidHeader, "gzip: bad magic")
     }
-    let (payload, next_p) = gunzip_decode_member(input, p, n, decoder)
+    check_cancelled(cancelled)
+    let (payload, next_p) = gunzip_decode_member(
+      input,
+      p,
+      n,
+      decoder,
+      limit - total,
+      cancelled,
+    ) catch {
+      GzipError(OutputLimitExceeded(limit=_, observed~), message) =>
+        raise GzipError(
+          OutputLimitExceeded(
+            limit=limit.to_uint64(),
+            observed=total.to_uint64() + observed,
+          ),
+          message,
+        )
+      error => raise error
+    }
+    total += payload.length()
     // The usual file is one member and nothing else: its payload is the
     // result, with no joining buffer to copy it through.
     if p == 0 && next_p == n {
       return payload
     }
-    out.write_bytes(payload)
+    if cancelled is Some(_) {
+      let mut start = 0
+      while start < payload.length() {
+        check_cancelled(cancelled)
+        let end = start + (payload.length() - start).min(4096)
+        out.write_bytes(payload[start:end])
+        start = end
+      }
+    } else {
+      out.write_bytes(payload)
+    }
     p = next_p
   }
+  check_cancelled(cancelled)
   out.to_bytes()
 }

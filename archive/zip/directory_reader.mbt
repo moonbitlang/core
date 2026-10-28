@@ -125,7 +125,7 @@ fn check_directory_limit(
 ) -> Unit raise ZipError {
   guard actual <= limit else {
     raise ZipError(
-      LimitExceeded(kind, limit, actual),
+      LimitExceeded(kind~, limit~, observed=actual),
       "zip: directory limit exceeded",
     )
   }
