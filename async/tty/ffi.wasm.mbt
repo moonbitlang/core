@@ -24,28 +24,24 @@ fn tty_open(fds : FixedArray[@fd_util.Fd]) -> Int32 {
 }
 
 ///|
-#unsafe_skip_stub_check
-fn tty_state_size_ffi() -> Int32 = "moonbitlang/async" "tty/state_size"
-
-///|
-/// Save the old state to `state`
+/// Write the current state to `state`, see `State`
 #unsafe_skip_stub_check
 #borrow(state)
-fn tty_enter_raw(
-  input : @fd_util.Fd,
-  output : @fd_util.Fd,
-  flags : Int32,
-  state : FixedArray[Byte],
-) -> Int32 = "moonbitlang/async" "tty/enter_raw"
-
-///|
-#unsafe_skip_stub_check
-#borrow(state)
-fn tty_leave_raw(
+fn tty_get_state(
   input : @fd_util.Fd,
   output : @fd_util.Fd,
   state : FixedArray[Byte],
-) -> Int32 = "moonbitlang/async" "tty/leave_raw"
+) -> Int32 = "moonbitlang/async" "tty/get_state"
+
+///|
+/// Apply `state`, see `State`
+#unsafe_skip_stub_check
+#borrow(state)
+fn tty_set_state(
+  input : @fd_util.Fd,
+  output : @fd_util.Fd,
+  state : FixedArray[Byte],
+) -> Int32 = "moonbitlang/async" "tty/set_state"
 
 ///|
 /// Return `(rows << 32) | cols`, or `-1` on failure.

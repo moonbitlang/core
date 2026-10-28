@@ -17,11 +17,13 @@ pub(all) enum Event {
   Resize
 } derive(Eq, @debug.Debug)
 
+type State
+pub fn State::make_raw(Self) -> Self
+
 type Tty
 pub async fn Tty::drop_all(Self) -> Int64
 pub async fn Tty::drop_exactly(Self, Int32) -> Unit
-pub fn Tty::enter_raw_mode(Self) -> Unit raise
-pub fn Tty::leave_raw_mode(Self) -> Unit raise
+pub fn Tty::get_state(Self) -> State raise
 pub async fn Tty::peek(Self) -> BytesView?
 pub async fn Tty::peek_at_least(Self, Int32) -> BytesView
 pub async fn Tty::peek_exactly(Self, Int32) -> BytesView
@@ -33,6 +35,7 @@ pub async fn Tty::read_event(Self) -> Event?
 pub async fn Tty::read_exactly(Self, Int32) -> Bytes
 pub async fn Tty::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
 pub async fn Tty::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub fn Tty::set_state(Self, State) -> Unit raise
 pub fn Tty::size(Self) -> (Int32, Int32) raise
 pub async fn Tty::write(Self, BytesView) -> Unit
 pub async fn Tty::write_reader(Self, &@io.BinaryReader) -> Unit
