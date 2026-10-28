@@ -57,12 +57,8 @@ pub async fn tmpdir(prefix~ : StringView) -> String {
     hasher.combine_int64(@event_loop.now())
     let h = hasher.finalize().reinterpret_as_uint()
     let path = StringBuilder()
-    path.write_string(tmp_base_path)
-    path.write_stringview(prefix)
-    path.write_char('.')
-    path.write_string(@env_util.current_process.to_string())
-    path.write_char('.')
-    path.write_string(h.to_string(radix=16))
+    path <+
+      "\{tmp_base_path}\{prefix}.\{@env_util.current_process}.\{h.to_string(radix=16)}"
     let path = path.to_string()
     try @event_loop.mkdir(path, mode=0o700, context="@fs.tmpdir()") catch {
       @os_error.OsError(AlreadyExists, ..) => ()
