@@ -334,8 +334,8 @@ fn MemDecoder::reset_into(
 }
 
 ///|
-/// Release caller-owned storage while keeping only reusable decoding workspace.
-fn MemDecoder::release_buffers(self : MemDecoder) -> Unit {
+/// Clear per-call input, output, and callback references, retaining workspace.
+fn MemDecoder::clear_call_references(self : MemDecoder) -> Unit {
   self.input = b""
   self.out.storage = []
   self.out.length = 0
@@ -1108,11 +1108,11 @@ pub fn Decompressor::decompress_into(
 ) -> DecompressResult raise InflateError {
   self.consumed = 0
   self.decoder.reset_into(input, output, cancelled)
-  errdefer self.decoder.release_buffers()
+  errdefer self.decoder.clear_call_references()
   self.decoder.run()
   self.consumed = self.decoder.consumed()
   let length = self.decoder.out.length
-  self.decoder.release_buffers()
+  self.decoder.clear_call_references()
   { consumed: self.consumed, produced: length, }
 }
 
@@ -1142,11 +1142,11 @@ pub fn Decompressor::decompress(
   decoder.reset_into(input, [], cancelled)
   // Not the caller's storage: an output of its own, which grows.
   decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY), limit~)
-  errdefer decoder.release_buffers()
+  errdefer decoder.clear_call_references()
   decoder.run()
   self.consumed = decoder.consumed()
   let decoded = decoder.out.to_bytes()
-  decoder.release_buffers()
+  decoder.clear_call_references()
   decoded
 }
 
