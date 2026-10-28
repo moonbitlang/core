@@ -117,7 +117,7 @@ pub async fn request_binary(
   body : BytesView,
   headers~ : Headers = {},
   proxy? : ClientConnection,
-) -> (Response, Bytes) {
+) -> (ResponseHeader, Bytes) {
   let conn = request(meth, uri, headers~, proxy?)
   defer conn.close()
   let response = conn..write(body).end_request()
@@ -140,7 +140,7 @@ pub async fn request_text(
   body : StringView,
   headers~ : Headers,
   proxy? : ClientConnection,
-) -> (Response, String) {
+) -> (ResponseHeader, String) {
   let conn = request(meth, uri, headers~, proxy?)
   defer conn.close()
   conn.text.write(body)
@@ -164,7 +164,7 @@ pub async fn request_json(
   body : Json?,
   headers~ : Headers,
   proxy? : ClientConnection,
-) -> (Response, Json) {
+) -> (ResponseHeader, Json) {
   let conn = request(meth, uri, headers~, proxy?)
   defer conn.close()
   if body is Some(body) {
@@ -188,7 +188,7 @@ pub async fn get_binary(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Bytes) {
+) -> (ResponseHeader, Bytes) {
   request_binary(Get, uri, b"", headers~, proxy?)
 }
 
@@ -206,7 +206,7 @@ pub async fn get_text(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, String) {
+) -> (ResponseHeader, String) {
   request_text(Get, uri, "", headers~, proxy?)
 }
 
@@ -224,7 +224,7 @@ pub async fn get_json(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Json) {
+) -> (ResponseHeader, Json) {
   request_json(Get, uri, None, headers~, proxy?)
 }
 
@@ -235,7 +235,7 @@ pub async fn put_binary(
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Bytes) {
+) -> (ResponseHeader, Bytes) {
   request_binary(Put, uri, content, headers~, proxy?)
 }
 
@@ -246,7 +246,7 @@ pub async fn put_text(
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, String) {
+) -> (ResponseHeader, String) {
   request_text(Put, uri, content, headers~, proxy?)
 }
 
@@ -257,7 +257,7 @@ pub async fn put_json(
   content : Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Json) {
+) -> (ResponseHeader, Json) {
   request_json(Put, uri, Some(content), headers~, proxy?)
 }
 
@@ -268,7 +268,7 @@ pub async fn post_binary(
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Bytes) {
+) -> (ResponseHeader, Bytes) {
   request_binary(Post, uri, content, headers~, proxy?)
 }
 
@@ -279,7 +279,7 @@ pub async fn post_text(
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, String) {
+) -> (ResponseHeader, String) {
   request_text(Post, uri, content, headers~, proxy?)
 }
 
@@ -290,7 +290,7 @@ pub async fn post_json(
   content : Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, Json) {
+) -> (ResponseHeader, Json) {
   request_json(Post, uri, Some(content), headers~, proxy?)
 }
 
@@ -308,7 +308,7 @@ pub async fn get(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (Response, ClientConnection) {
+) -> (ResponseHeader, ClientConnection) {
   let conn = request(Get, uri, headers~, proxy?)
   errdefer conn.close()
   (conn.end_request(), conn)

@@ -238,8 +238,8 @@ pub extend ClientConnection with @io.BinaryReader::{
 /// and will be silently ignored.
 pub async fn ClientConnection::end_request(
   self : ClientConnection,
-  on_informational_response? : async (Response) -> Unit,
-) -> Response {
+  on_informational_response? : async (ResponseHeader) -> Unit,
+) -> ResponseHeader {
   ignore(on_informational_response)
   guard! self.request is Some(request)
   self.request = None

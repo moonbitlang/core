@@ -69,22 +69,22 @@ pub extend RequestMethod with Show::{output}
 ///|
 #deprecated
 #doc(hidden)
-pub extend Request with @debug.Debug::{to_repr}
+pub extend RequestHeader with @debug.Debug::{to_repr}
 
 ///|
 #deprecated
 #doc(hidden)
-pub extend Request with @json.ToJson::{to_json}
+pub extend RequestHeader with @json.ToJson::{to_json}
 
 ///|
 #deprecated
 #doc(hidden)
-pub extend Response with @debug.Debug::{to_repr}
+pub extend ResponseHeader with @debug.Debug::{to_repr}
 
 ///|
 #deprecated
 #doc(hidden)
-pub extend Response with @json.ToJson::{to_json}
+pub extend ResponseHeader with @json.ToJson::{to_json}
 
 ///|
 #deprecated

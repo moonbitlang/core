@@ -371,7 +371,7 @@ fn Reader::setup_message_body(
 ///
 /// After `read_request` successfully returned,
 /// the HTTP reader itself can be used to extract the body of the request.
-async fn Reader::read_request(self : Reader) -> Request {
+async fn Reader::read_request(self : Reader) -> RequestHeader {
   guard! self.body is Empty
   self.trailer = None
   guard self.transport.read_until(b"\r\n") is Some(request_line) else {
@@ -431,7 +431,7 @@ async fn Reader::read_response(
   self : Reader,
   auto_decompress~ : Bool,
   request_method~ : RequestMethod?,
-) -> Response {
+) -> ResponseHeader {
   self.auto_decompress = auto_decompress
   guard! self.body is Empty
   self.trailer = None

@@ -121,7 +121,9 @@ pub fn ServerConnection::trailer(self : ServerConnection) -> Headers {
 /// After calling `read_request`,
 /// the body of the request can be obtained by using `ServerConnection`
 /// as an `@io.BinaryReader`, or through `.text` as an `@io.TextReader`.
-pub async fn ServerConnection::read_request(self : ServerConnection) -> Request {
+pub async fn ServerConnection::read_request(
+  self : ServerConnection,
+) -> RequestHeader {
   self.reader.skip_body()
   let request = self.reader.read_request()
   self.request_method = request.meth
@@ -318,7 +320,7 @@ pub async fn Server::accept(self : Server) -> (ServerConnection, @socket.Addr) {
 /// On error or cancellation, the server will be closed automatically.
 pub async fn Server::run_forever(
   self : Server,
-  f : async (Request, ServerConnection) -> Unit,
+  f : async (RequestHeader, ServerConnection) -> Unit,
   allow_failure? : Bool,
   max_connections? : Int32,
 ) -> Unit {
