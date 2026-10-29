@@ -674,7 +674,7 @@ test "parse/error_unclosed_group" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=1, hint="Unclosed group"))
+      #|Err(ParserError(at=0, hint="Unclosed group"))
     ),
   )
 }

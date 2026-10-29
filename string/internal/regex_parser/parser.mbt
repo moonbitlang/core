@@ -461,7 +461,8 @@ fn Parser::parse_group_continue(
   let (rest, pat) = Parser::disjunction(rest, ctx~)
   match rest {
     [')', .. rest] => (rest, pat)
-    [] => raise ctx.error_at(rest, HINT_UNCLOSED_GROUP)
+    // Like an unclosed class, an unclosed group is reported at its `(`.
+    [] => raise ctx.error_at(group_start, HINT_UNCLOSED_GROUP)
     _ => raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)
   }
 }
