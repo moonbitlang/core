@@ -98,6 +98,35 @@ test "parse/error_positions/unclosed_class_start" {
 }
 
 ///|
+test "parse/error_positions/unclosed_group_start" {
+  // An unclosed group is reported at its `(`, like an unclosed class. When
+  // several are open, the innermost one is reported, as in the compiler.
+  let cases = [
+    ("(", 0),
+    ("(a", 0),
+    ("ab(cd", 2),
+    ("(?:a", 0),
+    ("(?i:a", 0),
+    ("(?<x>", 0),
+    ("(a|(b)", 0),
+    ("((a)", 0),
+    ("((a", 1),
+    ("(a)(b", 3),
+    ("😀(a", 2),
+  ]
+  for (pattern, at) in cases {
+    assert_eq(
+      error_message(pattern),
+      Some("ParserError at position \{at}: Unclosed group"),
+    )
+  }
+  assert_eq(
+    error_message("(a[b"),
+    Some("ParserError at position \{2}: Unclosed character class"),
+  )
+}
+
+///|
 test "parse/error_positions/relative_to_input_view" {
   // The parser's public input is a view, so the position is relative to the
   // supplied view, not the start of its backing string.
@@ -110,6 +139,11 @@ test "parse/error_positions/relative_to_input_view" {
   assert_eq(
     error_message(pattern[2:]),
     Some("ParserError at position \{1}: Quantifier too large"),
+  )
+  let pattern = "xxa(b"
+  assert_eq(
+    error_message(pattern[2:]),
+    Some("ParserError at position \{1}: Unclosed group"),
   )
   let pattern = "xxa[b-"
   assert_eq(
