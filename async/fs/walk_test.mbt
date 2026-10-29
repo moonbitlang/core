@@ -28,15 +28,23 @@ async test "walk sequential" {
 
 ///|
 async test "walk parallel" {
-  @async.sleep(300)
   let log = StringBuilder()
-  let mut i = 0
-  @fs.walk("async/fs/test_directory/dir1", max_concurrency=2, (path, _) => {
-    i = i + 1
-    log <+ "handling \{path}\n"
-    @async.sleep(if i == 1 { 200 } else { 300 })
-    log <+ "finished handling \{path}\n"
-  })
+  @async.with_task_group <| group => {
+    // Use a queue to control the completion of individual walk visitors.
+    // The fairness of `@async.Queue` helps maintain correct completion ordering
+    let queue = @async.Queue(kind=Unbounded)
+    group.spawn_bg(no_wait=true) <| () => {
+      for ;; {
+        @async.sleep(200)
+        queue.put(())
+      }
+    }
+    @fs.walk("async/fs/test_directory/dir1", max_concurrency=2, (path, _) => {
+      log <+ "handling \{path}\n"
+      queue.get()
+      log <+ "finished handling \{path}\n"
+    })
+  }
   inspect(
     log.to_string(),
     content=(
