@@ -129,7 +129,7 @@ priv enum WriteFrame {
 /// Only applies to object properties, not array elements.
 pub struct Replacer {
   priv f : (String, Json) -> Json?
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a new Replacer with a custom function.

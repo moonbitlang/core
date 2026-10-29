@@ -25,7 +25,7 @@ enum JsonPath {
   Root
   Key(JsonPath, mut key~ : String)
   Index(JsonPath, mut index~ : Int32)
-} derive(Eq, @debug.Debug)
+} derive(Eq)
 
 ///|
 /// Appends an array index to the JSON path.

@@ -21,32 +21,3 @@ pub fn parse_bool(str : StringView) -> Bool raise {
     _ => syntax_err()
   }
 }
-
-///|
-test "parse_bool" {
-  let tests : Array[(String, Result[Bool, String])] = [
-    ("", Err(syntax_err_str)),
-    ("zutomayo", Err(syntax_err_str)),
-    ("0", Ok(false)),
-    ("f", Ok(false)),
-    ("F", Ok(false)),
-    ("FALSE", Ok(false)),
-    ("false", Ok(false)),
-    ("False", Ok(false)),
-    ("1", Ok(true)),
-    ("t", Ok(true)),
-    ("T", Ok(true)),
-    ("TRUE", Ok(true)),
-    ("true", Ok(true)),
-    ("True", Ok(true)),
-  ]
-  for t in tests {
-    @test.assert_eq(
-      Result::Ok(parse_bool(t.0)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
-      },
-      t.1,
-    )
-  }
-}

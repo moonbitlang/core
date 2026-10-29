@@ -1,6 +1,5 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/debug",
   "moonbitlang/core/double",
   "moonbitlang/core/float",
   "moonbitlang/core/int16",
@@ -19,5 +18,6 @@ import {
 } for "test"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
 } for "wbtest"
