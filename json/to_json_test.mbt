@@ -13,11 +13,6 @@
 // limitations under the License.
 
 ///|
-// Keep the prelude spellings in JSON examples and tests.
-#warnings("-unqualified_local_using")
-using @json {type Json, null}
-
-///|
 priv struct JsonValue {
   count : Int32
 } derive(@json.ToJson)

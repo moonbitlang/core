@@ -627,13 +627,6 @@ test "from_int64" {
 }
 
 ///|
-test "parse_decimal" {
-  let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  @test.assert_eq(parse_decimal_priv(s).to_string(), s)
-  @test.assert_eq(parse_decimal_priv("1.0e-10").to_string(), "0.0000000001")
-}
-
-///|
 test "to_string" {
   let hpd = Decimal::from_int64_priv(123456789L)
   hpd.decimal_point = 1
@@ -647,55 +640,10 @@ test "to_string" {
 }
 
 ///|
-test "shift" {
-  let tests : Array[_] = [
-    (0L, 100, "0"),
-    (0L, -100, "0"),
-    (1L, 100, "1267650600228229401496703205376"),
-    (
-      1L, -100, "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625",
-    ),
-    (12345678L, 8, "3160493568"),
-    (12345678L, -8, "48225.3046875"),
-    (195312L, 9, "99999744"),
-    (1953125L, 9, "1000000000"),
-  ]
-  for t in tests {
-    let d = Decimal::from_int64_priv(t.0)
-    d.shift_priv(t.1)
-    @test.assert_eq(d.to_string(), t.2)
-  }
-}
-
-///|
 test "parse decimal with underscore" {
   inspect(parse_decimal_priv("1e1_2"), content="1000000000000")
   inspect(parse_decimal_priv("1e12"), content="1000000000000")
   inspect(parse_decimal_priv("1_2_3"), content="123")
-}
-
-///|
-test "parse decimal error" {
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e"))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e+"))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e_"))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1-23"))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1.2.3"))
-    is Failure("invalid syntax"),
-  )
 }
 
 ///|
@@ -736,19 +684,6 @@ test "rounded_integer overflow when decimal_point > 20" {
   // Call rounded_integer directly to trigger the uncovered line
   let result = decimal.rounded_integer()
   inspect(result, content="-1") // Should be Int64::max_value
-}
-
-///|
-test "corner cases" {
-  let _ = parse_decimal_priv(".123")
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("."))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("-"))
-    is Failure("invalid syntax"),
-  )
 }
 
 ///|

@@ -1,10 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/json"
 
-import {
-  "moonbitlang/core/debug",
-}
-
 // Values
 pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
@@ -22,7 +18,7 @@ pub fn valid(StringView) -> Bool
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, @debug.Debug, ToJson)
+} derive(Eq, Show, ToJson)
 pub fn JsonDecodeError::equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
 
@@ -33,7 +29,7 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DuplicateKey(Position, String)
   DepthLimitExceeded
-} derive(Eq, @debug.Debug, ToJson)
+} derive(Eq, ToJson)
 pub fn ParseError::equal(Self, Self) -> Bool
 pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
@@ -79,11 +75,10 @@ pub impl Default for Json
 pub impl Eq for Json
 #deprecated
 pub impl Show for Json
-pub impl @debug.Debug for Json
 pub impl FromJson for Json
 pub impl ToJson for Json
 
-type JsonPath derive(Eq, @debug.Debug)
+type JsonPath derive(Eq)
 pub fn JsonPath::add_index(Self, Int32) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
 pub fn JsonPath::equal(Self, Self) -> Bool
@@ -94,12 +89,12 @@ pub impl ToJson for JsonPath
 pub(all) struct Position {
   line : Int32
   column : Int32
-} derive(Eq, @debug.Debug, ToJson)
+} derive(Eq, ToJson)
 pub fn Position::equal(Self, Self) -> Bool
 
 pub struct Replacer {
   // private fields
-} derive(@debug.Debug)
+}
 #alias(new, deprecated)
 pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self

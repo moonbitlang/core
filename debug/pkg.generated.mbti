@@ -1,6 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/debug"
 
+import {
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/json",
+}
+
 // Values
 #callsite(autofill(loc))
 pub fn[T : Eq + Debug] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
@@ -55,6 +60,7 @@ pub impl[T : Debug] Debug for FixedArray[T]
 pub impl[T : Debug] Debug for ReadOnlyArray[T]
 pub impl Debug for Bytes
 pub impl Debug for Error
+pub impl Debug for @buffer.Buffer
 pub impl Debug for ArgsLoc
 pub impl[T : Debug] Debug for Array[T]
 pub impl[T : Debug] Debug for ArrayView[T]
@@ -71,6 +77,12 @@ pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder
 pub impl[T] Debug for UninitializedArray[T]
+pub impl Debug for @json.Json
+pub impl Debug for @json.JsonDecodeError
+pub impl Debug for @json.JsonPath
+pub impl Debug for @json.ParseError
+pub impl Debug for @json.Position
+pub impl Debug for @json.Replacer
 pub impl[A : Debug, B : Debug] Debug for (A, B)
 pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
 pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D)
