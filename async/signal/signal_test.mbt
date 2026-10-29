@@ -135,9 +135,7 @@ async test "change cancellation signal set in the middle #1" {
       test_prog,
       stdin=@process.write_to_process(),
       stdout=@process.read_from_process(),
-      [
-        "2000", "-wait-on-init", "-print-finally", "before exit", "-swallow-cancel-signal",
-      ],
+      ["2000", "-wait-on-init", "-print-finally", "before exit"],
     )
     group.spawn_bg() <| () => {
       defer proc.stdout.close()
@@ -167,9 +165,7 @@ async test "change cancellation signal set in the middle #2" {
       test_prog,
       stdin=@process.write_to_process(),
       stdout=@process.read_from_process(),
-      [
-        "500", "-wait-on-init", "-print-finally", "before exit", "-swallow-cancel-signal",
-      ],
+      ["2000", "-wait-on-init", "-print-finally", "before exit"],
     )
     group.spawn_bg() <| () => {
       defer proc.stdout.close()

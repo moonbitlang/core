@@ -94,7 +94,7 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
           conn
           ..send_response(100, "CONTINUE", extra_headers={ "Info": "round2" })
           .end_response()
-          @async.sleep(100)
+          @async.sleep(300)
           conn..send_response(200, "OK").end_response()
         }
         path => raise Failure("unknown request path: \{path}")
@@ -176,7 +176,7 @@ extern "js" fn Server::create(
   #|           setTimeout(() => {
   #|             logger(`server: sending ${req.method} response part 2\n`)
   #|             response.end(`${req.method} response part 2\n`)
-  #|           }, 100)
+  #|           }, 300)
   #|         })
   #|       })
   #|       return

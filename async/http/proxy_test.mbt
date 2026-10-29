@@ -143,7 +143,7 @@ async test "proxied http request" {
       "http://www.example.org",
       proxy=ClientConnection("http://127.0.0.1:\{port}"),
     )
-    assert_true(result.has_prefix("<!doctype html>"))
+    inspect(result[:15], content="<!doctype html>")
   }
   json_inspect(log, content=[
     "proxy server: connected to www.example.org:80 successfully",
