@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+// Keep the prelude spellings in JSON examples and tests.
+#warnings("-unqualified_local_using")
+using @json {type Json, null}
+
+///|
 priv struct JsonAliasValue {
   count : Int32
 } derive(@json.ToJson)
@@ -20,9 +25,18 @@ priv struct JsonAliasValue {
 ///|
 test "ToJson alias preserves derivation and Json constructor conversion" {
   let value = JsonAliasValue::{ count: 42, }
-  let converted = @json.ToJson::to_json(value)
+  let converted : @json.Json = @json.ToJson::to_json(value)
+  let constructed = @json.Json(value)
   inspect(converted.stringify(), content="{\"count\":42}")
+  assert_true(converted == constructed)
   assert_true(converted == Json(value))
+}
+
+///|
+test "Json and null aliases preserve literals and patterns" {
+  let value : @json.Json = { "count": 42, "missing": @json.null }
+  assert_true(value is { "count": 42, "missing": Null, .. })
+  inspect(@json.null.stringify(), content="null")
 }
 
 ///|
