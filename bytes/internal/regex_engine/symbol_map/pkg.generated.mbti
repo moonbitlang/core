@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/bytes/internal/regex_engine/symbol_map"
+
+import {
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types/byte_set",
+}
+
+// Values
+pub fn new() -> SymbolMap
+
+// Errors
+
+// Types and methods
+type SymbolMap
+pub fn SymbolMap::finalize(Self) -> (Table, ReadOnlyArray[Int32])
+pub fn SymbolMap::split(Self, @byte_set.ByteSet) -> Unit
+
+type Table
+pub fn Table::map(Self, Byte) -> Int32
+pub fn Table::map_set(Self, @byte_set.ByteSet) -> @byte_set.ByteSet
+
+// Type aliases
+
+// Traits

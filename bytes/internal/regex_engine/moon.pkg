@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/hashmap",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types",
+  "moonbitlang/core/bytes/internal/regex_engine/ast",
+  "moonbitlang/core/bytes/internal/regex_engine/symbol_map",
+}
+
+import {
+  "moonbitlang/core/test",
+} for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"

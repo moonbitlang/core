@@ -1,5 +1,8 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/bytes/internal/regex_engine" @re,
+  "moonbitlang/core/bytes/internal/regex_parser",
 }
 
 import {
@@ -7,4 +10,5 @@ import {
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
+  "moonbitlang/core/string",
 } for "test"

@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/bytes/internal/regex_parser"
+
+import {
+  "moonbitlang/core/bytes/internal/regex_engine/ast",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn parse(StringView) -> @ast.Pattern raise ParserError
+
+// Errors
+type ParserError derive(@debug.Debug)
+pub fn ParserError::to_string(Self) -> String
+pub impl Show for ParserError
+
+// Types and methods
+
+// Type aliases
+
+// Traits

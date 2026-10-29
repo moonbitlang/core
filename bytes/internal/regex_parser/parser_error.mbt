@@ -1,0 +1,105 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+suberror ParserError {
+  ParserError(at~ : Int32, hint~ : String)
+} derive(@debug.Debug)
+
+///|
+pub impl Show for ParserError with fn output(self, logger) {
+  match self {
+    ParserError(at~, hint~) =>
+      logger <+
+        $|ParserError at position \{at}: \{hint}
+  }
+}
+
+///|
+const HINT_UNCLOSED_CHAR_CLASS = "Unclosed character class"
+
+///|
+const HINT_UNCLOSED_GROUP = "Unclosed group"
+
+///|
+const HINT_NESTING_TOO_DEEP = "Groups nested too deeply"
+
+///|
+const HINT_UNEXPECTED_CHAR = "Unexpected character"
+
+///|
+const HINT_QUANTIFIER_TOO_LARGE = "Quantifier too large"
+
+///|
+const HINT_INVALID_QUANTIFIER = "Invalid quantifier"
+
+///|
+const HINT_INVALID_ESCAPE = "Invalid escape sequence"
+
+///|
+const HINT_UNICODE_ESCAPE_NOT_ALLOWED = "Unicode escape sequences are not allowed in a bytes pattern, use \\xHH for a byte"
+
+///|
+const HINT_NON_ASCII_CHAR = "Non-ASCII characters are not allowed in a bytes pattern, use \\xHH for a byte"
+
+///|
+const HINT_INVALID_GROUP = "Invalid group"
+
+///|
+const HINT_DUPLICATE_GROUP_NAME = "Duplicate capture group name"
+
+///|
+const HINT_UNSUPPORTED_LOOKAHEAD = "Unsupported lookahead assertion"
+
+///|
+const HINT_UNSUPPORTED_NEGATIVE_LOOKAHEAD = "Unsupported negative lookahead assertion"
+
+///|
+const HINT_UNSUPPORTED_LOOKBEHIND = "Unsupported lookbehind assertion"
+
+///|
+const HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND = "Unsupported negative lookbehind assertion"
+
+///|
+const HINT_INVALID_POSIX_CLASS = "Invalid POSIX character class"
+
+///|
+const HINT_BARE_POSIX_CLASS = "A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon"
+
+///|
+const HINT_UNSUPPORTED_POSIX_CLASS = "Unsupported POSIX character class"
+
+///|
+const HINT_CHAR_RANGE_OVER_SETS = "Character class range over sets"
+
+///|
+const HINT_INVALID_CHAR_RANGE = "Invalid character class range"
+
+///|
+const HINT_UNSUPPORTED_CLASS_SET_EXPRESSION = "Unsupported character class set expression"
+
+///|
+const HINT_UNSUPPORTED_POSSESSIVE_QUANTIFIER = "Unsupported possessive quantifier"
+
+///|
+const HINT_UNSUPPORTED_NESTED_CHAR_CLASS = "Unsupported nested character class"
+
+///|
+const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S"
+
+///|
+const HINT_DASH_AT_BOUNDARY = "Dash at the start or end of character class is not supported, use \\- to match a literal dash"
+
+///|
+const HINT_DASH_AFTER_RANGE = "Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash"
