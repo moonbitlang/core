@@ -13,6 +13,62 @@
 // limitations under the License.
 
 ///|
+/// Legacy bounds-checked view using raw UTF-16 code-unit offsets relative to this view.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this view. Surrogate
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries, or `clamped_view` for clamped slicing.
+/// New raw code-unit algorithms can use `unsafe_view` with validated bounds.
+// Compiler-generated lexmatch/lexscan calls may still trigger this deprecation
+// until compiler lowering uses unsafe_view(start~, end~).
+#deprecated("Use `clamped_view(start~, end~)` or `exact_view(start~, end~)` instead")
+pub fn StringView::view(
+  self : StringView,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
+  }
+  StringView::make_view(
+    self.str(),
+    self.start() + start_offset,
+    self.start() + end_offset,
+  )
+}
+
+///|
+/// Legacy bounds-checked view using raw UTF-16 code-unit offsets.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this string. Surrogate
+/// boundaries are not checked: every `StringView` must be well-formed UTF-16,
+/// so the caller must not split a surrogate pair. Use `exact_view(start~, end~)`
+/// to validate text boundaries, or `clamped_view` for clamped slicing.
+/// New raw code-unit algorithms can use `unsafe_view` with validated bounds.
+// Compiler-generated lexmatch/lexscan calls may still trigger this deprecation
+// until compiler lowering uses unsafe_view(start~, end~).
+#deprecated("Use `clamped_view(start~, end~)` or `exact_view(start~, end~)` instead")
+pub fn String::view(
+  self : String,
+  start_offset~ : Int32 = 0,
+  end_offset? : Int32,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
+  }
+  StringView::make_view(self, start_offset, end_offset)
+}
+
+///|
 /// Encode a UTF-16 string into raw bytes.
 ///
 /// Deprecated: use `@encoding/utf8.encode` for text encoding.
