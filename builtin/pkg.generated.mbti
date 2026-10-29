@@ -619,6 +619,7 @@ pub fn String::unsafe_char_at(String, Int32) -> Char
 pub fn String::unsafe_range_equal(String, start~ : Int32, String, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn String::unsafe_substring(String, start~ : Int32, end~ : Int32) -> String
 pub fn String::unsafe_view(String, start~ : Int32, end~ : Int32) -> StringView
+#deprecated
 pub fn String::view(String, start_offset? : Int32, end_offset? : Int32) -> StringView
 pub impl Add for String
 pub impl Compare for String
@@ -1512,6 +1513,7 @@ pub fn StringView::trim_start(Self, chars? : Self) -> Self
 pub fn StringView::unsafe_charcode_at(Self, Int32) -> Int32
 pub fn StringView::unsafe_get(Self, Int32) -> UInt16
 pub fn StringView::unsafe_view(Self, start~ : Int32, end~ : Int32) -> Self
+#deprecated
 pub fn StringView::view(Self, start_offset? : Int32, end_offset? : Int32) -> Self
 pub impl Add for StringView
 pub impl Compare for StringView

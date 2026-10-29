@@ -152,9 +152,10 @@ it to preserve split pairs, but must ensure well-formed UTF-16 before passing
 results to character-based APIs.
 
 The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
-method retains its `start_offset`/`end_offset` labels and its numeric bounds
-checks, without checking surrogate boundaries. It will be deprecated after
-compiler-generated `lexmatch`/`lexscan` calls migrate to `unsafe_view`.
+methods on `String` and `StringView` are deprecated in favor of `clamped_view`
+or `exact_view`. They retain their `start_offset`/`end_offset` labels and numeric
+bounds checks, without checking surrogate boundaries. When migrating, rename
+the labels to `start`/`end` and choose the desired boundary behavior.
 New code should choose `clamped_view`, `exact_view`, or `unsafe_view` explicitly.
 
 ```d2
