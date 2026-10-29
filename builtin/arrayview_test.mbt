@@ -1302,3 +1302,31 @@ test "ArrayView::strip_suffix on sliced view" {
   let v = [0, 1, 2, 3, 4][:4]
   debug_inspect(v.strip_suffix([2, 3]), content="Some(<ArrayView: [0, 1]>)")
 }
+
+///|
+test "ArrayView::zip uses the shorter length" {
+  let v1 = [1, 2, 3, 4][1:]
+  let v2 = ['a', 'b'][:]
+  debug_inspect(v1.zip(v2), content="[(2, 'a'), (3, 'b')]")
+  debug_inspect(v2.zip(v1), content="[('a', 2), ('b', 3)]")
+  let empty : ArrayView[Int32] = [1][0:0]
+  debug_inspect(empty.zip(v2), content="[]")
+}
+
+///|
+test "ArrayView::zip_iter2 stops at the shorter view" {
+  let v1 = [1, 2, 3][:]
+  let v2 = ["x", "y"][:]
+  let iter = v1.zip_iter2(v2)
+  debug_inspect(iter.to_array(), content="[(1, \"x\"), (2, \"y\")]")
+}
+
+///|
+test "ArrayView::unzip" {
+  let v = [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')][1:3]
+  let (nums, chars) = v.unzip()
+  debug_inspect(nums, content="[2, 3]")
+  debug_inspect(chars, content="['b', 'c']")
+  let empty : ArrayView[(Int32, Char)] = [(1, 'a')][0:0]
+  debug_inspect(empty.unzip(), content="([], [])")
+}
