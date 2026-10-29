@@ -7,14 +7,16 @@ import {
 }
 
 // Values
-pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
+pub fn[T : FromJson] from_json(@builtin.Json, path? : JsonPath) -> T raise JsonDecodeError
 
 #callsite(autofill(args_loc, loc))
-pub fn json_inspect(&@builtin.ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+pub fn json_inspect(&@builtin.ToJson, content? : @builtin.Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
-pub fn parse(StringView, max_nesting_depth? : Int32, reject_duplicate_keys? : Bool, preserve_number_repr? : Bool) -> Json raise ParseError
+pub let null : @builtin.Json
 
-pub fn[T : @builtin.ToJson] to_json(T) -> Json
+pub fn parse(StringView, max_nesting_depth? : Int32, reject_duplicate_keys? : Bool, preserve_number_repr? : Bool) -> @builtin.Json raise ParseError
+
+pub fn[T : @builtin.ToJson] to_json(T) -> @builtin.Json
 
 pub fn valid(StringView) -> Bool
 
@@ -56,38 +58,40 @@ pub struct Replacer {
   // private fields
 } derive(@debug.Debug)
 #alias(new, deprecated)
-pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
+pub fn Replacer::Replacer((String, @builtin.Json) -> @builtin.Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
 
 #deprecated
-pub fn Json::as_array(Self) -> Array[Self]?
+pub fn @builtin.Json::as_array(Self) -> Array[Self]?
 #deprecated
-pub fn Json::as_bool(Self) -> Bool?
+pub fn @builtin.Json::as_bool(Self) -> Bool?
 #deprecated
-pub fn Json::as_null(Self) -> Unit?
+pub fn @builtin.Json::as_null(Self) -> Unit?
 #deprecated
-pub fn Json::as_number(Self) -> Double?
+pub fn @builtin.Json::as_number(Self) -> Double?
 #deprecated
-pub fn Json::as_object(Self) -> Map[String, Self]?
+pub fn @builtin.Json::as_object(Self) -> Map[String, Self]?
 #deprecated
-pub fn Json::as_string(Self) -> String?
+pub fn @builtin.Json::as_string(Self) -> String?
 #deprecated
-pub fn Json::item(Self, Int32) -> Self?
-pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int32, replacer? : Replacer) -> String
-pub fn Json::transform(Self, Replacer) -> Self
+pub fn @builtin.Json::item(Self, Int32) -> Self?
+pub fn @builtin.Json::stringify(Self, escape_slash? : Bool, indent? : Int32, replacer? : Replacer) -> String
+pub fn @builtin.Json::transform(Self, Replacer) -> Self
 #deprecated
-pub fn Json::value(Self, String) -> Self?
+pub fn @builtin.Json::value(Self, String) -> Self?
 #deprecated
-pub impl Show for Json
-pub impl @builtin.ToJson for Json
+pub impl Show for @builtin.Json
+pub impl @builtin.ToJson for @builtin.Json
 
 // Type aliases
+pub using @builtin {type Json}
+
 pub using @builtin {trait ToJson}
 
 // Traits
 pub(open) trait FromJson {
-  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(@builtin.Json, JsonPath) -> Self raise JsonDecodeError
 }
 pub impl FromJson for Unit
 pub impl FromJson for Bool
@@ -104,7 +108,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X]
 pub impl FromJson for Bytes
 pub impl[X : FromJson] FromJson for Array[X]
 pub impl[X : FromJson] FromJson for ArrayView[X]
-pub impl FromJson for Json
+pub impl FromJson for @builtin.Json
 pub impl[V : FromJson] FromJson for Map[String, V]
 pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
 pub impl[A : FromJson, B : FromJson] FromJson for (A, B)

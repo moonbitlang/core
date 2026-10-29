@@ -62,7 +62,6 @@ pub using @builtin {
   type Hasher,
   type Iter,
   type Iter2,
-  type Json,
   type Map,
   type InspectError,
   type SnapshotError,
@@ -176,11 +175,11 @@ pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
 }
 
 ///|
-/// Numeric constant `null`.
-pub let null : Json = @builtin.null
+/// JSON `null` constant.
+pub let null : Json = @json.null
 
 ///|
-pub using @json {trait ToJson, trait FromJson, json_inspect}
+pub using @json {type Json, trait ToJson, trait FromJson, json_inspect}
 
 ///|
 /// Type `Iterator`.
