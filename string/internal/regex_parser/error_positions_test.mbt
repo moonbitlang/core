@@ -13,12 +13,8 @@
 // limitations under the License.
 
 ///|
-fn error_message(
-  pattern : StringView,
-  mode~ : @regex_parser.Mode = String,
-) -> String? {
-  let profile = if mode is Bytes { profile_bytes() } else { profile_unicode() }
-  try parse(profile~, mode~, pattern) catch {
+fn error_message(pattern : StringView) -> String? {
+  try parse(profile=profile_unicode(), pattern) catch {
     e => Some("\{e}")
   } noraise {
     _ => None
@@ -50,26 +46,6 @@ test "parse/error_positions/escape_start" {
       Some("ParserError at position \{at}: \{hint}"),
     )
   }
-  for pattern in ["\\u0041", "\\u{41}"] {
-    assert_eq(
-      error_message(pattern, mode=Bytes),
-      Some(
-        "ParserError at position \{0}: Unicode escape sequences are not allowed",
-      ),
-    )
-  }
-  for pattern in ["[\\u0041]", "[\\u{41}]"] {
-    assert_eq(
-      error_message(pattern, mode=Bytes),
-      Some(
-        "ParserError at position \{1}: Unicode escape sequences are not allowed",
-      ),
-    )
-  }
-  assert_eq(
-    error_message("[中]", mode=Bytes),
-    Some("ParserError at position \{1}: Character out of range"),
-  )
 }
 
 ///|
@@ -159,11 +135,10 @@ test "parse/error_positions/other_escape_diagnostics_unchanged" {
     Some("ParserError at position \{1}: Invalid escape sequence"),
   )
   // Valid escapes, boundary repetition counts and complete classes remain
-  // accepted, in both string and byte modes.
+  // accepted.
   for pattern in ["\\u0041", "[\\u{1f600}]", "a{256}", "a{0,256}", "[a-z]"] {
     assert_eq(error_message(pattern), None)
   }
-  assert_eq(error_message("[\\x41]", mode=Bytes), None)
 }
 
 ///|

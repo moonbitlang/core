@@ -48,9 +48,6 @@ const HINT_INVALID_QUANTIFIER = "Invalid quantifier"
 const HINT_INVALID_ESCAPE = "Invalid escape sequence"
 
 ///|
-const HINT_UNICODE_ESCAPE_NOT_ALLOWED = "Unicode escape sequences are not allowed"
-
-///|
 const HINT_BYTE_ESCAPE_NOT_ALLOWED = "Byte escape sequences are not allowed"
 
 ///|

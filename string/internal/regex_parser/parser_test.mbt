@@ -32,37 +32,18 @@ fn profile_unicode() -> @re.Profile {
 }
 
 ///|
-fn profile_bytes() -> @re.Profile {
-  Profile(
-    valid=@re.RecharSet::char_range(0, 255),
-    word=@re.RecharSet::char_range('a', 'z') +
-      @re.RecharSet::char_range('A', 'Z') +
-      @re.RecharSet::char_range('0', '9') +
-      @re.RecharSet::char('_'),
-    category=fn(c) {
-      match c {
-        'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '_' => @re.Category::word()
-        '\n' => @re.Category::newline()
-        _ => @re.Category::not_word()
-      }
-    },
-  )
-}
-
-///|
 fn parse(
   profile~ : @re.Profile,
-  mode~ : @regex_parser.Mode,
   pattern : StringView,
 ) -> @re.Pattern raise @regex_parser.ParserError {
-  @regex_parser.parse(profile~, mode~, pattern)
+  @regex_parser.parse(profile~, pattern)
 }
 
 // Basic parsing tests
 
 ///|
 test "parse/simple_char" {
-  let pat = parse(profile=profile_unicode(), mode=String, "abc")
+  let pat = parse(profile=profile_unicode(), "abc")
   debug_inspect(
     pat,
     content=(
@@ -76,7 +57,7 @@ test "parse/simple_char" {
 
 ///|
 test "parse/dot_wildcard" {
-  let pat = parse(profile=profile_unicode(), mode=String, "a.b")
+  let pat = parse(profile=profile_unicode(), "a.b")
   debug_inspect(
     pat,
     content=(
@@ -94,7 +75,7 @@ test "parse/dot_wildcard" {
 
 ///|
 test "parse/quantifiers" {
-  let pat = parse(profile=profile_unicode(), mode=String, "a*b+c?")
+  let pat = parse(profile=profile_unicode(), "a*b+c?")
   debug_inspect(
     pat,
     content=(
@@ -112,17 +93,17 @@ test "parse/quantifiers" {
 
 ///|
 test "parse/quantifier_range" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "a{3}")
+  let pat1 = parse(profile=profile_unicode(), "a{3}")
   debug_inspect(
     pat1,
     content="Quantifier({ min: 3, max: Some(3), mode: Greedy }, Char([(97, 97)]))",
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "a{2,}")
+  let pat2 = parse(profile=profile_unicode(), "a{2,}")
   debug_inspect(
     pat2,
     content="Quantifier({ min: 2, max: None, mode: Greedy }, Char([(97, 97)]))",
   )
-  let pat3 = parse(profile=profile_unicode(), mode=String, "a{1,5}")
+  let pat3 = parse(profile=profile_unicode(), "a{1,5}")
   debug_inspect(
     pat3,
     content="Quantifier({ min: 1, max: Some(5), mode: Greedy }, Char([(97, 97)]))",
@@ -131,12 +112,12 @@ test "parse/quantifier_range" {
 
 ///|
 test "parse/non_greedy_quantifier" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "a*?")
+  let pat1 = parse(profile=profile_unicode(), "a*?")
   debug_inspect(
     pat1,
     content="Quantifier({ min: 0, max: None, mode: NonGreedy }, Char([(97, 97)]))",
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "a+?")
+  let pat2 = parse(profile=profile_unicode(), "a+?")
   debug_inspect(
     pat2,
     content="Quantifier({ min: 1, max: None, mode: NonGreedy }, Char([(97, 97)]))",
@@ -145,7 +126,7 @@ test "parse/non_greedy_quantifier" {
 
 ///|
 test "parse/alternation" {
-  let pat = parse(profile=profile_unicode(), mode=String, "a|b|c")
+  let pat = parse(profile=profile_unicode(), "a|b|c")
   debug_inspect(
     pat,
     content=(
@@ -159,7 +140,7 @@ test "parse/alternation" {
 
 ///|
 test "parse/groups" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "(abc)")
+  let pat1 = parse(profile=profile_unicode(), "(abc)")
   debug_inspect(
     pat1,
     content=(
@@ -172,7 +153,7 @@ test "parse/groups" {
       #|)
     ),
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "(a|b)")
+  let pat2 = parse(profile=profile_unicode(), "(a|b)")
   debug_inspect(
     pat2,
     content=(
@@ -186,7 +167,7 @@ test "parse/groups" {
 
 ///|
 test "parse/non_capture_group" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "(?:abc)")
+  let pat1 = parse(profile=profile_unicode(), "(?:abc)")
   debug_inspect(
     pat1,
     content=(
@@ -196,7 +177,7 @@ test "parse/non_capture_group" {
       #|)
     ),
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "a(?:b|c)d")
+  let pat2 = parse(profile=profile_unicode(), "a(?:b|c)d")
   debug_inspect(
     pat2,
     content=(
@@ -214,7 +195,7 @@ test "parse/non_capture_group" {
 
 ///|
 test "parse/named_groups" {
-  let pat = parse(profile=profile_unicode(), mode=String, "(?<name>abc)")
+  let pat = parse(profile=profile_unicode(), "(?<name>abc)")
   debug_inspect(
     pat,
     content=(
@@ -231,11 +212,11 @@ test "parse/named_groups" {
 
 ///|
 test "parse/character_class" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "[abc]")
+  let pat1 = parse(profile=profile_unicode(), "[abc]")
   debug_inspect(pat1, content="Char([(97, 99)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "[a-z]")
+  let pat2 = parse(profile=profile_unicode(), "[a-z]")
   debug_inspect(pat2, content="Char([(97, 122)])")
-  let pat3 = parse(profile=profile_unicode(), mode=String, "[^abc]")
+  let pat3 = parse(profile=profile_unicode(), "[^abc]")
   debug_inspect(
     pat3,
     content=(
@@ -246,14 +227,14 @@ test "parse/character_class" {
 
 ///|
 test "parse/character_class_range_clipped_to_profile_valid" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\uD7FF-\\uE000]")
+  let pat = parse(profile=profile_unicode(), "[\\uD7FF-\\uE000]")
   debug_inspect(pat, content="Char([(55295, 55295), (57344, 57344)])")
 }
 
 ///|
 test "parse/error_nested_character_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[[a-z][0-9]]")) catch {
+    Ok(parse(profile=profile_unicode(), "[[a-z][0-9]]")) catch {
       e => Err(e)
     },
     content=(
@@ -264,13 +245,13 @@ test "parse/error_nested_character_class" {
 
 ///|
 test "parse/posix_classes" {
-  let pat_digit = parse(profile=profile_unicode(), mode=String, "[[:digit:]]")
+  let pat_digit = parse(profile=profile_unicode(), "[[:digit:]]")
   debug_inspect(pat_digit, content="Char([(48, 57)])")
-  let pat_alpha = parse(profile=profile_unicode(), mode=String, "[[:alpha:]]")
+  let pat_alpha = parse(profile=profile_unicode(), "[[:alpha:]]")
   debug_inspect(pat_alpha, content="Char([(65, 90), (97, 122)])")
-  let pat_space = parse(profile=profile_unicode(), mode=String, "[[:space:]]")
+  let pat_space = parse(profile=profile_unicode(), "[[:space:]]")
   debug_inspect(pat_space, content="Char([(9, 13), (32, 32)])")
-  let pat_word = parse(profile=profile_unicode(), mode=String, "[[:word:]]")
+  let pat_word = parse(profile=profile_unicode(), "[[:word:]]")
   debug_inspect(
     pat_word,
     content="Char([(48, 57), (65, 90), (95, 95), (97, 122)])",
@@ -279,41 +260,35 @@ test "parse/posix_classes" {
 
 ///|
 test "parse/colon_ranges_are_not_bare_posix_classes" {
-  let range = parse(profile=profile_unicode(), mode=String, "[:-@]")
+  let range = parse(profile=profile_unicode(), "[:-@]")
   debug_inspect(range, content="Char([(58, 64)])")
-  let colon = parse(profile=profile_unicode(), mode=String, "[:]")
+  let colon = parse(profile=profile_unicode(), "[:]")
   debug_inspect(colon, content="Char([(58, 58)])")
-  let two_colons = parse(profile=profile_unicode(), mode=String, "[::]")
+  let two_colons = parse(profile=profile_unicode(), "[::]")
   debug_inspect(two_colons, content="Char([(58, 58)])")
-  let one_point_range = parse(profile=profile_unicode(), mode=String, "[:-:]")
+  let one_point_range = parse(profile=profile_unicode(), "[:-:]")
   debug_inspect(one_point_range, content="Char([(58, 58)])")
-  let union = parse(profile=profile_unicode(), mode=String, "[:!-@]")
+  let union = parse(profile=profile_unicode(), "[:!-@]")
   debug_inspect(union, content="Char([(33, 64)])")
-  let inverse = parse(profile=profile_unicode(), mode=String, "[^:-@]")
+  let inverse = parse(profile=profile_unicode(), "[^:-@]")
   debug_inspect(
     inverse,
     content="Char([(0, 57), (65, 55295), (57344, 1114111)])",
   )
-  let escaped_hyphen = parse(profile=profile_unicode(), mode=String, "[\\-:]")
+  let escaped_hyphen = parse(profile=profile_unicode(), "[\\-:]")
   debug_inspect(escaped_hyphen, content="Char([(45, 45), (58, 58)])")
-  let colon_then_hyphen = parse(
-    profile=profile_unicode(),
-    mode=String,
-    "[:\\-@]",
-  )
+  let colon_then_hyphen = parse(profile=profile_unicode(), "[:\\-@]")
   debug_inspect(
     colon_then_hyphen,
     content="Char([(45, 45), (58, 58), (64, 64)])",
   )
-  let bytes_range = parse(profile=profile_bytes(), mode=Bytes, "[:-@]")
-  debug_inspect(bytes_range, content="Char([(58, 64)])")
 }
 
 ///|
 test "parse/colon_preserves_posix_diagnostics" {
   for pattern in ["[:digit:]", "[^:digit:]", "[:unknown:]"] {
     let result = try {
-      ignore(parse(profile=profile_unicode(), mode=String, pattern))
+      ignore(parse(profile=profile_unicode(), pattern))
       "accepted"
     } catch {
       err => err.to_string()
@@ -322,11 +297,9 @@ test "parse/colon_preserves_posix_diagnostics" {
       result, "ParserError at position 0: A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
     )
   }
-  let digits = parse(profile=profile_unicode(), mode=String, "[[:digit:]]")
+  let digits = parse(profile=profile_unicode(), "[[:digit:]]")
   debug_inspect(digits, content="Char([(48, 57)])")
-  let unknown = Ok(
-    parse(profile=profile_unicode(), mode=String, "[[:unknown:]]"),
-  ) catch {
+  let unknown = Ok(parse(profile=profile_unicode(), "[[:unknown:]]")) catch {
     err => Err(err)
   }
   debug_inspect(
@@ -337,12 +310,12 @@ test "parse/colon_preserves_posix_diagnostics" {
 
 ///|
 test "parse/escape_sequences" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "\\n\\r\\t")
+  let pat1 = parse(profile=profile_unicode(), "\\n\\r\\t")
   debug_inspect(
     pat1,
     content="Sequence(<ReadOnlyArray: [Char([(10, 10)]), Char([(13, 13)]), Char([(9, 9)])]>)",
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "\\f\\v")
+  let pat2 = parse(profile=profile_unicode(), "\\f\\v")
   debug_inspect(
     pat2,
     content="Sequence(<ReadOnlyArray: [Char([(12, 12)]), Char([(11, 11)])]>)",
@@ -351,23 +324,16 @@ test "parse/escape_sequences" {
 
 ///|
 test "parse/unicode_escape" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "\\u0041")
+  let pat1 = parse(profile=profile_unicode(), "\\u0041")
   debug_inspect(pat1, content="Char([(65, 65)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "\\u{1F600}")
+  let pat2 = parse(profile=profile_unicode(), "\\u{1F600}")
   debug_inspect(pat2, content="Char([(128512, 128512)])")
-}
-
-///|
-test "parse/hex_escape_bytes_mode" {
-  let pat = parse(profile=profile_bytes(), mode=Bytes, "\\x41")
-  debug_inspect(pat, content="Char([(65, 65)])")
 }
 
 ///|
 test "parse/escaped_metacharacters" {
   let pat = parse(
     profile=profile_unicode(),
-    mode=String,
     "\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|",
   )
   debug_inspect(
@@ -397,7 +363,7 @@ test "parse/escaped_metacharacters" {
 
 ///|
 test "parse/anchors" {
-  let pat = parse(profile=profile_unicode(), mode=String, "^abc$")
+  let pat = parse(profile=profile_unicode(), "^abc$")
   debug_inspect(
     pat,
     content=(
@@ -417,7 +383,7 @@ test "parse/anchors" {
 
 ///|
 test "parse/word_boundary" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "\\bword\\b")
+  let pat1 = parse(profile=profile_unicode(), "\\bword\\b")
   debug_inspect(
     pat1,
     content=(
@@ -434,13 +400,13 @@ test "parse/word_boundary" {
       #|)
     ),
   )
-  let pat2 = parse(profile=profile_unicode(), mode=String, "\\B")
+  let pat2 = parse(profile=profile_unicode(), "\\B")
   debug_inspect(pat2, content="Assertion(NotWordBoundary)")
 }
 
 ///|
 test "parse/ignore_case_flag" {
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:abc)")
+  let pat = parse(profile=profile_unicode(), "(?i:abc)")
   debug_inspect(
     pat,
     content=(
@@ -461,7 +427,6 @@ test "parse/practical_date_ymd" {
   // ^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$
   let pat = parse(
     profile=profile_unicode(),
-    mode=String,
     "^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$",
   )
   debug_inspect(
@@ -495,11 +460,7 @@ test "parse/practical_date_ymd" {
 ///|
 test "parse/practical_identifier" {
   // ^[A-Za-z_][A-Za-z0-9_]*$
-  let pat = parse(
-    profile=profile_unicode(),
-    mode=String,
-    "^[A-Za-z_][A-Za-z0-9_]*$",
-  )
+  let pat = parse(profile=profile_unicode(), "^[A-Za-z_][A-Za-z0-9_]*$")
   debug_inspect(
     pat,
     content=(
@@ -521,17 +482,17 @@ test "parse/practical_identifier" {
 
 ///|
 test "parse/escaped_in_char_class" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "[\\n\\r\\t]")
+  let pat1 = parse(profile=profile_unicode(), "[\\n\\r\\t]")
   debug_inspect(pat1, content="Char([(9, 10), (13, 13)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "[\\-\\]]")
+  let pat2 = parse(profile=profile_unicode(), "[\\-\\]]")
   debug_inspect(pat2, content="Char([(45, 45), (93, 93)])")
 }
 
 ///|
 test "parse/char_class_with_unicode_escape" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "[\\u0041-\\u005A]")
+  let pat1 = parse(profile=profile_unicode(), "[\\u0041-\\u005A]")
   debug_inspect(pat1, content="Char([(65, 90)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "[\\u{41}-\\u{5A}]")
+  let pat2 = parse(profile=profile_unicode(), "[\\u{41}-\\u{5A}]")
   debug_inspect(pat2, content="Char([(65, 90)])")
 }
 
@@ -540,7 +501,7 @@ test "parse/char_class_with_unicode_escape" {
 ///|
 test "parse/error_use_posix_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
+    Ok(parse(profile=profile_unicode(), "\\d")) catch {
       e => Err(e)
     },
     content=(
@@ -557,7 +518,7 @@ test "parse/error_use_posix_class" {
 ///|
 test "parse/error_use_posix_class_in_char_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[\\d]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\d]")) catch {
       e => Err(e)
     },
     content=(
@@ -574,7 +535,7 @@ test "parse/error_use_posix_class_in_char_class" {
 ///|
 test "parse/error_byte_escape_in_string_mode" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[\\x41]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\x41]")) catch {
       e => Err(e)
     },
     content=(
@@ -586,7 +547,7 @@ test "parse/error_byte_escape_in_string_mode" {
 ///|
 test "parse/error_byte_escape_in_string_mode_term" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\x41")) catch {
+    Ok(parse(profile=profile_unicode(), "\\x41")) catch {
       e => Err(e)
     },
     content=(
@@ -596,21 +557,9 @@ test "parse/error_byte_escape_in_string_mode_term" {
 }
 
 ///|
-test "parse/error_unicode_escape_in_bytes_mode" {
-  debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=Bytes, "[\\u0041]")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
-    ),
-  )
-}
-
-///|
 test "parse/error_unicode_escape_out_of_range_in_class" {
   debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=String, "[\\u0100]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\uD800]")) catch {
       e => Err(e)
     },
     content=(
@@ -620,33 +569,9 @@ test "parse/error_unicode_escape_out_of_range_in_class" {
 }
 
 ///|
-test "parse/error_unicode_escape_in_bytes_mode_term" {
-  debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=Bytes, "\\u0041")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=0, hint="Unicode escape sequences are not allowed"))
-    ),
-  )
-}
-
-///|
-test "parse/error_unicode_brace_escape_in_bytes_mode" {
-  debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=Bytes, "[\\u{41}]")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
-    ),
-  )
-}
-
-///|
 test "parse/error_unsupported_posix_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[[:foo:]]")) catch {
+    Ok(parse(profile=profile_unicode(), "[[:foo:]]")) catch {
       e => Err(e)
     },
     content=(
@@ -658,7 +583,7 @@ test "parse/error_unsupported_posix_class" {
 ///|
 test "parse/error_unclosed_char_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[abc")) catch {
+    Ok(parse(profile=profile_unicode(), "[abc")) catch {
       e => Err(e)
     },
     content=(
@@ -670,7 +595,7 @@ test "parse/error_unclosed_char_class" {
 ///|
 test "parse/error_unclosed_group" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(")) catch {
+    Ok(parse(profile=profile_unicode(), "(")) catch {
       e => Err(e)
     },
     content=(
@@ -682,7 +607,7 @@ test "parse/error_unclosed_group" {
 ///|
 test "parse/error_invalid_quantifier" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a{abc}")) catch {
+    Ok(parse(profile=profile_unicode(), "a{abc}")) catch {
       e => Err(e)
     },
     content=(
@@ -694,7 +619,7 @@ test "parse/error_invalid_quantifier" {
 ///|
 test "parse/error_invalid_quantifier_range" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a{5,2}")) catch {
+    Ok(parse(profile=profile_unicode(), "a{5,2}")) catch {
       e => Err(e)
     },
     content=(
@@ -706,7 +631,7 @@ test "parse/error_invalid_quantifier_range" {
 ///|
 test "parse/error_quantifier_too_large" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a{999}")) catch {
+    Ok(parse(profile=profile_unicode(), "a{999}")) catch {
       e => Err(e)
     },
     content=(
@@ -718,7 +643,7 @@ test "parse/error_quantifier_too_large" {
 ///|
 test "parse/error_quantifier_too_large_overflow" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a{99999999999999999999}")) catch {
+    Ok(parse(profile=profile_unicode(), "a{99999999999999999999}")) catch {
       e => Err(e)
     },
     content=(
@@ -730,7 +655,7 @@ test "parse/error_quantifier_too_large_overflow" {
 ///|
 test "parse/error_max_quantifier_too_large" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a{1,999}")) catch {
+    Ok(parse(profile=profile_unicode(), "a{1,999}")) catch {
       e => Err(e)
     },
     content=(
@@ -742,7 +667,7 @@ test "parse/error_max_quantifier_too_large" {
 ///|
 test "parse/error_possessive_quantifier" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "a++")) catch {
+    Ok(parse(profile=profile_unicode(), "a++")) catch {
       e => Err(e)
     },
     content=(
@@ -754,7 +679,7 @@ test "parse/error_possessive_quantifier" {
 ///|
 test "parse/error_lookahead" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?=abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?=abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -766,7 +691,7 @@ test "parse/error_lookahead" {
 ///|
 test "parse/error_negative_lookahead" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?!abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?!abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -778,7 +703,7 @@ test "parse/error_negative_lookahead" {
 ///|
 test "parse/error_lookbehind" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?<=abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?<=abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -790,7 +715,7 @@ test "parse/error_lookbehind" {
 ///|
 test "parse/error_negative_lookbehind" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?<!abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?<!abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -802,7 +727,7 @@ test "parse/error_negative_lookbehind" {
 ///|
 test "parse/error_invalid_group" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?<>abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?<>abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -814,7 +739,7 @@ test "parse/error_invalid_group" {
 ///|
 test "parse/error_invalid_flags" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "(?xyz:abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "(?xyz:abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -826,7 +751,7 @@ test "parse/error_invalid_flags" {
 ///|
 test "parse/error_bare_posix_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[:digit:]")) catch {
+    Ok(parse(profile=profile_unicode(), "[:digit:]")) catch {
       e => Err(e)
     },
     content=(
@@ -843,7 +768,7 @@ test "parse/error_bare_posix_class" {
 ///|
 test "parse/error_invalid_char_range" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[z-a]")) catch {
+    Ok(parse(profile=profile_unicode(), "[z-a]")) catch {
       e => Err(e)
     },
     content=(
@@ -855,7 +780,7 @@ test "parse/error_invalid_char_range" {
 ///|
 test "parse/error_char_range_over_sets" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a-[:digit:]]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a-[:digit:]]")) catch {
       e => Err(e)
     },
     content=(
@@ -867,7 +792,7 @@ test "parse/error_char_range_over_sets" {
 ///|
 test "parse/error_unsupported_class_set_expression" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a--b]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a--b]")) catch {
       e => Err(e)
     },
     content=(
@@ -879,7 +804,7 @@ test "parse/error_unsupported_class_set_expression" {
 ///|
 test "parse/error_class_set_ampersand" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a&&b]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a&&b]")) catch {
       e => Err(e)
     },
     content=(
@@ -891,7 +816,7 @@ test "parse/error_class_set_ampersand" {
 ///|
 test "parse/error_unexpected_char_in_range" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a-]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a-]")) catch {
       e => Err(e)
     },
     content=(
@@ -908,7 +833,7 @@ test "parse/error_unexpected_char_in_range" {
 ///|
 test "parse/error_dash_at_start" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[-a]")) catch {
+    Ok(parse(profile=profile_unicode(), "[-a]")) catch {
       e => Err(e)
     },
     content=(
@@ -925,7 +850,7 @@ test "parse/error_dash_at_start" {
 ///|
 test "parse/error_dash_at_start_negated" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[^-a]")) catch {
+    Ok(parse(profile=profile_unicode(), "[^-a]")) catch {
       e => Err(e)
     },
     content=(
@@ -943,7 +868,7 @@ test "parse/error_dash_at_start_negated" {
 test "parse/error_invalid_escape" {
   // \q is not a valid escape sequence
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\q")) catch {
+    Ok(parse(profile=profile_unicode(), "\\q")) catch {
       e => Err(e)
     },
     content=(
@@ -955,7 +880,7 @@ test "parse/error_invalid_escape" {
 ///|
 test "parse/error_empty_unicode_brace_escape" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[\\u{}]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\u{}]")) catch {
       e => Err(e)
     },
     content=(
@@ -967,7 +892,7 @@ test "parse/error_empty_unicode_brace_escape" {
 ///|
 test "parse/error_unicode_out_of_range" {
   debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\u{FFFFFF}]")) catch {
       e => Err(e)
     },
     content=(
@@ -979,7 +904,7 @@ test "parse/error_unicode_out_of_range" {
 ///|
 test "parse/error_unicode_brace_out_of_range_term" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "\\u{110000}")) catch {
+    Ok(parse(profile=profile_unicode(), "\\u{110000}")) catch {
       e => Err(e)
     },
     content=(
@@ -991,7 +916,7 @@ test "parse/error_unicode_brace_out_of_range_term" {
 ///|
 test "parse/error_invalid_posix_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[[:abc")) catch {
+    Ok(parse(profile=profile_unicode(), "[[:abc")) catch {
       e => Err(e)
     },
     content=(
@@ -1003,47 +928,35 @@ test "parse/error_invalid_posix_class" {
 // Additional tests for more coverage
 
 ///|
-test "parse/hex_escape_in_char_class_bytes_mode" {
-  let pat = parse(profile=profile_bytes(), mode=Bytes, "[\\x41\\x5A]")
-  debug_inspect(pat, content="Char([(65, 65), (90, 90)])")
-}
-
-///|
-test "parse/hex_escape_lowercase_in_char_class_bytes_mode" {
-  let pat = parse(profile=profile_bytes(), mode=Bytes, "[\\x4f]")
-  debug_inspect(pat, content="Char([(79, 79)])")
-}
-
-///|
 test "parse/escape_sequences_in_char_class" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\n\\r\\t]")
+  let pat = parse(profile=profile_unicode(), "[\\n\\r\\t]")
   debug_inspect(pat, content="Char([(9, 10), (13, 13)])")
 }
 
 ///|
 test "parse/unicode_escape_in_char_class" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\u0041\\u{1f600}]")
+  let pat = parse(profile=profile_unicode(), "[\\u0041\\u{1f600}]")
   debug_inspect(pat, content="Char([(65, 65), (128512, 128512)])")
 }
 
 ///|
 test "parse/unicode_escape_lowercase_in_char_class" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\u00af]")
+  let pat = parse(profile=profile_unicode(), "[\\u00af]")
   debug_inspect(pat, content="Char([(175, 175)])")
 }
 
 ///|
 test "parse/lowercase_hex_unicode" {
-  let pat1 = parse(profile=profile_unicode(), mode=String, "\\u00ab")
+  let pat1 = parse(profile=profile_unicode(), "\\u00ab")
   debug_inspect(pat1, content="Char([(171, 171)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "\\u{abc}")
+  let pat2 = parse(profile=profile_unicode(), "\\u{abc}")
   debug_inspect(pat2, content="Char([(2748, 2748)])")
 }
 
 ///|
 test "parse/ignore_case_alternation" {
   // Cover alternation inside ignore case
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:a|b|c)")
+  let pat = parse(profile=profile_unicode(), "(?i:a|b|c)")
   debug_inspect(
     pat,
     content=(
@@ -1061,7 +974,7 @@ test "parse/ignore_case_alternation" {
 
 ///|
 test "parse/ignore_case_with_groups" {
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:(abc))")
+  let pat = parse(profile=profile_unicode(), "(?i:(abc))")
   debug_inspect(
     pat,
     content=(
@@ -1082,7 +995,7 @@ test "parse/ignore_case_with_groups" {
 
 ///|
 test "parse/ignore_case_with_anchors" {
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:^abc$)")
+  let pat = parse(profile=profile_unicode(), "(?i:^abc$)")
   debug_inspect(
     pat,
     content=(
@@ -1103,7 +1016,7 @@ test "parse/ignore_case_with_anchors" {
 ///|
 test "parse/double_dash_at_start_of_class" {
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a-z--[aeiou]]")) catch {
       e => Err(e)
     },
     content=(
@@ -1116,59 +1029,57 @@ test "parse/double_dash_at_start_of_class" {
 
 ///|
 test "parse/posix_class_ascii" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:ascii:]]")
+  let pat = parse(profile=profile_unicode(), "[[:ascii:]]")
   debug_inspect(pat, content="Char([(0, 127)])")
 }
 
 ///|
 test "parse/posix_class_upper" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:upper:]]")
+  let pat = parse(profile=profile_unicode(), "[[:upper:]]")
   debug_inspect(pat, content="Char([(65, 90)])")
 }
 
 ///|
 test "parse/posix_class_lower" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:lower:]]")
+  let pat = parse(profile=profile_unicode(), "[[:lower:]]")
   debug_inspect(pat, content="Char([(97, 122)])")
 }
 
 ///|
 test "parse/posix_class_alnum" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:alnum:]]")
+  let pat = parse(profile=profile_unicode(), "[[:alnum:]]")
   debug_inspect(pat, content="Char([(48, 57), (65, 90), (97, 122)])")
 }
 
 ///|
 test "parse/posix_class_xdigit" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:xdigit:]]")
+  let pat = parse(profile=profile_unicode(), "[[:xdigit:]]")
   debug_inspect(pat, content="Char([(48, 57), (65, 70), (97, 102)])")
 }
 
 ///|
 test "parse/posix_class_blank" {
-  let pat = parse(profile=profile_unicode(), mode=String, "[[:blank:]]")
+  let pat = parse(profile=profile_unicode(), "[[:blank:]]")
   debug_inspect(pat, content="Char([(9, 9), (32, 32)])")
 }
 
 ///|
 test "parse/backspace_in_char_class" {
   // \b in character class means backspace (0x08)
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\b]")
+  let pat = parse(profile=profile_unicode(), "[\\b]")
   debug_inspect(pat, content="Char([(8, 8)])")
 }
 
 ///|
 test "parse/formfeed_in_char_class" {
   // \f in character class means formfeed (0x0c = 12)
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\f]")
+  let pat = parse(profile=profile_unicode(), "[\\f]")
   debug_inspect(pat, content="Char([(12, 12)])")
 }
 
 ///|
 test "parse/parser_error_to_string" {
-  let result = Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
-    e => Err(e)
-  }
+  let result = Ok(parse(profile=profile_unicode(), "\\d")) catch { e => Err(e) }
   match result {
     Err(err) =>
       inspect(
@@ -1182,11 +1093,11 @@ test "parse/parser_error_to_string" {
 ///|
 test "parse/escaped_special_chars_in_class" {
   // Cover more escape sequences in character class: / " : &
-  let pat1 = parse(profile=profile_unicode(), mode=String, "[\\/]")
+  let pat1 = parse(profile=profile_unicode(), "[\\/]")
   debug_inspect(pat1, content="Char([(47, 47)])")
-  let pat2 = parse(profile=profile_unicode(), mode=String, "[\\:]")
+  let pat2 = parse(profile=profile_unicode(), "[\\:]")
   debug_inspect(pat2, content="Char([(58, 58)])")
-  let pat3 = parse(profile=profile_unicode(), mode=String, "[\\&]")
+  let pat3 = parse(profile=profile_unicode(), "[\\&]")
   debug_inspect(pat3, content="Char([(38, 38)])")
 }
 
@@ -1194,7 +1105,7 @@ test "parse/escaped_special_chars_in_class" {
 test "parse/error_triple_ampersand" {
   // Triple ampersand triggers set expression error
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[a&&&b]")) catch {
+    Ok(parse(profile=profile_unicode(), "[a&&&b]")) catch {
       e => Err(e)
     },
     content=(
@@ -1205,7 +1116,7 @@ test "parse/error_triple_ampersand" {
 
 ///|
 test "parse/non_capture_group_inside_capture" {
-  let pat = parse(profile=profile_unicode(), mode=String, "(a(?:b)c)")
+  let pat = parse(profile=profile_unicode(), "(a(?:b)c)")
   debug_inspect(
     pat,
     content=(
@@ -1222,7 +1133,7 @@ test "parse/non_capture_group_inside_capture" {
 
 ///|
 test "parse/quantifier_non_greedy_question" {
-  let pat = parse(profile=profile_unicode(), mode=String, "a??")
+  let pat = parse(profile=profile_unicode(), "a??")
   debug_inspect(
     pat,
     content=(
@@ -1236,7 +1147,7 @@ test "parse/quantifier_non_greedy_question" {
 
 ///|
 test "parse/quantifier_range_non_greedy" {
-  let pat = parse(profile=profile_unicode(), mode=String, "a{2,5}?")
+  let pat = parse(profile=profile_unicode(), "a{2,5}?")
   debug_inspect(
     pat,
     content=(
@@ -1251,7 +1162,7 @@ test "parse/quantifier_range_non_greedy" {
 ///|
 test "parse/nested_ignore_case" {
   // Test nested (?i:...) where ignore_case is already true
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:(?i:abc))")
+  let pat = parse(profile=profile_unicode(), "(?i:(?i:abc))")
   debug_inspect(
     pat,
     content=(
@@ -1271,7 +1182,7 @@ test "parse/nested_ignore_case" {
 test "parse/error_unmatched_paren" {
   // Extra closing paren should trigger unexpected char error
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "abc)")) catch {
+    Ok(parse(profile=profile_unicode(), "abc)")) catch {
       e => Err(e)
     },
     content=(
@@ -1284,7 +1195,7 @@ test "parse/error_unmatched_paren" {
 test "parse/error_empty_quantifier" {
   // Quantifier on empty pattern should trigger error
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "*")) catch {
+    Ok(parse(profile=profile_unicode(), "*")) catch {
       e => Err(e)
     },
     content=(
@@ -1296,14 +1207,14 @@ test "parse/error_empty_quantifier" {
 ///|
 test "parse/unicode_4digit_in_char_class" {
   // \u0041 inside character class
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\u0041]")
+  let pat = parse(profile=profile_unicode(), "[\\u0041]")
   debug_inspect(pat, content="Char([(65, 65)])")
 }
 
 ///|
 test "parse/unicode_brace_in_char_class" {
   // \u{41} inside character class
-  let pat = parse(profile=profile_unicode(), mode=String, "[\\u{41}]")
+  let pat = parse(profile=profile_unicode(), "[\\u{41}]")
   debug_inspect(pat, content="Char([(65, 65)])")
 }
 
@@ -1311,7 +1222,7 @@ test "parse/unicode_brace_in_char_class" {
 test "parse/error_dDsSwW_in_char_class" {
   // \d, \D, \s, \S, \w, \W should error inside character class too
   debug_inspect(
-    Ok(parse(profile=profile_unicode(), mode=String, "[\\w]")) catch {
+    Ok(parse(profile=profile_unicode(), "[\\w]")) catch {
       e => Err(e)
     },
     content=(
@@ -1328,7 +1239,7 @@ test "parse/error_dDsSwW_in_char_class" {
 ///|
 test "parse/ignore_case_quantifier" {
   // (?i:a+) should work
-  let pat = parse(profile=profile_unicode(), mode=String, "(?i:a+)")
+  let pat = parse(profile=profile_unicode(), "(?i:a+)")
   debug_inspect(
     pat,
     content=(
@@ -1341,37 +1252,11 @@ test "parse/ignore_case_quantifier" {
 }
 
 ///|
-test "parse/error_non_ascii_in_bytes_mode" {
-  // Non-ASCII character in bytes mode should trigger CHARACTER_OUT_OF_RANGE
-  debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=Bytes, "中")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=0, hint="Character out of range"))
-    ),
-  )
-}
-
-///|
-test "parse/error_non_ascii_in_bytes_mode_char_class" {
-  // Non-ASCII character in character class in bytes mode
-  debug_inspect(
-    Ok(parse(profile=profile_bytes(), mode=Bytes, "[中]")) catch {
-      e => Err(e)
-    },
-    content=(
-      #|Err(ParserError(at=1, hint="Character out of range"))
-    ),
-  )
-}
-
-///|
 /// A pattern that only nests used to overflow the stack instead of raising.
 test "parse/nesting_depth" {
   fn nested(open : String, depth : Int32) -> String {
     let pattern = open.repeat(depth) + "a" + ")".repeat(depth)
-    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+    try parse(profile=profile_unicode(), pattern) catch {
       err => err.to_string()
     } noraise {
       _ => "accepted"
@@ -1411,13 +1296,7 @@ test "parse/nesting_depth" {
     named = named + "(?<n\{i}>"
   }
   inspect(
-    try
-      parse(
-        profile=profile_unicode(),
-        mode=String,
-        named + "a" + ")".repeat(65),
-      )
-    catch {
+    try parse(profile=profile_unicode(), named + "a" + ")".repeat(65)) catch {
       err => err.to_string()
     } noraise {
       _ => "accepted"
@@ -1432,7 +1311,7 @@ test "parse/nesting_depth" {
 
 ///|
 fn parse_result(pattern : String) -> String {
-  @debug.to_string(parse(profile=profile_unicode(), mode=String, pattern)) catch {
+  @debug.to_string(parse(profile=profile_unicode(), pattern)) catch {
     err => err.to_string()
   }
 }
@@ -1540,7 +1419,7 @@ test "parse/unterminated_range_is_an_error" {
 ///|
 test "parse/duplicate_group_names" {
   let result = fn(pattern : String) {
-    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+    try parse(profile=profile_unicode(), pattern) catch {
       e => Err(e)
     } noraise {
       _ => Ok(())
@@ -1592,7 +1471,7 @@ test "parse/duplicate_group_names" {
 ///|
 test "parse/dash_after_range_or_posix_class" {
   let result = fn(pattern : String) {
-    Ok(parse(profile=profile_unicode(), mode=String, pattern)) catch {
+    Ok(parse(profile=profile_unicode(), pattern)) catch {
       e => Err(e)
     }
   }
@@ -1640,7 +1519,7 @@ test "parse/dash_after_range_or_posix_class" {
 ///|
 test "parse/bare_posix_class_shapes" {
   let result = fn(pattern : String) {
-    try parse(profile=profile_unicode(), mode=String, pattern) catch {
+    try parse(profile=profile_unicode(), pattern) catch {
       e => Err(e)
     } noraise {
       _ => Ok(())
