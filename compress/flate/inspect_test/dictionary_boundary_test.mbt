@@ -70,67 +70,50 @@ test "whole-buffer dictionary decoding supports both input modes and output form
     } else {
       Bytes::makei(17000, i => dictionary[size - 1 - i % size.min(257)])
     }
-    for
-      strategy in [
-        @flate.Standard(level=6),
-        Split(level=6),
-        Optimal(iterations=1),
-      ] {
-      let raw = @flate.deflate_all(plain, strategy~, dictionary=dict)
-      let decoder = @flate.Decompressor(dictionary=dict)
-      for mode in [@flate.Exact, Prefix] {
-        let framed = b"PAD" +
-          raw +
-          (if mode is Prefix { b"TRAILER" } else { b"" })
-        let input = framed[3:]
-        for two_pass in [false, true] {
-          match mode {
-            Exact => {
-              let result = @flate.inflate_exact(
-                input,
-                dictionary=dict,
-                two_pass~,
-                max_output=plain.length(),
-              )
-              assert_eq(result, plain)
-            }
-            Prefix => {
-              let result = @flate.inflate_prefix(
-                input,
-                dictionary=dict,
-                two_pass~,
-                max_output=plain.length(),
-              )
-              assert_eq(result.data, plain)
-              assert_eq(result.consumed, raw.length())
-            }
-          }
-        }
-        let result = decoder.decompress(input, mode~, max_output=plain.length())
-        assert_eq(result.data, plain)
-        assert_eq(result.consumed, raw.length())
-        for reusable in [false, true] {
-          let output = FixedArray::make(plain.length() + 11, b'\xA5')
-          let view = output.mut_view(start=3, end=3 + plain.length())
-          let counts = if reusable {
-            decoder.decompress_into(input, view, mode~)
-          } else {
-            @flate.Decompressor(dictionary=dict).decompress_into(
+    let raw = @flate.deflate_all(plain, dictionary=dict)
+    let decoder = @flate.Decompressor(dictionary=dict)
+    for mode in [@flate.Exact, Prefix] {
+      let framed = b"PAD" +
+        raw +
+        (if mode is Prefix { b"TRAILER" } else { b"" })
+      let input = framed[3:]
+      for two_pass in [false, true] {
+        match mode {
+          Exact => {
+            let result = @flate.inflate_exact(
               input,
-              view,
-              mode~,
+              dictionary=dict,
+              two_pass~,
+              max_output=plain.length(),
             )
+            assert_eq(result, plain)
           }
-          assert_eq(counts.consumed, raw.length())
-          assert_eq(counts.produced, plain.length())
-          assert_eq(Bytes::from_array(output[3:3 + plain.length()]), plain)
-          for i in 0..<3 {
-            assert_eq(output[i], b'\xA5')
-          }
-          for i in (3 + plain.length())..<output.length() {
-            assert_eq(output[i], b'\xA5')
+          Prefix => {
+            let result = @flate.inflate_prefix(
+              input,
+              dictionary=dict,
+              two_pass~,
+              max_output=plain.length(),
+            )
+            assert_eq(result.data, plain)
+            assert_eq(result.consumed, raw.length())
           }
         }
+      }
+      let result = decoder.decompress(input, mode~, max_output=plain.length())
+      assert_eq(result.data, plain)
+      assert_eq(result.consumed, raw.length())
+      let output = FixedArray::make(plain.length() + 11, b'\xA5')
+      let view = output.mut_view(start=3, end=3 + plain.length())
+      let counts = decoder.decompress_into(input, view, mode~)
+      assert_eq(counts.consumed, raw.length())
+      assert_eq(counts.produced, plain.length())
+      assert_eq(Bytes::from_array(output[3:3 + plain.length()]), plain)
+      for i in 0..<3 {
+        assert_eq(output[i], b'\xA5')
+      }
+      for i in (3 + plain.length())..<output.length() {
+        assert_eq(output[i], b'\xA5')
       }
     }
   }

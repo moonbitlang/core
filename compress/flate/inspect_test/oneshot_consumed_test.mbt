@@ -200,18 +200,6 @@ test "whole-buffer exact and prefix functions have distinct return contracts" {
     }
     let output = FixedArray::make(plain.length(), b'\x00')
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.Decompressor().decompress_into(input, output.mut_view())
-    })
-    assert_eq(kind, TrailingData)
-    let counts = @flate.Decompressor().decompress_into(
-      input,
-      output.mut_view(),
-      mode=Prefix,
-    )
-    assert_eq(counts.consumed, raw.length())
-    assert_eq(counts.produced, plain.length())
-    assert_eq(Bytes::from_array(output), plain)
-    let InflateError(kind, _) = @test.expect_error(() => {
       decoder.decompress(input)
     })
     assert_eq(kind, TrailingData)

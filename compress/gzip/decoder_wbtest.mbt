@@ -217,7 +217,7 @@ test "gzip repeated check_end preserves pending output and sticky EOF" {
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
   for _ in 0..<1000 {
-    let result = decoder.step(b"", output.mut_view())
+    let result = decoder.step(b"ignored", output.mut_view())
     @test.assert_eq(result.consumed, 0)
     decoded.write_bytes(Bytes::from_array(output[:result.produced]))
     if result.status is Done {

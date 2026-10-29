@@ -94,15 +94,15 @@ test "streaming zlib Decoder decodes a python zlib stream in tiny chunks" {
   let mut fed = 0
   for ;; {
     let next = if fed + 3 < n { fed + 3 } else { n }
-    let _status_result = dec.step(py_zlib[fed:next], obuf.mut_view())
-    let _status = _status_result.status
-    let c = _status_result.consumed
-    let p = _status_result.produced
+    let result = dec.step(py_zlib[fed:next], obuf.mut_view())
+    let c = result.consumed
+    let p = result.produced
     for i in 0..<p {
       out.write_byte(obuf[i])
     }
     fed = fed + c
     if dec.is_finished() {
+      @test.assert_eq(result.status, Done)
       break
     }
   }
@@ -384,6 +384,8 @@ test "streaming zlib Decoder latches end across output backpressure" {
     if status is Done {
       break
     }
+    @test.assert_eq(status, NeedMoreOutput)
+    @test.assert_eq(produced, 1)
   }
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), source)
