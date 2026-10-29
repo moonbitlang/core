@@ -139,7 +139,7 @@ test "the batch leaves a wrapped poll counter to the checked decoder" {
     ] {
     let (next_cancel, decoded) = case_
     let decoder = MemDecoder(input, () => false)
-    decoder.out = DecodeOutput::into(FixedArray::make(2000, b'\xA5'))
+    decoder.out = DecodeOutput::into(FixedArray::make(2000, b'\xA5').mut_view())
     decoder.next_cancel = next_cancel
     @test.assert_eq(decoder.decode_batch(litlen, Some(distance)), false)
     @test.assert_eq(decoder.out.length, decoded)

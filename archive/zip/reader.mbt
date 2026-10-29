@@ -202,10 +202,10 @@ fn inflate_entry(
     break total.to_int()
   }
   let output = FixedArray::make(size, b'\x00')
-  let written = @flate.inflate_into(compressed, output, cancelled~) catch {
+  let result = @flate.inflate_into(compressed, output.mut_view(), cancelled~) catch {
     err => raise wrap_inflate_error(err)
   }
-  guard written == size else {
+  guard result.produced == size else {
     raise ZipError(InvalidDeflate, "zip: preallocation size mismatch")
   }
   owned_zip_buffer_to_bytes(output)

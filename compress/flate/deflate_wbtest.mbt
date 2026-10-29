@@ -86,7 +86,7 @@ test "IncrementalEncoder latches end before a completed view is backpressured" {
     }
     assert_true(status is NeedMoreOutput)
   }
-  @test.assert_eq(inflate_all(compressed.to_bytes()), source)
+  @test.assert_eq(inflate_prefix(compressed.to_bytes()), source)
 }
 
 ///|
@@ -121,7 +121,7 @@ test "IncrementalEncoder reset clears queued flush and end requests" {
     @test.assert_eq(status, Done)
     @test.assert_eq(status_result.consumed, 12)
     @test.assert_eq(
-      inflate_all(Bytes::from_array(output[:status_result.produced])),
+      inflate_prefix(Bytes::from_array(output[:status_result.produced])),
       b"fresh stream",
     )
   }

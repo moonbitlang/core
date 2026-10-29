@@ -42,7 +42,7 @@ test "byte payloads append to the array sink from any view and offset" {
 test "fixed bit writers cannot wrap an exhausted cursor" {
   let bytes = b"abcd"
   // Simulate the old cursor at the Int32 boundary without a huge allocation.
-  let writer = BitWriter::into([])
+  let writer = BitWriter::into([].mut_view())
   writer.direct_pos = 2147483647
   writer.overflowed = true
   writer.write_byte(b'x')
@@ -55,7 +55,7 @@ test "fixed bit writers cannot wrap an exhausted cursor" {
 ///|
 #cfg(any(target="native", target="wasm"))
 test "bulk bit writes cannot wrap an exhausted cursor" {
-  let writer = BitWriter::into([])
+  let writer = BitWriter::into([].mut_view())
   writer.direct_pos = 2147483647
   writer.overflowed = true
   writer.write_array([b'a', b'b'], 2)

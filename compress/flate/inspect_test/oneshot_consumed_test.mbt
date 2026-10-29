@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // A decoder must report the DEFLATE boundary even after reading ahead into
-// another protocol frame, and replace that count after every call.
+// another protocol frame, and keep each returned result independent of reuse.
 
 ///|
 fn consumed_streams() -> Array[(Bytes, Bytes)] {
@@ -35,7 +35,6 @@ fn consumed_streams() -> Array[(Bytes, Bytes)] {
 ///|
 test "Decompressor returns both byte counts and preserves trailing input" {
   let decoder = @flate.Decompressor()
-  @test.assert_eq(decoder.last_consumed(), 0)
   let tails = [b""]
   for byte in [b'\x00', b'\xFF'] {
     for size in [1, 7, 8, 9, 17] {
@@ -48,26 +47,23 @@ test "Decompressor returns both byte counts and preserves trailing input" {
       let input = around[3:3 + raw.length() + tail.length()]
       for slack in [0, 300] {
         let output = FixedArray::make(plain.length() + slack, b'\xA5')
-        let result = decoder.decompress_into(input, output)
+        let result = decoder.decompress_into(input, output.mut_view())
         @test.assert_eq(result.produced, plain.length())
         @test.assert_eq(result.consumed, raw.length())
         @test.assert_eq(Bytes::from_array(output[:plain.length()]), plain)
-        @test.assert_eq(decoder.last_consumed(), raw.length())
         for i in plain.length()..<output.length() {
           @test.assert_eq(output[i], b'\xA5')
         }
       }
-      @test.assert_eq(
-        decoder.decompress(input, max_output=plain.length()),
-        plain,
-      )
-      @test.assert_eq(decoder.last_consumed(), raw.length())
+      let result = decoder.decompress(input, max_output=plain.length())
+      @test.assert_eq(result.data, plain)
+      @test.assert_eq(result.consumed, raw.length())
     }
   }
 }
 
 ///|
-test "Decompressor::last_consumed follows every call of one decompressor" {
+test "Decompressor results survive reuse and failures" {
   let plain = Bytes::makei(10000, i => (i % 17).to_byte())
   let raw = @flate.deflate_all(plain)
   let output = FixedArray::make(plain.length(), b'\x00')
@@ -78,23 +74,24 @@ test "Decompressor::last_consumed follows every call of one decompressor" {
         (b"\x07", @flate.Corrupt),
         (raw[:raw.length() - 1].to_owned(), Truncated),
       ] {
-      @test.assert_eq(decoder.decompress(raw), plain)
-      @test.assert_eq(decoder.last_consumed(), raw.length())
+      let previous = decoder.decompress(raw)
+      @test.assert_eq(previous.data, plain)
+      @test.assert_eq(previous.consumed, raw.length())
       let InflateError(kind, _) = @test.expect_error(() => {
         if fixed {
-          ignore(decoder.decompress_into(input, output))
+          ignore(decoder.decompress_into(input, output.mut_view()))
         } else {
           ignore(decoder.decompress(input))
         }
       })
       @test.assert_eq(kind, expected)
-      @test.assert_eq(decoder.last_consumed(), 0)
+      @test.assert_eq(previous.data, plain)
+      @test.assert_eq(previous.consumed, raw.length())
       @test.assert_eq(
-        decoder.decompress_into(raw, output).produced,
+        decoder.decompress_into(raw, output.mut_view()).produced,
         plain.length(),
       )
       @test.assert_eq(Bytes::from_array(output), plain)
-      @test.assert_eq(decoder.last_consumed(), raw.length())
     }
     for cancel_at in [1, 2] {
       let mut polls = 0
@@ -104,35 +101,34 @@ test "Decompressor::last_consumed follows every call of one decompressor" {
       }
       let InflateError(kind, _) = @test.expect_error(() => {
         if fixed {
-          ignore(decoder.decompress_into(raw, output, cancelled~))
+          ignore(decoder.decompress_into(raw, output.mut_view(), cancelled~))
         } else {
           ignore(decoder.decompress(raw, max_output=plain.length(), cancelled~))
         }
       })
       @test.assert_eq(kind, Cancelled)
-      @test.assert_eq(decoder.last_consumed(), 0)
-      @test.assert_eq(decoder.decompress(raw), plain)
+      @test.assert_eq(decoder.decompress(raw).data, plain)
       @test.assert_eq(polls, cancel_at)
-      @test.assert_eq(decoder.last_consumed(), raw.length())
     }
   }
 }
 
 ///|
-test "Decompressor::last_consumed is zero after a call that raises" {
+test "Decompressor can be reused after truncated prefixes" {
   let decoder = @flate.Decompressor()
   let output = FixedArray::make(16, b'\x00')
   let raw = b"\x4A\x04\x04\x02\x00\xFD\xFF\x62\x63"
   let behind = raw + raw
   for cut in 0..<raw.length() {
-    @test.assert_eq(decoder.decompress_into(behind, output).produced, 3)
+    @test.assert_eq(
+      decoder.decompress_into(behind, output.mut_view()).produced,
+      3,
+    )
     @test.assert_eq(Bytes::from_array(output[:3]), b"abc")
-    @test.assert_eq(decoder.last_consumed(), raw.length())
     let InflateError(kind, _) = @test.expect_error(() => {
-      decoder.decompress_into(behind[:cut], output)
+      decoder.decompress_into(behind[:cut], output.mut_view())
     })
     @test.assert_eq(kind, Truncated)
-    @test.assert_eq(decoder.last_consumed(), 0)
   }
 }
 
@@ -140,14 +136,15 @@ test "Decompressor::last_consumed is zero after a call that raises" {
 test "decompress and decompress_into take turns on one decompressor" {
   let decoder = @flate.Decompressor()
   for (raw, plain) in consumed_streams() {
-    @test.assert_eq(decoder.decompress(raw + b"behind"), plain)
-    @test.assert_eq(decoder.last_consumed(), raw.length())
+    let result = decoder.decompress(raw + b"behind")
+    @test.assert_eq(result.data, plain)
+    @test.assert_eq(result.consumed, raw.length())
     if plain.length() > 0 {
       let short = FixedArray::make(plain.length() - 1, b'\x00')
       for fixed in [true, false] {
         let InflateError(kind, _) = @test.expect_error(() => {
           if fixed {
-            ignore(decoder.decompress_into(raw, short))
+            ignore(decoder.decompress_into(raw, short.mut_view()))
           } else {
             ignore(decoder.decompress(raw, max_output=short.length()))
           }
@@ -159,21 +156,18 @@ test "decompress and decompress_into take turns on one decompressor" {
             observed=plain.length().to_uint64(),
           ),
         )
-        @test.assert_eq(decoder.last_consumed(), 0)
       }
     }
-    @test.assert_eq(decoder.decompress(raw), plain)
+    @test.assert_eq(decoder.decompress(raw).data, plain)
     let output = FixedArray::make(plain.length(), b'\x00')
     @test.assert_eq(
-      decoder.decompress_into(raw, output).produced,
+      decoder.decompress_into(raw, output.mut_view()).produced,
       plain.length(),
     )
     @test.assert_eq(Bytes::from_array(output), plain)
-    @test.assert_eq(decoder.last_consumed(), raw.length())
   }
   let InflateError(kind, _) = @test.expect_error(() => {
     decoder.decompress(b"", max_output=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
-  @test.assert_eq(decoder.last_consumed(), 0)
 }

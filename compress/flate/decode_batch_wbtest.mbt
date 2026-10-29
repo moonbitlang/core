@@ -92,7 +92,7 @@ test "batch handles the maximum forty-eight-bit token" {
     storage.blit_from_bytes(0, history, 0, history.length())
     let decoder = MemDecoder(coverage_finish_bits(writer), () => false)
     ignore(decoder.read_bits(alignment))
-    decoder.out = DecodeOutput::into(storage)
+    decoder.out = DecodeOutput::into(storage.mut_view())
     decoder.out.length = history.length()
     decoder.next_cancel = storage.length() + 1
     @test.assert_eq(decoder.decode_batch(literals, Some(distances)), true)
@@ -132,7 +132,7 @@ test "batch and checked tails preserve literal capacity and cancellation boundar
         true
       })
       let storage = FixedArray::make(capacity, b'\xA5')
-      decoder.out = DecodeOutput::into(storage)
+      decoder.out = DecodeOutput::into(storage.mut_view())
       decoder.next_cancel = checkpoint
       if checkpoint <= capacity && checkpoint <= 600 {
         let error = @test.expect_error(() => {
@@ -199,7 +199,7 @@ test "maximum matches preserve four-token reservation cancellation boundaries" {
         ignore(decoder.read_bits(alignment))
         let storage = FixedArray::make(1549, b'\xA5')
         storage[0] = b'A'
-        decoder.out = DecodeOutput::into(storage)
+        decoder.out = DecodeOutput::into(storage.mut_view())
         decoder.out.length = 1
         decoder.next_cancel = checkpoint
         if checkpoint <= 1291 {
@@ -262,7 +262,7 @@ test "batch matches preserve overlap and unread bits across alignments" {
           (i * 37 + 19).to_byte()
         })
         storage.blit_from_bytes(0, history, 0, distance)
-        decoder.out = DecodeOutput::into(storage)
+        decoder.out = DecodeOutput::into(storage.mut_view())
         decoder.out.length = distance
         decoder.next_cancel = storage.length() + 1
         @test.assert_eq(
@@ -313,7 +313,7 @@ test "batch refill preserves exact input position across checked tails" {
           ignore(decoder.read_bits(alignment))
           decoder.need(prefetch)
           let storage = FixedArray::make(size + 258, b'\xA5')
-          decoder.out = DecodeOutput::into(storage)
+          decoder.out = DecodeOutput::into(storage.mut_view())
           decoder.next_cancel = storage.length() + 1
           decoder.decode_block(packed_fixed_huffman_decoder, Some(distances))
           @test.assert_eq(decoder.out.length, size)
@@ -358,7 +358,7 @@ test "peeled literal remains committed before an invalid token" {
     }
     let decoder = MemDecoder(coverage_finish_bits(writer), () => false)
     let storage = FixedArray::make(512, b'\xA5')
-    decoder.out = DecodeOutput::into(storage)
+    decoder.out = DecodeOutput::into(storage.mut_view())
     decoder.next_cancel = 4096
     @test.assert_eq(
       decoder.decode_batch(packed_fixed_huffman_decoder, Some(distances)),
@@ -403,7 +403,7 @@ test "batch invalid tokens fall back without consuming the token" {
     let input = coverage_finish_bits(writer)
     let decoder = MemDecoder(input, () => false)
     let storage = FixedArray::make(512, b'\xA5')
-    decoder.out = DecodeOutput::into(storage)
+    decoder.out = DecodeOutput::into(storage.mut_view())
     decoder.out.length = 1
     decoder.next_cancel = 4096
     @test.assert_eq(
@@ -448,7 +448,7 @@ test "prefetched invalid tokens preserve the preceding match" {
     let decoder = MemDecoder(coverage_finish_bits(writer), () => false)
     let storage = FixedArray::makei(512, i => (i * 37 + 19).to_byte())
     storage[0] = b'A'
-    decoder.out = DecodeOutput::into(storage)
+    decoder.out = DecodeOutput::into(storage.mut_view())
     decoder.out.length = 1
     decoder.next_cancel = 4096
     @test.assert_eq(
@@ -490,7 +490,7 @@ test "zero prefetched primary remains invalid after a committed match" {
   let decoder = MemDecoder(coverage_finish_bits(writer), () => false)
   let storage = FixedArray::makei(512, i => (i * 37 + 19).to_byte())
   storage[0] = b'A'
-  decoder.out = DecodeOutput::into(storage)
+  decoder.out = DecodeOutput::into(storage.mut_view())
   decoder.out.length = 1
   decoder.next_cancel = 4096
   @test.assert_eq(decoder.decode_batch(literals, Some(distances)), false)
@@ -526,7 +526,7 @@ test "zero prefetched primary after a literal keeps the literal committed" {
   }
   let decoder = MemDecoder(coverage_finish_bits(writer), () => false)
   let storage = FixedArray::make(512, b'\xA5')
-  decoder.out = DecodeOutput::into(storage)
+  decoder.out = DecodeOutput::into(storage.mut_view())
   decoder.next_cancel = 4096
   @test.assert_eq(decoder.decode_batch(literals, Some(distances)), false)
   @test.assert_eq(decoder.pos * 8 - decoder.bit_count, 1)

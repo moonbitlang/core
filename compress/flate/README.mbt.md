@@ -33,12 +33,11 @@ no ownership conversion at the call site:
 test "README raw DEFLATE round-trip" {
   let source = b"runtime-agnostic streaming compression"
   let compressed = @flate.deflate_all(source)
-  @test.assert_eq(@flate.inflate_all(compressed), source)
+  @test.assert_eq(@flate.inflate_prefix(compressed), source)
 }
 ```
 
-For whole-buffer callers that already own their output storage, use the direct
-buffer API. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
+The direct-buffer APIs accept `MutArrayView[Byte]`, including slices of arrays. `deflate_bound` supplies a conservative DEFLATE capacity (it panics
 for a negative input length or an unrepresentable bound);
 compression returns `None` if its encoded output does not fit, while decompression
 raises `OutputLimitExceeded(limit~, observed~)` if its decoded output does not fit. Reuse
@@ -53,30 +52,28 @@ test "README caller-buffer DEFLATE" {
     @flate.deflate_bound(source.length()),
     b'\x00',
   )
-  guard compressor.compress_into(source, compressed_buffer)
+  guard compressor.compress_into(source, compressed_buffer.mut_view())
     is Some(compressed_len) else {
     @test.fail("deflate_bound was too small")
   }
   let compressed = Bytes::from_array(compressed_buffer[:compressed_len])
   let decompressor = @flate.Decompressor()
   let output = FixedArray::make(source.length(), b'\x00')
-  let decoded = decompressor.decompress_into(compressed, output)
+  let decoded = decompressor.decompress_into(compressed, output.mut_view())
   @test.assert_eq(decoded.consumed, compressed.length())
   @test.assert_eq(Bytes::from_array(output[:decoded.produced]), source)
 }
 ```
 
-`deflate_into` and `inflate_into` are single-use convenience forms of those
-methods. Like `inflate_all`, `inflate_into` ignores trailing bytes after a valid
-final DEFLATE block. `Decompressor::decompress_into` returns a `#valtype`
-`DecompressResult` with both `consumed` and `produced`, so a caller can find a
-trailer that follows the stream. `inflate_into` returns only the produced count. Use the streaming APIs when input
-or output must suspend under backpressure.
+`deflate_into` and `inflate_into` are single-use convenience forms of these methods.
+`inflate_into` and `Decompressor::decompress_into` return `DecompressResult` with
+`consumed` and `produced`. Trailing bytes are ignored; `consumed` locates their
+start. Use the streaming APIs when input or output must suspend.
 
 `Compressor::compress(input)` returns independent `Bytes` and reuses its
 workspace across calls, without requiring a caller-owned output buffer.
 `Decompressor::decompress(input)` is its counterpart: the output grows as in
-`inflate_all`, and `last_consumed()` says where the stream ended. That is how
+`inflate_prefix`, returning owned `data` and the input `consumed`. That is how
 to read a stream of unknown length from the front of a buffer and go on behind
 it:
 
@@ -87,8 +84,9 @@ test "README prefix decode" {
   let payload = b"the stream ends with its final block"
   let record = @flate.deflate_all(payload) + b"what follows"
   let decompressor = @flate.Decompressor()
-  @test.assert_eq(decompressor.decompress(record), payload)
-  let rest = record[decompressor.last_consumed():]
+  let result = decompressor.decompress(record)
+  @test.assert_eq(result.data, payload)
+  let rest = record[result.consumed:]
   @test.assert_eq(rest.to_owned(), b"what follows")
 }
 ```
@@ -122,7 +120,7 @@ test "README streaming IncrementalEncoder" {
       break
     }
   }
-  @test.assert_eq(@flate.inflate_all(compressed.to_bytes()), source)
+  @test.assert_eq(@flate.inflate_prefix(compressed.to_bytes()), source)
 }
 ```
 
@@ -176,7 +174,7 @@ test "README streaming IncrementalEncoder" {
 
 ### Exact and bounded one-shot decoding
 
-`inflate_all` and `Decompressor::decompress` accept a raw DEFLATE prefix;
+`inflate_prefix` and `Decompressor::decompress` accept a raw DEFLATE prefix;
 `inflate_exact` rejects trailing bytes. These and gzip/zlib `decompress` accept
 `max_output` and `cancelled`. gzip counts output across all members.
 
@@ -201,9 +199,9 @@ output buffer's capacity.
 A `cancelled` callback returning true raises `Cancelled`. It is polled regularly
 during decoding and, for gzip/zlib, checksum verification; gzip also polls while
 scanning headers and joining members. A failed `Decompressor` remains reusable
-with `last_consumed()` reset to zero.
+and returned results remain independent of later calls.
 
-`inflate_exact(preallocated=true)` counts and validates first, then decodes into
+`inflate_exact(two_pass=true)` counts and validates first, then decodes into
 one exactly sized allocation. It trades a second decode pass for lower peak
 memory; the default grows the output in one pass.
 
@@ -281,7 +279,7 @@ fn extract_entry(
   let output = FixedArray::make(65536, b'\x00')
   let mut input : Bytes = b""
   for ;; {
-    let status = reader.step(input, output)
+    let status = reader.step(input, output.mut_view())
     let produced = reader.last_produced()
     if produced > 0 {
       emit(Bytes::from_array(output[:produced]))
@@ -411,9 +409,9 @@ across its encoding and decoding paths:
 | Streaming decompression | `inflate.mbt` |
 | Shared decoding tables and validation | `huffman_table.mbt`, `tables.mbt`, `decode_rules.mbt` |
 
-Unbounded `inflate_all` uses the direct `MemDecoder` path, and so does
-`inflate_exact` called with the input alone. Bounded `inflate_all`, and
-`inflate_exact` with a limit, a callback or `preallocated`, drive the streaming
+Unbounded `inflate_prefix` uses the direct `MemDecoder` path, and so does
+`inflate_exact` called with the input alone. Bounded `inflate_prefix`, and
+`inflate_exact` with a limit, a callback or `two_pass`, drive the streaming
 inflater.
 `Decompressor::decompress_into` uses the direct decoder with caller-owned
 output, `Decompressor::decompress` with an output that grows.

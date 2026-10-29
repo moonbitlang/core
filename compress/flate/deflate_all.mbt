@@ -80,7 +80,7 @@ pub fn deflate_bound(input_size : Int32) -> Int32 {
 pub fn Compressor::compress_into(
   self : Compressor,
   input : BytesView,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
 ) -> Int32? {
   self.encode(input, BitWriter::into(output))
 }
@@ -173,7 +173,7 @@ pub fn deflate_all(
 /// Optional `fast_store` has the same opt-in speed/ratio trade-off as `deflate_all`.
 pub fn deflate_into(
   input : BytesView,
-  output : FixedArray[Byte],
+  output : MutArrayView[Byte],
   level~ : Int32 = 6,
   fast_store~ : Bool = false,
 ) -> Int32? {

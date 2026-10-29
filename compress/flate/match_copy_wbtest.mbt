@@ -24,7 +24,7 @@ test "match copies preserve overlap and exact output boundaries" {
       for extra in [0, 7] {
         let storage = FixedArray::make(distance + length + extra, b'\xA5')
         storage.blit_from_bytes(0, history, 0, distance)
-        let out = DecodeOutput::into(storage)
+        let out = DecodeOutput::into(storage.mut_view())
         out.length = distance
         out.append_repeated_suffix(distance, length)
         @test.assert_eq(out.length, distance + length)
@@ -75,7 +75,7 @@ test "decoded matches preserve exact capacity overlap and cancellation cadence" 
               calls += 1
               false
             })
-            d.out = DecodeOutput::into(storage)
+            d.out = DecodeOutput::into(storage.mut_view())
             d.out.length = 4
             d.next_cancel = 4 + cancel_after
             d.bitbuf = (extra | (distance_bits << extra_bits)).reinterpret_as_uint()
@@ -104,7 +104,7 @@ test "decoded short matches reject insufficient capacity before copying" {
   for length in 3..<=10 {
     let storage = FixedArray::make(length, b'x')
     let d = MemDecoder(b"", () => false)
-    d.out = DecodeOutput::into(storage)
+    d.out = DecodeOutput::into(storage.mut_view())
     d.out.length = 1
     d.next_cancel = 4096
     d.bit_count = 5 // fixed distance symbol 0: distance 1

@@ -23,7 +23,10 @@ test "direct stored blocks preserve boundaries and handle partial output" {
     for capacity in [0, 1, 4, 5, expected.length() - 1] {
       if capacity < expected.length() {
         @test.assert_eq(
-          compressor.compress_into(source, FixedArray::make(capacity, b'\x00')),
+          compressor.compress_into(
+            source,
+            FixedArray::make(capacity, b'\x00').mut_view(),
+          ),
           None,
         )
       }
@@ -32,7 +35,7 @@ test "direct stored blocks preserve boundaries and handle partial output" {
     for extra in [0, 13] {
       let output = FixedArray::make(expected.length() + extra, b'\xA5')
       @test.assert_eq(
-        compressor.compress_into(source, output),
+        compressor.compress_into(source, output.mut_view()),
         Some(expected.length()),
       )
       @test.assert_eq(direct_bytes(output, expected.length()), expected)
@@ -68,23 +71,42 @@ test "caller-buffer codecs match one-shot streams and reuse workspace" {
     let compressor = @flate.Compressor(level~)
     let decompressor = @flate.Decompressor()
     for source in direct_sources() {
-      let compressed_buffer = FixedArray::make(
-        @flate.deflate_bound(source.length()),
-        b'\x00',
-      )
-      guard compressor.compress_into(source, compressed_buffer)
-        is Some(compressed_len) else {
-        @test.fail("deflate_bound did not fit its source")
-      }
-      let compressed = direct_bytes(compressed_buffer, compressed_len)
+      let capacity = @flate.deflate_bound(source.length())
+      let storage = Array::make(capacity + 14, b'\xA5')
+      let output = storage.mut_view(start=7, end=7 + capacity)
+      let length = compressor.compress_into(source, output).unwrap()
+      let compressed = Bytes::from_array(output[:length])
       @test.assert_eq(compressed, @flate.deflate_all(source, level~))
+      @test.assert_eq(
+        compressor.compress_into(source, output.mut_view(end=length - 1)),
+        None,
+      )
+      @test.assert_eq(compressor.compress(source), compressed)
+      @test.assert_eq(@flate.deflate_into(source, output, level~), Some(length))
+      @test.assert_eq(Bytes::from_array(output[:length]), compressed)
+      @test.assert_eq(Bytes::from_array(storage[:7]), Bytes::make(7, b'\xA5'))
+      @test.assert_eq(
+        Bytes::from_array(storage[7 + capacity:]),
+        Bytes::make(7, b'\xA5'),
+      )
 
-      let decoded_buffer = FixedArray::make(source.length(), b'\x00')
-      let decoded = decompressor.decompress_into(compressed, decoded_buffer)
-      let decoded_len = decoded.produced
+      let decoded_storage = FixedArray::make(source.length() + 18, b'\xA5')
+      let decoded_output = decoded_storage.mut_view(
+        start=9,
+        end=9 + source.length(),
+      )
+      let decoded = decompressor.decompress_into(compressed, decoded_output)
       @test.assert_eq(decoded.consumed, compressed.length())
-      @test.assert_eq(decoded_len, source.length())
-      @test.assert_eq(direct_bytes(decoded_buffer, decoded_len), source)
+      @test.assert_eq(decoded.produced, source.length())
+      @test.assert_eq(Bytes::from_array(decoded_output), source)
+      @test.assert_eq(
+        Bytes::from_array(decoded_storage[:9]),
+        Bytes::make(9, b'\xA5'),
+      )
+      @test.assert_eq(
+        Bytes::from_array(decoded_storage[9 + source.length():]),
+        Bytes::make(9, b'\xA5'),
+      )
     }
   }
 }

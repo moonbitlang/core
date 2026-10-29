@@ -50,3 +50,42 @@ pub extend DeflateAction with Eq::{not_equal}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend DeflateAction with @debug.Debug::{to_repr}
+
+///|
+pub extend StepResult with Eq::{equal}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend StepResult with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend StepResult with @debug.Debug::{to_repr}
+
+///|
+pub extend DecompressResult with Eq::{equal}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend DecompressResult with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend DecompressResult with @debug.Debug::{to_repr}
+
+///|
+pub extend Decompressed with Eq::{equal}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Decompressed with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Decompressed with @debug.Debug::{to_repr}

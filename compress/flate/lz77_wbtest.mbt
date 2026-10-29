@@ -549,12 +549,12 @@ test "reused compressors preserve output across failed and empty generations" {
     ] {
     let input = Bytes::makei(size, i => ((i * 19 + i / 7) % alphabet).to_byte())
     @test.assert_eq(
-      codec.compress_into(input, FixedArray::make(0, b'\x00')),
+      codec.compress_into(input, FixedArray::make(0, b'\x00').mut_view()),
       None,
     )
     let compressed = codec.compress(input)
     @test.assert_eq(compressed, deflate_all(input))
-    @test.assert_eq(inflate_all(compressed), input)
+    @test.assert_eq(inflate_prefix(compressed), input)
   }
 }
 

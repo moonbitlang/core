@@ -22,3 +22,7 @@ fn owned_zip_buffer_to_bytes(buffer : FixedArray[Byte]) -> Bytes = "%identity"
 /// Borrow an output array synchronously for checksum calculation. This alias
 /// must never escape the call or survive another write to the output array.
 fn borrowed_zip_buffer_bytes(buffer : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
+/// The caller view defines the initialized range; never access spare capacity.
+fn zip_output_storage(output : MutArrayView[Byte]) -> FixedArray[Byte] = "%arrayview.buf"

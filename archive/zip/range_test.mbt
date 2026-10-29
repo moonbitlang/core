@@ -39,10 +39,14 @@ fn drive_entry_ranges(
   source : (@zip.ReadRange) -> BytesView,
   output_size : Int32,
 ) -> Bytes raise @zip.ZipError {
-  let output = FixedArray::make(output_size, b'\x00')
+  let storage = FixedArray::make(output_size + 2, b'\xA5')
+  let output = storage.mut_view(start=1, end=output_size + 1)
   let decoded = @buffer.Buffer()
   for input = (b"" : BytesView) {
     let status = reader.step(input, output)
+    guard storage[0] == b'\xA5' && storage[output_size + 1] == b'\xA5' else {
+      abort("entry reader wrote outside its output view")
+    }
     // NeedRead and Done may carry output too.
     decoded.write_bytes(Bytes::from_array(output[:reader.last_produced()]))
     match status {
@@ -78,7 +82,7 @@ test "range readers extract independent classic, ZIP64 and descriptor fixtures" 
     @test.assert_eq(drive_entry_ranges(reader, source, 1), expected)
     @test.assert_eq(reader.total_consumed(), entry.compressed_size())
     @test.assert_eq(reader.total_produced(), expected.length().to_uint64())
-    assert_true(reader.step(b"", []) is Done)
+    assert_true(reader.step(b"", [].mut_view()) is Done)
     @test.assert_eq(reader.last_produced(), 0)
   }
 }
@@ -140,13 +144,15 @@ test "range protocol errors latch and empty output suspends extraction" {
     source,
   )
   let reader = directory.open_entry(0)
-  guard reader.step(b"", []) is NeedRead(header) else {
+  guard reader.step(b"", [].mut_view()) is NeedRead(header) else {
     @test.fail("expected local-header request")
   }
-  let ZipError(kind, _) = @test.expect_error(() => reader.step(b"", []))
+  let ZipError(kind, _) = @test.expect_error(() => {
+    reader.step(b"", [].mut_view())
+  })
   @test.assert_eq(kind, InvalidRead(expected=header.length(), actual=0))
   let ZipError(repeated, _) = @test.expect_error(() => {
-    reader.step(source(header), [])
+    reader.step(source(header), [].mut_view())
   })
   @test.assert_eq(repeated, kind)
   @test.assert_eq(reader.last_produced(), 0)
@@ -155,7 +161,7 @@ test "range protocol errors latch and empty output suspends extraction" {
 
   let reader = directory.open_entry(0)
   for input = (b"" : BytesView) {
-    match reader.step(input, []) {
+    match reader.step(input, [].mut_view()) {
       NeedRead(range) => continue source(range)
       NeedMoreOutput => break
       Done => @test.fail("empty output completed a nonempty payload")
@@ -186,7 +192,7 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
   @test.assert_eq(kind, ChecksumMismatch)
   @test.assert_eq(reader.last_produced(), 0)
   let ZipError(repeated, _) = @test.expect_error(() => {
-    reader.step(b"unexpected", [])
+    reader.step(b"unexpected", [].mut_view())
   })
   @test.assert_eq(repeated, kind)
   @test.assert_eq(reader.last_produced(), 0)
@@ -221,7 +227,9 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
   })
   @test.assert_eq(kind, UnsupportedFeature)
   @test.assert_eq(reader.last_produced(), 0)
-  let ZipError(repeated, _) = @test.expect_error(() => reader.step(b"", []))
+  let ZipError(repeated, _) = @test.expect_error(() => {
+    reader.step(b"", [].mut_view())
+  })
   @test.assert_eq(repeated, kind)
 }
 
@@ -309,7 +317,9 @@ test "ZIP readers report observed per-entry and cumulative output limits" {
   }
   assert_true(actual > 5UL && actual <= 10UL)
   @test.assert_eq(reader.last_produced(), 0)
-  let ZipError(repeated, _) = @test.expect_error(() => reader.step(b"", []))
+  let ZipError(repeated, _) = @test.expect_error(() => {
+    reader.step(b"", [].mut_view())
+  })
   @test.assert_eq(repeated, kind)
 }
 
