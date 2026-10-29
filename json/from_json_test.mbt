@@ -38,7 +38,7 @@ test {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Index(Root, index=1), "Int::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "/1">, "Int::from_json: expected number"))
     ),
   )
 }
@@ -56,12 +56,7 @@ test {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError(
-      #|  (
-      #|    Key(Key(Root, key="y"), key="yy"),
-      #|    "Double::from_json: expected number",
-      #|  ),
-      #|)
+      #|JsonDecodeError((<JsonPath: "/y/yy">, "Double::from_json: expected number"))
     ),
   )
 }
@@ -581,7 +576,7 @@ test "uint" {
   debug_inspect(
     neg_err,
     content=(
-      #|JsonDecodeError((Root, "UInt::from_json: overflow"))
+      #|JsonDecodeError((<JsonPath: "">, "UInt::from_json: overflow"))
     ),
   )
   // overflow should error
@@ -592,7 +587,7 @@ test "uint" {
   debug_inspect(
     ovf_err,
     content=(
-      #|JsonDecodeError((Root, "UInt::from_json: overflow"))
+      #|JsonDecodeError((<JsonPath: "">, "UInt::from_json: overflow"))
     ),
   )
 }
@@ -677,7 +672,7 @@ test "unicode" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Char::from_json: invalid surrogate pair"))
+      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: invalid surrogate pair"))
     ),
   )
 }
@@ -734,7 +729,7 @@ test "Bool from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
+      #|JsonDecodeError((<JsonPath: "">, "Bool::from_json: expected boolean"))
     ),
   )
   let json_number = Json::number(42)
@@ -745,7 +740,7 @@ test "Bool from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
+      #|JsonDecodeError((<JsonPath: "">, "Bool::from_json: expected boolean"))
     ),
   )
   let json_string = Json("true")
@@ -756,7 +751,7 @@ test "Bool from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
+      #|JsonDecodeError((<JsonPath: "">, "Bool::from_json: expected boolean"))
     ),
   )
 }
@@ -771,7 +766,12 @@ test "Int64 from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Int64::from_json: expected number in string representation"))
+      #|JsonDecodeError(
+      #|  (
+      #|    <JsonPath: "">,
+      #|    "Int64::from_json: expected number in string representation",
+      #|  ),
+      #|)
     ),
   )
   let json_invalid_string = Json("not a number")
@@ -782,7 +782,7 @@ test "Int64 from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Int64::from_json: parsing failure invalid syntax"))
+      #|JsonDecodeError((<JsonPath: "">, "Int64::from_json: parsing failure invalid syntax"))
     ),
   )
 }
@@ -797,7 +797,7 @@ test "UInt from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "UInt::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "">, "UInt::from_json: expected number"))
     ),
   )
 }
@@ -812,7 +812,12 @@ test "UInt64 from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "UInt64::from_json: expected number in string representation"))
+      #|JsonDecodeError(
+      #|  (
+      #|    <JsonPath: "">,
+      #|    "UInt64::from_json: expected number in string representation",
+      #|  ),
+      #|)
     ),
   )
   let json_invalid_string = Json("not a number")
@@ -823,7 +828,7 @@ test "UInt64 from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "UInt64::from_json: parsing failure invalid syntax"))
+      #|JsonDecodeError((<JsonPath: "">, "UInt64::from_json: parsing failure invalid syntax"))
     ),
   )
 }
@@ -838,7 +843,7 @@ test "String from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "String::from_json: expected string"))
+      #|JsonDecodeError((<JsonPath: "">, "String::from_json: expected string"))
     ),
   )
 }
@@ -853,7 +858,7 @@ test "String View from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "View::from_json: expected string"))
+      #|JsonDecodeError((<JsonPath: "">, "View::from_json: expected string"))
     ),
   )
 }
@@ -868,7 +873,7 @@ test "Char from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Char::from_json: expected string"))
+      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: expected string"))
     ),
   )
   let json_empty_string = Json("")
@@ -879,7 +884,7 @@ test "Char from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Char::from_json: expected single character"))
+      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: expected single character"))
     ),
   )
   let json_long_string = Json("abc")
@@ -890,7 +895,7 @@ test "Char from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Char::from_json: expected single character"))
+      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: expected single character"))
     ),
   )
 }
@@ -905,7 +910,12 @@ test "BigInt from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "BigInt::from_json: expected number in string representation"))
+      #|JsonDecodeError(
+      #|  (
+      #|    <JsonPath: "">,
+      #|    "BigInt::from_json: expected number in string representation",
+      #|  ),
+      #|)
     ),
   )
   let json_invalid_number = Json("not-a-number")
@@ -916,7 +926,12 @@ test "BigInt from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "BigInt::from_json: invalid number in string representation"))
+      #|JsonDecodeError(
+      #|  (
+      #|    <JsonPath: "">,
+      #|    "BigInt::from_json: invalid number in string representation",
+      #|  ),
+      #|)
     ),
   )
 }
@@ -931,7 +946,7 @@ test "Array from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Array::from_json: expected array"))
+      #|JsonDecodeError((<JsonPath: "">, "Array::from_json: expected array"))
     ),
   )
 }
@@ -946,7 +961,7 @@ test "FixedArray from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "FixedArray::from_json: expected array"))
+      #|JsonDecodeError((<JsonPath: "">, "FixedArray::from_json: expected array"))
     ),
   )
 }
@@ -961,7 +976,7 @@ test "Map from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Map::from_json: expected object"))
+      #|JsonDecodeError((<JsonPath: "">, "Map::from_json: expected object"))
     ),
   )
 }
@@ -976,7 +991,7 @@ test "Option from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Option::from_json: expected array or null"))
+      #|JsonDecodeError((<JsonPath: "">, "Option::from_json: expected array or null"))
     ),
   )
 }
@@ -991,7 +1006,7 @@ test "Result from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Result::from_json: expected object"))
+      #|JsonDecodeError((<JsonPath: "">, "Result::from_json: expected object"))
     ),
   )
   let json_empty_obj = Json::empty_object()
@@ -1002,7 +1017,7 @@ test "Result from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Result::from_json: expected object with one field"))
+      #|JsonDecodeError((<JsonPath: "">, "Result::from_json: expected object with one field"))
     ),
   )
   let json_invalid_obj = Json::object({ "Invalid": Json::number(1) })
@@ -1013,7 +1028,12 @@ test "Result from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Result::from_json: expected object with Ok or Err field"))
+      #|JsonDecodeError(
+      #|  (
+      #|    <JsonPath: "">,
+      #|    "Result::from_json: expected object with Ok or Err field",
+      #|  ),
+      #|)
     ),
   )
 }
@@ -1028,7 +1048,7 @@ test "Unit from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Unit::from_json: expected null"))
+      #|JsonDecodeError((<JsonPath: "">, "Unit::from_json: expected null"))
     ),
   )
 }
@@ -1139,7 +1159,7 @@ test "Float from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Float::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "">, "Float::from_json: expected number"))
     ),
   )
   let json_array = Json::array([])
@@ -1150,7 +1170,7 @@ test "Float from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Float::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "">, "Float::from_json: expected number"))
     ),
   )
   let json_object = Json::empty_object()
@@ -1161,7 +1181,7 @@ test "Float from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Float::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "">, "Float::from_json: expected number"))
     ),
   )
   let json_null = null
@@ -1172,7 +1192,7 @@ test "Float from_json error handling" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "Float::from_json: expected number"))
+      #|JsonDecodeError((<JsonPath: "">, "Float::from_json: expected number"))
     ),
   )
 }
