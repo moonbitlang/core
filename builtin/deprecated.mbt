@@ -74,11 +74,9 @@ pub fn String::view(
 /// delimiter does not produce a final empty chunk. An empty array produces
 /// no chunks.
 ///
-/// Deprecated: prefer `ArrayView::split` for new code. It preserves the final
-/// empty segment and returns one empty segment for empty input, so migration
-/// requires checking these cases. Call `to_owned()` on each returned view if
-/// copied chunks are needed.
-#deprecated("Prefer ArrayView::split for new code; it preserves trailing empty segments and returns one empty segment for empty input")
+/// Deprecated: splitting semantics are being reconsidered. Existing behavior
+/// is preserved for compatibility.
+#deprecated("Array::split is deprecated; splitting semantics are being reconsidered")
 #locals(pred)
 pub fn[T] Array::split(
   self : Array[T],

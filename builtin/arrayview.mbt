@@ -850,58 +850,6 @@ pub fn[T] ArrayView::windows(
 }
 
 ///|
-/// Splits the view into sub-views separated by elements that satisfy the
-/// predicate. The delimiters are not included, and each returned sub-view
-/// shares the original backing array — no elements are copied.
-///
-/// Leading, trailing, and consecutive delimiters produce empty sub-views.
-/// An empty view produces one empty sub-view without calling the predicate.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let v = [1, 0, 2, 0, 3, 0, 4][:]
-///   debug_inspect(
-///     v.split(x => x == 0),
-///     content=(
-///       #|[
-///       #|  <ArrayView: [1]>,
-///       #|  <ArrayView: [2]>,
-///       #|  <ArrayView: [3]>,
-///       #|  <ArrayView: [4]>,
-///       #|]
-///     ),
-///   )
-///   debug_inspect(
-///     [0, 1, 0][:].split(x => x == 0).map(v => v.to_owned()),
-///     content="[[], [1], []]",
-///   )
-/// }
-/// ```
-#locals(pred)
-pub fn[T] ArrayView::split(
-  self : ArrayView[T],
-  pred : (T) -> Bool raise?,
-) -> Array[ArrayView[T]] raise? {
-  let chunks = []
-  let len = self.length()
-  for start = 0; start <= len; {
-    let end = for i = start; i < len && !pred(self.unsafe_get(i)); {
-      continue i + 1
-    } nobreak {
-      i
-    }
-    chunks.push(self[start:end])
-    if end == len {
-      break
-    }
-    continue end + 1
-  }
-  chunks
-}
-
-///|
 /// Zips two views into an array of pairs. The result is as long as the
 /// shorter view.
 ///

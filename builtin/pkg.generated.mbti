@@ -1094,7 +1094,6 @@ pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int32, B, A) -> B raise?)
 pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int32?
 pub fn[T] ArrayView::search_by(Self[T], (T) -> Bool raise?) -> Int32? raise?
-pub fn[T] ArrayView::split(Self[T], (T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int32
 pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
