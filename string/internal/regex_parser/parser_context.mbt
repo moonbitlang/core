@@ -13,18 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Type `Mode` used by this package APIs.
-pub(all) enum Mode {
-  Bytes
-  String
-}
-
-///|
 priv struct ParserContext {
   profile : @re.Profile
   base : Int32
   ignore_case : Bool
-  mode : Mode
   /// Number of groups open at the current position.
   depth : Int32
   /// Names of the capture groups read so far, shared by every copy of the
@@ -33,12 +25,8 @@ priv struct ParserContext {
 }
 
 ///|
-fn ParserContext::new(
-  profile~ : @re.Profile,
-  base~ : Int32,
-  mode~ : Mode,
-) -> ParserContext {
-  { profile, base, ignore_case: false, mode, depth: 0, group_names: Set([]), }
+fn ParserContext::new(profile~ : @re.Profile, base~ : Int32) -> ParserContext {
+  { profile, base, ignore_case: false, depth: 0, group_names: Set([]), }
 }
 
 ///|

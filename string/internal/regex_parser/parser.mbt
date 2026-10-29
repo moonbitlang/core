@@ -45,16 +45,9 @@ fn Parser::class_atom(
     (re"^\\r", after=rest) => (rest, Char('\r'))
     (re"^\\t", after=rest) => (rest, Char('\t'))
     (re"^\\v", after=rest) => (rest, Char('\u{0b}'))
-    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest2) => {
-      if ctx.mode is String {
-        raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
-      }
-      (rest2, Char(hex2i(hex)))
-    }
+    (re"^\\x[0-9A-Fa-f]{2}", after=_) =>
+      raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
     (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest2) => {
-      if ctx.mode is Bytes {
-        raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
-      }
       let c = hex2i(hex)
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
@@ -62,9 +55,6 @@ fn Parser::class_atom(
       (rest2, Char(c))
     }
     (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest2) => {
-      if ctx.mode is Bytes {
-        raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
-      }
       let c = hex2i(hex)
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
@@ -307,16 +297,9 @@ fn Parser::term(
     (re"^\\t", after=rest) => (rest, @re.char(@re.RecharSet::char('\t')), false)
     (re"^\\v", after=rest) =>
       (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
-    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest2) => {
-      if ctx.mode is String {
-        raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
-      }
-      (rest2, @re.char(@re.RecharSet::char(hex2i(hex))), false)
-    }
+    (re"^\\x[0-9A-Fa-f]{2}", after=_) =>
+      raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
     (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest2) => {
-      if ctx.mode is Bytes {
-        raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
-      }
       let c = hex2i(hex)
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
@@ -324,9 +307,6 @@ fn Parser::term(
       (rest2, @re.char(@re.RecharSet::char(c)), false)
     }
     (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest2) => {
-      if ctx.mode is Bytes {
-        raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
-      }
       let c = hex2i(hex)
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
@@ -488,13 +468,12 @@ fn Parser::disjunction(
 }
 
 ///|
-/// Parse input into this package's structured value.
+/// Parse a string regex pattern.
 pub fn parse(
   profile~ : @re.Profile,
-  mode~ : Mode,
   pattern : StringView,
 ) -> @re.Pattern raise ParserError {
-  let ctx = ParserContext::new(profile~, base=pattern.start_offset(), mode~)
+  let ctx = ParserContext::new(profile~, base=pattern.start_offset())
   let (rest, pat) = Parser::disjunction(pattern, ctx~)
   if !rest.is_empty() {
     raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)

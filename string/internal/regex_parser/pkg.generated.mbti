@@ -8,7 +8,7 @@ import {
 }
 
 // Values
-pub fn parse(profile~ : @shared_types.Profile, mode~ : Mode, StringView) -> @ast.Pattern raise ParserError
+pub fn parse(profile~ : @shared_types.Profile, StringView) -> @ast.Pattern raise ParserError
 
 // Errors
 type ParserError derive(@debug.Debug)
@@ -16,10 +16,6 @@ pub fn ParserError::to_string(Self) -> String
 pub impl Show for ParserError
 
 // Types and methods
-pub(all) enum Mode {
-  Bytes
-  String
-}
 
 // Type aliases
 

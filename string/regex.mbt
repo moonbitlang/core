@@ -68,11 +68,7 @@ pub struct Regex {
 /// ```
 #alias(new, deprecated="Use `Regex()` instead")
 pub fn Regex::Regex(pattern : StringView) -> Regex raise {
-  let pat = @regex_parser.parse(
-    profile=re_profile_unicode,
-    pattern,
-    mode=String,
-  )
+  let pat = @regex_parser.parse(profile=re_profile_unicode, pattern)
   { pat, re: None, }
 }
 
