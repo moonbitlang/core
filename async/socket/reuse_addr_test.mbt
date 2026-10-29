@@ -14,9 +14,9 @@
 
 ///|
 async test "reuse addr" {
+  let port = 8342
   async fn run_server(server : @socket.TcpServer) -> Unit {
     defer server.close()
-    let port = server.addr.port()
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
         let (conn, _) = server.accept()
@@ -32,13 +32,12 @@ async test "reuse addr" {
       }
     }
   }
-  for _ in 0..<2; port = 0 {
+  for _ in 0..<2 {
     let server = @socket.TcpServer(
       @socket.Addr::parse("127.0.0.1:\{port}"),
       reuse_addr=true,
     )
     defer server.close()
     run_server(server)
-    continue server.addr.port()
   }
 }
