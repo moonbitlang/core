@@ -34,9 +34,9 @@ pub struct Regex {
 ///   `(?<name> ... )`, `a|b`
 /// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
 ///
-/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex`.
+/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, escaped
+/// metacharacters, and the Unicode escapes `\uXXXX` and `\u{X...}`. Byte
+/// escapes `\xHH` are not supported.
 ///
 /// `^` and `$` are non-multiline anchors: they match only the beginning and
 /// end of the whole input, not per-line boundaries.
