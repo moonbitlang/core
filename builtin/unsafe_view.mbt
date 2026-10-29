@@ -27,7 +27,7 @@ pub fn[T] Array::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make(self.buffer(), start, end - start)
+  ArrayView::make_view(self.buffer(), start, end)
 }
 
 ///|
@@ -45,7 +45,7 @@ pub fn[T] ArrayView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make(self.buf(), self.start() + start, end - start)
+  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -63,10 +63,10 @@ pub fn[T] FixedArray::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make(
+  ArrayView::make_view(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
-    end - start,
+    end,
   )
 }
 
@@ -103,7 +103,7 @@ pub fn[T] MutArrayView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make(self.buf(), self.start() + start, end - start)
+  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -124,7 +124,7 @@ pub fn[T] UninitializedArray::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make(self, start, end - start)
+  ArrayView::make_view(self, start, end)
 }
 
 ///|
@@ -142,7 +142,7 @@ pub fn Bytes::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> BytesView {
-  BytesView::make(self, start, end - start)
+  BytesView::make_view(self, start, end)
 }
 
 ///|
@@ -160,7 +160,7 @@ pub fn BytesView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> BytesView {
-  BytesView::make(self.bytes(), self.start() + start, end - start)
+  BytesView::make_view(self.bytes(), self.start() + start, self.start() + end)
 }
 
 ///|

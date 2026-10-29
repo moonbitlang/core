@@ -306,7 +306,7 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// ```
 pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
   let old_len = self.length()
-  let append_len = other.len()
+  let append_len = other.length()
   guard! old_len + append_len >= old_len
   JSArray::ofAnyArray(self).append_view(
     JSArray::ofAnyFixedArray(other.buf().0),
@@ -349,7 +349,7 @@ pub fn[A] ArrayView::blit_to(
   dst : Array[A],
   dst_offset~ : Int32 = 0,
 ) -> Unit {
-  let len = self.len()
+  let len = self.length()
   let old_len = dst.length()
   guard! dst_offset >= 0 && dst_offset <= old_len
   let new_len = dst_offset + len

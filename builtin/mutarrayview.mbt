@@ -36,14 +36,17 @@ fn[T] MutArrayView::buf(self : MutArrayView[T]) -> UninitializedArray[T] = "%arr
 fn[T] MutArrayView::start(self : MutArrayView[T]) -> Int32 = "%arrayview.start"
 
 ///|
-fn[T] MutArrayView::len(self : MutArrayView[T]) -> Int32 = "%arrayview.len"
+fn[T] MutArrayView::end(self : MutArrayView[T]) -> Int32 = "%arrayview.end"
 
 ///|
-fn[T] MutArrayView::make(
+/// Builds the view `buf[start:end]` without any checks.
+///
+/// The caller must ensure `0 <= start <= end <= buf.length()`.
+fn[T] MutArrayView::make_view(
   buf : UninitializedArray[T],
   start : Int32,
-  len : Int32,
-) -> MutArrayView[T] = "%arrayview.make"
+  end : Int32,
+) -> MutArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Returns the length (number of elements) of a mutable array view.
@@ -65,7 +68,7 @@ fn[T] MutArrayView::make(
 /// ```
 #intrinsic("%mutarrayview.length")
 pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int32 {
-  self.len()
+  self.end() - self.start()
 }
 
 ///|
@@ -116,8 +119,8 @@ pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int32 {
 #intrinsic("%mutarrayview.get")
 #alias("_[_]")
 pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int32) -> T {
-  guard index >= 0 && index < self.len() else {
-    index_out_of_bounds(self.len(), index)
+  guard index >= 0 && index < self.length() else {
+    index_out_of_bounds(self.length(), index)
   }
   self.buf().unsafe_get(self.start() + index)
 }
@@ -180,8 +183,8 @@ pub fn[T] MutArrayView::set(
   index : Int32,
   value : T,
 ) -> Unit {
-  guard index >= 0 && index < self.len() else {
-    index_out_of_bounds(self.len(), index)
+  guard index >= 0 && index < self.length() else {
+    index_out_of_bounds(self.length(), index)
   }
   self.buf().unsafe_set(self.start() + index, value)
 }
@@ -257,7 +260,7 @@ pub fn[T] Array::mut_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  MutArrayView::make(self.buffer(), start, end - start)
+  MutArrayView::make_view(self.buffer(), start, end)
 }
 
 ///|
@@ -305,7 +308,7 @@ pub fn[T] MutArrayView::mut_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  MutArrayView::make(self.buf(), self.start() + start, end - start)
+  MutArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -349,10 +352,10 @@ pub fn[T] FixedArray::mut_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  MutArrayView::make(
+  MutArrayView::make_view(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
-    end - start,
+    end,
   )
 }
 
@@ -382,7 +385,7 @@ pub fn[T] MutArrayView::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make(self.buf(), self.start() + start, end - start)
+  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -412,8 +415,8 @@ pub fn[T] MutArrayView::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  ArrayView::make(self.buf(), self.start() + lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  ArrayView::make_view(self.buf(), self.start() + lo, self.start() + hi)
 }
 
 ///|
@@ -532,13 +535,13 @@ pub fn[T] MutArrayView::blit_from_array(
   dst_offset~ : Int32 = 0,
 ) -> Unit {
   guard! dst_offset >= 0 &&
-    dst_offset <= self.len() &&
-    source.len() <= self.len() - dst_offset
+    dst_offset <= self.length() &&
+    source.length() <= self.length() - dst_offset
   UninitializedArray::unsafe_blit(
     self.buf(),
     self.start() + dst_offset,
     source.buf(),
     source.start(),
-    source.len(),
+    source.length(),
   )
 }

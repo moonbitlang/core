@@ -16,7 +16,7 @@
 
 ///|
 /// An `ArrayView` represents a view into a section of an array without copying the data.
-/// It stores its own start offset and length when it is created, so iteration
+/// It stores its own start and end offsets when it is created, so iteration
 /// over a view keeps using those bounds even if the underlying array is later
 /// structurally modified.
 ///
@@ -59,14 +59,17 @@ fn[T] ArrayView::buf(self : ArrayView[T]) -> UninitializedArray[T] = "%arrayview
 fn[T] ArrayView::start(self : ArrayView[T]) -> Int32 = "%arrayview.start"
 
 ///|
-fn[T] ArrayView::len(self : ArrayView[T]) -> Int32 = "%arrayview.len"
+fn[T] ArrayView::end(self : ArrayView[T]) -> Int32 = "%arrayview.end"
 
 ///|
-fn[T] ArrayView::make(
+/// Builds the view `buf[start:end]` without any checks.
+///
+/// The caller must ensure `0 <= start <= end <= buf.length()`.
+fn[T] ArrayView::make_view(
   buf : UninitializedArray[T],
   start : Int32,
-  len : Int32,
-) -> ArrayView[T] = "%arrayview.make"
+  end : Int32,
+) -> ArrayView[T] = "%arrayview.make_view"
 
 // #endregion
 
@@ -92,7 +95,7 @@ fn[T] ArrayView::make(
 /// ```
 #intrinsic("%arrayview.length")
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int32 {
-  self.len()
+  self.end() - self.start()
 }
 
 ///|
@@ -155,8 +158,8 @@ pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int32 {
 #intrinsic("%arrayview.get")
 #alias("_[_]")
 pub fn[T] ArrayView::at(self : ArrayView[T], index : Int32) -> T {
-  guard index >= 0 && index < self.len() else {
-    index_out_of_bounds(self.len(), index)
+  guard index >= 0 && index < self.length() else {
+    index_out_of_bounds(self.length(), index)
   }
   self.buf().unsafe_get(self.start() + index)
 }
@@ -284,7 +287,7 @@ pub fn[T] Array::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make(self.buffer(), start, end - start)
+  ArrayView::make_view(self.buffer(), start, end)
 }
 
 ///|
@@ -329,7 +332,7 @@ pub fn[T] Array::get_view(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
-  Some(ArrayView::make(self.buffer(), start, end - start))
+  Some(ArrayView::make_view(self.buffer(), start, end))
 }
 
 ///|
@@ -378,7 +381,7 @@ pub fn[T] ArrayView::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make(self.buf(), self.start() + start, end - start)
+  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -425,7 +428,9 @@ pub fn[T] ArrayView::get_view(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
-  Some(ArrayView::make(self.buf(), self.start() + start, end - start))
+  Some(
+    ArrayView::make_view(self.buf(), self.start() + start, self.start() + end),
+  )
 }
 
 ///|
@@ -488,8 +493,8 @@ pub fn[T] Array::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  ArrayView::make(self.buffer(), lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  ArrayView::make_view(self.buffer(), lo, hi)
 }
 
 ///|
@@ -529,8 +534,8 @@ pub fn[T] ArrayView::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  ArrayView::make(self.buf(), self.start() + lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  ArrayView::make_view(self.buf(), self.start() + lo, self.start() + hi)
 }
 
 ///|
@@ -581,10 +586,10 @@ pub fn[T] FixedArray::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make(
+  ArrayView::make_view(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
-    end - start,
+    end,
   )
 }
 
@@ -631,10 +636,10 @@ pub fn[T] FixedArray::get_view(
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(
-    ArrayView::make(
+    ArrayView::make_view(
       unsafe_cast_fixedarray_to_uninitializedarray(self),
       start,
-      end - start,
+      end,
     ),
   )
 }
@@ -675,8 +680,12 @@ pub fn[T] FixedArray::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  ArrayView::make(unsafe_cast_fixedarray_to_uninitializedarray(self), lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  ArrayView::make_view(
+    unsafe_cast_fixedarray_to_uninitializedarray(self),
+    lo,
+    hi,
+  )
 }
 
 ///|

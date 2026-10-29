@@ -1327,7 +1327,8 @@ pub fn BytesView::unsafe_extract_bytesview(
   offset : Int32,
   len : Int32,
 ) -> BytesView {
-  BytesView::make(bs.bytes(), bs.start() + (offset >> 3), len >> 3)
+  let start = bs.start() + (offset >> 3)
+  BytesView::make_view(bs.bytes(), start, start + (len >> 3))
 }
 
 ///|
