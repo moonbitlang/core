@@ -19,10 +19,13 @@ fn BytesView::bytes(self : BytesView) -> Bytes = "%bytesview.bytes"
 fn BytesView::start(self : BytesView) -> Int32 = "%bytesview.start"
 
 ///|
-fn BytesView::len(self : BytesView) -> Int32 = "%bytesview.len"
+fn BytesView::end(self : BytesView) -> Int32 = "%bytesview.end"
 
 ///|
-fn BytesView::make(b : Bytes, start : Int32, len : Int32) -> BytesView = "%bytesview.make"
+/// Builds the view `b[start:end]` without any checks.
+///
+/// The caller must ensure `0 <= start <= end <= b.length()`.
+fn BytesView::make_view(b : Bytes, start : Int32, end : Int32) -> BytesView = "%bytesview.make_view"
 
 ///|
 /// Returns the number of bytes in the view.
@@ -44,7 +47,7 @@ fn BytesView::make(b : Bytes, start : Int32, len : Int32) -> BytesView = "%bytes
 /// ```
 #intrinsic("%bytesview.length")
 pub fn BytesView::length(self : BytesView) -> Int32 {
-  self.len()
+  self.end() - self.start()
 }
 
 ///|
@@ -193,7 +196,7 @@ pub fn Bytes::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
-  BytesView::make(self, start, end - start)
+  BytesView::make_view(self, start, end)
 }
 
 ///|
@@ -223,7 +226,7 @@ pub fn Bytes::get_view(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
-  Some(BytesView::make(self, start, end - start))
+  Some(BytesView::make_view(self, start, end))
 }
 
 ///|
@@ -239,7 +242,9 @@ pub fn BytesView::get_view(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
-  Some(BytesView::make(self.bytes(), self.start() + start, end - start))
+  Some(
+    BytesView::make_view(self.bytes(), self.start() + start, self.start() + end),
+  )
 }
 
 ///|
@@ -271,7 +276,7 @@ pub fn BytesView::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
-  BytesView::make(self.bytes(), self.start() + start, end - start)
+  BytesView::make_view(self.bytes(), self.start() + start, self.start() + end)
 }
 
 ///|
@@ -309,8 +314,8 @@ pub fn Bytes::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  BytesView::make(self, lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  BytesView::make_view(self, lo, hi)
 }
 
 ///|
@@ -340,8 +345,8 @@ pub fn BytesView::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  BytesView::make(self.bytes(), self.start() + lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  BytesView::make_view(self.bytes(), self.start() + lo, self.start() + hi)
 }
 
 ///|

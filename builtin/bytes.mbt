@@ -219,7 +219,7 @@ pub fn FixedArray::blit_from_bytesview(
     bytes_offset,
     src.bytes(),
     src.start(),
-    src.len(),
+    src.length(),
   )
 }
 

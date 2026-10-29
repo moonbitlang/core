@@ -98,7 +98,7 @@ pub fn[T] UninitializedArray::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make(self, start, end - start)
+  ArrayView::make_view(self, start, end)
 }
 
 ///|
@@ -131,8 +131,8 @@ pub fn[T] UninitializedArray::clamped_view(
     None => len
     Some(end) => clamp_offset(end, len)
   }
-  let count = if hi > lo { hi - lo } else { 0 }
-  ArrayView::make(self, lo, count)
+  let hi = if hi > lo { hi } else { lo }
+  ArrayView::make_view(self, lo, hi)
 }
 
 ///|
@@ -245,7 +245,7 @@ test "as_view with valid_range" {
   let arr : UninitializedArray[Int32] = UninitializedArray::make(5)
   let view = arr[1:4]
   inspect(view.start(), content="1")
-  inspect(view.len(), content="3")
+  inspect(view.length(), content="3")
 }
 
 ///|
