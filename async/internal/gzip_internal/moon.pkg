@@ -1,3 +1,7 @@
+options(
+  "allow-experimental-packages": true,
+)
+
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",

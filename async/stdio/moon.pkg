@@ -13,6 +13,8 @@ import {
 } for "test"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "deprecated.mbt": [ "native", "wasm" ],
     "stdio.mbt": [ "native", "wasm" ],

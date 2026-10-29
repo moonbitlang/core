@@ -18,5 +18,7 @@ import {
 } for "test"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: { "integration.wasm.mbt": [ "wasm" ] },
 )

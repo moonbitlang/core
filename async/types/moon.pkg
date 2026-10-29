@@ -1,3 +1,7 @@
+options(
+  experimental: true,
+)
+
 import {
   "moonbitlang/core/builtin",
 }

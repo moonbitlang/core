@@ -34,6 +34,8 @@ import {
 } for "wbtest"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "client.mbt": [ "native", "js", "wasm" ],
     "client_connection.js.mbt": [ "js" ],

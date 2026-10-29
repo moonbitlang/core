@@ -8,6 +8,7 @@ import {
 }
 
 options(
+  "allow-experimental-packages": true,
   "native-stub": [ "external_loop.c" ],
   targets: { "deprecated.mbt": [ "native" ], "main.mbt": [ "native" ] },
 )

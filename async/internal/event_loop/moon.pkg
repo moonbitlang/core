@@ -32,6 +32,7 @@ import {
 } for "wbtest"
 
 options(
+  "allow-experimental-packages": true,
   targets: {
     "cancel_before_submit_test.mbt": [ "native", "wasm" ],
     "event_loop.js.mbt": [ "js" ],
