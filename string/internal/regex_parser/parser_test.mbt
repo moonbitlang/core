@@ -578,7 +578,7 @@ test "parse/error_byte_escape_in_string_mode" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=5, hint="Byte escape sequences are not allowed"))
+      #|Err(ParserError(at=1, hint="Byte escape sequences are not allowed"))
     ),
   )
 }
@@ -590,7 +590,7 @@ test "parse/error_byte_escape_in_string_mode_term" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=4, hint="Byte escape sequences are not allowed"))
+      #|Err(ParserError(at=0, hint="Byte escape sequences are not allowed"))
     ),
   )
 }
@@ -626,7 +626,7 @@ test "parse/error_unicode_escape_in_bytes_mode_term" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=6, hint="Unicode escape sequences are not allowed"))
+      #|Err(ParserError(at=0, hint="Unicode escape sequences are not allowed"))
     ),
   )
 }
@@ -638,7 +638,7 @@ test "parse/error_unicode_brace_escape_in_bytes_mode" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=7, hint="Unicode escape sequences are not allowed"))
+      #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
     ),
   )
 }
@@ -662,7 +662,7 @@ test "parse/error_unclosed_char_class" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=4, hint="Unclosed character class"))
+      #|Err(ParserError(at=0, hint="Unclosed character class"))
     ),
   )
 }
@@ -698,7 +698,7 @@ test "parse/error_invalid_quantifier_range" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=6, hint="Invalid quantifier"))
+      #|Err(ParserError(at=1, hint="Invalid quantifier"))
     ),
   )
 }
@@ -710,7 +710,7 @@ test "parse/error_quantifier_too_large" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=2, hint="Quantifier too large"))
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
     ),
   )
 }
@@ -722,7 +722,7 @@ test "parse/error_quantifier_too_large_overflow" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=2, hint="Quantifier too large"))
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
     ),
   )
 }
@@ -734,7 +734,7 @@ test "parse/error_max_quantifier_too_large" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=4, hint="Quantifier too large"))
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
     ),
   )
 }
@@ -971,7 +971,7 @@ test "parse/error_unicode_out_of_range" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=11, hint="Character out of range"))
+      #|Err(ParserError(at=1, hint="Character out of range"))
     ),
   )
 }
@@ -983,7 +983,7 @@ test "parse/error_unicode_brace_out_of_range_term" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=10, hint="Character out of range"))
+      #|Err(ParserError(at=0, hint="Character out of range"))
     ),
   )
 }
@@ -1361,7 +1361,7 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=2, hint="Character out of range"))
+      #|Err(ParserError(at=1, hint="Character out of range"))
     ),
   )
 }
@@ -1520,19 +1520,19 @@ test "parse/unterminated_range_is_an_error" {
   inspect(
     parse_result("[a-"),
     content=(
-      #|ParserError at position 3: Unclosed character class
+      #|ParserError at position 0: Unclosed character class
     ),
   )
   inspect(
     parse_result("[a-b"),
     content=(
-      #|ParserError at position 4: Unclosed character class
+      #|ParserError at position 0: Unclosed character class
     ),
   )
   inspect(
     parse_result("[a"),
     content=(
-      #|ParserError at position 2: Unclosed character class
+      #|ParserError at position 0: Unclosed character class
     ),
   )
 }

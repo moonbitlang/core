@@ -34,6 +34,7 @@ const MAX_GROUP_DEPTH = 64
 fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
+  class_start~ : StringView,
 ) -> (StringView, CharOrClass) raise ParserError {
   lexmatch rest with longest {
     (re"^\\[dDsSwW]", after=_) =>
@@ -44,11 +45,11 @@ fn Parser::class_atom(
     (re"^\\r", after=rest) => (rest, Char('\r'))
     (re"^\\t", after=rest) => (rest, Char('\t'))
     (re"^\\v", after=rest) => (rest, Char('\u{0b}'))
-    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) => {
+    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest2) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
       }
-      (rest, Char(hex2i(hex)))
+      (rest2, Char(hex2i(hex)))
     }
     (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest2) => {
       if ctx.mode is Bytes {
@@ -60,7 +61,7 @@ fn Parser::class_atom(
       }
       (rest2, Char(c))
     }
-    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest) => {
+    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest2) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -68,7 +69,7 @@ fn Parser::class_atom(
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, Char(c))
+      (rest2, Char(c))
     }
     (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"\-:&]" as c), after=rest) =>
@@ -89,14 +90,14 @@ fn Parser::class_atom(
     (re"^\[:[A-Za-z0-9_\-]+:\]", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_POSIX_CLASS)
     (re"^\[:", after=_) => raise ctx.error_at(rest, HINT_INVALID_POSIX_CLASS)
-    (re"^." as c, after=rest) => {
+    (re"^." as c, after=rest2) => {
       guard ctx.profile.valid.contains(c.to_int()) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, Char(c.to_int()))
+      (rest2, Char(c.to_int()))
     }
     // Only the end of the pattern gets here, as in `[a-`.
-    _ => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
+    _ => raise ctx.error_at(class_start, HINT_UNCLOSED_CHAR_CLASS)
   }
 }
 
@@ -114,7 +115,7 @@ fn Parser::class_contents(
   let content_length = rest.length()
   outer~: for rest = rest, char_set = @re.RecharSet::empty() {
     match rest {
-      [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
+      [] => raise ctx.error_at(class_start, HINT_UNCLOSED_CHAR_CLASS)
       [']', ..] => break outer~ (rest, char_set)
       [':', ']', ..] if colon_start && content_length - rest.length() >= 2 =>
         raise ctx.error_at(class_start, HINT_BARE_POSIX_CLASS)
@@ -122,14 +123,14 @@ fn Parser::class_contents(
         let (rest, left) = match rest {
           ['[', ':', ..] =>
             // POSIX character class like [:digit:], handled by class_atom
-            Parser::class_atom(rest, ctx~)
+            Parser::class_atom(rest, ctx~, class_start~)
           ['[', ..] =>
             raise ctx.error_at(rest, HINT_UNSUPPORTED_NESTED_CHAR_CLASS)
           // A dash after a character makes a range, and the start of the
           // class is checked by the caller, so this one follows a range or a
           // POSIX class. It is an error, as in the compiler's regex literals.
           ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AFTER_RANGE)
-          _ => Parser::class_atom(rest, ctx~)
+          _ => Parser::class_atom(rest, ctx~, class_start~)
         }
         let (rest, left_set) = match left {
           Char(c) =>
@@ -138,7 +139,11 @@ fn Parser::class_contents(
                 raise ctx.error_at(rest, HINT_UNSUPPORTED_CLASS_SET_EXPRESSION)
               ['-', ']', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
               ['-', .. rest] => {
-                let (rest2, right) = Parser::class_atom(rest, ctx~)
+                let (rest2, right) = Parser::class_atom(
+                  rest,
+                  ctx~,
+                  class_start~,
+                )
                 match right {
                   Char(c2) => {
                     guard c <= c2 else {
@@ -205,7 +210,7 @@ fn Parser::character_class(
           char_set & ctx.profile.valid
         },
       )
-    [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
+    [] => raise ctx.error_at(class_start, HINT_UNCLOSED_CHAR_CLASS)
     _ => panic()
   }
 }
@@ -215,16 +220,17 @@ fn Parser::quantifier_opt(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Quantifier?) raise ParserError {
+  let quantifier_start = rest
   let (rest, range) = lexmatch rest with longest {
     (re"^\*", after=rest) => (rest, Some((0, None)))
     (re"^\+", after=rest) => (rest, Some((1, None)))
     (re"^\?", after=rest) => (rest, Some((0, Some(1))))
     (re"^[{]" + (re"[0-9]+" as min) + re"[}]", after=rest) => {
-      let min = Parser::quant_bound(min, ctx~)
+      let min = Parser::quant_bound(min, ctx~, start=quantifier_start)
       (rest, Some((min, Some(min))))
     }
     (re"^[{]" + (re"[0-9]+" as min) + re",[}]", after=rest) => {
-      let min = Parser::quant_bound(min, ctx~)
+      let min = Parser::quant_bound(min, ctx~, start=quantifier_start)
       (rest, Some((min, None)))
     }
     (
@@ -235,10 +241,10 @@ fn Parser::quantifier_opt(
       re"[}]",
       after=rest,
     ) => {
-      let min = Parser::quant_bound(min, ctx~)
-      let max = Parser::quant_bound(max, ctx~)
+      let min = Parser::quant_bound(min, ctx~, start=quantifier_start)
+      let max = Parser::quant_bound(max, ctx~, start=quantifier_start)
       guard min <= max else {
-        raise ctx.error_at(rest, HINT_INVALID_QUANTIFIER)
+        raise ctx.error_at(quantifier_start, HINT_INVALID_QUANTIFIER)
       }
       (rest, Some((min, Some(max))))
     }
@@ -264,12 +270,13 @@ fn Parser::quantifier_opt(
 fn Parser::quant_bound(
   digits : StringView,
   ctx~ : ParserContext,
+  start~ : StringView,
 ) -> Int32 raise ParserError {
   for c in digits; value = 0 {
     let digit = c.to_int() - '0'
     let next = value * 10 + digit
     guard next <= MAX_QUANT else {
-      raise ctx.error_at(digits, HINT_QUANTIFIER_TOO_LARGE)
+      raise ctx.error_at(start, HINT_QUANTIFIER_TOO_LARGE)
     }
     continue next
   } nobreak {
@@ -296,13 +303,13 @@ fn Parser::term(
     (re"^\\t", after=rest) => (rest, @re.char(@re.RecharSet::char('\t')), false)
     (re"^\\v", after=rest) =>
       (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
-    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) => {
+    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest2) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
       }
-      (rest, @re.char(@re.RecharSet::char(hex2i(hex))), false)
+      (rest2, @re.char(@re.RecharSet::char(hex2i(hex))), false)
     }
-    (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest) => {
+    (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest2) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -310,9 +317,9 @@ fn Parser::term(
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(@re.RecharSet::char(c)), false)
+      (rest2, @re.char(@re.RecharSet::char(c)), false)
     }
-    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest) => {
+    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest2) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -320,7 +327,7 @@ fn Parser::term(
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(@re.RecharSet::char(c)), false)
+      (rest2, @re.char(@re.RecharSet::char(c)), false)
     }
     (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"]" as c), after=rest) =>
