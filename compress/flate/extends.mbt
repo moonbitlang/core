@@ -52,6 +52,19 @@ pub extend DeflateAction with Eq::{not_equal}
 pub extend DeflateAction with @debug.Debug::{to_repr}
 
 ///|
+pub extend Strategy with Eq::{equal}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Strategy with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Strategy with @debug.Debug::{to_repr}
+
+///|
 pub extend StepResult with Eq::{equal}
 
 ///|

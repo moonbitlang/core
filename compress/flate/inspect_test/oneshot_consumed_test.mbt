@@ -24,7 +24,7 @@ fn consumed_streams() -> Array[(Bytes, Bytes)] {
     (hello_stored, b"hello"),
     (v_fixed_aaa, b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
     (v_dynamic_text, dynamic_plain),
-    (@flate.deflate_all(noise, level=0), noise),
+    (@flate.deflate_all(noise, strategy=Standard(level=0)), noise),
     (@flate.deflate_all(text), text),
     // Fixed block followed by a stored block: prefetched bytes must be
     // returned before the stored header is read.

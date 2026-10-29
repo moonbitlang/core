@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Tests for the public `deflate_all_split` entry point: round-trips, the
+// Tests for the public Split strategy: round-trips, the
 // never-worse-than-fixed arbitration guarantee, and edge cases (stored level,
 // empty input, large multi-chunk inputs).
 
@@ -120,7 +120,7 @@ fn split_midmix(size : Int32) -> Bytes {
 /// The splitter must never be larger than the fixed-cadence `deflate_all` on
 /// any input the arbitration can judge, and round-trips on large inputs that
 /// cross master-chunk boundaries.
-test "deflate_all_split never worse than fixed cadence" {
+test "Split strategy never worse than fixed cadence" {
   for level in 1..<=9 {
     let inputs : FixedArray[(String, Bytes)] = [
       ("prose", split_prose(1048576)),
@@ -132,8 +132,8 @@ test "deflate_all_split never worse than fixed cadence" {
     ]
     for t in inputs {
       let (name, data) = t
-      let fixed = @flate.deflate_all(data, level~)
-      let split = @flate.deflate_all_split(data, level~)
+      let fixed = @flate.deflate_all(data, strategy=Standard(level~))
+      let split = @flate.deflate_all(data, strategy=Split(level~))
       assert_true(
         split.length() <= fixed.length(),
         msg="split larger than fixed on \{name} L\{level}: \{split.length()} > \{fixed.length()}",
@@ -144,14 +144,14 @@ test "deflate_all_split never worse than fixed cadence" {
 }
 
 ///|
-test "deflate_all_split clamps out-of-range levels" {
+test "Split strategy clamps out-of-range levels" {
   let src = b"level clamping is deterministic across the splitter too"
   @test.assert_eq(
-    @flate.deflate_all_split(src, level=-1),
-    @flate.deflate_all_split(src, level=0),
+    @flate.deflate_all(src, strategy=Split(level=-1)),
+    @flate.deflate_all(src, strategy=Split(level=0)),
   )
   @test.assert_eq(
-    @flate.deflate_all_split(src, level=99),
-    @flate.deflate_all_split(src, level=9),
+    @flate.deflate_all(src, strategy=Split(level=99)),
+    @flate.deflate_all(src, strategy=Split(level=9)),
   )
 }

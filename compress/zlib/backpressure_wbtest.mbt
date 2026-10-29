@@ -31,7 +31,7 @@ test "zlib wrappers bound accepted input under output backpressure" {
   assert_true(enc_consumed < source.length())
   @test.assert_eq(enc_produced, 0)
 
-  let compressed = compress(source, level=0)
+  let compressed = compress(source, strategy=Standard(level=0))
   let decoder = Decoder()
   @test.assert_eq(decoder.unused_input(), b"")
   let dec_status_result = decoder.finish(compressed, no_output.mut_view())

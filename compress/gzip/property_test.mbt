@@ -21,12 +21,15 @@ test "property: gzip round-trips at every level" {
   @quickcheck.check(
     (data : Bytes) => {
       for level in 0..<10 {
-        if @gzip.decompress(@gzip.compress(data, level~)) != data {
+        if @gzip.decompress(@gzip.compress(data, strategy=Standard(level~))) !=
+          data {
           return false
         }
       }
-      if @gzip.decompress(@gzip.compress_optimal(data, iterations=3)) != data {
-        return false
+      for strategy in [@gzip.Strategy::Split(level=6), Optimal(iterations=3)] {
+        if @gzip.decompress(@gzip.compress(data, strategy~)) != data {
+          return false
+        }
       }
       true
     },

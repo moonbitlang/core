@@ -7,9 +7,7 @@ import {
 }
 
 // Values
-pub fn compress(BytesView, level? : Int32, fast_store? : Bool) -> Bytes
-
-pub fn compress_optimal(BytesView, iterations? : Int32, fast_store? : Bool) -> Bytes
+pub fn compress(BytesView, strategy? : @flate.Strategy, fast_store? : Bool) -> Bytes
 
 pub fn decompress(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
 
@@ -47,5 +45,12 @@ pub(all) enum ZlibErrorKind {
 pub fn ZlibErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases
+pub using @flate {type DeflateAction}
+
+pub using @flate {type Status}
+
+pub using @flate {type StepResult}
+
+pub using @flate {type Strategy}
 
 // Traits

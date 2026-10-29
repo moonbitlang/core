@@ -44,16 +44,18 @@ test "compress level 0 matches a complete standard golden" {
     // CRC32("abc")=0x352441C2 (little-endian), ISIZE=3.
      0xC2, 0x41, 0x24, 0x35, 0x03, 0x00, 0x00, 0x00,
   ]
-  @test.assert_eq(@gzip.compress(b"abc", level=0), golden)
+  @test.assert_eq(@gzip.compress(b"abc", strategy=Standard(level=0)), golden)
 }
 
 ///|
 /// Optimal (zopfli-style) gzip round-trips and is no larger than level 6.
-test "compress_optimal round-trips and is no larger than level 6" {
+test "Optimal strategy round-trips and is no larger than level 6" {
   let payload = b"the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. pack my box with five dozen liquor jugs."
-  let opt = @gzip.compress_optimal(payload)
+  let opt = @gzip.compress(payload, strategy=Optimal(iterations=15))
   @test.assert_eq(@gzip.decompress(opt), payload)
-  assert_true(opt.length() <= @gzip.compress(payload, level=6).length())
+  assert_true(
+    opt.length() <= @gzip.compress(payload, strategy=Standard(level=6)).length(),
+  )
 }
 
 ///|
@@ -502,7 +504,7 @@ test "streaming gzip Decoder drains a large stored member one byte at a time" {
     bytes.push((i & 0xFF).to_byte())
   }
   let payload = Bytes::from_array(bytes)
-  let gz = @gzip.compress(payload, level=0)
+  let gz = @gzip.compress(payload, strategy=Standard(level=0))
   let dec = @gzip.Decoder()
   let obuf = FixedArray::make(1, b'\x00')
   let plain = @buffer.Buffer()
@@ -736,7 +738,7 @@ test "streaming gzip verifies independent members while output is reused" {
     b"short final member",
   ]
   let stream = concat_bytes(
-    payloads.map(payload => @gzip.compress(payload, level=0)),
+    payloads.map(payload => @gzip.compress(payload, strategy=Standard(level=0))),
   )
   let decoder = @gzip.Decoder()
   let padded = Array::make(263, b'\xA5')

@@ -16,6 +16,14 @@
 // Adler-32 trailer. The streaming decoder supports preset dictionaries.
 
 ///|
+pub using @flate {
+  type Strategy,
+  type Status,
+  type StepResult,
+  type DeflateAction,
+}
+
+///|
 /// Machine-readable category for a zlib decoding failure. The accompanying
 /// `ZlibError` message remains intended for diagnostics rather than branching.
 /// Output limits, cancellation and invalid limits apply to `decompress` only.
@@ -99,30 +107,14 @@ fn zlib_frame(input : BytesView, deflated : Bytes) -> Bytes {
 }
 
 ///|
-/// Compress `input` into the zlib format. `level` 0-9 (clamped) trades speed
-/// for ratio; 0 = stored only, 6 = default.
-/// Optional `fast_store` is off by default; sampled inputs may use stored
-/// DEFLATE blocks, sacrificing compression ratio for speed.
+/// Compress a complete zlib stream with the selected DEFLATE strategy.
+/// `fast_store` may bypass the strategy for sampled inputs, trading ratio for speed.
 pub fn compress(
   input : BytesView,
-  level~ : Int32 = 6,
+  strategy~ : @flate.Strategy = Standard(level=6),
   fast_store~ : Bool = false,
 ) -> Bytes {
-  zlib_frame(input, @flate.deflate_all(input, level~, fast_store~))
-}
-
-///|
-/// Compress `input` into the zlib format with zopfli-style optimal parsing
-/// over the complete input. `iterations` controls the parsing effort
-/// per block and defaults to 15. Compression ratio depends on the input.
-/// Optional `fast_store` is off by default; sampled inputs may use stored
-/// DEFLATE blocks, sacrificing compression ratio for speed.
-pub fn compress_optimal(
-  input : BytesView,
-  iterations~ : Int32 = 15,
-  fast_store~ : Bool = false,
-) -> Bytes {
-  zlib_frame(input, @flate.deflate_all_optimal(input, iterations~, fast_store~))
+  zlib_frame(input, @flate.deflate_all(input, strategy~, fast_store~))
 }
 
 ///|

@@ -260,7 +260,7 @@ pub fn Writer::add(
     Deflate => {
       let compressor = self.compressor.unwrap_or_else(() => {
         let codec = @flate.Compressor(
-          level=self.level,
+          strategy=Standard(level=self.level),
           fast_store=self.fast_store,
         )
         self.compressor = Some(codec)

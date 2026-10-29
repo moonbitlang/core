@@ -263,52 +263,37 @@ fn emit_split_blocks(
 }
 
 ///|
-/// Compress with content-driven block splitting: tokenize each master chunk
-/// once (full 32 KB cross-block history), cut the token stream where the
-/// symbol statistics drift, and select stored, fixed or dynamic encoding for
-/// each segment.
-/// A mid-tier between the fixed-cadence `deflate_all` and the offline zopfli
-/// `deflate_all_optimal`.
-/// `fast_store` is disabled by default. Enabling it can bypass this strategy
-/// for heuristically incompressible input, trading output size for speed.
-pub fn deflate_all_split(
+/// Tokenize each chunk once, then select content-driven or fixed-cadence cuts.
+fn Compressor::encode_split(
+  self : Compressor,
   input : BytesView,
-  level~ : Int32 = 6,
-  fast_store~ : Bool = false,
-) -> Bytes {
-  let lv = clamp_level(level)
-  let w = BitWriter()
+  w : BitWriter,
+  cfg : LevelConfig,
+) -> Unit {
   let n = input.length()
-  guard lv != 0 && !(fast_store && should_fast_store(input)) else {
-    w.write_stored(input, 0, n, is_final=true)
-    w.flush()
-    return Bytes::from_array(w.out)
-  }
-  guard n != 0 else {
-    w.emit_empty_block(input)
-    w.flush()
-    return Bytes::from_array(w.out)
-  }
-  let cfg = level_configs[lv]
+  guard n != 0 else { return w.emit_empty_block(input) }
   let block_size = 65535
-  // Keep splitter chunks aligned with the ordinary whole-buffer cadence so
-  // cost estimates compare partitions over the same tokenized range.
-  let master_size = block_size
-  let long_hash_bits = long_hash_bits_for_input(input)
-  let finder = MatchFinder(input_size=n, long_hash_bits~)
-  finder.reset_for_input(input, long_hash_bits~)
   let mut pos = 0
   for ;; {
-    let target = next_block_target(pos, n, master_size)
-    let tokens : Array[Int32] = []
-    let ll_freq = FixedArray::make(MAX_NUM_LIT, 0)
-    let d_freq = FixedArray::make(MAX_NUM_DIST, 0)
+    let target = next_block_target(pos, n, block_size)
+    let tokens = self.tokens
+    let ll_freq = self.ll_freq
+    let d_freq = self.d_freq
+    tokens.clear()
+    ll_freq.fill(0)
+    d_freq.fill(0)
     let processed = tokenize(
-      input, finder, pos, target, cfg, tokens, ll_freq, d_freq,
+      input,
+      self.finder,
+      pos,
+      target,
+      cfg,
+      tokens,
+      ll_freq,
+      d_freq,
     )
     let all_pos = token_positions(tokens, pos, processed)
     let split_cuts = choose_splits(tokens)
-    // Compare adaptive and fixed-cadence partitions using the shared cost model.
     let fixed_cuts = fixed_cadence_cuts(tokens, all_pos, pos, block_size)
     let cuts = if partition_cost(tokens, all_pos, split_cuts) <
       partition_cost(tokens, all_pos, fixed_cuts) {
@@ -320,6 +305,4 @@ pub fn deflate_all_split(
     pos = processed
     guard pos < n else { break }
   }
-  w.flush()
-  Bytes::from_array(w.out)
 }
