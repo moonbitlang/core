@@ -266,11 +266,9 @@ test "deflate round trips: whole-buffer encoders" {
   for (_, data) in roundtrip_corpus() {
     assert_decodes(compressor.compress(data), data)
     let output = FixedArray::make(@flate.deflate_bound(data.length()), b'\x00')
-    let length = @flate.deflate_into(
-      data,
-      output.mut_view(),
-      strategy=Standard(level=6),
-    ).unwrap()
+    let length = @flate.Compressor(strategy=Standard(level=6))
+      .compress_into(data, output.mut_view())
+      .unwrap()
     assert_decodes(Bytes::makei(length, i => output[i]), data)
     for level in [1, 6, 9] {
       assert_decodes(@flate.deflate_all(data, strategy=Split(level~)), data)

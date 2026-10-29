@@ -273,6 +273,7 @@ priv struct MemDecoder {
   mut bitbuf : UInt32 // LSB-first bit accumulator
   mut bit_count : Int32 // valid bits in `bitbuf`
   mut out : DecodeOutput
+  dictionary : Bytes
   mut cancelled : () -> Bool // polled every `CANCEL_GRANULARITY` produced bytes
   mut poll_cancel : Bool
   mut next_cancel : Int32 // poll `cancelled` once `out` reaches this length
@@ -291,9 +292,7 @@ fn no_cancellation() -> Bool {
 }
 
 ///|
-/// A DEFLATE Huffman code is at most 15 bits. The one-shot decoder can keep a
-/// 24-bit reservoir because it is allowed to consume trailing bytes after the
-/// final block, as documented by `inflate_prefix`'s prefix semantics.
+/// Whole-byte read-ahead is excluded by consumed(), including in Exact mode.
 const HUFFMAN_FAST_BITS : Int32 = 15
 
 ///|
@@ -308,6 +307,7 @@ const INFLATE_SCRATCH_SIZE : Int32 = 8192
 fn MemDecoder::MemDecoder(
   input : BytesView,
   cancelled : () -> Bool,
+  dictionary? : BytesView,
 ) -> MemDecoder {
   {
     input,
@@ -315,6 +315,9 @@ fn MemDecoder::MemDecoder(
     bitbuf: 0,
     bit_count: 0,
     out: DecodeOutput(input.length()),
+    dictionary: dictionary.map_or(b"", dict => {
+      dict[(dict.length() - WINDOW_SIZE).max(0):].to_owned()
+    }),
     cancelled,
     poll_cancel: true,
     next_cancel: 0,
@@ -534,7 +537,11 @@ fn MemDecoder::decode_match(
   let dist = (distance_info >> 4) + self.read_bits(distance_info & 0xF)
   let available_history = self.out.length
   guard available_history >= WINDOW_SIZE ||
-    back_reference_distance_is_valid(dist, available_history) else {
+    back_reference_distance_is_valid(dist, available_history) ||
+    (
+      dist > available_history &&
+      dist - available_history <= self.dictionary.length()
+    ) else {
     raise InflateError(Corrupt, "corrupt: distance too far back")
   }
   // Copy a complete match here when capacity and the cancellation interval
@@ -542,7 +549,9 @@ fn MemDecoder::decode_match(
   // Short text matches use forward byte copies, including overlapping history.
   let out = self.out
   let start = out.length
-  if length <= out.capacity - start && length < self.next_cancel - start {
+  if dist <= start &&
+    length <= out.capacity - start &&
+    length < self.next_cancel - start {
     let storage = out.storage
     let at = out.start + start
     if length <= 16 {
@@ -950,8 +959,20 @@ fn MemDecoder::copy_match(
       remaining
     }
     let chunk = remaining.min(until_cancel)
-    self.out.append_repeated_suffix(distance, chunk)
-    remaining = remaining - chunk
+    let copied = if distance > self.out.length {
+      let history = distance - self.out.length
+      let copied = chunk.min(history)
+      self.out.append_bytes(
+        self.dictionary,
+        self.dictionary.length() - history,
+        copied,
+      )
+      copied
+    } else {
+      self.out.append_repeated_suffix(distance, chunk)
+      chunk
+    }
+    remaining -= copied
     self.check_cancel()
   }
 }
@@ -963,8 +984,7 @@ fn MemDecoder::copy_stored(
 ) -> Unit raise InflateError {
   let mut remaining = length
   while remaining > 0 {
-    // Preserve `inflate_prefix`'s cancellation cadence while copying each chunk
-    // through the core bulk-copy primitive.
+    // Keep cancellation polling aligned with produced output.
     let until_cancel = if self.poll_cancel {
       self.next_cancel - self.out.length
     } else {
@@ -1053,66 +1073,43 @@ fn MemDecoder::consumed(self : MemDecoder) -> Int32 {
 }
 
 ///|
-/// Decompress a raw DEFLATE stream held entirely in memory. Bytes after the
-/// final block are ignored; use `inflate_exact` when an exact framing boundary
-/// is required. Omit `max_output` for unbounded output, or supply a non-negative
-/// ceiling to raise `OutputLimitExceeded` before returning an oversized result;
-/// a negative ceiling raises `InvalidArgument`.
-/// If supplied, `cancelled` is polled at entry and every 4096 produced bytes
-/// (8192 with `max_output`); returning `true` raises `InflateError(Cancelled, _)`.
-pub fn inflate_prefix(
-  input : BytesView,
-  max_output? : Int32,
-  cancelled? : () -> Bool,
-) -> Bytes raise InflateError {
-  if max_output is Some(limit) {
-    guard limit >= 0 else {
-      raise InflateError(InvalidArgument, "max_output must be non-negative")
-    }
-    return inflate_streaming_all(
-      input,
-      Some(limit),
-      false,
-      cancelled.map_or(no_cancellation, callback => callback),
-    )
-  }
-  let d = MemDecoder(input, no_cancellation)
-  d.set_cancellation(cancelled)
-  d.run()
-  d.out.to_bytes()
-}
-
-///|
-/// A reusable, whole-buffer raw DEFLATE decompressor. It decodes the stream at
-/// the front of its input, into caller-owned storage (`decompress_into`) or
-/// into new `Bytes` (`decompress`). `decompress_into` returns both byte counts;
-/// `decompress` returns owned data and the input consumed. Huffman and
-/// dynamic-header workspace is retained across streams.
+/// A reusable whole-buffer decoder with independent history for each stream.
 struct Decompressor {
   decoder : MemDecoder
 }
 
 ///|
-/// Create a reusable whole-buffer decompressor.
-pub fn Decompressor::Decompressor() -> Decompressor {
-  { decoder: MemDecoder(b"", () => false), }
+/// Own the final 32 KiB of the optional dictionary for reuse across streams.
+pub fn Decompressor::Decompressor(dictionary? : BytesView) -> Decompressor {
+  { decoder: MemDecoder(b"", no_cancellation, dictionary?), }
 }
 
 ///|
-/// Decode a raw DEFLATE prefix into `output`, returning consumed/produced counts.
-/// Trailing bytes are ignored; `consumed` locates their start. The buffer capacity
-/// is the ceiling for `OutputLimitExceeded(limit~, observed~)`. Decoder workspace
-/// and caller-owned output storage can be reused across streams.
+fn check_input_mode(
+  mode : InputMode,
+  consumed : Int32,
+  input_length : Int32,
+) -> Unit raise InflateError {
+  if mode is Exact && consumed != input_length {
+    raise InflateError(TrailingData, "trailing data after DEFLATE stream")
+  }
+}
+
+///|
+/// Decode into the view; Exact rejects trailing input, and errors may leave output written.
 pub fn Decompressor::decompress_into(
   self : Decompressor,
   input : BytesView,
   output : MutArrayView[Byte],
+  mode~ : InputMode = Exact,
   cancelled? : () -> Bool,
 ) -> DecompressResult raise InflateError {
   self.decoder.reset_into(input, output, cancelled)
   defer self.decoder.clear_call_references()
   self.decoder.run()
-  { consumed: self.decoder.consumed(), produced: self.decoder.out.length, }
+  let consumed = self.decoder.consumed()
+  check_input_mode(mode, consumed, input.length())
+  { consumed, produced: self.decoder.out.length, }
 }
 
 ///|
@@ -1120,15 +1117,11 @@ pub fn Decompressor::decompress_into(
 const PREFIX_OUTPUT_CAPACITY : Int32 = 16384
 
 ///|
-/// Decode a raw DEFLATE prefix into new `Bytes`, reusing decoder workspace.
-/// The result records consumed input bytes; `inflate_exact` rejects trailing bytes.
-/// `max_output` caps output storage (default: `Bytes` capacity); exceeding it
-/// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
-/// `cancelled` is polled at entry and every 4096 decoded bytes; true raises
-/// `Cancelled`. The decoder can be reused after any error.
+/// Decode with reusable workspace; max_output limits output bytes, and Prefix permits trailing input.
 pub fn Decompressor::decompress(
   self : Decompressor,
   input : BytesView,
+  mode~ : InputMode = Exact,
   max_output? : Int32,
   cancelled? : () -> Bool,
 ) -> Decompressed raise InflateError {
@@ -1142,120 +1135,72 @@ pub fn Decompressor::decompress(
   decoder.out = DecodeOutput(input.length().min(PREFIX_OUTPUT_CAPACITY), limit~)
   defer decoder.clear_call_references()
   decoder.run()
-  { data: decoder.out.to_bytes(), consumed: decoder.consumed(), }
+  let consumed = decoder.consumed()
+  check_input_mode(mode, consumed, input.length())
+  { data: decoder.out.to_bytes(), consumed, }
 }
 
 ///|
-/// One-shot form of `Decompressor::decompress_into`, returning both byte counts.
-/// Use a `Decompressor` to reuse workspace across calls.
-pub fn inflate_into(
-  input : BytesView,
-  output : MutArrayView[Byte],
-  cancelled? : () -> Bool,
-) -> DecompressResult raise InflateError {
-  Decompressor().decompress_into(input, output, cancelled?)
-}
-
-///|
-/// Drive the streaming inflater over an in-memory input. If `exact` is true,
-/// reject bytes after the final DEFLATE block. If `max_output` is present, one
-/// fixed scratch buffer may be filled past that boundary internally, but no
-/// oversized result is returned. `cancelled` is polled at entry and once per
-/// step (every 8192 produced bytes); returning `true` raises
-/// `InflateError(Cancelled, _)`.
-fn inflate_streaming_all(
-  input : BytesView,
-  max_output : Int32?,
-  exact : Bool,
-  cancelled : () -> Bool,
-) -> Bytes raise InflateError {
-  guard !cancelled() else {
-    raise InflateError(Cancelled, "cancelled by caller")
-  }
-  let inflater = IncrementalDecoder()
-  let scratch = FixedArray::make(INFLATE_SCRATCH_SIZE, b'\x00')
-  let decoded : Array[Byte] = []
-  let mut input_pos = 0
-  for ;; {
-    let status_result = inflater.step(input[input_pos:], scratch.mut_view())
-    let status = status_result.status
-    let consumed = status_result.consumed
-    let produced = status_result.produced
-    input_pos = input_pos + consumed
-    guard !cancelled() else {
-      raise InflateError(Cancelled, "cancelled by caller")
-    }
-    ignore(
-      checked_decode_output_length(
-        decoded.length(),
-        produced,
-        limit=max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE),
-      ),
-    )
-    decoded.append(scratch[:produced])
-    match status {
-      Done => {
-        if exact && input_pos != input.length() {
-          raise InflateError(TrailingData, "trailing data after DEFLATE stream")
-        }
-        return Bytes::from_array(decoded)
-      }
-      NeedMoreOutput => ()
-      NeedMoreInput => raise InflateError(Truncated, "unexpected end of input")
-    }
-  }
-}
-
-///|
-/// Decode exactly one raw DEFLATE stream, rejecting trailing bytes.
-/// `max_output` caps decoded bytes (default: `Bytes` capacity); exceeding it
-/// raises `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
-/// `cancelled` is polled at entry and every 8192 decoded bytes; true raises
-/// `Cancelled`. `two_pass=true` validates and counts first, then decodes
-/// into one exactly sized allocation: roughly twice the work for lower peak
-/// memory. The default grows the output in one pass.
+/// Decode exactly one stream, rejecting trailing input; two_pass uses an exactly sized output allocation.
 pub fn inflate_exact(
   input : BytesView,
+  dictionary? : BytesView,
   max_output? : Int32,
   cancelled? : () -> Bool,
   two_pass~ : Bool = false,
 ) -> Bytes raise InflateError {
+  inflate_allocated(input, Exact, dictionary, max_output, cancelled, two_pass).data
+}
+
+///|
+/// Decode a stream prefix and return its consumed boundary; two_pass uses an exactly sized output allocation.
+pub fn inflate_prefix(
+  input : BytesView,
+  dictionary? : BytesView,
+  max_output? : Int32,
+  cancelled? : () -> Bool,
+  two_pass~ : Bool = false,
+) -> Decompressed raise InflateError {
+  inflate_allocated(input, Prefix, dictionary, max_output, cancelled, two_pass)
+}
+
+///|
+fn inflate_allocated(
+  input : BytesView,
+  mode : InputMode,
+  dictionary : BytesView?,
+  max_output : Int32?,
+  cancelled : (() -> Bool)?,
+  two_pass : Bool,
+) -> Decompressed raise InflateError {
   if max_output is Some(limit) {
     guard limit >= 0 else {
       raise InflateError(InvalidArgument, "max_output must be non-negative")
     }
   }
-  guard max_output is Some(_) || cancelled is Some(_) || two_pass else {
-    let decoder = MemDecoder(input, no_cancellation)
-    decoder.set_cancellation(None)
-    decoder.run()
-    guard decoder.consumed() == input.length() else {
-      raise InflateError(TrailingData, "trailing data after DEFLATE stream")
-    }
-    return decoder.out.to_bytes()
-  }
-  let cancelled = cancelled.unwrap_or(no_cancellation)
   if two_pass {
-    inflate_preallocated(input, max_output, cancelled)
+    inflate_preallocated(
+      input,
+      max_output,
+      cancelled.unwrap_or(no_cancellation),
+      mode,
+      dictionary,
+    )
   } else {
-    inflate_streaming_all(input, max_output, true, cancelled)
+    Decompressor(dictionary?).decompress(input, mode~, max_output?, cancelled?)
   }
 }
 
 ///|
-/// Drive one inflater over the whole in-memory input, delivering produced
-/// chunks to `emit` (called once per step with the scratch contents). Returns
-/// the total number of bytes produced. `max_output` raises once the total
-/// exceeds it; `exact` rejects bytes after the final block; `cancelled` is
-/// polled once per step and raises `InflateError(Cancelled, _)`.
+/// Drive an incremental decode, enforcing the output limit before emitting each chunk.
 fn inflate_drive(
   inflater : IncrementalDecoder,
   input : BytesView,
   max_output : Int32?,
-  exact : Bool,
+  mode : InputMode,
   cancelled : () -> Bool,
   emit : (FixedArray[Byte], Int32) -> Unit,
-) -> Int32 raise InflateError {
+) -> DecompressResult raise InflateError {
   let scratch = FixedArray::make(INFLATE_SCRATCH_SIZE, b'\x00')
   let mut total = 0
   let mut input_pos = 0
@@ -1278,10 +1223,8 @@ fn inflate_drive(
     )
     emit(scratch, produced)
     guard status is Done else { continue }
-    if exact && input_pos != input.length() {
-      raise InflateError(TrailingData, "trailing data after DEFLATE stream")
-    }
-    return total
+    check_input_mode(mode, input_pos, input.length())
+    return { consumed: input_pos, produced: total, }
   }
 }
 
@@ -1299,33 +1242,38 @@ fn validate_preallocation_size(
 }
 
 ///|
-/// `inflate_exact` with `two_pass=true`: validate and count in one pass
-/// over an 8 KiB scratch, then replay the deterministic decode into one exact
-/// allocation (the same `IncrementalDecoder` is reused via `reset`).
+/// Replay only the measured input prefix, with the same dictionary and a bounded output allocation.
 fn inflate_preallocated(
   input : BytesView,
   max_output : Int32?,
   cancelled : () -> Bool,
-) -> Bytes raise InflateError {
+  mode : InputMode,
+  dictionary : BytesView?,
+) -> Decompressed raise InflateError {
   guard !cancelled() else {
     raise InflateError(Cancelled, "cancelled by caller")
   }
-  let inflater = IncrementalDecoder()
-  let size = inflate_drive(inflater, input, max_output, true, cancelled, (
+  let inflater = IncrementalDecoder(dictionary?)
+  let counted = inflate_drive(inflater, input, max_output, mode, cancelled, (
     _scratch,
     _produced,
   ) => ())
-  inflater.reset()
-  let buf = FixedArray::make(size, b'\x00')
+  inflater.reset(dictionary?)
+  let buf = FixedArray::make(counted.produced, b'\x00')
   let mut filled = 0
-  ignore(
-    inflate_drive(inflater, input, None, true, cancelled, (scratch, produced) => {
+  let replayed = inflate_drive(
+    inflater,
+    input[:counted.consumed],
+    Some(counted.produced),
+    Exact,
+    cancelled,
+    (scratch, produced) => {
       scratch.blit_to(buf, len=produced, dst_offset=filled)
-      filled = filled + produced
-    }),
+      filled += produced
+    },
   )
-  validate_preallocation_size(size, filled)
-  owned_decode_buffer_to_bytes(buf)
+  validate_preallocation_size(counted.produced, replayed.produced)
+  { data: owned_decode_buffer_to_bytes(buf), consumed: replayed.consumed, }
 }
 
 ///|

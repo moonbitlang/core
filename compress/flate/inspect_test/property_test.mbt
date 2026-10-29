@@ -133,13 +133,13 @@ test "property: optimal and split parsers round-trip" {
       let data = input.0
       if @flate.inflate_prefix(
           @flate.deflate_all(data, strategy=Optimal(iterations=4)),
-        ) !=
+        ).data !=
         data {
         return false
       }
       if @flate.inflate_prefix(
           @flate.deflate_all(data, strategy=Split(level=6)),
-        ) !=
+        ).data !=
         data {
         return false
       }
@@ -164,7 +164,7 @@ test "property: compressible data round-trips across boundaries" {
       for level in levels {
         if @flate.inflate_prefix(
             @flate.deflate_all(source, strategy=Standard(level~)),
-          ) !=
+          ).data !=
           source {
           return false
         }

@@ -17,7 +17,7 @@ test "round-trip: repetitive data actually compresses" {
   let s = b"abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc"
   let comp = @flate.deflate_all(s)
   assert_true(comp.length() < s.length())
-  @test.assert_eq(@flate.inflate_prefix(comp), s)
+  @test.assert_eq(@flate.inflate_prefix(comp).data, s)
 }
 
 ///|
@@ -97,7 +97,7 @@ test "IncrementalEncoder finalization preserves unconsumed input under backpress
   @test.assert_eq(final_pos, final_input.length())
   assert_true(def.is_finished())
   @test.assert_eq(
-    @flate.inflate_prefix(compressed.to_bytes()),
+    @flate.inflate_prefix(compressed.to_bytes()).data,
     prefix + final_input,
   )
   let sentinel = FixedArray::make(4, b'\xA5')

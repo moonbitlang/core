@@ -136,7 +136,7 @@ fn inflate_member(
   max_output : Int32,
   cancelled : (() -> Bool)?,
 ) -> @flate.Decompressed raise GzipError {
-  decoder.decompress(input[q:], max_output~, cancelled?) catch {
+  decoder.decompress(input[q:], mode=Prefix, max_output~, cancelled?) catch {
     // All remaining input was handed over, yet the stream did not end.
     InflateError(Truncated, _) => raise GzipError(Truncated, "gzip: truncated")
     err => raise wrap_inflate_error(err)

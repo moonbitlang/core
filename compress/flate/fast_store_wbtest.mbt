@@ -34,18 +34,18 @@ test "fast store remains opt in across compression entry points" {
     @test.assert_eq(
       inflate_prefix(
         deflate_all(input, strategy=Standard(level~), fast_store=true),
-      ),
+      ).data,
       input,
     )
   }
   @test.assert_eq(
-    inflate_prefix(deflate_all(input, strategy=Split(level=6), fast_store=true)),
+    inflate_prefix(deflate_all(input, strategy=Split(level=6), fast_store=true)).data,
     input,
   )
   @test.assert_eq(
     inflate_prefix(
       deflate_all(input, strategy=Optimal(iterations=1), fast_store=true),
-    ),
+    ).data,
     input,
   )
 }
@@ -74,7 +74,7 @@ test "fast store output respects capacities bounds and codec reuse" {
       @test.assert_eq(output[i], b'\xA5')
     }
     @test.assert_eq(
-      deflate_into(input, output.mut_view(), fast_store=true),
+      Compressor(fast_store=true).compress_into(input, output.mut_view()),
       Some(expected.length()),
     )
     @test.assert_eq(codec.compress(input), expected)
@@ -82,7 +82,7 @@ test "fast store output respects capacities bounds and codec reuse" {
       codec.compress(b"abcabcabcabc"),
       deflate_all(b"abcabcabcabc"),
     )
-    @test.assert_eq(inflate_prefix(codec.compress(b"")), b"")
+    @test.assert_eq(inflate_prefix(codec.compress(b"")).data, b"")
   }
 }
 
@@ -158,11 +158,14 @@ test "fast store transitions across sync flush backpressure and reset" {
     let encoded : Array[Byte] = []
     append_fast_store_stream(fast, first, SyncFlush, encoded)
     append_fast_store_stream(fast, last, Finish, encoded)
-    @test.assert_eq(inflate_prefix(Bytes::from_array(encoded)), first + last)
+    @test.assert_eq(
+      inflate_prefix(Bytes::from_array(encoded)).data,
+      first + last,
+    )
     fast.reset()
     encoded.clear()
     append_fast_store_stream(fast, noise, Finish, encoded)
-    @test.assert_eq(inflate_prefix(Bytes::from_array(encoded)), noise)
+    @test.assert_eq(inflate_prefix(Bytes::from_array(encoded)).data, noise)
     let defaults : Array[Byte] = []
     let explicit : Array[Byte] = []
     let normal = IncrementalEncoder()

@@ -58,7 +58,7 @@ test "Optimal strategy round-trips and beats greedy" {
   }
   let src = Bytes::from_array(arr)
   let opt = @flate.deflate_all(src, strategy=Optimal(iterations=8))
-  @test.assert_eq(@flate.inflate_prefix(opt), src)
+  @test.assert_eq(@flate.inflate_prefix(opt).data, src)
   assert_true(opt.length() <= @flate.deflate_all(src).length())
 }
 
@@ -82,7 +82,7 @@ test "Optimal strategy splits heterogeneous data" {
   }
   let src = Bytes::from_array(arr)
   let opt = @flate.deflate_all(src, strategy=Optimal(iterations=5))
-  @test.assert_eq(@flate.inflate_prefix(opt), src)
+  @test.assert_eq(@flate.inflate_prefix(opt).data, src)
   assert_true(
     opt.length() <=
     @flate.deflate_all(src, strategy=Standard(level=9)).length() + 16,

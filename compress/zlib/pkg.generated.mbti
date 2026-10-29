@@ -7,9 +7,9 @@ import {
 }
 
 // Values
-pub fn compress(BytesView, strategy? : @flate.Strategy, fast_store? : Bool) -> Bytes
+pub fn compress(BytesView, strategy? : @flate.Strategy, dictionary? : BytesView, fast_store? : Bool) -> Bytes
 
-pub fn decompress(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
+pub fn decompress(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
 
 // Errors
 pub suberror ZlibError {
@@ -19,7 +19,7 @@ pub suberror ZlibError {
 // Types and methods
 type Decoder
 pub fn Decoder::Decoder(dictionary? : BytesView) -> Self
-pub fn Decoder::finish(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
+pub fn Decoder::check_end(Self) -> @flate.Status raise ZlibError
 pub fn Decoder::is_finished(Self) -> Bool
 pub fn Decoder::step(Self, BytesView, MutArrayView[Byte]) -> @flate.StepResult raise ZlibError
 pub fn Decoder::unused_input(Self) -> Bytes

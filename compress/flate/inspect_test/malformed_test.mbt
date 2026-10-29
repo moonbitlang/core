@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "inflate_prefix rejects malformed block structure with the correct category" {
+test "prefix inflate rejects malformed block structure with the correct category" {
   for
     (input, expected) in [
       (b"", @flate.Truncated),

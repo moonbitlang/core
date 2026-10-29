@@ -28,17 +28,17 @@ test "codec equality methods can be passed as functions across packages" {
 }
 
 ///|
-test "bounded inflate_prefix enforces its decoded-size boundary" {
+test "bounded prefix inflate enforces its decoded-size boundary" {
   let source = b"bounded one-shot inflate"
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(
-    @flate.inflate_prefix(compressed, max_output=source.length()),
+    @flate.inflate_prefix(compressed, max_output=source.length()).data,
     source,
   )
-  // The limited convenience API deliberately retains inflate_prefix's prefix
-  // semantics; exact framing is the separate inflate_exact contract.
+  // Prefix decoding permits trailing input even with an output limit;
+  // inflate_exact rejects trailing bytes.
   @test.assert_eq(
-    @flate.inflate_prefix(compressed + b"TRAILING", max_output=source.length()),
+    @flate.inflate_prefix(compressed + b"TRAILING", max_output=source.length()).data,
     source,
   )
   let InflateError(kind, _) = @test.expect_error(() => {
@@ -56,19 +56,18 @@ test "bounded inflate_prefix enforces its decoded-size boundary" {
   })
   @test.assert_eq(kind, InvalidArgument)
   let empty = @flate.deflate_all(b"")
-  @test.assert_eq(@flate.inflate_prefix(empty, max_output=0), b"")
-  // More than one scratch buffer forces the convenience driver through
-  // NeedMoreOutput without weakening the decoded-size limit.
+  @test.assert_eq(@flate.inflate_prefix(empty, max_output=0).data, b"")
+  // Large output forces buffer growth without weakening the decoded-size limit.
   let large = Bytes::from_array(Array::make(20000, b'X'))
   let large_compressed = @flate.deflate_all(large)
   @test.assert_eq(
-    @flate.inflate_prefix(large_compressed, max_output=large.length()),
+    @flate.inflate_prefix(large_compressed, max_output=large.length()).data,
     large,
   )
 }
 
 ///|
-fn inflate_exact_sources() -> Array[Bytes] {
+fn inflate_sources() -> Array[Bytes] {
   let patterned = Array::make(30000, b'\x00')
   for i in 0..<30000 {
     patterned[i] = (i * 31 + i / 7).to_byte()
@@ -85,8 +84,8 @@ fn inflate_exact_sources() -> Array[Bytes] {
 }
 
 ///|
-test "inflate_exact preallocated and grow paths agree" {
-  for source in inflate_exact_sources() {
+test "inflate preallocated and grow paths agree" {
+  for source in inflate_sources() {
     for level in [0, 1, 6] {
       let compressed = @flate.deflate_all(source, strategy=Standard(level~))
       @test.assert_eq(@flate.inflate_exact(compressed, two_pass=true), source)
@@ -96,7 +95,7 @@ test "inflate_exact preallocated and grow paths agree" {
 }
 
 ///|
-test "preallocated inflate_exact rejects truncation after output suspension" {
+test "preallocated inflate rejects truncation after output suspension" {
   let compressed = @flate.deflate_all(
     Bytes::make(8194, b'x'),
     strategy=Standard(level=0),
@@ -108,7 +107,7 @@ test "preallocated inflate_exact rejects truncation after output suspension" {
 }
 
 ///|
-test "inflate_exact enforces max_output on both paths" {
+test "inflate enforces max_output on both paths" {
   let source = Bytes::from_array(Array::make(20000, b'X'))
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(@flate.inflate_exact(compressed, max_output=20000), source)
@@ -129,7 +128,7 @@ test "inflate_exact enforces max_output on both paths" {
 }
 
 ///|
-test "inflate_exact entry cancellation raises Cancelled on both paths" {
+test "inflate entry cancellation raises Cancelled on both paths" {
   for preallocated in [false, true] {
     let InflateError(kind, _) = @test.expect_error(() => {
       @flate.inflate_exact(b"\x03\x00", two_pass=preallocated, cancelled=() => {
@@ -141,7 +140,7 @@ test "inflate_exact entry cancellation raises Cancelled on both paths" {
 }
 
 ///|
-test "preallocated inflate_exact honors cancellation in both passes" {
+test "preallocated inflate honors cancellation in both passes" {
   let source = Bytes::from_array(Array::make(30000, b'A'))
   let compressed = @flate.deflate_all(source)
   // Pass 1 (counting) covers 30000 bytes in four 8192-byte steps and polls
@@ -164,7 +163,7 @@ test "preallocated inflate_exact honors cancellation in both passes" {
 }
 
 ///|
-test "inflate_prefix honours entry and mid-stream cancellation with or without a limit" {
+test "prefix inflate honours entry and mid-stream cancellation with or without a limit" {
   let source = Bytes::make(20000, b'X')
   for level in [0, 6] {
     let compressed = @flate.deflate_all(source, strategy=Standard(level~))

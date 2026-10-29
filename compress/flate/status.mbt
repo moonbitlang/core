@@ -58,6 +58,13 @@ pub(all) struct StepResult {
 } derive(Eq, @debug.Debug)
 
 ///|
+/// Whether whole-buffer decoding requires an exact input boundary.
+pub(all) enum InputMode {
+  Exact
+  Prefix
+} derive(Eq, @debug.Debug)
+
+///|
 /// Byte counts from a successful whole-buffer decompression call.
 #valtype
 pub struct DecompressResult {

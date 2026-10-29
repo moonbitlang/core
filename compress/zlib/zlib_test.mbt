@@ -94,15 +94,15 @@ test "streaming zlib Decoder decodes a python zlib stream in tiny chunks" {
   let mut fed = 0
   for ;; {
     let next = if fed + 3 < n { fed + 3 } else { n }
-    let _status_result = dec.step(py_zlib[fed:next], obuf.mut_view())
-    let _status = _status_result.status
-    let c = _status_result.consumed
-    let p = _status_result.produced
+    let result = dec.step(py_zlib[fed:next], obuf.mut_view())
+    let c = result.consumed
+    let p = result.produced
     for i in 0..<p {
       out.write_byte(obuf[i])
     }
     fed = fed + c
     if dec.is_finished() {
+      @test.assert_eq(result.status, Done)
       break
     }
   }
@@ -140,6 +140,29 @@ test "streaming zlib Decoder: empty" {
 test "zlib preset dictionary round-trip" {
   let dict = b"common preamble shared by both sides of the protocol"
   let msg = b"common preamble shared by both sides of the protocol -- payload"
+  for
+    strategy in [
+      @zlib.Strategy::Standard(level=0),
+      Standard(level=6),
+      Split(level=6),
+      Optimal(iterations=1),
+    ] {
+    for dictionary in [dict, b""] {
+      let encoded = @zlib.compress(msg, strategy~, dictionary~)
+      @test.assert_eq(@zlib.decompress(encoded, dictionary~), msg)
+      let ZlibError(kind, _) = @test.expect_error(() => {
+        @zlib.decompress(encoded)
+      })
+      @test.assert_eq(kind, DictionaryRequired)
+    }
+    @test.assert_eq(
+      @zlib.decompress(
+        @zlib.compress(msg, strategy~, dictionary=dict, fast_store=true),
+        dictionary=dict,
+      ),
+      msg,
+    )
+  }
   let enc = @zlib.Encoder(dictionary=dict)
   let obuf = FixedArray::make(4096, b'\x00')
   let out = @buffer.Buffer()
@@ -158,6 +181,35 @@ test "zlib preset dictionary round-trip" {
     }
   }
   let z = out.to_bytes()
+  @test.assert_eq(
+    @zlib.decompress(z, dictionary=dict, max_output=msg.length()),
+    msg,
+  )
+  let ZlibError(missing, _) = @test.expect_error(() => @zlib.decompress(z))
+  @test.assert_eq(missing, DictionaryRequired)
+  let ZlibError(wrong, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=b"wrong")
+  })
+  @test.assert_eq(wrong, DictionaryMismatch)
+  let ZlibError(limited, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=dict, max_output=msg.length() - 1)
+  })
+  @test.assert_eq(
+    limited,
+    OutputLimitExceeded(
+      limit=(msg.length() - 1).to_uint64(),
+      observed=msg.length().to_uint64(),
+    ),
+  )
+  let mut polls = 0
+  let ZlibError(cancelled, _) = @test.expect_error(() => {
+    @zlib.decompress(z, dictionary=dict, cancelled=() => {
+      polls += 1
+      polls == 4
+    })
+  })
+  @test.assert_eq(cancelled, Cancelled)
+
   // With the right dictionary: decodes and verifies the trailer.
   let dec = @zlib.Decoder(dictionary=dict)
   let dbuf = FixedArray::make(4096, b'\x00')
@@ -260,28 +312,41 @@ test "malformed DEFLATE errors are wrapped as ZlibError" {
 test "streaming zlib Decoder reports truncation at end" {
   let output = FixedArray::make(256, b'\x00')
   let header = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    header.finish(b"\x78", output.mut_view())
-  })
+  let result = header.step(b"\x78", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => header.check_end())
   @test.assert_eq(kind, Truncated)
 
   let dictid = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    dictid.finish(b"\x78\x20\x00\x00", output.mut_view())
-  })
+  let result = dictid.step(b"\x78\x20\x00\x00", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78\x20\x00\x00".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => dictid.check_end())
   @test.assert_eq(kind, Truncated)
 
   let body = @zlib.Decoder()
+  let result = body.step(b"\x78\x01\x03", output.mut_view())
+  @test.assert_eq(result.consumed, b"\x78\x01\x03".length())
+  assert_true(result.status is NeedMoreInput)
   let ZlibError(kind, _) = @test.expect_error(() => {
-    body.finish(b"\x78\x01\x03", output.mut_view())
+    let mut status = body.check_end()
+    for _ in 0..<8 {
+      if status is Done {
+        break
+      }
+      status = body.step(b"", output.mut_view()).status
+    }
   })
   @test.assert_eq(kind, Truncated)
 
   let encoded = @zlib.compress(b"truncated checksum trailer")
   let trailer = @zlib.Decoder()
-  let ZlibError(kind, _) = @test.expect_error(() => {
-    trailer.finish(encoded[:encoded.length() - 1], output.mut_view())
-  })
+  let result = trailer.step(encoded[:encoded.length() - 1], output.mut_view())
+  @test.assert_eq(result.consumed, encoded.length() - 1)
+  @test.assert_eq(result.produced, b"truncated checksum trailer".length())
+  assert_true(result.status is NeedMoreInput)
+  let ZlibError(kind, _) = @test.expect_error(() => trailer.check_end())
   @test.assert_eq(kind, Truncated)
 }
 
@@ -293,13 +358,15 @@ test "streaming zlib Decoder latches end across output backpressure" {
   let encoded = @zlib.compress(source)
   let decoder = @zlib.Decoder()
   let no_output = FixedArray::make(0, b'\x00')
-  let initial_status_result = decoder.finish(encoded, no_output.mut_view())
+  let initial_status_result = decoder.step(encoded, no_output.mut_view())
   let initial_status = initial_status_result.status
   let initial_consumed = initial_status_result.consumed
   let initial_produced = initial_status_result.produced
   assert_true(initial_status is NeedMoreOutput)
   @test.assert_eq(initial_consumed, encoded.length())
   @test.assert_eq(initial_produced, 0)
+  assert_true(decoder.check_end() is NeedMoreOutput)
+  assert_true(decoder.check_end() is NeedMoreOutput)
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
   let mut first_resume = true
@@ -317,10 +384,14 @@ test "streaming zlib Decoder latches end across output backpressure" {
     if status is Done {
       break
     }
+    @test.assert_eq(status, NeedMoreOutput)
+    @test.assert_eq(produced, 1)
   }
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), source)
   @test.assert_eq(decoder.unused_input(), b"")
+  assert_true(decoder.check_end() is Done)
+  assert_true(decoder.check_end() is Done)
 }
 
 ///|
@@ -587,13 +658,12 @@ test "streaming zlib checksum survives output reuse before a split trailer" {
   @test.assert_eq(decoded.to_bytes(), source)
   for i in 0..<4 {
     let input = stream[body_end + i:body_end + i + 1]
-    let result = if i == 3 {
-      decoder.finish(input, output)
-    } else {
-      decoder.step(input, output)
-    }
+    let result = decoder.step(input, output)
     @test.assert_eq(result.status, if i == 3 { Done } else { NeedMoreInput })
+    @test.assert_eq(result.consumed, 1)
+    @test.assert_eq(result.produced, 0)
   }
+  assert_true(decoder.check_end() is Done)
   @test.assert_eq(padded[2], b'\xA5')
   @test.assert_eq(padded[260], b'\xA5')
 }

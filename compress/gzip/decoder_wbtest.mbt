@@ -32,9 +32,9 @@ test "gzip header FNAME bytes are discarded, not retained" {
   let plain = b"body after a long filename"
   let normal = compress(plain)
   let rest = b"\x00" + normal[10:].to_owned()
-  let result = decoder.finish(rest, output.mut_view())
-  @test.assert_eq(result.status, Done)
+  let result = decoder.step(rest, output.mut_view())
   @test.assert_eq(result.consumed, rest.length())
+  @test.assert_eq(decoder.check_end(), Done)
   @test.assert_eq(Bytes::from_array(output[:result.produced]), plain)
 }
 
@@ -81,7 +81,7 @@ test "gzip failed state freezes decoder cursors" {
   let decoder = Decoder()
   let output = FixedArray::make(1, b'\x00')
   let GzipError(first_kind, first_error) = @test.expect_error(() => {
-    decoder.finish(malformed, output.mut_view())
+    decoder.step(malformed, output.mut_view())
   })
 
   let pending_pos = decoder.pending_pos
@@ -92,6 +92,11 @@ test "gzip failed state freezes decoder cursors" {
     decoder.step(b"must not be accepted", output.mut_view())
   })
 
+  let GzipError(end_kind, end_error) = @test.expect_error(() => {
+    decoder.check_end()
+  })
+  assert_true(end_kind == first_kind)
+  @test.assert_eq(end_error, first_error)
   assert_true(first_kind == InvalidDeflate)
   assert_true(repeated_kind == first_kind)
   @test.assert_eq(repeated_error, first_error)
@@ -121,6 +126,7 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
       (stream, expected_error) in [
         (compressed, None),
         (Bytes::from_array(damaged), Some(ChecksumMismatch)),
+        (compressed[:compressed.length() - 1].to_owned(), Some(Truncated)),
       ] {
       for (chunk, room) in [(1 << 20, 32768), (33, 7)] {
         let fixed = Decoder()
@@ -130,27 +136,18 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
         let decoded = @buffer.Buffer()
         let mut position = 0
         let mut verdict = None
+        let mut ending = false
         for ;; {
           let end = (position + chunk).min(stream.length())
           let input = stream[position:end]
-          let status = try {
-            if end == stream.length() {
-              fixed.finish(input, output.mut_view())
-            } else {
-              fixed.step(input, output.mut_view())
-            }
-          } catch {
+          let status = try fixed.step(input, output.mut_view()) catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))
           }
-          let other = try {
-            if end == stream.length() {
-              viewed.finish(input, padded.mut_view(start=3, end=room + 3))
-            } else {
-              viewed.step(input, padded.mut_view(start=3, end=room + 3))
-            }
-          } catch {
+          let other = try
+            viewed.step(input, padded.mut_view(start=3, end=room + 3))
+          catch {
             GzipError(kind, _) => Err(kind)
           } noraise {
             result => Ok((result.status, result.consumed, result.produced))
@@ -167,10 +164,31 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
               @test.assert_eq(output[:count], padded[3:3 + count])
               decoded.write_bytes(Bytes::from_array(output[:count]))
               position += consumed
-              if status is Done {
-                break
+              let final_status = if position == stream.length() && !ending {
+                ending = true
+                let finalized = try fixed.check_end() catch {
+                  GzipError(kind, _) => Err(kind)
+                } noraise {
+                  status => Ok(status)
+                }
+                let other_finalized = try viewed.check_end() catch {
+                  GzipError(kind, _) => Err(kind)
+                } noraise {
+                  status => Ok(status)
+                }
+                @test.assert_eq(finalized, other_finalized)
+                finalized
+              } else {
+                Ok(status)
               }
-              assert_true(consumed > 0 || count > 0)
+              match final_status {
+                Err(kind) => {
+                  verdict = Some(kind)
+                  break
+                }
+                Ok(Done) => break
+                Ok(_) => assert_true(consumed > 0 || count > 0)
+              }
             }
           }
         }
@@ -182,4 +200,57 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
       }
     }
   }
+}
+
+///|
+test "gzip repeated check_end preserves pending output and sticky EOF" {
+  let payload = Bytes::make(200, b'x')
+  let stream = compress(payload)
+  let decoder = Decoder()
+  let result = decoder.step(stream, [].mut_view())
+  @test.assert_eq(result.consumed, stream.length())
+  @test.assert_eq(result.produced, 0)
+  @test.assert_eq(result.status, NeedMoreOutput)
+  @test.assert_eq(decoder.check_end(), NeedMoreOutput)
+  @test.assert_eq(decoder.check_end(), NeedMoreOutput)
+  assert_true(decoder.ending)
+  let output = FixedArray::make(1, b'\x00')
+  let decoded = @buffer.Buffer()
+  for _ in 0..<1000 {
+    let result = decoder.step(b"ignored", output.mut_view())
+    @test.assert_eq(result.consumed, 0)
+    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    if result.status is Done {
+      break
+    }
+    @test.assert_eq(result.status, NeedMoreOutput)
+    @test.assert_eq(result.produced, 1)
+  }
+  assert_true(decoder.is_finished())
+  @test.assert_eq(decoded.to_bytes(), payload)
+  @test.assert_eq(decoder.check_end(), Done)
+  @test.assert_eq(decoder.check_end(), Done)
+}
+
+///|
+test "gzip check_end truncation is latched before further input" {
+  let decoder = Decoder()
+  let output = FixedArray::make(1, b'\xA5')
+  let result = decoder.step(b"\x1F", output.mut_view())
+  @test.assert_eq(result.consumed, 1)
+  @test.assert_eq(result.produced, 0)
+  @test.assert_eq(result.status, NeedMoreInput)
+  let GzipError(kind, message) = @test.expect_error(() => decoder.check_end())
+  @test.assert_eq(kind, Truncated)
+  let GzipError(repeated_kind, repeated_message) = @test.expect_error(() => {
+    decoder.check_end()
+  })
+  @test.assert_eq(repeated_kind, kind)
+  @test.assert_eq(repeated_message, message)
+  let GzipError(step_kind, step_message) = @test.expect_error(() => {
+    decoder.step(b"\x8Bmust not be accepted", output.mut_view())
+  })
+  @test.assert_eq(step_kind, kind)
+  @test.assert_eq(step_message, message)
+  @test.assert_eq(output[0], b'\xA5')
 }

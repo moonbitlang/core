@@ -92,7 +92,7 @@ test "caller-buffer codecs match one-shot streams and reuse workspace" {
       )
       @test.assert_eq(compressor.compress(source), compressed)
       @test.assert_eq(
-        @flate.deflate_into(source, output, strategy~),
+        @flate.Compressor(strategy~).compress_into(source, output),
         Some(length),
       )
       @test.assert_eq(Bytes::from_array(output[:length]), compressed)
@@ -120,5 +120,48 @@ test "caller-buffer codecs match one-shot streams and reuse workspace" {
         Bytes::make(9, b'\xA5'),
       )
     }
+  }
+}
+
+///|
+test "dictionary compression preserves history across chunks and codec reuse" {
+  let backing = Bytes::makei(40010, i => (i * 73 + i / 19).to_byte())
+  let dictionary = backing[5:40005]
+  let suffix = dictionary[dictionary.length() - 1024:].to_owned()
+  let large = Bytes::makei(262401, i => suffix[i % suffix.length()])
+  let strategies : Array[@flate.Strategy] = [
+    Standard(level=6),
+    Split(level=6),
+    Optimal(iterations=1),
+  ]
+  for strategy in strategies {
+    let codec = @flate.Compressor(strategy~, dictionary~)
+    for source in [suffix, large, b"", suffix] {
+      let expected = @flate.deflate_all(source, strategy~, dictionary~)
+      let capacity = @flate.deflate_bound(source.length(), strategy~)
+      let storage = FixedArray::make(capacity + 2, b'\xA5')
+      @test.assert_eq(codec.compress_into(source, [].mut_view()), None)
+      let length = codec
+        .compress_into(source, storage.mut_view(start=1, end=capacity + 1))
+        .unwrap()
+      @test.assert_eq(Bytes::from_array(storage[1:1 + length]), expected)
+      @test.assert_eq(codec.compress(source), expected)
+      @test.assert_eq(storage[0], b'\xA5')
+      @test.assert_eq(storage[capacity + 1], b'\xA5')
+      let decoded = FixedArray::make(source.length() + 1, b'\x00')
+      let result = @flate.IncrementalDecoder(dictionary~).step(
+        expected,
+        decoded.mut_view(),
+      )
+      @test.assert_eq(result.status, Done)
+      @test.assert_eq(result.produced, source.length())
+      @test.assert_eq(Bytes::from_array(decoded[:result.produced]), source)
+    }
+    assert_true(
+      @flate.deflate_all(suffix, strategy~, dictionary~).length() <
+      @flate.deflate_all(suffix, strategy~).length(),
+    )
+    let encoded = @zlib.compress(suffix, strategy~, dictionary~)
+    @test.assert_eq(@zlib.decompress(encoded, dictionary~), suffix)
   }
 }

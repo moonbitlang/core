@@ -227,7 +227,7 @@ fn emit_split_blocks(
   tokens : Array[Int32],
   all_pos : FixedArray[Int32],
   cuts : Array[Int32],
-  n : Int32,
+  is_final~ : Bool,
 ) -> Unit {
   let m = tokens.length()
   let mut lo = 0
@@ -242,7 +242,7 @@ fn emit_split_blocks(
       tokens[lo:cut],
       ll_freq,
       d_freq,
-      is_final=all_pos[cut] >= n,
+      is_final=is_final && cut == m,
     )
     lo = cut
   }
@@ -257,52 +257,44 @@ fn emit_split_blocks(
       tokens[lo:m],
       ll_freq,
       d_freq,
-      is_final=all_pos[m] >= n,
+      is_final~,
     )
   }
 }
 
 ///|
-/// Tokenize each chunk once, then select content-driven or fixed-cadence cuts.
+/// Tokenize once, then select content-driven or fixed-cadence cuts.
 fn Compressor::encode_split(
   self : Compressor,
   input : BytesView,
+  pos : Int32,
+  target : Int32,
   w : BitWriter,
   cfg : LevelConfig,
-) -> Unit {
-  let n = input.length()
-  guard n != 0 else { return w.emit_empty_block(input) }
-  let block_size = 65535
-  let mut pos = 0
-  for ;; {
-    let target = next_block_target(pos, n, block_size)
-    let tokens = self.tokens
-    let ll_freq = self.ll_freq
-    let d_freq = self.d_freq
-    tokens.clear()
-    ll_freq.fill(0)
-    d_freq.fill(0)
-    let processed = tokenize(
-      input,
-      self.finder,
-      pos,
-      target,
-      cfg,
-      tokens,
-      ll_freq,
-      d_freq,
-    )
-    let all_pos = token_positions(tokens, pos, processed)
-    let split_cuts = choose_splits(tokens)
-    let fixed_cuts = fixed_cadence_cuts(tokens, all_pos, pos, block_size)
-    let cuts = if partition_cost(tokens, all_pos, split_cuts) <
-      partition_cost(tokens, all_pos, fixed_cuts) {
-      split_cuts
-    } else {
-      fixed_cuts
-    }
-    emit_split_blocks(w, input, tokens, all_pos, cuts, n)
-    pos = processed
-    guard pos < n else { break }
+  is_final~ : Bool,
+) -> Int32 {
+  guard pos < input.length() else {
+    w.emit_empty_block(input)
+    return pos
   }
+  let processed = self.tokenize(input, pos, target, cfg)
+  let tokens = self.tokens
+  let all_pos = token_positions(tokens, pos, processed)
+  let split_cuts = choose_splits(tokens)
+  let fixed_cuts = fixed_cadence_cuts(tokens, all_pos, pos, 65535)
+  let cuts = if partition_cost(tokens, all_pos, split_cuts) <
+    partition_cost(tokens, all_pos, fixed_cuts) {
+    split_cuts
+  } else {
+    fixed_cuts
+  }
+  emit_split_blocks(
+    w,
+    input,
+    tokens,
+    all_pos,
+    cuts,
+    is_final=is_final && processed == input.length(),
+  )
+  processed
 }
