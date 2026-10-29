@@ -79,51 +79,12 @@ fn resolve_host(
     // cannot be an IPv6 address; the resolver checks the rest.
     let address = host[1:host.length() - 1]
     guard address.contains(":") else { raise InvalidFormat }
-    // A URI uses `%25` before a zone ID, while the resolver expects `%`.
-    guard address.find("%") is Some(i) else { return (address, port) }
-    guard address[i:].has_prefix("%25") else { raise InvalidFormat }
-    let zone = decode_zone_id(address[i + 3:])
-    ("\{address[:i]}%\{zone}", port)
+    // RFC 9844 removed zone IDs such as `fe80::1%25eth0` from URIs.
+    guard !address.contains("%") else { raise InvalidFormat }
+    (address, port)
   } else {
     (host, port)
   }
-}
-
-///|
-/// Decode an RFC 6874 zone ID of unreserved characters and percent-encoded
-/// UTF-8 octets. Reject whitespace and control characters in interface names.
-#cfg(any(target="native", target="wasm"))
-fn decode_zone_id(zone : StringView) -> String raise UriParseError {
-  fn hex(c : Char) -> Int32 raise UriParseError {
-    match c {
-      '0'..<='9' => c.to_int() - '0'.to_int()
-      'a'..<='f' => c.to_int() - 'a'.to_int() + 10
-      'A'..<='F' => c.to_int() - 'A'.to_int() + 10
-      _ => raise InvalidFormat
-    }
-  }
-
-  guard zone.length() > 0 else { raise InvalidFormat }
-  let octets = @buffer.Buffer()
-  let mut rest = zone
-  while rest is [c, .. tail] {
-    match (c, tail) {
-      ('a'..<='z' | 'A'..<='Z' | '0'..<='9' | '-' | '.' | '_' | '~', _) => {
-        octets.write_byte(c.to_int().to_byte())
-        rest = tail
-      }
-      ('%', [hi, lo, .. after]) => {
-        octets.write_byte((hex(hi) * 16 + hex(lo)).to_byte())
-        rest = after
-      }
-      _ => raise InvalidFormat
-    }
-  }
-  let zone = @utf8.decode(octets.contents()) catch { _ => raise InvalidFormat }
-  for c in zone {
-    guard c > ' ' && c != '\u{7f}' else { raise InvalidFormat }
-  }
-  zone
 }
 
 ///|

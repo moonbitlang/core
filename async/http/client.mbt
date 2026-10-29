@@ -50,9 +50,9 @@ async fn Client::connect(
   let (hostname, port) = resolve_host(host, protocol~)
   let transport = if proxy is Some(proxy) {
     errdefer proxy.close()
-    // CONNECT uses an authority, including brackets and an encoded zone ID.
+    // CONNECT uses an authority, which keeps the brackets of an IPv6 address.
     let authority = if hostname.contains(":") {
-      "[\{encode_ip_literal(hostname)}]:\{port}"
+      "[\{hostname}]:\{port}"
     } else {
       "\{hostname}:\{port}"
     }
@@ -69,22 +69,17 @@ async fn Client::connect(
   if !headers.contains("User-Agent") {
     headers["User-Agent"] = "moonbit-http-client/1.1"
   }
-  // A certificate names an IPv6 address without its local zone ID.
-  let tls_host = match hostname.find("%") {
-    Some(i) if hostname.contains(":") => hostname[:i].to_owned()
-    _ => hostname.to_owned()
-  }
   let (tls, reader, sender) = match (protocol, transport) {
     (Http, Plain(conn)) =>
       (None, Reader::new(conn), Sender::new(conn, headers~))
     (Https, Plain(conn)) => {
-      let tls = @tls.Tls::client(conn, host=tls_host, trust~)
+      let tls = @tls.Tls::client(conn, host=hostname.to_owned(), trust~)
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
     (Http, Proxy(proxy)) =>
       (None, Reader::new(proxy), Sender::new(proxy, headers~))
     (Https, Proxy(proxy)) => {
-      let tls = @tls.Tls::client(proxy, host=tls_host, trust~)
+      let tls = @tls.Tls::client(proxy, host=hostname.to_owned(), trust~)
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
   }
@@ -440,27 +435,4 @@ pub async fn Client::enter_passthrough_mode(self : Client) -> Unit {
   guard! self.sender.mode is SendingHeader
   self.reader.enter_passthrough_mode()
   self.sender.enter_passthrough_mode()
-}
-
-///|
-/// Encode the zone ID of an IPv6 address for a URI authority (RFC 6874).
-fn encode_ip_literal(address : StringView) -> String {
-  guard address.find("%") is Some(i) else { return address.to_owned() }
-  let buf = StringBuilder()
-  buf.write_view(address[:i])
-  buf.write_string("%25")
-  for c in address[i + 1:] {
-    match c {
-      'a'..<='z' | 'A'..<='Z' | '0'..<='9' | '-' | '.' | '_' | '~' =>
-        buf.write_char(c)
-      _ =>
-        for octet in @utf8.encode(c.to_string()) {
-          let octet = octet.to_int()
-          buf.write_char('%')
-          buf.write_char("0123456789ABCDEF"[octet >> 4].unsafe_to_char())
-          buf.write_char("0123456789ABCDEF"[octet & 15].unsafe_to_char())
-        }
-    }
-  }
-  buf.to_string()
 }
