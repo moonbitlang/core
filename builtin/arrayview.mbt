@@ -854,8 +854,8 @@ pub fn[T] ArrayView::windows(
 /// predicate. The delimiters are not included, and each returned sub-view
 /// shares the original backing array — no elements are copied.
 ///
-/// The result has the same shape as `Array::split`: a leading delimiter
-/// produces an empty sub-view, while a trailing delimiter does not.
+/// Leading, trailing, and consecutive delimiters produce empty sub-views.
+/// An empty view produces one empty sub-view without calling the predicate.
 ///
 /// Example:
 ///
@@ -873,6 +873,10 @@ pub fn[T] ArrayView::windows(
 ///       #|]
 ///     ),
 ///   )
+///   debug_inspect(
+///     [0, 1, 0][:].split(x => x == 0).map(v => v.to_owned()),
+///     content="[[], [1], []]",
+///   )
 /// }
 /// ```
 #locals(pred)
@@ -882,13 +886,16 @@ pub fn[T] ArrayView::split(
 ) -> Array[ArrayView[T]] raise? {
   let chunks = []
   let len = self.length()
-  for start = 0; start < len; {
+  for start = 0; start <= len; {
     let end = for i = start; i < len && !pred(self.unsafe_get(i)); {
       continue i + 1
     } nobreak {
       i
     }
     chunks.push(self[start:end])
+    if end == len {
+      break
+    }
     continue end + 1
   }
   chunks
@@ -926,12 +933,12 @@ pub fn[A, B] ArrayView::zip(
 ///   let v1 = [1, 2, 3][:]
 ///   let v2 = ['a', 'b', 'c'][:]
 ///   debug_inspect(
-///     v1.zip_to_iter2(v2).to_array(),
+///     v1.zip_iter2(v2).to_array(),
 ///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
 ///   )
 /// }
 /// ```
-pub fn[A, B] ArrayView::zip_to_iter2(
+pub fn[A, B] ArrayView::zip_iter2(
   self : ArrayView[A],
   other : ArrayView[B],
 ) -> Iter2[A, B] {

@@ -1716,51 +1716,6 @@ pub fn[T] Array::suffixes(
 }
 
 ///|
-/// Splits an array into chunks using a predicate function. Creates chunks by
-/// grouping consecutive elements that do not satisfy the predicate function.
-/// Elements that satisfy the predicate function are excluded from the resulting
-/// chunks and act as delimiters.
-///
-/// Parameters:
-///
-/// * `array` : The array to be split into chunks.
-/// * `predicate` : A function that takes an element and returns `true` if the
-/// element should be used as a delimiter.
-///
-/// Returns an array of arrays, where each inner array is a chunk of consecutive
-/// elements that do not satisfy the predicate.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 0, 2, 0, 3, 0, 4]
-///   debug_inspect(arr.split(x => x == 0), content="[[1], [2], [3], [4]]")
-///   let arr = [0, 1, 0, 0, 2, 0]
-///   debug_inspect(arr.split(x => x == 0), content="[[], [1], [], [2]]")
-/// }
-/// ```
-#locals(pred)
-pub fn[T] Array::split(
-  self : Array[T],
-  pred : (T) -> Bool raise?,
-) -> Array[Array[T]] raise? {
-  let chunks = []
-  for i = 0; i < self.length(); {
-    let chunk = []
-    let i = for i = i; i < self.length() && !pred(self[i]); {
-      chunk.push(self[i])
-      continue i + 1
-    } nobreak {
-      i
-    }
-    chunks.push(chunk)
-    continue i + 1
-  }
-  chunks
-}
-
-///|
 /// Creates an iterator over the elements of the array.
 ///
 /// Parameters:
@@ -2182,15 +2137,13 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
 ///   debug_inspect(
-///     arr1.zip_to_iter2(arr2).to_array(),
+///     arr1.zip_iter2(arr2).to_array(),
 ///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
 ///   )
 /// }
 /// ```
-pub fn[A, B] Array::zip_to_iter2(
-  self : Array[A],
-  other : Array[B],
-) -> Iter2[A, B] {
+#alias(zip_to_iter2, deprecated)
+pub fn[A, B] Array::zip_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
   let length = if self.length() < other.length() {
     self.length()
   } else {

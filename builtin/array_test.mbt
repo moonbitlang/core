@@ -678,11 +678,19 @@ test "array_shrink_to_fit_2" {
 }
 
 ///|
-test "array_split" {
+#warnings("-deprecated")
+test "array_split preserves legacy empty field behavior" {
   debug_inspect(
     [1, 2, 3, 4, 5, 6, 7].split(x => x % 2 == 1),
     content="[[], [2], [4], [6]]",
   )
+  let empty : Array[Int32] = []
+  debug_inspect(
+    empty.split(_ => fail("predicate called on empty array")),
+    content="[]",
+  )
+  debug_inspect([0, 0].split(x => x == 0), content="[[], []]")
+  debug_inspect([0, 1, 0].split(x => x == 0), content="[[], [1]]")
 }
 
 ///|
@@ -1360,12 +1368,12 @@ test "@array.zip_with" {
 }
 
 ///|
-test "zip_to_iter2" {
+test "zip_iter2" {
   // Test with two non-empty arrays
   let arr1 = [1, 2, 3]
   let arr2 = ['a', 'b', 'c']
   debug_inspect(
-    arr1.zip_to_iter2(arr2).to_array(),
+    arr1.zip_iter2(arr2).to_array(),
     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
   )
 
@@ -1373,7 +1381,7 @@ test "zip_to_iter2" {
   let arr3 = [1, 2]
   let arr4 = ["a", "b", "c"]
   debug_inspect(
-    arr3.zip_to_iter2(arr4).to_array(),
+    arr3.zip_iter2(arr4).to_array(),
     content=(
       #|[(1, "a"), (2, "b")]
     ),
@@ -1383,7 +1391,7 @@ test "zip_to_iter2" {
   let arr5 : Array[Int32] = []
   let arr6 = ["a", "b", "c"]
   debug_inspect(
-    arr5.zip_to_iter2(arr6).to_array(),
+    arr5.zip_iter2(arr6).to_array(),
     content=(
       #|[]
     ),
@@ -1391,7 +1399,17 @@ test "zip_to_iter2" {
 }
 
 ///|
-test "zip_to_iter2 early termination" {
+#warnings("-deprecated")
+test "zip_to_iter2 remains available as a deprecated alias" {
+  let left = [1, 2, 3]
+  let right = ['a', 'b']
+  let iter = left.zip_to_iter2(right)
+  debug_inspect(iter.next(), content="Some((1, 'a'))")
+  debug_inspect(iter.to_array(), content="[(2, 'b')]")
+}
+
+///|
+test "zip_iter2 early termination" {
   // This test should trigger the uncovered line 301: break IterEnd
   // We create an iterator that terminates early when it encounters a specific value
   let arr1 = [1, 2, 3, 4, 5]
@@ -1400,7 +1418,7 @@ test "zip_to_iter2 early termination" {
   let mut found_target = false
 
   // Use run to iterate with early termination
-  let xx = arr1.zip_to_iter2(arr2)
+  let xx = arr1.zip_iter2(arr2)
   for x, _y in xx {
     count += 1
     if x == 3 {

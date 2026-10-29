@@ -1012,6 +1012,7 @@ pub fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int32) -> Int32) -> Unit
 pub fn[T : Compare] Array::sort(Self[T]) -> Unit
 pub fn[T] Array::sort_by(Self[T], (T, T) -> Int32) -> Unit
 pub fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
+#deprecated
 pub fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
 pub fn[T : Eq] Array::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
@@ -1025,7 +1026,8 @@ pub fn[T] Array::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> ArrayView
 pub fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
 pub fn[T] Array::windows(Self[T], Int32) -> Self[ArrayView[T]]
 pub fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
-pub fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
+#alias(zip_to_iter2, deprecated)
+pub fn[A, B] Array::zip_iter2(Self[A], Self[B]) -> Iter2[A, B]
 pub impl[T] Add for Array[T]
 pub impl[T : Compare] Compare for Array[T]
 pub impl[T] Default for Array[T]
@@ -1103,7 +1105,7 @@ pub fn[T] ArrayView::unsafe_view(Self[T], start~ : Int32, end~ : Int32) -> Self[
 pub fn[T1, T2] ArrayView::unzip(Self[(T1, T2)]) -> (Array[T1], Array[T2])
 pub fn[T] ArrayView::windows(Self[T], Int32) -> Array[Self[T]]
 pub fn[A, B] ArrayView::zip(Self[A], Self[B]) -> Array[(A, B)]
-pub fn[A, B] ArrayView::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
+pub fn[A, B] ArrayView::zip_iter2(Self[A], Self[B]) -> Iter2[A, B]
 pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]

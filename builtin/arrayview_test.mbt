@@ -1309,17 +1309,47 @@ test "ArrayView::split leading and trailing delimiters" {
   debug_inspect(
     v.split(x => x == 0),
     content=(
-      #|[<ArrayView: []>, <ArrayView: [1]>, <ArrayView: []>, <ArrayView: [2]>]
+      #|[
+      #|  <ArrayView: []>,
+      #|  <ArrayView: [1]>,
+      #|  <ArrayView: []>,
+      #|  <ArrayView: [2]>,
+      #|  <ArrayView: []>,
+      #|]
     ),
   )
 }
 
 ///|
-test "ArrayView::split matches Array::split" {
-  let arr = [3, 0, 0, 1, 2, 0, 4, 0]
+test "ArrayView::split can copy chunks" {
+  let arr : ReadOnlyArray[Int32] = [3, 0, 0, 1, 2, 0, 4, 0]
   let from_view = arr[:].split(x => x == 0).map(v => v.to_owned())
-  debug_inspect(from_view, content="[[3], [], [1, 2], [4]]")
-  debug_inspect(arr.split(x => x == 0), content="[[3], [], [1, 2], [4]]")
+  debug_inspect(from_view, content="[[3], [], [1, 2], [4], []]")
+}
+
+///|
+test "ArrayView::split preserves empty fields" {
+  let cases : ReadOnlyArray[(Array[Int32], Array[Array[Int32]])] = [
+    ([], [[]]),
+    ([1], [[1]]),
+    ([0], [[], []]),
+    ([0, 0], [[], [], []]),
+    ([0, 1], [[], [1]]),
+    ([1, 0], [[1], []]),
+    ([1, 0, 0], [[1], [], []]),
+    ([1, 0, 0, 2], [[1], [], [2]]),
+    ([1, 2], [[1, 2]]),
+  ]
+  for case in cases {
+    let (input, expected) = case
+    let view_visited = []
+    let chunks = input[:].split(x => {
+      view_visited.push(x)
+      x == 0
+    })
+    @test.assert_eq(chunks.map(v => v.to_owned()), expected)
+    @test.assert_eq(view_visited, input)
+  }
 }
 
 ///|
@@ -1335,8 +1365,10 @@ test "ArrayView::split without delimiters" {
 
 ///|
 test "ArrayView::split empty view" {
-  let v : ArrayView[Int32] = [1, 2, 3][0:0]
-  debug_inspect(v.split(x => x == 0), content="[]")
+  let v : ArrayView[Int32] = [1, 2, 3][2:2]
+  let parts = v.split(x => x == 0)
+  debug_inspect(parts, content="[<ArrayView: []>]")
+  inspect(parts[0].start_offset(), content="2")
 }
 
 ///|
@@ -1347,7 +1379,7 @@ test "ArrayView::split on sliced view shares backing" {
   debug_inspect(
     parts,
     content=(
-      #|[<ArrayView: [10]>, <ArrayView: [2, 3]>]
+      #|[<ArrayView: [10]>, <ArrayView: [2, 3]>, <ArrayView: []>]
     ),
   )
 }
@@ -1384,10 +1416,10 @@ test "ArrayView::zip uses the shorter length" {
 }
 
 ///|
-test "ArrayView::zip_to_iter2 stops at the shorter view" {
+test "ArrayView::zip_iter2 stops at the shorter view" {
   let v1 = [1, 2, 3][:]
   let v2 = ["x", "y"][:]
-  let iter = v1.zip_to_iter2(v2)
+  let iter = v1.zip_iter2(v2)
   debug_inspect(iter.to_array(), content="[(1, \"x\"), (2, \"y\")]")
 }
 

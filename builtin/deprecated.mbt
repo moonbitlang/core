@@ -69,6 +69,37 @@ pub fn String::view(
 }
 
 ///|
+/// Splits an array into copied chunks separated by elements satisfying `pred`.
+/// Leading and consecutive delimiters produce empty chunks, but a trailing
+/// delimiter does not produce a final empty chunk. An empty array produces
+/// no chunks.
+///
+/// Deprecated: prefer `ArrayView::split` for new code. It preserves the final
+/// empty segment and returns one empty segment for empty input, so migration
+/// requires checking these cases. Call `to_owned()` on each returned view if
+/// copied chunks are needed.
+#deprecated("Prefer ArrayView::split for new code; it preserves trailing empty segments and returns one empty segment for empty input")
+#locals(pred)
+pub fn[T] Array::split(
+  self : Array[T],
+  pred : (T) -> Bool raise?,
+) -> Array[Array[T]] raise? {
+  let chunks = []
+  for i = 0; i < self.length(); {
+    let chunk = []
+    let i = for i = i; i < self.length() && !pred(self[i]); {
+      chunk.push(self[i])
+      continue i + 1
+    } nobreak {
+      i
+    }
+    chunks.push(chunk)
+    continue i + 1
+  }
+  chunks
+}
+
+///|
 /// Encode a UTF-16 string into raw bytes.
 ///
 /// Deprecated: use `@encoding/utf8.encode` for text encoding.
