@@ -9,6 +9,7 @@ import {
 }
 
 options(
+  "allow-experimental-packages": true,
   targets: {
     "deprecated.mbt": [ "native", "wasm" ],
     "fd_util.mbt": [ "native" ],

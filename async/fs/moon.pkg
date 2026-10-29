@@ -30,6 +30,8 @@ import {
 max_concurrent_tests = 3
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "README.mbt.md": [ "native" ],
     "access_test.mbt": [ "native", "wasm" ],

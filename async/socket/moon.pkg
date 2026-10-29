@@ -23,6 +23,8 @@ import {
 } for "test"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "addr.mbt": [ "native", "wasm" ],
     "addr_test.mbt": [ "native", "wasm" ],

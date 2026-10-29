@@ -29,6 +29,8 @@ import {
 } for "test"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "certificate_test.mbt": [ "native", "wasm" ],
     "channel_binding_test.mbt": [ "native", "wasm" ],

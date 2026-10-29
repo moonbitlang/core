@@ -13,6 +13,8 @@ import {
 } for "test"
 
 options(
+  "allow-experimental-packages": true,
+  experimental: true,
   targets: {
     "js_async.mbt": [ "js" ],
     "js_async_test.mbt": [ "js" ],
