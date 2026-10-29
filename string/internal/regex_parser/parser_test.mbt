@@ -806,7 +806,7 @@ test "parse/error_invalid_group" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=0, hint="Invalid group"))
+      #|Err(ParserError(at=1, hint="Invalid group"))
     ),
   )
 }
@@ -818,7 +818,7 @@ test "parse/error_invalid_flags" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=6, hint="Invalid group"))
+      #|Err(ParserError(at=1, hint="Invalid group"))
     ),
   )
 }
@@ -847,7 +847,7 @@ test "parse/error_invalid_char_range" {
       e => Err(e)
     },
     content=(
-      #|Err(ParserError(at=3, hint="Invalid character class range"))
+      #|Err(ParserError(at=1, hint="Invalid character class range"))
     ),
   )
 }
@@ -1384,25 +1384,25 @@ test "parse/nesting_depth" {
   inspect(
     nested("(", 65),
     content=(
-      #|ParserError at position 65: Groups nested too deeply
+      #|ParserError at position 64: Groups nested too deeply
     ),
   )
   inspect(
     nested("(?:", 65),
     content=(
-      #|ParserError at position 195: Groups nested too deeply
+      #|ParserError at position 192: Groups nested too deeply
     ),
   )
   inspect(
     nested("(?i:", 65),
     content=(
-      #|ParserError at position 260: Groups nested too deeply
+      #|ParserError at position 256: Groups nested too deeply
     ),
   )
   inspect(
     nested("(", 100_000),
     content=(
-      #|ParserError at position 65: Groups nested too deeply
+      #|ParserError at position 64: Groups nested too deeply
     ),
   )
   // Named groups need distinct names.
@@ -1423,7 +1423,7 @@ test "parse/nesting_depth" {
       _ => "accepted"
     },
     content=(
-      #|ParserError at position 455: Groups nested too deeply
+      #|ParserError at position 448: Groups nested too deeply
     ),
   )
   // Sibling groups do not increase the nesting depth.
