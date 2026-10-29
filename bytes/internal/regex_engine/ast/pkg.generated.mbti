@@ -1,0 +1,78 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/bytes/internal/regex_engine/ast"
+
+import {
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types",
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types/byte_set",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn alt(ReadOnlyArray[Pattern]) -> Pattern
+
+pub fn assertion(Assertion) -> Pattern
+
+pub fn capture(name? : String, Pattern) -> Pattern
+
+pub fn char(@byte_set.ByteSet) -> Pattern
+
+pub let empty : Pattern
+
+pub let end_of_input : Pattern
+
+pub let end_of_line : Pattern
+
+pub let end_of_word : Pattern
+
+pub let epsilon : Pattern
+
+pub let not_word_boundary : Pattern
+
+pub fn quantifier(Pattern, Quantifier) -> Pattern
+
+pub fn seq(ReadOnlyArray[Pattern]) -> Pattern
+
+pub let start_of_input : Pattern
+
+pub let start_of_line : Pattern
+
+pub let start_of_word : Pattern
+
+// Errors
+
+// Types and methods
+pub enum Assertion {
+  StartOfInput
+  EndOfInput
+  StartOfLine
+  EndOfLine
+  StartOfWord
+  EndOfWord
+  NotWordBoundary
+} derive(@debug.Debug)
+
+pub struct Pattern {
+  desc : PatternDesc
+  nullable : Bool
+}
+pub fn Pattern::is_anchored(Self) -> Bool
+pub impl @debug.Debug for Pattern
+
+pub enum PatternDesc {
+  Char(@byte_set.ByteSet)
+  Sequence(ReadOnlyArray[Pattern])
+  Alternation(ReadOnlyArray[Pattern])
+  Quantifier(Quantifier, Pattern)
+  Capture(name~ : String?, Pattern)
+  Assertion(Assertion)
+} derive(@debug.Debug)
+
+pub(all) struct Quantifier {
+  min : Int32
+  max : Int32?
+  mode : @shared_types.QuantifierMode
+} derive(@debug.Debug)
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,6 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/set",
+  "moonbitlang/core/bytes/internal/regex_engine" @re,
+}

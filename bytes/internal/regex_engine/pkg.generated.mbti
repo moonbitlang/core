@@ -1,0 +1,69 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/bytes/internal/regex_engine"
+
+import {
+  "moonbitlang/core/bytes/internal/regex_engine/ast",
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types",
+  "moonbitlang/core/bytes/internal/regex_engine/shared_types/byte_set",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn alt(ReadOnlyArray[@ast.Pattern]) -> @ast.Pattern
+
+pub fn assertion(@ast.Assertion) -> @ast.Pattern
+
+pub fn capture(name? : String, @ast.Pattern) -> @ast.Pattern
+
+pub fn char(@byte_set.ByteSet) -> @ast.Pattern
+
+pub fn compile(@ast.Pattern, max_cache_words? : Int32) -> Regex
+
+pub let empty : @ast.Pattern
+
+pub let end_of_input : @ast.Pattern
+
+pub let end_of_line : @ast.Pattern
+
+pub let end_of_word : @ast.Pattern
+
+pub let epsilon : @ast.Pattern
+
+pub let not_word_boundary : @ast.Pattern
+
+pub fn quantifier(@ast.Pattern, @ast.Quantifier) -> @ast.Pattern
+
+pub fn seq(ReadOnlyArray[@ast.Pattern]) -> @ast.Pattern
+
+pub let start_of_input : @ast.Pattern
+
+pub let start_of_line : @ast.Pattern
+
+pub let start_of_word : @ast.Pattern
+
+pub let word_set : @byte_set.ByteSet
+
+// Errors
+
+// Types and methods
+type MatchResult derive(@debug.Debug)
+pub fn MatchResult::group(Self, Int32) -> (Int32, Int32)?
+
+type Regex
+pub fn Regex::execute(Self, BytesView, Int32) -> MatchResult?
+pub fn Regex::group_names(Self) -> ReadOnlyArray[String?]
+
+// Type aliases
+pub using @ast {type Assertion}
+
+pub using @byte_set {type ByteSet}
+
+pub using @shared_types {type Category}
+
+pub using @ast {type Pattern}
+
+pub using @ast {type Quantifier}
+
+pub using @shared_types {type QuantifierMode}
+
+// Traits

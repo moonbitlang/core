@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/bytes/internal/regex_engine/shared_types/byte_set"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type ByteSet
+pub fn ByteSet::add(Self, Self) -> Self
+pub fn ByteSet::char(Int32) -> Self
+pub fn ByteSet::char_range(Int32, Int32) -> Self
+pub fn ByteSet::contains(Self, Int32) -> Bool
+pub fn ByteSet::difference(Self, Self) -> Self
+pub fn ByteSet::empty() -> Self
+pub fn ByteSet::full() -> Self
+pub fn ByteSet::intersection(Self, Self) -> Self
+pub fn ByteSet::intervals(Self) -> Iter[(Int32, Int32)]
+pub fn ByteSet::is_empty(Self) -> Bool
+pub fn ByteSet::land(Self, Self) -> Self
+pub fn ByteSet::offset_by(Self, (Int32) -> Int32) -> Self
+pub fn ByteSet::sub(Self, Self) -> Self
+pub fn ByteSet::union(Self, Self) -> Self
+pub impl Add for ByteSet
+pub impl BitAnd for ByteSet
+pub impl Sub for ByteSet
+pub impl @debug.Debug for ByteSet
+
+// Type aliases
+
+// Traits

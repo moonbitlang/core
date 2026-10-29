@@ -3,6 +3,7 @@ package "moonbitlang/core/bytes"
 
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -10,6 +11,19 @@ import {
 // Errors
 
 // Types and methods
+pub struct BytesRegex {
+  // private fields
+}
+pub fn BytesRegex::BytesRegex(StringView) -> Self raise
+pub fn BytesRegex::execute(Self, BytesView, last_index? : Int32) -> MatchResult?
+pub impl @debug.Debug for BytesRegex
+
+type MatchResult derive(@debug.Debug)
+pub fn MatchResult::after(Self) -> BytesView
+pub fn MatchResult::before(Self) -> BytesView
+pub fn MatchResult::content(Self) -> BytesView
+pub fn MatchResult::group(Self, Int32) -> BytesView?
+pub fn MatchResult::named_group(Self, String) -> BytesView?
 
 // Type aliases
 #deprecated

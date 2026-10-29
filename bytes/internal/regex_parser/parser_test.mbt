@@ -1,0 +1,1481 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+fn parse(pattern : StringView) -> @re.Pattern raise @regex_parser.ParserError {
+  @regex_parser.parse(pattern)
+}
+
+// Basic parsing tests
+
+///|
+test "parse/simple_char" {
+  let pat = parse("abc")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/dot_wildcard" {
+  let pat = parse("a.b")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [Char([(97, 97)]), Char([(0, 255)]), Char([(98, 98)])]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/quantifiers" {
+  let pat = parse("a*b+c?")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Quantifier({ min: 0, max: None, mode: Greedy }, Char([(97, 97)])),
+      #|      Quantifier({ min: 1, max: None, mode: Greedy }, Char([(98, 98)])),
+      #|      Quantifier({ min: 0, max: Some(1), mode: Greedy }, Char([(99, 99)])),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/quantifier_range" {
+  let pat1 = parse("a{3}")
+  debug_inspect(
+    pat1,
+    content="Quantifier({ min: 3, max: Some(3), mode: Greedy }, Char([(97, 97)]))",
+  )
+  let pat2 = parse("a{2,}")
+  debug_inspect(
+    pat2,
+    content="Quantifier({ min: 2, max: None, mode: Greedy }, Char([(97, 97)]))",
+  )
+  let pat3 = parse("a{1,5}")
+  debug_inspect(
+    pat3,
+    content="Quantifier({ min: 1, max: Some(5), mode: Greedy }, Char([(97, 97)]))",
+  )
+}
+
+///|
+test "parse/non_greedy_quantifier" {
+  let pat1 = parse("a*?")
+  debug_inspect(
+    pat1,
+    content="Quantifier({ min: 0, max: None, mode: NonGreedy }, Char([(97, 97)]))",
+  )
+  let pat2 = parse("a+?")
+  debug_inspect(
+    pat2,
+    content="Quantifier({ min: 1, max: None, mode: NonGreedy }, Char([(97, 97)]))",
+  )
+}
+
+///|
+test "parse/alternation" {
+  let pat = parse("a|b|c")
+  debug_inspect(
+    pat,
+    content=(
+      #|Alternation(
+      #|  <ReadOnlyArray:
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/groups" {
+  let pat1 = parse("(abc)")
+  debug_inspect(
+    pat1,
+    content=(
+      #|Capture(
+      #|  name=None,
+      #|  Sequence(
+      #|    <ReadOnlyArray:
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|  ),
+      #|)
+    ),
+  )
+  let pat2 = parse("(a|b)")
+  debug_inspect(
+    pat2,
+    content=(
+      #|Capture(
+      #|  name=None,
+      #|  Alternation(<ReadOnlyArray: [Char([(97, 97)]), Char([(98, 98)])]>),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/non_capture_group" {
+  let pat1 = parse("(?:abc)")
+  debug_inspect(
+    pat1,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|)
+    ),
+  )
+  let pat2 = parse("a(?:b|c)d")
+  debug_inspect(
+    pat2,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Char([(97, 97)]),
+      #|      Alternation(<ReadOnlyArray: [Char([(98, 98)]), Char([(99, 99)])]>),
+      #|      Char([(100, 100)]),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/named_groups" {
+  let pat = parse("(?<name>abc)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Capture(
+      #|  name=Some("name"),
+      #|  Sequence(
+      #|    <ReadOnlyArray:
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/character_class" {
+  let pat1 = parse("[abc]")
+  debug_inspect(pat1, content="Char([(97, 99)])")
+  let pat2 = parse("[a-z]")
+  debug_inspect(pat2, content="Char([(97, 122)])")
+  let pat3 = parse("[^abc]")
+  debug_inspect(
+    pat3,
+    content=(
+      #|Char([(0, 96), (100, 255)])
+    ),
+  )
+}
+
+///|
+test "parse/error_nested_character_class" {
+  debug_inspect(
+    Ok(parse("[[a-z][0-9]]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Unsupported nested character class"))
+    ),
+  )
+}
+
+///|
+test "parse/posix_classes" {
+  let pat_digit = parse("[[:digit:]]")
+  debug_inspect(pat_digit, content="Char([(48, 57)])")
+  let pat_alpha = parse("[[:alpha:]]")
+  debug_inspect(pat_alpha, content="Char([(65, 90), (97, 122)])")
+  let pat_space = parse("[[:space:]]")
+  debug_inspect(pat_space, content="Char([(9, 13), (32, 32)])")
+  let pat_word = parse("[[:word:]]")
+  debug_inspect(
+    pat_word,
+    content="Char([(48, 57), (65, 90), (95, 95), (97, 122)])",
+  )
+}
+
+///|
+test "parse/colon_ranges_are_not_bare_posix_classes" {
+  let range = parse("[:-@]")
+  debug_inspect(range, content="Char([(58, 64)])")
+  let colon = parse("[:]")
+  debug_inspect(colon, content="Char([(58, 58)])")
+  let two_colons = parse("[::]")
+  debug_inspect(two_colons, content="Char([(58, 58)])")
+  let one_point_range = parse("[:-:]")
+  debug_inspect(one_point_range, content="Char([(58, 58)])")
+  let union = parse("[:!-@]")
+  debug_inspect(union, content="Char([(33, 64)])")
+  let inverse = parse("[^:-@]")
+  debug_inspect(
+    inverse,
+    content=(
+      #|Char([(0, 57), (65, 255)])
+    ),
+  )
+  let escaped_hyphen = parse("[\\-:]")
+  debug_inspect(escaped_hyphen, content="Char([(45, 45), (58, 58)])")
+  let colon_then_hyphen = parse("[:\\-@]")
+  debug_inspect(
+    colon_then_hyphen,
+    content="Char([(45, 45), (58, 58), (64, 64)])",
+  )
+}
+
+///|
+test "parse/colon_preserves_posix_diagnostics" {
+  for pattern in ["[:digit:]", "[^:digit:]", "[:unknown:]"] {
+    let result = try {
+      ignore(parse(pattern))
+      "accepted"
+    } catch {
+      err => err.to_string()
+    }
+    assert_eq(
+      result, "ParserError at position 0: A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+    )
+  }
+  let digits = parse("[[:digit:]]")
+  debug_inspect(digits, content="Char([(48, 57)])")
+  let unknown = Ok(parse("[[:unknown:]]")) catch { err => Err(err) }
+  debug_inspect(
+    unknown,
+    content="Err(ParserError(at=1, hint=\"Unsupported POSIX character class\"))",
+  )
+}
+
+///|
+test "parse/escape_sequences" {
+  let pat1 = parse("\\n\\r\\t")
+  debug_inspect(
+    pat1,
+    content="Sequence(<ReadOnlyArray: [Char([(10, 10)]), Char([(13, 13)]), Char([(9, 9)])]>)",
+  )
+  let pat2 = parse("\\f\\v")
+  debug_inspect(
+    pat2,
+    content="Sequence(<ReadOnlyArray: [Char([(12, 12)]), Char([(11, 11)])]>)",
+  )
+}
+
+///|
+test "parse/escaped_metacharacters" {
+  let pat = parse("\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Char([(94, 94)]),
+      #|      Char([(36, 36)]),
+      #|      Char([(46, 46)]),
+      #|      Char([(42, 42)]),
+      #|      Char([(43, 43)]),
+      #|      Char([(63, 63)]),
+      #|      Char([(40, 40)]),
+      #|      Char([(41, 41)]),
+      #|      Char([(91, 91)]),
+      #|      Char([(93, 93)]),
+      #|      Char([(123, 123)]),
+      #|      Char([(125, 125)]),
+      #|      Char([(124, 124)]),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/anchors" {
+  let pat = parse("^abc$")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Assertion(StartOfInput),
+      #|      Char([(97, 97)]),
+      #|      Char([(98, 98)]),
+      #|      Char([(99, 99)]),
+      #|      Assertion(EndOfInput),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/word_boundary" {
+  let pat1 = parse("\\bword\\b")
+  debug_inspect(
+    pat1,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Alternation(<ReadOnlyArray: [Assertion(StartOfWord), Assertion(EndOfWord)]>),
+      #|      Char([(119, 119)]),
+      #|      Char([(111, 111)]),
+      #|      Char([(114, 114)]),
+      #|      Char([(100, 100)]),
+      #|      Alternation(<ReadOnlyArray: [Assertion(StartOfWord), Assertion(EndOfWord)]>),
+      #|    ]>,
+      #|)
+    ),
+  )
+  let pat2 = parse("\\B")
+  debug_inspect(pat2, content="Assertion(NotWordBoundary)")
+}
+
+///|
+test "parse/ignore_case_flag" {
+  let pat = parse("(?i:abc)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Char([(65, 65), (97, 97)]),
+      #|      Char([(66, 66), (98, 98)]),
+      #|      Char([(67, 67), (99, 99)]),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/practical_date_ymd" {
+  // ^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$
+  let pat = parse("^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Assertion(StartOfInput),
+      #|      Capture(
+      #|        name=None,
+      #|        Quantifier({ min: 4, max: Some(4), mode: Greedy }, Char([(48, 57)])),
+      #|      ),
+      #|      Char([(45, 45)]),
+      #|      Capture(
+      #|        name=None,
+      #|        Quantifier({ min: 2, max: Some(2), mode: Greedy }, Char([(48, 57)])),
+      #|      ),
+      #|      Char([(45, 45)]),
+      #|      Capture(
+      #|        name=None,
+      #|        Quantifier({ min: 2, max: Some(2), mode: Greedy }, Char([(48, 57)])),
+      #|      ),
+      #|      Assertion(EndOfInput),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/practical_identifier" {
+  // ^[A-Za-z_][A-Za-z0-9_]*$
+  let pat = parse("^[A-Za-z_][A-Za-z0-9_]*$")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Assertion(StartOfInput),
+      #|      Char([(65, 90), (95, 95), (97, 122)]),
+      #|      Quantifier(
+      #|        { min: 0, max: None, mode: Greedy },
+      #|        Char([(48, 57), (65, 90), (95, 95), (97, 122)]),
+      #|      ),
+      #|      Assertion(EndOfInput),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/escaped_in_char_class" {
+  let pat1 = parse("[\\n\\r\\t]")
+  debug_inspect(pat1, content="Char([(9, 10), (13, 13)])")
+  let pat2 = parse("[\\-\\]]")
+  debug_inspect(pat2, content="Char([(45, 45), (93, 93)])")
+}
+
+///|
+test "parse/error_use_posix_class" {
+  debug_inspect(
+    Ok(parse("\\d")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_use_posix_class_in_char_class" {
+  debug_inspect(
+    Ok(parse("[\\d]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=1,
+      #|    hint="Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_unsupported_posix_class" {
+  debug_inspect(
+    Ok(parse("[[:foo:]]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Unsupported POSIX character class"))
+    ),
+  )
+}
+
+///|
+test "parse/error_unclosed_char_class" {
+  debug_inspect(
+    Ok(parse("[abc")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unclosed character class"))
+    ),
+  )
+}
+
+///|
+test "parse/error_unclosed_group" {
+  debug_inspect(
+    Ok(parse("(")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unclosed group"))
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_quantifier" {
+  debug_inspect(
+    Ok(parse("a{abc}")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid quantifier"))
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_quantifier_range" {
+  debug_inspect(
+    Ok(parse("a{5,2}")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid quantifier"))
+    ),
+  )
+}
+
+///|
+test "parse/error_quantifier_too_large" {
+  debug_inspect(
+    Ok(parse("a{999}")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
+    ),
+  )
+}
+
+///|
+test "parse/error_quantifier_too_large_overflow" {
+  debug_inspect(
+    Ok(parse("a{99999999999999999999}")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
+    ),
+  )
+}
+
+///|
+test "parse/error_max_quantifier_too_large" {
+  debug_inspect(
+    Ok(parse("a{1,999}")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Quantifier too large"))
+    ),
+  )
+}
+
+///|
+test "parse/error_possessive_quantifier" {
+  debug_inspect(
+    Ok(parse("a++")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=2, hint="Unsupported possessive quantifier"))
+    ),
+  )
+}
+
+///|
+test "parse/error_lookahead" {
+  debug_inspect(
+    Ok(parse("(?=abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unsupported lookahead assertion"))
+    ),
+  )
+}
+
+///|
+test "parse/error_negative_lookahead" {
+  debug_inspect(
+    Ok(parse("(?!abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unsupported negative lookahead assertion"))
+    ),
+  )
+}
+
+///|
+test "parse/error_lookbehind" {
+  debug_inspect(
+    Ok(parse("(?<=abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unsupported lookbehind assertion"))
+    ),
+  )
+}
+
+///|
+test "parse/error_negative_lookbehind" {
+  debug_inspect(
+    Ok(parse("(?<!abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unsupported negative lookbehind assertion"))
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_group" {
+  debug_inspect(
+    Ok(parse("(?<>abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid group"))
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_flags" {
+  debug_inspect(
+    Ok(parse("(?xyz:abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid group"))
+    ),
+  )
+}
+
+///|
+test "parse/error_bare_posix_class" {
+  debug_inspect(
+    Ok(parse("[:digit:]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_char_range" {
+  debug_inspect(
+    Ok(parse("[z-a]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid character class range"))
+    ),
+  )
+}
+
+///|
+test "parse/error_char_range_over_sets" {
+  debug_inspect(
+    Ok(parse("[a-[:digit:]]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=4, hint="Character class range over sets"))
+    ),
+  )
+}
+
+///|
+test "parse/error_unsupported_class_set_expression" {
+  debug_inspect(
+    Ok(parse("[a--b]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
+    ),
+  )
+}
+
+///|
+test "parse/error_class_set_ampersand" {
+  debug_inspect(
+    Ok(parse("[a&&b]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
+    ),
+  )
+}
+
+///|
+test "parse/error_unexpected_char_in_range" {
+  debug_inspect(
+    Ok(parse("[a-]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=2,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_dash_at_start" {
+  debug_inspect(
+    Ok(parse("[-a]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=1,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_dash_at_start_negated" {
+  debug_inspect(
+    Ok(parse("[^-a]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=2,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_escape" {
+  // \q is not a valid escape sequence
+  debug_inspect(
+    Ok(parse("\\q")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Invalid escape sequence"))
+    ),
+  )
+}
+
+///|
+test "parse/error_invalid_posix_class" {
+  debug_inspect(
+    Ok(parse("[[:abc")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid POSIX character class"))
+    ),
+  )
+}
+
+// Additional tests for more coverage
+
+///|
+test "parse/escape_sequences_in_char_class" {
+  let pat = parse("[\\n\\r\\t]")
+  debug_inspect(pat, content="Char([(9, 10), (13, 13)])")
+}
+
+///|
+test "parse/ignore_case_alternation" {
+  // Cover alternation inside ignore case
+  let pat = parse("(?i:a|b|c)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Alternation(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Char([(65, 65), (97, 97)]),
+      #|      Char([(66, 66), (98, 98)]),
+      #|      Char([(67, 67), (99, 99)]),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/ignore_case_with_groups" {
+  let pat = parse("(?i:(abc))")
+  debug_inspect(
+    pat,
+    content=(
+      #|Capture(
+      #|  name=None,
+      #|  Sequence(
+      #|    <ReadOnlyArray:
+      #|      [
+      #|        Char([(65, 65), (97, 97)]),
+      #|        Char([(66, 66), (98, 98)]),
+      #|        Char([(67, 67), (99, 99)]),
+      #|      ]>,
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/ignore_case_with_anchors" {
+  let pat = parse("(?i:^abc$)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Assertion(StartOfInput),
+      #|      Char([(65, 65), (97, 97)]),
+      #|      Char([(66, 66), (98, 98)]),
+      #|      Char([(67, 67), (99, 99)]),
+      #|      Assertion(EndOfInput),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/double_dash_at_start_of_class" {
+  debug_inspect(
+    Ok(parse("[a-z--[aeiou]]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=4, hint="Unsupported character class set expression"))
+    ),
+  )
+}
+
+// Additional POSIX character class tests for coverage
+
+///|
+test "parse/posix_class_ascii" {
+  let pat = parse("[[:ascii:]]")
+  debug_inspect(pat, content="Char([(0, 127)])")
+}
+
+///|
+test "parse/posix_class_upper" {
+  let pat = parse("[[:upper:]]")
+  debug_inspect(pat, content="Char([(65, 90)])")
+}
+
+///|
+test "parse/posix_class_lower" {
+  let pat = parse("[[:lower:]]")
+  debug_inspect(pat, content="Char([(97, 122)])")
+}
+
+///|
+test "parse/posix_class_alnum" {
+  let pat = parse("[[:alnum:]]")
+  debug_inspect(pat, content="Char([(48, 57), (65, 90), (97, 122)])")
+}
+
+///|
+test "parse/posix_class_xdigit" {
+  let pat = parse("[[:xdigit:]]")
+  debug_inspect(pat, content="Char([(48, 57), (65, 70), (97, 102)])")
+}
+
+///|
+test "parse/posix_class_blank" {
+  let pat = parse("[[:blank:]]")
+  debug_inspect(pat, content="Char([(9, 9), (32, 32)])")
+}
+
+///|
+test "parse/backspace_in_char_class" {
+  // \b in character class means backspace (0x08)
+  let pat = parse("[\\b]")
+  debug_inspect(pat, content="Char([(8, 8)])")
+}
+
+///|
+test "parse/formfeed_in_char_class" {
+  // \f in character class means formfeed (0x0c = 12)
+  let pat = parse("[\\f]")
+  debug_inspect(pat, content="Char([(12, 12)])")
+}
+
+///|
+test "parse/parser_error_to_string" {
+  let result = Ok(parse("\\d")) catch { e => Err(e) }
+  match result {
+    Err(err) =>
+      inspect(
+        err.to_string(),
+        content="ParserError at position 0: Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
+      )
+    Ok(_) => panic()
+  }
+}
+
+///|
+test "parse/escaped_special_chars_in_class" {
+  // Cover more escape sequences in character class: / " : &
+  let pat1 = parse("[\\/]")
+  debug_inspect(pat1, content="Char([(47, 47)])")
+  let pat2 = parse("[\\:]")
+  debug_inspect(pat2, content="Char([(58, 58)])")
+  let pat3 = parse("[\\&]")
+  debug_inspect(pat3, content="Char([(38, 38)])")
+}
+
+///|
+test "parse/error_triple_ampersand" {
+  // Triple ampersand triggers set expression error
+  debug_inspect(
+    Ok(parse("[a&&&b]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
+    ),
+  )
+}
+
+///|
+test "parse/non_capture_group_inside_capture" {
+  let pat = parse("(a(?:b)c)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Capture(
+      #|  name=None,
+      #|  Sequence(
+      #|    <ReadOnlyArray:
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/quantifier_non_greedy_question" {
+  let pat = parse("a??")
+  debug_inspect(
+    pat,
+    content=(
+      #|Quantifier(
+      #|  { min: 0, max: Some(1), mode: NonGreedy },
+      #|  Char([(97, 97)]),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/quantifier_range_non_greedy" {
+  let pat = parse("a{2,5}?")
+  debug_inspect(
+    pat,
+    content=(
+      #|Quantifier(
+      #|  { min: 2, max: Some(5), mode: NonGreedy },
+      #|  Char([(97, 97)]),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/nested_ignore_case" {
+  // Test nested (?i:...) where ignore_case is already true
+  let pat = parse("(?i:(?i:abc))")
+  debug_inspect(
+    pat,
+    content=(
+      #|Sequence(
+      #|  <ReadOnlyArray:
+      #|    [
+      #|      Char([(65, 65), (97, 97)]),
+      #|      Char([(66, 66), (98, 98)]),
+      #|      Char([(67, 67), (99, 99)]),
+      #|    ]>,
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_unmatched_paren" {
+  // Extra closing paren should trigger unexpected char error
+  debug_inspect(
+    Ok(parse("abc)")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=3, hint="Unexpected character"))
+    ),
+  )
+}
+
+///|
+test "parse/error_empty_quantifier" {
+  // Quantifier on empty pattern should trigger error
+  debug_inspect(
+    Ok(parse("*")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=0, hint="Unexpected character"))
+    ),
+  )
+}
+
+///|
+test "parse/error_dDsSwW_in_char_class" {
+  // \d, \D, \s, \S, \w, \W should error inside character class too
+  debug_inspect(
+    Ok(parse("[\\w]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=1,
+      #|    hint="Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/ignore_case_quantifier" {
+  // (?i:a+) should work
+  let pat = parse("(?i:a+)")
+  debug_inspect(
+    pat,
+    content=(
+      #|Quantifier(
+      #|  { min: 1, max: None, mode: Greedy },
+      #|  Char([(65, 65), (97, 97)]),
+      #|)
+    ),
+  )
+}
+
+///|
+/// A pattern that only nests used to overflow the stack instead of raising.
+test "parse/nesting_depth" {
+  fn nested(open : String, depth : Int32) -> String {
+    let pattern = open.repeat(depth) + "a" + ")".repeat(depth)
+    try parse(pattern) catch {
+      err => err.to_string()
+    } noraise {
+      _ => "accepted"
+    }
+  }
+
+  inspect(nested("(", 64), content="accepted")
+  inspect(nested("(?:", 64), content="accepted")
+  inspect(nested("(?i:", 64), content="accepted")
+  inspect(
+    nested("(", 65),
+    content=(
+      #|ParserError at position 64: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?:", 65),
+    content=(
+      #|ParserError at position 192: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(?i:", 65),
+    content=(
+      #|ParserError at position 256: Groups nested too deeply
+    ),
+  )
+  inspect(
+    nested("(", 100_000),
+    content=(
+      #|ParserError at position 64: Groups nested too deeply
+    ),
+  )
+  // Named groups need distinct names.
+  let mut named = ""
+  for i in 10..<75 {
+    named = named + "(?<n\{i}>"
+  }
+  inspect(
+    try parse(named + "a" + ")".repeat(65)) catch {
+      err => err.to_string()
+    } noraise {
+      _ => "accepted"
+    },
+    content=(
+      #|ParserError at position 448: Groups nested too deeply
+    ),
+  )
+  // Sibling groups do not increase the nesting depth.
+  inspect(nested("(a)(", 64), content="accepted")
+}
+
+///|
+fn parse_result(pattern : String) -> String {
+  @debug.to_string(parse(pattern)) catch {
+    err => err.to_string()
+  }
+}
+
+///|
+/// An escape that means nothing in a character class used to be read as a
+/// backslash followed by the next character, with no error: `[\\v]` matched
+/// `\\` and `v` where a regex literal matches a vertical tab, and `[\\p{L}]`
+/// matched five literal characters.
+test "parse/unknown_escape_in_class_is_an_error" {
+  // A control-character escape means the same inside a class as outside it.
+  inspect(
+    parse_result("\\v"),
+    content=(
+      #|Char([(11, 11)])
+    ),
+  )
+  inspect(
+    parse_result("[\\v]"),
+    content=(
+      #|Char([(11, 11)])
+    ),
+  )
+  inspect(
+    parse_result("[\\t\\n\\r\\f\\v]"),
+    content=(
+      #|Char([(9, 13)])
+    ),
+  )
+  inspect(
+    parse_result("[\\-\\]\\\\]"),
+    content=(
+      #|Char([(45, 45), (92, 93)])
+    ),
+  )
+  // An escape that is not known is rejected, as it is outside a class.
+  inspect(
+    parse_result("\\q"),
+    content=(
+      #|ParserError at position 0: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\q]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\0]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\cA]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\p{L}]"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[a\\q-z]"),
+    content=(
+      #|ParserError at position 2: Invalid escape sequence
+    ),
+  )
+  inspect(
+    parse_result("[\\"),
+    content=(
+      #|ParserError at position 1: Invalid escape sequence
+    ),
+  )
+}
+
+///|
+/// Found by running random patterns through the parser: a range cut off by
+/// the end of the pattern aborted the program instead of raising.
+test "parse/unterminated_range_is_an_error" {
+  inspect(
+    parse_result("[a-"),
+    content=(
+      #|ParserError at position 0: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_result("[a-b"),
+    content=(
+      #|ParserError at position 0: Unclosed character class
+    ),
+  )
+  inspect(
+    parse_result("[a"),
+    content=(
+      #|ParserError at position 0: Unclosed character class
+    ),
+  )
+}
+
+///|
+test "parse/duplicate_group_names" {
+  let result = fn(pattern : String) {
+    try parse(pattern) catch {
+      e => Err(e)
+    } noraise {
+      _ => Ok(())
+    }
+  }
+  debug_inspect(
+    result("(?<n>a)(?<n>b)"),
+    content=(
+      #|Err(ParserError(at=10, hint="Duplicate capture group name"))
+    ),
+  )
+  debug_inspect(
+    result("(?<n>a)|(?<n>b)"),
+    content=(
+      #|Err(ParserError(at=11, hint="Duplicate capture group name"))
+    ),
+  )
+  debug_inspect(
+    result("(?<n>(?<n>a))"),
+    content=(
+      #|Err(ParserError(at=8, hint="Duplicate capture group name"))
+    ),
+  )
+  debug_inspect(
+    result("(?<n>a)(?<m>b)(?<nm>c)"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  // Many distinct names, each looked up once.
+  let many = StringBuilder()
+  for i in 0..<10000 {
+    many <+ "(?<n\{i}>a)"
+  }
+  debug_inspect(
+    result(many.to_string()),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result(many.to_string() + "(?<n9999>a)"),
+    content=(
+      #|Err(ParserError(at=108893, hint="Duplicate capture group name"))
+    ),
+  )
+}
+
+///|
+test "parse/dash_after_range_or_posix_class" {
+  let result = fn(pattern : String) { Ok(parse(pattern)) catch { e => Err(e) } }
+  debug_inspect(
+    result("[a-b-c]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=4,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[a-b-]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=4,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[[:digit:]-a]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=10,
+      #|    hint="Dash after a range or a POSIX class is ambiguous, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[a-b\\-c]"),
+    content=(
+      #|Ok(Char([(45, 45), (97, 99)]))
+    ),
+  )
+}
+
+///|
+test "parse/bare_posix_class_shapes" {
+  let result = fn(pattern : String) {
+    try parse(pattern) catch {
+      e => Err(e)
+    } noraise {
+      _ => Ok(())
+    }
+  }
+  // A class whose content starts and ends with a colon.
+  debug_inspect(
+    result("[:-@:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[:a-z:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[:ab1:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[:a\\]:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+  debug_inspect(
+    result("[^:a-z:]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=0,
+      #|    hint="A class that starts and ends with ':' looks like a POSIX class without its outer brackets, write [[:digit:]] for the POSIX class or list ':' once (e.g. [a-z:]) for a literal colon",
+      #|  ),
+      #|)
+    ),
+  )
+  // No character between the colons, an escaped colon, or a colon that
+  // ends a range.
+  debug_inspect(
+    result("[::]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[^::]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:a\\:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+  debug_inspect(
+    result("[:!-:]"),
+    content=(
+      #|Ok(())
+    ),
+  )
+}
+
+///|
+test "parse/byte_escape" {
+  debug_inspect(
+    parse("\\x41\\xff"),
+    content=(
+      #|Sequence(<ReadOnlyArray: [Char([(65, 65)]), Char([(255, 255)])]>)
+    ),
+  )
+  debug_inspect(
+    parse("[\\x80-\\xFF\\x0a]"),
+    content="Char([(10, 10), (128, 255)])",
+  )
+}
+
+///|
+test "parse/negated_class_covers_high_bytes" {
+  debug_inspect(parse("[^\\x00-\\x7f]"), content="Char([(128, 255)])")
+  debug_inspect(
+    parse("[^[:word:]]"),
+    content=(
+      #|Char([(0, 47), (58, 64), (91, 94), (96, 96), (123, 255)])
+    ),
+  )
+}
+
+///|
+test "parse/ignore_case_is_ascii" {
+  // Only ASCII letters fold; `\xc9` and `\xe9` (`É` and `é` in Latin-1) stay
+  // apart.
+  debug_inspect(
+    parse("(?i:\\xc9a)"),
+    content=(
+      #|Sequence(<ReadOnlyArray: [Char([(201, 201)]), Char([(65, 65), (97, 97)])]>)
+    ),
+  )
+}
