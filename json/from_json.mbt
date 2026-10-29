@@ -20,7 +20,7 @@
 #warnings("-deprecated_syntax-deprecated")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson, @debug.Debug)
+} derive(Eq, Show, ToJson)
 
 ///|
 /// Trait for types that can be converted from `Json`
