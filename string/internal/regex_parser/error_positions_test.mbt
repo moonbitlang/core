@@ -165,3 +165,25 @@ test "parse/error_positions/other_escape_diagnostics_unchanged" {
   }
   assert_eq(error_message("[\\x41]", mode=Bytes), None)
 }
+
+///|
+test "parse/error_positions/construct_start" {
+  // An invalid range is reported at its first character, and an invalid
+  // group modifier at its `?`, as in the compiler's regex literals.
+  let cases = [
+    ("[z-a]", 1, "Invalid character class range"),
+    ("x[^z-a]", 3, "Invalid character class range"),
+    ("[a-cz-a]", 4, "Invalid character class range"),
+    ("(?<x", 1, "Invalid group"),
+    ("(?<x)", 1, "Invalid group"),
+    ("a(?<>b)", 2, "Invalid group"),
+    ("(?xyz:a)", 1, "Invalid group"),
+    ("😀(?xyz:a)", 3, "Invalid group"),
+  ]
+  for (pattern, at, hint) in cases {
+    assert_eq(
+      error_message(pattern),
+      Some("ParserError at position \{at}: \{hint}"),
+    )
+  }
+}

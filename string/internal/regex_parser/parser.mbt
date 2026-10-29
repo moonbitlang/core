@@ -120,6 +120,7 @@ fn Parser::class_contents(
       [':', ']', ..] if colon_start && content_length - rest.length() >= 2 =>
         raise ctx.error_at(class_start, HINT_BARE_POSIX_CLASS)
       _ => {
+        let atom_start = rest
         let (rest, left) = match rest {
           ['[', ':', ..] =>
             // POSIX character class like [:digit:], handled by class_atom
@@ -146,8 +147,10 @@ fn Parser::class_contents(
                 )
                 match right {
                   Char(c2) => {
+                    // The range is the error, so it is reported at its
+                    // start, as in the compiler's regex literals.
                     guard c <= c2 else {
-                      raise ctx.error_at(rest, HINT_INVALID_CHAR_RANGE)
+                      raise ctx.error_at(atom_start, HINT_INVALID_CHAR_RANGE)
                     }
                     (rest2, @re.RecharSet::char_range(c, c2))
                   }
@@ -289,6 +292,7 @@ fn Parser::term(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Pattern) raise ParserError {
+  let term_start = rest
   let (rest, pat, is_assertion) = lexmatch rest with longest {
     (re"^\^", after=rest) => (rest, @re.start_of_input, true)
     (re"^\$", after=rest) => (rest, @re.end_of_input, true)
@@ -350,22 +354,34 @@ fn Parser::term(
         raise ctx.error_at(rest, offset=3, HINT_DUPLICATE_GROUP_NAME)
       }
       ctx.group_names.add(name)
-      let (rest, pat) = Parser::parse_group_continue(rest2, ctx~)
+      let (rest, pat) = Parser::parse_group_continue(
+        rest2,
+        ctx~,
+        group_start=term_start,
+      )
       (rest, @re.capture(name~, pat), false)
     }
     (re"^\(\?:", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
+      let (rest, pat) = Parser::parse_group_continue(
+        rest,
+        ctx~,
+        group_start=term_start,
+      )
       (rest, pat, false)
     }
-    (re"^\(\?<", after=_) => raise ctx.error_at(rest, HINT_INVALID_GROUP)
+    // A group modifier that is not valid is reported at its `?`, as in the
+    // compiler's regex literals.
+    (re"^\(\?<", after=_) =>
+      raise ctx.error_at(term_start, offset=1, HINT_INVALID_GROUP)
     (re"^\(\?" + (re"[A-Za-z]+" as modifier) + re":", after=rest) =>
       match modifier {
         "i" => {
           let need_process = !ctx.ignore_case
-          let (rest, pat) = Parser::parse_group_continue(rest, ctx={
-            ..ctx,
-            ignore_case: true,
-          })
+          let (rest, pat) = Parser::parse_group_continue(
+            rest,
+            group_start=term_start,
+            ctx={ ..ctx, ignore_case: true, },
+          )
           (
             rest,
             if need_process {
@@ -376,10 +392,14 @@ fn Parser::term(
             false,
           )
         }
-        _ => raise ctx.error_at(rest, HINT_INVALID_GROUP)
+        _ => raise ctx.error_at(term_start, offset=1, HINT_INVALID_GROUP)
       }
     (re"^\(", after=rest) => {
-      let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
+      let (rest, pat) = Parser::parse_group_continue(
+        rest,
+        ctx~,
+        group_start=term_start,
+      )
       (rest, @re.capture(pat), false)
     }
     (re"^\[", after=_) => {
@@ -430,9 +450,12 @@ fn Parser::alternative(
 fn Parser::parse_group_continue(
   rest : StringView,
   ctx~ : ParserContext,
+  group_start~ : StringView,
 ) -> (StringView, @re.Pattern) raise ParserError {
+  // The group that is too deep is the error, so it is reported at its `(`,
+  // as in the compiler's regex literals.
   guard ctx.depth < MAX_GROUP_DEPTH else {
-    raise ctx.error_at(rest, HINT_NESTING_TOO_DEEP)
+    raise ctx.error_at(group_start, HINT_NESTING_TOO_DEEP)
   }
   let ctx = { ..ctx, depth: ctx.depth + 1, }
   let (rest, pat) = Parser::disjunction(rest, ctx~)
