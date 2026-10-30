@@ -134,3 +134,20 @@ async test "group defer cancelled" {
     ),
   )
 }
+
+///|
+async test "group defer itself failed" {
+  let err = @test.expect_error_async(() => {
+    @async.with_task_group() <| group => {
+      group.add_defer(() => raise Failure("group defer failure #1"))
+      group.add_defer(() => raise Failure("group defer failure #2"))
+      raise Failure("with_task_group failure")
+    }
+  })
+  @debug.debug_inspect(
+    err,
+    content=(
+      #|Failure("group defer failure #1")
+    ),
+  )
+}
