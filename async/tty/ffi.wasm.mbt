@@ -18,7 +18,9 @@
 fn tty_open_ffi(fds : FixedArray[@fd_util.Fd], len : Int32) -> Int32 = "moonbitlang/async" "tty/open"
 
 ///|
-/// Fill `fds` with `[input_fd, wakeup_fd, control_fd, output_fd]`
+/// Open the terminal into `fds`: `[tty]` on Unix, used for both input and
+/// output, `[input, output]` on Windows. Return the number of handles opened.
+/// On Unix this also lets the host deliver `SIGWINCH` to the event loop.
 fn tty_open(fds : FixedArray[@fd_util.Fd]) -> Int32 {
   tty_open_ffi(fds, fds.length())
 }

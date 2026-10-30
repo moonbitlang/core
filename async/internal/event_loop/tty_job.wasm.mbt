@@ -13,48 +13,24 @@
 // limitations under the License.
 
 ///|
-// The host reads into its own buffer; `thread_pool/get_read_result` copies the
-// bytes back on completion. A resize completes with `-1` and no data.
-#unsafe_skip_stub_check
-fn JobHandle::tty_read(
-  input : @fd_util.Fd,
-  wakeup : @fd_util.Fd,
-  len : Int32,
-) -> JobHandle = "moonbitlang/async" "thread_pool/make_tty_read_job"
-
-///|
-fn Job::tty_read(
-  input : @fd_util.Fd,
-  wakeup : @fd_util.Fd,
-  buf : FixedArray[Byte],
-  offset : Int32,
-  len : Int32,
-) -> Job {
-  Job(JobHandle::tty_read(input, wakeup, len), copy_output=job => {
-    job.get_read_result(buf, offset, len)
-  })
-}
-
-///|
 // Counts and offsets are UTF-16 code units, copied back with
-// `thread_pool/get_read_console_result`.
+// `thread_pool/get_read_console_result`. The job waits for console input
+// records and owns the event that cancels the wait.
 #unsafe_skip_stub_check
 fn JobHandle::tty_read_console_input(
   input : @fd_util.Fd,
-  wakeup : @fd_util.Fd,
   len : Int32,
 ) -> JobHandle = "moonbitlang/async" "thread_pool/make_tty_read_console_input_job"
 
 ///|
 fn TtyReadConsoleInputJob::new(
   input : @fd_util.Fd,
-  wakeup : @fd_util.Fd,
   buf : FixedArray[UInt16],
   offset : Int32,
   len : Int32,
 ) -> TtyReadConsoleInputJob {
   TtyReadConsoleInputJob(
-    Job(JobHandle::tty_read_console_input(input, wakeup, len), copy_output=job => {
+    Job(JobHandle::tty_read_console_input(input, len), copy_output=job => {
       job.get_read_console_result(buf, offset, len)
     }),
   )

@@ -15,8 +15,6 @@
 ///|
 /// The controlling terminal of the process, obtained with `open()`.
 struct Tty {
-  /// the input descriptor on Unix, `CONOUT$` on Windows
-  mut control_fd : @fd_util.Fd
   /// the state applied by `set_state`, or read by `get_state`
   mut state : State
   /// the state when the terminal was opened, restored on exit
@@ -55,8 +53,8 @@ let instance : @ref.Ref[Tty?] = {
 }
 
 ///|
-/// Open the controlling terminal of the process: `/dev/tty` on Unix,
-/// the console on Windows. Fails if there is no controlling terminal.
+/// Open the controlling terminal of the process: `/dev/tty` on Linux,
+/// the terminal device behind it on macOS, the console on Windows. Fails if there is no controlling terminal.
 ///
 /// Every call in the same event loop returns the _same_ `Tty`,
 /// because all handles of a terminal share its mode, input and resize signal.
@@ -73,30 +71,37 @@ pub async fn open() -> Tty {
 
 ///|
 fn Tty::open(context~ : String) -> Tty raise {
-  let fds = FixedArray::make(4, @fd_util.invalid_fd)
+  let fds = FixedArray::make(2, @fd_util.invalid_fd)
   if tty_open(fds) < 0 {
     @os_error.check_errno(context)
   }
-  guard! fds is [input_fd, wakeup_fd, control_fd, output_fd]
-  let output = @event_loop.IoHandle::from_fd(
-    output_fd,
-    kind=if @event_loop.platform is Windows { Console } else { CharDevice },
-    is_async=false,
-  )
-  let tty = @event_loop.Tty::new(input_fd~, wakeup_fd~)
-  let state = State(FixedArray::make(state_size(), b'\x00'))
-  if tty_get_state(tty.input_fd(), control_fd, state.0) < 0 {
+  let (input, output) = if @event_loop.platform is Windows {
+    guard! fds is [input_fd, output_fd]
+    let input = @event_loop.IoHandle::from_fd(
+      input_fd,
+      kind=Console,
+      is_async=false,
+    )
+    errdefer input.close()
+    (
+      input,
+      @event_loop.IoHandle::from_fd(output_fd, kind=Console, is_async=false),
+    )
+  } else {
+    // pollable, so it is non-blocking and registered to the event bus
+    let io = @event_loop.IoHandle::from_fd(fds[0], kind=CharDevice)
+    (io, io)
+  }
+  let tty = @event_loop.Tty::new(input~)
+  errdefer {
     output.close()
-    if @event_loop.platform is Windows {
-      @fd_util.close(control_fd, kind=Console, context="") catch {
-        _ => ()
-      }
-    }
     tty.close()
+  }
+  let state = State(FixedArray::make(state_size(), b'\x00'))
+  if tty_get_state(input.fd(), output.fd(), state.0) < 0 {
     @os_error.check_errno(context)
   }
   {
-    control_fd,
     state,
     original: state,
     tty,
@@ -110,13 +115,6 @@ fn Tty::open(context~ : String) -> Tty raise {
 ///|
 fn Tty::close(self : Tty) -> Unit {
   self.output.close()
-  // on Unix, `control_fd` is the input descriptor closed by `self.tty`
-  if @event_loop.platform is Windows {
-    @fd_util.close(self.control_fd, kind=Console, context="") catch {
-      _ => ()
-    }
-  }
-  self.control_fd = @fd_util.invalid_fd
   self.tty.close()
 }
 
@@ -220,7 +218,7 @@ fn State::reads_records(self : State) -> Bool {
 /// The current state of the terminal.
 pub fn Tty::get_state(self : Tty) -> State raise {
   let state = State(FixedArray::make(state_size(), b'\x00'))
-  if tty_get_state(self.tty.input_fd(), self.control_fd, state.0) < 0 {
+  if tty_get_state(self.tty.input_fd(), self.output.fd(), state.0) < 0 {
     @os_error.check_errno("@tty.Tty::get_state()")
   }
   self.state = state
@@ -241,7 +239,7 @@ pub fn Tty::set_state(self : Tty, state : State) -> Unit raise {
 
 ///|
 fn Tty::apply(self : Tty, state : State, context~ : String) -> Unit raise {
-  if tty_set_state(self.tty.input_fd(), self.control_fd, state.0) < 0 {
+  if tty_set_state(self.tty.input_fd(), self.output.fd(), state.0) < 0 {
     @os_error.check_errno(context)
   }
   self.state = state
@@ -250,7 +248,7 @@ fn Tty::apply(self : Tty, state : State, context~ : String) -> Unit raise {
 ///|
 /// The size of the terminal window as `(rows, cols)`.
 pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
-  tty_size(self.control_fd, context="@tty.Tty::size()")
+  tty_size(self.output.fd(), context="@tty.Tty::size()")
 }
 
 ///|
