@@ -115,6 +115,51 @@ pub fn MatchResult::named_group(
 }
 
 ///|
+/// The value of a `reb"..."` literal: the compiler checks the pattern at
+/// compile time and builds the regex at run time with this function.
+///
+/// DO NOT call this function even in this package.
+#internal(internal, "not intended for public use")
+#doc(hidden)
+pub fn BytesRegex::internal_from_string(pat : String) -> BytesRegex {
+  try! BytesRegex(pat)
+}
+
+///|
+/// Concatenates two regexes in sequence.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let regex = @bytes.BytesRegex("ab") + BytesRegex("\\xff")
+///   guard regex.execute(b"xab\xff") is Some(m) else { fail("Expected match") }
+///   inspect(m.content(), content="b\"ab\\xff\"")
+/// }
+/// ```
+#intrinsic("%regex.seq")
+pub impl Add for BytesRegex with fn add(self, other) -> BytesRegex {
+  { pat: @re.seq([self.pat, other.pat]), re: None, }
+}
+
+///|
+/// Builds an alternation that matches either regex.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let regex = @bytes.BytesRegex("^GET$") | BytesRegex("^POST$")
+///   inspect(regex.execute(b"POST") is Some(_), content="true")
+///   inspect(regex.execute(b"PUT") is Some(_), content="false")
+/// }
+/// ```
+#intrinsic("%regex.alt")
+pub impl BitOr for BytesRegex with fn lor(self, other) -> BytesRegex {
+  { pat: @re.alt([self.pat, other.pat]), re: None, }
+}
+
+///|
 fn BytesRegex::re(self : BytesRegex) -> @re.Regex {
   match self.re {
     Some(re) => re

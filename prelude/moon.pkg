@@ -8,6 +8,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/debug",
   "moonbitlang/core/string",
+  "moonbitlang/core/bytes",
   "moonbitlang/core/ref",
   "moonbitlang/core/lazy",
   "moonbitlang/core/test",

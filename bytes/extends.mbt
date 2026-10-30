@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// --- promoted: kept as regular methods (blessed public API) ---
+
+///|
+pub extend BytesRegex with Add::{add}
+
+///|
+pub extend BytesRegex with BitOr::{lor}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|

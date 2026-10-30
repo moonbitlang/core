@@ -16,6 +16,7 @@ Core types available in every MoonBit program:
 - `Hasher` — hash computation
 - `Ref` — mutable reference cell
 - `Regex` — regular expressions
+- `BytesRegex` — regular expressions over bytes
 - `Repr` — debug representation
 - `Failure`, `InspectError`, `SnapshotError` — error types
 - `SourceLoc`, `ArgsLoc` — source location info
