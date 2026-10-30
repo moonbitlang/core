@@ -3,9 +3,16 @@ description: "Run MoonBit tests with --target native --release"
 runs:
   using: "composite"
   steps:
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@v0.0.11
+
     - name: Set ulimit and run moon test (--release + --target native)
       if: ${{ runner.os != 'Windows' }}
       shell: bash
+      env:
+        MOON_CC_WRAPPER: sccache
+        SCCACHE_GHA_ENABLED: "true"
+        SCCACHE_GHA_RW_MODE: ${{ github.ref == 'refs/heads/main' && 'READ_WRITE' || 'READ_ONLY' }}
       run: |
         ulimit -s 8176
         moon test --target native --release
@@ -17,5 +24,9 @@ runs:
     - name: Run moon test on Windows (--release + --target native)
       if: ${{ runner.os == 'Windows' }}
       shell: bash
+      env:
+        MOON_CC_WRAPPER: sccache
+        SCCACHE_GHA_ENABLED: "true"
+        SCCACHE_GHA_RW_MODE: ${{ github.ref == 'refs/heads/main' && 'READ_WRITE' || 'READ_ONLY' }}
       run: |
         moon test --target native --release
