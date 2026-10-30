@@ -13,6 +13,841 @@
 // limitations under the License.
 
 ///|
+/// An `Array` is a collection of values that supports random access and can
+/// grow in size.
+struct Array[T] {
+  mut buf : UninitializedArray[T]
+  mut len : Int32
+}
+
+///|
+/// Creates an array of `len` elements whose contents are unspecified. The
+/// array reports `length() == len` immediately, so every slot is observable
+/// and the caller must write all of them before the array is read or escapes.
+///
+/// Prefer `Array::makei` unless the initializing loop cannot be expressed as
+/// a function of the index.
+#doc(hidden)
+pub fn[T] Array::unsafe_make_uninit(len : Int32) -> Array[T] {
+  { buf: UninitializedArray::make(len), len, }
+}
+
+///|
+#owned(src)
+fn[T] Array::unsafe_make_and_blit(
+  src : UninitializedArray[T],
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
+) -> Array[T] {
+  {
+    buf: UninitializedArray::make_and_blit(
+      src,
+      allocate_len~,
+      src_offset~,
+      dst_offset~,
+      len~,
+    ),
+    len: allocate_len,
+  }
+}
+
+///|
+#owned(src)
+fn[T] Array::unsafe_make_and_blit_from_fixed(
+  src : FixedArray[T],
+  allocate_len~ : Int32,
+  len~ : Int32,
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
+) -> Array[T] {
+  {
+    buf: UninitializedArray::unsafe_make_and_blit_from_fixed(
+      src, allocate_len, src_offset, dst_offset, len,
+    ),
+    len: allocate_len,
+  }
+}
+
+///|
+#owned(value)
+fn[T] Array::unsafe_resize_with_default(
+  self : Array[T],
+  new_len : Int32,
+  value : T,
+) -> Unit {
+  let len = self.length()
+  guard! new_len >= len
+  if new_len <= self.capacity() {
+    self.buf.unchecked_fill(len, value, new_len - len)
+  } else {
+    let new_buf = UninitializedArray::unsafe_make_and_blit_with_init(
+      self.buf,
+      new_len,
+      value,
+      0,
+      0,
+      len,
+    )
+    self.buf = new_buf
+  }
+  self.len = new_len
+}
+
+///|
+/// Creates a new empty array with an optional initial capacity.
+///
+/// Parameters:
+///
+/// * `capacity` : The initial capacity of the array. If 0 (default), creates an
+/// array with minimum capacity. Must be non-negative.
+///
+/// Returns a new empty array of type `Array[T]` with the specified initial
+/// capacity.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : Array[Int32] = Array(capacity=10)
+///   inspect(arr.length(), content="0")
+///   inspect(arr.capacity(), content="10")
+///   let arr : Array[Int32] = Array()
+///   inspect(arr.length(), content="0")
+/// }
+/// ```
+pub fn[T] Array::Array(capacity~ : Int32 = 0) -> Array[T] {
+  if capacity == 0 {
+    []
+  } else {
+    { buf: UninitializedArray::make(capacity), len: 0, }
+  }
+}
+
+///|
+/// Returns the number of elements in the array.
+///
+/// Parameters:
+///
+/// * `array` : The array whose length is to be determined.
+///
+/// Returns the number of elements in the array as an integer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : Array[Int32] = [1, 2, 3]
+///   inspect(arr.length(), content="3")
+///   let empty : Array[Int32] = []
+///   inspect(empty.length(), content="0")
+/// }
+/// ```
+#intrinsic("%array.length")
+pub fn[T] Array::length(self : Array[T]) -> Int32 {
+  self.len
+}
+
+///|
+/// Truncates the array to the specified length. This function is marked as
+/// `unsafe` because it directly manipulates the internal buffer of the array,
+/// which can lead to undefined behavior if not used carefully.
+///
+/// # Parameters
+///
+/// - `self` : The array to be truncated.
+/// - `new_len` : The new length to which the array should be truncated. Must be
+/// less than or equal to the current length of the array.
+///
+/// # Returns
+///
+/// - `Unit` : This function does not return a value.
+///
+/// # Errors
+///
+/// - This function does not raise errors, but it panics if `new_len` is greater
+/// than the current length of the array.
+///
+/// # Retention
+///
+/// The slots beyond `new_len` are left as they are rather than nulled out, so
+/// that an `ArrayView` created before the call can never observe uninitialized
+/// memory. The removed elements stay reachable from the buffer until those
+/// slots are reused by later pushes, until the buffer grows, or until the
+/// array is dropped; `Array::release_unused` overwrites them on demand.
+fn[T] Array::unsafe_truncate_to_length(
+  self : Array[T],
+  new_len : Int32,
+) -> Unit {
+  guard! new_len <= self.length()
+  self.len = new_len
+}
+
+///|
+test "unsafe_truncate_to_length" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.unsafe_truncate_to_length(3)
+  assert_true(arr == [1, 2, 3])
+}
+
+///|
+fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
+  self.buf
+}
+
+///|
+/// Compute the next capacity without allocating. Since arrays never shrink
+/// while growing, `required < len` means the required-size calculation
+/// overflowed.
+#inline
+fn array_growth_capacity(
+  current : Int32,
+  len : Int32,
+  required : Int32,
+) -> Int32 {
+  if required < len {
+    abort("Array capacity overflow")
+  }
+  let start = if current == 0 { 8 } else { current }
+  for space = start; space < required; {
+    let next = space * 2
+    if next <= space {
+      break required
+    }
+    continue next
+  } nobreak {
+    space
+  }
+}
+
+///|
+test "Array growth capacity doubles while representable" {
+  inspect(array_growth_capacity(8, 8, 9), content="16")
+  inspect(array_growth_capacity(8, 8, 33), content="64")
+}
+
+///|
+test "Array growth capacity falls back to the exact requirement" {
+  inspect(
+    array_growth_capacity(0x40000000, 0x40000000, 0x40000001),
+    content="1073741825",
+  )
+  inspect(
+    array_growth_capacity(0x20000000, 0x20000000, 0x40000001),
+    content="1073741825",
+  )
+}
+
+///|
+test "panic Array growth rejects a wrapped required size" {
+  ignore(array_growth_capacity(16, 16, -1))
+}
+
+///|
+fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int32) -> Unit {
+  let old_buf = self.buf
+  // Drop the array's reference so make_and_blit can see a unique old buffer.
+  // On native/Wasm1 this lets it transfer element references without retaining
+  // each one. Other owners still keep the buffer on the shared-copy path.
+  self.buf = []
+  // Only the live prefix is worth carrying over. The slots beyond `len` hold
+  // either NULL or the elements earlier removals left behind, and leaving them
+  // with the old buffer is what releases the latter when that buffer dies.
+  let len = self.len
+  let copy_len = if len < new_capacity { len } else { new_capacity }
+  let new_buf = UninitializedArray::make_and_blit(
+    old_buf,
+    allocate_len=new_capacity,
+    len=copy_len,
+  )
+  self.buf = new_buf
+}
+
+///|
+test "UninitializedArray::unsafe_blit_fixed" {
+  let src = FixedArray::make(5, 0)
+  let dst = UninitializedArray::make(5)
+  for i in 0..<5 {
+    src[i] = i + 1
+  }
+  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+  for i in 0..<5 {
+    assert_true(dst[i] == src[i])
+  }
+}
+
+///|
+test "Array::resize_buffer" {
+  let arr = Array::Array(capacity=2)
+  arr.push(1)
+  arr.push(2)
+  arr.resize_buffer(4)
+  assert_true(arr.buffer().0.length() >= 4)
+  arr.push(3)
+  arr.push(4)
+  assert_true(arr.length() == 4)
+  assert_true(arr[0] == 1)
+  assert_true(arr[1] == 2)
+  assert_true(arr[2] == 3)
+  assert_true(arr[3] == 4)
+}
+
+///|
+/// Reallocate the array to fit `required`. Callers keep the capacity check on
+/// their fast path and only call this when allocation is necessary.
+#inline(never)
+fn[T] Array::realloc(self : Array[T], required : Int32) -> Unit {
+  let old_cap = self.capacity()
+  let new_cap = array_growth_capacity(old_cap, self.length(), required)
+  self.resize_buffer(new_cap)
+}
+
+///|
+/// Reserves capacity to ensure that it can hold at least the number of elements
+/// specified by the `capacity` argument.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let v = [1]
+///   v.reserve_capacity(10)
+///   @test.assert_eq(v.capacity(), 10)
+/// }
+/// ```
+pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int32) -> Unit {
+  if self.capacity() >= capacity {
+    return
+  }
+  self.resize_buffer(capacity)
+}
+
+///|
+/// Shrinks the capacity of the array as much as possible.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let v = Array(capacity=10)
+///   v.push(1)
+///   v.push(2)
+///   v.push(3)
+///   v.shrink_to_fit()
+///   @test.assert_eq(v.capacity(), 3)
+/// }
+/// ```
+///
+/// The survivors are copied into the new buffer and the old one is released
+/// with them, so this also releases whatever earlier removals left in the
+/// unused capacity. It pays an allocation plus a copy of every survivor to do
+/// so; `Array::release_unused` releases the same elements in one pass over the
+/// unused region and no allocation, at the cost of leaving the capacity alone.
+pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
+  if self.capacity() <= self.length() {
+    return
+  }
+  self.resize_buffer(self.length())
+}
+
+///|
+/// Overwrites the array's unused capacity -- every slot from `length()` up to
+/// `capacity()` -- with `placeholder`, releasing whatever those slots held.
+///
+/// Shrinking an array never clears the slots it vacates, so whatever they held
+/// -- a removed element, or a duplicate reference to a survivor that was
+/// shifted over it -- stays reachable from the buffer and unreleased until
+/// later pushes reuse those slots, the buffer grows, or the array is dropped.
+/// This releases them on demand without reallocating, which is what
+/// `Array::pop`, `Array::remove`, `Array::retain` and the other operations
+/// that take no placeholder leave outstanding. `Array::shrink_to_fit` releases
+/// them too, but by allocating an exact-size buffer and copying every survivor
+/// into it; this costs one pass over the unused region and no allocation.
+///
+/// An `ArrayView` created before the call observes `placeholder` in that region
+/// afterwards, in place of whatever it held.
+///
+/// This only matters for element types holding references -- for types such as
+/// `Int` there is nothing to release and the call merely costs a pass over the
+/// buffer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = ["a", "b", "c"]
+///   let _ = arr.pop()
+///   arr.release_unused(placeholder="")
+///   debug_inspect(arr, content="[\"a\", \"b\"]")
+/// }
+/// ```
+#owned(placeholder)
+pub fn[T] Array::release_unused(self : Array[T], placeholder~ : T) -> Unit {
+  let len = self.len
+  self.buf.unchecked_fill(len, placeholder, self.capacity() - len)
+}
+
+///|
+/// Adds an element to the end of the array.
+///
+/// If the array is at capacity, it will be reallocated.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = []
+///   v.push(3)
+/// }
+/// ```
+#owned(value)
+pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
+  if self.length() == self.buffer().0.length() {
+    self.realloc(self.length() + 1)
+  }
+  let length = self.length()
+  self.unsafe_set(length, value)
+  self.len = length + 1
+}
+
+///|
+/// Appends all elements from one array to the end of another array. The elements
+/// are added in-place, modifying the original array.
+///
+/// Parameters:
+///
+/// * `self` : The array to append to.
+/// * `other` : The array whose elements will be appended.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int32] = [4, 5, 6]
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int32] = []
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3]")
+/// }
+/// ```
+pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
+  let src = other.buf()
+  let src_offset = other.start()
+  let append_len = other.length()
+  let old_len = self.len
+  let new_len = old_len + append_len
+  guard! new_len >= old_len
+  if new_len > self.buf.0.length() {
+    self.realloc(new_len)
+  }
+  self.len = new_len
+  UninitializedArray::unsafe_blit(
+    self.buf,
+    old_len,
+    src,
+    src_offset,
+    append_len,
+  )
+}
+
+///|
+/// Copies elements from one array to another array, with support for growing the
+/// destination array if needed. The arrays may overlap, in which case the copy
+/// is performed in a way that preserves the data.
+///
+/// Parameters:
+///
+/// * `self` : The array to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source array. Defaults to 0.
+/// * `dst_offset` : Starting index in the destination array. Defaults to
+/// 0.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0]
+///   src[:3].blit_to(dst, dst_offset=1)
+///   @debug.debug_inspect(dst, content="[0, 1, 2, 3]")
+/// }
+/// ```
+///
+/// Panics if:
+///
+/// * `len` is negative
+/// * `src_offset` is negative
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of destination array
+/// * `src_offset + len` exceeds the length of source array
+#label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
+#label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
+pub fn[A] Array::blit_to(
+  self : Array[A],
+  dst : Array[A],
+  len~ : Int32 = self.length(),
+  src_offset~ : Int32 = 0,
+  dst_offset~ : Int32 = 0,
+) -> Unit {
+  let old_len = dst.length()
+  guard! len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= old_len &&
+    len <= self.length() - src_offset
+  let new_len = dst_offset + len
+  guard! new_len >= 0
+  if new_len > dst.capacity() {
+    dst.realloc(new_len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buffer(),
+    src_offset,
+    len,
+  )
+  if new_len > old_len {
+    dst.len = new_len
+  }
+}
+
+///|
+/// Copies all elements from an array view to a destination array, with support
+/// for growing the destination array if needed.
+///
+/// Parameters:
+///
+/// * `self` : The array view to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `dst_offset` : Starting index in the destination array. Defaults to 0.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let view = src[1:4] // view = [2, 3, 4]
+///   let dst = [0, 0]
+///   view.blit_to(dst, dst_offset=1)
+///   @debug.debug_inspect(dst, content="[0, 2, 3, 4]")
+/// }
+/// ```
+///
+/// Panics if:
+///
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of destination array
+pub fn[A] ArrayView::blit_to(
+  self : ArrayView[A],
+  dst : Array[A],
+  dst_offset~ : Int32 = 0,
+) -> Unit {
+  let len = self.length()
+  let old_len = dst.length()
+  guard! dst_offset >= 0 && dst_offset <= old_len
+  let new_len = dst_offset + len
+  guard! new_len >= 0
+  if new_len > dst.capacity() {
+    dst.realloc(new_len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buf(),
+    self.start(),
+    len,
+  )
+  if new_len > old_len {
+    dst.len = new_len
+  }
+}
+
+///|
+/// Removes the last element from an array and returns it, or `None` if it is empty.
+///
+/// The vacated slot goes on referring to the returned element, so an
+/// `ArrayView` created beforehand keeps observing that element, and it is
+/// released only once a later push reuses the slot, the buffer grows, or the
+/// buffer is dropped. Call `Array::release_unused` to release it at once.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3]
+///   @test.assert_eq(v.pop(), Some(3))
+///   @test.assert_eq(v, [1, 2])
+/// }
+/// ```
+pub fn[T] Array::pop(self : Array[T]) -> T? {
+  let len = self.length()
+  if len == 0 {
+    None
+  } else {
+    let index = len - 1
+    let v = self.unsafe_get(index)
+    // The slot keeps referring to `v` until it is reused or the buffer dies;
+    // see `unsafe_truncate_to_length` for why it is not nulled out.
+    self.len = index
+    Some(v)
+  }
+}
+
+///|
+/// Removes and returns the last element from the array.
+///
+/// Parameters:
+///
+/// * `array` : The array from which to remove and return the last element.
+///
+/// Returns the last element of the array before removal.
+///
+/// As with `Array::pop`, the vacated slot goes on referring to the returned
+/// element until a later push reuses it, the buffer grows, the buffer is
+/// dropped, or `Array::release_unused` overwrites it.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3]
+///   inspect(arr.unsafe_pop(), content="3")
+///   @debug.debug_inspect(arr, content="[1, 2]")
+/// }
+/// ```
+///
+#internal(unsafe, "Panic if the array is empty.")
+#doc(hidden)
+#alias(pop_exn, deprecated)
+pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
+  let len = self.length()
+  guard! len != 0
+  let index = len - 1
+  let v = self.unsafe_get(index)
+  self.len = index
+  v
+}
+
+///|
+/// Removes and returns the element at position index within the array, 
+/// shifting all elements after it to the left.
+/// 
+/// This function will panic if the index is out of bounds.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = [3, 4, 5]
+///   @test.assert_eq(v.remove(1), 4)
+///   @test.assert_eq(v, [3, 5])
+/// }
+/// ```
+pub fn[T] Array::remove(self : Array[T], index : Int32) -> T {
+  guard index >= 0 && index < self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  let value = self.unsafe_get(index)
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index,
+    self.buffer(),
+    index + 1,
+    self.length() - index - 1,
+  )
+  self.unsafe_truncate_to_length(self.length() - 1)
+  value
+}
+
+///|
+/// Removes the specified range from the array and returns it.
+///
+/// This functions returns an array range from `begin` to `end` `[begin, end)`
+/// 
+/// This function will panic if the index is out of bounds.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = [3, 4, 5]
+///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+///   @test.assert_eq(vv, [4])
+///   @test.assert_eq(v, [3, 5])
+/// }
+/// ```
+///
+/// The `end - begin` slots vacated at the end of the array are not cleared:
+/// each keeps whatever it held before the survivors were shifted down, so a
+/// drained element or a duplicate reference to a survivor stays reachable
+/// there until the slot is reused, the buffer grows, or the array is dropped.
+/// Call `Array::release_unused` to overwrite them at once, or
+/// `Array::shrink_to_fit` to move the survivors into an exact-size buffer.
+///
+pub fn[T] Array::drain(self : Array[T], begin : Int32, end : Int32) -> Array[T] {
+  guard! begin >= 0 && end <= self.length() && begin <= end
+  let num = end - begin
+  let v = {
+    buf: UninitializedArray::make_and_blit(
+      self.buffer(),
+      allocate_len=num,
+      src_offset=begin,
+      len=num,
+    ),
+    len: num,
+  }
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    begin,
+    self.buffer(),
+    end,
+    self.length() - end,
+  )
+  self.unsafe_truncate_to_length(self.length() - num)
+  v
+}
+
+///|
+/// Inserts an element at a given index within the array.
+/// This function will panic if the index is out of bounds.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let a = [1, 2, 3]
+///   a.insert(1, 4)
+///   @debug.debug_inspect(a, content="[1, 4, 2, 3]")
+///   let b = [1, 2, 3]
+///   b.insert(0, 5)
+///   @debug.debug_inspect(b, content="[5, 1, 2, 3]")
+///   let c = [1, 2, 3]
+///   c.insert(3, 6)
+///   @debug.debug_inspect(c, content="[1, 2, 3, 6]")
+/// }
+/// ```
+#owned(value)
+pub fn[T] Array::insert(self : Array[T], index : Int32, value : T) -> Unit {
+  guard index >= 0 && index <= self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  if self.length() == self.buffer().0.length() {
+    self.realloc(self.length() + 1)
+  }
+  UninitializedArray::unsafe_blit(
+    self.buffer(),
+    index + 1,
+    self.buffer(),
+    index,
+    self.length() - index,
+  )
+  let length = self.length()
+  self.unsafe_set(index, value)
+  self.len = length + 1
+}
+
+///|
+/// Fills an Array with a specified value.
+/// 
+/// This method fills all or part of an Array with the given value.
+/// 
+/// # Parameters
+/// - `value`: The value to fill the array with
+/// - `start`: The starting index (inclusive, default: 0)
+/// - `end`: The ending index (exclusive, optional)
+/// 
+/// If `end` is not provided, fills from `start` to the end of the array.
+/// If `start` equals `end`, no elements are modified.
+/// 
+/// # Panics
+/// - Panics if `start` is negative or greater than or equal to the array length
+/// - Panics if `end` is provided and is less than `start` or greater than array length
+/// - Does nothing if the array is empty
+/// 
+/// # Example
+/// ```mbt check
+/// test {
+///   // Fill entire array
+///   let arr = [1, 2, 3, 4, 5]
+///   arr.fill(0)
+///   @debug.debug_inspect(arr, content="[0, 0, 0, 0, 0]")
+///
+///   // Fill from index 1 to 3 (exclusive)
+///   let arr2 = [1, 2, 3, 4, 5]
+///   arr2.fill(99, start=1, end=3)
+///   @debug.debug_inspect(arr2, content="[1, 99, 99, 4, 5]")
+///
+///   // Fill from index 2 to end
+///   let arr3 = ["a", "b", "c", "d"]
+///   arr3.fill("x", start=2)
+///   @debug.debug_inspect(
+///     arr3,
+///     content=(
+///       #|["a", "b", "x", "x"]
+///     ),
+///   )
+/// }
+/// ```
+#owned(value)
+pub fn[A] Array::fill(
+  self : Array[A],
+  value : A,
+  start~ : Int32 = 0,
+  end? : Int32,
+) -> Unit {
+  let array_length = self.length()
+  guard array_length > 0 else { return }
+  guard! start >= 0 && start < array_length
+  let length = match end {
+    None => array_length
+    Some(e) => {
+      guard! e >= start && e <= array_length
+      e
+    }
+  }
+  self.buf.unchecked_fill(start, value, length - start)
+}
+
+///|
+/// Creates and returns a new array with a copy of all elements from the input
+/// array.
+///
+/// Parameters:
+///
+/// * `array` : The array to be copied.
+///
+/// Returns a new array containing all elements from the original array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let original = [1, 2, 3]
+///   let copied = original.copy()
+///   @debug.debug_inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
+/// }
+/// ```
+#alias(clone, deprecated)
+pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    return []
+  }
+  let arr = Array::unsafe_make_uninit(len)
+  Array::unsafe_blit(arr, 0, self, 0, len)
+  arr
+}
+
+///|
 /// Creates a new dynamic array from a fixed-size array.
 ///
 /// Parameters:
