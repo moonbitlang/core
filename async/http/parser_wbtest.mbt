@@ -880,3 +880,38 @@ async test "chunked early EOF: chunk boundary" {
     )
   }
 }
+
+///|
+async test "skip_body discards buffered body tail before the next message" {
+  let source = @io.MemoryReader(w => {
+    w.write(
+      b"HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\na|bHTTP/1.1 200 OK\r\nContent-Length: 1\r\n\r\nc",
+    )
+  })
+  defer source.close()
+  let reader = Reader::new(source)
+  ignore(reader.read_response(auto_decompress=false, request_method=None))
+  inspect(@io.BinaryReader::read_until(reader, b"|").unwrap(), content="b\"a\"")
+  reader.skip_body()
+  ignore(reader.read_response(auto_decompress=false, request_method=None))
+  inspect(@io.BinaryReader::read_all(reader), content="b\"c\"")
+}
+
+///|
+async test "skip_body after a buffered partial read allows an empty next body" {
+  let source = @io.MemoryReader(w => {
+    w.write(
+      b"HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\na|bHTTP/1.1 204 No Content\r\n\r\n",
+    )
+  })
+  defer source.close()
+  let reader = Reader::new(source)
+  ignore(reader.read_response(auto_decompress=false, request_method=None))
+  inspect(@io.BinaryReader::read_until(reader, b"|").unwrap(), content="b\"a\"")
+  reader.skip_body()
+  let response = reader.read_response(
+    auto_decompress=false,
+    request_method=None,
+  )
+  inspect(response.code, content="204")
+}

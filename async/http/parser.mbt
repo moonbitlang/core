@@ -466,6 +466,10 @@ async fn Reader::read_response(
 /// so that the next request/response can be processed.
 async fn Reader::skip_body(self : Reader) -> Unit {
   if self.body is Empty {
+    // `peek`/`read_until` may have fetched the entire body into `ctrl`
+    // while leaving part of it unconsumed; discard those bytes
+    // so they do not leak into the next message.
+    self.ctrl.clear()
     return
   }
   ignore(self.drop_all())
