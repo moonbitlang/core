@@ -596,7 +596,10 @@ pub fn[A] Deque::capacity(self : Deque[A]) -> Int32 {
 }
 
 ///|
-/// Reallocate the deque with a new capacity.
+/// Reallocate the deque with a new capacity. Callers (`push_front`,
+/// `push_back`, `insert`) keep the capacity check on their fast path and only
+/// call this when the buffer is full.
+#inline(never)
 fn[A] Deque::realloc(self : Deque[A]) -> Unit {
   let old_cap = self.buf.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
