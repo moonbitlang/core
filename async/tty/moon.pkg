@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/internal/coroutine",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/os_error",
+}
+
+supported_targets = "-all+wasm"
+
+options(
+  targets: { "ffi.wasm.mbt": [ "wasm" ] },
+)

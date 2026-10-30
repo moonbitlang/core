@@ -165,6 +165,12 @@ type Timer
 pub fn Timer::cancel(Self) -> Unit
 pub fn Timer::new(Int32, () -> Unit) -> Self
 
+type Tty
+pub fn Tty::close(Self) -> Unit
+pub fn Tty::input_fd(Self) -> UInt64
+pub fn Tty::new(input~ : IoHandle) -> Self
+pub async fn Tty::read(Self, FixedArray[Byte], offset~ : Int32, len~ : Int32, raw~ : Bool, block_resize~ : Bool, context~ : String) -> Int32
+
 pub(all) struct WindowsWatcherBuf(UInt64)
 
 // Type aliases
