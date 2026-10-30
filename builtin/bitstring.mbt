@@ -1060,6 +1060,7 @@ pub fn BytesView::unsafe_extract_uint_le(
 ///|
 /// Outlined slow path of `unsafe_extract_uint_le`, kept out of the entry
 /// function so the aligned fast paths above stay small enough to inline.
+#inline(never)
 fn BytesView::unsafe_extract_uint_le_slow(
   bs : BytesView,
   offset : Int32,
@@ -1174,6 +1175,7 @@ pub fn BytesView::unsafe_extract_uint64_le(
 ///|
 /// Outlined slow path of `unsafe_extract_uint64_le`, kept out of the entry
 /// function so the aligned fast paths above stay small enough to inline.
+#inline(never)
 fn BytesView::unsafe_extract_uint64_le_slow(
   bs : BytesView,
   offset : Int32,

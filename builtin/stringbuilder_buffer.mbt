@@ -74,6 +74,7 @@ fn stringbuilder_growth_capacity(
 /// their fast path and enter here only when growth or overflow handling is
 /// needed. The builder invariant `0 <= len <= data.length()` lets fixed-size
 /// appends compare against the remaining capacity without overflowing.
+#inline(never)
 fn StringBuilder::grow(self : StringBuilder, required : Int32) -> Unit {
   let new_capacity = stringbuilder_growth_capacity(
     self.data.length(),
