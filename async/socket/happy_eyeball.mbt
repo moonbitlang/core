@@ -33,6 +33,12 @@ pub async fn Tcp::connect_to_host(
   protocol~ : IpProtocolPreference = NoPreference,
 ) -> Tcp {
   let context = "@socket.Tcp::connect_to_host()"
+  try Addr::parse_ip(host, port~, context~) catch {
+    InvalidAddr => ()
+    err => raise err
+  } noraise {
+    addr => return Tcp::connect(addr)
+  }
   let ai = match @event_loop.getaddrinfo(host, context~) {
     Ok(ai) => AddrInfo(ai)
     Err(msg) => raise ResolveHostnameError(msg)

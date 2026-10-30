@@ -13,32 +13,29 @@
 // limitations under the License.
 
 ///|
-fn try_parse_ipv6(
-  input : String,
-) -> (FixedArray[Byte], Int32, String?) raise InvalidAddr {
-  // Make sure the format is [addr]:port
-  guard input.has_prefix("[") else {
-    // IPv6 address must start with '['
-    raise InvalidAddr
+fn Addr::parse_ip(
+  host : StringView,
+  port~ : Int32,
+  context~ : String,
+) -> Addr raise {
+  if host is ['[', .. ipv6_str, ']'] {
+    let (ip_bytes, interface) = parse_ipv6(ipv6_str)
+    let scope_id = if interface is Some(interface) {
+      parse_ipv6_zone_suffix(interface, context~)
+    } else {
+      0
+    }
+    Addr::new_ipv6(ip_bytes, port, scope_id~)
+  } else {
+    let ip = parse_ipv4(host)
+    Addr::new(ip, port)
   }
+}
 
-  // Find the closing bracket
-  guard input.rev_find("]") is Some(bracket_end) else {
-    // IPv6 address missing closing ']'
-    raise InvalidAddr
-  }
-
-  // Check the part after the closing bracket, it must be ":port"
-  let remaining = input[bracket_end + 1:]
-  guard remaining.has_prefix(":") else {
-    // Missing port after IPv6 address
-    raise InvalidAddr
-  }
-
-  // Parse the IPv6 address and port
-  let ip_str = input[1:bracket_end]
-  let port_str = remaining[1:]
-
+///|
+fn parse_ipv6(
+  ip_str : StringView,
+) -> (FixedArray[Byte], String?) raise InvalidAddr {
   // Extract optional zone suffix
   let (ip_str, interface) = if ip_str.find("%") is Some(ip_end) {
     let interface = ip_str[ip_end + 1:]
@@ -48,25 +45,8 @@ fn try_parse_ipv6(
     (ip_str, None)
   }
 
-  // Parse the IPv6 address into a byte array
-  let ip_bytes = parse_ipv6_to_bytes(ip_str)
-
-  let port = parse_port(port_str)
-
-  (ip_bytes, port, interface)
-}
-
-///|
-fn parse_ipv6_to_bytes(
-  ip_str : StringView,
-) -> FixedArray[Byte] raise InvalidAddr {
-  // Handle the case where the IPv6 address is "::"
-  if ip_str == "::" {
-    return FixedArray::make(16, 0)
-  }
-
-  // Check for "::" compression
-  match ip_str.split("::").collect() {
+  let ip_bytes = match ip_str.split("::").collect() {
+    ["", ""] => FixedArray::make(16, b'\x00')
     [ip_str] => parse_full_ipv6_to_bytes(ip_str)
     [left_part, right_part] =>
       parse_compressed_ipv6_to_bytes(left_part, right_part)
@@ -74,6 +54,9 @@ fn parse_ipv6_to_bytes(
       // IPv6 address can only have one '::' compression
       raise InvalidAddr
   }
+
+  // Parse the IPv6 address into a byte array
+  (ip_bytes, interface)
 }
 
 ///|
@@ -227,16 +210,9 @@ fn parse_ipv4_to_bytes(
 }
 
 ///|
-fn try_parse_ipv4(input : String) -> (UInt32, Int32) raise InvalidAddr {
-  // Find the last colon to separate IP and port
-  guard input.rev_find(":") is Some(last_colon) else { raise InvalidAddr }
-  let ip_str = input[:last_colon]
-  let port_str = input[last_colon + 1:]
-  let port = parse_port(port_str)
-  // Parse the IP address
-  let (a, b, c, d) = parse_ipv4_to_bytes(ip_str)
-  let ip = (a << 24) | (b << 16) | (c << 8) | d
-  (ip, port)
+fn parse_ipv4(input : StringView) -> UInt32 raise InvalidAddr {
+  let (a, b, c, d) = parse_ipv4_to_bytes(input)
+  (a << 24) | (b << 16) | (c << 8) | d
 }
 
 ///|

@@ -71,3 +71,15 @@ async test "resolve preference" {
     content="[::1]:80",
   )
 }
+
+///|
+async test "resolve plain IP" {
+  inspect(@socket.Addr::resolve("8.8.8.8", port=53), content="8.8.8.8:53")
+  inspect(@socket.Addr::resolve("[::1]", port=80), content="[::1]:80")
+  inspect(
+    @socket.Addr::resolve("[fe80::b65e:e4fa:c7f6:c3fd]", port=80),
+    content=(
+      #|[fe80::b65e:e4fa:c7f6:c3fd]:80
+    ),
+  )
+}
