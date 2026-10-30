@@ -57,6 +57,8 @@ async test "WebSocket client example" {
     let addr = @socket.Addr::parse("127.0.0.1:\{port}")
     group.spawn_bg(no_wait=true, () => websocket_echo_server(addr))
 
+    @async.sleep(100) // wait for the server to start
+
     // Create a new client via `@websocket.connect`.
     // TLs encrypted WebSocket tunnel can be created via `wss://` URL.
     let ws = @websocket.connect("ws://127.0.0.1:\{port}/ws")

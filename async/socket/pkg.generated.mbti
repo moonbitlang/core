@@ -23,7 +23,7 @@ pub fn Addr::ip(Self) -> UInt32
 pub fn Addr::is_ipv6(Self) -> Bool
 pub fn Addr::is_multicast(Self) -> Bool
 pub fn Addr::new(UInt32, Int32) -> Self
-pub fn Addr::parse(String) -> Self raise
+pub fn Addr::parse(StringView) -> Self raise
 pub fn Addr::port(Self) -> Int32
 pub async fn Addr::resolve(String, port~ : Int32, protocol? : IpProtocolPreference) -> Self
 pub fn Addr::to_string(Self) -> String
