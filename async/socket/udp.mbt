@@ -417,6 +417,24 @@ pub fn UdpServer::join_multicast_group_v6(
 }
 
 ///|
+/// Validate that `buf[offset:offset + max_len]` stays inside `buf`
+/// before the range is forwarded to native receive calls,
+/// which perform no bounds checking of their own.
+fn check_recv_bounds(
+  buf : FixedArray[Byte],
+  offset~ : Int32,
+  max_len~ : Int32,
+  context~ : String,
+) -> Unit raise {
+  guard offset >= 0 &&
+    offset <= buf.length() &&
+    max_len >= 0 &&
+    max_len <= buf.length() - offset else {
+    raise Failure::Failure("\{context}: destination range out of bounds")
+  }
+}
+
+///|
 /// Receive packet from a UDP client.
 /// For `udp.recv(buf, offset~, max_len~)`,
 /// at most `max_len` bytes of data will be written to `buf`, starting from `offset`.
@@ -436,6 +454,7 @@ pub async fn UdpClient::recv(
   offset~ : Int32 = 0,
   max_len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
+  check_recv_bounds(buf, offset~, max_len~, context="@socket.UdpClient::recv()")
   self.io.read(buf, offset~, len=max_len, context="@socket.UdpClient::recv()")
 }
 
@@ -449,6 +468,12 @@ pub async fn UdpClient::recvfrom(
   offset~ : Int32 = 0,
   max_len~ : Int32 = buf.length() - offset,
 ) -> (Int32, Addr) {
+  check_recv_bounds(
+    buf,
+    offset~,
+    max_len~,
+    context="@socket.UdpClient::recvfrom()",
+  )
   // Create a big enough Addr to hold both IPv4 and IPv6 address
   let addr = Addr::empty(self.addr.family())
   let n_read = self.io.recvfrom(
@@ -481,6 +506,12 @@ pub async fn UdpServer::recvfrom(
   offset~ : Int32 = 0,
   max_len~ : Int32 = buf.length() - offset,
 ) -> (Int32, Addr) {
+  check_recv_bounds(
+    buf,
+    offset~,
+    max_len~,
+    context="@socket.UdpServer::recvfrom()",
+  )
   // Create a big enough Addr to hold both IPv4 and IPv6 address
   let addr = Addr::empty(self.addr.family())
   let n_read = self.io.recvfrom(

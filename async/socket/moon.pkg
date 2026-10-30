@@ -52,6 +52,7 @@ options(
     "ifname.wasm.mbt": [ "wasm" ],
     "interface_util_for_test.mbt": [ "native", "wasm" ],
     "multicast_test.mbt": [ "native", "wasm" ],
+    "udp_bounds_test.mbt": [ "native", "wasm" ],
     "read_exactly_test.mbt": [ "native", "wasm" ],
     "resolve_host_test.mbt": [ "native" ],
     "resolve_host_wasm_test.mbt": [ "wasm" ],

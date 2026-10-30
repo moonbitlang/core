@@ -274,6 +274,12 @@ pub async fn File::read_at(
   offset~ : Int32 = 0,
   len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
+  guard offset >= 0 &&
+    offset <= buf.length() &&
+    len >= 0 &&
+    len <= buf.length() - offset else {
+    raise Failure::Failure("`File::read_at()`: destination range out of bounds")
+  }
   self.io.read_at(buf, offset~, len~, position~, context="@fs.File::read_at()")
 }
 
