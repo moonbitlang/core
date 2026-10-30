@@ -95,16 +95,18 @@ pub fn Command::render_help(self : Command) -> String {
 }
 
 ///|
-/// A successful argument parse or a request to display help or version text.
+/// The result of parsing arguments: matches, help, version, or an error.
 /// `Help` and `Version` contain the text printed by `Command::parse`, without
 /// the final newline added when printing.
-pub(all) enum ParseOutcome {
+pub(all) enum ParseResult {
   /// Parsed arguments, ready for the command to execute.
   Parsed(Matches)
   /// A request for command or subcommand help.
   Help(String)
   /// A request for version information.
   Version(String)
+  /// A parse or command-definition error with display-ready text.
+  Failed(Error)
 }
 
 ///|
@@ -115,8 +117,8 @@ pub(all) enum ParseOutcome {
 /// only from `env`, which defaults to empty. Precedence is
 /// `argv > env > default_values`.
 ///
-/// Help and version requests return `Ok(Help(text))` and `Ok(Version(text))`.
-/// Failures return `Err(error)` with display-ready text: parse errors include
+/// Help and version requests return `Help(text)` and `Version(text)`.
+/// Failures return `Failed(error)` with display-ready text: parse errors include
 /// contextual help, while command-definition errors contain only validation text.
 /// Errors are ordinary return values so callers can handle every outcome without
 /// an error effect.
@@ -126,26 +128,24 @@ pub(all) enum ParseOutcome {
 /// test {
 ///   let cmd = @argparse.Command("demo", version="1.0.0")
 ///   match cmd.parse_as_result(argv=["--version"]) {
-///     Ok(Version(text)) => inspect(text, content="1.0.0")
+///     Version(text) => inspect(text, content="1.0.0")
 ///     _ => fail("expected a version request")
 ///   }
 /// }
 /// ```
 #as_free_fn
-#warnings("-result_error_return")
 pub fn Command::parse_as_result(
   self : Command,
   argv~ : ArrayView[String],
   env~ : Map[String, String] = Map([]),
-) -> Result[ParseOutcome, Error] {
+) -> ParseResult {
   try {
     let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)
-    Ok(Parsed(build_matches(self, raw, [])))
+    Parsed(build_matches(self, raw, []))
   } catch {
-    DisplayHelp::Message(text) => Ok(Help(trim_single_trailing_newline(text)))
-    DisplayVersion::Message(text) =>
-      Ok(Version(trim_single_trailing_newline(text)))
-    err => Err(err)
+    DisplayHelp::Message(text) => Help(trim_single_trailing_newline(text))
+    DisplayVersion::Message(text) => Version(trim_single_trailing_newline(text))
+    err => Failed(err)
   }
 }
 

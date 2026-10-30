@@ -22,7 +22,7 @@ pub fn Command::Command(StringView, flags? : ArrayView[FlagArg], options? : Arra
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
 #as_free_fn
-pub fn Command::parse_as_result(Self, argv~ : ArrayView[String], env? : Map[String, String]) -> Result[ParseOutcome, Error]
+pub fn Command::parse_as_result(Self, argv~ : ArrayView[String], env? : Map[String, String]) -> ParseResult
 pub fn Command::render_help(Self) -> String
 
 pub(all) enum FlagAction {
@@ -63,10 +63,11 @@ pub struct OptionArg {
 #alias(new, deprecated)
 pub fn OptionArg::OptionArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 
-pub(all) enum ParseOutcome {
+pub(all) enum ParseResult {
   Parsed(Matches)
   Help(String)
   Version(String)
+  Failed(Error)
 }
 
 pub struct PositionArg {
