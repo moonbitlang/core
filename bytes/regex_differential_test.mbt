@@ -309,3 +309,92 @@ test "BytesRegex agrees with @string.Regex at the parser limits" {
     }
   }
 }
+
+///|
+test "BytesRegex + and | agree with @string.Regex" {
+  // Two generated patterns, joined by the operators rather than in the
+  // pattern text: the groups of the right operand follow those of the left.
+  let rng = { state: 4573U, }
+  let alphabet = "abcAB_12 \n.-"
+  let mut matches = 0
+  for _ in 0..<1000 {
+    let gen = { rng, groups: 0, names: [], }
+    let p1 = gen.pattern(1 + rng.pick(3))
+    let p2 = gen.pattern(1 + rng.pick(3))
+    guard error_of(p1) is (None, None) && error_of(p2) is (None, None) else {
+      continue
+    }
+    let seq = (
+      @string.Regex(p1) + Regex(p2),
+      @bytes.BytesRegex(p1) + BytesRegex(p2),
+    )
+    let alt = (
+      @string.Regex(p1) | Regex(p2),
+      @bytes.BytesRegex(p1) | BytesRegex(p2),
+    )
+    for pair in [("+", seq), ("|", alt)] {
+      let (op, (s_re, b_re)) = pair
+      for _ in 0..<5 {
+        let text = String::from_array(
+          Array::makei(rng.pick(12), _ => {
+            alphabet.unsafe_get(rng.pick(alphabet.length())).unsafe_to_char()
+          }),
+        )
+        let s_match = s_re.execute(text)
+        let b_match = b_re.execute(ascii_bytes(text))
+        let ctx = "\{p1.escape()} \{op} \{p2.escape()} on \{text.escape()}"
+        match (s_match, b_match) {
+          (None, None) => ()
+          (Some(s), Some(b)) => {
+            matches += 1
+            for i in 0..<=(gen.groups + 1) {
+              if !same_view(text, s.group(i), ascii_bytes(text), b.group(i)) {
+                fail("group \{i} differs, \{ctx}")
+              }
+            }
+            for name in gen.names {
+              if !same_view(
+                  text,
+                  s.named_group(name),
+                  ascii_bytes(text),
+                  b.named_group(name),
+                ) {
+                fail("group \{name} differs, \{ctx}")
+              }
+            }
+          }
+          _ => fail("match differs, \{ctx}")
+        }
+      }
+    }
+  }
+  assert_true(matches > 2000)
+}
+
+///|
+test "BytesRegex::internal_from_string is BytesRegex" {
+  // The compiler builds the value of a `reb"..."` literal with it, and lifts
+  // each call to a static initializer, so it is only ever called with a
+  // literal: a call with a variable would not compile in release mode.
+  let cases = [
+    ("^GET /", @bytes.BytesRegex::internal_from_string("^GET /")),
+    (
+      "\\xef\\xbb\\xbf",
+      @bytes.BytesRegex::internal_from_string("\\xef\\xbb\\xbf"),
+    ),
+    (
+      "(?<n>[[:digit:]]+)|x",
+      @bytes.BytesRegex::internal_from_string("(?<n>[[:digit:]]+)|x"),
+    ),
+  ]
+  for case in cases {
+    let (pattern, a) = case
+    let b = @bytes.BytesRegex(pattern)
+    @test.assert_eq(@debug.to_string(a), @debug.to_string(b))
+    let input = b"GET /12\xef\xbb\xbf"
+    @test.assert_eq(
+      a.execute(input).map(m => m.content().to_owned()),
+      b.execute(input).map(m => m.content().to_owned()),
+    )
+  }
+}

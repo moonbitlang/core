@@ -15,7 +15,11 @@ pub struct BytesRegex {
   // private fields
 }
 pub fn BytesRegex::BytesRegex(StringView) -> Self raise
+pub fn BytesRegex::add(Self, Self) -> Self
 pub fn BytesRegex::execute(Self, BytesView, last_index? : Int32) -> MatchResult?
+pub fn BytesRegex::lor(Self, Self) -> Self
+pub impl Add for BytesRegex
+pub impl BitOr for BytesRegex
 pub impl @debug.Debug for BytesRegex
 
 type MatchResult derive(@debug.Debug)

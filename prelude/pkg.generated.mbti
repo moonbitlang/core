@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/buffer",
   "moonbitlang/core/builtin",
+  "moonbitlang/core/bytes",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/lazy",
@@ -98,6 +99,8 @@ pub using @buffer {type Buffer}
 pub using @builtin {type Byte}
 
 pub using @builtin {type Bytes}
+
+pub using @bytes {type BytesRegex}
 
 pub using @builtin {type BytesView}
 

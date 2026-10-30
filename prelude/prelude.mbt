@@ -124,6 +124,9 @@ pub using @debug {dump}
 pub using @string {type Regex}
 
 ///|
+pub using @bytes {type BytesRegex}
+
+///|
 /// Applies a function to a value and returns the original value.
 ///
 /// # Parameters
