@@ -137,7 +137,10 @@ pub fn BytesRegex::internal_from_string(pat : String) -> BytesRegex {
 ///   inspect(m.content(), content="b\"ab\\xff\"")
 /// }
 /// ```
-#intrinsic("%regex.seq")
+// The compiler does not know `%bytes_regex.seq` yet and runs the body;
+// drop the `#warnings` once a released compiler knows it.
+#intrinsic("%bytes_regex.seq")
+#warnings("-unknown_intrinsic")
 pub impl Add for BytesRegex with fn add(self, other) -> BytesRegex {
   { pat: @re.seq([self.pat, other.pat]), re: None, }
 }
@@ -154,7 +157,10 @@ pub impl Add for BytesRegex with fn add(self, other) -> BytesRegex {
 ///   inspect(regex.execute(b"PUT") is Some(_), content="false")
 /// }
 /// ```
-#intrinsic("%regex.alt")
+// The compiler does not know `%bytes_regex.alt` yet and runs the body;
+// drop the `#warnings` once a released compiler knows it.
+#intrinsic("%bytes_regex.alt")
+#warnings("-unknown_intrinsic")
 pub impl BitOr for BytesRegex with fn lor(self, other) -> BytesRegex {
   { pat: @re.alt([self.pat, other.pat]), re: None, }
 }
