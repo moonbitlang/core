@@ -1626,7 +1626,6 @@ pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int32, X] {
 /// Example:
 ///
 /// ```mbt check
-/// #cfg(not(target="js"))
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
@@ -1634,7 +1633,6 @@ pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int32, X] {
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```
-#cfg(not(target="js"))
 #alias(clone, deprecated)
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()
@@ -1643,34 +1641,6 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   } else {
     FixedArray::make_and_blit(self, allocate_len=len, init=self[0], len~)
   }
-}
-
-///|
-/// Creates a new array that is a copy of the original array.
-///
-/// Parameters:
-///
-/// * `self` : The array to be copied. The type of elements in the array must be
-/// `T`.
-///
-/// Returns a new array containing all elements from the original array in the
-/// same order.
-///
-/// Example:
-///
-/// ```mbt check
-/// #cfg(target="js")
-/// test {
-///   let original = [1, 2, 3]
-///   let copied = original.copy()
-///   @debug.debug_inspect(copied, content="[1, 2, 3]")
-///   inspect(physical_equal(original, copied), content="false")
-/// }
-/// ```
-#cfg(target="js")
-#alias(clone, deprecated)
-pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
-  JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()
 }
 
 ///|
