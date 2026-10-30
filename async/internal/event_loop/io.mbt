@@ -26,7 +26,7 @@ priv enum IoStatus {
 /// capable of performing async IO operations.
 pub struct IoHandle {
   priv mut fd : @fd_util.Fd
-  priv kind : @fd_util.FileKind
+  priv mut kind : @fd_util.FileKind
   /// - `is_async=true`: support native async operations through the event bus.
   ///   This usually means the fd is non blocking (Unix) or overlapped (Windows)
   /// - `is_async=false`: all operations are blocking and go through the thread pool
@@ -44,7 +44,7 @@ pub struct IoHandle {
   priv mut write : IoStatus
   /// Similar to `read_offset`, but for the write end of the object.
   mut write_offset : Int64
-  priv console_state : WindowsConsoleBuffer
+  priv mut console_state : WindowsConsoleBuffer
 }
 
 ///|

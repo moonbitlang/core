@@ -146,6 +146,21 @@ fn Job::copy_output(self : Job) -> Unit {
 
 ///|
 #unsafe_skip_stub_check
+fn JobHandle::run_sync(job : JobHandle) -> Unit = "moonbitlang/async" "thread_pool/run_job"
+
+///|
+fn Job::run_sync(self : Job, context~ : String) -> Int32 raise {
+  self.handle.run_sync()
+  if self.handle.err() is err && err > 0 {
+    raise @os_error.from_errno(err, context~)
+  } else {
+    self.copy_output()
+    self.handle.ret()
+  }
+}
+
+///|
+#unsafe_skip_stub_check
 fn JobHandle::read(
   fd : @fd_util.Fd,
   len : Int32,

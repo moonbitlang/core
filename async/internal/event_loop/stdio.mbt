@@ -41,20 +41,19 @@ fn kind_of_fd_sync(
 
 ///|
 #cfg(target="wasm")
-#unsafe_skip_stub_check
-fn kind_of_fd_sync_ffi(fd : @fd_util.Fd) -> Int32 = "moonbitlang/async" "stdio/kind_of_fd"
-
-///|
-#cfg(target="wasm")
 fn kind_of_fd_sync(
   fd : @fd_util.Fd,
   context~ : String,
 ) -> @fd_util.FileKind raise {
-  let kind = kind_of_fd_sync_ffi(fd)
-  if kind < 0 {
-    @os_error.check_errno(context)
+  let buf = FixedArray::make(16, b'\x00')
+  let job = Job::fstatx(fd, STAT_FILE_KIND, buf, buf.length())
+  defer job.free()
+  let _ = job.run_sync(context~)
+  guard! buf is [u32le(_), u32le(mask), u64le(kind)]
+  guard (mask & STAT_FILE_KIND) != 0 else {
+    raise @os_error.from_errno(@errno_util.not_supported, context~)
   }
-  @fd_util.FileKind::from_int(kind)
+  @fd_util.FileKind::from_int(kind.to_int())
 }
 
 ///|
@@ -81,10 +80,9 @@ fn setup_stdio(id : Int32, context~ : String) -> IoHandle raise {
     // In this case, avoid problem caused by duplicated handle value
     return handle
   }
-  let kind = kind_of_fd_sync(fd, context~)
   let handle = {
     fd,
-    kind,
+    kind: Unknown,
     // Stdio channels may be shared between many different processes,
     // and some (argubly misbehaving ones) of them may
     // change the blocking/non-blocking status of stdio channels.
@@ -102,13 +100,16 @@ fn setup_stdio(id : Int32, context~ : String) -> IoHandle raise {
     read_offset: -1,
     write: Idle,
     write_offset: -1,
-    console_state: WindowsConsoleBuffer(kind),
+    console_state: dummy_console_buffer,
   }
   stdio_handles[fd] = handle
   register_hook(
     init=() => {
       guard! curr_loop.val is Some(evloop)
       guard! evloop.fds.get(fd) is None
+      let kind = kind_of_fd_sync(fd, context~)
+      handle.kind = kind
+      handle.console_state = WindowsConsoleBuffer(kind)
       evloop.fds[fd] = handle
     },
     exit=() => handle.detach_from_event_loop(),
