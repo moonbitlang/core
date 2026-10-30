@@ -40,14 +40,22 @@ pub fn Cookie::Cookie(
 }
 
 ///|
+/// Parse the value of a `Set-Cookie` header.
+/// Following RFC 6265 section 5.2, a line without `=` in its name-value pair
+/// is ignored (`None`), and so is a malformed `Max-Age` attribute, instead of
+/// failing the whole response.
 #cfg(any(target="native", target="wasm"))
-fn Cookie::parse(line : StringView) -> Cookie raise {
-  guard line.split_once("=") is Some((name, rest)) else { raise BadRequest }
-  let name = name.to_owned()
-  guard rest.split_once(";") is Some((value, attrs)) else {
-    Cookie(name, rest.to_owned())
+fn Cookie::parse(line : StringView) -> Cookie? {
+  let (name_value, attrs) = match line.split_once(";") {
+    Some(pair) => pair
+    None => (line, "")
   }
+  guard name_value.split_once("=") is Some((name, value)) else { return None }
+  let name = name.to_owned()
   let value = value.to_owned()
+  if attrs is "" {
+    return Some(Cookie(name, value))
+  }
 
   let mut path = None
   let mut expires_raw = None
@@ -62,10 +70,10 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
       match name.to_lower() {
         "path" => path = Some(value.to_owned())
         "expires" => expires_raw = Some(value.to_owned())
-        "max-age" => {
-          let value = @string.parse_int64(value) catch { _ => raise BadRequest }
-          max_age = Some(value)
-        }
+        "max-age" =>
+          if parse_max_age(value) is Some(value) {
+            max_age = Some(value)
+          }
         "domain" => domain = Some(value.to_owned())
         _ => extensions.push(attr.to_owned())
       }
@@ -77,7 +85,7 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
       }
     }
   }
-  {
+  Some({
     name,
     value,
     path,
@@ -87,6 +95,23 @@ fn Cookie::parse(line : StringView) -> Cookie raise {
     secure,
     http_only,
     extensions,
+  })
+}
+
+///|
+/// RFC 6265 section 5.2.2 ignores a value that is not an optional `-`
+/// followed by digits. A value that has this form but does not fit in `Int64`
+/// is ignored as well, since it cannot be represented.
+#cfg(any(target="native", target="wasm"))
+fn parse_max_age(value : StringView) -> Int64? {
+  let digits = if value.has_prefix("-") { value[1:] } else { value }
+  guard digits.length() > 0 && digits.iter().all(c => c is ('0'..<='9')) else {
+    return None
+  }
+  try @string.parse_int64(value) catch {
+    _ => None
+  } noraise {
+    value => Some(value)
   }
 }
 
