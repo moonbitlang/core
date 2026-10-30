@@ -70,6 +70,7 @@ fn buffer_growth_capacity(
 /// their fast path and enter here only when growth or overflow handling is
 /// needed. The buffer invariant `0 <= len <= data.length()` lets fixed-size
 /// appends compare against the remaining capacity without overflowing.
+#inline(never)
 fn Buffer::grow(self : Buffer, required : Int32) -> Unit {
   let new_capacity = buffer_growth_capacity(
     self.data.length(),
