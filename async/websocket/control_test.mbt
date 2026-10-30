@@ -67,6 +67,9 @@ async test "ping auto-reply race-with-write" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
     let port = server.addr.port()
+    // used for synchronization
+    let queue1 = @async.Queue(kind=Unbounded)
+    let queue2 = @async.Queue(kind=Unbounded)
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -76,21 +79,24 @@ async test "ping auto-reply race-with-write" {
       defer ws.close()
       @async.with_task_group() <| group => {
         // currently, auto-reply is only triggered when the user is actually reading.
-        group.spawn_bg(no_wait=true, () => ignore(ws.recv().read_all()))
+        group.spawn_bg(no_wait=true, () => ignore(ws.recv().drop_all()))
         ws.start_message(Text)
         ws.write(b"1234")
-        @async.sleep(400)
+        queue1.put(())
+        queue2.get()
         ws.end_message()
       }
     }
     let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
-    @async.sleep(200)
+    queue1.get()
     let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
     // the "1234" message from the server is already buffered at this stage.
     // However, the pong message will interrupt it.
     http_client.write(ping_frame)
+    @async.sleep(200)
+    queue2.put(())
     // The `PONG` reply should come first
     json_inspect(http_client.read_exactly(2).to_array(), content=[0x8a, 0x04])
     inspect(@utf8.decode(http_client.read_exactly(4)), content="abcd")
@@ -104,6 +110,9 @@ async test "close test" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
     let port = server.addr.port()
+    // used for synchronization
+    let queue1 = @async.Queue(kind=Unbounded)
+    let queue2 = @async.Queue(kind=Unbounded)
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -123,17 +132,20 @@ async test "close test" {
         }
         ws.start_message(Text)
         ws.write(b"1234")
-        @async.sleep(400)
+        queue1.put(())
+        queue2.get()
         ws.end_message()
       }
     }
     let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
-    @async.sleep(200)
+    queue1.get()
     // the "1234" message from the server is already buffered at this stage.
     // However, the close message will interrupt it.
     ws_client.send_close(code=Normal, reason="abcd")
+    @async.sleep(200)
+    queue2.put(())
     // The `close` reply should come first
     json_inspect(http_client.read_exactly(2).to_array(), content=[0x88, 6])
     guard! http_client.read_exactly(2) is [u16be(code)]
@@ -200,6 +212,7 @@ async test "multiple ping" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
     let port = server.addr.port()
+    let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -207,7 +220,7 @@ async test "multiple ping" {
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
       defer ws.close()
-      @async.sleep(100)
+      cond.wait()
       inspect(ws.recv().text.read_all(), content="1234")
       ws.send_text("abcd")
     }
@@ -218,6 +231,8 @@ async test "multiple ping" {
         @async.with_task_group() <| inner => {
           inner.spawn_bg(() => ws.ping())
           inner.spawn_bg(() => ws.ping())
+          @async.sleep(200)
+          cond.signal()
         }
         ws.send_text("1234")
       }
@@ -231,6 +246,7 @@ async test "ping cancelled" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
     let port = server.addr.port()
+    let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -238,7 +254,7 @@ async test "ping cancelled" {
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
       defer ws.close()
-      @async.sleep(200)
+      cond.wait()
       inspect(ws.recv().text.read_all(), content="1234")
       ws.send_text("abcd")
     }
@@ -249,9 +265,10 @@ async test "ping cancelled" {
         inspect(ws.recv().text.read_all(), content="abcd")
       }
       debug_inspect(
-        @async.with_timeout_opt(100, () => ws.ping(msg=b"1")),
+        @async.with_timeout_opt(200, () => ws.ping(msg=b"1")),
         content="None",
       )
+      cond.signal()
       ws.ping(msg=b"1")
       ws.send_text("1234")
     }
@@ -263,6 +280,7 @@ async test "duplicated ping" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
     let port = server.addr.port()
+    let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -270,7 +288,7 @@ async test "duplicated ping" {
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
       defer ws.close()
-      @async.sleep(100)
+      cond.wait()
       inspect(ws.recv().text.read_all(), content="1234")
       ws.send_text("abcd")
     }
@@ -281,6 +299,7 @@ async test "duplicated ping" {
         @async.with_task_group() <| inner => {
           inner.spawn_bg(() => ws.ping(msg=b"1"))
           inner.spawn_bg() <| () => {
+            defer cond.signal()
             debug_inspect(
               @test.expect_error_async(() => ws.ping(msg=b"1")),
               content=(

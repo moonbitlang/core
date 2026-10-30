@@ -27,6 +27,7 @@ async fn main {
   let mut exit_code = 0
   let mut msg_after_sleep = None
   let mut msg_finally = None
+  let mut msg_after_init = None
   let mut use_default_handler = false
   let mut wait_on_init = false
   for args = @env.args()[1:] {
@@ -49,6 +50,11 @@ async fn main {
       ["-print-finally", .. rest] => {
         guard rest is [msg, .. rest] else { fail("invalid arguments") }
         msg_finally = Some(msg)
+        continue rest
+      }
+      ["-print-after-init", .. rest] => {
+        guard rest is [msg, .. rest] else { fail("invalid arguments") }
+        msg_after_init = Some(msg)
         continue rest
       }
       ["-use-default-handler", .. rest] => {
@@ -74,9 +80,12 @@ async fn main {
     @signal.set_global_cancellation_signals([])
     register_termination_handler()
   }
+  if msg_after_init is Some(msg) {
+    @stdio.stdout.text.write("\{msg}\n")
+  }
   @async.sleep(time)
   if msg_after_sleep is Some(msg) {
-    println(msg)
+    @stdio.stdout.text.write("\{msg}\n")
   }
   exit(exit_code)
 }

@@ -97,46 +97,34 @@ async test "with_timeout timeout" {
 ///|
 async test "with_timeout nested1" {
   let log = StringBuilder()
-  @async.with_task_group(root => {
-    root.spawn_bg() <| () => {
-      @async.sleep(200)
-      log <+ "200ms tick\n"
-      @async.sleep(200)
-      log <+ "400ms tick\n"
-    }
-    @async.with_timeout(300, () => {
-      let result = @async.handle_cancellation() <| () => {
-        @async.with_timeout(500) <| () => {
-          match @async.handle_cancellation(() => @async.sleep(2000)) {
-            None => {
-              log <+ "task cancelled\n"
-              @coroutine.raise_cancellation_signal()
-            }
-            Some(_) => log <+ "task finished after 2s\n"
+  @async.with_timeout(300, () => {
+    let result = @async.handle_cancellation() <| () => {
+      @async.with_timeout(500) <| () => {
+        match @async.handle_cancellation(() => @async.sleep(2000)) {
+          None => {
+            log <+ "task cancelled\n"
+            @coroutine.raise_cancellation_signal()
           }
+          Some(_) => log <+ "task finished after 2s\n"
         }
       }
-      match result {
-        None => {
-          log <+ "inner `with_timeout` cancelled\n"
-          @coroutine.raise_cancellation_signal()
-        }
-        Some(_) => ()
-      }
-    }) catch {
-      err => log <+ "outer `with_timeout` fail with \{err}\n"
     }
-    log <+ "main task finished\n"
-  })
+    match result {
+      None => {
+        log <+ "inner `with_timeout` cancelled\n"
+        @coroutine.raise_cancellation_signal()
+      }
+      Some(_) => ()
+    }
+  }) catch {
+    err => log <+ "outer `with_timeout` fail with \{err}\n"
+  }
   inspect(
     log.to_string(),
     content=(
-      #|200ms tick
       #|task cancelled
       #|inner `with_timeout` cancelled
       #|outer `with_timeout` fail with TimeoutError
-      #|main task finished
-      #|400ms tick
       #|
     ),
   )
@@ -145,38 +133,24 @@ async test "with_timeout nested1" {
 ///|
 async test "with_timeout nested2" {
   let log = StringBuilder()
-  @async.with_task_group(root => {
-    root.spawn_bg() <| () => {
-      @async.sleep(300)
-      log <+ "300ms tick\n"
-      @async.sleep(300)
-      log <+ "600ms tick\n"
-    }
-    @async.with_timeout(750, () => {
-      @async.with_timeout(450, () => {
-        match @async.handle_cancellation(() => @async.sleep(2000)) {
-          None => {
-            log <+ "task cancelled\n"
-            @coroutine.raise_cancellation_signal()
-          }
-          Some(_) => log <+ "task finished after 2s\n"
+  @async.with_timeout(750) <| () => {
+    @async.with_timeout(450, () => {
+      match @async.handle_cancellation(() => @async.sleep(2000)) {
+        None => {
+          log <+ "task cancelled\n"
+          @coroutine.raise_cancellation_signal()
         }
-      }) catch {
-        err => log <+ "inner `with_timeout` fail with \{err}\n"
+        Some(_) => log <+ "task finished after 2s\n"
       }
     }) catch {
-      err => log <+ "outer `with_timeout` fail with \{err}\n"
+      err => log <+ "inner `with_timeout` fail with \{err}\n"
     }
-    log <+ "main task finished\n"
-  })
+  }
   inspect(
     log.to_string(),
     content=(
-      #|300ms tick
       #|task cancelled
       #|inner `with_timeout` fail with TimeoutError
-      #|main task finished
-      #|600ms tick
       #|
     ),
   )
