@@ -14,14 +14,14 @@
 
 ///|
 // The explicit function type checks that parsing requires no raising effect.
-test "parse_as_result is non-raising and preserves inputs across calls" {
+test "parse_outcome is non-raising and preserves inputs across calls" {
   let cmd = @argparse.Command("demo", options=[
     OptionArg("name", env="NAME", default_values=["default"]),
   ])
-  let parse : (ArrayView[String], Map[String, String]) -> @argparse.ParseResult = (
+  let parse : (ArrayView[String], Map[String, String]) -> @argparse.ParseOutcome = (
     argv,
     env,
-  ) => cmd.parse_as_result(argv~, env~)
+  ) => cmd.parse_outcome(argv~, env~)
   let argv = ["--name", "cli"]
   let env = { "NAME": "environment" }
   for _ in 0..<2 {
@@ -36,45 +36,45 @@ test "parse_as_result is non-raising and preserves inputs across calls" {
     fail("expected environment value")
   }
   debug_inspect(from_env.values, content="{ \"name\": [\"environment\"] }")
-  guard cmd.parse_as_result(argv=[]) is Parsed(from_default) else {
+  guard cmd.parse_outcome(argv=[]) is Parsed(from_default) else {
     fail("expected default value")
   }
   debug_inspect(from_default.values, content="{ \"name\": [\"default\"] }")
   from_default.values["name"].push("changed")
-  guard cmd.parse_as_result(argv=[]) is Parsed(again) else {
+  guard cmd.parse_outcome(argv=[]) is Parsed(again) else {
     fail("expected unchanged default")
   }
   debug_inspect(again.values, content="{ \"name\": [\"default\"] }")
 }
 
 ///|
-test "parse_as_result returns help for all built-in routes" {
+test "parse_outcome returns help for all built-in routes" {
   let cmd = @argparse.Command("demo", about="demo app", subcommands=[
     Command("echo", about="echo text"),
   ])
   for flag in ["--help", "-h"] {
-    guard cmd.parse_as_result(argv=[flag]) is Help(text) else {
+    guard cmd.parse_outcome(argv=[flag]) is Help(text) else {
       fail("expected help")
     }
     assert_eq(text + "\n", cmd.render_help())
   }
-  guard cmd.parse_as_result(argv=["help", "echo"]) is Help(by_subcommand) else {
+  guard cmd.parse_outcome(argv=["help", "echo"]) is Help(by_subcommand) else {
     fail("expected subcommand help")
   }
-  guard cmd.parse_as_result(argv=["echo", "--help"]) is Help(by_flag) else {
+  guard cmd.parse_outcome(argv=["echo", "--help"]) is Help(by_flag) else {
     fail("expected subcommand help")
   }
   inspect(by_subcommand == by_flag, content="true")
   inspect(by_flag.contains("echo text"), content="true")
   let required = @argparse.Command("demo", arg_required_else_help=true)
-  inspect(required.parse_as_result(argv=[]) is Help(_), content="true")
+  inspect(required.parse_outcome(argv=[]) is Help(_), content="true")
 }
 
 ///|
-test "parse_as_result returns version and custom display actions" {
+test "parse_outcome returns version and custom display actions" {
   let cmd = @argparse.Command("demo", version="1.2.3")
   for flag in ["--version", "-V"] {
-    guard cmd.parse_as_result(argv=[flag]) is Version(text) else {
+    guard cmd.parse_outcome(argv=[flag]) is Version(text) else {
       fail("expected version")
     }
     assert_eq(text, "1.2.3")
@@ -89,25 +89,22 @@ test "parse_as_result returns version and custom display actions" {
       FlagArg("show-version", action=Version),
     ],
   )
-  inspect(
-    custom.parse_as_result(argv=["--show-help"]) is Help(_),
-    content="true",
-  )
-  guard custom.parse_as_result(argv=["--show-version"]) is Version(text) else {
+  inspect(custom.parse_outcome(argv=["--show-help"]) is Help(_), content="true")
+  guard custom.parse_outcome(argv=["--show-version"]) is Version(text) else {
     fail("expected custom version")
   }
   inspect(text, content="1.2.3")
   let with_newlines = @argparse.Command("demo", version="1.2.3\n\n")
-  guard with_newlines.parse_as_result(argv=["--version"]) is Version(text) else {
+  guard with_newlines.parse_outcome(argv=["--version"]) is Version(text) else {
     fail("expected version with a trailing newline")
   }
   inspect(text, content="1.2.3\n")
 }
 
 ///|
-test "parse_as_result returns errors with the same diagnostics as parse" {
+test "parse_outcome returns errors with the same diagnostics as parse" {
   let cmd = @argparse.Command("demo")
-  guard cmd.parse_as_result(argv=["--bad"]) is Failed(err) else {
+  guard cmd.parse_outcome(argv=["--bad"]) is Failed(err) else {
     fail("expected parse error")
   }
   let raised = @test.expect_error(() => cmd.parse(argv=["--bad"]))
@@ -118,7 +115,7 @@ test "parse_as_result returns errors with the same diagnostics as parse" {
   )
   inspect(err.to_string().contains("Usage: demo"), content="true")
   let invalid = @argparse.Command("demo", options=[OptionArg("input", long="")])
-  guard invalid.parse_as_result(argv=[]) is Failed(err) else {
+  guard invalid.parse_outcome(argv=[]) is Failed(err) else {
     fail("expected command-definition error")
   }
   inspect(
