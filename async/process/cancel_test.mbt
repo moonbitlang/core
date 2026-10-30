@@ -16,23 +16,30 @@
 async test "cancel `@process.run()`" {
   let test_prog = sleep_prog.wait()
   let log = StringBuilder()
-  @async.with_task_group() <| root => {
+  @async.with_task_group() <| group => {
     let (r, w) = @process.read_from_process_shared()
-    let task = root.spawn(() => {
+    let task = group.spawn(() => {
       defer log <+ "process terminates\n"
       defer w.close()
-      @process.run(test_prog, ["10000"], stdout=w)
+      @process.run(
+        test_prog,
+        ["10000", "-print-after-init", "started"],
+        stdout=w,
+      )
     })
-    root.spawn_bg() <| () => {
-      defer r.close()
-      while r.text.read() is Some(data) {
-        let data = data.replace_all(old="\r\n", new="\n")
-        log <+ "from process: \{data}"
-      }
-    }
-    @async.sleep(500)
-    task.cancel()
+    defer r.close()
+    debug_inspect(
+      r.text.read_until("\n"),
+      content=(
+        #|Some("started")
+      ),
+    )
     log <+ "cancelling task running process\n"
+    task.cancel()
+    while r.text.read() is Some(data) {
+      let data = data.replace_all(old="\r\n", new="\n")
+      log <+ "from process: \{data}"
+    }
   }
   inspect(
     log.to_string(),
