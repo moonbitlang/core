@@ -179,7 +179,6 @@ fn[T] UninitializedArray::unsafe_make_and_blit(
 
 ///|
 /// Unsafe variant of `make` with `init` followed by `unsafe_blit`.
-#cfg(not(target="js"))
 #intrinsic("%fixedarray.make_with_init_blit")
 #owned(src, init)
 fn[T] UninitializedArray::unsafe_make_and_blit_with_init(
@@ -223,7 +222,6 @@ pub fn[T] UninitializedArray::make_and_blit(
 
 ///|
 /// Unsafe variant of `make` followed by `unsafe_blit_fixed`.
-#cfg(not(target="js"))
 #intrinsic("%fixedarray.make_with_blit")
 #owned(src)
 fn[T] UninitializedArray::unsafe_make_and_blit_from_fixed(
@@ -263,7 +261,6 @@ test "panic as_view with invalid_end" {
 ///|
 #coverage.skip
 #intrinsic("%fixedarray.fill")
-#cfg(not(target="js"))
 #owned(value)
 fn[T] UninitializedArray::unchecked_fill(
   self : UninitializedArray[T],
