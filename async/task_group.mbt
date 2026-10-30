@@ -208,6 +208,11 @@ pub fn[X] TaskGroup::spawn(
 /// If cancellable code have to be run anyway, use `protect_from_cancel`.
 /// It is highly recommended to add a hard timeout to async defer block in this case,
 /// to avoid infinite hanging due to blocked operation.
+///
+/// If a group defer failed with error, that error become the result of the whole `with_task_group`,
+/// but other remaining group defer blocks will still get executed in order.
+/// The final error raised by `with_task_group` would be
+/// the error raised by the last failing group defer block.
 pub fn TaskGroup::add_defer(
   self : TaskGroup,
   block : async () -> Unit nocancel,
@@ -261,7 +266,7 @@ pub async fn with_task_group(
   guard! tg.children.is_empty()
   while tg.group_defer.pop() is Some(defer_block) {
     defer_block() catch {
-      err => if tg.state is Done { tg.state = Fail(err) }
+      err => tg.state = Fail(err)
     }
   }
   match tg.state {
