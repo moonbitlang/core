@@ -9,6 +9,29 @@ small, predictable feature set.
 Argument constructors are named `FlagArg` / `OptionArg` / `PositionArg` to
 avoid shadowing built-in types like `Option`.
 
+`parse_as_result` parses an explicit `argv` without reading process state, changing
+its inputs, printing, exiting, or raising errors. It returns
+`Result[ParseOutcome, Error]`: `Ok(Parsed(matches))`, `Ok(Help(text))`,
+`Ok(Version(text))`, or `Err(error)`. Help and version text omit the final
+newline used for printing. Environment values come only from the optional `env`
+map, which defaults to empty.
+
+Use this entry point in embedded programs and tests that must retain control:
+
+```mbt check
+///|
+test "version request without process effects" {
+  let cmd = @argparse.Command("demo", version="1.0.0")
+  match @argparse.parse_as_result(cmd, argv=["--version"]) {
+    Ok(Version(text)) => inspect(text, content="1.0.0")
+    _ => fail("expected a version request")
+  }
+}
+```
+
+`parse` is the CLI convenience entry point: it defaults to process arguments,
+prints and exits with code `0` for help or version requests, and raises errors.
+
 
 ## Quick Start
 
