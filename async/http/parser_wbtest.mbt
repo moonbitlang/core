@@ -777,6 +777,35 @@ async test "read_response parse cookie" {
 }
 
 ///|
+async test "read_response ignores malformed Set-Cookie" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    group.spawn_bg() <| () => {
+      defer w.close()
+      w
+      ..write(b"HTTP/1.1 200 OK\r\n")
+      ..write(b"Set-Cookie: nameless\r\n")
+      ..write(b"Set-Cookie: Cookie1=value1; Max-Age=soon\r\n")
+      .write(b"Content-Length: 2\r\n\r\nok")
+    }
+    defer r.close()
+    let input = Reader::new(r)
+    let response = input.read_response(
+      request_method=None,
+      auto_decompress=true,
+    )
+    inspect(response.code, content="200")
+    @debug.debug_inspect(
+      response.cookies.map(cookie => (cookie.name, cookie.max_age)),
+      content=(
+        #|[("Cookie1", None)]
+      ),
+    )
+    inspect(@utf8.decode(input.read_all()), content="ok")
+  }
+}
+
+///|
 async test "chunk extension" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.pipe()

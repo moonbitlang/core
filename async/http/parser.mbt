@@ -306,7 +306,9 @@ async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
       @utf8.decode(header_line[colon_index + 1:])
     }
     if key == "Set-Cookie" {
-      cookies.push(Cookie::parse(value))
+      if Cookie::parse(value) is Some(cookie) {
+        cookies.push(cookie)
+      }
     } else {
       match headers.get(key) {
         None => headers[key] = value
