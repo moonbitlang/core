@@ -80,7 +80,7 @@ pub impl[K : @json.ToJson, V : @json.ToJson] @json.ToJson for VectorMap[K, V] wi
   self,
 ) {
   [
-    for k, v in self => ([k, v] : Json)
+    for k, v in self => ([k, v] : @json.Json)
   ]
 }
 

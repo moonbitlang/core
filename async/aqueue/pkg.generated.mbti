@@ -3,12 +3,13 @@ package "moonbitlang/core/async/aqueue"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
 
 // Errors
-pub suberror QueueAlreadyClosed derive(ToJson, @debug.Debug)
+pub suberror QueueAlreadyClosed derive(@debug.Debug, @json.ToJson)
 
 // Types and methods
 pub(all) enum Kind {

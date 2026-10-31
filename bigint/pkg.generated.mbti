@@ -68,9 +68,9 @@ pub impl Shl for BigInt
 pub impl Show for BigInt
 pub impl Shr for BigInt
 pub impl Sub for BigInt
-pub impl ToJson for BigInt
 pub impl @debug.Debug for BigInt
 pub impl @json.FromJson for BigInt
+pub impl @json.ToJson for BigInt
 
 // Type aliases
 

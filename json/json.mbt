@@ -129,7 +129,7 @@ priv enum WriteFrame {
 /// Only applies to object properties, not array elements.
 pub struct Replacer {
   priv f : (String, Json) -> Json?
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a new Replacer with a custom function.
@@ -575,12 +575,6 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
     Array(members) => Array(members.map(m => m.transform(replacer)))
     value => value
   }
-}
-
-///|
-/// Useful for json interpolation
-pub impl ToJson for Json with fn to_json(self) {
-  self
 }
 
 ///|

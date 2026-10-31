@@ -96,7 +96,7 @@ pub impl[A : @json.ToJson] @json.ToJson for List[A] with fn to_json(self) {
   for a in self {
     jsons.push(a.to_json())
   }
-  Json::array(jsons)
+  @json.Json::array(jsons)
 }
 
 ///|

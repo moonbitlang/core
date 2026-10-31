@@ -459,12 +459,11 @@ test "Int16::abs" {
 }
 
 ///|
-#warnings("-deprecated")
-test "Int16::to_json" {
-  @debug.debug_inspect(Int16::to_json(0), content="Number(0)")
-  @debug.debug_inspect(Int16::to_json(1), content="Number(1)")
-  @debug.debug_inspect(Int16::to_json(32767), content="Number(32767)")
-  @debug.debug_inspect(Int16::to_json(-32768), content="Number(-32768)")
+test "Int16 JSON conversion" {
+  @debug.debug_inspect(Json((0 : Int16)), content="Number(0)")
+  @debug.debug_inspect(Json((1 : Int16)), content="Number(1)")
+  @debug.debug_inspect(Json((32767 : Int16)), content="Number(32767)")
+  @debug.debug_inspect(Json((-32768 : Int16)), content="Number(-32768)")
 }
 
 ///|

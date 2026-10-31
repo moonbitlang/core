@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/async/socket",
   "moonbitlang/core/async/tls",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -13,7 +14,7 @@ pub async fn get(StringView, headers? : Map[CaseInsensitiveString, String], prox
 
 pub async fn get_binary(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Bytes)
 
-pub async fn get_json(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Json)
+pub async fn get_json(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, @json.Json)
 
 pub async fn get_text(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, String)
 
@@ -21,7 +22,7 @@ pub async fn post(StringView, headers? : Map[CaseInsensitiveString, String], pro
 
 pub async fn post_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Bytes)
 
-pub async fn post_json(StringView, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Json)
+pub async fn post_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, @json.Json)
 
 pub async fn post_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, String)
 
@@ -29,7 +30,7 @@ pub async fn put(StringView, headers? : Map[CaseInsensitiveString, String], prox
 
 pub async fn put_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Bytes)
 
-pub async fn put_json(StringView, Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Json)
+pub async fn put_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, @json.Json)
 
 pub async fn put_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, String)
 
@@ -37,7 +38,7 @@ pub async fn request(RequestMethod, StringView, headers? : Map[CaseInsensitiveSt
 
 pub async fn request_binary(RequestMethod, StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Bytes)
 
-pub async fn request_json(RequestMethod, StringView, Json?, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, Json)
+pub async fn request_json(RequestMethod, StringView, @json.Json?, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, @json.Json)
 
 pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, String)
 
@@ -46,25 +47,25 @@ pub suberror HttpProtocolError {
   BadRequest
   HttpVersionNotSupported(String)
   NotImplemented
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
-pub suberror IncorrectBodyLength derive(ToJson, @debug.Debug)
+pub suberror IncorrectBodyLength derive(@debug.Debug, @json.ToJson)
 
 pub(all) suberror InvalidMethod {
   InvalidMethod(String)
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
 pub suberror ProxyError {
   ProxyError(ResponseHeader)
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
 pub suberror UriParseError {
   InvalidFormat
   UnsupportedProtocol(String)
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
 // Types and methods
-pub(all) struct CaseInsensitiveString(String) derive(ToJson)
+pub(all) struct CaseInsensitiveString(String) derive(@json.ToJson)
 pub fn CaseInsensitiveString::to_string(Self) -> String
 pub impl Compare for CaseInsensitiveString
 pub impl Eq for CaseInsensitiveString
@@ -77,7 +78,7 @@ pub fn Client::Client(headers? : Map[CaseInsensitiveString, String]) -> Self
 pub fn Client::close(Self) -> Unit
 pub async fn Client::get(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, ClientConnection)
 pub async fn Client::get_binary(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, Bytes)
-pub async fn Client::get_json(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, Json)
+pub async fn Client::get_json(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, @json.Json)
 pub async fn Client::get_text(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, String)
 pub async fn Client::post(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
 pub async fn Client::put(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
@@ -123,21 +124,21 @@ pub struct Cookie {
   secure : Bool
   http_only : Bool
   extensions : Array[String]
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 #alias(new, deprecated)
 pub fn Cookie::Cookie(String, String, path? : String, expires_raw? : String, max_age? : Int64, domain? : String, secure? : Bool, http_only? : Bool, extensions? : Array[String]) -> Self
 
 pub(all) enum Protocol {
   Http
   Https
-} derive(Compare, Eq, Hash, ToJson, @debug.Debug)
+} derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
 pub fn Protocol::default_port(Self) -> Int32
 
 pub(all) struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Map[CaseInsensitiveString, String]
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
 pub(all) enum RequestMethod {
   Get
@@ -150,7 +151,7 @@ pub(all) enum RequestMethod {
   Trace
   Patch
   Extension(String)
-} derive(Compare, Eq, Hash, ToJson, @debug.Debug)
+} derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
 pub fn RequestMethod::to_string(Self) -> String
 pub impl Show for RequestMethod
 
@@ -159,7 +160,7 @@ pub(all) struct ResponseHeader {
   reason : String
   headers : Map[CaseInsensitiveString, String]
   cookies : Array[Cookie]
-} derive(ToJson, @debug.Debug)
+} derive(@debug.Debug, @json.ToJson)
 
 pub struct Server {
   addr : @socket.Addr

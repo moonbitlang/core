@@ -65,9 +65,9 @@ pub impl[K : Eq] Eq for HashSet[K]
 #deprecated
 pub impl[K : Show] Show for HashSet[K]
 pub impl[K : Eq] Sub for HashSet[K]
-pub impl[X : ToJson] ToJson for HashSet[X]
 pub impl[K : @debug.Debug] @debug.Debug for HashSet[K]
 pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for HashSet[X]
+pub impl[X : @json.ToJson] @json.ToJson for HashSet[X]
 
 // Type aliases
 

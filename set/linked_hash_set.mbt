@@ -883,7 +883,7 @@ pub impl[X : @json.ToJson] @json.ToJson for Set[X] with fn to_json(self) {
   for v in self {
     res.push(v.to_json())
   }
-  Json::array(res)
+  @json.Json::array(res)
 }
 
 ///|

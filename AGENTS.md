@@ -43,16 +43,11 @@ package to the trait's package:
 - **Traits whose home is `builtin`** (`Add`…`Sub`, `Compare`, `Eq`, `Hash`,
   `Show`, `Default`, `Logger`, `ToStringView`): every package already depends on
   `builtin`, so promoting them creates **no cycle** — safe on any type.
-- **Traits whose home is a higher package** (`@json.FromJson`,
+- **Traits whose home is a higher package** (`@json.ToJson`, `@json.FromJson`,
   `@quickcheck.Arbitrary`, `@debug.Debug`): promoting them on a lower-level type
   would form a cycle (`builtin → json` etc.), so they are **never promoted** —
   always use the free function (`@json.from_json`, `@quickcheck.…`,
   `@debug.Debug`).
-
-This is about the trait's *logical* home, not the file it currently sits in:
-**`ToJson` lives in `builtin` today only for bootstrapping but belongs in
-`@json`**, so it is treated as a higher-package trait (not promoted) — promoting
-it would have to be ripped out the day it moves.
 
 Within the "safe to promote" set:
 
@@ -86,14 +81,13 @@ Within the "safe to promote" set:
   deprecating it breaks `moon test --build-only --deny-warn`. moonbitlang/moon#1938
   removes that call; deprecate `Byte` like the rest once a moon release ships.)
 - **`ToJson::to_json`**: **not promoted** — use **`Json(x)`**, the constructor of
-  `Json` (re-exported by the prelude, so it needs no import and works from every
-  package, `builtin` included). Between that and `Json`'s literal sugar
+  `Json` (re-exported by the prelude, so it needs no import in packages using
+  the prelude). Between that and `Json`'s literal sugar
   (`([x, y] : Json)`, `({ "k": v } : Json)`) you rarely need `x.to_json()` at
   all, and serialization is cold, so nothing is lost by going through the
-  constructor. Because `Json(x)` is spelled the same regardless of which package
-  `Json` lives in, moving `Json`/`ToJson` to `@json` later would not churn call
-  sites — exactly how `to_repr(x)` is spelled the same though `Debug`/`Repr` live
-  in `@debug`.
+  constructor. `Json` and `ToJson` live in `@json`; the prelude keeps `Json(x)`
+  available without a package qualifier, just as it does for `Repr(x)` from
+  `@debug`.
 
 This policy governs a package's own `extends.mbt` (its public API surface).
 

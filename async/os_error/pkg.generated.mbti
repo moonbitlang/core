@@ -3,6 +3,7 @@ package "moonbitlang/core/async/os_error"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -11,7 +12,7 @@ pub fn check_errno(String) -> Unit raise OsError
 // Errors
 pub suberror OsError {
   OsError(Kind, raw_code~ : Int32, context~ : String)
-} derive(ToJson)
+} derive(@json.ToJson)
 #as_free_fn
 pub fn OsError::from_errno(Int32, context~ : String) -> Self
 pub fn OsError::to_string(Self) -> String
@@ -29,7 +30,7 @@ pub(all) enum Kind {
   ConnectionRefused
   OperationNotSupported
   Unknown
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug, @json.ToJson)
 
 // Type aliases
 

@@ -17,7 +17,7 @@
 #as_free_fn(deprecated="Use `@json.from_json` instead")
 #deprecated("Use `@json.from_json` instead")
 pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
-  json : Json,
+  json : @json.Json,
 ) -> SortedSet[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

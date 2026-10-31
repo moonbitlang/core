@@ -52,22 +52,6 @@ fn check_and_consume_base(
 }
 
 ///|
-test {
-  assert_true(
-    @test.expect_error(() => parse_int64("0b01", base=3))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_int64("0x01", base=3))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_int64("0o01", base=3))
-    is Failure("invalid syntax"),
-  )
-}
-
-///|
 /// Parses a string into an Int64 number using the specified base, or returns an error.
 /// The base must be 0 or between 2 and 36 (inclusive). If base is 0, it will be
 /// inferred from the string prefix:

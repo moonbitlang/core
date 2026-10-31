@@ -3,6 +3,7 @@ package "moonbitlang/core/bench"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -26,7 +27,7 @@ pub fn Bench::dump_summaries(Self) -> String
 pub fn[Any] Bench::keep(Self, Any) -> Unit
 pub impl @debug.Debug for Bench
 
-type Summary derive(ToJson, @debug.Debug)
+type Summary derive(@debug.Debug, @json.ToJson)
 
 type Timestamp
 pub impl @debug.Debug for Timestamp

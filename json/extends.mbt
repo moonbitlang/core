@@ -15,6 +15,9 @@
 // --- promoted: kept as regular methods (blessed public API) ---
 
 ///|
+pub extend Json with Eq::{equal}
+
+///|
 pub extend JsonDecodeError with Eq::{equal}
 
 ///|
@@ -53,9 +56,14 @@ pub extend Json with Show::{to_string, output}
 pub extend Json with ToJson::{to_json}
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend JsonDecodeError with @debug.Debug::{to_repr}
+pub extend Json with Default::{default}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Json with Eq::{not_equal}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -73,11 +81,6 @@ pub extend JsonDecodeError with Show::{output}
 pub extend JsonDecodeError with ToJson::{to_json}
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend JsonPath with @debug.Debug::{to_repr}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonPath with Eq::{not_equal}
@@ -91,11 +94,6 @@ pub extend JsonPath with Show::{output}
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonPath with ToJson::{to_json}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ParseError with @debug.Debug::{to_repr}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -113,11 +111,6 @@ pub extend ParseError with Show::{output}
 pub extend ParseError with ToJson::{to_json}
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Position with @debug.Debug::{to_repr}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Position with Eq::{not_equal}
@@ -126,8 +119,3 @@ pub extend Position with Eq::{not_equal}
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Position with ToJson::{to_json}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Replacer with @debug.Debug::{to_repr}

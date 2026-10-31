@@ -1,6 +1,6 @@
 # Error Package Documentation
 
-This package documents MoonBit's error handling system. `Error::to_string` and the `Show` and `ToJson` implementations for `Error` are provided by `builtin`; the `Debug` implementation is provided by `debug`. No `error` import is needed to use them.
+This package documents MoonBit's error handling system. `Error::to_string` and the `Show` implementation for `Error` are provided by `builtin`; `ToJson` is provided by `json`, and `Debug` by `debug`. No `error` import is needed to use them.
 
 ## Basic Error Usage
 
@@ -81,7 +81,7 @@ test "custom errors" {
 
 ## Error Display and JSON Conversion
 
-The builtin package provides `Show` and `ToJson` implementations:
+The `builtin` package provides the `Show` implementation; `json` provides `ToJson`:
 
 ```mbt check
 ///|

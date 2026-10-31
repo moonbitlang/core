@@ -13,18 +13,13 @@
 // limitations under the License.
 
 ///|
-// Keep the prelude spellings in JSON examples and tests.
-#warnings("-unqualified_local_using")
-using @json {type Json, null}
-
-///|
-priv struct JsonAliasValue {
+priv struct JsonValue {
   count : Int32
 } derive(@json.ToJson)
 
 ///|
-test "ToJson alias preserves derivation and Json constructor conversion" {
-  let value = JsonAliasValue::{ count: 42, }
+test "ToJson derivation and Json constructor conversion" {
+  let value = JsonValue::{ count: 42, }
   let converted : @json.Json = @json.ToJson::to_json(value)
   let constructed = @json.Json(value)
   inspect(converted.stringify(), content="{\"count\":42}")
@@ -33,7 +28,7 @@ test "ToJson alias preserves derivation and Json constructor conversion" {
 }
 
 ///|
-test "Json and null aliases preserve literals and patterns" {
+test "Json and null preserve literals and patterns" {
   let value : @json.Json = { "count": 42, "missing": @json.null }
   assert_true(value is { "count": 42, "missing": Null, .. })
   inspect(@json.null.stringify(), content="null")
@@ -119,6 +114,38 @@ test "Double::to_json" {
 ///|
 test "Float::to_json" {
   debug_inspect(Json(Float(42.0)), content="Number(42)")
+}
+
+///|
+test "ToJson for narrow integers" {
+  @json.json_inspect(Json((65535 : UInt16)), content=65535)
+  @json.json_inspect(Json((-32768 : Int16)), content=-32768)
+}
+
+///|
+test "ToJson for read-only arrays and views" {
+  let values : ReadOnlyArray[Int32] = [10, 20, 30]
+  @json.json_inspect(Json(values), content=[10, 20, 30])
+  @json.json_inspect(Json(values[1:]), content=[20, 30])
+  @json.json_inspect(Json(([] : ReadOnlyArray[Int32])), content=[])
+  @json.json_inspect(Json(values[1:1]), content=[])
+}
+
+///|
+test "ToJson preserves byte escaping and view bounds" {
+  let bytes = b"x\x00\x1f\"\\\x7f\xffy"
+  let view = bytes[1:7]
+  @json.json_inspect(Json(view), content="\\x00\\x1f\\x22\\x5c\\x7f\\xff")
+  assert_true(Json(view) == Json(view.to_owned()))
+  @json.json_inspect(Json(bytes[1:1]), content="")
+}
+
+///|
+test "ToJson for Failure and Error" {
+  let failure = Failure("test error")
+  let error : Error = failure
+  @json.json_inspect(Json(failure), content=["Failure", "test error"])
+  assert_true(Json(error) == Json(failure))
 }
 
 ///|

@@ -2,7 +2,6 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/double",
   "moonbitlang/core/uint64",
-  "moonbitlang/core/test",
 }
 
 import {
@@ -10,3 +9,7 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/bigint",
 } for "test"
+
+import {
+  "moonbitlang/core/test",
+} for "wbtest"

@@ -138,7 +138,7 @@ pub async fn Client::get_json(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
-) -> (ResponseHeader, Json) {
+) -> (ResponseHeader, @json.Json) {
   let (response, conn) = self.get(uri, extra_headers~)
   defer conn.close()
   (response, @json.parse(conn.text.read_all()))
