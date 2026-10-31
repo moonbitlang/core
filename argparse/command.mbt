@@ -95,11 +95,66 @@ pub fn Command::render_help(self : Command) -> String {
 }
 
 ///|
+/// The result of parsing arguments: matches, help, version, or an error.
+/// `Help` and `Version` contain the text printed by `Command::parse`, without
+/// the final newline added when printing.
+pub(all) enum ParseOutcome {
+  /// Parsed arguments, ready for the command to execute.
+  Parsed(Matches)
+  /// A request for command or subcommand help.
+  Help(String)
+  /// A request for version information.
+  Version(String)
+  /// A parse or command-definition error with display-ready text.
+  Failed(Error)
+}
+
+///|
+/// Parse explicit arguments without reading process state, printing, exiting,
+/// or raising errors. The command, arguments, and environment map are not mutated.
+///
+/// `argv` excludes the program name and is required. Environment values come
+/// only from `env`, which defaults to empty. Precedence is
+/// `argv > env > default_values`.
+///
+/// Help and version requests return `Help(text)` and `Version(text)`.
+/// Failures return `Failed(error)` with display-ready text: parse errors include
+/// contextual help, while command-definition errors contain only validation text.
+/// Errors are ordinary return values so callers can handle every outcome without
+/// an error effect.
+/// Use `Command::parse` for automatic process arguments and help/version exit.
+///
+/// ```mbt check
+/// test {
+///   let cmd = @argparse.Command("demo", version="1.0.0")
+///   match cmd.parse_outcome(argv=["--version"]) {
+///     Version(text) => inspect(text, content="1.0.0")
+///     _ => fail("expected a version request")
+///   }
+/// }
+/// ```
+#as_free_fn
+pub fn Command::parse_outcome(
+  self : Command,
+  argv~ : ArrayView[String],
+  env~ : Map[String, String] = Map([]),
+) -> ParseOutcome {
+  try {
+    let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)
+    Parsed(build_matches(self, raw, []))
+  } catch {
+    DisplayHelp::Message(text) => Help(trim_single_trailing_newline(text))
+    DisplayVersion::Message(text) => Version(trim_single_trailing_newline(text))
+    err => Failed(err)
+  }
+}
+
+///|
 /// Parse argv/environment according to this command spec.
 ///
 /// Behavior:
 /// - Help/version requests print output immediately and terminate with exit code
-///   `0`.
+///   `0`. Use `Command::parse_outcome` to receive results without these effects.
 /// - Parse failures raise display-ready error text with full contextual help.
 /// - Command-definition validation failures raise display-ready validation
 ///   text (without appended help).

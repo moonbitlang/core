@@ -21,6 +21,8 @@ pub struct Command {
 pub fn Command::Command(StringView, flags? : ArrayView[FlagArg], options? : ArrayView[OptionArg], positionals? : ArrayView[PositionArg], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup], default_subcommand? : StringView) -> Self
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
+#as_free_fn
+pub fn Command::parse_outcome(Self, argv~ : ArrayView[String], env? : Map[String, String]) -> ParseOutcome
 pub fn Command::render_help(Self) -> String
 
 pub(all) enum FlagAction {
@@ -60,6 +62,13 @@ pub struct OptionArg {
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn OptionArg::OptionArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+
+pub(all) enum ParseOutcome {
+  Parsed(Matches)
+  Help(String)
+  Version(String)
+  Failed(Error)
+}
 
 pub struct PositionArg {
   // private fields
