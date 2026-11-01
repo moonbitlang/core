@@ -754,55 +754,37 @@ pub fn String::clamped_view(
   start~ : Int32 = 0,
   end? : Int32,
 ) -> StringView {
-  match end {
-    None => clamped_to_end(self, start)
+  let len = self.length()
+  // Container bounds need no surrogate check; only interior offsets can split a pair.
+  let lo = if start <= 0 {
+    0
+  } else if start >= len {
+    len
+  } else if self.unsafe_get(start).is_trailing_surrogate() &&
+    self.unsafe_get(start - 1).is_leading_surrogate() {
+    start + 1
+  } else {
+    start
+  }
+  let hi = match end {
+    None => len
     Some(e) =>
-      if e >= self.length() {
-        clamped_to_end(self, start)
+      if e <= 0 {
+        0
+      } else if e >= len {
+        len
+      } else if self.unsafe_get(e).is_trailing_surrogate() &&
+        self.unsafe_get(e - 1).is_leading_surrogate() {
+        e - 1
       } else {
-        clamped_range(self, start, e)
+        e
       }
   }
-}
-
-///|
-/// `clamped_view` for a request that reaches the end of `self`.
-///
-/// The end cannot split a pair inside the string, so only the start needs
-/// snapping. Keep this common case separate from the two-bound range helper.
-fn clamped_to_end(s : String, start : Int32) -> StringView {
-  let len = s.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  if lo > 0 &&
-    lo < len &&
-    s.unsafe_get(lo).is_trailing_surrogate() &&
-    s.unsafe_get(lo - 1).is_leading_surrogate() {
-    lo += 1
+  if lo >= hi {
+    self.unsafe_view(start=lo, end=lo)
+  } else {
+    self.unsafe_view(start=lo, end=hi)
   }
-  s.unsafe_view(start=lo, end=len)
-}
-
-///|
-/// `clamped_view` for an explicit `[start, end)` request: both offsets are
-/// clamped into range, then snapped off a surrogate pair they would split.
-fn clamped_range(s : String, start : Int32, end : Int32) -> StringView {
-  let len = s.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
-  if lo > 0 &&
-    lo < len &&
-    s.unsafe_get(lo).is_trailing_surrogate() &&
-    s.unsafe_get(lo - 1).is_leading_surrogate() {
-    lo += 1
-  }
-  if hi > 0 &&
-    hi < len &&
-    s.unsafe_get(hi).is_trailing_surrogate() &&
-    s.unsafe_get(hi - 1).is_leading_surrogate() {
-    hi -= 1
-  }
-  let hi = if lo >= hi { lo } else { hi }
-  s.unsafe_view(start=lo, end=hi)
 }
 
 ///|
@@ -830,58 +812,39 @@ pub fn StringView::clamped_view(
   start~ : Int32 = 0,
   end? : Int32,
 ) -> StringView {
-  match end {
-    None => view_clamped_to_end(self, start)
+  let len = self.length()
+  let str = self.str()
+  let base = self.start()
+  // Container bounds need no surrogate check; only interior offsets can split a pair.
+  let lo = if start <= 0 {
+    0
+  } else if start >= len {
+    len
+  } else if str.unsafe_get(base + start).is_trailing_surrogate() &&
+    str.unsafe_get(base + start - 1).is_leading_surrogate() {
+    start + 1
+  } else {
+    start
+  }
+  let hi = match end {
+    None => len
     Some(e) =>
-      if e >= self.length() {
-        view_clamped_to_end(self, start)
+      if e <= 0 {
+        0
+      } else if e >= len {
+        len
+      } else if str.unsafe_get(base + e).is_trailing_surrogate() &&
+        str.unsafe_get(base + e - 1).is_leading_surrogate() {
+        e - 1
       } else {
-        view_clamped_range(self, start, e)
+        e
       }
   }
-}
-
-///|
-/// `clamped_view` for a request that reaches the end of the view.
-/// Only pairs inside the view are snapped. Preserve its existing end even if
-/// the view was created with `unsafe_view` and ends inside a surrogate pair.
-fn view_clamped_to_end(v : StringView, start : Int32) -> StringView {
-  let len = v.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let str = v.str()
-  let base = v.start()
-  if lo > 0 &&
-    lo < len &&
-    str.unsafe_get(base + lo).is_trailing_surrogate() &&
-    str.unsafe_get(base + lo - 1).is_leading_surrogate() {
-    lo += 1
+  if lo >= hi {
+    str.unsafe_view(start=base + lo, end=base + lo)
+  } else {
+    str.unsafe_view(start=base + lo, end=base + hi)
   }
-  str.unsafe_view(start=base + lo, end=base + len)
-}
-
-///|
-/// `clamped_view` for an explicit `[start, end)` request: both offsets are
-/// clamped into range, then snapped off a surrogate pair they would split.
-fn view_clamped_range(v : StringView, start : Int32, end : Int32) -> StringView {
-  let len = v.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
-  let str = v.str()
-  let base = v.start()
-  if lo > 0 &&
-    lo < len &&
-    str.unsafe_get(base + lo).is_trailing_surrogate() &&
-    str.unsafe_get(base + lo - 1).is_leading_surrogate() {
-    lo += 1
-  }
-  if hi > 0 &&
-    hi < len &&
-    str.unsafe_get(base + hi).is_trailing_surrogate() &&
-    str.unsafe_get(base + hi - 1).is_leading_surrogate() {
-    hi -= 1
-  }
-  let hi = if lo >= hi { lo } else { hi }
-  str.unsafe_view(start=base + lo, end=base + hi)
 }
 
 ///|
