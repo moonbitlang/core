@@ -46,12 +46,16 @@ pub let word_set : @byte_set.ByteSet
 // Errors
 
 // Types and methods
-type MatchResult derive(@debug.Debug)
+type MatchResult
+pub fn MatchResult::end(Self, Int32) -> Int32
 pub fn MatchResult::group(Self, Int32) -> (Int32, Int32)?
+pub fn MatchResult::start(Self, Int32) -> Int32
+pub impl @debug.Debug for MatchResult
 
 type Regex
 pub fn Regex::execute(Self, BytesView, Int32) -> MatchResult?
 pub fn Regex::group_names(Self) -> ReadOnlyArray[String?]
+pub fn Regex::search(Self, BytesView, Int32) -> FixedArray[Int32]?
 
 // Type aliases
 pub using @ast {type Assertion}

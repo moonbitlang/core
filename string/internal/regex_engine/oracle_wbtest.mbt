@@ -198,7 +198,13 @@ test "lazy DFA agrees with a Pike VM over the same NFA" {
       let input = text[6:text.length() - 6]
       let start = rng.pick(input.length() + 1)
       let expected = pike(re, input, start)
-      let actual = re.execute(input, start).map(m => m.0)
+      let actual = re
+        .execute(input, start)
+        .map(m => Array::from_fixed_array(m.0))
+      @test.assert_eq(
+        re.search(input, start).map(offsets => Array::from_fixed_array(offsets)),
+        actual,
+      )
       if expected != actual {
         fail(
           "Pike mismatch pattern=\{@debug.to_string(pat)} input=\{input.to_owned().escape()} start=\{start} expected=\{@debug.to_string(expected)} actual=\{@debug.to_string(actual)}",

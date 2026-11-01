@@ -71,22 +71,19 @@ struct MatchResult {
 ///|
 /// Return match `before` view.
 pub fn MatchResult::before(self : MatchResult) -> BytesView {
-  guard self.result.group(0) is Some((start, _end)) else { panic() }
-  self.input[:start]
+  self.input[:self.result.start(0)]
 }
 
 ///|
 /// Return match `after` view.
 pub fn MatchResult::after(self : MatchResult) -> BytesView {
-  guard self.result.group(0) is Some((_start, end)) else { panic() }
-  self.input[end:]
+  self.input[self.result.end(0):]
 }
 
 ///|
 /// Return match `content` view.
 pub fn MatchResult::content(self : MatchResult) -> BytesView {
-  guard self.result.group(0) is Some((start, end)) else { panic() }
-  self.input[start:end]
+  self.input[self.result.start(0):self.result.end(0)]
 }
 
 ///|
@@ -96,10 +93,10 @@ pub fn MatchResult::group(
   self : MatchResult,
   group_index : Int32,
 ) -> BytesView? {
-  match self.result.group(group_index) {
-    None => None
-    Some((start, end)) => Some(self.input[start:end])
-  }
+  let start = self.result.start(group_index)
+  let end = self.result.end(group_index)
+  guard start >= 0 && end >= 0 else { None }
+  Some(self.input[start:end])
 }
 
 ///|
@@ -221,4 +218,21 @@ pub fn BytesRegex::execute(
     None => None
     Some(result) => Some({ input, group_names: re.group_names(), result, })
   }
+}
+
+///|
+/// DO NOT call this function even in this package.
+///
+/// The offsets of the first match in `input`, without allocating: group `i`
+/// is `input[offsets[2 * i]:offsets[2 * i + 1]]`, and `-1` marks a group that
+/// did not participate. `self` keeps the array and overwrites it, so what is
+/// needed must be read before the next search with `self`. For the code
+/// `lexmatch` compiles to.
+#internal(internal, "not intended for public use")
+#doc(hidden)
+pub fn BytesRegex::internal_search(
+  self : BytesRegex,
+  input : BytesView,
+) -> FixedArray[Int32]? {
+  self.re().search(input, 0)
 }
