@@ -439,8 +439,8 @@ The generated code can rely on that array because the compiler guarantees what a
 caller otherwise has to get right by hand:
 
 - Every binding is read before the case body runs, and nothing can run between
-  the search and those reads. The bindings are views of `input`, not of the
-  array, so the body may run the same `lexmatch` again.
+  the search and those reads. The bindings come from `input` and keep no
+  reference to the array, so the body may run the same `lexmatch` again.
 - `as` is not allowed under an alternation or a quantifier, so a bound group
   always participates and `-1` is never read.
 - The indices come from the pattern, so they are in range for `unsafe_get`.
