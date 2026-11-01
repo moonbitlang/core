@@ -66,8 +66,9 @@ pub fn Regex::execute(
 }
 
 ///|
-/// `execute` without allocating: the offsets, laid out as in `MatchResult`, are
-/// held by `self` and only valid until its next search.
+/// `execute` without allocating a result: the offsets, laid out as in
+/// `MatchResult`, are held by `self` and only valid until its next search.
+/// Building the lazy DFA still allocates, on the first searches.
 pub fn Regex::search(
   self : Regex,
   input : StringView,

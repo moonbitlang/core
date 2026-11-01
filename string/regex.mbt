@@ -361,11 +361,11 @@ pub fn Regex::execute(
 ///|
 /// DO NOT call this function even in this package.
 ///
-/// The offsets of the first match in `input`, without allocating: group `i`
-/// is `input[offsets[2 * i]:offsets[2 * i + 1]]`, and `-1` marks a group that
-/// did not participate. `self` keeps the array and overwrites it, so what is
-/// needed must be read before the next search with `self`. For the code
-/// `lexmatch` compiles to.
+/// The offsets of the first match in `input`, without allocating a result:
+/// group `i` is `input[offsets[2 * i]:offsets[2 * i + 1]]`, and `-1` marks a
+/// group that did not participate. `self` keeps the array and overwrites it,
+/// so what is needed must be read before the next search with `self`. For the
+/// code `lexmatch` compiles to.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_search(
