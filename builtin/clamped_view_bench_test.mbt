@@ -18,13 +18,8 @@
 /// measured.
 fn clamped_bench_doc() -> String {
   [
-    "key = \"value\"\n",
-    "name = \"moonbit\" # 😈 comment\n",
-    "nums = [1, 2, 3, 40, 500]\n",
-    "[table]\n",
-    "emoji = \"😈😈😈\"\n",
-    "flag = true\n",
-    "date = 1979-05-27T07:32:00Z\n",
+    "key = \"value\"\n", "name = \"moonbit\" # 😈 comment\n", "nums = [1, 2, 3, 40, 500]\n",
+    "[table]\n", "emoji = \"😈😈😈\"\n", "flag = true\n", "date = 1979-05-27T07:32:00Z\n",
   ].join("")
 }
 
