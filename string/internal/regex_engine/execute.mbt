@@ -15,18 +15,40 @@
 ///|
 /// Capture offsets of a successful match: `[start0, end0, start1, end1, ...]`
 /// relative to the searched view, `-1` for groups that did not participate.
-struct MatchResult(Array[Int32]) derive(@debug.Debug)
+struct MatchResult(FixedArray[Int32])
+
+///|
+pub impl @debug.Debug for MatchResult with fn to_repr(self) {
+  @debug.Repr::ctor("MatchResult", [
+    (None, Repr(Array::from_fixed_array(self.0))),
+  ])
+}
 
 ///|
 /// The `(start, end)` offsets of capture group `index`, or `None` when the
 /// index is out of range or the group did not participate in the match.
 pub fn MatchResult::group(self : MatchResult, index : Int32) -> (Int32, Int32)? {
-  // Validate before multiplying so large indices cannot wrap into a group.
-  guard index >= 0 && index < self.0.length() / 2 else { None }
-  let start = self.0[index * 2]
-  let end = self.0[index * 2 + 1]
+  let start = self.start(index)
+  let end = self.end(index)
   guard start >= 0 && end >= 0 else { None }
   Some((start, end))
+}
+
+///|
+/// The start offset of capture group `index`, or `-1` when the index is out of
+/// range or the group did not participate in the match.
+pub fn MatchResult::start(self : MatchResult, index : Int32) -> Int32 {
+  // Validate before multiplying so large indices cannot wrap into a group.
+  guard index >= 0 && index < self.0.length() / 2 else { -1 }
+  self.0[index * 2]
+}
+
+///|
+/// The end offset of capture group `index`, or `-1` when the index is out of
+/// range or the group did not participate in the match.
+pub fn MatchResult::end(self : MatchResult, index : Int32) -> Int32 {
+  guard index >= 0 && index < self.0.length() / 2 else { -1 }
+  self.0[index * 2 + 1]
 }
 
 ///|
@@ -39,8 +61,7 @@ pub fn Regex::execute(
 ) -> MatchResult? {
   match self.search(input, last_index) {
     None => None
-    Some(offsets) =>
-      Some(MatchResult(Array::makei(offsets.length(), i => offsets[i])))
+    Some(offsets) => Some(MatchResult(offsets.copy()))
   }
 }
 
