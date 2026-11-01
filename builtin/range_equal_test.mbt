@@ -304,3 +304,77 @@ test "quickcheck: BytesView == agrees with a byte-by-byte comparison" {
     count=500,
   )
 }
+
+///|
+test "Bytes range equality basics and empty ranges" {
+  inspect(
+    b"xhello".range_equal(b"hello!", start=1, other_start=0, len=5),
+    content="true",
+  )
+  inspect(
+    b"xhello".unsafe_range_equal(b"hello!", start=1, other_start=0, len=5),
+    content="true",
+  )
+  inspect(
+    b"hello".range_equal(b"hallo", start=0, other_start=0, len=5),
+    content="false",
+  )
+  inspect(
+    b"hello".unsafe_range_equal(b"hallo", start=0, other_start=0, len=5),
+    content="false",
+  )
+  inspect(
+    b"abcabc".range_equal(b"abcabc", start=0, other_start=3, len=3),
+    content="true",
+  )
+  inspect(
+    b"abcabc".unsafe_range_equal(b"abcabc", start=0, other_start=3, len=3),
+    content="true",
+  )
+  inspect(b"".range_equal(b"", start=0, other_start=0, len=0), content="true")
+  inspect(
+    b"".unsafe_range_equal(b"", start=0, other_start=0, len=0),
+    content="true",
+  )
+  inspect(
+    b"abc".range_equal(b"xy", start=3, other_start=2, len=0),
+    content="true",
+  )
+  inspect(
+    b"abc".unsafe_range_equal(b"xy", start=3, other_start=2, len=0),
+    content="true",
+  )
+}
+
+///|
+test "Bytes range equality agrees with byte comparison" {
+  // Include zero and high bytes, misaligned ranges, and lengths around the
+  // sixteen-byte SIMD threshold, with a mismatch inside the shared pattern.
+  let left = Bytes::makei(40, i => (i * 37 % 256).to_byte())
+  let right = Bytes::makei(43, i => {
+    if i == 31 {
+      b'\xff'
+    } else {
+      ((i + 3) * 37 % 256).to_byte()
+    }
+  })
+  for start in 0..<=left.length() {
+    for other_start in 0..<=right.length() {
+      let max_len = (left.length() - start).min(right.length() - other_start)
+      for len in 0..<=max_len {
+        let mut expected = true
+        for i in 0..<len {
+          if left[start + i] != right[other_start + i] {
+            expected = false
+            break
+          }
+        }
+        assert_eq(left.range_equal(right, start~, other_start~, len~), expected)
+        assert_eq(
+          left.unsafe_range_equal(right, start~, other_start~, len~),
+          expected,
+        )
+      }
+    }
+  }
+}

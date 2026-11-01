@@ -366,6 +366,51 @@ pub fn FixedArray::set_utf16be_char(
 pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool = "%bytes.equal"
 
 ///|
+/// Compares two byte ranges for equality without constructing intermediate views.
+///
+/// Offsets and `len` count bytes.
+///
+/// # Panics
+/// Panics if either offset or `len` is negative, or if either range extends
+/// beyond its buffer. An empty range at the end of a buffer is valid.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(
+///     b"xhello".range_equal(b"hello!", start=1, other_start=0, len=5),
+///     content="true",
+///   )
+///   inspect(
+///     b"hello".range_equal(b"hallo", start=0, other_start=0, len=5),
+///     content="false",
+///   )
+/// }
+/// ```
+#borrow(self, other)
+pub fn Bytes::range_equal(
+  self : Bytes,
+  start~ : Int32,
+  other : Bytes,
+  other_start~ : Int32,
+  len~ : Int32,
+) -> Bool {
+  let self_len = self.length()
+  let other_len = other.length()
+  // Validate offsets before subtracting, avoiding overflow in offset + len.
+  guard len >= 0 &&
+    start >= 0 &&
+    start <= self_len &&
+    other_start >= 0 &&
+    other_start <= other_len &&
+    len <= self_len - start &&
+    len <= other_len - other_start else {
+    abort("Bytes::range_equal: invalid range")
+  }
+  self.unsafe_range_equal(other, start~, other_start~, len~)
+}
+
+///|
 /// Compares two byte sequences based on shortlex order. First compares the lengths of
 /// the sequences, then compares bytes pairwise until a difference is found or
 /// all bytes have been compared.

@@ -564,12 +564,16 @@ pub fn BytesView::unsafe_read_uint16_be(
 ///
 /// # Safety
 /// - **No bounds checking**: caller must ensure both ranges
-///   `[self_off, self_off + len)` and `[other_off, other_off + len)` are fully
+///   `[start, start + len)` and `[other_start, other_start + len)` are fully
 ///   within their respective buffers.
+/// - Both offsets and `len` must be nonnegative. An empty range at the end of
+///   a buffer is valid.
+///
+/// Use `range_equal` to check the range bounds.
 ///
 /// # Parameters
 /// - `self`, `other`: the two byte sequences
-/// - `self_off`, `other_off`: starting byte offsets
+/// - `start`, `other_start`: starting byte offsets
 /// - `len`: number of bytes to compare
 ///
 /// This is the shared intrinsic-backed primitive for view/owned equality
@@ -591,18 +595,18 @@ pub fn BytesView::unsafe_read_uint16_be(
 #borrow(self, other)
 #cfg(target="wasm")
 #intrinsic("%bytes.unsafe_range_equal")
-fn Bytes::unsafe_range_equal(
+pub fn Bytes::unsafe_range_equal(
   self : Bytes,
-  self_off~ : Int32,
+  start~ : Int32,
   other : Bytes,
-  other_off~ : Int32,
+  other_start~ : Int32,
   len~ : Int32,
 ) -> Bool {
   if len >= 16 {
-    return bytes_range_equal_simd(self, self_off, other, other_off, len)
+    return bytes_range_equal_simd(self, start, other, other_start, len)
   }
   for i in 0..<len {
-    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+    guard self.unsafe_get(start + i) == other.unsafe_get(other_start + i) else {
       return false
     }
   }
@@ -610,18 +614,27 @@ fn Bytes::unsafe_range_equal(
 }
 
 ///|
+/// Compares two byte ranges for equality without bounds checking.
+///
+/// # Safety
+/// Both offsets and `len` must be nonnegative, and both ranges
+/// `[start, start + len)` and `[other_start, other_start + len)` must be fully
+/// within their respective buffers. An empty range at the end of a buffer is
+/// valid. Violating these requirements causes undefined behavior.
+///
+/// Use `range_equal` to check the range bounds.
 #borrow(self, other)
 #cfg(not(target="wasm"))
 #intrinsic("%bytes.unsafe_range_equal")
-fn Bytes::unsafe_range_equal(
+pub fn Bytes::unsafe_range_equal(
   self : Bytes,
-  self_off~ : Int32,
+  start~ : Int32,
   other : Bytes,
-  other_off~ : Int32,
+  other_start~ : Int32,
   len~ : Int32,
 ) -> Bool {
   for i in 0..<len {
-    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+    guard self.unsafe_get(start + i) == other.unsafe_get(other_start + i) else {
       return false
     }
   }
