@@ -211,7 +211,7 @@ fn StringView::escape_to(
 // units at a time for longer runs.
 //
 // This relies on `String`/`StringView` being well-formed UTF-16 (see
-// `StringView::make_view`). Every run boundary is either an end of the view or
+// `String::unsafe_view`). Every run boundary is either an end of the view or
 // next to an escaped code unit, which is ASCII, so no boundary splits a
 // surrogate pair: the scalar loop's `self[seg:i]` never snaps a boundary, and
 // the unchecked `make_view` below yields the same well-formed run.
@@ -229,7 +229,7 @@ fn StringView::escape_to(
   for i = self.start(), seg = self.start() {
     let i = find_escape_code_unit(data, i, end)
     if i > seg {
-      logger.write_view(StringView::make_view(data, seg, i))
+      logger.write_view(data.unsafe_view(start=seg, end=i))
     }
     guard i < end else { break }
     let code = data.unsafe_get(i)

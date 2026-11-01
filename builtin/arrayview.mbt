@@ -61,16 +61,6 @@ fn[T] ArrayView::start(self : ArrayView[T]) -> Int32 = "%arrayview.start"
 ///|
 fn[T] ArrayView::end(self : ArrayView[T]) -> Int32 = "%arrayview.end"
 
-///|
-/// Builds the view `buf[start:end]` without any checks.
-///
-/// The caller must ensure `0 <= start <= end <= buf.length()`.
-fn[T] ArrayView::make_view(
-  buf : UninitializedArray[T],
-  start : Int32,
-  end : Int32,
-) -> ArrayView[T] = "%arrayview.make_view"
-
 // #endregion
 
 // #region methods
@@ -287,7 +277,7 @@ pub fn[T] Array::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make_view(self.buffer(), start, end)
+  self.buffer().unsafe_view(start~, end~)
 }
 
 ///|
@@ -332,7 +322,7 @@ pub fn[T] Array::get_view(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
-  Some(ArrayView::make_view(self.buffer(), start, end))
+  Some(self.buffer().unsafe_view(start~, end~))
 }
 
 ///|
@@ -381,7 +371,7 @@ pub fn[T] ArrayView::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
+  self.buf().unsafe_view(start=self.start() + start, end=self.start() + end)
 }
 
 ///|
@@ -429,7 +419,7 @@ pub fn[T] ArrayView::get_view(
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(
-    ArrayView::make_view(self.buf(), self.start() + start, self.start() + end),
+    self.buf().unsafe_view(start=self.start() + start, end=self.start() + end),
   )
 }
 
@@ -494,7 +484,7 @@ pub fn[T] Array::clamped_view(
     Some(end) => clamp_offset(end, len)
   }
   let hi = if hi > lo { hi } else { lo }
-  ArrayView::make_view(self.buffer(), lo, hi)
+  self.buffer().unsafe_view(start=lo, end=hi)
 }
 
 ///|
@@ -535,7 +525,7 @@ pub fn[T] ArrayView::clamped_view(
     Some(end) => clamp_offset(end, len)
   }
   let hi = if hi > lo { hi } else { lo }
-  ArrayView::make_view(self.buf(), self.start() + lo, self.start() + hi)
+  self.buf().unsafe_view(start=self.start() + lo, end=self.start() + hi)
 }
 
 ///|
@@ -586,11 +576,7 @@ pub fn[T] FixedArray::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make_view(
-    unsafe_cast_fixedarray_to_uninitializedarray(self),
-    start,
-    end,
-  )
+  unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(start~, end~)
 }
 
 ///|
@@ -636,11 +622,7 @@ pub fn[T] FixedArray::get_view(
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(
-    ArrayView::make_view(
-      unsafe_cast_fixedarray_to_uninitializedarray(self),
-      start,
-      end,
-    ),
+    unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(start~, end~),
   )
 }
 
@@ -681,10 +663,9 @@ pub fn[T] FixedArray::clamped_view(
     Some(end) => clamp_offset(end, len)
   }
   let hi = if hi > lo { hi } else { lo }
-  ArrayView::make_view(
-    unsafe_cast_fixedarray_to_uninitializedarray(self),
-    lo,
-    hi,
+  unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(
+    start=lo,
+    end=hi,
   )
 }
 
