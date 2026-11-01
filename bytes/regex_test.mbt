@@ -193,3 +193,29 @@ test "BytesRegex: Debug" {
     ),
   )
 }
+
+///|
+test "a match stays valid after the next search" {
+  let regex = @bytes.BytesRegex::BytesRegex("(a)|(b)")
+  guard regex.execute(b"xa") is Some(first) else { fail("expected a match") }
+  guard regex.execute(b"b") is Some(second) else { fail("expected a match") }
+  inspect(first.group(1) is Some(_), content="true")
+  inspect(first.group(2) is Some(_), content="false")
+  inspect(second.group(1) is Some(_), content="false")
+  inspect(second.group(2) is Some(_), content="true")
+}
+
+///|
+test "internal_search reuses its offsets" {
+  let regex = @bytes.BytesRegex::BytesRegex("(a)|(b)")
+  guard regex.internal_search(b"xa") is Some(offsets) else {
+    fail("expected a match")
+  }
+  debug_inspect(offsets, content="<FixedArray: [1, 2, 1, 2, -1, -1]>")
+  guard regex.internal_search(b"b") is Some(next) else {
+    fail("expected a match")
+  }
+  assert_true(physical_equal(offsets, next))
+  debug_inspect(offsets, content="<FixedArray: [0, 1, -1, -1, 0, 1]>")
+  assert_true(regex.internal_search(b"c") is None)
+}

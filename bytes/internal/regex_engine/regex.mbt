@@ -169,6 +169,7 @@ struct Regex {
   mut move_values : FixedArray[Int32]
   // Scratch space reused across `execute` calls.
   mut regs : FixedArray[Int32]
+  offsets : FixedArray[Int32]
   visited : FixedArray[Int32]
   targeted : FixedArray[Int32]
   mut epoch : Int32
@@ -257,6 +258,7 @@ pub fn compile(
     move_words: 0,
     move_values: [],
     regs: FixedArray::make(8, -1),
+    offsets: FixedArray::make(ntags, -1),
     visited: FixedArray::make(nnodes, 0),
     targeted: FixedArray::make(nnodes, 0),
     epoch: 0,
