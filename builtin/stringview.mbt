@@ -754,28 +754,60 @@ pub fn String::clamped_view(
   start~ : Int32 = 0,
   end? : Int32,
 ) -> StringView {
-  let len = self.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = match end {
-    None => len
-    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
+  match end {
+    None => clamped_to_end(self, start)
+    Some(e) => {
+      if e >= self.length() {
+        clamped_to_end(self, start)
+      } else {
+        clamped_range(self, start, e)
+      }
+    }
   }
+}
+
+///|
+/// `clamped_view` for a request that reaches the end of `self`.
+///
+/// The end offset is the string length, which always sits on a character
+/// boundary, so only the start can need snapping. This is the common spelling
+/// (`s[i:]`, and `s[i:len]` through the dispatch above), and keeping it in its
+/// own small function keeps the hot path's frame free of the unused bound.
+fn clamped_to_end(s : String, start : Int32) -> StringView {
+  let len = s.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
   if lo > 0 &&
     lo < len &&
-    self.unsafe_get(lo).is_trailing_surrogate() &&
-    self.unsafe_get(lo - 1).is_leading_surrogate() {
+    s.unsafe_get(lo).is_trailing_surrogate() &&
+    s.unsafe_get(lo - 1).is_leading_surrogate() {
+    lo += 1
+  }
+  s.unsafe_view(start=lo, end=len)
+}
+
+///|
+/// `clamped_view` for an explicit `[start, end)` request: both offsets are
+/// clamped into range, then snapped off a surrogate pair they would split.
+fn clamped_range(s : String, start : Int32, end : Int32) -> StringView {
+  let len = s.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
+  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
+  if lo > 0 &&
+    lo < len &&
+    s.unsafe_get(lo).is_trailing_surrogate() &&
+    s.unsafe_get(lo - 1).is_leading_surrogate() {
     lo += 1
   }
   if hi > 0 &&
     hi < len &&
-    self.unsafe_get(hi).is_trailing_surrogate() &&
-    self.unsafe_get(hi - 1).is_leading_surrogate() {
+    s.unsafe_get(hi).is_trailing_surrogate() &&
+    s.unsafe_get(hi - 1).is_leading_surrogate() {
     hi -= 1
   }
   if lo >= hi {
-    self.unsafe_view(start=lo, end=lo)
+    s.unsafe_view(start=lo, end=lo)
   } else {
-    self.unsafe_view(start=lo, end=hi)
+    s.unsafe_view(start=lo, end=hi)
   }
 }
 
@@ -804,14 +836,49 @@ pub fn StringView::clamped_view(
   start~ : Int32 = 0,
   end? : Int32,
 ) -> StringView {
-  let len = self.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = match end {
-    None => len
-    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
+  match end {
+    None => view_clamped_to_end(self, start)
+    Some(e) => {
+      if e >= self.length() {
+        view_clamped_to_end(self, start)
+      } else {
+        view_clamped_range(self, start, e)
+      }
+    }
   }
-  let str = self.str()
-  let base = self.start()
+}
+
+///|
+/// `clamped_view` for a request that reaches the end of `self`; the end offset
+/// is `self.length()`, a character boundary by construction, so only the start
+/// can need snapping. Split out so the hot path's frame stays small.
+fn view_clamped_to_end(v : StringView, start : Int32) -> StringView {
+  let len = v.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
+  let str = v.str()
+  let base = v.start()
+  if lo > 0 &&
+    lo < len &&
+    str.unsafe_get(base + lo).is_trailing_surrogate() &&
+    str.unsafe_get(base + lo - 1).is_leading_surrogate() {
+    lo += 1
+  }
+  str.unsafe_view(start=base + lo, end=base + len)
+}
+
+///|
+/// `clamped_view` for an explicit `[start, end)` request: both offsets are
+/// clamped into range, then snapped off a surrogate pair they would split.
+fn view_clamped_range(
+  v : StringView,
+  start : Int32,
+  end : Int32,
+) -> StringView {
+  let len = v.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
+  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
+  let str = v.str()
+  let base = v.start()
   if lo > 0 &&
     lo < len &&
     str.unsafe_get(base + lo).is_trailing_surrogate() &&
