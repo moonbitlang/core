@@ -91,19 +91,22 @@ struct MatchResult {
 ///|
 /// Return match `before` view.
 pub fn MatchResult::before(self : MatchResult) -> StringView {
-  self.input[:self.result.start(0)]
+  guard self.result.group(0) is Some((start, _end)) else { panic() }
+  self.input[:start]
 }
 
 ///|
 /// Return match `after` view.
 pub fn MatchResult::after(self : MatchResult) -> StringView {
-  self.input[self.result.end(0):]
+  guard self.result.group(0) is Some((_start, end)) else { panic() }
+  self.input[end:]
 }
 
 ///|
 /// Return match `content` view.
 pub fn MatchResult::content(self : MatchResult) -> StringView {
-  self.input[self.result.start(0):self.result.end(0)]
+  guard self.result.group(0) is Some((start, end)) else { panic() }
+  self.input[start:end]
 }
 
 ///|
@@ -113,10 +116,10 @@ pub fn MatchResult::group(
   self : MatchResult,
   group_index : Int32,
 ) -> StringView? {
-  let start = self.result.start(group_index)
-  let end = self.result.end(group_index)
-  guard start >= 0 && end >= 0 else { None }
-  Some(self.input[start:end])
+  match self.result.group(group_index) {
+    None => None
+    Some((start, end)) => Some(self.input[start:end])
+  }
 }
 
 ///|
@@ -366,7 +369,6 @@ pub fn Regex::execute(
 /// group that did not participate. `self` keeps the array and overwrites it,
 /// so what is needed must be read before the next search with `self`. For the
 /// code `lexmatch` compiles to.
-#internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_search(
   self : Regex,
