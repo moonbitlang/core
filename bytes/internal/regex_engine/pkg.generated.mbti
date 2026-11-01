@@ -46,11 +46,10 @@ pub let word_set : @byte_set.ByteSet
 // Errors
 
 // Types and methods
-type MatchResult
+type MatchResult derive(@debug.Debug)
 pub fn MatchResult::end(Self, Int32) -> Int32
 pub fn MatchResult::group(Self, Int32) -> (Int32, Int32)?
 pub fn MatchResult::start(Self, Int32) -> Int32
-pub impl @debug.Debug for MatchResult
 
 type Regex
 pub fn Regex::execute(Self, BytesView, Int32) -> MatchResult?

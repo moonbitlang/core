@@ -15,14 +15,7 @@
 ///|
 /// Capture offsets of a successful match: `[start0, end0, start1, end1, ...]`
 /// relative to the searched view, `-1` for groups that did not participate.
-struct MatchResult(FixedArray[Int32])
-
-///|
-pub impl @debug.Debug for MatchResult with fn to_repr(self) {
-  @debug.Repr::ctor("MatchResult", [
-    (None, Repr(Array::from_fixed_array(self.0))),
-  ])
-}
+struct MatchResult(FixedArray[Int32]) derive(@debug.Debug)
 
 ///|
 /// The `(start, end)` offsets of capture group `index`, or `None` when the
