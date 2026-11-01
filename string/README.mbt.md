@@ -387,6 +387,99 @@ test "regex combinators" {
 }
 ```
 
+## How `lexmatch` Uses `Regex`
+
+With `regex_backend = "runtime"` in `moon.pkg`, a first-match `lexmatch` is
+compiled to `Regex` searches instead of a static automaton. Each case becomes an
+arm guarded by `Regex::internal_search`, and the arms are tried in order:
+
+```mbt check
+///|
+fn split_key(input : StringView) -> (StringView, StringView)? {
+  lexmatch input {
+    (re"^" + (re"[[:alpha:]]+" as key) + re"=", after=rest) => Some((key, rest))
+    _ => None
+  }
+}
+
+///|
+/// What the compiler generates for `split_key`.
+fn split_key_compiled(input : StringView) -> (StringView, StringView)? {
+  match () {
+    _ if re"^([[:alpha:]]+)=".internal_search(input) is Some(offsets) => {
+      let key = input[offsets.unsafe_get(2):offsets.unsafe_get(3)]
+      let rest = input[offsets.unsafe_get(1):]
+      Some((key, rest))
+    }
+    _ => None
+  }
+}
+
+///|
+test "lexmatch and its compiled form agree" {
+  for input in ["key=42", "=42", "1key=42"] {
+    assert_eq(split_key(input), split_key_compiled(input))
+  }
+  debug_inspect(
+    split_key_compiled("key=42"),
+    content=(
+      #|Some((<StringView: "key">, <StringView: "42">))
+    ),
+  )
+}
+```
+
+`internal_search` returns the offsets of the match, or `None`. Group `i` spans
+`input[offsets[2 * i]:offsets[2 * i + 1]]`, group `0` is the whole match, `-1`
+marks a group that did not participate, and `before=` and `after=` are
+`input[:offsets[0]]` and `input[offsets[1]:]`. Unlike `execute`, it allocates no
+`MatchResult`, because the array belongs to the `Regex`.
+
+The generated code can rely on that array because the compiler guarantees what a
+caller otherwise has to get right by hand:
+
+- Every binding is read before the case body runs, and nothing can run between
+  the search and those reads. The bindings are views of `input`, not of the
+  array, so the body may run the same `lexmatch` again.
+- `as` is not allowed under an alternation or a quantifier, so a bound group
+  always participates and `-1` is never read.
+- The indices come from the pattern, so they are in range for `unsafe_get`.
+
+### Why `internal_search` Is Not for Normal Use
+
+Use `execute` in hand-written code. Its `MatchResult` owns a copy of the offsets.
+`internal_search` is `pub` only because the code `lexmatch` compiles to lives in
+the user's package. It is hidden from the documentation, may change without
+notice, and calling it by hand outside `moonbitlang/core` gives an
+`alert_internal` warning. It is easy to misuse in ways that give wrong results
+rather than errors:
+
+- **The next search overwrites the result.** The array is only valid until the
+  next search with the same `Regex`, and nothing in its type says so:
+
+  ```mbt check
+  ///|
+  test "the next search overwrites internal_search offsets" {
+    let regex = re"[[:digit:]]+"
+    guard regex.internal_search("a1") is Some(first) else { fail("no match") }
+    debug_inspect(first, content="<FixedArray: [1, 2]>")
+    guard regex.internal_search("bb22") is Some(_) else { fail("no match") }
+    // `first` is the same array, so it now describes the second match.
+    debug_inspect(first, content="<FixedArray: [2, 4]>")
+  }
+  ```
+
+- **A `re"..."` literal is shared.** With optimization on, it is lifted to one
+  constant, so offsets kept across a call can be overwritten by any code that
+  evaluates the same literal, including a recursive call. Without optimization,
+  each evaluation builds a new `Regex`, so the same bug can stay hidden until a
+  release build.
+- **`-1` is an ordinary integer.** `MatchResult::group` turns it into `None`, but
+  slicing with it does not fail: on `"abc"`, `[-1:-1]` is empty and `[-1:]` is
+  the whole string.
+- **Offsets belong to one input.** They are plain integers, so nothing stops them
+  being applied to a different view.
+
 ## Performance Notes
 
 - Use `StringBuilder` or `Buffer` for building strings incrementally rather than
