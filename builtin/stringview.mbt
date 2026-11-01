@@ -768,10 +768,8 @@ pub fn String::clamped_view(
 ///|
 /// `clamped_view` for a request that reaches the end of `self`.
 ///
-/// The end offset is the string length, which always sits on a character
-/// boundary, so only the start can need snapping. This is the common spelling
-/// (`s[i:]`, and `s[i:len]` through the dispatch above), and keeping it in its
-/// own small function keeps the hot path's frame free of the unused bound.
+/// The end cannot split a pair inside the string, so only the start needs
+/// snapping. Keep this common case separate from the two-bound range helper.
 fn clamped_to_end(s : String, start : Int32) -> StringView {
   let len = s.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
@@ -803,11 +801,8 @@ fn clamped_range(s : String, start : Int32, end : Int32) -> StringView {
     s.unsafe_get(hi - 1).is_leading_surrogate() {
     hi -= 1
   }
-  if lo >= hi {
-    s.unsafe_view(start=lo, end=lo)
-  } else {
-    s.unsafe_view(start=lo, end=hi)
-  }
+  let hi = if lo >= hi { lo } else { hi }
+  s.unsafe_view(start=lo, end=hi)
 }
 
 ///|
@@ -847,9 +842,9 @@ pub fn StringView::clamped_view(
 }
 
 ///|
-/// `clamped_view` for a request that reaches the end of `self`; the end offset
-/// is `self.length()`, a character boundary by construction, so only the start
-/// can need snapping. Split out so the hot path's frame stays small.
+/// `clamped_view` for a request that reaches the end of the view.
+/// Only pairs inside the view are snapped. Preserve its existing end even if
+/// the view was created with `unsafe_view` and ends inside a surrogate pair.
 fn view_clamped_to_end(v : StringView, start : Int32) -> StringView {
   let len = v.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
@@ -885,11 +880,8 @@ fn view_clamped_range(v : StringView, start : Int32, end : Int32) -> StringView 
     str.unsafe_get(base + hi - 1).is_leading_surrogate() {
     hi -= 1
   }
-  if lo >= hi {
-    str.unsafe_view(start=base + lo, end=base + lo)
-  } else {
-    str.unsafe_view(start=base + lo, end=base + hi)
-  }
+  let hi = if lo >= hi { lo } else { hi }
+  str.unsafe_view(start=base + lo, end=base + hi)
 }
 
 ///|

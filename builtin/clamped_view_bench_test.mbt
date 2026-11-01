@@ -24,8 +24,8 @@ fn clamped_bench_doc() -> String {
 }
 
 ///|
-/// Every character boundary of `s`: the offsets a caller can legitimately ask
-/// for, skipping the middle of a surrogate pair.
+/// Character-boundary starts, representative of parser cursors. Separate
+/// benchmarks below also exercise out-of-range and surrogate-splitting starts.
 fn clamped_bench_stops(s : String) -> Array[Int32] {
   let stops : Array[Int32] = []
   let mut i = 0
@@ -41,7 +41,8 @@ fn clamped_bench_stops(s : String) -> Array[Int32] {
 
 ///|
 /// `s[i:]`: one bound, so the end offset is the string length and the only
-/// boundary that can need snapping is the start.
+/// boundary that can need snapping is the start. XOR keeps both start and
+/// length observable: adding them would reduce every suffix to the same end.
 test "bench String::clamped_view start only" (it : @bench.T) {
   let s = clamped_bench_doc()
   let stops = clamped_bench_stops(s)
@@ -49,7 +50,7 @@ test "bench String::clamped_view start only" (it : @bench.T) {
     let mut acc = 0
     for i in stops {
       let v = s.clamped_view(start=i)
-      acc += v.start_offset() + v.length()
+      acc += v.start_offset() ^ v.length()
     }
     it.keep(acc)
   })
@@ -65,7 +66,7 @@ test "bench String::clamped_view start and end at the end" (it : @bench.T) {
     let mut acc = 0
     for i in stops {
       let v = s.clamped_view(start=i, end=len)
-      acc += v.start_offset() + v.length()
+      acc += v.start_offset() ^ v.length()
     }
     it.keep(acc)
   })
@@ -80,7 +81,7 @@ test "bench String::clamped_view start and end" (it : @bench.T) {
     let mut acc = 0
     for i in stops {
       let v = s.clamped_view(start=i, end=i + 4)
-      acc += v.start_offset() + v.length()
+      acc += v.start_offset() ^ v.length()
     }
     it.keep(acc)
   })
@@ -91,12 +92,52 @@ test "bench String::clamped_view start and end" (it : @bench.T) {
 test "bench StringView::clamped_view start only" (it : @bench.T) {
   let s = clamped_bench_doc()
   let stops = clamped_bench_stops(s)
-  let whole = s[:]
+  let whole = ("prefix" + s + "suffix").exact_view(start=6, end=6 + s.length())
   it.bench(() => {
     let mut acc = 0
     for i in stops {
       let v = whole.clamped_view(start=i)
-      acc += v.start_offset() + v.length()
+      acc += v.start_offset() ^ v.length()
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+/// Include every code-unit offset, negative and oversized offsets, and both
+/// integer extremes so the fast path also measures clamping and snapping.
+fn clamped_bench_mixed_stops(s : String) -> Array[Int32] {
+  let stops = [@int.MIN_VALUE, @int.MAX_VALUE]
+  for i in -1..<=(s.length() + 1) {
+    stops.push(i)
+  }
+  stops
+}
+
+///|
+test "bench String::clamped_view mixed starts" (it : @bench.T) {
+  let s = clamped_bench_doc()
+  let stops = clamped_bench_mixed_stops(s)
+  it.bench(() => {
+    let mut acc = 0
+    for i in stops {
+      let v = s.clamped_view(start=i)
+      acc += v.start_offset() ^ v.length()
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench StringView::clamped_view mixed starts" (it : @bench.T) {
+  let s = clamped_bench_doc()
+  let stops = clamped_bench_mixed_stops(s)
+  let whole = ("prefix" + s + "suffix").exact_view(start=6, end=6 + s.length())
+  it.bench(() => {
+    let mut acc = 0
+    for i in stops {
+      let v = whole.clamped_view(start=i)
+      acc += v.start_offset() ^ v.length()
     }
     it.keep(acc)
   })
