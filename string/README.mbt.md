@@ -449,10 +449,8 @@ caller otherwise has to get right by hand:
 
 Use `execute` in hand-written code. Its `MatchResult` owns a copy of the offsets.
 `internal_search` is `pub` only because the code `lexmatch` compiles to lives in
-the user's package. It is hidden from the documentation, may change without
-notice, and calling it by hand outside `moonbitlang/core` gives an
-`alert_internal` warning. It is easy to misuse in ways that give wrong results
-rather than errors:
+the user's package. It is hidden from the documentation and may change without
+notice. It is easy to misuse in ways that give wrong results rather than errors:
 
 - **The next search overwrites the result.** The array is only valid until the
   next search with the same `Regex`, and nothing in its type says so:

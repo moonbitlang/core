@@ -44,11 +44,8 @@ pub let start_of_word : @ast.Pattern
 // Errors
 
 // Types and methods
-type MatchResult
-pub fn MatchResult::end(Self, Int32) -> Int32
+type MatchResult derive(@debug.Debug)
 pub fn MatchResult::group(Self, Int32) -> (Int32, Int32)?
-pub fn MatchResult::start(Self, Int32) -> Int32
-pub impl @debug.Debug for MatchResult
 
 type Regex
 pub fn Regex::execute(Self, StringView, Int32) -> MatchResult?
