@@ -813,24 +813,32 @@ pub fn StringView::clamped_view(
   end? : Int32,
 ) -> StringView {
   let len = self.length()
-  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = match end {
-    None => len
-    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
-  }
   let str = self.str()
   let base = self.start()
-  if lo > 0 &&
-    lo < len &&
-    str.unsafe_get(base + lo).is_trailing_surrogate() &&
-    str.unsafe_get(base + lo - 1).is_leading_surrogate() {
-    lo += 1
+  // Container bounds need no surrogate check; only interior offsets can split a pair.
+  let lo = if start <= 0 {
+    0
+  } else if start >= len {
+    len
+  } else if str.unsafe_get(base + start).is_trailing_surrogate() &&
+    str.unsafe_get(base + start - 1).is_leading_surrogate() {
+    start + 1
+  } else {
+    start
   }
-  if hi > 0 &&
-    hi < len &&
-    str.unsafe_get(base + hi).is_trailing_surrogate() &&
-    str.unsafe_get(base + hi - 1).is_leading_surrogate() {
-    hi -= 1
+  let hi = match end {
+    None => len
+    Some(e) =>
+      if e <= 0 {
+        0
+      } else if e >= len {
+        len
+      } else if str.unsafe_get(base + e).is_trailing_surrogate() &&
+        str.unsafe_get(base + e - 1).is_leading_surrogate() {
+        e - 1
+      } else {
+        e
+      }
   }
   if lo >= hi {
     str.unsafe_view(start=base + lo, end=base + lo)
