@@ -756,13 +756,12 @@ pub fn String::clamped_view(
 ) -> StringView {
   match end {
     None => clamped_to_end(self, start)
-    Some(e) => {
+    Some(e) =>
       if e >= self.length() {
         clamped_to_end(self, start)
       } else {
         clamped_range(self, start, e)
       }
-    }
   }
 }
 
@@ -838,13 +837,12 @@ pub fn StringView::clamped_view(
 ) -> StringView {
   match end {
     None => view_clamped_to_end(self, start)
-    Some(e) => {
+    Some(e) =>
       if e >= self.length() {
         view_clamped_to_end(self, start)
       } else {
         view_clamped_range(self, start, e)
       }
-    }
   }
 }
 
@@ -869,11 +867,7 @@ fn view_clamped_to_end(v : StringView, start : Int32) -> StringView {
 ///|
 /// `clamped_view` for an explicit `[start, end)` request: both offsets are
 /// clamped into range, then snapped off a surrogate pair they would split.
-fn view_clamped_range(
-  v : StringView,
-  start : Int32,
-  end : Int32,
-) -> StringView {
+fn view_clamped_range(v : StringView, start : Int32, end : Int32) -> StringView {
   let len = v.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
   let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
