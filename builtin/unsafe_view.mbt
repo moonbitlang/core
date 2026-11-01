@@ -27,7 +27,7 @@ pub fn[T] Array::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make_view(self.buffer(), start, end)
+  self.buffer().unsafe_view(start~, end~)
 }
 
 ///|
@@ -45,7 +45,7 @@ pub fn[T] ArrayView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
+  self.buf().unsafe_view(start=self.start() + start, end=self.start() + end)
 }
 
 ///|
@@ -63,11 +63,7 @@ pub fn[T] FixedArray::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make_view(
-    unsafe_cast_fixedarray_to_uninitializedarray(self),
-    start,
-    end,
-  )
+  unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(start~, end~)
 }
 
 ///|
@@ -103,7 +99,7 @@ pub fn[T] MutArrayView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> ArrayView[T] {
-  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
+  self.buf().unsafe_view(start=self.start() + start, end=self.start() + end)
 }
 
 ///|
@@ -123,9 +119,7 @@ pub fn[T] UninitializedArray::unsafe_view(
   self : UninitializedArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> ArrayView[T] {
-  ArrayView::make_view(self, start, end)
-}
+) -> ArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -181,9 +175,7 @@ pub fn String::unsafe_view(
   self : String,
   start~ : Int32,
   end~ : Int32,
-) -> StringView {
-  StringView::make_view(self, start, end)
-}
+) -> StringView = "%stringview.make"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -204,5 +196,5 @@ pub fn StringView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> StringView {
-  StringView::make_view(self.str(), self.start() + start, self.start() + end)
+  self.str().unsafe_view(start=self.start() + start, end=self.start() + end)
 }

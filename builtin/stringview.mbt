@@ -25,18 +25,6 @@ fn StringView::start(self : StringView) -> Int32 = "%stringview.start"
 fn StringView::end(self : StringView) -> Int32 = "%stringview.end"
 
 ///|
-/// Builds the view `str[start:end]` without any checks.
-///
-/// The caller must ensure `0 <= start <= end <= str.length()`.
-/// Raw code-unit algorithms may preserve split surrogate pairs. Before using
-/// character-based APIs, the caller must ensure the view is well-formed UTF-16.
-fn StringView::make_view(
-  str : String,
-  start : Int32,
-  end : Int32,
-) -> StringView = "%stringview.make"
-
-///|
 /// Returns the UTF-16 code unit at the given index.
 /// 
 /// This method has O(1) complexity.
@@ -77,12 +65,12 @@ pub fn StringView::suffixes(
     } else if next_start == end {
       finished = true
       if include_empty {
-        Some(StringView::make_view(str, next_start, end))
+        Some(str.unsafe_view(start=next_start, end~))
       } else {
         None
       }
     } else {
-      let suffix = StringView::make_view(str, next_start, end)
+      let suffix = str.unsafe_view(start=next_start, end~)
       let code = str.unsafe_get(next_start)
       if code.is_leading_surrogate() &&
         next_start + 1 < end &&
@@ -699,7 +687,7 @@ pub fn String::get_view(
   if end < len && self.unsafe_get(end).is_trailing_surrogate() {
     return None
   }
-  Some(StringView::make_view(self, start, end))
+  Some(self.unsafe_view(start~, end~))
 }
 
 ///|
@@ -729,7 +717,7 @@ pub fn StringView::get_view(
   if abs_end < str_len && self.str().unsafe_get(abs_end).is_trailing_surrogate() {
     return None
   }
-  Some(StringView::make_view(self.str(), abs_start, abs_end))
+  Some(self.str().unsafe_view(start=abs_start, end=abs_end))
 }
 
 ///|
@@ -785,9 +773,9 @@ pub fn String::clamped_view(
     hi -= 1
   }
   if lo >= hi {
-    StringView::make_view(self, lo, lo)
+    self.unsafe_view(start=lo, end=lo)
   } else {
-    StringView::make_view(self, lo, hi)
+    self.unsafe_view(start=lo, end=hi)
   }
 }
 
@@ -837,9 +825,9 @@ pub fn StringView::clamped_view(
     hi -= 1
   }
   if lo >= hi {
-    StringView::make_view(str, base + lo, base + lo)
+    str.unsafe_view(start=base + lo, end=base + lo)
   } else {
-    StringView::make_view(str, base + lo, base + hi)
+    str.unsafe_view(start=base + lo, end=base + hi)
   }
 }
 
@@ -875,7 +863,7 @@ pub fn String::split_at(self : String, at : Int32) -> (StringView, StringView) {
     self.unsafe_get(cut - 1).is_leading_surrogate() {
     cut -= 1
   }
-  (StringView::make_view(self, 0, cut), StringView::make_view(self, cut, len))
+  (self.unsafe_view(start=0, end=cut), self.unsafe_view(start=cut, end=len))
 }
 
 ///|
@@ -907,8 +895,8 @@ pub fn StringView::split_at(
     cut -= 1
   }
   (
-    StringView::make_view(str, base, base + cut),
-    StringView::make_view(str, base + cut, self.end()),
+    str.unsafe_view(start=base, end=base + cut),
+    str.unsafe_view(start=base + cut, end=self.end()),
   )
 }
 
@@ -968,7 +956,7 @@ pub fn String::exact_view(
   if end < len {
     guard! !self.unsafe_get(end).is_trailing_surrogate()
   }
-  StringView::make_view(self, start, end)
+  self.unsafe_view(start~, end~)
 }
 
 ///|
@@ -1037,7 +1025,7 @@ pub fn StringView::exact_view(
   if abs_end < str_len {
     guard! !self.str().unsafe_get(abs_end).is_trailing_surrogate()
   }
-  StringView::make_view(self.str(), abs_start, abs_end)
+  self.str().unsafe_view(start=abs_start, end=abs_end)
 }
 
 ///|

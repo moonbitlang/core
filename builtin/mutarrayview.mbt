@@ -385,7 +385,7 @@ pub fn[T] MutArrayView::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make_view(self.buf(), self.start() + start, self.start() + end)
+  self.buf().unsafe_view(start=self.start() + start, end=self.start() + end)
 }
 
 ///|
@@ -416,7 +416,7 @@ pub fn[T] MutArrayView::clamped_view(
     Some(end) => clamp_offset(end, len)
   }
   let hi = if hi > lo { hi } else { lo }
-  ArrayView::make_view(self.buf(), self.start() + lo, self.start() + hi)
+  self.buf().unsafe_view(start=self.start() + lo, end=self.start() + hi)
 }
 
 ///|

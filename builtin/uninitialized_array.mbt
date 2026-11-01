@@ -98,7 +98,7 @@ pub fn[T] UninitializedArray::exact_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::make_view(self, start, end)
+  self.unsafe_view(start~, end~)
 }
 
 ///|
@@ -132,7 +132,7 @@ pub fn[T] UninitializedArray::clamped_view(
     Some(end) => clamp_offset(end, len)
   }
   let hi = if hi > lo { hi } else { lo }
-  ArrayView::make_view(self, lo, hi)
+  self.unsafe_view(start=lo, end=hi)
 }
 
 ///|

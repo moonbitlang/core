@@ -779,9 +779,9 @@ fn string_contains_any_ascii(
   bits2 : UInt32,
   bits3 : UInt32,
 ) -> Bool {
-  StringView::make_view(str, start, end).contains_any_ascii_chars(
-    bits0, bits1, bits2, bits3,
-  )
+  str
+  .unsafe_view(start~, end~)
+  .contains_any_ascii_chars(bits0, bits1, bits2, bits3)
 }
 
 ///|
@@ -1218,7 +1218,7 @@ pub fn StringView::trim_start(
         bits2,
         bits3,
       )
-      StringView::make_view(self.str(), start, self.end())
+      self.str().unsafe_view(start~, end=self.end())
     }
     None => self.trim_start_with_chars(chars)
   }
@@ -1271,7 +1271,7 @@ pub fn StringView::trim_end(
         bits2,
         bits3,
       )
-      StringView::make_view(self.str(), self.start(), end)
+      self.str().unsafe_view(start=self.start(), end~)
     }
     None => self.trim_end_with_chars(chars)
   }
@@ -1335,7 +1335,7 @@ pub fn StringView::trim(
         bits2,
         bits3,
       )
-      StringView::make_view(self.str(), start, end)
+      self.str().unsafe_view(start~, end~)
     }
     None => self.trim_start_with_chars(chars).trim_end_with_chars(chars)
   }

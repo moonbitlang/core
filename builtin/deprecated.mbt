@@ -35,11 +35,9 @@ pub fn StringView::view(
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  StringView::make_view(
-    self.str(),
-    self.start() + start_offset,
-    self.start() + end_offset,
-  )
+  self
+  .str()
+  .unsafe_view(start=self.start() + start_offset, end=self.start() + end_offset)
 }
 
 ///|
@@ -65,7 +63,7 @@ pub fn String::view(
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  StringView::make_view(self, start_offset, end_offset)
+  self.unsafe_view(start=start_offset, end=end_offset)
 }
 
 ///|
