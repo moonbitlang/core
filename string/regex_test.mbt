@@ -22,7 +22,7 @@ test "execute/non_capture_group" {
       #|{
       #|  input: <StringView: "abcd">,
       #|  group_names: <ReadOnlyArray: [None, None]>,
-      #|  result: MatchResult([0, 4, 2, 3]),
+      #|  result: MatchResult(<FixedArray: [0, 4, 2, 3]>),
       #|}
     ),
   )
@@ -38,7 +38,7 @@ test "execute/non_capture_with_named_group" {
       #|{
       #|  input: <StringView: "abcd">,
       #|  group_names: <ReadOnlyArray: [None, None, Some("d")]>,
-      #|  result: MatchResult([0, 4, 1, 2, 3, 4]),
+      #|  result: MatchResult(<FixedArray: [0, 4, 1, 2, 3, 4]>),
       #|}
     ),
   )
@@ -56,7 +56,7 @@ test "execute/any_char_on_supplementary_plane" {
       #|{
       #|  input: <StringView: "😀">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 2]),
+      #|  result: MatchResult(<FixedArray: [0, 2]>),
       #|}
     ),
   )
@@ -140,7 +140,7 @@ test "compile/unicode_escape_supplementary_plane" {
       #|{
       #|  input: <StringView: "a😀b">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([1, 3]),
+      #|  result: MatchResult(<FixedArray: [1, 3]>),
       #|}
     ),
   )
@@ -158,7 +158,7 @@ test "string/literal_metacharacters" {
       #|{
       #|  input: <StringView: "xa+b(c)y">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([1, 7]),
+      #|  result: MatchResult(<FixedArray: [1, 7]>),
       #|}
     ),
   )
@@ -187,7 +187,7 @@ test "repeat/greedy_and_nongreedy" {
       #|{
       #|  input: <StringView: "a12345">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([1, 5]),
+      #|  result: MatchResult(<FixedArray: [1, 5]>),
       #|}
     ),
   )
@@ -197,7 +197,7 @@ test "repeat/greedy_and_nongreedy" {
       #|{
       #|  input: <StringView: "a12345">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([1, 3]),
+      #|  result: MatchResult(<FixedArray: [1, 3]>),
       #|}
     ),
   )
@@ -239,7 +239,7 @@ test "add/sequence" {
       #|{
       #|  input: <StringView: "xxabcdyy">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([2, 6]),
+      #|  result: MatchResult(<FixedArray: [2, 6]>),
       #|}
     ),
   )
@@ -255,7 +255,7 @@ test "bitor/alternation" {
       #|  {
       #|    input: <StringView: "dog">,
       #|    group_names: <ReadOnlyArray: [None]>,
-      #|    result: MatchResult([0, 3]),
+      #|    result: MatchResult(<FixedArray: [0, 3]>),
       #|  },
       #|)
     ),
@@ -290,7 +290,7 @@ test "complex/email_pattern" {
       #|{
       #|  input: <StringView: "user@example.com">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 16]),
+      #|  result: MatchResult(<FixedArray: [0, 16]>),
       #|}
     ),
   )
@@ -303,7 +303,7 @@ test "complex/email_pattern" {
       #|{
       #|  input: <StringView: "test.user+tag@my-domain.org">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 27]),
+      #|  result: MatchResult(<FixedArray: [0, 27]>),
       #|}
     ),
   )
@@ -326,7 +326,7 @@ test "complex/url_protocol" {
       #|{
       #|  input: <StringView: "https://example.com">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 19]),
+      #|  result: MatchResult(<FixedArray: [0, 19]>),
       #|}
     ),
   )
@@ -339,7 +339,7 @@ test "complex/url_protocol" {
       #|{
       #|  input: <StringView: "ftp://files.server.org">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 22]),
+      #|  result: MatchResult(<FixedArray: [0, 22]>),
       #|}
     ),
   )
@@ -371,7 +371,7 @@ test "complex/date_formats" {
       #|{
       #|  input: <StringView: "2026-02-26">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 10]),
+      #|  result: MatchResult(<FixedArray: [0, 10]>),
       #|}
     ),
   )
@@ -384,7 +384,7 @@ test "complex/date_formats" {
       #|{
       #|  input: <StringView: "2026/02/26">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 10]),
+      #|  result: MatchResult(<FixedArray: [0, 10]>),
       #|}
     ),
   )
@@ -397,7 +397,7 @@ test "complex/date_formats" {
       #|{
       #|  input: <StringView: "2026.02.26">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 10]),
+      #|  result: MatchResult(<FixedArray: [0, 10]>),
       #|}
     ),
   )
@@ -420,7 +420,7 @@ test "complex/programming_identifier" {
       #|{
       #|  input: <StringView: "std::string::length">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 19]),
+      #|  result: MatchResult(<FixedArray: [0, 19]>),
       #|}
     ),
   )
@@ -433,7 +433,7 @@ test "complex/programming_identifier" {
       #|{
       #|  input: <StringView: "_internal_var">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 13]),
+      #|  result: MatchResult(<FixedArray: [0, 13]>),
       #|}
     ),
   )
@@ -447,7 +447,7 @@ test "complex/programming_identifier" {
       #|{
       #|  input: <StringView: "123invalid">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([3, 10]),
+      #|  result: MatchResult(<FixedArray: [3, 10]>),
       #|}
     ),
   )
@@ -478,7 +478,7 @@ test "complex/log_level" {
       #|{
       #|  input: <StringView: "[2026-02-26 10:30:45] ERROR">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 27]),
+      #|  result: MatchResult(<FixedArray: [0, 27]>),
       #|}
     ),
   )
@@ -491,7 +491,7 @@ test "complex/log_level" {
       #|{
       #|  input: <StringView: "[10:30] WARNING">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 15]),
+      #|  result: MatchResult(<FixedArray: [0, 15]>),
       #|}
     ),
   )
@@ -525,7 +525,7 @@ test "complex/phone_number" {
       #|{
       #|  input: <StringView: "+1 (555)123-4567">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 16]),
+      #|  result: MatchResult(<FixedArray: [0, 16]>),
       #|}
     ),
   )
@@ -556,7 +556,7 @@ test "complex/semantic_version" {
       #|{
       #|  input: <StringView: "1.2.3">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 5]),
+      #|  result: MatchResult(<FixedArray: [0, 5]>),
       #|}
     ),
   )
@@ -569,7 +569,7 @@ test "complex/semantic_version" {
       #|{
       #|  input: <StringView: "2.0.0-beta.1+20260226">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 21]),
+      #|  result: MatchResult(<FixedArray: [0, 21]>),
       #|}
     ),
   )
@@ -594,7 +594,7 @@ test "complex/hex_color" {
       #|{
       #|  input: <StringView: "#FFF">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 4]),
+      #|  result: MatchResult(<FixedArray: [0, 4]>),
       #|}
     ),
   )
@@ -607,7 +607,7 @@ test "complex/hex_color" {
       #|{
       #|  input: <StringView: "#FF5733">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 7]),
+      #|  result: MatchResult(<FixedArray: [0, 7]>),
       #|}
     ),
   )
@@ -620,7 +620,7 @@ test "complex/hex_color" {
       #|{
       #|  input: <StringView: "#FF5733AA">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 9]),
+      #|  result: MatchResult(<FixedArray: [0, 9]>),
       #|}
     ),
   )
@@ -652,7 +652,7 @@ test "complex/json_number" {
       #|{
       #|  input: <StringView: "-42">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 3]),
+      #|  result: MatchResult(<FixedArray: [0, 3]>),
       #|}
     ),
   )
@@ -665,7 +665,7 @@ test "complex/json_number" {
       #|{
       #|  input: <StringView: "3.14159">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 7]),
+      #|  result: MatchResult(<FixedArray: [0, 7]>),
       #|}
     ),
   )
@@ -678,7 +678,7 @@ test "complex/json_number" {
       #|{
       #|  input: <StringView: "6.022e23">,
       #|  group_names: <ReadOnlyArray: [None]>,
-      #|  result: MatchResult([0, 8]),
+      #|  result: MatchResult(<FixedArray: [0, 8]>),
       #|}
     ),
   )
