@@ -874,6 +874,7 @@ pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
 pub fn Bytes::new(Int32) -> Bytes
 #deprecated
 pub fn Bytes::of_string(String) -> Bytes
+pub fn Bytes::range_equal(Bytes, start~ : Int32, Bytes, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn Bytes::repeat(Bytes, Int32) -> Bytes
 pub fn Bytes::rev_find(Bytes, BytesView) -> Int32?
 #alias(chop_prefix, deprecated)
@@ -885,6 +886,7 @@ pub fn Bytes::to_array(Bytes) -> Array[Byte]
 pub fn Bytes::to_fixedarray(Bytes, len? : Int32) -> FixedArray[Byte]
 pub fn Bytes::to_string(Bytes) -> String
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, length? : Int32) -> String
+pub fn Bytes::unsafe_range_equal(Bytes, start~ : Int32, Bytes, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn Bytes::unsafe_view(Bytes, start~ : Int32, end~ : Int32) -> BytesView
 pub impl Add for Bytes
 pub impl Compare for Bytes

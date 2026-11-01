@@ -330,8 +330,8 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int32? {
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=target_start + candidate,
-        other_off=pattern_start,
+        start=target_start + candidate,
+        other_start=pattern_start,
         len=last_offset,
       ) {
       break Some(candidate)
@@ -376,8 +376,8 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int32? {
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=found + 1,
-        other_off=pattern_start + 1,
+        start=found + 1,
+        other_start=pattern_start + 1,
         len=middle_len,
       ) {
       break Some(candidate)
@@ -531,8 +531,8 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? {
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=target_start + found + 1,
-        other_off=pattern_start + 1,
+        start=target_start + found + 1,
+        other_start=pattern_start + 1,
         len=middle_len,
       ) {
       break Some(found)
@@ -576,8 +576,8 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? {
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=found + 1,
-        other_off=pattern_start + 1,
+        start=found + 1,
+        other_start=pattern_start + 1,
         len=middle_len,
       ) {
       break Some(candidate)
@@ -628,8 +628,8 @@ fn find_rabin_karp_from(
     .data()
     .unsafe_range_equal(
       pattern.data(),
-      self_off=target_start + start,
-      other_off=pattern_start,
+      start=target_start + start,
+      other_start=pattern_start,
       len=pattern_len,
     ) {
     return Some(start)
@@ -643,8 +643,8 @@ fn find_rabin_karp_from(
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=target_start + candidate,
-        other_off=pattern_start,
+        start=target_start + candidate,
+        other_start=pattern_start,
         len=pattern_len,
       ) {
       break Some(candidate)
@@ -675,8 +675,8 @@ fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int32? 
       .data()
       .unsafe_range_equal(
         pattern.data(),
-        self_off=target_start + found + 1,
-        other_off=pattern_start + 1,
+        start=target_start + found + 1,
+        other_start=pattern_start + 1,
         len=pattern_len - 1,
       ) {
       break Some(found)

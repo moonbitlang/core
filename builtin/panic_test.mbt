@@ -344,3 +344,53 @@ test "panic set_utf16be_char with invalid code point" {
 test "panic" {
   let _ : Int32 = Option::None.unwrap()
 }
+
+///|
+test "panic Bytes range_equal negative self offset" {
+  b"abc".range_equal(b"abc", start=-1, other_start=0, len=1) |> ignore
+}
+
+///|
+test "panic Bytes range_equal negative other offset" {
+  b"abc".range_equal(b"abc", start=0, other_start=-1, len=1) |> ignore
+}
+
+///|
+test "panic Bytes range_equal negative length" {
+  b"abc".range_equal(b"abc", start=0, other_start=0, len=-1) |> ignore
+}
+
+///|
+test "panic Bytes range_equal self range out of bounds" {
+  b"abc".range_equal(b"abcd", start=1, other_start=0, len=3) |> ignore
+}
+
+///|
+test "panic Bytes range_equal other range out of bounds" {
+  b"abcd".range_equal(b"abc", start=0, other_start=1, len=3) |> ignore
+}
+
+///|
+test "panic Bytes range_equal empty self range past end" {
+  b"abc".range_equal(b"", start=4, other_start=0, len=0) |> ignore
+}
+
+///|
+test "panic Bytes range_equal empty other range past end" {
+  b"".range_equal(b"abc", start=0, other_start=4, len=0) |> ignore
+}
+
+///|
+test "panic Bytes range_equal overflowing length" {
+  b"abc".range_equal(b"abc", start=1, other_start=1, len=2147483647) |> ignore
+}
+
+///|
+test "panic Bytes range_equal overflowing self offset" {
+  b"abc".range_equal(b"abc", start=2147483647, other_start=0, len=1) |> ignore
+}
+
+///|
+test "panic Bytes range_equal overflowing other offset" {
+  b"abc".range_equal(b"abc", start=0, other_start=2147483647, len=1) |> ignore
+}
