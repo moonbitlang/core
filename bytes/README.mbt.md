@@ -207,3 +207,23 @@ test "bytes prefix/suffix" {
   debug_inspect(bytes.strip_prefix(b"zz"), content="None")
 }
 ```
+
+## How `lexmatch` Uses `BytesRegex`
+
+With `regex_backend = "runtime"` in `moon.pkg`, a first-match `lexmatch` on
+`Bytes` or `BytesView` is compiled to `BytesRegex` searches through
+`BytesRegex::internal_search`. It works as `Regex::internal_search` does, which
+the `string` package's README describes, with byte offsets:
+
+```mbt check
+///|
+test "internal_search offsets" {
+  let regex = @bytes.BytesRegex::BytesRegex("(a)|(b)")
+  guard regex.internal_search(b"xa") is Some(offsets) else { fail("no match") }
+  debug_inspect(offsets, content="<FixedArray: [1, 2, 1, 2, -1, -1]>")
+}
+```
+
+Use `execute` in hand-written code. `internal_search` is `pub` only for the code
+`lexmatch` compiles to: the next search with the same `BytesRegex` overwrites the
+array it returns, and `-1` marks a group that did not participate.
