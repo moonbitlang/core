@@ -16,7 +16,7 @@
 /// Text with astral characters, so the boundary snapping has real surrogate
 /// pairs to look at, and long enough that the per-call cost is what is being
 /// measured.
-fn clamped_bench_doc() -> String {
+fn string_clamped_bench_doc() -> String {
   [
     "key = \"value\"\n", "name = \"moonbit\" # 😈 comment\n", "nums = [1, 2, 3, 40, 500]\n",
     "[table]\n", "emoji = \"😈😈😈\"\n", "flag = true\n", "date = 1979-05-27T07:32:00Z\n",
@@ -26,7 +26,7 @@ fn clamped_bench_doc() -> String {
 ///|
 /// Character-boundary starts, representative of parser cursors. Separate
 /// benchmarks below also exercise out-of-range and surrogate-splitting starts.
-fn clamped_bench_stops(s : String) -> Array[Int32] {
+fn string_clamped_bench_stops(s : String) -> Array[Int32] {
   let stops : Array[Int32] = []
   let mut i = 0
   while i <= s.length() {
@@ -44,8 +44,8 @@ fn clamped_bench_stops(s : String) -> Array[Int32] {
 /// boundary that can need snapping is the start. XOR keeps both start and
 /// length observable: adding them would reduce every suffix to the same end.
 test "bench String::clamped_view start only" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_stops(s)
+  let s = string_clamped_bench_doc()
+  let stops = string_clamped_bench_stops(s)
   it.bench(() => {
     let mut acc = 0
     for i in stops {
@@ -59,8 +59,8 @@ test "bench String::clamped_view start only" (it : @bench.T) {
 ///|
 /// `s[i:len]`: the same request with the length spelled out.
 test "bench String::clamped_view start and end at the end" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_stops(s)
+  let s = string_clamped_bench_doc()
+  let stops = string_clamped_bench_stops(s)
   let len = s.length()
   it.bench(() => {
     let mut acc = 0
@@ -75,8 +75,8 @@ test "bench String::clamped_view start and end at the end" (it : @bench.T) {
 ///|
 /// `s[i:i + 4]`: two bounds that both have to be clamped and snapped.
 test "bench String::clamped_view start and end" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_stops(s)
+  let s = string_clamped_bench_doc()
+  let stops = string_clamped_bench_stops(s)
   it.bench(() => {
     let mut acc = 0
     for i in stops {
@@ -88,25 +88,9 @@ test "bench String::clamped_view start and end" (it : @bench.T) {
 }
 
 ///|
-/// The view-relative spelling of the one-bound case.
-test "bench StringView::clamped_view start only" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_stops(s)
-  let whole = ("prefix" + s + "suffix").exact_view(start=6, end=6 + s.length())
-  it.bench(() => {
-    let mut acc = 0
-    for i in stops {
-      let v = whole.clamped_view(start=i)
-      acc += v.start_offset() ^ v.length()
-    }
-    it.keep(acc)
-  })
-}
-
-///|
 /// Include every code-unit offset, negative and oversized offsets, and both
 /// integer extremes so the fast path also measures clamping and snapping.
-fn clamped_bench_mixed_stops(s : String) -> Array[Int32] {
+fn string_clamped_bench_mixed_stops(s : String) -> Array[Int32] {
   let stops = [@int.MIN_VALUE, @int.MAX_VALUE]
   for i in -1..<=(s.length() + 1) {
     stops.push(i)
@@ -116,27 +100,12 @@ fn clamped_bench_mixed_stops(s : String) -> Array[Int32] {
 
 ///|
 test "bench String::clamped_view mixed starts" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_mixed_stops(s)
+  let s = string_clamped_bench_doc()
+  let stops = string_clamped_bench_mixed_stops(s)
   it.bench(() => {
     let mut acc = 0
     for i in stops {
       let v = s.clamped_view(start=i)
-      acc += v.start_offset() ^ v.length()
-    }
-    it.keep(acc)
-  })
-}
-
-///|
-test "bench StringView::clamped_view mixed starts" (it : @bench.T) {
-  let s = clamped_bench_doc()
-  let stops = clamped_bench_mixed_stops(s)
-  let whole = ("prefix" + s + "suffix").exact_view(start=6, end=6 + s.length())
-  it.bench(() => {
-    let mut acc = 0
-    for i in stops {
-      let v = whole.clamped_view(start=i)
       acc += v.start_offset() ^ v.length()
     }
     it.keep(acc)
