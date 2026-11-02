@@ -23,6 +23,9 @@ fn get_cli_args_internal() -> Array[String] {
 }
 
 ///|
+extern "c" fn exit_internal(code : Int32) -> Unit = "exit"
+
+///|
 extern "c" fn now_internal() -> UInt64 = "moonbit_get_ms_since_epoch"
 
 ///|

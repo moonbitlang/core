@@ -28,6 +28,14 @@ extern "js" fn get_cli_args_ffi() -> FixedArray[String] =
   #| }
 
 ///|
+extern "js" fn exit_internal(code : Int32) -> Unit =
+  #| function(code) {
+  #|   if (typeof process !== "undefined" && typeof process.exit === "function") {
+  #|     process.exit(code);
+  #|   }
+  #| }
+
+///|
 extern "js" fn now_internal() -> UInt64 =
   #| function() {
   #|   const nowMs = Date.now();
