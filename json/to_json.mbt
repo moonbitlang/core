@@ -67,7 +67,7 @@ pub impl ToJson for Char with fn to_json(self : Char) -> Json {
 }
 
 ///|
-pub impl ToJson for Int16 with fn to_json(self : Int16) -> Json {
+pub impl ToJson for @int16.Int16 with fn to_json(self : @int16.Int16) -> Json {
   Json::number(self.to_int().to_double())
 }
 
@@ -97,7 +97,7 @@ pub impl ToJson for UInt64 with fn to_json(self : UInt64) -> Json {
 }
 
 ///|
-pub impl ToJson for Float with fn to_json(self : Float) -> Json {
+pub impl ToJson for @float.Float with fn to_json(self : @float.Float) -> Json {
   ToJson::to_json(self.to_double())
 }
 
