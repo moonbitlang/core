@@ -43,11 +43,11 @@ pub async fn readdir(StringView, include_hidden? : Bool, include_special? : Bool
 
 pub async fn realpath(StringView) -> String
 
-pub async fn remove(StringView) -> Unit nocancel
+pub async fn remove(StringView, allow_missing? : Bool) -> Unit nocancel
 
 pub async fn rename(StringView, StringView, replace? : Bool) -> Unit
 
-pub async fn rmdir(StringView, recursive? : Bool) -> Unit nocancel
+pub async fn rmdir(StringView, recursive? : Bool, allow_missing? : Bool) -> Unit nocancel
 
 pub async fn symlink(target~ : StringView, StringView, force_symlink? : Bool) -> Unit
 

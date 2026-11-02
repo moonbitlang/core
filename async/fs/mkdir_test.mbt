@@ -37,6 +37,13 @@ async test "rmdir recursive" {
 }
 
 ///|
+async test "rmdir allow_missing" {
+  let path = "_build/rmdir_allow_missing_test"
+  @test.assert_raise_async(() => @fs.rmdir(path))
+  @fs.rmdir(path, allow_missing=true)
+}
+
+///|
 async test "mkdir recursive" {
   let base_path = "_build/recursive_mkdir"
   let path = "\{base_path}/test//directory"
