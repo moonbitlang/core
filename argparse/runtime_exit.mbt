@@ -23,6 +23,5 @@ fn trim_single_trailing_newline(text : String) -> String {
 ///|
 fn[T] print_and_exit_success(text : String) -> T {
   println(trim_single_trailing_newline(text))
-  runtime_exit_success()
-  panic()
+  @env.exit(0)
 }
