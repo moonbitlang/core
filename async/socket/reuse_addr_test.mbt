@@ -15,6 +15,8 @@
 ///|
 async test "reuse addr" {
   let port = 8342
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
   async fn run_server(server : @socket.TcpServer) -> Unit {
     defer server.close()
     @async.with_task_group <| group => {

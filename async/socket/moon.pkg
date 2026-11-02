@@ -32,6 +32,7 @@ import {
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/test",
   "moonbitlang/core/async/process",
+  "moonbitlang/core/async/fs",
 } for "test"
 
 options(
@@ -50,7 +51,7 @@ options(
     "happy_eyeball.mbt": [ "native", "wasm" ],
     "ifname.mbt": [ "native" ],
     "ifname.wasm.mbt": [ "wasm" ],
-    "interface_util_for_test.mbt": [ "native", "wasm" ],
+    "utils_for_test.mbt": [ "native", "wasm" ],
     "multicast_test.mbt": [ "native", "wasm" ],
     "read_exactly_test.mbt": [ "native", "wasm" ],
     "resolve_host_test.mbt": [ "native" ],
