@@ -31,7 +31,6 @@ async test "rmdir recursive" {
   @fs.mkdir("\{path}/inner")
   @fs.write_text("\{path}/inner/file", "")
   @fs.symlink("\{path}/symlink", target="\{cwd}/_build")
-  defer (if @fs.exists(path) { @fs.rmdir(path, recursive=true) })
   @test.assert_raise_async(() => @fs.rmdir(path))
   @fs.rmdir(path, recursive=true)
 }

@@ -22,14 +22,8 @@ async test "rename basic" {
     create_mode=CreateOrTruncate,
     sync=Full,
   )
-  defer {
-    if @fs.exists(old_path) {
-      @fs.remove(old_path)
-    }
-    if @fs.exists(new_path) {
-      @fs.remove(new_path)
-    }
-  }
+  defer @fs.remove(old_path, allow_missing=true)
+  defer @fs.remove(new_path, allow_missing=true)
   defer file.close()
   file.write(b"abcd")
   inspect(@fs.read_text(old_path), content="abcd")
@@ -45,14 +39,8 @@ async test "rename replace" {
   let old_path = "_build/rename_replace_test_old"
   let new_path = "_build/rename_replace_test_new"
   @fs.write_text(new_path, "xyzw")
-  defer {
-    if @fs.exists(old_path) {
-      @fs.remove(old_path)
-    }
-    if @fs.exists(new_path) {
-      @fs.remove(new_path)
-    }
-  }
+  defer @fs.remove(old_path, allow_missing=true)
+  defer @fs.remove(new_path, allow_missing=true)
   let old_file = @fs.open(
     old_path,
     mode=WriteOnly,

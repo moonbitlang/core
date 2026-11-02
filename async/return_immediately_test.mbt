@@ -69,19 +69,12 @@ async test "return_immediately error on cancel" {
 
 ///|
 async test "return_immediately recursive cancel" {
-  let log = []
-  @async.with_task_group() <| group => {
-    group.spawn_bg() <| () => {
-      @async.sleep(100)
-      log.push("100ms tick")
-    }
-    @async.with_task_group <| group => {
-      defer @async.sleep(200)
-      group.return_immediately()
-    }
-    log.push("inner group finished")
+  @async.with_task_group <| group => {
+    assert_true(
+      @async.handle_cancellation(() => group.return_immediately()) is None,
+    )
+    assert_true(@async.handle_cancellation(() => @async.sleep(200)) is None)
   }
-  json_inspect(log, content=["inner group finished", "100ms tick"])
 }
 
 ///|
