@@ -44,34 +44,32 @@ pub async fn getaddrinfo(
   // So our strategy here is to keep `getaddrinfo` running on cancellation,
   // let a background task wait for its completion and perform cleanup, 
   // while not waiting for the result in the main task
-  try
-    @coroutine.spawn(() => {
-      defer job.free()
-      let ret = perform_job_in_worker(job, context~) catch {
-        @os_error.OsError(_) as err =>
-          raise err.wrap_context(context => "\{context}: \{host.escape()}")
-        err => raise err
-      }
-      // if the outer `getaddrinfo` call already terminated,
-      // we should not extract the result from the job,
-      // instead we should let `job.free` free the result.
-      guard !terminated else { return }
-      if ret != 0 {
-        result = Err(gai_error_to_string(ret))
-      } else {
-        result = Ok(job.get_getaddrinfo_result())
-      }
-    }).wait()
-  catch {
-    _ if result is Ok(_) =>
+  let coro = @coroutine.spawn() <| () => {
+    defer job.free()
+    let ret = perform_job_in_worker(job, context~) catch {
+      @os_error.OsError(_) as err =>
+        raise err.wrap_context(context => "\{context}: \{host.escape()}")
+      err => raise err
+    }
+    // if the outer `getaddrinfo` call already terminated,
+    // we should not extract the result from the job,
+    // instead we should let `job.free` free the result.
+    guard !terminated else { return }
+    if ret != 0 {
+      result = Err(gai_error_to_string(ret))
+    } else {
+      result = Ok(job.get_getaddrinfo_result())
+    }
+  }
+  match @coroutine.handle_cancellation(() => coro.wait()) {
+    Some(_) => result
+    None if result is Ok(_) =>
       // corner case: if the job happens to complete at the same tick as cancellation,
       // as long as `get_getaddrinfo_result` is called,
       // we should treat `getaddrinfo` as successful anyway,
       // otherwise the result will leak
-      return result
-    err => raise err
-  } noraise {
-    _ => result
+      result
+    None => @coroutine.raise_cancellation_signal()
   }
 }
 
