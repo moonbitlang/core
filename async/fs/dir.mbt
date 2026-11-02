@@ -66,10 +66,14 @@ pub async fn mkdir(
 /// If `recursive` is `false`,
 /// `path` must be an empty directory, otherwise `rmdir` will fail.
 ///
+/// Unless `allow_missing=true` (`false` by default),
+/// an error will be raised if the target file does not exist.
+///
 /// This function is not cancellable.
 pub async fn rmdir(
   path : StringView,
   recursive~ : Bool = false,
+  allow_missing~ : Bool = false,
 ) -> Unit nocancel {
   let context = "@fs.rmdir()"
   if recursive {
@@ -92,7 +96,10 @@ pub async fn rmdir(
       }
     }
   }
-  @event_loop.rmdir(path, context~)
+  @event_loop.rmdir(path, context~) catch {
+    @os_error.OsError(NotFound, ..) if allow_missing => ()
+    err => raise err
+  }
 }
 
 ///|
