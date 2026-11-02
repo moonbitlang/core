@@ -31,6 +31,23 @@ Each package has its files and blackbox test files (common, ending in `_test.mbt
 - When writing tests, you are encouraged to use `inspect` and run `moon test --update` to update the snapshots, only use assertions
   like `assert_eq` when you are in some loops where each snapshot may vary. You can use `moon coverage analyze > uncovered.log` to see which parts of your code are not covered by tests.
 
+# Callback errors in mutating APIs
+
+Bulk in-place collection operations must require non-raising callbacks. This
+includes filtering, extraction, mapping, sorting, and shuffling: callers should
+not need to reason about a partially transformed collection after a callback
+raises. Keep deprecated aliases consistent with the canonical methods.
+
+Non-mutating operations such as `map`, `filter`, and `filter_map` may accept
+`raise?` callbacks. For fallible transformations, compute the result before
+committing changes to the original collection. This does not roll back side
+effects performed by the callback itself.
+
+Traversal callbacks (`each`, folds, searches) may still raise. Single-value
+updates that assign only after the callback succeeds (`Ref::update`) and scoped
+operations with explicit restoration (`Ref::protect`) may also raise. This
+policy does not prohibit error propagation in I/O or async APIs.
+
 # Trait-method promotion (`extend`)
 
 When a type `impl`s a trait, the trait's methods can be *promoted* to inherent
