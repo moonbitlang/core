@@ -128,7 +128,6 @@ async test "cancel with SIGHUP" {
 ///|
 async test "change cancellation signal set in the middle #1" {
   let test_prog = sleep_prog.wait()
-  let log = []
   @async.with_task_group() <| group => {
     let proc = @process.spawn(
       group,
@@ -137,50 +136,32 @@ async test "change cancellation signal set in the middle #1" {
       stdout=@process.read_from_process(),
       ["2000", "-wait-on-init", "-print-finally", "before exit"],
     )
-    group.spawn_bg() <| () => {
-      defer proc.stdout.close()
-      while proc.stdout.text.read() is Some(data) {
-        let data = data.replace_all(old="\r\n", new="\n").trim()
-        log.push("from process: \{data}")
-      }
-    }
+    defer proc.stdout.close()
     defer proc.stdin.close()
     @async.sleep(250)
     proc.cancel()
-    log.push("cancelling task running process")
-    @async.sleep(250)
+    inspect(proc.stdout.text.read_all().trim(), content="before exit")
   }
-  json_inspect(log, content=[
-    "cancelling task running process", "from process: before exit",
-  ])
 }
 
 ///|
 async test "change cancellation signal set in the middle #2" {
   let test_prog = sleep_prog.wait()
-  let log = []
   @async.with_task_group() <| group => {
     let proc = @process.spawn(
       group,
       test_prog,
-      stdin=@process.write_to_process(),
       stdout=@process.read_from_process(),
-      ["2000", "-wait-on-init", "-print-finally", "before exit"],
+      ["2000", "-print-after-init", "init", "-print-finally", "before exit"],
     )
-    group.spawn_bg() <| () => {
-      defer proc.stdout.close()
-      while proc.stdout.text.read() is Some(data) {
-        let data = data.replace_all(old="\r\n", new="\n").trim()
-        log.push("from process: \{data}")
-      }
-    }
-    defer proc.stdin.close()
-    proc.stdin.text.write("whatever")
+    defer proc.stdout.close()
+    guard! proc.stdout.text.read() is Some(msg)
+    inspect(msg.trim(), content="init")
     @async.sleep(250)
     proc.cancel()
-    log.push("cancelling task running process")
+    inspect(
+      proc.stdout.text.read_all().trim(),
+      content="received termination signal",
+    )
   }
-  json_inspect(log, content=[
-    "cancelling task running process", "from process: received termination signal",
-  ])
 }
