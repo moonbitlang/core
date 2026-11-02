@@ -25,6 +25,8 @@ async test "Only_V4 server" {
   // Use a rarely used port outside random assignment range,
   // so that there is no collision with randomly assigned IPv6 port
   let port = 8344
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.TcpServer(
@@ -83,6 +85,8 @@ async test "Only_V6 server" {
   // Use a rarely used port outside random assignment range,
   // so that there is no collision with randomly assigned IPv4 port
   let port = 8346
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.TcpServer(
@@ -192,6 +196,8 @@ async test "Only_V4 UDP server" {
   // Use a rarely used port outside random assignment range,
   // so that there is no collision with randomly assigned IPv6 port
   let port = 8344
+  let lock = lock_port(port, protocol="udp")
+  defer lock.unlock()
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:\{port}"))
@@ -246,6 +252,8 @@ async test "Only_V6 UDP server" {
   // Use a rarely used port outside random assignment range,
   // so that there is no collision with randomly assigned IPv4 port
   let port = 8346
+  let lock = lock_port(port, protocol="udp")
+  defer lock.unlock()
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.UdpServer(

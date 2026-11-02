@@ -32,3 +32,12 @@ let test_interface : @async.Lazy[String] = Lazy(() => {
     err => abort(err.to_string())
   }
 })
+
+///|
+async fn lock_port(port : Int32, protocol~ : String) -> @fs.File {
+  let path = "_build/port_lock_\{protocol}_\{port}"
+  let file = @fs.open(path, mode=ReadOnly, create_mode=OpenOrCreate)
+  errdefer file.close()
+  file.lock(Exclusive)
+  file
+}
