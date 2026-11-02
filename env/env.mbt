@@ -22,6 +22,18 @@ pub fn args() -> Array[String] {
 }
 
 ///|
+/// Terminate the process with the given exit code. Zero indicates success;
+/// a nonzero code indicates failure. This function never returns.
+///
+/// On JavaScript, uses `process.exit` and panics if it is unavailable.
+/// WebAssembly hosts must provide WASI `proc_exit` for `wasm` or
+/// `__moonbit_sys_unstable.exit` for `wasm-gc`.
+pub fn[T] exit(code : Int32) -> T {
+  exit_internal(code)
+  panic()
+}
+
+///|
 /// Get the current time in milliseconds since the Unix epoch.
 pub fn now() -> UInt64 {
   now_internal()

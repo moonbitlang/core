@@ -29,6 +29,24 @@ test "command line arguments" {
 }
 ```
 
+## Process Exit
+
+Use `@env.exit(code)` to terminate the process. Exit code `0` indicates success;
+a nonzero code indicates failure. The function never returns, so it can be used
+in a branch that otherwise produces a value.
+
+```mbt nocheck
+///|
+fn main {
+  println("Done")
+  @env.exit(0)
+}
+```
+
+On JavaScript, `exit` uses `process.exit` and panics if it is unavailable.
+WebAssembly hosts must provide WASI `proc_exit` for `wasm` or
+`__moonbit_sys_unstable.exit` for `wasm-gc`.
+
 ## Current Time
 
 Get the current time in milliseconds since Unix epoch:

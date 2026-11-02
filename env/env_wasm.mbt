@@ -114,6 +114,14 @@ fn get_cli_args_internal() -> Array[String] {
 fn get_cli_args_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "args_get"
 
 ///|
+#cfg(target="wasm")
+fn exit_internal(code : Int32) -> Unit = "wasi_snapshot_preview1" "proc_exit"
+
+///|
+#cfg(target="wasm-gc")
+fn exit_internal(code : Int32) -> Unit = "__moonbit_sys_unstable" "exit"
+
+///|
 fn now_internal() -> UInt64 = "__moonbit_time_unstable" "now"
 
 ///|
