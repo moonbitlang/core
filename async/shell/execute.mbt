@@ -312,16 +312,8 @@ fn resolve_redirect(
     Inherit => None
     ToFile(path) => Some(ToFile(path))
     AppendToFile(path) => Some(AppendFile(path))
-    Discard => Some(ToFile(null_device))
+    Discard => Some(Discard)
   }
-}
-
-///|
-/// The platform's always-existing sink for unwanted output.
-let null_device : String = if @env_util.platform is Windows {
-  "NUL"
-} else {
-  "/dev/null"
 }
 
 ///|

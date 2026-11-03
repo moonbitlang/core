@@ -210,6 +210,21 @@ automatically after process creation. The corresponding `Process.stdin`,
 `Process.stdout`, and `Process.stderr` channels are caller-owned and must be
 closed when no longer needed.
 
+### Empty Input and Discarded Output
+
+Use `stdin=Empty` when the child should receive no standard input.
+Reads from the child's standard input immediately reach end-of-file.
+Use `stdout=Discard` or `stderr=Discard` for when child's output should be discarded:
+
+```moonbit check
+///|
+#cfg(all(target="native", not(platform="windows")))
+async test "empty input and discarded output" {
+  let result = @process.run("cat", [], stdin=Empty, stdout=Discard)
+  inspect(result.exit_code, content="0")
+}
+```
+
 ## File Redirection
 
 ### Redirect from File
@@ -572,7 +587,9 @@ view for UTF-8 text I/O, as in `child.stdout.text.read_all()` and
 | `Inherit` | Inherit the corresponding stream from the current execution context | No caller-owned handle |
 | `Stdin`, `Stdout`, `Stderr` | Select a parent-process standard stream explicitly | No caller-owned handle |
 | `FeedFromParent` | Feed one child's stdin through `Process.stdin` | Close `Process.stdin` after writing |
+| `Empty` | Give the child an empty input stream that immediately reaches EOF | Managed automatically |
 | `Collect` | Collect one output stream through a process handle or `ProcessResult` | With `spawn()`, close `Process.stdout` or `.stderr` after reading |
+| `Discard` | Ignore everything written to an output stream | Managed automatically |
 | `FromFile(path)` | Read one child's stdin from a file | Managed automatically |
 | `ToFile(path)`, `AppendFile(path)` | Write one child's output to a file | Managed automatically |
 | `DuplicateStdout` | Send a child's stderr to its stdout destination | No separate handle; valid only as `stderr` |

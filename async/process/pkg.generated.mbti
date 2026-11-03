@@ -62,6 +62,7 @@ pub(all) enum ProcessInput {
   Inherit
   Stdin
   FeedFromParent
+  Empty
   FromFile(StringView)
   Shared(SharedProcessInput)
 }
@@ -72,6 +73,7 @@ pub(all) enum ProcessOutput {
   Stdout
   Stderr
   Collect
+  Discard
   ToFile(StringView)
   AppendFile(StringView)
   DuplicateStdout

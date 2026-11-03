@@ -157,3 +157,35 @@ async test "pipe" {
     )
   }
 }
+
+///|
+async test "stdin=Empty" {
+  let cat = cat.wait()
+  @async.with_task_group <| group => {
+    let proc = @process.spawn(group, cat, [], stdin=Empty, stdout=Collect)
+    defer proc.stdout.close()
+    inspect(
+      @async.with_timeout(1000, () => proc.stdout.text.read_all()),
+      content="",
+    )
+  }
+}
+
+///|
+async test "stdout=Discard" {
+  let cat = cat.wait()
+  @async.with_task_group <| group => {
+    let proc = @process.spawn(
+      group,
+      cat,
+      [],
+      stdin=FeedFromParent,
+      stdout=Discard,
+    )
+    defer proc.stdin.close()
+    let chunk = Bytes::make(1024, b'\x00')
+    for _ in 0..<20 {
+      proc.stdin.write(chunk)
+    }
+  }
+}

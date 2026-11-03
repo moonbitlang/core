@@ -169,6 +169,8 @@ pub(all) enum ProcessInput {
   /// standard input. With `spawn()` or `spawn_orphan()`, write through the
   /// returned process handle's `.stdin` field and close it to send end-of-file.
   FeedFromParent
+  /// Redirect the child's standard input to an empty stream
+  Empty
   /// Read the child's standard input from the file at `path`.
   FromFile(StringView)
   /// Read the child's standard input from a caller-owned shared channel.
@@ -177,6 +179,12 @@ pub(all) enum ProcessInput {
   /// `redirect_from_file()`. Close it after it has been passed to the last
   /// child, or if spawning is abandoned.
   Shared(SharedProcessInput)
+}
+
+///|
+let null_device : String = match @event_loop.platform {
+  Linux | MacOS => "/dev/null"
+  Windows => "NUL"
 }
 
 ///|
@@ -195,6 +203,18 @@ async fn ProcessInput::init_stdin(
       let r = @event_loop.IoHandle::from_fd(r, kind=Pipe, is_async=false)
       let w = @event_loop.IoHandle::from_fd(w, kind=Pipe)
       (Some(r), WriteToProcess(Some(w)))
+    }
+    Empty => {
+      let (file, _) = @event_loop.open(
+        null_device,
+        0, // read only
+        create=@fs.OpenExisting.to_int(),
+        append=false,
+        sync=0,
+        mode=0,
+        context~,
+      )
+      (Some(file), no_input)
     }
     FromFile(filename) => {
       let (file, _) = @event_loop.open(
@@ -219,7 +239,7 @@ fn ProcessInput::close(
 ) -> Unit {
   match self {
     Inherit | Stdin | Shared(_) => ()
-    FeedFromParent | FromFile(_) =>
+    FeedFromParent | Empty | FromFile(_) =>
       if child_end is Some(child_end) {
         child_end.close()
       }
@@ -244,6 +264,8 @@ pub(all) enum ProcessOutput {
   /// handle's `.stdout` or `.stderr` field. With `run()`, use the corresponding
   /// accessor on `ProcessResult`, such as `stdout_binary()` or `stderr_text()`.
   Collect
+  /// Discard all output content written by the child
+  Discard
   /// Write the child's output to the file at `path`.
   /// If the file does not exist it will be created, otherwise it will be truncated.
   ToFile(StringView)
@@ -279,6 +301,18 @@ async fn ProcessOutput::init_stdout(
       let r = @event_loop.IoHandle::from_fd(r, kind=Pipe)
       let w = @event_loop.IoHandle::from_fd(w, kind=Pipe, is_async=false)
       (ReadFromProcess(Some(r)), Some(w))
+    }
+    Discard => {
+      let (file, _) = @event_loop.open(
+        null_device,
+        1, // write only
+        create=@fs.OpenExisting.to_int(),
+        append=false,
+        sync=0,
+        mode=0,
+        context~,
+      )
+      (no_output, Some(file))
     }
     ToFile(filename) => {
       let (file, _) = @event_loop.open(
@@ -318,8 +352,13 @@ async fn ProcessOutput::init_stderr(
   match output {
     Inherit => ProcessOutput::init_stdout(Stderr, context~)
     DuplicateStdout => (no_output, stdout)
-    Stdout | Stderr | Collect | ToFile(_) | AppendFile(_) | Shared(_) =>
-      output.init_stdout(context~)
+    Stdout
+    | Stderr
+    | Collect
+    | Discard
+    | ToFile(_)
+    | AppendFile(_)
+    | Shared(_) => output.init_stdout(context~)
   }
 }
 
@@ -330,7 +369,7 @@ fn ProcessOutput::close(
 ) -> Unit {
   match self {
     Inherit | Stdout | Stderr | Shared(_) | DuplicateStdout => ()
-    Collect | ToFile(_) | AppendFile(_) =>
+    Collect | Discard | ToFile(_) | AppendFile(_) =>
       if child_end is Some(child_end) {
         child_end.close()
       }
