@@ -537,7 +537,6 @@ test "context is attached to raised failures too" {
       #|  shrinks=29,
       #|  shrink_attempts=31,
       #|)
-
     ),
   )
 }
