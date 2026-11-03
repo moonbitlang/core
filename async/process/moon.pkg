@@ -9,7 +9,6 @@ import {
   "moonbitlang/core/async/internal/coroutine",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/internal/os_string",
-  "moonbitlang/core/async/stdio",
   "moonbitlang/core/async",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/fs",

@@ -25,7 +25,7 @@ async test "spawn_in_group wait" {
 async test "spawn_in_group cancel" {
   let sleep = sleep_prog.wait()
   @async.with_task_group() <| outer => {
-    let (r, w) = @process.read_from_process_shared()
+    let (r, w) = @process.read_from_process()
     outer.spawn_bg() <| () => {
       defer r.close()
       inspect(r.text.read_all().trim(), content="received termination signal")
@@ -33,7 +33,7 @@ async test "spawn_in_group cancel" {
     @async.with_task_group() <| inner => {
       let _ = {
         defer w.close()
-        @process.spawn(inner, sleep, ["10000"], stdout=w, no_wait=true)
+        @process.spawn(inner, sleep, ["10000"], stdout=Shared(w), no_wait=true)
       }
       @async.sleep(300)
     }
@@ -44,12 +44,9 @@ async test "spawn_in_group cancel" {
 async test "Process::wait" {
   let sleep = sleep_prog.wait()
   @async.with_task_group() <| group => {
-    let child = @process.spawn(
-      group,
-      sleep,
-      stdout=@process.read_from_process(),
-      ["500", "-exit-code", "42", "-print-after-sleep", "done"],
-    )
+    let child = @process.spawn(group, sleep, stdout=Collect, [
+      "500", "-exit-code", "42", "-print-after-sleep", "done",
+    ])
     let output = group.spawn() <| () => {
       defer child.stdout.close()
       child.stdout.text.read_all().trim().to_owned()
@@ -71,12 +68,9 @@ async test "Process::wait" {
 async test "Process::try_wait" {
   let sleep = sleep_prog.wait()
   @async.with_task_group() <| group => {
-    let child = @process.spawn(
-      group,
-      sleep,
-      stdout=@process.read_from_process(),
-      ["500", "-exit-code", "42", "-print-after-sleep", "end"],
-    )
+    let child = @process.spawn(group, sleep, stdout=Collect, [
+      "500", "-exit-code", "42", "-print-after-sleep", "end",
+    ])
     let output = group.spawn() <| () => {
       defer child.stdout.close()
       child.stdout.text.read_all().trim().to_owned()
@@ -94,12 +88,7 @@ async test "Process::cancel" {
   let sleep = sleep_prog.wait()
   let t0 = @async.now()
   @async.with_task_group() <| group => {
-    let child = @process.spawn(
-      group,
-      sleep,
-      ["10000"],
-      stdout=@process.read_from_process(),
-    )
+    let child = @process.spawn(group, sleep, ["10000"], stdout=Collect)
     group.spawn_bg() <| () => {
       defer child.stdout.close()
       inspect(

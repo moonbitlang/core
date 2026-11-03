@@ -22,15 +22,10 @@ async test "cancel with default signal" {
   let test_prog = sleep_prog.wait()
   let log = []
   @async.with_task_group() <| group => {
-    let child = @process.spawn(
-      group,
-      test_prog,
-      stdout=@process.read_from_process(),
-      [
-        "10000", "-use-default-handler", "-print-after-sleep", "normal exit", "-print-finally",
-        "before exit",
-      ],
-    )
+    let child = @process.spawn(group, test_prog, stdout=Collect, [
+      "10000", "-use-default-handler", "-print-after-sleep", "normal exit", "-print-finally",
+      "before exit",
+    ])
     group.spawn_bg() <| () => {
       defer log.push("process terminates")
       let _ = child.wait()
@@ -61,7 +56,7 @@ async test "cancel with ctrl+c" {
     let child = @process.spawn(
       group,
       test_prog,
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.graceful_cancel(timeout=5000, signal=SIGINT),
       [
         "10000", "-use-default-handler", "-print-after-sleep", "normal exit", "-print-finally",
@@ -98,7 +93,7 @@ async test "cancel with SIGHUP" {
     let child = @process.spawn(
       group,
       test_prog,
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.graceful_cancel(timeout=5000, signal=SIGHUP),
       [
         "10000", "-use-default-handler", "-print-after-sleep", "normal exit", "-print-finally",
@@ -132,8 +127,8 @@ async test "change cancellation signal set in the middle #1" {
     let proc = @process.spawn(
       group,
       test_prog,
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
       ["2000", "-wait-on-init", "-print-finally", "before exit"],
     )
     defer proc.stdout.close()
@@ -148,12 +143,9 @@ async test "change cancellation signal set in the middle #1" {
 async test "change cancellation signal set in the middle #2" {
   let test_prog = sleep_prog.wait()
   @async.with_task_group() <| group => {
-    let proc = @process.spawn(
-      group,
-      test_prog,
-      stdout=@process.read_from_process(),
-      ["2000", "-print-after-init", "init", "-print-finally", "before exit"],
-    )
+    let proc = @process.spawn(group, test_prog, stdout=Collect, [
+      "2000", "-print-after-init", "init", "-print-finally", "before exit",
+    ])
     defer proc.stdout.close()
     guard! proc.stdout.text.read() is Some(msg)
     inspect(msg.trim(), content="init")

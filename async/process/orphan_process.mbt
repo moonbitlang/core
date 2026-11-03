@@ -18,17 +18,17 @@ pub struct OrphanProcess {
   pid : Int32
   /// Redirected `stdin` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stdin` redirected to `@process.write_to_process()`.
+  /// with `stdin=FeedFromParent`.
   /// In this case, it can be used to write to stdin of the child process.
   stdin : WriteToProcess
   /// Redirected `stdout` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stdout` redirected to `@process.read_from_process()`.
+  /// with `stdout=Collect`.
   /// In this case, it can be used to read from the stdout of the child process.
   stdout : ReadFromProcess
   /// Redirected `stderr` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stderr` redirected to `@process.read_from_process()`.
+  /// with `stderr=Collect`.
   /// In this case, it can be used to read from the stderr of the child process.
   stderr : ReadFromProcess
   priv handle : @event_loop.Process
@@ -43,7 +43,7 @@ pub fn OrphanProcess::close(self : OrphanProcess) -> Unit {
 
 ///|
 /// Execute a system process with command `cmd`,
-/// and provide `args` as extra arguments to `cmd.
+/// and provide `args` as extra arguments to `cmd`.
 /// Both `cmd` and elements of `args` are encoded using UTF8.
 /// A handle similar to `Process` is returned, see `@process.spawn` for more details.
 ///
@@ -62,9 +62,9 @@ pub async fn spawn_orphan(
   args : ArrayView[String],
   extra_env~ : Map[String, String] = Map([]),
   inherit_env~ : Bool = true,
-  stdin~ : &ProcessInput = @stdio.stdin,
-  stdout~ : &ProcessOutput = @stdio.stdout,
-  stderr~ : &ProcessOutput = @stdio.stderr,
+  stdin~ : ProcessInput = Inherit,
+  stdout~ : ProcessOutput = Inherit,
+  stderr~ : ProcessOutput = Inherit,
   cwd? : StringView,
   no_console_window~ : Bool = false,
 ) -> OrphanProcess {

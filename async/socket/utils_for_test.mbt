@@ -15,7 +15,7 @@
 ///|
 let test_interface_index : @async.Lazy[UInt32] = Lazy(() => {
   let prog = @test_util.build_test_program("find_ipv6_test_interface")
-  let result = @process.run(prog, [], stdout=@process.read_from_process())
+  let result = @process.run(prog, [], stdout=Collect)
   let index = @string.parse_uint(result.stdout_text().trim())
   guard index > 0 else {
     raise Failure("cannot find suitable network interface for testing")

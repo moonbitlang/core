@@ -17,14 +17,14 @@ async test "cancel `@process.run()`" {
   let test_prog = sleep_prog.wait()
   let log = StringBuilder()
   @async.with_task_group() <| group => {
-    let (r, w) = @process.read_from_process_shared()
+    let (r, w) = @process.read_from_process()
     let task = group.spawn(() => {
       defer log <+ "process terminates\n"
       defer w.close()
       @process.run(
         test_prog,
         ["10000", "-print-after-init", "started"],
-        stdout=w,
+        stdout=Shared(w),
       )
     })
     defer r.close()
@@ -60,7 +60,7 @@ async test "cancel process timeout" {
       group,
       test_prog,
       ["-swallow-cancel-signal", "10000"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.graceful_cancel(timeout=500),
     )
     let t_receive_graceful_termination = group.spawn(() => {
@@ -94,7 +94,7 @@ async test "cancel process hard" {
       group,
       test_prog,
       ["10000"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.hard_cancel(),
     )
     group.spawn_bg() <| () => {
@@ -120,7 +120,7 @@ async test "orphan process" {
     let proc = @process.spawn_orphan(
       shell,
       ["-c", "\{write_stdout} first; sleep 1; \{write_stdout} second"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
     )
     let wait_task = group.spawn() <| () => {
       defer log <+ "process terminates\n"
@@ -153,7 +153,7 @@ async test "kill children on hard cancel" {
       group,
       spawn,
       [sleep, "450", "-print-after-sleep", "after sleep"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.hard_cancel(),
     )
     defer child.stdout.close()
@@ -172,7 +172,7 @@ async test "do not kill orphan children on hard cancel" {
       group,
       spawn,
       ["-orphan", sleep, "450", "-print-after-sleep", "after sleep"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cancel_handler=@process.hard_cancel(),
     )
     defer child.stdout.close()

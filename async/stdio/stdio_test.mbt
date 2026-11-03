@@ -24,8 +24,8 @@ async test "redirect_file" {
   let result = @process.run(
     cat,
     [],
-    stdin=@process.redirect_from_file("moon.mod"),
-    stdout=@process.redirect_to_file(out_file),
+    stdin=FromFile("moon.mod"),
+    stdout=ToFile(out_file),
   )
   inspect(result.exit_code, content="0")
   assert_eq(@fs.read_binary(out_file), @fs.read_binary("moon.mod"))
@@ -40,8 +40,8 @@ async test "redirect pipe" {
       group,
       cat,
       [],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
     )
     group.spawn_bg() <| () => {
       defer child.stdin.close()
@@ -71,9 +71,9 @@ async test "stdio cancel" {
       group,
       cat,
       ["-timeout", "500"],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
-      stderr=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
+      stderr=Collect,
     )
     defer child.stdin.close()
     defer child.stdout.close()
@@ -104,9 +104,9 @@ async test "stdout and stderr are the same" {
       group,
       cat,
       [],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
-      stderr=@process.duplicate_stdout(),
+      stdin=FeedFromParent,
+      stdout=Collect,
+      stderr=DuplicateStdout,
     )
     defer child.stdout.close()
     {

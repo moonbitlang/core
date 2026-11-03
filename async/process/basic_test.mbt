@@ -19,7 +19,7 @@ async test "basic_ls" {
       group,
       shell,
       ["-c", "\{ls} async/fs/test_directory/dir1"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       extra_env={ "LC_ALL": "C" },
     )
     defer child.stdout.close()
@@ -42,8 +42,8 @@ async test "basic_cat" {
       group,
       cat,
       [],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
     )
     group.spawn_bg() <| () => {
       defer child.stdin.close()
@@ -61,7 +61,7 @@ async test "basic_cat" {
 ///|
 #cfg(platform="windows")
 async test "execute .com file" {
-  let result = @process.run("chcp.com", [], stdout=@process.read_from_process())
+  let result = @process.run("chcp.com", [], stdout=Collect)
   let output = result.stdout_binary()
   guard output.strip_suffix(b"\r\n") is Some(output) &&
     output.rev_find(b" ") is Some(index) &&
@@ -84,7 +84,7 @@ async test "prevent NUL command injection" {
   let result = @process.run(
     prog,
     ["100", "-print-after-sleep", bad_arg],
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.stdout_text().trim_end(chars="\r\n"), content="abc")
 }

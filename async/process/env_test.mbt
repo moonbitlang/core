@@ -20,7 +20,7 @@ async test "set_env" {
       group,
       shell,
       ["-c", "\{write_stdout} \{env_var}"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       extra_env={ "MAGIC_VAR": "MAGIC_VALUE" },
     )
     defer child.stdout.close()
@@ -36,7 +36,7 @@ async test "set_env no inherit" {
       group,
       test_prog,
       [],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       extra_env={
         "MAGIC_VAR_1": "MAGIC_VALUE_1",
         "MAGIC_VAR_2": "MAGIC_VALUE_2",
@@ -69,7 +69,7 @@ async test "set_env override" {
     shell,
     ["-c", "\{write_stdout} \{env_var}"],
     extra_env=Map([(name, "overwritten")]),
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(
     result.stdout_text().trim_end(chars="\r\n"),
@@ -86,7 +86,7 @@ async test "set_env injection key" {
     shell,
     ["-c", "\{write_stdout} \{env_var}"],
     extra_env={ "MAGIC_VAR\u{0000}MAGIC_VAR2=def": "abc" },
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.stdout_text().trim_end(chars="\r\n"))
   let env_var2 = if is_windows { "$env:MAGIC_VAR2" } else { "$MAGIC_VAR2" }
@@ -94,7 +94,7 @@ async test "set_env injection key" {
     shell,
     ["-c", "\{write_stdout} \{env_var2}"],
     extra_env={ "MAGIC_VAR\u{0000}MAGIC_VAR2=def": "abc" },
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.stdout_text().trim_end(chars="\r\n"))
 }
@@ -106,7 +106,7 @@ async test "set_env injection value" {
     shell,
     ["-c", "\{write_stdout} \{env_var}"],
     extra_env={ "MAGIC_VAR": "abc\u{0000}MAGIC_VAR2=def" },
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.stdout_text().trim_end(chars="\r\n"))
 }

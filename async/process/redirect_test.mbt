@@ -15,22 +15,26 @@
 ///|
 async test "merge multiple" {
   @async.with_task_group() <| root => {
-    let (r, w) = @process.read_from_process_shared()
+    let (r, w) = @process.read_from_process()
     root.spawn_bg(no_wait=true) <| () => {
       defer r.close()
       inspect(r.text.read_all(), content="abcdefgh")
     }
     @async.with_task_group() <| group => {
       defer w.close()
-      @process.spawn(group, shell, ["-c", "\{write_stdout} abcd"], stdout=w, extra_env={
-        "LANG": "en_US.UTF-8",
-      })
+      @process.spawn(
+        group,
+        shell,
+        ["-c", "\{write_stdout} abcd"],
+        stdout=Shared(w),
+        extra_env={ "LANG": "en_US.UTF-8" },
+      )
       |> ignore
       @process.spawn(
         group,
         shell,
         ["-c", "sleep 1; \{write_stdout} efgh"],
-        stdout=w,
+        stdout=Shared(w),
         extra_env={ "LANG": "en_US.UTF-8" },
       )
       |> ignore
@@ -50,8 +54,8 @@ async test "redirect to file" {
     let _ = @process.run(
       cat,
       [],
-      stdin=@process.redirect_from_file(input_file),
-      stdout=@process.redirect_to_file(output_file),
+      stdin=FromFile(input_file),
+      stdout=ToFile(output_file),
     )
     inspect(@fs.read_text(output_file), content="abcd")
   }
@@ -61,21 +65,21 @@ async test "redirect to file" {
 async test "merge multiple to file" {
   let output_file = "_build/process_redirect_merge_multiple_test_out.txt"
   defer @fs.remove(output_file)
-  let w = @process.redirect_to_file_shared(output_file)
+  let w = @process.redirect_to_file(output_file)
   @async.with_task_group <| group => {
     defer w.close()
     let _ = @process.spawn(
       group,
       shell,
       ["-c", "\{write_stdout} abcd"],
-      stdout=w,
+      stdout=Shared(w),
       extra_env={ "LANG": "en_US.UTF-8" },
     )
     let _ = @process.spawn(
       group,
       shell,
       ["-c", "sleep 1; \{write_stdout} efgh"],
-      stdout=w,
+      stdout=Shared(w),
       extra_env={ "LANG": "en_US.UTF-8" },
     )
   }
@@ -94,8 +98,8 @@ async test "merge stdout and stderr" {
       group,
       shell,
       ["-c", "\{write_stdout} abcd; \{write_stderr} efgh"],
-      stdout=@process.read_from_process(),
-      stderr=@process.duplicate_stdout(),
+      stdout=Collect,
+      stderr=DuplicateStdout,
     )
     defer child.stdout.close()
     inspect(child.stdout.text.read_all(), content="abcdefgh")
@@ -109,8 +113,8 @@ async test "merge stdout and stderr to file" {
   let _ = @process.run(
     shell,
     ["-c", "\{write_stdout} abcd; \{write_stderr} efgh"],
-    stdout=@process.redirect_to_file(output_file),
-    stderr=@process.duplicate_stdout(),
+    stdout=ToFile(output_file),
+    stderr=DuplicateStdout,
   )
   inspect(
     @fs.read_text(output_file),
@@ -131,17 +135,11 @@ async test "pipe" {
       group,
       cat,
       [],
-      stdin=@process.write_to_process(),
-      stdout=w,
+      stdin=FeedFromParent,
+      stdout=Shared(w),
     )
     defer child1.stdin.close()
-    let child2 = @process.spawn(
-      group,
-      cat,
-      [],
-      stdin=r,
-      stdout=@process.read_from_process(),
-    )
+    let child2 = @process.spawn(group, cat, [], stdin=Shared(r), stdout=Collect)
     defer child2.stdout.close()
     child1.stdin.write(b"abcd")
     debug_inspect(

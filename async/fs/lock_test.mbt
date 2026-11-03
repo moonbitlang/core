@@ -35,8 +35,8 @@ async fn run_lock_file_prog(
   let lock_proc = @process.spawn(
     group,
     prog,
-    stdin=@process.write_to_process(),
-    stdout=@process.read_from_process(),
+    stdin=FeedFromParent,
+    stdout=Collect,
     [file, "-duration", duration.to_string(), lock_kind],
   )
   let input = @async.Queue(kind=Unbounded)

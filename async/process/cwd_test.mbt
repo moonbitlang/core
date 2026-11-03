@@ -21,7 +21,7 @@ async test "set cwd" {
       group,
       shell,
       ["-c", ls],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
       cwd="async/fs/test_directory/dir1",
       extra_env={ "LC_ALL": "C" },
     )

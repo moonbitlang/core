@@ -21,9 +21,9 @@ async fn node_gzip(mode : String, input : Bytes) -> Bytes {
       group,
       "node",
       ["async/gzip/node_gzip.js", mode],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
-      stderr=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
+      stderr=Collect,
     )
     group.spawn_bg() <| () => {
       defer node_proc.stdin.close()

@@ -305,19 +305,14 @@ fn validate_output_limit(limit : Int32) -> Unit raise ShellError {
 /// `spawn`, which also owns cleanup if process creation fails.
 fn resolve_redirect(
   redirect : Redirect,
-  capture : &@process.ProcessOutput?,
-) -> &@process.ProcessOutput? {
+  capture : @process.ProcessOutput?,
+) -> @process.ProcessOutput? {
   match redirect {
     Capture => capture
     Inherit => None
-    ToFile(path) =>
-      Some(@process.redirect_to_file(path, create_mode=CreateOrTruncate))
-    AppendToFile(path) =>
-      Some(
-        @process.redirect_to_file(path, append=true, create_mode=OpenOrCreate),
-      )
-    Discard =>
-      Some(@process.redirect_to_file(null_device, create_mode=OpenExisting))
+    ToFile(path) => Some(ToFile(path))
+    AppendToFile(path) => Some(AppendFile(path))
+    Discard => Some(ToFile(null_device))
   }
 }
 
@@ -333,9 +328,9 @@ let null_device : String = if @env_util.platform is Windows {
 async fn spawn_stage(
   group : @async.TaskGroup,
   cmd : Cmd,
-  stdin : &@process.ProcessInput,
-  stdout : &@process.ProcessOutput?,
-  stderr : &@process.ProcessOutput?,
+  stdin : @process.ProcessInput,
+  stdout : @process.ProcessOutput?,
+  stderr : @process.ProcessOutput?,
 ) -> @process.Process {
   @process.spawn(
     group,
@@ -541,17 +536,17 @@ async fn run_pipeline(pipeline : Pipeline, sink : Sink) -> Output {
       Some(FromFile(_) | Inherit) => false
       Some(Text(_) | Binary(_)) | None => true
     }
-    let first_input : &@process.ProcessInput = match first_stdin {
-      Some(FromFile(path)) => @process.redirect_from_file(path)
-      Some(Inherit) => @stdio.stdin
-      Some(Text(_) | Binary(_)) | None => @process.write_to_process()
+    let first_input : @process.ProcessInput = match first_stdin {
+      Some(FromFile(path)) => FromFile(path)
+      Some(Inherit) => Inherit
+      Some(Text(_) | Binary(_)) | None => FeedFromParent
     }
     let processes : Array[@process.Process] = []
     for index, cmd in commands {
-      let stdin : &@process.ProcessInput = if index == 0 {
+      let stdin : @process.ProcessInput = if index == 0 {
         first_input
       } else {
-        junction_inputs[index - 1]
+        Shared(junction_inputs[index - 1])
       }
       //
       // A downstream stage that stops reading early closes the pipe in the
@@ -560,11 +555,11 @@ async fn run_pipeline(pipeline : Pipeline, sink : Sink) -> Output {
       let captures_stdout = index + 1 == count &&
         !(sink is Inherited) &&
         cmd.stdout is Capture
-      let stdout : &@process.ProcessOutput? = if index + 1 < count {
-        Some(junction_outputs[index])
+      let stdout : @process.ProcessOutput? = if index + 1 < count {
+        Some(Shared(junction_outputs[index]))
       } else {
-        let final_capture : &@process.ProcessOutput? = if captures_stdout {
-          Some(@process.read_from_process())
+        let final_capture : @process.ProcessOutput? = if captures_stdout {
+          Some(Collect)
         } else {
           None
         }
@@ -572,8 +567,8 @@ async fn run_pipeline(pipeline : Pipeline, sink : Sink) -> Output {
       }
       //
       let captures_stderr = collect_stderr && cmd.stderr is Capture
-      let stderr_capture : &@process.ProcessOutput? = if captures_stderr {
-        Some(@process.read_from_process())
+      let stderr_capture : @process.ProcessOutput? = if captures_stderr {
+        Some(Collect)
       } else {
         None
       }
