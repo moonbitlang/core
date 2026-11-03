@@ -58,7 +58,7 @@ pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
-pub fn[K : Hash + Eq, V] HashMap::update(Self[K, V], K, (V?) -> V?) -> Unit
+pub fn[K : Hash + Eq, V] HashMap::update(Self[K, V], K, (V?) -> V? raise?) -> Unit raise?
 pub fn[K : Hash + Eq, V] HashMap::update_or_default(Self[K, V], K, V, (V) -> V raise?) -> Unit raise?
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for HashMap[K, V]

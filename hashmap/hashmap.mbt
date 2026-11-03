@@ -428,6 +428,9 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 /// once `f` returns: `Some(new_value)` stores `new_value` under `key`,
 /// replacing any value `f` itself stored there, and `None` removes `key` if it
 /// existed when `f` was called.
+/// If `f` raises, the error is propagated without applying an update, insertion,
+/// or removal. Side effects performed by `f`, including changes to this map,
+/// are not rolled back.
 ///
 /// Example:
 ///
@@ -461,8 +464,8 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 pub fn[K : Hash + Eq, V] HashMap::update(
   self : HashMap[K, V],
   key : K,
-  f : (V?) -> V?,
-) -> Unit {
+  f : (V?) -> V? raise?,
+) -> Unit raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {

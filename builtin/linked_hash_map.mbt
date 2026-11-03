@@ -1252,6 +1252,9 @@ fn[K, V] Map::add_unique_with_hash(
 /// once `f` returns: `Some(new_value)` stores `new_value` under `key`,
 /// replacing any value `f` itself stored there, and `None` removes `key` if it
 /// existed when `f` was called.
+/// If `f` raises, the error is propagated without applying an update, insertion,
+/// or removal. Side effects performed by `f`, including changes to this map,
+/// are not rolled back.
 ///
 /// Example:
 ///
@@ -1300,8 +1303,8 @@ fn[K, V] Map::add_unique_with_hash(
 pub fn[K : Hash + Eq, V] Map::update(
   self : Map[K, V],
   key : K,
-  f : (V?) -> V?,
-) -> Unit {
+  f : (V?) -> V? raise?,
+) -> Unit raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
