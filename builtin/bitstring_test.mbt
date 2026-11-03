@@ -223,6 +223,7 @@ test "extract int64" {
 test "extract view" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
+  let nested = b"\x00\x89\xab\xcd\xef\x00"[1:5]
   fn equal(a : BytesView, b : ArrayView[Byte]) raise {
     @test.assert_eq(a.length(), b.length())
     for i in 0..<a.length() {
@@ -236,6 +237,9 @@ test "extract view" {
         bs1.unsafe_extract_bytesview(i * 8, j * 8),
         bs2.unsafe_extract_bytesview(i * 8, j * 8),
       )
+      let extracted = nested.unsafe_extract_bytesview(i * 8, j * 8)
+      equal(extracted, bs2.unsafe_extract_bytesview(i * 8, j * 8))
+      @test.assert_eq(extracted.start_offset(), 1 + i)
     }
   }
 }

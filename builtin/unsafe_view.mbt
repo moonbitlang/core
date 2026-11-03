@@ -194,14 +194,11 @@ pub fn[T] UninitializedArray::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `Bytes::exact_view` to validate bounds, or `Bytes::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%bytes.unsafe_view")
 pub fn Bytes::unsafe_view(
   self : Bytes,
   start~ : Int32,
   end~ : Int32,
-) -> BytesView {
-  BytesView::make_view(self, start, end)
-}
+) -> BytesView = "%bytesview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -219,7 +216,7 @@ pub fn BytesView::unsafe_view(
   start~ : Int32,
   end~ : Int32,
 ) -> BytesView {
-  BytesView::make_view(self.bytes(), self.start() + start, self.start() + end)
+  self.bytes().unsafe_view(start=self.start() + start, end=self.start() + end)
 }
 
 ///|
