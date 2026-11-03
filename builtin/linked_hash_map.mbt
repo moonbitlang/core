@@ -930,6 +930,9 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 /// Calls `f` in insertion order and preserves that order in the result.
 /// If `f` raises, iteration stops immediately and the error propagates.
 /// This method does not modify `self`.
+///
+/// `f` must not structurally modify `self` (insert or remove keys, or clear the
+/// map), including through aliases. Doing so results in undefined behavior.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,

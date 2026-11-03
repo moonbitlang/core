@@ -841,7 +841,7 @@ test "map propagates the first error in insertion order" {
 
 ///|
 test "Map::map callbacks follow insertion order after collisions and removal" {
-  let m : Map[LKey, Int] = Map([])
+  let m : Map[LKey, Int32] = Map([])
   for i in 0..<20 {
     m[LKey(i, 0)] = i
   }
