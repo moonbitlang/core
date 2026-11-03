@@ -22,7 +22,6 @@
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `Array::exact_view` to validate bounds, or `Array::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%array.unsafe_view")
 pub fn[T] Array::unsafe_view(
   self : Array[T],
   start~ : Int32,
@@ -41,7 +40,6 @@ pub fn[T] Array::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `ArrayView::exact_view` to validate bounds, or `ArrayView::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%arrayview.unsafe_view")
 pub fn[T] ArrayView::unsafe_view(
   self : ArrayView[T],
   start~ : Int32,
@@ -60,7 +58,6 @@ pub fn[T] ArrayView::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `FixedArray::exact_view` to validate bounds, or `FixedArray::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%fixedarray.unsafe_view")
 pub fn[T] FixedArray::unsafe_view(
   self : FixedArray[T],
   start~ : Int32,
@@ -79,7 +76,6 @@ pub fn[T] FixedArray::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `ReadOnlyArray::exact_view` to validate bounds, or `ReadOnlyArray::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%readonlyarray.unsafe_view")
 pub fn[T] ReadOnlyArray::unsafe_view(
   self : ReadOnlyArray[T],
   start~ : Int32,
@@ -98,7 +94,6 @@ pub fn[T] ReadOnlyArray::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `MutArrayView::exact_view` to validate bounds, or `MutArrayView::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%mutarrayview.unsafe_view")
 pub fn[T] MutArrayView::unsafe_view(
   self : MutArrayView[T],
   start~ : Int32,
@@ -116,7 +111,6 @@ pub fn[T] MutArrayView::unsafe_view(
 /// The caller must ensure `0 <= start <= end <= self.length()`.
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `Array::mut_view` to validate bounds.
-#intrinsic("%array.unsafe_mut_view")
 pub fn[T] Array::unsafe_mut_view(
   self : Array[T],
   start~ : Int32,
@@ -134,7 +128,6 @@ pub fn[T] Array::unsafe_mut_view(
 /// The caller must ensure `0 <= start <= end <= self.length()`.
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `FixedArray::mut_view` to validate bounds.
-#intrinsic("%fixedarray.unsafe_mut_view")
 pub fn[T] FixedArray::unsafe_mut_view(
   self : FixedArray[T],
   start~ : Int32,
@@ -156,7 +149,6 @@ pub fn[T] FixedArray::unsafe_mut_view(
 /// The caller must ensure `0 <= start <= end <= self.length()`.
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `MutArrayView::mut_view` to validate bounds.
-#intrinsic("%mutarrayview.unsafe_mut_view")
 pub fn[T] MutArrayView::unsafe_mut_view(
   self : MutArrayView[T],
   start~ : Int32,
@@ -210,7 +202,6 @@ pub fn Bytes::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `BytesView::exact_view` to validate bounds, or `BytesView::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%bytesview.unsafe_view")
 pub fn BytesView::unsafe_view(
   self : BytesView,
   start~ : Int32,
