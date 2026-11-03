@@ -1245,7 +1245,7 @@ pub fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
 pub fn[V] Map::get_from_bytes(Self[Bytes, V], BytesView) -> V?
 pub fn[V] Map::get_from_string(Self[String, V], StringView) -> V?
 pub fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V
-pub fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
+pub fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V raise?) -> V raise?
 pub fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]

@@ -203,6 +203,10 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 /// Returns the value for the key if present, otherwise inserts the value
 /// produced by `init` and returns it.
 ///
+/// If `key` is present, `init` is not called. If `init` raises, the error is
+/// propagated without inserting a value. Side effects performed by `init`
+/// are not rolled back.
+///
 /// `init` must not structurally modify `self`, directly or through an alias:
 /// it must not insert or remove keys, or clear the map. Violations have
 /// unspecified results and are not guaranteed to be detected. Memory and type
@@ -211,8 +215,8 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 pub fn[K : Compare, V] SortedMap::get_or_init(
   self : SortedMap[K, V],
   key : K,
-  init : () -> V,
-) -> V {
+  init : () -> V raise?,
+) -> V raise? {
   match self.get(key) {
     Some(v) => v
     None => {

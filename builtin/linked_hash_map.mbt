@@ -370,11 +370,14 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
 /// `default` may read or write `self` (as a recursive memoized function
 /// does). Its result is stored under `key` once it returns, replacing any
 /// value that `default` itself stored under `key`.
+/// If `key` is present, `default` is not called. If `default` raises, the error
+/// is propagated without inserting its result. Side effects performed by
+/// `default`, including changes to this map, are not rolled back.
 pub fn[K : Hash + Eq, V] Map::get_or_init(
   self : Map[K, V],
   key : K,
-  default : () -> V,
-) -> V {
+  default : () -> V raise?,
+) -> V raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
