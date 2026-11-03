@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-priv struct Empty {} derive(Debug)
+#derive(Debug)
+priv struct Empty {}
 
 ///|
 test "diff: arrays collapse when all children differ" {

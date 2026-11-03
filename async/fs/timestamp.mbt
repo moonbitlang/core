@@ -13,11 +13,12 @@
 // limitations under the License.
 
 ///|
+#derive(Eq, Compare, @debug.Debug)
 #valtype
 struct Timestamp {
   sec : Int64
   nsec : Int32
-} derive(Eq, Compare, @debug.Debug)
+}
 
 ///|
 /// Return the number of seconds since Unix EPOCH of the timestamp

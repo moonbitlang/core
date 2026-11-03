@@ -38,7 +38,8 @@ async test "manual cancel" {
 }
 
 ///|
-suberror Err derive(Debug)
+#derive(Debug)
+suberror Err
 
 ///|
 async test "error propagation" {

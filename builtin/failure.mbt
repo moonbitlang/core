@@ -36,10 +36,11 @@
 /// ```
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove this annotation.
+#derive(Show)
 #warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
-} derive(Show)
+}
 
 ///|
 /// Raises a `Failure` error with a given message and source location.

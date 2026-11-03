@@ -18,6 +18,7 @@
 /// The engine is runtime-agnostic: it moves bytes between an input view and an
 /// output buffer and *suspends* by returning one of these, so any driver — a
 /// synchronous loop or an async adapter — can resume it.
+#derive(Eq, @debug.Debug)
 pub(all) enum Status {
   /// End of the DEFLATE stream was reached; the operation is complete.
   Done
@@ -25,7 +26,7 @@ pub(all) enum Status {
   NeedMoreInput
   /// The output buffer filled up; drain it and call again.
   NeedMoreOutput
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Requested action for one streaming compression step.
@@ -33,6 +34,7 @@ pub(all) enum Status {
 /// The action applies after the complete input view has been consumed. If a
 /// step reports partial consumption, re-present the remaining suffix with the
 /// same action.
+#derive(Eq, @debug.Debug)
 pub(all) enum DeflateAction {
   /// Accept input without emitting a control block.
   Continue
@@ -41,12 +43,13 @@ pub(all) enum DeflateAction {
   SyncFlush
   /// Finish the DEFLATE stream after all input in this view has been accepted.
   Finish
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Result of one streaming codec call. The counts describe the input prefix
 /// accepted and the output prefix written by this call, including when it
 /// returns `Done`. Keep the result to inspect it independently of later calls.
+#derive(Eq, @debug.Debug)
 #valtype
 pub(all) struct StepResult {
   /// Whether decoding or encoding completed or needs more input/output.
@@ -55,28 +58,31 @@ pub(all) struct StepResult {
   consumed : Int32
   /// Number of bytes written to this call's output view.
   produced : Int32
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Whether whole-buffer decoding requires an exact input boundary.
+#derive(Eq, @debug.Debug)
 pub(all) enum InputMode {
   Exact
   Prefix
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Byte counts from a successful whole-buffer decompression call.
+#derive(Eq, @debug.Debug)
 #valtype
 pub struct DecompressResult {
   /// Compressed bytes consumed, excluding any trailing data.
   consumed : Int32
   /// Decompressed bytes written to the caller's buffer.
   produced : Int32
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Owned output and the compressed prefix consumed by a whole-buffer decode.
+#derive(Eq, @debug.Debug)
 pub struct Decompressed {
   data : Bytes
   consumed : Int32
-} derive(Eq, @debug.Debug)
+}

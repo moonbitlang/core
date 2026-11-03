@@ -16,10 +16,11 @@
 /// A classification attached to one generated test case.
 ///
 /// Construct observations with `label`, `classify`, and `collect`.
+#derive(@debug.Debug)
 enum Observation {
   Label(String)
   Class(label~ : String, hit~ : Bool)
-} derive(@debug.Debug)
+}
 
 ///|
 /// Observations attached to one generated test case.
@@ -122,10 +123,11 @@ fn ObservationSummary::add(
 }
 
 ///|
+#derive(Eq)
 priv struct ObservationRow {
   count : UInt32
   name : String
-} derive(Eq)
+}
 
 ///|
 impl Compare for ObservationRow with fn compare(

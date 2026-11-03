@@ -16,12 +16,13 @@
 /// Where a value/flag came from.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove this annotation.
+#derive(Eq, Show, @debug.Debug)
 #warnings("-deprecated_syntax")
 pub enum ValueSource {
   Argv
   Env
   Default
-} derive(Eq, Show, @debug.Debug)
+}
 
 ///|
 /// Parse results for declarative commands.
@@ -31,6 +32,7 @@ pub enum ValueSource {
 /// - `flag_counts` stores occurrence counts for `FlagAction::Count`.
 /// - `sources` records the final source (`Argv` / `Env` / `Default`) per arg.
 /// - `subcommand` stores nested matches for the selected subcommand.
+#derive(@debug.Debug)
 pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
@@ -41,7 +43,7 @@ pub struct Matches {
   priv flag_sources : Map[String, ValueSource]
   priv value_sources : Map[String, ValueSource]
   priv mut parsed_subcommand : (String, Matches)?
-} derive(@debug.Debug)
+}
 
 ///|
 fn new_matches_parse_state() -> Matches {

@@ -31,7 +31,8 @@
 ///   @debug.debug_inspect(a, content="Reverse(1)") // Shows wrapped value
 /// }
 /// ```
-pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
+#derive(Eq, Hash, @debug.Debug)
+pub(all) struct Reverse[T](T)
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)

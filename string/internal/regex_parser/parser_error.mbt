@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(@debug.Debug)
 suberror ParserError {
   ParserError(at~ : Int32, hint~ : String)
-} derive(@debug.Debug)
+}
 
 ///|
 pub impl Show for ParserError with fn output(self, logger) {

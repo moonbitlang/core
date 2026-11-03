@@ -35,9 +35,10 @@ pub struct ClientConnection {
 
 ///|
 /// Error raised when the proxy responded with a non-2XX response code
+#derive(@debug.Debug, @json.ToJson)
 pub suberror ProxyError {
   ProxyError(ResponseHeader)
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 async fn ClientConnection::connect(

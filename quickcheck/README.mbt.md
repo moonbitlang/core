@@ -282,10 +282,11 @@ is needed:
 
 ```mbt check
 ///|
+#derive(Debug)
 priv struct Point {
   x : Int32
   y : Int32
-} derive(Debug)
+}
 
 ///|
 impl @quickcheck.Arbitrary for Point with fn arbitrary(size, r0) {

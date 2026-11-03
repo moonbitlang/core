@@ -15,6 +15,7 @@
 ///|
 /// A cross-platform enum describing common error kinds.
 /// Useful for matching specific special error codes.
+#derive(@debug.Debug, @json.ToJson, Eq)
 #non_exhaustive
 pub(all) enum Kind {
   NotFound
@@ -25,7 +26,7 @@ pub(all) enum Kind {
   OperationNotSupported
   // TODO: add private constructor support & make `Unknown` private
   Unknown
-} derive(@debug.Debug, @json.ToJson, Eq)
+}
 
 ///|
 let errno_table : Map[Int32, Kind] = match @env_util.platform {

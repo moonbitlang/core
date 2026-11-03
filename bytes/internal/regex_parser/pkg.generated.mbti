@@ -10,7 +10,8 @@ import {
 pub fn parse(StringView) -> @ast.Pattern raise ParserError
 
 // Errors
-type ParserError derive(@debug.Debug)
+#derive(@debug.Debug)
+type ParserError
 pub fn ParserError::to_string(Self) -> String
 pub impl Show for ParserError
 

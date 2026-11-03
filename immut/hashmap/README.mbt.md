@@ -238,7 +238,8 @@ The invariant holds even under engineered collisions:
 ```mbt check
 ///|
 /// Every key hashes to the same value: all entries share one bucket.
-priv struct SameHashKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct SameHashKey(Int32)
 
 ///|
 impl Hash for SameHashKey with fn hash(_) {

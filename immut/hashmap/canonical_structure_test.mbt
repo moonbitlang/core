@@ -26,7 +26,8 @@
 ///|
 /// Keys whose 32-bit hash keeps only the low three bits, so keys that agree
 /// on `n & 7` collide on the full hash while `Eq` still distinguishes them.
-priv struct CollidingKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct CollidingKey(Int32)
 
 ///|
 impl Hash for CollidingKey with fn hash(self) {
@@ -107,7 +108,8 @@ test "chained removals from a collision bucket collapse in any order" {
 /// Keys whose hash lives only in the top path segment (bits 25..=29): all
 /// keys share path segments 1-5, so they diverge — or fully collide — only
 /// at the maximum trie depth.
-priv struct DeepKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct DeepKey(Int32)
 
 ///|
 impl Hash for DeepKey with fn hash(self) {

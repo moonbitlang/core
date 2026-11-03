@@ -13,10 +13,11 @@
 // limitations under the License.
 
 ///|
+#derive(@json.ToJson)
 priv struct RangeImpl[T] {
   lo : T
   hi : T
-} derive(@json.ToJson)
+}
 
 // pub
 // priv

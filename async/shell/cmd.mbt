@@ -21,12 +21,13 @@
 /// already exist. `Inherit` hands the child the parent's own standard input,
 /// which is what an interactive command needs; without it, standard input is
 /// closed.
+#derive(@debug.Debug)
 pub(all) enum Stdin {
   Text(String)
   Binary(Bytes)
   FromFile(String)
   Inherit
-} derive(@debug.Debug)
+}
 
 ///|
 /// Where a child process's standard output or standard error goes.
@@ -41,13 +42,14 @@ pub(all) enum Stdin {
 /// existing one. `Discard` is the structured `> /dev/null`: the stream goes to
 /// the platform's null device. A redirected stream is absent from `Output`,
 /// where it appears as an empty string.
+#derive(@debug.Debug)
 pub(all) enum Redirect {
   Capture
   Inherit
   ToFile(String)
   AppendToFile(String)
   Discard
-} derive(@debug.Debug)
+}
 
 ///|
 /// A shell-free process description.
@@ -59,6 +61,7 @@ pub(all) enum Redirect {
 /// The representation is abstract and a `Cmd` is immutable once built. Its
 /// derived `Debug` representation can be logged or snapshot-tested before it
 /// runs.
+#derive(@debug.Debug)
 struct Cmd {
   program : String
   arguments : Array[String]
@@ -68,7 +71,7 @@ struct Cmd {
   stdin : Stdin?
   stdout : Redirect
   stderr : Redirect
-} derive(@debug.Debug)
+}
 
 ///|
 /// Describe one process.

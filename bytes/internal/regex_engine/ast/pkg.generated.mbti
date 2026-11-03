@@ -41,6 +41,7 @@ pub let start_of_word : Pattern
 // Errors
 
 // Types and methods
+#derive(@debug.Debug)
 pub enum Assertion {
   StartOfInput
   EndOfInput
@@ -49,7 +50,7 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-} derive(@debug.Debug)
+}
 
 pub struct Pattern {
   desc : PatternDesc
@@ -58,6 +59,7 @@ pub struct Pattern {
 pub fn Pattern::is_anchored(Self) -> Bool
 pub impl @debug.Debug for Pattern
 
+#derive(@debug.Debug)
 pub enum PatternDesc {
   Char(@byte_set.ByteSet)
   Sequence(ReadOnlyArray[Pattern])
@@ -65,13 +67,14 @@ pub enum PatternDesc {
   Quantifier(Quantifier, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-} derive(@debug.Debug)
+}
 
+#derive(@debug.Debug)
 pub(all) struct Quantifier {
   min : Int32
   max : Int32?
   mode : @shared_types.QuantifierMode
-} derive(@debug.Debug)
+}
 
 // Type aliases
 

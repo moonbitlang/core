@@ -584,10 +584,11 @@ fn[T : Eq + Hash] append_patience_matches(
 ///
 /// This set may grow (e.g. a histogram variant); treat it as a configuration
 /// input to construct rather than a type to match exhaustively.
+#derive(Eq, @debug.Debug)
 pub(all) enum DiffAlgorithm {
   Myers
   Patience
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 fn[T : Eq + Hash] collect_matches(

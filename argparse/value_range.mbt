@@ -16,11 +16,12 @@
 /// Number-of-values constraint for an argument.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove `-deprecated_syntax` here.
+#derive(Eq, Show, @debug.Debug)
 #warnings("-deprecated_syntax-deprecated")
 pub struct ValueRange {
   priv lower : Int32
   priv upper : Int32?
-} derive(Eq, Show, @debug.Debug)
+}
 
 ///|
 /// Create a value-count range.

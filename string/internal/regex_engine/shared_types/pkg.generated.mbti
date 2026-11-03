@@ -11,7 +11,8 @@ import {
 // Errors
 
 // Types and methods
-pub struct Category(Int32) derive(Eq, Hash)
+#derive(Eq, Hash)
+pub struct Category(Int32)
 pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
 pub fn Category::equal(Self, Self) -> Bool
@@ -39,10 +40,11 @@ pub struct Profile {
 #alias(new, deprecated)
 pub fn Profile::Profile(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int32) -> Category) -> Self
 
+#derive(@debug.Debug)
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
-} derive(@debug.Debug)
+}
 
 // Type aliases
 pub type Rechar = Int32

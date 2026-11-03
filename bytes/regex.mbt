@@ -62,11 +62,12 @@ pub impl @debug.Debug for BytesRegex with fn to_repr(self) {
 
 ///|
 /// Result of one successful match produced by `BytesRegex::execute`.
+#derive(@debug.Debug)
 struct MatchResult {
   input : BytesView
   group_names : ReadOnlyArray[String?]
   result : @re.MatchResult
-} derive(@debug.Debug)
+}
 
 ///|
 /// Return match `before` view.

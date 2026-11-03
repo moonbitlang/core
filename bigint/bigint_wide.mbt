@@ -32,10 +32,11 @@ struct BigInt {
 }
 
 ///|
+#derive(Eq)
 priv enum Sign {
   Positive
   Negative
-} derive(Eq)
+}
 
 ///|
 /// Switch from schoolbook to Karatsuba at this many limbs.

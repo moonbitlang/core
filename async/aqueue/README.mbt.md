@@ -339,7 +339,8 @@ ended (e.g. an upstream failure vs. a normal completion).
 
 ```moonbit check
 ///|
-suberror MyDone derive(Debug)
+#derive(Debug)
+suberror MyDone
 
 ///|
 async test "custom close error" {

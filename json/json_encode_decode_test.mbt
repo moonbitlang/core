@@ -14,11 +14,12 @@
 
 ///|
 /// Type `AllThree`.
+#derive(Debug)
 priv struct AllThree {
   ints : Array[Int32]
   floats : Array[Double]
   strings : Array[String]
-} derive(Debug)
+}
 
 ///|
 fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
@@ -36,9 +37,10 @@ fn AllThree::to_json(self : AllThree) -> Json {
 }
 
 ///|
+#derive(Debug)
 priv suberror DecodeError {
   DecodeError(String)
-} derive(Debug)
+}
 
 ///|
 fn of_json(jv : Json) -> AllThree raise DecodeError {

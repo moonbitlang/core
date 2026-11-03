@@ -16,6 +16,7 @@
 // Please refer to https://github.com/rust-lang/rust/blob/a19472a93e2eecce1477011fa9f7ec49b45ca164/library/test/src/stats.rs
 
 ///|
+#derive(@json.ToJson, @debug.Debug)
 struct Summary {
   name : String?
   sum : Double
@@ -32,7 +33,7 @@ struct Summary {
   iqr : Double
   batch_size : Int32
   runs : Int32
-} derive(@json.ToJson, @debug.Debug)
+}
 
 ///|
 fn Summary::new(

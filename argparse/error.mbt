@@ -111,9 +111,10 @@ fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
 
 ///|
 /// Internal build errors raised while validating command definitions.
+#derive(@debug.Debug)
 priv suberror ArgBuildError {
   Unsupported(String)
-} derive(@debug.Debug)
+}
 
 ///|
 /// Internal control-flow event for displaying help.

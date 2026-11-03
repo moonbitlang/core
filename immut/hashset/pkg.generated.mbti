@@ -10,7 +10,8 @@ import {
 // Errors
 
 // Types and methods
-type HashSet[A] derive(Eq)
+#derive(Eq)
+type HashSet[A]
 pub fn[A : Eq + Hash] HashSet::HashSet(ArrayView[A]) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool

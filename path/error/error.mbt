@@ -14,7 +14,8 @@
 
 ///|
 /// An error encountered while resolving a path.
+#derive(@debug.Debug)
 pub(all) suberror ResolveError {
   /// The path requires a current working directory, but it is unavailable.
   CurrentDirectoryUnavailable
-} derive(@debug.Debug)
+}

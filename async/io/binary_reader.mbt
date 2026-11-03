@@ -78,7 +78,8 @@ pub(open) trait BinaryReader: BinaryReaderImpl {
 ///|
 /// Error raised by binary reader APIs when the binary stream reaches EOF
 /// before enough data can be fetched according to user request
-pub(all) suberror ReaderClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub(all) suberror ReaderClosed
 
 ///|
 impl BinaryReaderImpl with fn ensure_buffered(self, min_len : Int32) {

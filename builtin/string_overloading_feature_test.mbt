@@ -18,7 +18,8 @@ trait FromString {
 }
 
 ///|
-priv struct MyInt(Int32) derive(Debug)
+#derive(Debug)
+priv struct MyInt(Int32)
 
 // _ allow in names
 
@@ -28,7 +29,8 @@ impl FromString for MyInt with fn from_string(_s) {
 }
 
 ///|
-priv struct MyString(String) derive(Debug)
+#derive(Debug)
+priv struct MyString(String)
 
 ///|
 impl FromString for MyString with fn from_string(_s) {

@@ -23,10 +23,11 @@ test "Bool hash function" {
 }
 
 ///|
+#derive(Hash, Eq, Debug)
 priv struct TestHash {
   flag : Bool
   x : Int32
-} derive(Hash, Eq, Debug)
+}
 
 ///|
 test "Bool hash function with struct" {

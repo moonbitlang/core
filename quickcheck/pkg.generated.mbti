@@ -63,7 +63,8 @@ pub fn[T, U] Generator::zip(Self[T], Self[U]) -> Self[(T, U)]
 pub fn[T, U, V] Generator::zip_with(Self[T], Self[U], (T, U) -> V) -> Self[V]
 pub fn[T, U, V, W] Generator::zip_with3(Self[T], Self[U], Self[V], (T, U, V) -> W) -> Self[W]
 
-type Observation derive(@debug.Debug)
+#derive(@debug.Debug)
+type Observation
 pub fn Observation::to_string(Self) -> String
 pub impl Show for Observation
 

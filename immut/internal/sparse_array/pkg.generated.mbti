@@ -13,14 +13,16 @@ pub fn[X] singleton(Int32, X) -> SparseArray[X]
 // Errors
 
 // Types and methods
-pub struct Bitset(UInt32) derive(Eq)
+#derive(Eq)
+pub struct Bitset(UInt32)
 pub fn Bitset::equal(Self, Self) -> Bool
 pub fn Bitset::first_idx(Self) -> Int32
 
+#derive(Eq)
 pub struct SparseArray[X] {
   elem_info : Bitset
   data : FixedArray[X]
-} derive(Eq)
+}
 pub fn[X] SparseArray::add(Self[X], Int32, X) -> Self[X]
 pub fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
 pub fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?

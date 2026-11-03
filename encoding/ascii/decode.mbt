@@ -14,9 +14,10 @@
 
 ///|
 /// Error type `Malformed`.
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(BytesView)
-} derive(@debug.Debug)
+}
 
 ///|
 fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "%string.unsafe_from_uint16_fixedarray"

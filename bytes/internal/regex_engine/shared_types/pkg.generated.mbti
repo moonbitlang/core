@@ -11,7 +11,8 @@ import {
 // Errors
 
 // Types and methods
-pub struct Category(Int32) derive(Eq, Hash)
+#derive(Eq, Hash)
+pub struct Category(Int32)
 pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
 pub fn Category::equal(Self, Self) -> Bool
@@ -28,10 +29,11 @@ pub fn Category::not_word_start() -> Self
 pub fn Category::word() -> Self
 pub impl Add for Category
 
+#derive(@debug.Debug)
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
-} derive(@debug.Debug)
+}
 
 // Type aliases
 pub using @byte_set {type ByteSet}

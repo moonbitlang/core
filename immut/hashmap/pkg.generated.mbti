@@ -10,7 +10,8 @@ import {
 // Errors
 
 // Types and methods
-type HashMap[K, V] derive(Eq)
+#derive(Eq)
+type HashMap[K, V]
 pub fn[K : Eq + Hash, V] HashMap::HashMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")

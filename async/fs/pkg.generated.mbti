@@ -118,6 +118,7 @@ pub impl @io.BinaryReader for File
 pub impl @io.BinaryWriter for File
 
 #non_exhaustive
+#derive(Eq, @debug.Debug)
 pub(all) enum FileKind {
   Unknown
   Regular
@@ -128,14 +129,15 @@ pub(all) enum FileKind {
   BlockDevice
   CharDevice
   Console
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum FsEvent {
   Modify(String)
   Create(String)
   Remove(String)
   Rename(old~ : String, new~ : String)
-} derive(Eq, @debug.Debug)
+}
 
 pub(all) enum Lock {
   Shared
@@ -154,7 +156,8 @@ pub(all) enum SyncMode {
   Full
 }
 
-type Timestamp derive(Compare, Eq, @debug.Debug)
+#derive(Compare, Eq, @debug.Debug)
+type Timestamp
 pub fn Timestamp::msec(Self) -> Int64
 pub fn Timestamp::nsec(Self) -> Int32
 pub fn Timestamp::sec(Self) -> Int64

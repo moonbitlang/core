@@ -28,6 +28,7 @@
 
 ///|
 /// Stable classification for failures raised by the raw DEFLATE APIs.
+#derive(Eq, @debug.Debug)
 pub(all) enum InflateErrorKind {
   /// Physical input ended before a complete raw DEFLATE stream.
   Truncated
@@ -42,7 +43,7 @@ pub(all) enum InflateErrorKind {
   Cancelled
   /// A caller-supplied argument is out of range, such as a negative limit.
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Error raised while decoding a raw DEFLATE stream.

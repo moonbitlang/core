@@ -14,6 +14,7 @@
 
 ///|
 /// Declarative command specification.
+#derive(@debug.Debug)
 pub struct Command {
   priv name : String
   priv args : Array[Arg]
@@ -29,7 +30,7 @@ pub struct Command {
   priv default_subcommand : String?
   priv hidden : Bool
   priv mut build_error : ArgBuildError?
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a declarative command specification.

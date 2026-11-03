@@ -57,7 +57,8 @@ pub using @coroutine {handle_cancellation}
 
 ///|
 /// Default error raised by `@async.with_timeout` when timeout expires
-pub suberror TimeoutError derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror TimeoutError
 
 ///|
 /// `with_timeout(timeout, f)` run the async function `f`.

@@ -18,6 +18,7 @@
 /// [Microsoft Maximum Path Length Limitation](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation)
 /// [Microsoft GetFullPathNameW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfullpathnamew)
 /// [The Old New Thing: What are these environment variables like =C:?](https://devblogs.microsoft.com/oldnewthing/20100412-00/?p=14313)
+#derive(@json.ToJson, Hash, Eq)
 priv struct WinPath {
   prefix : WinPrefix
   trailing_separator : Bool
@@ -25,7 +26,7 @@ priv struct WinPath {
   /// Index of the root's end in the original path string (before any
   /// normalization), following Node `path.win32.parse().root`.
   root_end : Int32
-} derive(@json.ToJson, Hash, Eq)
+}
 
 ///|
 /// #### Verbatim Prefix
@@ -50,6 +51,7 @@ priv struct WinPath {
 /// > Because you cannot use the "\\?\" prefix with a relative path,
 /// > relative paths are always limited to a total of MAX_PATH characters.
 ///
+#derive(@json.ToJson, Hash, Eq)
 priv enum WinPrefix {
   /// Syntax: `\`
   ///
@@ -84,7 +86,7 @@ priv enum WinPrefix {
   /// Warning: this letter is case-insensitive.
   VolumeLetter(Char)
   None
-} derive(@json.ToJson, Hash, Eq)
+}
 
 // In order to make code more clean,
 // so we have to define many string constants to avoid escape sequences.

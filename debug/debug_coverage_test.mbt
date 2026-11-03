@@ -18,17 +18,19 @@
 // `Debug` instances for builtin opaque types.
 
 ///|
+#derive(Eq, @debug.Debug)
 priv struct CovPoint {
   x : Int32
   y : Double
-} derive(Eq, @debug.Debug)
+}
 
 ///|
+#derive(Eq, @debug.Debug)
 priv enum CovShape {
   Dot
   Circle(radius~ : Int32)
   Line(Int32, Int32)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Run `assert_eq` on two values and return whether it reported a difference,

@@ -15,7 +15,8 @@
 ///|
 /// Capture offsets of a successful match: `[start0, end0, start1, end1, ...]`
 /// relative to the searched view, `-1` for groups that did not participate.
-struct MatchResult(FixedArray[Int32]) derive(@debug.Debug)
+#derive(@debug.Debug)
+struct MatchResult(FixedArray[Int32])
 
 ///|
 /// The `(start, end)` offsets of capture group `index`, or `None` when the

@@ -15,11 +15,12 @@
 ///|
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
 /// Empty elements don't waste any space, without losing constant-time access
+#derive(Eq)
 pub struct SparseArray[X] {
   // record which elements are present
   elem_info : Bitset
   data : FixedArray[X]
-} derive(Eq)
+}
 
 ///|
 /// Return an empty value.

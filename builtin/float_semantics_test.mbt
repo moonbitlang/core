@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(Eq, Compare, Hash)
 priv struct FloatingKey[T] {
   value : T
-} derive(Eq, Compare, Hash)
+}
 
 ///|
 fn[T : Compare + Hash] check_float_relations(

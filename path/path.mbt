@@ -30,7 +30,8 @@ pub using @error {type ResolveError}
 /// Equality compares the underlying strings exactly, including case and
 /// separators. It does not normalize paths or determine whether they refer to
 /// the same filesystem entry.
-pub(all) struct Path(String) derive(Eq, @debug.Debug)
+#derive(Eq, @debug.Debug)
+pub(all) struct Path(String)
 
 ///|
 pub impl Show for Path with fn output(path, logger) {

@@ -18,12 +18,13 @@
 /// The representation is abstract; readers use the accessor methods. Text is
 /// decoded as lossy UTF-8 so arbitrary process output cannot cancel a run;
 /// `stdout_bytes` keeps standard output byte for byte.
+#derive(@debug.Debug)
 struct Output {
   exit_code : Int32
   stdout : String
   stdout_bytes : Bytes
   stderr : String
-} derive(@debug.Debug)
+}
 
 ///|
 /// The exit status: for a pipeline, the rightmost non-zero stage status, or
@@ -81,6 +82,7 @@ pub fn Output::check(self : Output) -> Unit raise {
 /// Callers choose between checked operations (`run` and `check`) and explicit
 /// status inspection (`status` and `exit_code`) rather than depending on these
 /// implementation-level categories.
+#derive(@debug.Debug)
 priv suberror ShellError {
   EmptyProgram
   EmptyPipeline
@@ -92,4 +94,4 @@ priv suberror ShellError {
   RedirectOnNonFinalStage(Int32)
   StdoutNotCaptured
   CommandFailed(Output)
-} derive(@debug.Debug)
+}

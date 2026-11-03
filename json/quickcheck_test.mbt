@@ -24,7 +24,8 @@
 /// Doubles drawn from uniformly random bit patterns, so subnormals, -0.0,
 /// and extreme magnitudes all appear. Non-finite patterns fall back to a
 /// finite value since JSON cannot represent NaN or infinities as numbers.
-priv struct FiniteDouble(Double) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct FiniteDouble(Double)
 
 ///|
 impl @quickcheck.Arbitrary for FiniteDouble with fn arbitrary(_size, state) {
@@ -92,7 +93,8 @@ fn json_gen(depth : Int32) -> @quickcheck.Generator[Json] {
 ///|
 /// Wrapper giving `Json` the `Arbitrary`/`Shrink`/`Debug` instances the
 /// quickcheck driver needs.
-priv struct ArbJson(Json) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct ArbJson(Json)
 
 ///|
 impl @quickcheck.Arbitrary for ArbJson with fn arbitrary(size, state) {

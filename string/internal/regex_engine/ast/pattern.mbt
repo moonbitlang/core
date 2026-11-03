@@ -18,14 +18,16 @@
 /// - `min`: minimum repetition count.
 /// - `max`: optional maximum repetition count.
 /// - `mode`: greedy/non-greedy mode.
+#derive(@debug.Debug)
 pub(all) struct Quantifier {
   min : Int32
   max : Int32?
   mode : @shared_types.QuantifierMode
-} derive(@debug.Debug)
+}
 
 ///|
 /// Zero-width regex assertions.
+#derive(@debug.Debug)
 pub enum Assertion {
   StartOfInput
   EndOfInput
@@ -34,7 +36,7 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-} derive(@debug.Debug)
+}
 
 ///|
 /// Core regex pattern AST node with cached nullability.
@@ -50,6 +52,7 @@ pub impl @debug.Debug for Pattern with fn to_repr(self) {
 
 ///|
 /// Variants of regex pattern syntax nodes.
+#derive(@debug.Debug)
 pub enum PatternDesc {
   Char(@shared_types.RecharSet)
   Sequence(ReadOnlyArray[Pattern])
@@ -57,7 +60,7 @@ pub enum PatternDesc {
   Quantifier(Quantifier, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-} derive(@debug.Debug)
+}
 
 ///|
 /// Return whether the pattern is anchored to input boundaries.

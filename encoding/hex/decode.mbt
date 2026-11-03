@@ -17,9 +17,10 @@
 ///
 /// `Malformed(input)` reports that `input` has odd length or contains a
 /// character that is not a hexadecimal digit.
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(StringView)
-} derive(@debug.Debug)
+}
 
 ///|
 fn hex_value(code_unit : Int32) -> Int32 {

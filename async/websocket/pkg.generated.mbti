@@ -10,14 +10,16 @@ import {
 // Values
 
 // Errors
+#derive(@debug.Debug)
 pub suberror WebSocketError {
   ConnectionClosed(CloseCode, String?)
   InvalidHandshake(String)
   HandshakeRejected(String, @http.ResponseHeader)
   ProtocolError(String)
-} derive(@debug.Debug)
+}
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) enum CloseCode {
   Normal
   GoingAway
@@ -30,7 +32,7 @@ pub(all) enum CloseCode {
   MissingExtension
   InternalError
   Other(UInt16)
-} derive(Eq, @debug.Debug)
+}
 
 pub struct Conn {
   text : @io.Utf8Writer
@@ -73,10 +75,11 @@ pub async fn Message::read_into(Self, FixedArray[Byte], offset? : Int32, max_len
 pub async fn Message::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
 pub impl @io.BinaryReader for Message
 
+#derive(@debug.Debug)
 pub(all) enum MessageKind {
   Binary
   Text
-} derive(@debug.Debug)
+}
 
 // Type aliases
 

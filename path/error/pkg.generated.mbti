@@ -8,9 +8,10 @@ import {
 // Values
 
 // Errors
+#derive(@debug.Debug)
 pub(all) suberror ResolveError {
   CurrentDirectoryUnavailable
-} derive(@debug.Debug)
+}
 
 // Types and methods
 

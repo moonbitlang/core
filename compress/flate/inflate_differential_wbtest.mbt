@@ -13,10 +13,11 @@
 // limitations under the License.
 
 ///|
+#derive(Eq, @debug.Debug)
 priv enum InflateDifferentialOutcome {
   InflateDifferentialOk(Bytes)
   InflateDifferentialErr(InflateErrorKind)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 priv struct InflateDifferentialRng {

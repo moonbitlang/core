@@ -13,11 +13,12 @@
 // limitations under the License.
 
 ///|
+#derive(@debug.Debug)
 priv struct Entry[K] {
   mut psl : Int32
   hash : Int32
   key : K
-} derive(@debug.Debug)
+}
 
 /// A mutable hash set implements with Robin Hood hashing.
 ///

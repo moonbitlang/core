@@ -17,9 +17,10 @@
 ///
 /// Every stage is separately visible to the process host, and an empty
 /// pipeline is rejected when execution is requested.
+#derive(@debug.Debug)
 struct Pipeline {
   commands : Array[Cmd]
-} derive(@debug.Debug)
+}
 
 ///|
 /// Describe a pipeline whose stages are connected by real pipes.

@@ -21,7 +21,8 @@
 /// so insertions collide heavily and deterministically (independent of the
 /// runtime hash seed, which is randomized on some targets). This forces the
 /// Robin Hood push-away path to run regardless of platform.
-priv struct Collide(Int32) derive(Eq)
+#derive(Eq)
+priv struct Collide(Int32)
 
 ///|
 impl Hash for Collide with fn hash(self) {

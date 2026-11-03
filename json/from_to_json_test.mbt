@@ -35,6 +35,7 @@ test "map JSON conversion sizes the result for live entries" {
 
 ///|
 // Older compilers expand this derive through deprecated String::to_json.
+#derive(@json.ToJson, @json.FromJson, Debug, Eq)
 #warnings("-deprecated")
 priv enum Expr {
   Add(Expr, Expr)
@@ -42,7 +43,7 @@ priv enum Expr {
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(@json.ToJson, @json.FromJson, Debug, Eq)
+}
 
 ///|
 test {

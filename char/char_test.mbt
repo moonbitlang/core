@@ -37,9 +37,10 @@ test "show output" {
 }
 
 ///|
+#derive(Hash, Eq, Debug)
 priv struct TestHash {
   x : Char
-} derive(Hash, Eq, Debug)
+}
 
 ///|
 test "Char hash function with struct" {

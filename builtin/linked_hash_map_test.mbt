@@ -629,7 +629,8 @@ test "Map::merge_in_place empty maps" {
 }
 
 ///|
-priv struct LKey(Int32, Int32) derive(Eq)
+#derive(Eq)
+priv struct LKey(Int32, Int32)
 
 ///|
 impl Hash for LKey with fn hash(self) {
@@ -913,7 +914,8 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
 ///|
 /// A key whose hash is the integer itself, so the table layouts in the
 /// reentrancy tests below do not depend on the per-process hash seed.
-priv struct Id(Int32) derive(Eq)
+#derive(Eq)
+priv struct Id(Int32)
 
 ///|
 impl Hash for Id with fn hash_combine(self, hasher) {

@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(Debug)
 priv enum H {
   A(Char)
-} derive(Debug)
+}
 
 ///|
 test "char nested" {

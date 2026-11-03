@@ -690,7 +690,8 @@ fn calc_grow_threshold(capacity : Int32) -> Int32 {
 }
 
 ///|
-priv struct MyString(String) derive(Eq, @debug.Debug)
+#derive(Eq, @debug.Debug)
+priv struct MyString(String)
 
 ///|
 impl Hash for MyString with fn hash(self) {

@@ -27,10 +27,11 @@ pub fn Archive::remove(Self, StringView) -> Bool
 pub fn Archive::replace(Self, StringView, BytesView) -> Bool
 pub fn Archive::set_comment(Self, BytesView) -> Unit
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Compression {
   Store
   Deflate
-} derive(Eq, @debug.Debug)
+}
 pub fn Compression::equal(Self, Self) -> Bool
 
 type Directory
@@ -88,6 +89,7 @@ pub(all) enum EntryStep {
   Done
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum LimitKind {
   PackageBytes
   Entries
@@ -95,7 +97,7 @@ pub(all) enum LimitKind {
   TotalUncompressedBytes
   DirectoryBytes
   OutputBytes
-} derive(Eq, @debug.Debug)
+}
 pub fn LimitKind::equal(Self, Self) -> Bool
 
 pub struct ReadLimits {
@@ -121,6 +123,7 @@ pub fn Writer::is_finished(Self) -> Bool
 pub fn Writer::position(Self) -> UInt64
 pub fn Writer::write(Self, BytesView) -> Unit raise
 
+#derive(Eq, @debug.Debug)
 pub(all) enum ZipErrorKind {
   Truncated
   InvalidSignature
@@ -137,7 +140,7 @@ pub(all) enum ZipErrorKind {
   Cancelled
   InvalidArgument
   InvalidState
-} derive(Eq, @debug.Debug)
+}
 pub fn ZipErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases

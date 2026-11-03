@@ -30,6 +30,7 @@ pub fn Encoder::is_finished(Self) -> Bool
 pub fn Encoder::reset(Self, dictionary? : BytesView) -> Unit
 pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
 
+#derive(Eq, @debug.Debug)
 pub(all) enum ZlibErrorKind {
   Truncated
   InvalidHeader
@@ -41,7 +42,7 @@ pub(all) enum ZlibErrorKind {
   OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   Cancelled
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 pub fn ZlibErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases

@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(ToJson)
 priv struct JsonRecord {
   count : Int32
-} derive(ToJson)
+}
 
 ///|
 test "JSON remains available through the prelude" {

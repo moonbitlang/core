@@ -325,7 +325,8 @@ pub fn[X] Queue::try_get(self : Queue[X]) -> X? raise {
 
 ///|
 /// Default error raised when trying to access an already-closed queue
-pub suberror QueueAlreadyClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror QueueAlreadyClosed
 
 ///|
 /// Close an async queue. After the queue is closed:

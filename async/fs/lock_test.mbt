@@ -18,10 +18,11 @@ let lock_file_prog : @async.Lazy[String] = Lazy(() => {
 })
 
 ///|
+#derive(Debug)
 enum LockEvent {
   Acquire
   Release
-} derive(Debug)
+}
 
 ///|
 async fn run_lock_file_prog(

@@ -30,6 +30,7 @@ pub fn Encoder::is_finished(Self) -> Bool
 pub fn Encoder::reset(Self) -> Unit
 pub fn Encoder::step(Self, BytesView, MutArrayView[Byte], action? : @flate.DeflateAction) -> @flate.StepResult
 
+#derive(Eq, @debug.Debug)
 pub(all) enum GzipErrorKind {
   Truncated
   InvalidHeader
@@ -39,7 +40,7 @@ pub(all) enum GzipErrorKind {
   OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   Cancelled
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 pub fn GzipErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases

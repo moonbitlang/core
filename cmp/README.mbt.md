@@ -65,10 +65,11 @@ With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to comp
 
 ```mbt check
 ///|
+#derive(Debug)
 priv struct Person {
   name : String
   age : Int32
-} derive(Debug)
+}
 
 ///|
 test "cmp_by_key" {

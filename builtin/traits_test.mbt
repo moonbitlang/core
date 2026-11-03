@@ -22,10 +22,11 @@ test "write_iter with trailing" {
 }
 
 ///|
+#derive(Hash, Eq, Debug)
 priv struct Data {
   x : Array[Int32]
   y : FixedArray[Int32]
-} derive(Hash, Eq, Debug)
+}
 
 ///|
 test "hash_data" {
@@ -46,10 +47,11 @@ struct TestLogger {
 }
 
 ///|
+#derive(Eq)
 priv struct Pair {
   left : Int32
   right : Int32
-} derive(Eq)
+}
 
 ///|
 struct Wrapper {

@@ -113,7 +113,8 @@ const EMPTY_MESSAGE_HEADER_END : Bytes = b"Content-Length: 0\r\n\r\n"
 ///|
 /// Error raised when the user is sending a fixed length HTTP message body,
 /// but the actual length of the message body is incorrect.
-pub suberror IncorrectBodyLength derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror IncorrectBodyLength
 
 ///|
 impl @io.BinaryWriter for Sender

@@ -24,6 +24,7 @@
 /// kind are coalesced. Storing both coordinates keeps each edit
 /// self-contained, so a slice of the script (a hunk) still knows its absolute
 /// positions.
+#derive(Eq, @debug.Debug)
 pub enum Edit {
   /// Delete `old_len` elements starting at `old_index` from `old`.
   ///
@@ -38,7 +39,7 @@ pub enum Edit {
   /// Keep `len` equal elements starting at `old_index` in `old` and `new_index`
   /// in `new`.
   Equal(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Return the half-open range `[start, end)` covered by this edit in `old`.

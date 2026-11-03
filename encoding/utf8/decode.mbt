@@ -14,9 +14,10 @@
 
 ///|
 /// Error type `Malformed`.
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(BytesView)
-} derive(@debug.Debug)
+}
 
 ///|
 fn drop_utf8_bom(bytes : BytesView, ignore_bom : Bool) -> BytesView {

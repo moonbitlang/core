@@ -48,11 +48,12 @@ fn[R : @io.BinaryReader] Reader::new(transport : R) -> Reader {
 
 ///|
 /// Error raised when an invalid HTTP message is processed
+#derive(@debug.Debug, @json.ToJson)
 pub suberror HttpProtocolError {
   BadRequest
   HttpVersionNotSupported(String)
   NotImplemented
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 /// Decode some data from current chunk, perform gzip decompression if necessary.

@@ -17,10 +17,11 @@
 // Older compilers expand this derive through deprecated String::to_json.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove the deprecated_syntax suppression.
+#derive(Eq, Show, ToJson)
 #warnings("-deprecated_syntax-deprecated")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson)
+}
 
 ///|
 /// Trait for types that can be converted from `Json`

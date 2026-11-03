@@ -27,7 +27,8 @@
 ///   inspect((w + nw).intersects(w), content="true")
 /// }
 /// ```
-pub struct Category(Int32) derive(Eq, Hash)
+#derive(Eq, Hash)
+pub struct Category(Int32)
 
 ///|
 /// A sentinel category used in internal transitions.

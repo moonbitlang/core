@@ -14,6 +14,7 @@
 
 ///|
 /// Kind of a file
+#derive(Eq, @debug.Debug)
 #non_exhaustive
 pub(all) enum FileKind {
   Unknown = 0
@@ -25,7 +26,7 @@ pub(all) enum FileKind {
   BlockDevice = 6
   CharDevice = 7
   Console = 8
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 // currently we cannot re-export constructors,

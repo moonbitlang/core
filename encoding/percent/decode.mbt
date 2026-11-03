@@ -18,9 +18,10 @@
 /// `Malformed(input)` reports that `input` contains a `%` that is not
 /// followed by two hexadecimal digits, or a run of escaped bytes that is not
 /// valid UTF-8.
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(StringView)
-} derive(@debug.Debug)
+}
 
 ///|
 fn hex_value(code_unit : Int32) -> Int32 {
