@@ -13,11 +13,14 @@
 // limitations under the License.
 
 ///|
-async test "resolve mooncakes.io" {
-  inspect(
-    @socket.Addr::resolve("mooncakes.io", port=443),
-    content="34.219.237.228:443",
-  )
+async test "resolve localhost with default preference" {
+  // Either loopback family is valid: the system resolver controls their order.
+  let addr = @socket.Addr::resolve("localhost", port=443)
+  if addr.is_ipv6() {
+    inspect(addr, content="[::1]:443")
+  } else {
+    inspect(addr, content="127.0.0.1:443")
+  }
 }
 
 ///|
