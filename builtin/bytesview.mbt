@@ -216,6 +216,7 @@ pub fn Bytes::exact_view(
 ///   debug_inspect(bs.get_view(start=10), content="None")
 /// }
 /// ```
+#intrinsic("%bytes.view_opt")
 pub fn Bytes::get_view(
   self : Bytes,
   start~ : Int32 = 0,
@@ -232,6 +233,7 @@ pub fn Bytes::get_view(
 ///|
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
 /// range is invalid. The optional variant of `BytesView::exact_view`.
+#intrinsic("%bytesview.view_opt")
 pub fn BytesView::get_view(
   self : BytesView,
   start~ : Int32 = 0,

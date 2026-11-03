@@ -312,6 +312,7 @@ pub fn[T] Array::exact_view(
 ///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
+#intrinsic("%array.view_opt")
 pub fn[T] Array::get_view(
   self : Array[T],
   start~ : Int32 = 0,
@@ -408,6 +409,7 @@ pub fn[T] ArrayView::exact_view(
 ///   debug_inspect(view.get_view(start~, end~), content="None")
 /// }
 /// ```
+#intrinsic("%arrayview.view_opt")
 pub fn[T] ArrayView::get_view(
   self : ArrayView[T],
   start~ : Int32 = 0,
@@ -611,6 +613,7 @@ pub fn[T] FixedArray::exact_view(
 ///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
+#intrinsic("%fixedarray.view_opt")
 pub fn[T] FixedArray::get_view(
   self : FixedArray[T],
   start~ : Int32 = 0,

@@ -123,6 +123,35 @@ test "unsafe_view preserves every valid raw UTF-16 range" {
 }
 
 ///|
+test "unsafe_mut_view agrees with mut_view on every valid range" {
+  let arr = [1, 2, 3]
+  let fixed : FixedArray[Int32] = [1, 2, 3]
+  let nested = [0, 1, 2, 3, 4].mut_view(start=1, end=4)
+  for start in 0..<=3 {
+    for end in start..<=3 {
+      let expected = arr.mut_view(start~, end~).to_owned()
+      for
+        result in [
+          arr.unsafe_mut_view(start~, end~),
+          fixed.unsafe_mut_view(start~, end~),
+          nested.unsafe_mut_view(start~, end~),
+        ] {
+        assert_eq(result.to_owned(), expected)
+      }
+      assert_eq(nested.unsafe_mut_view(start~, end~).start_offset(), 1 + start)
+    }
+  }
+  arr.unsafe_mut_view(start=1, end=3)[0] = 20
+  fixed.unsafe_mut_view(start=1, end=3)[1] = 30
+  nested.unsafe_mut_view(start=1, end=3).unsafe_mut_view(start=0, end=1)[0] = 40
+  json_inspect(arr, content=[1, 20, 3])
+  json_inspect(fixed, content=[1, 2, 30])
+  json_inspect(nested.to_owned(), content=[1, 40, 3])
+  let empty : Array[Int32] = []
+  assert_eq(empty.unsafe_mut_view(start=0, end=0).length(), 0)
+}
+
+///|
 test "unsafe_view supports empty containers" {
   let arr : Array[Int32] = []
   let fixed : FixedArray[Int32] = []
