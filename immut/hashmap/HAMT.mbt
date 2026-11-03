@@ -347,7 +347,7 @@ pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> HashMap[K, V] raise? {
-  fn go(node) raise? {
+  fn go(node : Node[K, V]) raise? {
     match node {
       Leaf(key1, value1, bucket) => {
         let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
@@ -397,7 +397,7 @@ pub fn[K, V, A] HashMap::fold(
   init~ : A,
   f : (A, K, V) -> A raise?,
 ) -> A raise? {
-  fn go(acc, node) raise? {
+  fn go(acc, node : Node[K, V]) raise? {
     match node {
       Leaf(k, v, bucket) =>
         bucket.fold(init=f(acc, k, v), (acc, kv) => f(acc, kv.0, kv.1))
@@ -545,7 +545,7 @@ fn[K : Eq, V] Node::remove_with_path(
 /// WARNING: this operation is `O(N)` in map size
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
-  fn node_size(node) {
+  fn node_size(node : Node[K, V]) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()
       Flat(_) => 1
@@ -612,7 +612,7 @@ pub fn[K : Eq, V] HashMap::union_with(
   other : HashMap[K, V],
   f : (K, V, V) -> V raise?,
 ) -> HashMap[K, V] raise? {
-  fn go(node1 : Node[_], node2) raise? {
+  fn go(node1 : Node[_], node2 : Node[_]) raise? {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) => {
         let new_value = match node1.get_with_path(key2, path2) {
@@ -723,7 +723,7 @@ pub fn[K : Eq, V] HashMap::intersection_with(
   other : HashMap[K, V],
   f : (K, V, V) -> V raise?,
 ) -> HashMap[K, V] raise? {
-  fn go(node1 : Node[_], node2) raise? {
+  fn go(node1 : Node[_], node2 : Node[_]) raise? {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) =>
         match node1.get_with_path(key2, path2) {
@@ -828,7 +828,7 @@ pub fn[K, V] HashMap::each(
   self : HashMap[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
-  fn go(node) raise? {
+  fn go(node : Node[K, V]) raise? {
     match node {
       Leaf(k, v, bucket) => {
         f(k, v)

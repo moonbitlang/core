@@ -388,7 +388,7 @@ fn[A : Eq] Node::remove_with_path(
 /// WARNING: this operation is `O(N)` in set size
 #alias(size, deprecated)
 pub fn[A] HashSet::length(self : HashSet[A]) -> Int32 {
-  fn node_size(node) {
+  fn node_size(node : Node[A]) {
     match node {
       Leaf(_, bucket) => 1 + bucket.length()
       Flat(_) => 1
@@ -413,7 +413,7 @@ pub fn[K : Eq] HashSet::union(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  fn go(node1, node2) {
+  fn go(node1 : Node[K], node2 : Node[K]) {
     // A subtree shared by both sets (e.g. two versions of one set) is its
     // own union.
     if physical_equal(node1, node2) {
@@ -450,7 +450,7 @@ pub fn[K : Eq] HashSet::intersection(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  fn go(node1, node2) {
+  fn go(node1 : Node[K], node2 : Node[K]) {
     // A subtree shared by both sets is its own intersection.
     if physical_equal(node1, node2) {
       return Some(node1)
@@ -544,7 +544,7 @@ pub fn[A] HashSet::each(
   self : HashSet[A],
   f : (A) -> Unit raise?,
 ) -> Unit raise? {
-  fn go(node) raise? {
+  fn go(node : Node[A]) raise? {
     match node {
       Leaf(k, bucket) => {
         f(k)

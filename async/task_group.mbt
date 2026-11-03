@@ -322,7 +322,7 @@ pub fn TaskGroup::spawn_loop(
             f()
           }
         Some(strategy) => {
-          let fatal_error = err => {
+          let fatal_error = (err : Error) => {
             err is BreakFromSpawnLoop || (fatal_error is Some(f) && f(err))
           }
           for ;; {
