@@ -22,7 +22,6 @@ import {
 }
 
 import {
-  "moonbitlang/core/string",
   "moonbitlang/core/async/internal/test_util",
 } for "test"
 
@@ -32,6 +31,11 @@ import {
   "moonbitlang/core/env",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/encoding/utf8",
+} for "test"
+
+#cfg(target="native")
+import {
+  "moonbitlang/core/string",
 } for "test"
 
 import {

@@ -1,11 +1,11 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/json",
-  "moonbitlang/core/string",
 }
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
   "moonbitlang/core/debug",
   "moonbitlang/core/lazy",
   "moonbitlang/core/async/os_error",
@@ -23,7 +23,6 @@ import {
 }
 
 import {
-  "moonbitlang/core/string",
   "moonbitlang/core/async/internal/test_util",
 } for "test"
 

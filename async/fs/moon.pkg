@@ -1,10 +1,10 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/int",
 }
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/int",
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
   "moonbitlang/core/set",

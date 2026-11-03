@@ -1,8 +1,6 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
-  "moonbitlang/core/int",
-  "moonbitlang/core/string",
   "moonbitlang/core/json",
 }
 
@@ -15,6 +13,8 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/int",
+  "moonbitlang/core/string",
   "moonbitlang/core/set",
   "moonbitlang/core/cmp",
   "moonbitlang/core/encoding/utf8",
