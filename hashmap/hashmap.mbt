@@ -364,6 +364,9 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 /// `init` may read or write `self` (as a recursive memoized function does).
 /// Its result is stored under `key` once it returns, replacing any value that
 /// `init` itself stored under `key`.
+/// If `key` is present, `init` is not called. If `init` raises, the error is
+/// propagated without inserting its result. Side effects performed by `init`,
+/// including changes to this map, are not rolled back.
 ///
 /// Example:
 ///
@@ -378,8 +381,8 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 pub fn[K : Hash + Eq, V] HashMap::get_or_init(
   self : HashMap[K, V],
   key : K,
-  init : () -> V,
-) -> V {
+  init : () -> V raise?,
+) -> V raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
