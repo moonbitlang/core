@@ -62,9 +62,7 @@ pub fn[T] FixedArray::unsafe_view(
   self : FixedArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> ArrayView[T] {
-  unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(start~, end~)
-}
+) -> ArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -80,9 +78,7 @@ pub fn[T] ReadOnlyArray::unsafe_view(
   self : ReadOnlyArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> ArrayView[T] {
-  self.unsafe_reinterpret_to_fixed_array().unsafe_view(start~, end~)
-}
+) -> ArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -132,13 +128,7 @@ pub fn[T] FixedArray::unsafe_mut_view(
   self : FixedArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> MutArrayView[T] {
-  MutArrayView::make_view(
-    unsafe_cast_fixedarray_to_uninitializedarray(self),
-    start,
-    end,
-  )
-}
+) -> MutArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a mutable view without checking or clamping bounds.
