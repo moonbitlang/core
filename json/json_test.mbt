@@ -421,7 +421,7 @@ test "stringify non-finite number" {
     ),
   )
   inspect(
-    [nan, inf, neg_inf].to_json().stringify(),
+    Json([nan, inf, neg_inf]).stringify(),
     content=(
       #|["NaN","Infinity","-Infinity"]
     ),
@@ -437,6 +437,29 @@ test "stringify non-finite number" {
     Json::number(@double.infinity, repr="1e999999999").stringify(),
     content="1e999999999",
   )
+}
+
+///|
+test "stringify non-finite number with replacer and indent" {
+  let json : Json = { "number": 0, "tail": [1, 2] }
+  let mut calls = 0
+  let replacer = @json.Replacer((key, value) => {
+    calls += 1
+    Some(if key == "number" { Json::number(@double.infinity) } else { value })
+  })
+  inspect(
+    json.stringify(indent=2, replacer~),
+    content=(
+      #|{
+      #|  "number": "Infinity",
+      #|  "tail": [
+      #|    1,
+      #|    2
+      #|  ]
+      #|}
+    ),
+  )
+  inspect(calls, content="2")
 }
 
 ///|

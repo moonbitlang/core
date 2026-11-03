@@ -113,38 +113,6 @@ fn write_indent(
 }
 
 ///|
-#inline
-fn write_number(buf : StringBuilder, number : Double) -> Unit {
-  // The guard is kept tiny and the non-finite tail outlined so that inlining
-  // this into the `stringify` loop stays cheap on every ordinary number.
-  if number.is_nan() || number.is_inf() {
-    write_non_finite_number(buf, number)
-  } else {
-    buf.write_object(number)
-  }
-}
-
-///|
-fn write_non_finite_number(buf : StringBuilder, number : Double) -> Unit {
-  // JSON has no syntax for NaN or the infinities, so a `Number` holding one
-  // cannot be written as a bare literal. Encode them the way `Double::to_json`
-  // does — as the strings "NaN", "Infinity" and "-Infinity" — since
-  // `Double::from_json` accepts exactly those three, so the value still
-  // survives a round trip.
-  //
-  // Only a directly constructed `Number` reaches this: the parser stores the
-  // source text in `repr` for every literal that overflows to an infinity, and
-  // that branch writes `repr` verbatim without consulting the double.
-  if number.is_nan() {
-    buf.write_string("\"NaN\"")
-  } else if number.is_pos_inf() {
-    buf.write_string("\"Infinity\"")
-  } else {
-    buf.write_string("\"-Infinity\"")
-  }
-}
-
-///|
 /// Internal stack frame used by iterative stringify to avoid recursion
 priv enum WriteFrame {
   Array(Array[Json], mut i~ : Int32) // (arr, index)
@@ -357,7 +325,13 @@ pub fn Json::stringify(
           }
           Number(n, repr~) =>
             match repr {
-              None => write_number(buf, n)
+              None =>
+                if n.is_nan() || n.is_inf() {
+                  // Reuse Double's ToJson encoding and the string branch above.
+                  continue Some(Json(n))
+                } else {
+                  buf.write_object(n)
+                }
               Some(r) => buf.write_string(r)
             }
           True => buf <+ "true"
