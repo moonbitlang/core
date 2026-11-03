@@ -671,6 +671,7 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 ///   debug_inspect(s.get_view(start=100), content="None")
 /// }
 /// ```
+#intrinsic("%string.view_opt")
 pub fn String::get_view(
   self : String,
   start~ : Int32 = 0,
@@ -694,6 +695,7 @@ pub fn String::get_view(
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
 /// range is invalid — either out of bounds or splitting a UTF-16 surrogate
 /// pair. The optional variant of `StringView::exact_view`.
+#intrinsic("%stringview.view_opt")
 pub fn StringView::get_view(
   self : StringView,
   start~ : Int32 = 0,

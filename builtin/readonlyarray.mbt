@@ -909,6 +909,7 @@ pub fn[T] ReadOnlyArray::exact_view(
 ///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
+#intrinsic("%readonlyarray.view_opt")
 pub fn[T] ReadOnlyArray::get_view(
   self : ReadOnlyArray[T],
   start~ : Int32 = 0,
