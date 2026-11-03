@@ -248,6 +248,9 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// the value stored when the key is absent. This mirrors Java's `Map.merge`
 /// and Rust's `Entry::and_modify(f).or_insert(default)`.
 ///
+/// If `f` raises, the error is propagated without storing a replacement value.
+/// Side effects performed by `f` are not rolled back.
+///
 /// `f` must not structurally modify `self`, directly or through an alias:
 /// it must not insert or remove keys, or clear the map. Violations have
 /// unspecified results and are not guaranteed to be detected. Memory and type
@@ -257,8 +260,8 @@ pub fn[K : Compare, V] SortedMap::update_or_default(
   self : SortedMap[K, V],
   key : K,
   default : V,
-  f : (V) -> V,
-) -> Unit {
+  f : (V) -> V raise?,
+) -> Unit raise? {
   let (new_root, inserted) = update_or_default_node(self.root, key, default, f)
   if self.root != new_root {
     self.root = new_root
@@ -760,8 +763,8 @@ fn[K : Compare, V] update_or_default_node(
   root : Node[K, V]?,
   key : K,
   default : V,
-  f : (V) -> V,
-) -> (Node[K, V]?, Bool) {
+  f : (V) -> V raise?,
+) -> (Node[K, V]?, Bool) raise? {
   match root {
     None => (Some(new_node(key, default)), true)
     Some(n) =>
