@@ -14,7 +14,7 @@
 
 ///|
 test "bench Map::map int n=0" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<0 {
     m[i * 1103515245] = i
   }
@@ -23,7 +23,7 @@ test "bench Map::map int n=0" (it : @bench.T) {
 
 ///|
 test "bench Map::map int n=1" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<1 {
     m[i * 1103515245] = i
   }
@@ -32,7 +32,7 @@ test "bench Map::map int n=1" (it : @bench.T) {
 
 ///|
 test "bench Map::map int n=16" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<16 {
     m[i * 1103515245] = i
   }
@@ -41,7 +41,7 @@ test "bench Map::map int n=16" (it : @bench.T) {
 
 ///|
 test "bench Map::map int n=10000" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<10000 {
     m[i * 1103515245] = i
   }
@@ -50,7 +50,7 @@ test "bench Map::map int n=10000" (it : @bench.T) {
 
 ///|
 test "bench Map::map int n=100000" (it : @bench.T) {
-  let m : Map[Int, Int] = Map([])
+  let m : Map[Int32, Int32] = Map([])
   for i in 0..<100000 {
     m[i * 1103515245] = i
   }
