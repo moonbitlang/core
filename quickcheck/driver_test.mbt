@@ -531,12 +531,13 @@ test "context is attached to raised failures too" {
       #|Raised(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  error=Failure("quickcheck/driver_test.mbt:516:32-516:44@moonbitlang/core FAILED: boom"),
+      #|  error=Failure("quickcheck/driver_test.mbt:522:32-522:44@moonbitlang/core FAILED: boom"),
       #|  tests=1,
       #|  size=0,
       #|  shrinks=29,
       #|  shrink_attempts=31,
       #|)
+
     ),
   )
 }
