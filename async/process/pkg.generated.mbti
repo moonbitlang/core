@@ -4,44 +4,32 @@ package "moonbitlang/core/async/process"
 import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/signal",
-  "moonbitlang/core/async/stdio",
 }
 
 // Values
-pub fn duplicate_stdout() -> &ProcessOutput
-
 pub fn graceful_cancel(timeout~ : Int32, signal? : @signal.Signal) -> CancellationHandler
 
 pub fn hard_cancel() -> CancellationHandler
 
 pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise
 
-pub fn read_from_process() -> &ProcessOutput
+pub fn read_from_process() -> (ReadFromProcess, SharedProcessOutput) raise
 
-pub fn read_from_process_shared() -> (ReadFromProcess, SharedProcessOutput) raise
+pub async fn redirect_from_file(String) -> SharedProcessInput
 
-pub fn redirect_from_file(String) -> &ProcessInput
+pub async fn redirect_to_file(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
 
-pub async fn redirect_from_file_shared(String) -> SharedProcessInput
+pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler) -> ProcessResult
 
-pub fn redirect_to_file(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> &ProcessOutput
+pub async fn spawn(@async.TaskGroup, StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, no_wait? : Bool) -> Process
 
-pub async fn redirect_to_file_shared(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
-
-pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler) -> ProcessResult
-
-pub async fn spawn(@async.TaskGroup, StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, no_wait? : Bool) -> Process
-
-pub async fn spawn_orphan(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : &ProcessInput, stdout? : &ProcessOutput, stderr? : &ProcessOutput, cwd? : StringView, no_console_window? : Bool) -> OrphanProcess
+pub async fn spawn_orphan(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool) -> OrphanProcess
 
 pub async fn wait_pid(Int32) -> Int32
 
-pub fn write_to_process() -> &ProcessInput
-
-pub fn write_to_process_shared() -> (SharedProcessInput, WriteToProcess) raise
+pub fn write_to_process() -> (SharedProcessInput, WriteToProcess) raise
 
 // Errors
 
@@ -68,6 +56,27 @@ pub struct Process {
 pub fn Process::cancel(Self) -> Unit
 pub fn Process::try_wait(Self) -> Int32? raise
 pub async fn Process::wait(Self) -> Int32
+
+#non_exhaustive
+pub(all) enum ProcessInput {
+  Inherit
+  Stdin
+  FeedFromParent
+  FromFile(StringView)
+  Shared(SharedProcessInput)
+}
+
+#non_exhaustive
+pub(all) enum ProcessOutput {
+  Inherit
+  Stdout
+  Stderr
+  Collect
+  ToFile(StringView)
+  AppendFile(StringView)
+  DuplicateStdout
+  Shared(SharedProcessOutput)
+}
 
 pub struct ProcessResult {
   exit_code : Int32
@@ -99,11 +108,9 @@ pub impl @io.BinaryReader for ReadFromProcess
 
 type SharedProcessInput
 pub fn SharedProcessInput::close(Self) -> Unit
-pub impl ProcessInput for SharedProcessInput
 
 type SharedProcessOutput
 pub fn SharedProcessOutput::close(Self) -> Unit
-pub impl ProcessOutput for SharedProcessOutput
 
 pub struct WriteToProcess {
   text : @io.Utf8Writer
@@ -117,8 +124,3 @@ pub impl @io.BinaryWriter for WriteToProcess
 // Type aliases
 
 // Traits
-trait ProcessInput
-pub impl ProcessInput for @stdio.Input
-
-trait ProcessOutput
-pub impl ProcessOutput for @stdio.Output

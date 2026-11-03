@@ -12,11 +12,7 @@ Execute commands and collect their output:
 ///|
 #cfg(all(target="native", not(platform="windows")))
 async test "simple command execution" {
-  let result = @process.run(
-    "echo",
-    ["Hello, World!"],
-    stdout=@process.read_from_process(),
-  )
+  let result = @process.run("echo", ["Hello, World!"], stdout=Collect)
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text().has_prefix("Hello"), content="true")
 }
@@ -61,11 +57,10 @@ Child processes follow the rules of structured concurrency:
 
 ## Collecting Process Output
 
-`run()` collects a stream when it is redirected with
-`@process.read_from_process()`. Use `stdout_binary()` or `stderr_binary()` for
-raw `Bytes`, and `stdout_text()` or `stderr_text()` to decode the corresponding
-stream as UTF-8. An output accessor fails if that stream was not redirected
-with `read_from_process()`.
+`run()` collects a stream when it is redirected with `stdout=Collect` or `stderr=Collect`.
+Use `.stdout_binary()`/`.stderr_binary()` on the returned `struct ProcessResult` for raw `Bytes`,
+or `.stdout_text()`/`.stderr_text()` to decode the corresponding stream as UTF-8.
+An output accessor fails if that stream was not redirected with `Collect`.
 
 ### Collect Standard Output
 
@@ -75,11 +70,7 @@ Capture stdout from a process:
 ///|
 #cfg(all(target="native", not(platform="windows")))
 async test "collect stdout" {
-  let result = @process.run(
-    "printf",
-    ["test output"],
-    stdout=@process.read_from_process(),
-  )
+  let result = @process.run("printf", ["test output"], stdout=Collect)
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text(), content="test output")
 }
@@ -90,7 +81,7 @@ async test "collect stdout with args" {
   let result = @process.run(
     "sh",
     ["-c", "echo 'line 1'; echo 'line 2'"],
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   let output = result.stdout_text()
   inspect(result.exit_code, content="0")
@@ -110,7 +101,7 @@ async test "collect stderr" {
   let result = @process.run(
     "sh",
     ["-c", "printf 'error message' >&2"],
-    stderr=@process.read_from_process(),
+    stderr=Collect,
   )
   inspect(result.exit_code, content="0")
   inspect(result.stderr_text(), content="error message")
@@ -128,8 +119,8 @@ async test "collect both streams" {
   let result = @process.run(
     "sh",
     ["-c", "printf 'out msg'; printf 'err msg' >&2"],
-    stdout=@process.read_from_process(),
-    stderr=@process.read_from_process(),
+    stdout=Collect,
+    stderr=Collect,
   )
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text(), content="out msg")
@@ -148,8 +139,8 @@ async test "collect merged output" {
   let result = @process.run(
     "sh",
     ["-c", "printf 'ab'; printf 'cd' >&2; printf 'ef'"],
-    stdout=@process.read_from_process(),
-    stderr=@process.duplicate_stdout(),
+    stdout=Collect,
+    stderr=DuplicateStdout,
   )
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text(), content="abcdef")
@@ -160,8 +151,9 @@ async test "collect merged output" {
 
 ### Reading from Process
 
-Use `@process.read_from_process()` with `@process.spawn` to create a pipe lazily.
-Output is available through `.stdout` or `.stderr` on the returned child handle:
+Use `stdout=Collect` or `stderr=Collect` with `@process.spawn` to collect child output from parent.
+Output is available through `.stdout` or `.stderr` on the returned process handle.
+`.stdout` and `.stderr` also has a builtin `.text` field providing text view for the corresponding stream:
 
 ```moonbit check
 ///|
@@ -172,7 +164,7 @@ async test "read from process with pipe" {
       group,
       "echo",
       ["Hello from process"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
     )
     defer child.stdout.close()
     let output = child.stdout.text.read_all()
@@ -183,9 +175,9 @@ async test "read from process with pipe" {
 
 ### Writing to Process
 
-Use `@process.write_to_process()` with `@process.spawn` to create a pipe lazily.
-Input can be written through `.stdin` on the returned child handle. Close
-`.stdin` when writing is complete so the child observes end-of-file:
+Use `FeedFromParent` with `@process.spawn` to create feed input to child's `stdin` from parent.
+Input can be written through `.stdin` on the returned process handle.
+Close `.stdin` when writing is complete so the child observes end-of-file:
 
 ```moonbit check
 ///|
@@ -196,8 +188,8 @@ async test "write to process with pipe" {
       group,
       "cat",
       ["-"],
-      stdin=@process.write_to_process(),
-      stdout=@process.read_from_process(),
+      stdin=FeedFromParent,
+      stdout=Collect,
     )
     group.spawn_bg(() => {
       defer child.stdin.close()
@@ -212,10 +204,11 @@ async test "write to process with pipe" {
 }
 ```
 
-`read_from_process()` and `write_to_process()` are for one child created with
-`spawn()`. Their child-side handles are closed automatically after process
-creation. The returned `Process.stdin`, `Process.stdout`, and `Process.stderr`
-channels must be closed by the caller when those channels were requested.
+`Collect` and `FeedFromParent` are the convenient choices for one child created
+with `spawn()` or `spawn_orphan()`. Their child-side pipe endpoints are closed
+automatically after process creation. The corresponding `Process.stdin`,
+`Process.stdout`, and `Process.stderr` channels are caller-owned and must be
+closed when no longer needed.
 
 ## File Redirection
 
@@ -234,8 +227,8 @@ async test "redirect input from file" {
     let result = @process.run(
       "cat",
       [],
-      stdin=@process.redirect_from_file(input_file),
-      stdout=@process.read_from_process(),
+      stdin=FromFile(input_file),
+      stdout=Collect,
     )
     inspect(result.exit_code, content="0")
     inspect(result.stdout_text(), content="file content")
@@ -257,7 +250,7 @@ async test "redirect output to file" {
     let result = @process.run(
       "echo",
       ["test output"],
-      stdout=@process.redirect_to_file(output_file),
+      stdout=ToFile(output_file),
     )
     inspect(result.exit_code, content="0")
     let content = @fs.read_text(output_file)
@@ -283,24 +276,25 @@ async test "file to file redirection" {
     let _ = @process.run(
       "cat",
       [],
-      stdin=@process.redirect_from_file(input_file),
-      stdout=@process.redirect_to_file(output_file),
+      stdin=FromFile(input_file),
+      stdout=ToFile(output_file),
     )
     inspect(@fs.read_text(output_file), content="redirect test")
   })
 }
 ```
 
-`redirect_from_file()` and `redirect_to_file()` are lazy, single-process
-redirections. The file is opened while the process is created and the parent
-copy of the file handle is closed automatically afterward.
+`FromFile(path)`, `ToFile(path)`, and `AppendFile(path)` are automatically
+managed, single-process redirections. The file is opened while the process is
+created and the process API closes its copy of the file handle afterward.
 
 ### Share a File Redirection
 
-Use `redirect_to_file_shared()` when multiple children must inherit the same
-open output file. Unlike the single-process helper, it opens the file
-immediately and returns a `SharedProcessOutput` owned by the caller. Close it
-after it has been passed to the last child, or if spawning is abandoned:
+Use `redirect_to_file()` when multiple children must share the same open output
+file, or when custom creation modes or permissions are needed. Unlike
+`ToFile(path)` and `AppendFile(path)`, it opens the file immediately and returns
+a caller-owned `SharedProcessOutput`. Pass it as `Shared(output)`, and close it
+after it has been passed to the last child or if spawning is abandoned:
 
 ```moonbit check
 ///|
@@ -308,12 +302,14 @@ after it has been passed to the last child, or if spawning is abandoned:
 async test "redirect multiple processes to one file" {
   let output_file = "_build/process_shared_output.txt"
   defer @fs.remove(output_file)
-  let output = @process.redirect_to_file_shared(output_file)
+  let output = @process.redirect_to_file(output_file)
   {
     defer output.close()
     @async.with_task_group(group => {
-      @process.spawn(group, "printf", ["first"], stdout=output) |> ignore
-      @process.spawn(group, "printf", ["second"], stdout=output) |> ignore
+      @process.spawn(group, "printf", ["first"], stdout=Shared(output))
+      |> ignore
+      @process.spawn(group, "printf", ["second"], stdout=Shared(output))
+      |> ignore
     })
   }
   let content = @fs.read_text(output_file)
@@ -322,10 +318,10 @@ async test "redirect multiple processes to one file" {
 }
 ```
 
-`redirect_from_file_shared()` similarly returns a caller-owned
-`SharedProcessInput`. Children using it share one open file description and
-therefore one file offset: data consumed by one child is no longer available to
-the others. Always close the value after its last use.
+`redirect_from_file()` similarly returns a caller-owned `SharedProcessInput`.
+Pass it as `Shared(input)`. Children using it share one open file description
+and therefore one file offset: data consumed by one child is no longer
+available to the others. Always close the value after its last use.
 
 ## Environment Variables
 
@@ -341,7 +337,7 @@ async test "set environment variable" {
     "sh",
     ["-c", "echo $MY_VAR"],
     extra_env={ "MY_VAR": "my_value" },
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text().trim(), content="my_value")
@@ -354,7 +350,7 @@ async test "multiple environment variables" {
     "sh",
     ["-c", "echo $VAR1-$VAR2"],
     extra_env={ "VAR1": "first", "VAR2": "second" },
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text().trim(), content="first-second")
@@ -374,7 +370,7 @@ async test "isolated environment" {
     [],
     extra_env={ "ONLY_VAR": "only_value" },
     inherit_env=false,
-    stdout=@process.read_from_process(),
+    stdout=Collect,
   )
   let output = result.stdout_text()
   inspect(result.exit_code, content="0")
@@ -394,12 +390,7 @@ Execute processes in a specific directory:
 ///|
 #cfg(all(target="native", not(platform="windows")))
 async test "set working directory" {
-  let result = @process.run(
-    "pwd",
-    [],
-    cwd="async",
-    stdout=@process.read_from_process(),
-  )
+  let result = @process.run("pwd", [], cwd="async", stdout=Collect)
   inspect(result.exit_code, content="0")
   let text = result.stdout_text().trim()
   // Check that the path ends with "src" (works across OSes)
@@ -409,12 +400,7 @@ async test "set working directory" {
 ///|
 #cfg(all(target="native", not(platform="windows")))
 async test "relative path in cwd" {
-  let result = @process.run(
-    "ls",
-    [],
-    cwd="async",
-    stdout=@process.read_from_process(),
-  )
+  let result = @process.run("ls", [], cwd="async", stdout=Collect)
   inspect(result.exit_code, content="0")
   let text = result.stdout_text()
   // Should list contents of src directory
@@ -452,11 +438,10 @@ async test "wait for specific exit code" {
 
 The `Process` handle exposes:
 
-- `pid`, the operating-system process identifier;
-- `stdin`, when `stdin=write_to_process()` was requested;
-- `stdout` and `stderr`, when the corresponding stream uses
-  `read_from_process()`;
-- `wait()`, `try_wait()`, and `cancel()` for lifecycle management.
+- `pid`, the operating-system process identifier
+- `stdin`, when `stdin=FeedFromParent` was requested
+- `stdout` and `stderr`, when the corresponding stream uses `Collect`
+- `wait()`, `try_wait()`, and `cancel()` for lifecycle management
 
 Only use the pipe fields configured during `spawn()`, and close each configured
 field when it is no longer needed.
@@ -505,7 +490,8 @@ async test "spawn orphan and wait later" {
 
 ### Merge Output Streams
 
-Use `@process.duplicate_stdout()` to redirect `stderr` to the same channel as `stdout` for a child process:
+Use `DuplicateStdout` to redirect `stderr` to the same destination as `stdout`
+for a child process:
 
 ```moonbit check
 ///|
@@ -516,8 +502,8 @@ async test "merge stdout and stderr" {
       group,
       "sh",
       ["-c", "echo 'to stdout'; echo 'to stderr' >&2"],
-      stdout=@process.read_from_process(),
-      stderr=@process.duplicate_stdout(),
+      stdout=Collect,
+      stderr=DuplicateStdout,
     )
     defer child.stdout.close()
     let output = child.stdout.text.read_all()
@@ -529,16 +515,16 @@ async test "merge stdout and stderr" {
 
 ### Multiple Processes Sharing Output
 
-`read_from_process_shared()` creates a parent reader and a `SharedProcessOutput` that can
-be passed to multiple children, allowing the parent to collect their merged
-output. Unlike `read_from_process()`, both ends are explicit and caller-owned.
+`read_from_process()` creates a parent reader and a `SharedProcessOutput` that
+can be passed to multiple children as `Shared(writer)`, allowing the parent to
+collect their merged output. Both ends are explicit and caller-owned.
 
 ```moonbit check
 ///|
 #cfg(all(target="native", not(platform="windows")))
 async test "multiple processes to one pipe" {
   @async.with_task_group(root => {
-    let (reader, writer) = @process.read_from_process_shared()
+    let (reader, writer) = @process.read_from_process()
     root.spawn_bg(no_wait=true, () => {
       defer reader.close()
       let output = reader.text.read_all()
@@ -548,8 +534,8 @@ async test "multiple processes to one pipe" {
     @async.with_task_group(group => {
       // Close the shared child-side handle after spawning the last child.
       defer writer.close()
-      @process.spawn(group, "echo", ["first"], stdout=writer) |> ignore
-      @process.spawn(group, "echo", ["second"], stdout=writer) |> ignore
+      @process.spawn(group, "echo", ["first"], stdout=Shared(writer)) |> ignore
+      @process.spawn(group, "echo", ["second"], stdout=Shared(writer)) |> ignore
     })
   })
 }
@@ -557,11 +543,11 @@ async test "multiple processes to one pipe" {
 
 ### Other Shared Pipes
 
-`write_to_process_shared()` returns a `SharedProcessInput` for children and a
-`WriteToProcess` for the parent. It is useful when the same input stream must be
-passed to multiple children, or when using `run()` or `spawn_orphan()` instead
-of `spawn()`. Children share the stream: each byte is consumed by only one
-reader.
+`write_to_process()` returns a `SharedProcessInput` for children and a
+`WriteToProcess` for the parent. Pass the input endpoint as `Shared(input)`. It
+is useful when the same input stream must be passed to multiple children, or
+when using `run()` without a `Process.stdin` handle. Children share the stream:
+each byte is consumed by only one reader.
 
 `pipe()` returns a `(SharedProcessInput, SharedProcessOutput)` pair for direct
 child-to-child communication. Pass the output to the producer and the input to
@@ -583,21 +569,19 @@ view for UTF-8 text I/O, as in `child.stdout.text.read_all()` and
 
 | API or value | Redirection role | Ownership and closing |
 |---|---|---|
-| `@stdio.stdin` | `ProcessInput` | Borrowed; not closed by the process API |
-| `@stdio.stdout`, `@stdio.stderr` | `ProcessOutput` | Borrowed; not closed by the process API |
-| `write_to_process()` | Single-child `ProcessInput` | Child side is automatic; close returned `Process.stdin` |
-| `read_from_process()` | Single-child `ProcessOutput` | Child side is automatic; close returned `Process.stdout` or `.stderr` |
-| `redirect_from_file(path)` | Single-child `ProcessInput` | Opened lazily and closed automatically after process creation |
-| `redirect_to_file(path, ...)` | Single-child `ProcessOutput` | Opened lazily and closed automatically after process creation |
-| `write_to_process_shared()` | `SharedProcessInput` plus parent writer | Caller closes both ends |
-| `read_from_process_shared()` | Parent reader plus `SharedProcessOutput` | Caller closes both ends |
+| `Inherit` | Inherit the corresponding stream from the current execution context | No caller-owned handle |
+| `Stdin`, `Stdout`, `Stderr` | Select a parent-process standard stream explicitly | No caller-owned handle |
+| `FeedFromParent` | Feed one child's stdin through `Process.stdin` | Close `Process.stdin` after writing |
+| `Collect` | Collect one output stream through a process handle or `ProcessResult` | With `spawn()`, close `Process.stdout` or `.stderr` after reading |
+| `FromFile(path)` | Read one child's stdin from a file | Managed automatically |
+| `ToFile(path)`, `AppendFile(path)` | Write one child's output to a file | Managed automatically |
+| `DuplicateStdout` | Send a child's stderr to its stdout destination | No separate handle; valid only as `stderr` |
+| `Shared(endpoint)` | Use a caller-owned input or output endpoint | Close the endpoint after passing it to its last child |
+| `write_to_process()` | `SharedProcessInput` plus parent writer | Caller closes both ends |
+| `read_from_process()` | Parent reader plus `SharedProcessOutput` | Caller closes both ends |
 | `pipe()` | `SharedProcessInput` plus `SharedProcessOutput` | Caller closes both ends |
-| `redirect_from_file_shared(path)` | `SharedProcessInput` | Caller closes it after its last use |
-| `redirect_to_file_shared(path, ...)` | `SharedProcessOutput` | Caller closes it after its last use |
-
-`duplicate_stdout()` is a special `ProcessOutput` accepted only as `stderr`; it
-makes the child inherit the same destination as its `stdout` and does not own a
-separate handle.
+| `redirect_from_file(path)` | Shared file-backed input endpoint | Caller closes it after its last use |
+| `redirect_to_file(path, ...)` | Shared file-backed output endpoint | Caller closes it after its last use |
 
 ## Best Practices
 

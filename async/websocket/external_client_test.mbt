@@ -36,7 +36,7 @@ async test "external client" {
     let result = @process.run(
       "node",
       ["async/websocket/client.ts", "ws://127.0.0.1:\{port}"],
-      stdout=@process.read_from_process(),
+      stdout=Collect,
     )
     inspect(
       result.stdout_text(),

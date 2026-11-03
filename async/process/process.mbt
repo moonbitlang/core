@@ -16,8 +16,8 @@
 /// The result of a completed process.
 /// Exit code of the process can be obtained via `.exit_code`.
 ///
-/// If the stdout/stderr channel of a process is redirected to `@process.read_from_process()`,
-/// the content of the corresponding channel can be obtained via
+/// If a process's `stdout` or `stderr` is redirected with `Collect`, the content
+/// of that stream can be obtained via
 /// `.stdout_binary()` or `.stdout_text()`/`.stderr_binary()` or `.stderr_text()`.
 pub struct ProcessResult {
   exit_code : Int32
@@ -27,11 +27,11 @@ pub struct ProcessResult {
 
 ///|
 /// Obtain the collected content of a child process's stdout.
-/// The child process's `stdout` must be redirected to `@process.read_from_process()`.
+/// The child process's `stdout` must be redirected with `Collect`.
 pub fn ProcessResult::stdout_binary(self : ProcessResult) -> Bytes {
   guard self.stdout is Some(stdout) else {
     abort(
-      "cannot read output of a process whose stdout is not `@process.read_from_process()`",
+      "cannot read output of a process whose stdout is not redirected with `Collect`",
     )
   }
   stdout
@@ -39,18 +39,18 @@ pub fn ProcessResult::stdout_binary(self : ProcessResult) -> Bytes {
 
 ///|
 /// Obtain the collected content of a child process's stdout, as UTF-8 encoded text.
-/// The child process's `stdout` must be redirected to `@process.read_from_process()`.
+/// The child process's `stdout` must be redirected with `Collect`.
 pub fn ProcessResult::stdout_text(self : ProcessResult) -> String raise {
   @utf8.decode(self.stdout_binary())
 }
 
 ///|
 /// Obtain the collected content of a child process's stderr.
-/// The child process's `stderr` must be redirected to `@process.read_from_process()`.
+/// The child process's `stderr` must be redirected with `Collect`.
 pub fn ProcessResult::stderr_binary(self : ProcessResult) -> Bytes {
   guard self.stderr is Some(stderr) else {
     abort(
-      "cannot read output of a process whose stderr is not `@process.read_from_process()`",
+      "cannot read output of a process whose stderr is not redirected with `Collect`",
     )
   }
   stderr
@@ -58,7 +58,7 @@ pub fn ProcessResult::stderr_binary(self : ProcessResult) -> Bytes {
 
 ///|
 /// Obtain the collected content of a child process's stderr, as UTF-8 encoded text.
-/// The child process's `stderr` must be redirected to `@process.read_from_process()`.
+/// The child process's `stderr` must be redirected with `Collect`.
 pub fn ProcessResult::stderr_text(self : ProcessResult) -> String raise {
   @utf8.decode(self.stderr_binary())
 }
@@ -75,12 +75,14 @@ pub fn ProcessResult::stderr_text(self : ProcessResult) -> String raise {
 ///
 /// `@process.run()` does not expose a `Process` object for the child,
 /// so the caller cannot retrieve the PID or `.stdin` channel of the child process.
-/// As a consequence, `@process.write_to_process()` cannot be used with `@process.run()`.
+/// As a consequence, `FeedFromParent` cannot be used to interact with
+/// `@process.run()`.
 /// When the current process needs to interact with the child's `stdin`,
-/// use `@process.spawn` instead or `@process.write_to_process_shared()` instead.
+/// use `@process.spawn` with `FeedFromParent`, or create a caller-owned input
+/// channel with `@process.write_to_process()` and pass it as `stdin=Shared(input)`.
 ///
-/// When `stdout`/`stderr` of `@process.run()` is redirected to `@process.read_from_process()`,
-/// `@process.run` will collect the output of the corresponding channel automatically.
+/// When `stdout` or `stderr` is redirected with `Collect`, `@process.run()`
+/// collects the corresponding output automatically.
 /// The result can be obtained by calling
 /// `.stdout_binary()`/`.stderr_binary()`/`.stdout_text()`/`.stderr_text()`
 /// on the returned `struct ProcessResult`.
@@ -92,9 +94,9 @@ pub async fn run(
   args : ArrayView[String],
   extra_env~ : Map[String, String] = Map([]),
   inherit_env~ : Bool = true,
-  stdin~ : &ProcessInput = @stdio.stdin,
-  stdout~ : &ProcessOutput = @stdio.stdout,
-  stderr~ : &ProcessOutput = @stdio.stderr,
+  stdin~ : ProcessInput = Inherit,
+  stdout~ : ProcessOutput = Inherit,
+  stderr~ : ProcessOutput = Inherit,
   cwd? : StringView,
   no_console_window~ : Bool = false,
   cancel_handler~ : CancellationHandler = graceful_cancel(timeout=5000),
@@ -156,17 +158,17 @@ pub struct Process {
   pid : Int32
   /// Redirected `stdin` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stdin` redirected to `@process.write_to_process()`.
+  /// with `stdin=FeedFromParent`.
   /// In this case, it can be used to write to stdin of the child process.
   stdin : WriteToProcess
   /// Redirected `stdout` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stdout` redirected to `@process.read_from_process()`.
+  /// with `stdout=Collect`.
   /// In this case, it can be used to read from the stdout of the child process.
   stdout : ReadFromProcess
   /// Redirected `stderr` channel of the process.
   /// This field is only meaningful if the process is spawned
-  /// with `stderr` redirected to `@process.read_from_process()`.
+  /// with `stderr=Collect`.
   /// In this case, it can be used to read from the stderr of the child process.
   stderr : ReadFromProcess
   priv result : @async.Task[Int32]
@@ -205,7 +207,7 @@ pub fn Process::cancel(self : Process) -> Unit {
 /// On Windows, both `cmd` and `args` are passed via native unicode string,
 /// and `args` will be converted to Windows-style command line string via C argv splitting rule.
 ///
-/// If `no_wait` is `false` (`fales` by default),
+/// If `no_wait` is `false` (`false` by default),
 /// the task group will wait for termination of the child process before returning normally.
 /// When the task group is about to exit, for example due to fatal error, external cancellation,
 /// the child process will be terminated automatically.
@@ -214,23 +216,23 @@ pub fn Process::cancel(self : Process) -> Unit {
 /// users can retrieve the PID of the spawned process via `.pid`
 /// or wait for the process to terminate via `.wait()`/`.try_wait()`.
 ///
-/// The standard IO of the new process will be redirected to the value of `stdin`, stdout` and `stderr`.
-/// By default the child process will inherit corresponding stdio channels from current process.
-/// Standard IO channel can be redirected to one of the following:
+/// The new process's standard streams are configured by `stdin`, `stdout`, and
+/// `stderr`. They default to `Inherit`, which inherits the corresponding stream
+/// from the current execution context.
 ///
-/// - `@process.read_from_process()`, `@process.write_to_process()`,
-///   `@process.read_from_process_shared()` and `@process.write_to_process_shared()`
-///   can be used to interact with the child from current process
-/// - `@process.pipe()` can be used to connect input/output channels of multiple children process
-/// - `@process.redirect_to_file()`, `@process.rerdirect_from_file()`,
-///   `@process.redirect_to_file_shared()` and `@process.rerdirect_from_file_shared()`
-///   can be used to redirect input/output to a file path
-/// - `@stdio.stdin`, `@stdio.stdout` and `@stdio.stderr` can also be used for redirection directly
-/// - `@process.duplicate_stdout()` can be used to redirect stderr,
-///   in this case the child process's stderr channel will be the same as its stdout channel
+/// Use `FeedFromParent` to write through `Process.stdin`, and `Collect` to read
+/// through `Process.stdout` or `Process.stderr`. `FromFile`, `ToFile`, and
+/// `AppendFile` provide automatically managed file redirection.
+/// `DuplicateStdout` redirects standard error to the standard-output
+/// destination. `Stdin`, `Stdout`, and `Stderr` select a parent-process standard
+/// stream explicitly.
 ///
-/// See the document of the above functions for more detail on each kind of redirection,
-/// in particular resource management contract on various objects involved.
+/// Use `Shared(input)` or `Shared(output)` with caller-owned endpoints returned
+/// by `write_to_process()`, `read_from_process()`, `pipe()`,
+/// `redirect_from_file()`, or `redirect_to_file()` when an endpoint must be
+/// shared by multiple children or used independently of a `Process` handle.
+/// Caller-owned endpoints must be closed after they have been passed to their
+/// last child, or if spawning is abandoned.
 ///
 /// If `inherit_env` is `true` (`true` by default),
 /// the new process will inherit environment variables of current process.
@@ -267,9 +269,9 @@ pub async fn spawn(
   args : ArrayView[String],
   extra_env~ : Map[String, String] = Map([]),
   inherit_env~ : Bool = true,
-  stdin~ : &ProcessInput = @stdio.stdin,
-  stdout~ : &ProcessOutput = @stdio.stdout,
-  stderr~ : &ProcessOutput = @stdio.stderr,
+  stdin~ : ProcessInput = Inherit,
+  stdout~ : ProcessOutput = Inherit,
+  stderr~ : ProcessOutput = Inherit,
   cwd? : StringView,
   no_console_window~ : Bool = false,
   cancel_handler~ : CancellationHandler = graceful_cancel(timeout=5000),
