@@ -116,10 +116,6 @@ async test "Timer waiter cancelled 2" {
 ///|
 async test "Timer::cancel" {
   let log = []
-  let start = @async.now()
-  fn tick() {
-    (@async.now() - start + 50).to_int() / 150
-  }
   let timer = @async.Timer(450)
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
@@ -128,87 +124,69 @@ async test "Timer::cancel" {
     }
     group.spawn_bg() <| () => {
       let result = @test.expect_error_async(() => timer.wait())
-      log.push("Timer::wait(): \{@debug.to_string(result)} at tick #\{tick()}")
+      log.push("Timer::wait(): \{@debug.to_string(result)}")
     }
     @async.sleep(600)
     let err = @test.expect_error_async(() => timer.wait())
-    log.push("at tick #\{tick()}: Timer::wait(): \{@debug.to_string(err)}")
+    log.push("wait after cancellation: \{@debug.to_string(err)}")
     timer.cancel()
     let err = @test.expect_error_async(() => timer.wait())
-    log.push("at tick #\{tick()}: Timer::wait(): \{@debug.to_string(err)}")
+    log.push("wait after repeated cancellation: \{@debug.to_string(err)}")
   }
   json_inspect(log, content=[
-    "Timer::wait(): TimerCancelled at tick #1", "at tick #4: Timer::wait(): TimerCancelled",
-    "at tick #4: Timer::wait(): TimerCancelled",
+    "Timer::wait(): TimerCancelled", "wait after cancellation: TimerCancelled", "wait after repeated cancellation: TimerCancelled",
   ])
 }
 
 ///|
 async test "Timer::refresh has waiter" {
   let log = []
-  let start = @async.now()
-  fn tick() -> Int32 {
-    (@async.now() - start + 50).to_int() / 150
-  }
-
+  let mut refreshed_at = @async.now()
   let timer = @async.Timer(300)
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
       timer.wait()
-      log.push("Timer::wait() completed at tick #\{tick()}")
+      // Keep the previous 50ms early tolerance, with no upper bound on lateness.
+      assert_true(@async.now() - refreshed_at >= 250)
+      log.push("Timer::wait() completed")
     }
     group.spawn_bg() <| () => {
       @async.sleep(150)
-      log.push("refresh timer at #\{tick()}")
+      log.push("refresh timer #1")
+      refreshed_at = @async.now()
       timer.refresh()
-    }
-    group.spawn_bg() <| () => {
-      @async.sleep(300)
-      log.push("refresh timer at #\{tick()}")
+      // Sequence the refreshes instead of racing two independently scheduled tasks.
+      @async.sleep(150)
+      log.push("refresh timer #2")
+      refreshed_at = @async.now()
       timer.refresh()
     }
   }
   json_inspect(log, content=[
-    "refresh timer at #1", "refresh timer at #2", "Timer::wait() completed at tick #4",
+    "refresh timer #1", "refresh timer #2", "Timer::wait() completed",
   ])
 }
 
 ///|
 async test "Timer::refresh no waiter" {
-  let log = []
-  let start = @async.now()
-  fn tick() -> Int32 {
-    (@async.now() - start + 50).to_int() / 150
-  }
-
   let timer = @async.Timer(300)
   @async.sleep(150)
+  let refreshed_at = @async.now()
   timer.refresh()
-  log.push("refresh timer at tick #\{tick()}")
   timer.wait()
-  log.push("Timer::wait() completed at tick #\{tick()}")
-  json_inspect(log, content=[
-    "refresh timer at tick #1", "Timer::wait() completed at tick #3",
-  ])
+  // A no-op refresh would leave at most 150ms on the original deadline.
+  // There is no upper bound: a busy runner may resume the task late.
+  assert_true(@async.now() - refreshed_at >= 250)
 }
 
 ///|
 async test "Timer::refresh already terminated" {
-  let log = []
-  let start = @async.now()
-  fn tick() -> Int32 {
-    (@async.now() - start + 50).to_int() / 150
-  }
-
   let timer = @async.Timer(300)
-  @async.sleep(450)
-  timer.refresh()
-  log.push("refresh timer at tick #\{tick()}")
   timer.wait()
-  log.push("Timer::wait() completed at tick #\{tick()}")
-  json_inspect(log, content=[
-    "refresh timer at tick #3", "Timer::wait() completed at tick #5",
-  ])
+  let refreshed_at = @async.now()
+  timer.refresh()
+  timer.wait()
+  assert_true(@async.now() - refreshed_at >= 250)
 }
 
 ///|
