@@ -519,12 +519,15 @@ pub fn[K : Hash + Eq, V] HashMap::update(
 ///
 /// `f` may read or write `self`. Its result is stored under `key` once it
 /// returns, even if `f` removed `key`.
+/// If `f` raises, the error is propagated without storing a replacement value.
+/// Side effects performed by `f`, including changes to this map, are not rolled
+/// back. For an absent key, `default` is inserted without calling `f`.
 pub fn[K : Hash + Eq, V] HashMap::update_or_default(
   self : HashMap[K, V],
   key : K,
   default : V,
-  f : (V) -> V,
-) -> Unit {
+  f : (V) -> V raise?,
+) -> Unit raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {
