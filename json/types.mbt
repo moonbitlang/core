@@ -14,13 +14,15 @@
 
 ///|
 /// Type `Position` used by this package APIs.
+#derive(Eq, ToJson)
 pub(all) struct Position {
   line : Int32 // 1-based
   column : Int32 // 0-based
-} derive(Eq, ToJson)
+}
 
 ///|
 /// Error type `ParseError`.
+#derive(Eq, ToJson)
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -29,7 +31,7 @@ pub(all) suberror ParseError {
   /// A repeated decoded object key, positioned at its second opening quote.
   DuplicateKey(Position, String)
   DepthLimitExceeded
-} derive(Eq, ToJson)
+}
 
 ///|
 pub impl Show for ParseError with fn output(self, logger) {

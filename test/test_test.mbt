@@ -49,10 +49,11 @@ test "Test name" {
 }
 
 ///|
+#derive(Debug)
 priv suberror MyError {
   NotFound(String)
   Invalid(reason~ : String)
-} derive(Debug)
+}
 
 ///|
 fn maybe_raise(should_raise : Bool) -> Unit raise MyError {

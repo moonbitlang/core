@@ -16,6 +16,7 @@
 /// Which bounded resource was exceeded during a bounded read or write. The
 /// payload-related kinds guard decoded allocations; `DirectoryBytes` bounds
 /// metadata-only directory input; `OutputBytes` bounds serialization size.
+#derive(Eq, @debug.Debug)
 pub(all) enum LimitKind {
   PackageBytes
   Entries
@@ -23,11 +24,12 @@ pub(all) enum LimitKind {
   TotalUncompressedBytes
   DirectoryBytes
   OutputBytes
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Machine-readable category for a ZIP container failure. The accompanying
 /// `ZipError` message is intended for diagnostics rather than branching.
+#derive(Eq, @debug.Debug)
 pub(all) enum ZipErrorKind {
   /// The input ended before a complete record, header, payload, or trailer.
   Truncated
@@ -66,7 +68,7 @@ pub(all) enum ZipErrorKind {
   /// A `Writer` call is not valid in its current state: no open entry, an
   /// entry already open, a reentrant sink call, or use after finish/failure.
   InvalidState
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Structured ZIP failure: a stable category plus a human-readable diagnostic.

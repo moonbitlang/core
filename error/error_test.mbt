@@ -169,10 +169,11 @@ test "protect2 & finally raise error" {
 
 ///|
 // Older compilers expand this derive through deprecated String::to_json.
+#derive(ToJson)
 #warnings("-deprecated")
 priv suberror ErrWithToJson {
   ErrWithToJson(Int32)
-} derive(ToJson)
+}
 
 ///|
 suberror ErrWithoutToJson {

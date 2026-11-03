@@ -70,7 +70,8 @@ fn reference_encode(text : String) -> String {
 /// unreserved characters, `%`, hexadecimal digits, non-ASCII characters and
 /// both surrogate halves, so malformed escapes and unpaired surrogates are
 /// frequent.
-priv struct Spiky(String) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct Spiky(String)
 
 ///|
 let spiky_alphabet : Array[Int32] = [

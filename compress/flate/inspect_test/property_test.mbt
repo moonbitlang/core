@@ -21,7 +21,8 @@
 // literal/stored/dynamic block mix.
 
 ///|
-priv struct Compressible(Bytes) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct Compressible(Bytes)
 
 ///|
 fn prop_text_byte(rs : @quickcheck.RandomState) -> Byte {

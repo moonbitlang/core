@@ -829,11 +829,12 @@ test "length_eq" {
 }
 
 ///|
+#derive(Debug)
 priv enum StringPatternToken {
   True
   False
   Other
-} derive(Debug)
+}
 
 ///|
 test "string pattern matching" {

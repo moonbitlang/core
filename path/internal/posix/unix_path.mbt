@@ -13,21 +13,23 @@
 // limitations under the License.
 
 ///|
+#derive(@json.ToJson, Hash, Eq)
 priv enum UnixPrefix {
   /// Syntax: `/` or `/{3,}`
   ///
   /// A pathname consisting of a single <slash> shall resolve to the root directory of the process.
   Root
   None
-} derive(@json.ToJson, Hash, Eq)
+}
 
 ///|
 /// [Posix 4.13 Pathname Resolution](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_13)
+#derive(@json.ToJson, Hash, Eq)
 priv struct UnixPath {
   prefix : UnixPrefix
   trailing_separator : Bool
   components : Array[StringView]
-} derive(@json.ToJson, Hash, Eq)
+}
 
 ///|
 fn is_unix_sep_at(path : StringView, index : Int32) -> Bool {

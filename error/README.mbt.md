@@ -86,10 +86,11 @@ The `builtin` package provides the `Show` implementation; `json` provides `ToJso
 ```mbt check
 ///|
 // Older compilers expand this derive through deprecated String::to_json.
+#derive(ToJson)
 #warnings("-deprecated")
 priv suberror MyError {
   MyError(Int32)
-} derive(ToJson)
+}
 
 ///|
 test "error display and json" {

@@ -291,7 +291,8 @@ test "HAMT::union with branch" {
 }
 
 ///|
-priv struct MyString(String) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct MyString(String)
 
 ///|
 impl Hash for MyString with fn hash_combine(_self, hasher) {

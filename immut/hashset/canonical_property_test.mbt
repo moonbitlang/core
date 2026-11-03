@@ -30,7 +30,8 @@
 /// Elements whose hash lives only in path segment 3 (bits 10..=14): all
 /// elements share segments 1-2 and diverge — or fully collide — at
 /// mid-trie depth.
-priv struct MidDepthElem(Int32) derive(Eq)
+#derive(Eq)
+priv struct MidDepthElem(Int32)
 
 ///|
 impl Hash for MidDepthElem with fn hash(self) {
@@ -44,7 +45,8 @@ impl Hash for MidDepthElem with fn hash_combine(self, hasher) {
 
 ///|
 /// Elements that all share the one and only collision bucket.
-priv struct ZeroHashElem(Int32) derive(Eq)
+#derive(Eq)
+priv struct ZeroHashElem(Int32)
 
 ///|
 impl Hash for ZeroHashElem with fn hash(_) {

@@ -10,16 +10,19 @@ import {
 // Values
 
 // Errors
-pub suberror InvalidAddr derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror InvalidAddr
 
+#derive(@debug.Debug, @json.ToJson)
 pub suberror ResolveHostnameError {
   ResolveHostnameError(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 pub fn ResolveHostnameError::to_string(Self) -> String
 pub impl Show for ResolveHostnameError
 
 // Types and methods
-type Addr derive(Compare, Eq, Hash)
+#derive(Compare, Eq, Hash)
+type Addr
 pub fn Addr::ip(Self) -> UInt32
 pub fn Addr::is_ipv6(Self) -> Bool
 pub fn Addr::is_multicast(Self) -> Bool
@@ -31,13 +34,14 @@ pub fn Addr::to_string(Self) -> String
 pub impl Show for Addr
 pub impl @debug.Debug for Addr
 
+#derive(@debug.Debug)
 pub(all) enum IpProtocolPreference {
   OnlyV4
   OnlyV6
   FavorV4
   FavorV6
   NoPreference
-} derive(@debug.Debug)
+}
 
 pub struct Tcp {
   addr : Addr

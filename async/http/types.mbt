@@ -14,6 +14,7 @@
 
 ///|
 /// HTTP request method
+#derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
 pub(all) enum RequestMethod {
   Get
   Head
@@ -25,7 +26,7 @@ pub(all) enum RequestMethod {
   Trace
   Patch
   Extension(String)
-} derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
+}
 
 ///|
 pub impl Show for RequestMethod with fn to_string(self) {
@@ -49,9 +50,10 @@ pub extend RequestMethod with Show::{to_string}
 ///|
 /// Error raised when an invalid extension method (i.e. not valid HTTP method name)
 /// is supplied when sending a HTTP request
+#derive(@debug.Debug, @json.ToJson)
 pub(all) suberror InvalidMethod {
   InvalidMethod(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 /// Type for HTTP headers. The names of headers are case insensitive.
@@ -66,14 +68,16 @@ pub type Headers = Map[CaseInsensitiveString, String]
 
 ///|
 /// HTTP request header
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Headers
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 /// HTTP response header
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct ResponseHeader {
   code : Int32
   reason : String
@@ -83,10 +87,11 @@ pub(all) struct ResponseHeader {
   /// JS backend note: browsers forbid JS code from accessing raw cookie values,
   /// so this field is always empty on JS backend.
   cookies : Array[Cookie]
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 /// A cookie value returned by a HTTP server via the `Set-Cookie` header
+#derive(@debug.Debug, @json.ToJson)
 pub struct Cookie {
   name : String
   value : String
@@ -97,4 +102,4 @@ pub struct Cookie {
   secure : Bool
   http_only : Bool
   extensions : Array[String]
-} derive(@debug.Debug, @json.ToJson)
+}

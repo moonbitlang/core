@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(@json.ToJson)
 priv struct NestedJsonValue {
   w : Int32
-} derive(@json.ToJson)
+}
 
 ///|
 test "deep access" {

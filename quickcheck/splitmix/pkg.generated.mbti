@@ -10,7 +10,8 @@ import {
 // Errors
 
 // Types and methods
-type RandomState derive(@debug.Debug)
+#derive(@debug.Debug)
+type RandomState
 #as_free_fn(new, deprecated)
 pub fn RandomState::RandomState(seed? : UInt64) -> Self
 pub fn RandomState::clone(Self) -> Self

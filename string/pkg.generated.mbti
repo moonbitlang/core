@@ -25,7 +25,8 @@ pub fn parse_uint64(StringView, base? : Int32) -> UInt64 raise
 // Errors
 
 // Types and methods
-type MatchResult derive(@debug.Debug)
+#derive(@debug.Debug)
+type MatchResult
 pub fn MatchResult::after(Self) -> StringView
 pub fn MatchResult::before(Self) -> StringView
 pub fn MatchResult::content(Self) -> StringView

@@ -14,7 +14,8 @@
 
 ///|
 /// Type `Endian` used by this package APIs.
+#derive(@debug.Debug)
 pub(all) enum Endian {
   Little
   Big
-} derive(@debug.Debug)
+}

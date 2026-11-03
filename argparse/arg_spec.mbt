@@ -18,26 +18,29 @@
 /// - `SetTrue` / `SetFalse` set a boolean value.
 /// - `Count` increments `Matches.flag_counts`.
 /// - `Help` / `Version` display output and exit successfully when triggered.
+#derive(Eq, @debug.Debug)
 pub(all) enum FlagAction {
   SetTrue
   SetFalse
   Count
   Help
   Version
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Behavior for option args.
 ///
 /// - `Set` accepts the value once; a repeated occurrence is an error.
 /// - `Append` keeps all provided values in order.
+#derive(Eq, @debug.Debug)
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Unified argument model used by the parser internals.
+#derive(@debug.Debug)
 priv struct Arg {
   // All
   name : String
@@ -50,9 +53,10 @@ priv struct Arg {
   hidden : Bool
   info : ArgInfo
   multiple : Bool
-} derive(@debug.Debug)
+}
 
 ///|
+#derive(@debug.Debug)
 priv enum ArgInfo {
   FlagInfo(
     short~ : Char?,
@@ -72,13 +76,14 @@ priv enum ArgInfo {
     default_values~ : Array[String]?,
     allow_hyphen_values~ : Bool
   )
-} derive(@debug.Debug)
+}
 
 ///|
 /// Declarative flag constructor wrapper.
+#derive(@debug.Debug)
 pub struct FlagArg {
   priv arg : Arg
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a flag argument.
@@ -131,9 +136,10 @@ pub fn FlagArg::FlagArg(
 ///|
 /// Declarative option constructor wrapper.
 /// Named `OptionArg` to avoid shadowing the built-in `Option` type.
+#derive(@debug.Debug)
 pub struct OptionArg {
   priv arg : Arg
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create an option argument.
@@ -190,9 +196,10 @@ pub fn OptionArg::OptionArg(
 
 ///|
 /// Declarative positional constructor wrapper.
+#derive(@debug.Debug)
 pub struct PositionArg {
   priv arg : Arg
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a positional argument.

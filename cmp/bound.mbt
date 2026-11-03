@@ -34,11 +34,12 @@
 ///   @debug.debug_inspect(lower, content="Excluded(3)")
 /// }
 /// ```
+#derive(Eq, Hash, @debug.Debug)
 pub(all) enum Bound[T] {
   Included(T)
   Excluded(T)
   Unbounded
-} derive(Eq, Hash, @debug.Debug)
+}
 
 ///|
 test "Bound equality and hashing" {

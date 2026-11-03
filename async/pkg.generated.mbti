@@ -44,16 +44,19 @@ pub async fn[X] with_timeout_opt(Int32, async () -> X) -> X?
 // Errors
 pub(all) suberror BreakFromSpawnLoop
 
-pub suberror TimeoutError derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror TimeoutError
 #deprecated
 pub impl Show for TimeoutError
 
-pub suberror TimerCancelled derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror TimerCancelled
 #deprecated
 pub impl Show for TimerCancelled
 
 #alias(TaskCancelled, deprecated)
-pub suberror WaitedTaskAlreadyCancelled derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror WaitedTaskAlreadyCancelled
 
 // Types and methods
 type Lazy[X]

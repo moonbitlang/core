@@ -71,9 +71,10 @@ test "Float::to_int" {
 }
 
 ///|
+#derive(Hash)
 priv struct FloatHashInput {
   a : Float
-} derive(Hash)
+}
 
 ///|
 test "Hash" {

@@ -23,8 +23,9 @@ struct Task[X] {
 ///|
 /// Special error indicating a waited task is cancelled.
 /// Note that this error has nothing to do with cancellation of *current* task.
+#derive(@debug.Debug, @json.ToJson)
 #alias(TaskCancelled, deprecated)
-pub suberror WaitedTaskAlreadyCancelled derive(@debug.Debug, @json.ToJson)
+pub suberror WaitedTaskAlreadyCancelled
 
 ///|
 /// Wait for a task and retrieve its result value.

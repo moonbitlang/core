@@ -82,11 +82,12 @@ pub impl @debug.Debug for Regex with fn to_repr(self) {
 
 ///|
 /// Result of one successful match produced by `Regex::execute`.
+#derive(@debug.Debug)
 struct MatchResult {
   input : StringView
   group_names : ReadOnlyArray[String?]
   result : @re.MatchResult
-} derive(@debug.Debug)
+}
 
 ///|
 /// Return match `before` view.

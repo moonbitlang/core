@@ -96,6 +96,7 @@ fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
 /// One step of a randomly generated pipeline. Each variant carries the
 /// parameters the combinator needs, already wrapped into a sensible
 /// range by `decode_op`.
+#derive(@debug.Debug)
 priv enum Op {
   Map(Int32)
   Filter(Int32, Int32)
@@ -106,7 +107,7 @@ priv enum Op {
   Concat(Array[Int32])
   FlatMap(Int32)
   Zip(Array[Int32])
-} derive(@debug.Debug)
+}
 
 ///|
 /// Turns an arbitrary `(Int, Int)` into an `Op`. Every combination is

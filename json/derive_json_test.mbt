@@ -13,11 +13,12 @@
 // limitations under the License.
 
 ///|
+#derive(@json.ToJson, @json.FromJson, Debug, Eq)
 priv struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
-} derive(@json.ToJson, @json.FromJson, Debug, Eq)
+}
 
 ///|
 test {
@@ -41,11 +42,12 @@ test {
 // Should the deriver generate constraints that [B: Show]
 
 ///|
+#derive(@json.ToJson)
 priv struct Hello3[A, B] {
   fieldAX : A
   fieldB : B
   data : Map[Int32, A]
-} derive(@json.ToJson)
+}
 
 ///|
 test {

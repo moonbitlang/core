@@ -14,7 +14,8 @@ pub let sep : Char
 // Errors
 
 // Types and methods
-pub(all) struct Path(String) derive(Eq, @debug.Debug)
+#derive(Eq, @debug.Debug)
+pub(all) struct Path(String)
 pub fn Path::basename(Self) -> StringView
 pub fn Path::dirname(Self) -> Self
 pub fn Path::equal(Self, Self) -> Bool

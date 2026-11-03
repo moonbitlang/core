@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-priv struct StableInt(Int32) derive(Eq)
+#derive(Eq)
+priv struct StableInt(Int32)
 
 ///|
 impl Hash for StableInt with fn hash_combine(self, hasher) {

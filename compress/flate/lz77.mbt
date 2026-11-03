@@ -46,13 +46,14 @@ const STREAM_RING_STORAGE_SIZE : Int32 = STREAM_RING_SIZE * 2
 /// lookahead search budgets are separate. Levels 1-3 are greedy, expressed as
 /// `max_lazy = 0`. Level 0 (stored only) is special-cased in the block
 /// planner and never searches.
+#derive(Eq)
 #valtype
 priv struct LevelConfig {
   good_length : Int32 // shrink the chain budget once a match this long is held
   max_lazy : Int32 // 0 = greedy (commit immediately); else defer while best < this
   nice_length : Int32 // stop searching outright at this match length
   max_chain : Int32 // candidate positions examined per search
-} derive(Eq)
+}
 
 ///|
 let level_configs : FixedArray[LevelConfig] = [

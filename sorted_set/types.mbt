@@ -25,10 +25,11 @@ struct SortedSet[V] {
 }
 
 ///|
+#derive(@debug.Debug)
 #unsafe_cycle_free
 priv struct Node[V] {
   mut value : V
   mut left : Node[V]?
   mut right : Node[V]?
   mut height : Int32
-} derive(@debug.Debug)
+}

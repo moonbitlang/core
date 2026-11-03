@@ -27,6 +27,7 @@ pub using @flate {
 /// Machine-readable category for a gzip decoding failure. The accompanying
 /// `GzipError` message remains intended for diagnostics rather than branching.
 /// Output limits, cancellation and invalid limits apply to `decompress` only.
+#derive(Eq, @debug.Debug)
 pub(all) enum GzipErrorKind {
   /// The input ended before a complete member, header field, body, or trailer.
   Truncated
@@ -45,7 +46,7 @@ pub(all) enum GzipErrorKind {
   Cancelled
   /// A caller-supplied output ceiling is negative.
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Structured gzip decoding failure: a stable category plus a human-readable

@@ -10,9 +10,11 @@ import {
 pub fn pipe() -> (PipeRead, PipeWrite)
 
 // Errors
-pub suberror PipeClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror PipeClosed
 
-pub(all) suberror ReaderClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub(all) suberror ReaderClosed
 
 // Types and methods
 type BinaryReaderController

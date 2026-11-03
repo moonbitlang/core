@@ -28,7 +28,8 @@
 ///|
 /// Keys whose hash lives only in path segment 3 (bits 10..=14): all keys
 /// share segments 1-2 and diverge — or fully collide — at mid-trie depth.
-priv struct MidDepthKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct MidDepthKey(Int32)
 
 ///|
 impl Hash for MidDepthKey with fn hash(self) {
@@ -42,7 +43,8 @@ impl Hash for MidDepthKey with fn hash_combine(self, hasher) {
 
 ///|
 /// Keys that all share the one and only collision bucket.
-priv struct ZeroHashKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct ZeroHashKey(Int32)
 
 ///|
 impl Hash for ZeroHashKey with fn hash(_) {

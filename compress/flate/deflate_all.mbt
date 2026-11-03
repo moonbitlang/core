@@ -19,6 +19,7 @@
 ///|
 /// Whole-buffer compression strategy. Levels are clamped to 0-9;
 /// level 0 emits stored blocks only.
+#derive(Eq, @debug.Debug)
 pub(all) enum Strategy {
   /// Fixed-cadence blocks with the selected compression level.
   Standard(level~ : Int32)
@@ -26,7 +27,7 @@ pub(all) enum Strategy {
   Split(level~ : Int32)
   /// Iterated optimal parsing and splitting; iterations are clamped to at least 1.
   Optimal(iterations~ : Int32)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Select content-driven splitting with compression level 6 by default.

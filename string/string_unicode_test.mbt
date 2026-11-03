@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(Debug)
 priv struct Data {
   val : String
-} derive(Debug)
+}
 
 ///|
 test {

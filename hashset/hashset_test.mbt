@@ -16,7 +16,8 @@
 let default_init_capacity = 8
 
 ///|
-priv struct HashSetKey(Int32, Int32) derive(Eq)
+#derive(Eq)
+priv struct HashSetKey(Int32, Int32)
 
 ///|
 impl Hash for HashSetKey with fn hash(self) {

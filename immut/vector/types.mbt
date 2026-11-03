@@ -49,9 +49,10 @@ struct Vector[A] {
 /// because `append_right_leaf` and `push_end` grow a relaxed node by patching
 /// its sizes array rather than re-deriving it. Treating full as equivalent to
 /// radix is what made `at` abort in #4083.
+#derive(Eq, @debug.Debug)
 #unsafe_cycle_free
 priv enum Tree[A] {
   Empty
   Node(FixedArray[Tree[A]], FixedArray[Int32]?) // (Subtrees, Sizes of subtrees)
   Leaf(FixedArray[A])
-} derive(Eq, @debug.Debug)
+}

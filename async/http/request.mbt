@@ -14,10 +14,11 @@
 
 ///|
 /// Supported HTTP protocols
+#derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
 pub(all) enum Protocol {
   Http
   Https
-} derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
+}
 
 ///|
 /// The default port of a HTTP protocol
@@ -30,10 +31,11 @@ pub fn Protocol::default_port(p : Protocol) -> Int32 {
 
 ///|
 /// Error raised when an invalid URI is specified
+#derive(@debug.Debug, @json.ToJson)
 pub suberror UriParseError {
   InvalidFormat
   UnsupportedProtocol(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {

@@ -15,11 +15,12 @@
 ///|
 /// The unique identity of a file on the system.
 /// Consist of the ID of its device and its unique ID within that device.
+#derive(Eq, Hash)
 #valtype
 pub(all) struct FileIdentity {
   dev_id : UInt64
   file_id : UInt64
-} derive(Eq, Hash)
+}
 
 ///|
 /// Open a new handle to the file at `path`.

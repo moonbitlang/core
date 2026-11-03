@@ -43,29 +43,35 @@ pub async fn request_json(RequestMethod, StringView, @json.Json?, headers~ : Map
 pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, String)
 
 // Errors
+#derive(@debug.Debug, @json.ToJson)
 pub suberror HttpProtocolError {
   BadRequest
   HttpVersionNotSupported(String)
   NotImplemented
-} derive(@debug.Debug, @json.ToJson)
+}
 
-pub suberror IncorrectBodyLength derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror IncorrectBodyLength
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) suberror InvalidMethod {
   InvalidMethod(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 
+#derive(@debug.Debug, @json.ToJson)
 pub suberror ProxyError {
   ProxyError(ResponseHeader)
-} derive(@debug.Debug, @json.ToJson)
+}
 
+#derive(@debug.Debug, @json.ToJson)
 pub suberror UriParseError {
   InvalidFormat
   UnsupportedProtocol(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 
 // Types and methods
-pub(all) struct CaseInsensitiveString(String) derive(@json.ToJson)
+#derive(@json.ToJson)
+pub(all) struct CaseInsensitiveString(String)
 pub fn CaseInsensitiveString::to_string(Self) -> String
 pub impl Compare for CaseInsensitiveString
 pub impl Eq for CaseInsensitiveString
@@ -114,6 +120,7 @@ pub async fn ClientConnection::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryReader for ClientConnection
 pub impl @io.BinaryWriter for ClientConnection
 
+#derive(@debug.Debug, @json.ToJson)
 pub struct Cookie {
   name : String
   value : String
@@ -124,22 +131,25 @@ pub struct Cookie {
   secure : Bool
   http_only : Bool
   extensions : Array[String]
-} derive(@debug.Debug, @json.ToJson)
+}
 #alias(new, deprecated)
 pub fn Cookie::Cookie(String, String, path? : String, expires_raw? : String, max_age? : Int64, domain? : String, secure? : Bool, http_only? : Bool, extensions? : Array[String]) -> Self
 
+#derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
 pub(all) enum Protocol {
   Http
   Https
-} derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
+}
 pub fn Protocol::default_port(Self) -> Int32
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Map[CaseInsensitiveString, String]
-} derive(@debug.Debug, @json.ToJson)
+}
 
+#derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
 pub(all) enum RequestMethod {
   Get
   Head
@@ -151,16 +161,17 @@ pub(all) enum RequestMethod {
   Trace
   Patch
   Extension(String)
-} derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
+}
 pub fn RequestMethod::to_string(Self) -> String
 pub impl Show for RequestMethod
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct ResponseHeader {
   code : Int32
   reason : String
   headers : Map[CaseInsensitiveString, String]
   cookies : Array[Cookie]
-} derive(@debug.Debug, @json.ToJson)
+}
 
 pub struct Server {
   addr : @socket.Addr

@@ -13,9 +13,11 @@ pub fn rand_bytes(Int32) -> Bytes raise
 pub fn sha1(Bytes) -> Bytes raise
 
 // Errors
-pub suberror ConnectionClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror ConnectionClosed
 
-type TlsError derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+type TlsError
 pub fn TlsError::to_string(Self) -> String
 pub impl Show for TlsError
 

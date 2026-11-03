@@ -13,10 +13,11 @@
 // limitations under the License.
 
 ///|
+#derive(@debug.Debug)
 struct Test {
   name : String
   buffer : StringBuilder
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create a new instance.

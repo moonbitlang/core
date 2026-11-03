@@ -19,6 +19,7 @@ pub fn set_cloexec(UInt64, context~ : String) -> Unit raise
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) enum FileKind {
   Unknown
   Regular
@@ -29,7 +30,7 @@ pub(all) enum FileKind {
   BlockDevice
   CharDevice
   Console
-} derive(Eq, @debug.Debug)
+}
 pub fn FileKind::can_poll(Self) -> Bool
 pub fn FileKind::from_int(Int32) -> Self
 

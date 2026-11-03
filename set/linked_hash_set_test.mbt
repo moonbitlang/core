@@ -16,10 +16,11 @@
 let default_init_capacity = 8
 
 ///|
+#derive(Eq)
 priv struct Key {
   id : Int32
   hash_value : Int32
-} derive(Eq)
+}
 
 ///|
 impl Hash for Key with fn hash_combine(self, hasher) {

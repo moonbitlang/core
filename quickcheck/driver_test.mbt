@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-priv struct SizedProbe(Int32) derive(Debug)
+#derive(Debug)
+priv struct SizedProbe(Int32)
 
 ///|
 impl @quickcheck.Arbitrary for SizedProbe with fn arbitrary(size, _) {
@@ -24,7 +25,8 @@ impl @quickcheck.Arbitrary for SizedProbe with fn arbitrary(size, _) {
 impl @shrink.Shrink for SizedProbe
 
 ///|
-priv struct ShrinkInput(Int32) derive(Debug)
+#derive(Debug)
+priv struct ShrinkInput(Int32)
 
 ///|
 impl @quickcheck.Arbitrary for ShrinkInput with fn arbitrary(_, _) {
@@ -41,7 +43,8 @@ impl @shrink.Shrink for ShrinkInput with fn shrink(input) {
 }
 
 ///|
-priv struct RepeatingInput(Int32) derive(Debug, Arbitrary)
+#derive(Debug, Arbitrary)
+priv struct RepeatingInput(Int32)
 
 ///|
 impl @shrink.Shrink for RepeatingInput with fn shrink(input) {
@@ -49,7 +52,8 @@ impl @shrink.Shrink for RepeatingInput with fn shrink(input) {
 }
 
 ///|
-priv struct DriftInput(Int32) derive(Debug)
+#derive(Debug)
+priv struct DriftInput(Int32)
 
 ///|
 impl @quickcheck.Arbitrary for DriftInput with fn arbitrary(_, _) {
@@ -66,7 +70,8 @@ impl @shrink.Shrink for DriftInput with fn shrink(input) {
 }
 
 ///|
-priv struct FilteredShrinkInput(Int32) derive(Debug)
+#derive(Debug)
+priv struct FilteredShrinkInput(Int32)
 
 ///|
 impl @quickcheck.Arbitrary for FilteredShrinkInput with fn arbitrary(_, _) {
@@ -83,10 +88,11 @@ impl @shrink.Shrink for FilteredShrinkInput with fn shrink(input) {
 }
 
 ///|
+#derive(Debug)
 priv suberror QcError {
   InitialRaised
   ShrunkRaised
-} derive(Debug)
+}
 
 ///|
 test "report returns a structured passing report" {

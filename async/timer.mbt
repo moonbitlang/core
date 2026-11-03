@@ -73,7 +73,8 @@ fn Timer::wake(timer : Timer, target_state : TimerState) -> Unit {
 ///|
 /// When waiting for a timer, if the timer is explicitly cancelled,
 /// the waiter will receive this error.
-pub suberror TimerCancelled derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror TimerCancelled
 
 ///|
 /// Manually cancel a timer.

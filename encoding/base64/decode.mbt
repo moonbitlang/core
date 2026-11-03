@@ -14,9 +14,10 @@
 
 ///|
 /// Error type `Malformed`.
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(StringView)
-} derive(@debug.Debug)
+}
 
 ///|
 const WRITESPACE = -3

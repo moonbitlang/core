@@ -9,7 +9,8 @@ import {
 // Values
 
 // Errors
-pub suberror QueueAlreadyClosed derive(@debug.Debug, @json.ToJson)
+#derive(@debug.Debug, @json.ToJson)
+pub suberror QueueAlreadyClosed
 
 // Types and methods
 pub(all) enum Kind {

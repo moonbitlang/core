@@ -14,6 +14,7 @@
 
 ///|
 /// Declarative argument group constructor.
+#derive(@debug.Debug)
 struct ArgGroup {
   name : String
   required : Bool
@@ -21,7 +22,7 @@ struct ArgGroup {
   args : Array[String]
   requires : Array[String]
   conflicts_with : Array[String]
-} derive(@debug.Debug)
+}
 
 ///|
 /// Create an argument group.

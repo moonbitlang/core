@@ -126,6 +126,7 @@ WebSocket close code.
 
 ```moonbit no-check
 ///|
+#derive(Debug, Eq)
 pub(all) enum CloseCode {
   Normal // 1000
   GoingAway // 1001
@@ -138,7 +139,7 @@ pub(all) enum CloseCode {
   MissingExtension // 1010
   InternalError // 1011
   Other(UInt16)
-} derive(Debug, Eq)
+}
 ```
 
 ### Error Types
@@ -146,11 +147,12 @@ pub(all) enum CloseCode {
 #### `WebSocketError`
 ```moonbit no-check
 ///|
+#derive(Debug)
 suberror WebSocketError {
   // Connection was closed with specific code.
   // with an optional message for close reason.
   ConnectionClosed(CloseCode, String?)
   InvalidHandshake(String) // Handshake failed with detailed reason
   ProtocolError // Malformed frame
-} derive(Debug)
+}
 ```

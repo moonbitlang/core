@@ -23,27 +23,30 @@ test {
 }
 
 ///|
+#derive(@json.ToJson)
 priv struct P {
   x : Int32
   y : Int32
   color : Color
-} derive(@json.ToJson)
+}
 
 ///|
 // Older compilers expand this derive through deprecated String::to_json.
+#derive(@json.ToJson)
 #warnings("-deprecated")
 priv enum Color {
   Red
   Green
   Blue
-} derive(@json.ToJson)
+}
 
 ///|
+#derive(@json.ToJson)
 priv struct Line {
   p1 : P
   p2 : P
   color : Color
-} derive(@json.ToJson)
+}
 
 ///|
 test "json inspect" {

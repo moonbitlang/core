@@ -115,7 +115,8 @@ This holds even for elements whose hashes collide:
 ```mbt check
 ///|
 /// Every element hashes to the same value: all of them share one bucket.
-priv struct OneBucketElem(Int32) derive(Eq)
+#derive(Eq)
+priv struct OneBucketElem(Int32)
 
 ///|
 impl Hash for OneBucketElem with fn hash(_) {

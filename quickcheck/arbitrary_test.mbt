@@ -13,10 +13,11 @@
 // limitations under the License.
 
 ///|
+#derive(@quickcheck.Arbitrary, Debug)
 priv struct H {
   x : Int32
   y : Int32
-} derive(@quickcheck.Arbitrary, Debug)
+}
 
 ///|
 fn[T : @quickcheck.Arbitrary] scalar_samples_at_zero(

@@ -14,7 +14,8 @@
 
 ///|
 /// a simple bit set to store a set of integers less than 32
-pub struct Bitset(UInt32) derive(Eq)
+#derive(Eq)
+pub struct Bitset(UInt32)
 
 ///|
 let empty_bitset : Bitset = Bitset(0)

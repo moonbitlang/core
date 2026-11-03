@@ -21,11 +21,12 @@
 /// MoonBit only allows assigning to a constructor's mutable field through a
 /// binding that pattern matching has narrowed to that variant, so the decoders
 /// in `from_json.mbt` obtain one with a `guard!` whose test cannot fail.
+#derive(Eq)
 enum JsonPath {
   Root
   Key(JsonPath, mut key~ : String)
   Index(JsonPath, mut index~ : Int32)
-} derive(Eq)
+}
 
 ///|
 /// Appends an array index to the JSON path.

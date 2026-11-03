@@ -17,6 +17,7 @@
 // in permille) so scores and tracebacks are bit-identical on every backend.
 
 ///|
+#derive(Eq, @debug.Debug)
 priv enum TokKind {
   Word // identifiers and numbers
   Str // string literals and #|/$| raw-string lines
@@ -25,7 +26,7 @@ priv enum TokKind {
   Comment // content tokens inside a // comment (tokenized, not opaque)
   Filler // comment boilerplate: the // marker and comment whitespace
   Space
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 priv struct Tok {

@@ -25,16 +25,18 @@ pub fn Compressor::Compressor(strategy? : Strategy, dictionary? : BytesView, fas
 pub fn Compressor::compress(Self, BytesView) -> Bytes
 pub fn Compressor::compress_into(Self, BytesView, MutArrayView[Byte]) -> Int32?
 
+#derive(Eq, @debug.Debug)
 pub struct DecompressResult {
   consumed : Int32
   produced : Int32
-} derive(Eq, @debug.Debug)
+}
 pub fn DecompressResult::equal(Self, Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub struct Decompressed {
   data : Bytes
   consumed : Int32
-} derive(Eq, @debug.Debug)
+}
 pub fn Decompressed::equal(Self, Self) -> Bool
 
 type Decompressor
@@ -42,11 +44,12 @@ pub fn Decompressor::Decompressor(dictionary? : BytesView) -> Self
 pub fn Decompressor::decompress(Self, BytesView, mode? : InputMode, max_output? : Int32, cancelled? : () -> Bool) -> Decompressed raise InflateError
 pub fn Decompressor::decompress_into(Self, BytesView, MutArrayView[Byte], mode? : InputMode, cancelled? : () -> Bool) -> DecompressResult raise InflateError
 
+#derive(Eq, @debug.Debug)
 pub(all) enum DeflateAction {
   Continue
   SyncFlush
   Finish
-} derive(Eq, @debug.Debug)
+}
 pub fn DeflateAction::equal(Self, Self) -> Bool
 
 type IncrementalDecoder
@@ -61,6 +64,7 @@ pub fn IncrementalEncoder::is_finished(Self) -> Bool
 pub fn IncrementalEncoder::reset(Self, dictionary? : BytesView) -> Unit
 pub fn IncrementalEncoder::step(Self, BytesView, MutArrayView[Byte], action? : DeflateAction) -> StepResult
 
+#derive(Eq, @debug.Debug)
 pub(all) enum InflateErrorKind {
   Truncated
   Corrupt
@@ -68,34 +72,38 @@ pub(all) enum InflateErrorKind {
   OutputLimitExceeded(limit~ : UInt64, observed~ : UInt64)
   Cancelled
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 pub fn InflateErrorKind::equal(Self, Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub(all) enum InputMode {
   Exact
   Prefix
-} derive(Eq, @debug.Debug)
+}
 pub fn InputMode::equal(Self, Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Status {
   Done
   NeedMoreInput
   NeedMoreOutput
-} derive(Eq, @debug.Debug)
+}
 pub fn Status::equal(Self, Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub(all) struct StepResult {
   status : Status
   consumed : Int32
   produced : Int32
-} derive(Eq, @debug.Debug)
+}
 pub fn StepResult::equal(Self, Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Strategy {
   Standard(level~ : Int32)
   Split(level~ : Int32)
   Optimal(iterations~ : Int32)
-} derive(Eq, @debug.Debug)
+}
 pub fn Strategy::equal(Self, Self) -> Bool
 pub fn Strategy::optimal(iterations? : Int32) -> Self
 pub fn Strategy::split(level? : Int32) -> Self

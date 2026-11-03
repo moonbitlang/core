@@ -69,7 +69,8 @@ fn adversarial_string_gen() -> @quickcheck.Generator[String] {
 }
 
 ///|
-priv struct AdvString(String) derive(@debug.Debug)
+#derive(@debug.Debug)
+priv struct AdvString(String)
 
 ///|
 impl @quickcheck.Arbitrary for AdvString with fn arbitrary(size, state) {

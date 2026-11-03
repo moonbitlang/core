@@ -18,7 +18,8 @@
 /// runtime hash seed, which is randomized on some targets. Without this,
 /// whether the test reaches `shift_back` at all would depend on how `Int`
 /// hashing happens to mix, and the regression could go unnoticed.
-priv struct Collide(Int32) derive(Eq)
+#derive(Eq)
+priv struct Collide(Int32)
 
 ///|
 impl Hash for Collide with fn hash(self) {

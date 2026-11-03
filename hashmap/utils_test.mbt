@@ -178,7 +178,8 @@ test "T::retain - preserve map integrity after retain" {
 }
 
 ///|
-priv struct RetainCollisionKey(Int32) derive(Eq)
+#derive(Eq)
+priv struct RetainCollisionKey(Int32)
 
 ///|
 impl Hash for RetainCollisionKey with fn hash(_) {

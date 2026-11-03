@@ -58,13 +58,15 @@ priv struct FrameHeader {
 
 ///|
 /// WebSocket message
+#derive(@debug.Debug)
 pub(all) enum MessageKind {
   Binary
   Text
-} derive(@debug.Debug)
+}
 
 ///|
 /// WebSocket close status codes
+#derive(@debug.Debug, Eq)
 pub(all) enum CloseCode {
   Normal // 1000
   GoingAway // 1001
@@ -77,7 +79,7 @@ pub(all) enum CloseCode {
   MissingExtension // 1010
   InternalError // 1011
   Other(UInt16)
-} derive(@debug.Debug, Eq)
+}
 
 ///|
 fn CloseCode::to_uint16(self : CloseCode) -> UInt16 {
@@ -115,9 +117,10 @@ fn CloseCode::from_uint(code : UInt32) -> CloseCode {
 
 ///|
 /// Error from a WebSocket connection
+#derive(@debug.Debug)
 pub suberror WebSocketError {
   ConnectionClosed(CloseCode, String?) // Connection was closed
   InvalidHandshake(String) // Handshake failed with specific reason
   HandshakeRejected(String, @http.ResponseHeader) // Server rejected handshake
   ProtocolError(String)
-} derive(@debug.Debug)
+}

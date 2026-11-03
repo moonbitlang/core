@@ -22,9 +22,10 @@
 ///
 /// `raw_code` is the raw, system-specific error number.
 /// `context` describe the context that generated this error.
+#derive(@json.ToJson)
 pub suberror OsError {
   OsError(Kind, raw_code~ : Int32, context~ : String)
-} derive(@json.ToJson)
+}
 
 ///|
 /// Create a `OsError` from a raw error number

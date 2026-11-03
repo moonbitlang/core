@@ -18,12 +18,13 @@
 /// - `SIGTERM`: `SIGTERM` on Unix, unavailable on Windows
 /// - `SIGHUP`: `SIGHUP` on Unix, `CTRL_CLOSE_EVENT` on Windows
 /// - `SIGBREAK`: unavailable on Unix, `CTRL_BREAK_EVENT` on Windows
+#derive(@debug.Debug)
 pub(all) enum Signal {
   SIGINT = 0
   SIGTERM = 1
   SIGHUP = 2
   SIGBREAK = 3
-} derive(@debug.Debug)
+}
 
 ///|
 fn Signal::index(sig : Signal) -> Int32 = "%identity"

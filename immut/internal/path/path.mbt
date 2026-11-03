@@ -24,7 +24,8 @@
 /// For example, `Path::of(x) = 0b11_10000_10101_00100_11111_01010_00110`
 /// represents segments as
 /// [0b_10000, 0b_10101, 0b_00100, 0b_11111, 0b_01010, 0b_00110]
-pub struct Path(UInt32) derive(Eq)
+#derive(Eq)
+pub struct Path(UInt32)
 
 ///|
 const SEGMENT_LENGTH : Int32 = 5

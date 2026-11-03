@@ -122,10 +122,11 @@ pub struct AddrInfo(UInt64)
 
 type EventLoop
 
+#derive(Eq, Hash)
 pub(all) struct FileIdentity {
   dev_id : UInt64
   file_id : UInt64
-} derive(Eq, Hash)
+}
 
 pub struct IoHandle {
   mut read_offset : Int64

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-priv struct MyString(String) derive(Eq)
+#derive(Eq)
+priv struct MyString(String)
 
 ///|
 impl Hash for MyString with fn hash(self) {

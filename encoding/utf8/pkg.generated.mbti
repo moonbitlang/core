@@ -13,9 +13,10 @@ pub fn decode_lossy(BytesView, ignore_bom? : Bool) -> String
 pub fn encode(StringView, bom? : Bool) -> Bytes
 
 // Errors
+#derive(@debug.Debug)
 pub suberror Malformed {
   Malformed(BytesView)
-} derive(@debug.Debug)
+}
 
 // Types and methods
 

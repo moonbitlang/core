@@ -14,10 +14,11 @@
 
 ///|
 /// The ZIP compression methods this package can read and write.
+#derive(Eq, @debug.Debug)
 pub(all) enum Compression {
   Store
   Deflate
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 fn Compression::code(compression : Compression) -> Int32 {

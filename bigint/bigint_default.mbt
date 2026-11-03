@@ -42,10 +42,11 @@ struct BigInt {
 }
 
 ///|
+#derive(Eq, @debug.Debug)
 priv enum Sign {
   Positive
   Negative
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 test "internal repr" {

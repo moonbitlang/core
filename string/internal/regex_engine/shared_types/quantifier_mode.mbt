@@ -14,7 +14,8 @@
 
 ///|
 /// Type `QuantifierMode` used by this package APIs.
+#derive(@debug.Debug)
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
-} derive(@debug.Debug)
+}

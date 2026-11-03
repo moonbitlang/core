@@ -13,10 +13,11 @@
 // limitations under the License.
 
 ///|
+#derive(@debug.Debug)
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
-} derive(@debug.Debug)
+}
 
 ///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15

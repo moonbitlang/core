@@ -21,12 +21,13 @@
 /// - `Rename(old~, new~)`, the file previously at `old` has been moved to `new`
 ///
 /// All paths are relative to the base directory of the watcher, using `/` as path separator.
+#derive(Eq, @debug.Debug)
 pub(all) enum FsEvent {
   Modify(String)
   Create(String)
   Remove(String)
   Rename(old~ : String, new~ : String)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Info about a watched file in the watched tree.

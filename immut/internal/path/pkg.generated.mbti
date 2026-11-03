@@ -9,7 +9,8 @@ pub fn[A : Hash] of(A) -> Path
 // Errors
 
 // Types and methods
-pub struct Path(UInt32) derive(Eq)
+#derive(Eq)
+pub struct Path(UInt32)
 pub fn Path::advance(Self, Int32) -> Self
 pub fn Path::equal(Self, Self) -> Bool
 pub fn Path::idx(Self) -> Int32

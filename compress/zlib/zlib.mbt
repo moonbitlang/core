@@ -27,6 +27,7 @@ pub using @flate {
 /// Machine-readable category for a zlib decoding failure. The accompanying
 /// `ZlibError` message remains intended for diagnostics rather than branching.
 /// Output limits, cancellation and invalid limits apply to `decompress` only.
+#derive(Eq, @debug.Debug)
 pub(all) enum ZlibErrorKind {
   /// The input ended before the header, body, DICTID, or trailer completed.
   Truncated
@@ -49,7 +50,7 @@ pub(all) enum ZlibErrorKind {
   Cancelled
   /// A caller-supplied output ceiling is negative.
   InvalidArgument
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Structured zlib decoding failure: a stable category plus a human-readable

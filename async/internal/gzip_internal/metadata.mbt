@@ -13,12 +13,13 @@
 // limitations under the License.
 
 ///|
+#derive(@debug.Debug, @json.ToJson)
 priv suberror FormatError {
   InvalidHeader(String)
   InvalidTrailer(String)
   InvalidBlock(String)
   NeedMoreInput(String)
-} derive(@debug.Debug, @json.ToJson)
+}
 
 ///|
 /// header size of a gzip stream

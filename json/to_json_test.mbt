@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#derive(@json.ToJson)
 priv struct JsonValue {
   count : Int32
-} derive(@json.ToJson)
+}
 
 ///|
 test "ToJson derivation and Json constructor conversion" {
@@ -251,10 +252,11 @@ test "Json constructor converts maps" {
 }
 
 ///|
+#derive(@json.ToJson, @json.FromJson, Eq)
 priv struct Opt {
   x : Int32?
   t : Int32??
-} derive(@json.ToJson, @json.FromJson, Eq)
+}
 
 ///|
 test "Option::to_json" {

@@ -42,10 +42,11 @@ fn[T] hunks_to_string(
 }
 
 ///|
+#derive(Hash, Eq)
 priv struct User {
   id : Int32
   name : String
-} derive(Hash, Eq)
+}
 
 ///|
 fn show_user(u : User) -> String {
@@ -53,12 +54,13 @@ fn show_user(u : User) -> String {
 }
 
 ///|
+#derive(Hash, Eq)
 priv enum Token {
   Start
   Stop
   Num(Int32)
   Word(String)
-} derive(Hash, Eq)
+}
 
 ///|
 fn show_token(t : Token) -> String {

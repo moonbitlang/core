@@ -41,6 +41,7 @@ pub using @edit_distance {
 /// `Replace` advance both by `len`. The script covers both inputs completely,
 /// all lengths are positive, and adjacent edits of the same kind are
 /// coalesced.
+#derive(Eq, @debug.Debug)
 pub enum LevenshteinEdit {
   /// Delete `old_len` elements starting at `old_index` from `old`.
   ///
@@ -59,7 +60,7 @@ pub enum LevenshteinEdit {
   /// `len` elements starting at `new_index` in `new`, pairing them
   /// one-to-one; every pair is unequal.
   Replace(old_index~ : Int32, new_index~ : Int32, len~ : Int32)
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 /// Length of the longest common prefix of `old` and `new`.
