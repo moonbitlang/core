@@ -25,6 +25,89 @@ async test "command with exit code" {
 }
 ```
 
+### Reusable and Composite Commands
+
+`@process.Cmd` is a reusable description of one process or a composition of
+processes. Constructing a `Cmd` does not start it. Use `left | right` (or
+`left.pipe(right)`) to build a pipeline, and `Cmd::sequence([...])` to run a
+nonempty list of commands in order. A sequence runs every element even if an
+earlier one exits unsuccessfully.
+
+The redirection model is based on nested contexts. By default, each sub-command
+inherits its `stdin`, `stdout`, `stderr`, and working directory from its
+surrounding context, but it may override any of them with local settings.
+Use `.with_context()` to place local settings around an existing command,
+including a whole pipeline or sequence. Calling `.run()` or `.spawn()` defines
+the outermost context; its redirections and working directory flow inward
+wherever a command does not provide a more local setting. `FeedFromParent` and
+`Collect` create parent-facing handles, so they are allowed only in this
+outermost context, not in `Cmd()` or `.with_context()`.
+
+```moonbit check
+///|
+#cfg(all(target="native", not(platform="windows")))
+async test "run a reusable pipeline" {
+  let select_beta = @process.Cmd("grep", ["beta"])
+  let pipeline = (@process.Cmd("printf", ["alpha\nbeta\n"]) | select_beta).with_context(
+    stderr=Discard,
+  )
+  let result = pipeline.run(stdout=Collect)
+  inspect(result.exit_code, content="0")
+  inspect(result.stdout_text(), content="beta\n")
+}
+
+///|
+#cfg(all(target="native", not(platform="windows")))
+async test "run a command sequence" {
+  let sequence = @process.Cmd::sequence([
+    Cmd("sh", ["-c", "exit 7"]),
+    Cmd("sh", ["-c", "exit 3"]),
+  ])
+  inspect(sequence.run().exit_code, content="3")
+}
+```
+
+Exit status and PID selection are deliberately different for composites. The
+rules apply recursively when pipelines and sequences are nested:
+
+| Command shape | Execution | Reported exit status | `Process.pid` from `.spawn()` |
+|---|---|---|---|
+| `Cmd(program, args)` | One process | That process's status | That process |
+| `left \| right` | Both sides run concurrently; stdout from `left` feeds stdin of `right` | `right`'s status if all stages are accepted; otherwise the rightmost rejection is raised (`pipefail`) | `right`'s selected PID |
+| `Cmd::sequence(commands)` | Every command runs in order | Final command's reported status | No meaningful PID (`0`) for a multi-command sequence |
+
+`Cmd::run()` returns no PID. The `Process` returned by `Cmd::spawn()` represents
+the whole composite: `wait()` and `try_wait()` return the reported status from
+the table, while `cancel()` cancels all running processes in the composite.
+The PID part of the returned `Process` is selected using the table above.
+
+By default, `Cmd()` accepts every exit code, so a nonzero exit remains an
+ordinary status and a sequence continues to its next command. Pass an
+`accepted_exit_code` predicate when only selected codes are valid. A rejected
+code raises `CommandFailed`, which records the code, program, and arguments.
+Errors propagate through composite commands: a pipeline waits for all stages
+and raises the rightmost rejected exit code, following shell `pipefail`,
+while a sequence stops before starting later commands, following shell `set -e`.
+Exit codes produced during cancellation are checked for commands whose result remains observable.
+Failure in spawning a sub process itself is considered fatal for pipes.
+All other commands in the pipe will be cancelled in this case, and `spawn` will fail with the spawn error.
+
+```moonbit check
+///|
+#cfg(all(target="native", not(platform="windows")))
+async test "reject an unexpected exit code" {
+  let cmd = @process.Cmd("sh", ["-c", "exit 7"], accepted_exit_code=code => {
+    code == 0
+  })
+  let err = @test.expect_error_async(() => cmd.run())
+  match err {
+    @process.CommandFailed(code, program=_, args=_) =>
+      inspect(code, content="7")
+    _ => fail("expected CommandFailed")
+  }
+}
+```
+
 ### Spawn a Process in a Task Group
 
 Use `@process.spawn` to start a process without blocking the current task. It
@@ -574,6 +657,12 @@ For every shared pipe, also close the parent-facing `ReadFromProcess` or
 writer can prevent readers from observing end-of-file.
 
 ## Types Reference
+
+`Cmd` is an opaque, reusable command description. It can represent one process,
+a pipeline built with `|`/`.pipe()`, or a nonempty sequence built with
+`Cmd::sequence()`. Use `.with_context()` to apply local standard-I/O or working
+directory settings to any command description, and use `Cmd::run()` or
+`Cmd::spawn()` to execute it.
 
 `ProcessInput` and `ProcessOutput` are the redirection types accepted by
 `run()`, `spawn()`, and `spawn_orphan()`.

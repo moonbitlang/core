@@ -43,6 +43,15 @@ pub impl Show for CommandFailed
 // Types and methods
 pub(all) struct CancellationHandler(async (Int32) -> Unit)
 
+type Cmd
+pub fn Cmd::Cmd(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, accepted_exit_code? : (Int32) -> Bool) -> Self
+pub fn Cmd::pipe(Self, Self) -> Self
+pub async fn Cmd::run(Self, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, cancel_handler? : CancellationHandler) -> ProcessResult
+pub fn Cmd::sequence(ArrayView[Self]) -> Self
+pub async fn Cmd::spawn(Self, @async.TaskGroup, no_wait? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, cancel_handler? : CancellationHandler) -> Process
+pub fn Cmd::with_context(Self, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView) -> Self
+pub impl BitOr for Cmd
+
 pub struct OrphanProcess {
   pid : Int32
   stdin : WriteToProcess
