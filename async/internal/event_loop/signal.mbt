@@ -28,6 +28,22 @@ pub let all_signals : ReadOnlyArray[Int32] = ReadOnlyArray::makei(
 )
 
 ///|
+/// `SIGWINCH` on Unix, `-1` where it does not exist.
+/// The signal thread may report it, and the event loop ignores it instead of
+/// cancelling the program, as its default action does.
+#cfg(all(target="native", not(platform="windows")))
+let sigwinch : Int32 = 28
+
+///|
+/// There is no `SIGWINCH` on Windows
+#cfg(all(target="native", platform="windows"))
+let sigwinch : Int32 = -1
+
+///|
+#cfg(target="wasm")
+let sigwinch : Int32 = if platform is Windows { -1 } else { 28 }
+
+///|
 /// Error raised when current event loop is cancelled by a registered cancellation signal
 pub suberror KilledBySignal {
   KilledBySignal(Int32)
