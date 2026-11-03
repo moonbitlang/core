@@ -1,10 +1,10 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/json",
 }
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/json",
   "moonbitlang/core/debug",
   "moonbitlang/core/async/internal/env_util",
   "moonbitlang/core/async/internal/errno_util" @errno,

@@ -42,8 +42,12 @@ import {
 } for "test"
 
 import {
-  "moonbitlang/core/json",
   "moonbitlang/core/async/internal/test_util",
+} for "wbtest"
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/json",
 } for "wbtest"
 
 #cfg(any(target="native", target="wasm", target="js"))
