@@ -217,7 +217,7 @@ test "arbitrary size branches" {
   let result : Result[Int32, Int32] = for
     _ in 0..<64
     result = (Ok(0) : Result[Int32, Int32]) {
-    let result = @quickcheck.Arbitrary::arbitrary(1, rs3)
+    let result : Result[Int32, Int32] = @quickcheck.Arbitrary::arbitrary(1, rs3)
     if result is Err(_) {
       break result
     }

@@ -532,7 +532,7 @@ async fn Watcher::wait_aux(
 pub async fn Watcher::wait(self : Watcher) -> Array[FsEvent] {
   let events = []
   let pending_rename : Map[@event_loop.FileIdentity, FsEvent] = Map([])
-  fn on_event(rename_id, event : FsEvent) {
+  fn on_event(rename_id : @event_loop.FileIdentity?, event : FsEvent) {
     guard rename_id is Some(id) &&
       !(self.watched.get(id) is Some({ is_dir: true, .. })) else {
       events.push(event)

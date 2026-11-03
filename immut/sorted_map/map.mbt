@@ -303,12 +303,12 @@ fn[K, V] balance(
   //     x   2       --->    1   z
   //        / \             / \
   //       y   z           x   y
-  fn single_l(k1, v1, x, r) {
+  fn single_l(k1, v1, x, r : SortedMap[K, V]) {
     guard! r is Tree(k2, value=v2, y, z, ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y), z)
   }
 
-  fn single_r(k2, v2, l, z) {
+  fn single_r(k2, v2, l : SortedMap[K, V], z) {
     guard! l is Tree(k1, value=v1, x, y, ..)
     make_tree(k1, v1, x, make_tree(k2, v2, y, z))
   }
@@ -320,7 +320,7 @@ fn[K, V] balance(
   //      2   z        x  y1 y2  z
   //     / \
   //    y1 y2
-  fn double_l(k1, v1, x, r) {
+  fn double_l(k1, v1, x, r : SortedMap[K, V]) {
     guard! r is Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
@@ -332,7 +332,7 @@ fn[K, V] balance(
   //  x  2             x  y1 y2  z
   //    / \
   //   y1 y2
-  fn double_r(k3, v3, l, z) {
+  fn double_r(k3, v3, l : SortedMap[K, V], z) {
     guard! l is Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
