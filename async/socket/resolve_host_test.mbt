@@ -24,6 +24,21 @@ async test "resolve localhost with default preference" {
 }
 
 ///|
+// Run explicitly with:
+// moon test --target native async/socket/resolve_host_test.mbt --include-skipped -f "resolve external DNS"
+// Endpoint addresses: https://developers.cloudflare.com/1.1.1.1/infrastructure/network-operators/
+#skip("requires external DNS access")
+async test "resolve external DNS" {
+  let addr = @async.with_timeout(10000, () => {
+    @socket.Addr::resolve("one.one.one.one", port=443, protocol=OnlyV4)
+  })
+  // Either documented IPv4 address may be returned first.
+  guard addr.to_string() is ("1.1.1.1:443" | "1.0.0.1:443") else {
+    fail("Unexpected address for one.one.one.one: \{addr}")
+  }
+}
+
+///|
 async test "resolve cancel" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
