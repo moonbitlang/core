@@ -5,6 +5,7 @@ import {
 #cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/ref",
   "moonbitlang/core/debug",
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/coroutine",
@@ -61,6 +62,8 @@ options(
     "basic_test.mbt": [ "native", "wasm" ],
     "cancel_test.mbt": [ "native", "wasm" ],
     "cancellation.mbt": [ "native", "wasm" ],
+    "cmd.mbt": [ "native", "wasm" ],
+    "cmd_test.mbt": [ "native", "wasm" ],
     "commands_for_test.mbt": [ "native", "wasm" ],
     "cwd_test.mbt": [ "native", "wasm" ],
     "env_test.mbt": [ "native", "wasm" ],

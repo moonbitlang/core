@@ -20,6 +20,13 @@
 
 static int32_t swallow_cancel_signal = 0;
 
+static int32_t use_stderr = 0;
+
+MOONBIT_FFI_EXPORT
+void set_use_stderr() {
+  use_stderr = 1;
+}
+
 MOONBIT_FFI_EXPORT
 void set_swallow_cancel_signal() {
   swallow_cancel_signal = 1;
@@ -30,16 +37,17 @@ void set_swallow_cancel_signal() {
 #include <windows.h>
 
 BOOL WINAPI handler(DWORD ctrl_type) {
+  FILE *output = use_stderr ? stderr : stdout;
   switch (ctrl_type) {
     case CTRL_BREAK_EVENT:
-      printf("received termination signal\n");
-      fflush(stdout);
+      fprintf(output, "received termination signal\n");
+      fflush(output);
       if (!swallow_cancel_signal)
         ExitProcess(1);
       break;
     default:
-      printf("received other signal\n");
-      fflush(stdout);
+      fprintf(output, "received other signal\n");
+      fflush(output);
       break;
   }
   return TRUE;
@@ -56,16 +64,17 @@ void register_termination_handler() {
 #include <stdlib.h>
 
 void handler(int s) {
+  FILE *output = use_stderr ? stderr : stdout;
   switch (s) {
     case SIGTERM:
-      printf("received termination signal\n");
-      fflush(stdout);
+      fprintf(output, "received termination signal\n");
+      fflush(output);
       if (!swallow_cancel_signal)
         exit(1);
       break;
     default:
-      printf("received other signal\n");
-      fflush(stdout);
+      fprintf(output, "received other signal\n");
+      fflush(output);
       break;
   }
 }
