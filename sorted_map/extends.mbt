@@ -15,9 +15,17 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend SortedMap with Compare::{compare}
+
+///|
 pub extend SortedMap with Eq::{equal}
 
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedMap with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)

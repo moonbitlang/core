@@ -37,6 +37,13 @@ pub impl Show for JsError with fn output(self, _logger) {
 }
 
 ///|
+#internal(unimplemented, "unimplemented in native backend")
+#coverage.skip
+pub impl @debug.Debug for JsError with fn to_repr(_self) {
+  abort("unimplemented in native backend")
+}
+
+///|
 pub extend JsError with Show::{to_string}
 
 ///|

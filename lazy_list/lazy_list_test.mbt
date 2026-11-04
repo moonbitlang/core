@@ -385,3 +385,10 @@ test "LazyList constructor copies the view" {
   debug_inspect(xs.tail().map(t => t.to_array()), content="Some([3, 4])")
   inspect(@lazy_list.LazyList(([] : Array[Int32])).is_empty(), content="true")
 }
+
+///|
+test "Default is the empty lazy list" {
+  let xs : @lazy_list.LazyList[Int32] = Default::default()
+  inspect(xs.is_empty(), content="true")
+  debug_inspect(xs.to_array(), content="[]")
+}

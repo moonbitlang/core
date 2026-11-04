@@ -526,6 +526,24 @@ pub impl[V : Eq] Eq for SortedSet[V] with fn equal(self, other) {
 }
 
 ///|
+/// Compares two sets: a set with fewer elements is smaller; sets of the same
+/// size are compared lexicographically by their elements in ascending order.
+/// This is the same ordering as `@immut/sorted_set.SortedSet`. It returns `0`
+/// exactly when the sets are equal under `==`, provided the `Compare` and `Eq`
+/// impls of `V` agree.
+pub impl[V : Compare] Compare for SortedSet[V] with fn compare(self, other) -> Int32 {
+  guard self.size == other.size else { return self.size - other.size }
+  let iter = self.iter()
+  let iter1 = other.iter()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    let cmp = a.compare(b)
+    guard cmp is 0 else { break cmp }
+  } nobreak {
+    0
+  }
+}
+
+///|
 /// Returns `true` if the set contains no elements.
 pub fn[V] SortedSet::is_empty(self : SortedSet[V]) -> Bool {
   self.root is None

@@ -15,9 +15,17 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend SortedSet with Compare::{compare}
+
+///|
 pub extend SortedSet with Eq::{equal}
 
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedSet with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
 #deprecated("Use the `@debug.Debug` trait instead", skip_current_package=true)

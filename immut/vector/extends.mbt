@@ -29,6 +29,11 @@ pub extend Vector with Hash::{hash}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Vector with Default::{default}
+
+///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Vector with @debug.Debug::{to_repr}

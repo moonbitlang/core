@@ -6,6 +6,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/immut/sorted_set" @immut/sorted_set,
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
   "moonbitlang/core/bench",

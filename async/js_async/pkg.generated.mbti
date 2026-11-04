@@ -3,6 +3,7 @@ package "moonbitlang/core/async/js_async"
 
 import {
   "moonbitlang/core/async/io",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -12,6 +13,7 @@ pub async fn[X] run_promise((AbortSignal) -> Promise[X]) -> X
 type JsError
 pub fn JsError::to_string(Self) -> String
 pub impl Show for JsError
+pub impl @debug.Debug for JsError
 
 // Types and methods
 #external

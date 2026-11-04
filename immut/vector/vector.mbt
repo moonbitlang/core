@@ -24,6 +24,12 @@ pub fn[A] Vector::new() -> Vector[A] {
 }
 
 ///|
+/// The empty vector, same as `Vector::new()`.
+pub impl[A] Default for Vector[A] with fn default() {
+  Vector::new()
+}
+
+///|
 /// Create a vector with a single element.
 ///
 /// # Example
