@@ -711,6 +711,9 @@ pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
 /// because each element's stored hash is reused: elements are never hashed
 /// again.
 ///
+/// `f` is called once for each element `self` held when `filter` was called,
+/// in that order, even if `f` modifies `self`.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -722,20 +725,30 @@ pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
 /// }
 /// ```
 pub fn[K] Set::filter(self : Set[K], f : (K) -> Bool raise?) -> Set[K] raise? {
-  // Collect first so the result can be sized for exactly the kept elements:
-  // a stored hash fits a table of any size.
-  let kept : Array[Entry[K]] = []
+  // Snapshot the entries before calling `f`: `f` may modify `self`, which can
+  // relink an element the traversal has already visited after the current one.
+  let kept : Array[Entry[K]] = Array(capacity=self.size)
   for x = self.head {
     match x {
-      Some({ key, hash, next, .. }) => {
-        if f(key) {
-          kept.push({ prev: -1, next: None, psl: 0, key, hash, })
-        }
+      Some({ next, .. } as entry) => {
+        kept.push(entry)
         continue next
       }
       None => break
     }
   }
+  // Keep the elements `f` accepts, compacting in place. Collecting first lets
+  // the result be sized for exactly the kept elements: a stored hash fits a
+  // table of any size.
+  let mut n = 0
+  for i in 0..<kept.length() {
+    let { key, hash, .. } = kept.unsafe_get(i)
+    if f(key) {
+      kept.unsafe_set(n, { prev: -1, next: None, psl: 0, key, hash, })
+      n += 1
+    }
+  }
+  kept.truncate(n)
   let other = new_set(
     if kept.is_empty() {
       default_init_capacity
