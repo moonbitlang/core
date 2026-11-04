@@ -237,3 +237,127 @@ async test "node compatibility on generated binary data" {
   let input = Bytes::makei(65536 + 257, i => ((i * 73 + 19) & 0xff).to_byte())
   assert_node_compatibility(input)
 }
+
+///|
+/// Bitwise CRC-32 (IEEE), kept local so the regression test below does not
+/// depend on the decoder's own checksum code.
+fn test_crc32(data : Bytes) -> UInt32 {
+  let mut crc = 0xFFFFFFFFU
+  for b in data {
+    crc = crc ^ b.to_uint()
+    for _ in 0..<8 {
+      crc = if (crc & 1) != 0 { (crc >> 1) ^ 0xEDB88320U } else { crc >> 1 }
+    }
+  }
+  crc ^ 0xFFFFFFFFU
+}
+
+///|
+/// Minimal LSB-first bit writer for hand-built DEFLATE blocks.
+priv struct BitWriter {
+  out : @buffer.Buffer
+  mut acc : UInt32
+  mut nbits : Int32
+}
+
+///|
+fn BitWriter::bits(self : BitWriter, value : UInt32, n : Int32) -> Unit {
+  self.acc = self.acc | (value << self.nbits)
+  self.nbits += n
+  while self.nbits >= 8 {
+    self.out.write_byte((self.acc & 0xff).to_byte())
+    self.acc = self.acc >> 8
+    self.nbits -= 8
+  }
+}
+
+///|
+/// Write a Huffman code, which DEFLATE packs most significant bit first.
+fn BitWriter::code(self : BitWriter, code : UInt32, n : Int32) -> Unit {
+  for i = n - 1; i >= 0; i = i - 1 {
+    self.bits((code >> i) & 1, 1)
+  }
+}
+
+///|
+/// A gzip stream of two stored blocks of `first_len` and `second_len` bytes,
+/// then a fixed-Huffman block copying 3 bytes from distance 32768 and 258
+/// bytes from distance 1, so that the result depends on the history ring
+/// holding exactly the last 32 KiB. Returns the stream and the decoded text.
+fn stored_then_backrefs(
+  first_len : Int32,
+  second_len : Int32,
+) -> (Bytes, Bytes) {
+  let first = Bytes::makei(first_len, i => (i % 251).to_byte())
+  let second = Bytes::makei(second_len, i => (i % 241).to_byte())
+  let plain = @buffer.Buffer()
+  plain..write_bytes(first).write_bytes(second)
+  let stored = plain.to_bytes()
+  let n = stored.length()
+  plain.write_bytes(stored[n - 32768:n - 32768 + 3])
+  // distance 1 repeats the last byte copied above
+  for _ in 0..<258 {
+    plain.write_byte(stored[n - 32768 + 2])
+  }
+  let plain = plain.to_bytes()
+  let stream = @buffer.Buffer()
+  stream.write_bytes(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
+  for data in [first, second] {
+    let len = data.length()
+    stream.write_byte(b'\x00')
+    stream.write_uint16_le(len.to_uint16())
+    stream.write_uint16_le((len ^ 0xffff).to_uint16())
+    stream.write_bytes(data)
+  }
+  let bw = { out: stream, acc: 0, nbits: 0, }
+  bw.bits(1, 1) // BFINAL
+  bw.bits(1, 2) // BTYPE = fixed Huffman
+  bw.code(0b0000001, 7) // length code 257: length 3
+  bw.code(29, 5) // distance code 29: 24577 + 13 extra bits
+  bw.bits(32768 - 24577, 13)
+  bw.code(0b11000101, 8) // length code 285: length 258
+  bw.code(0, 5) // distance code 0: distance 1
+  bw.code(0, 7) // end of block
+  bw.bits(0, 7) // flush the last partial byte
+  stream.write_uint_le(test_crc32(plain))
+  stream.write_uint_le(plain.length().reinterpret_as_uint())
+  (stream.to_bytes(), plain)
+}
+
+///|
+async fn decode_buffered(stream : Bytes) -> Bytes {
+  let out = @buffer.Buffer()
+  @async.with_task_group() <| root => {
+    let (r, w) = @io.pipe()
+    root.spawn_bg() <| () => {
+      defer w.close()
+      w.write(stream)
+    }
+    defer r.close()
+    // Buffer the whole stream up front so that each stored block is available
+    // to the decoder in one piece, as it would be from a fast socket.
+    ignore(r.peek_exactly(stream.length()))
+    let decoder = @gzip.Decoder(r)
+    // An output buffer larger than the history ring lets a whole stored block
+    // be produced by a single call.
+    let buf = FixedArray::make(131072, b'\x00')
+    while decoder.read_into(buf) is n && n > 0 {
+      out.write_bytes(buf.unsafe_reinterpret_as_bytes()[:n])
+    }
+  }
+  out.to_bytes()
+}
+
+///|
+async test "decoder keeps the last 32 KiB of a large stored block" {
+  // A 32767-byte stored block leaves the 32 KiB history ring at position
+  // 32767; the following 65535-byte stored block used to be copied into the
+  // ring in one wrap, overrunning it.
+  for lens in [(32767, 65535), (5, 32768), (0, 65535), (40000, 32769)] {
+    let (first, second) = lens
+    let (stream, plain) = stored_then_backrefs(first, second)
+    let out = decode_buffered(stream)
+    assert_eq(out.length(), plain.length())
+    assert_true(out == plain)
+  }
+}

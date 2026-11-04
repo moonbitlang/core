@@ -13,6 +13,7 @@ import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/io",
   "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/buffer",
   "moonbitlang/core/async/internal/test_util",
 } for "test"
 
