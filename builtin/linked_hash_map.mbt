@@ -937,42 +937,58 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 /// If `f` raises, iteration stops immediately and the error propagates.
 /// This method does not modify `self`.
 ///
-/// `f` must not structurally modify `self` (insert or remove keys, or clear the
-/// map), including through aliases. Doing so results in undefined behavior.
+/// `f` is called once for each key `self` held when `map` was called, and the
+/// result holds exactly those keys in that order, even if `f` modifies `self`.
+/// Each value is read as its key is reached.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,
 ) -> Map[K, V2] raise? {
+  let { size, capacity, capacity_mask, grow_at, tail, .. } = self
   // copy structure
   let other = {
-    capacity: self.capacity,
-    entries: FixedArray::make(self.capacity, None),
-    size: self.size,
-    capacity_mask: self.capacity_mask,
-    grow_at: self.grow_at,
+    capacity,
+    entries: FixedArray::make(capacity, None),
+    size,
+    capacity_mask,
+    grow_at,
     head: None,
-    tail: self.tail,
+    tail,
   }
   guard self.head is Some(first) else { return other }
-  for entry = first, previous = (None : Entry[K, V2]?) {
-    let { prev, next, psl, hash, key, value, } = entry
+  // Snapshot the entries and their table slots before calling `f`: `f` may
+  // modify `self`, which can relink, move or drop entries.
+  let entries : UninitializedArray[Entry[K, V]] = UninitializedArray::make(size)
+  let slots : FixedArray[Int32] = FixedArray::make(size, 0)
+  let mut entry = first
+  for i in 0..<size {
+    entries[i] = entry
     // The next entry's back-link identifies this entry's table slot.
     // For the last entry, the map stores that slot in `tail`.
-    let idx = match next {
-      Some(next) => next.prev
-      None => self.tail
+    match entry.next {
+      Some(next) => {
+        slots.unsafe_set(i, next.prev)
+        entry = next
+      }
+      None => slots.unsafe_set(i, tail)
     }
-    let new_value = f(key, value)
-    let new_entry = { prev, next: None, psl, hash, key, value: new_value, }
+  }
+  let mut prev = -1
+  let mut previous : Entry[K, V2]? = None
+  for i in 0..<size {
+    let { hash, key, value, .. } = entries[i]
+    let idx = slots.unsafe_get(i)
+    // Derive `psl` from the slot: a modification of `self` may have moved
+    // this entry and updated its stored `psl`.
+    let psl = (idx - hash) & capacity_mask
+    let new_entry = { prev, next: None, psl, hash, key, value: f(key, value), }
     other.entries[idx] = Some(new_entry)
     match previous {
       Some(previous) => previous.next = Some(new_entry)
       None => other.head = Some(new_entry)
     }
-    match next {
-      Some(next) => continue next, Some(new_entry)
-      None => break
-    }
+    prev = idx
+    previous = Some(new_entry)
   }
   other
 }
@@ -1149,6 +1165,10 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// `Map([for k, v in m if f(k, v) => (k, v)])` because each entry's stored
 /// hash is reused: keys are never hashed again and no tuples are allocated.
 ///
+/// `f` is called once for each key `self` held when `filter` was called, in
+/// that order, even if `f` modifies `self`. Each value is read as its key is
+/// reached, and the result keeps the value `f` was given.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1168,29 +1188,42 @@ pub fn[K, V] Map::filter(
   self : Map[K, V],
   f : (K, V) -> Bool raise?,
 ) -> Map[K, V] raise? {
-  // Collect the kept entries first so the result can be sized for exactly
-  // them: a stored hash fits a table of any size, and the table never grows.
-  let kept : Array[Entry[K, V]] = []
+  // Snapshot the entries before calling `f`: `f` may modify `self`, which can
+  // relink an entry the traversal has already visited after the current one.
+  let kept : Array[Entry[K, V]] = Array(capacity=self.size)
   for x = self.head {
     match x {
-      Some({ key, value, next, .. } as entry) => {
-        if f(key, value) {
-          kept.push(entry)
-        }
+      Some({ next, .. } as entry) => {
+        kept.push(entry)
         continue next
       }
       None => break
     }
   }
+  // Keep the entries `f` accepts, compacting in place, along with the value
+  // `f` saw: `f` may also replace values. Collecting first lets the result be
+  // sized for exactly the kept entries: a stored hash fits a table of any
+  // size, and the table never grows.
+  let values : Array[V] = Array(capacity=kept.length())
+  for i in 0..<kept.length() {
+    let entry = kept.unsafe_get(i)
+    let value = entry.value
+    if f(entry.key, value) {
+      kept.unsafe_set(values.length(), entry)
+      values.push(value)
+    }
+  }
+  let n = values.length()
   let other = new_map(
-    if kept.is_empty() {
+    if n == 0 {
       default_init_capacity
     } else {
-      capacity_for_length(kept.length())
+      capacity_for_length(n)
     },
   )
-  for entry in kept {
-    other.add_unique_with_hash(entry.key, entry.value, entry.hash)
+  for i in 0..<n {
+    let entry = kept.unsafe_get(i)
+    other.add_unique_with_hash(entry.key, values.unsafe_get(i), entry.hash)
   }
   other
 }
