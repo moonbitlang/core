@@ -36,16 +36,29 @@ test "next_two_uint should return two 32-bit unsigned integers" {
 }
 
 ///|
-test "clone_random_state" {
+test "RandomState::copy preserves the current sequence independently" {
   let state = @splitmix.RandomState(seed=42UL)
+  state.next()
+  let copied = state.copy()
+  // Advance each state in batches to detect shared mutable state.
+  let expected = Array::makei(8, _ => state.next_uint64())
+  let actual = Array::makei(8, _ => copied.next_uint64())
+  inspect(actual == expected, content="true")
+  let expected = Array::makei(8, _ => copied.next_uint64())
+  let actual = Array::makei(8, _ => state.next_uint64())
+  inspect(actual == expected, content="true")
+}
+
+///|
+#warnings("-deprecated")
+test "RandomState::clone remains compatible with copy" {
+  let state = @splitmix.RandomState(seed=42UL)
+  state.next()
   let cloned = state.clone()
-
-  // Generate some values from both states to ensure they behave the same
-  let orig_int = state.next_int()
-  let clone_int = cloned.next_int()
-
-  // The cloned state should produce the same value as the original
-  inspect(orig_int == clone_int, content="true")
+  let copied = state.copy()
+  for _ in 0..<8 {
+    assert_eq(cloned.next_uint64(), copied.next_uint64())
+  }
 }
 
 ///|

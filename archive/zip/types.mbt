@@ -260,11 +260,11 @@ pub fn Archive::set_comment(self : Archive, comment : BytesView) -> Unit {
 }
 
 ///|
-/// Returns an independently mutable snapshot of this archive. The clone shares
+/// Returns an independently mutable snapshot of this archive. The copy shares
 /// entry payloads and source storage but owns a
 /// fresh entries array, so `add`/`replace`/`remove` on either side never
 /// affects the other.
-pub fn Archive::clone(self : Archive) -> Archive {
+pub fn Archive::copy(self : Archive) -> Archive {
   {
     entries: self.entries.copy(),
     comment: self.comment,
