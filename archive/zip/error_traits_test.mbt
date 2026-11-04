@@ -72,35 +72,17 @@ test "ZipError Debug prints the constructor form" {
 }
 
 ///|
-test "ZipError Eq compares kind and message" {
-  let a = zip_error(b"not a zip archive at all, no EOCD here")
-  let b = zip_error(b"not a zip archive at all, no EOCD here")
+fn error_kind(err : @zip.ZipError) -> @zip.ZipErrorKind {
+  match err {
+    ZipError(kind, _) => kind
+  }
+}
+
+///|
+test "ZipError is matched by kind" {
+  // The error doesn't implement `Eq`, because derived equality would compare the
+  // message text too. Callers match on the kind, which does implement `Eq`.
   let c = zip_error(empty_archive, limits=ReadLimits(max_package_bytes=1))
-  inspect(
-    a == b,
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a.equal(b),
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a == c,
-    content=(
-      #|false
-    ),
-  )
-  inspect(
-    a != c,
-    content=(
-      #|true
-    ),
-  )
-  // Same kind (`InvalidSignature`), different message: not equal.
   let archive = @zip.Archive()
   archive.add("a", b"x", compression=Store)
   let bad_local = @zip.write(archive).to_fixedarray()
@@ -111,24 +93,14 @@ test "ZipError Eq compares kind and message" {
   (bad_central[eocd + 17].to_int() << 8)] = 0
   let d = zip_error(Bytes::from_array(bad_local))
   let e = zip_error(Bytes::from_array(bad_central))
-  inspect(
-    d,
-    content=(
-      #|InvalidSignature: zip: invalid local header signature
-    ),
-  )
-  inspect(
-    e,
-    content=(
-      #|InvalidSignature: zip: invalid central directory signature
-    ),
-  )
-  inspect(
-    d == e,
-    content=(
-      #|false
-    ),
-  )
+  guard d is ZipError(InvalidSignature, _) && e is ZipError(InvalidSignature, _) else {
+    fail("expected InvalidSignature, got \{d} and \{e}")
+  }
+  // Same kind, different message.
+  inspect(error_kind(d) == error_kind(e), content="true")
+  inspect("\{d}" == "\{e}", content="false")
+  // Different kinds.
+  inspect(error_kind(d) == error_kind(c), content="false")
 }
 
 ///|

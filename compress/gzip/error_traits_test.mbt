@@ -64,48 +64,27 @@ test "GzipError Debug prints the constructor form" {
 }
 
 ///|
-test "GzipError Eq compares kind and message" {
+fn error_kind(err : @gzip.GzipError) -> @gzip.GzipErrorKind {
+  match err {
+    GzipError(kind, _) => kind
+  }
+}
+
+///|
+test "GzipError is matched by kind" {
+  // The error doesn't implement `Eq`, because derived equality would compare the
+  // message text too. Callers match on the kind, which does implement `Eq`.
   let a = gzip_error(b"this is definitely not gzip data")
-  let b = gzip_error(b"this is definitely not gzip data")
   let c = gzip_error(@gzip.compress(b"hello, world"), max_output=4)
-  inspect(
-    a == b,
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a.equal(b),
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a == c,
-    content=(
-      #|false
-    ),
-  )
-  inspect(
-    a != c,
-    content=(
-      #|true
-    ),
-  )
-  // Same kind (`InvalidHeader`), different message: not equal.
   let d = gzip_error(b"\x1f\x8b\x07this is definitely not gzip data")
-  inspect(
-    d,
-    content=(
-      #|InvalidHeader: gzip: unsupported compression method
-    ),
-  )
-  inspect(
-    a == d,
-    content=(
-      #|false
-    ),
-  )
+  guard a is GzipError(InvalidHeader, _) && d is GzipError(InvalidHeader, _) else {
+    fail("expected InvalidHeader, got \{a} and \{d}")
+  }
+  // Same kind, different message.
+  inspect(error_kind(a) == error_kind(d), content="true")
+  inspect("\{a}" == "\{d}", content="false")
+  // Different kinds.
+  inspect(error_kind(a) == error_kind(c), content="false")
 }
 
 ///|

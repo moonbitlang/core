@@ -51,7 +51,7 @@ pub(all) enum InflateErrorKind {
 /// `Show` prints `<kind>: <message>` on one line, such as
 /// `Corrupt: corrupt: reserved block type`.
 /// `@debug.Debug` prints the constructor form.
-#derive(Eq, @debug.Debug)
+#derive(@debug.Debug)
 pub suberror InflateError {
   InflateError(InflateErrorKind, String)
 }
