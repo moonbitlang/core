@@ -848,3 +848,16 @@ async test "watch debounce" {
     }
   }
 }
+
+///|
+test "FileKind and FsEvent promote equal" {
+  let kind_eq : (@fs.FileKind, @fs.FileKind) -> Bool = @fs.FileKind::equal
+  inspect(kind_eq(Regular, Regular), content="true")
+  inspect(@fs.FileKind::Regular.equal(Directory), content="false")
+  let event_eq : (@fs.FsEvent, @fs.FsEvent) -> Bool = @fs.FsEvent::equal
+  inspect(event_eq(Create("a"), Create("a")), content="true")
+  inspect(
+    @fs.FsEvent::Rename(old="a", new="b").equal(Rename(old="a", new="c")),
+    content="false",
+  )
+}

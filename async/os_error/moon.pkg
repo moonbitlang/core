@@ -28,6 +28,7 @@ options(
     "error.mbt": [ "native", "wasm" ],
     "error_kind.mbt": [ "native", "wasm" ],
     "deprecated.mbt": [ "native", "wasm" ],
+    "extends.mbt": [ "native", "wasm" ],
     "os_error_test.mbt": [ "native", "wasm" ],
   },
 )

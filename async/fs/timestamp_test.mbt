@@ -128,3 +128,28 @@ async test "mtime for opened file" {
   assert_true((mtime_2 - mtime_1).msec() > 500)
   assert_true((ctime_2 - ctime_1).msec() > 500)
 }
+
+///|
+async test "Timestamp promotes equal, compare, hash and sub" {
+  let path = "_build/timestamp_promotion_test"
+  @fs.write_text(path, "abcd", sync=Full)
+  defer @fs.remove(path)
+  let a = @fs.mtime(path)
+  let b = @fs.mtime(path)
+  let eq : (@fs.Timestamp, @fs.Timestamp) -> Bool = @fs.Timestamp::equal
+  let cmp : (@fs.Timestamp, @fs.Timestamp) -> Int32 = @fs.Timestamp::compare
+  let hash : (@fs.Timestamp) -> Int32 = @fs.Timestamp::hash
+  let sub : (@fs.Timestamp, @fs.Timestamp) -> @fs.Timestamp = @fs.Timestamp::sub
+  inspect(eq(a, b), content="true")
+  inspect(cmp(a, b), content="0")
+  // `Hash` agrees with `Eq`, so timestamps can key a `Map`
+  inspect(hash(a) == b.hash(), content="true")
+  let seen : Map[@fs.Timestamp, Int32] = Map([])
+  seen[a] = 1
+  inspect(seen.get(b) == Some(1), content="true")
+  let zero = sub(a, b)
+  inspect(zero.sec(), content="0")
+  inspect(zero.nsec(), content="0")
+  inspect(a.sub(b).equal(zero), content="true")
+  inspect(zero.compare(a) < 0, content="true")
+}

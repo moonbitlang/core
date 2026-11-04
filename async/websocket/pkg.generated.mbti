@@ -33,6 +33,7 @@ pub(all) enum CloseCode {
   InternalError
   Other(UInt16)
 }
+pub fn CloseCode::equal(Self, Self) -> Bool
 
 pub struct Conn {
   text : @io.Utf8Writer

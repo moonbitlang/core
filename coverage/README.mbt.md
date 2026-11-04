@@ -13,7 +13,7 @@ test "coverage counter basics" {
   let counter = @coverage.CoverageCounter::new(5)
 
   // Initially all counters should be zero
-  inspect(counter.to_string(), content="[0, 0, 0, 0, 0]")
+  inspect(counter, content="[0, 0, 0, 0, 0]")
 
   // Increment specific tracking points
   counter.incr(0) // First code point executed once
@@ -21,7 +21,7 @@ test "coverage counter basics" {
   counter.incr(0) // First code point executed again
 
   // Check the updated counters
-  inspect(counter.to_string(), content="[2, 0, 1, 0, 0]")
+  inspect(counter, content="[2, 0, 1, 0, 0]")
 }
 ```
 
@@ -58,7 +58,7 @@ test "tracking execution paths" {
   inspect(result3, content="zero")
 
   // All paths should have been executed once
-  inspect(counter.to_string(), content="[1, 1, 1]")
+  inspect(counter, content="[1, 1, 1]")
 }
 ```
 
@@ -94,7 +94,7 @@ test "loop coverage" {
   inspect(result, content="24") // 1*2 + 2 + 3*2 + 4 + 5*2 = 2 + 2 + 6 + 4 + 10 = 24
 
   // Both branches should have been executed
-  let coverage_str = counter.to_string()
+  let coverage_str = "\{counter}"
   inspect(coverage_str.length() > 5, content="true") // Should show execution counts
 }
 ```
@@ -142,7 +142,7 @@ test "function coverage" {
   inspect(unknown_result, content="0")
 
   // Check that three of four branches were executed
-  let final_coverage = counter.to_string()
+  let final_coverage = "\{counter}"
   inspect(final_coverage, content="[1, 1, 0, 1]") // add, sub, not mul, unknown
 }
 ```
@@ -187,7 +187,7 @@ test "coverage analysis" {
   inspect(result3, content="small")
 
   // Analyze coverage: which paths were taken
-  let coverage = counter.to_string()
+  let coverage = "\{counter}"
   // Should show: [3, 1, 2, 1, 1, 0] - entry(3), negative(1), non-negative(2), zero(1), positive(1), large(0)
   inspect(coverage.length() > 10, content="true")
 }
@@ -242,7 +242,7 @@ test "coverage reporting" {
   counter.incr(2) // Line 3 executed
   // Line 2 (index 1) never executed
 
-  let report = counter.to_string()
+  let report = "\{counter}"
   inspect(report, content="[2, 0, 1]")
 
   // In real usage, you might analyze this data:

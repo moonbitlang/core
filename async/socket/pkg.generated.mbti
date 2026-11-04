@@ -23,6 +23,9 @@ pub impl Show for ResolveHostnameError
 // Types and methods
 #derive(Compare, Eq, Hash)
 type Addr
+pub fn Addr::compare(Self, Self) -> Int32
+pub fn Addr::equal(Self, Self) -> Bool
+pub fn Addr::hash(Self) -> Int32
 pub fn Addr::ip(Self) -> UInt32
 pub fn Addr::is_ipv6(Self) -> Bool
 pub fn Addr::is_multicast(Self) -> Bool

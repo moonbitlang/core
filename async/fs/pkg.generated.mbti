@@ -130,6 +130,7 @@ pub(all) enum FileKind {
   CharDevice
   Console
 }
+pub fn FileKind::equal(Self, Self) -> Bool
 
 #derive(Eq, @debug.Debug)
 pub(all) enum FsEvent {
@@ -138,6 +139,7 @@ pub(all) enum FsEvent {
   Remove(String)
   Rename(old~ : String, new~ : String)
 }
+pub fn FsEvent::equal(Self, Self) -> Bool
 
 pub(all) enum Lock {
   Shared
@@ -156,11 +158,15 @@ pub(all) enum SyncMode {
   Full
 }
 
-#derive(Compare, Eq, @debug.Debug)
+#derive(Compare, Eq, Hash, @debug.Debug)
 type Timestamp
+pub fn Timestamp::compare(Self, Self) -> Int32
+pub fn Timestamp::equal(Self, Self) -> Bool
+pub fn Timestamp::hash(Self) -> Int32
 pub fn Timestamp::msec(Self) -> Int64
 pub fn Timestamp::nsec(Self) -> Int32
 pub fn Timestamp::sec(Self) -> Int64
+pub fn Timestamp::sub(Self, Self) -> Self
 pub impl Sub for Timestamp
 
 type Watcher

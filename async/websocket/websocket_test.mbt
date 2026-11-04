@@ -192,3 +192,11 @@ async test "large message" {
     inspect(server_checksum.wait(), content="3745800")
   }
 }
+
+///|
+test "CloseCode promotes equal" {
+  let eq : (@websocket.CloseCode, @websocket.CloseCode) -> Bool = @websocket.CloseCode::equal
+  inspect(eq(Normal, Normal), content="true")
+  inspect(eq(Other(4000), Other(4000)), content="true")
+  inspect(@websocket.CloseCode::Normal.equal(GoingAway), content="false")
+}

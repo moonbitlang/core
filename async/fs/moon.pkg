@@ -51,6 +51,7 @@ options(
     "create_test.mbt": [ "native", "wasm" ],
     "cursor_test.mbt": [ "native" ],
     "deprecated.mbt": [ "native", "wasm" ],
+    "extends.mbt": [ "native", "wasm" ],
     "dir.mbt": [ "native", "wasm" ],
     "dir_test.mbt": [ "native", "wasm" ],
     "eof_test.mbt": [ "native", "wasm" ],

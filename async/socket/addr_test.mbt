@@ -87,3 +87,18 @@ test "Parse IPv6 address with ipv4" {
   // Too many groups
   @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:127.0.0.1]:8080"))
 }
+
+///|
+test "Addr promotes equal, compare and hash" {
+  let a = @socket.Addr::parse("127.0.0.1:80")
+  let b = @socket.Addr::parse("127.0.0.1:80")
+  let c = @socket.Addr::parse("127.0.0.1:81")
+  let eq : (@socket.Addr, @socket.Addr) -> Bool = @socket.Addr::equal
+  let cmp : (@socket.Addr, @socket.Addr) -> Int32 = @socket.Addr::compare
+  let hash : (@socket.Addr) -> Int32 = @socket.Addr::hash
+  inspect(eq(a, b), content="true")
+  inspect(a.equal(c), content="false")
+  inspect(cmp(a, b), content="0")
+  inspect(a.compare(c) < 0, content="true")
+  inspect(hash(a) == b.hash(), content="true")
+}
