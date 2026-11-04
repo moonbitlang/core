@@ -218,9 +218,9 @@ exactly, so for decimal end points iterate over integers and scale.
 ```mbt check
 ///|
 test "range" {
-  let values = @range.iter(from=Float(0), to=1.0, step=0.5).to_array()
+  let values = @range.iter(start=Float(0), end=1.0, step=0.5).to_array()
   debug_inspect(values.map(Float::to_double), content="[0, 0.5]")
-  let inclusive = @range.iter(from=Float(0), to=1.0, step=0.5, inclusive=true)
+  let inclusive = @range.iter(start=Float(0), end=1.0, step=0.5, inclusive=true)
   debug_inspect(
     inclusive.map(Float::to_double).to_array(),
     content="[0, 0.5, 1]",

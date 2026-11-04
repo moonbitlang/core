@@ -95,9 +95,7 @@ fn reference_char_length_cmp(
 /// `s[start:end]` against the model, for a range the model says is valid.
 fn check_char_length_range(s : String, start : Int32, end : Int32) -> Bool {
   guard char_length_model(s, start, end) is Some(expected) else { return true }
-  guard s.char_length(start_offset=start, end_offset=end) == expected else {
-    return false
-  }
+  guard s.char_length(start~, end~) == expected else { return false }
   guard reference_char_length(s, start, end) == expected else { return false }
   let lens = [
     0,
@@ -117,12 +115,10 @@ fn check_char_length_range(s : String, start : Int32, end : Int32) -> Bool {
     -1,
   ]
   for len in lens {
-    guard s.char_length_eq(len, start_offset=start, end_offset=end) ==
-      (expected == len) else {
+    guard s.char_length_eq(len, start~, end~) == (expected == len) else {
       return false
     }
-    guard s.char_length_ge(len, start_offset=start, end_offset=end) ==
-      (expected >= len) else {
+    guard s.char_length_ge(len, start~, end~) == (expected >= len) else {
       return false
     }
   }
@@ -188,9 +184,9 @@ test "char_length: leading surrogate as the last unit of a block-aligned range" 
     assert_false(s.char_length_ge(blocks * 8 + 1))
     // The same unit followed by a trailing surrogate outside the range.
     let s2 = char_length_units(units + [0xDC00])
-    assert_eq(s2.char_length(end_offset=blocks * 8), blocks * 8)
+    assert_eq(s2.char_length(end=blocks * 8), blocks * 8)
     assert_eq(s2.char_length(), blocks * 8)
-    assert_true(s2.char_length_eq(blocks * 8, end_offset=blocks * 8))
+    assert_true(s2.char_length_eq(blocks * 8, end=blocks * 8))
   }
 }
 
@@ -246,15 +242,11 @@ test "char_length_eq/ge: reversed ranges read nothing" {
   // range walks nothing, including one whose `end - start` wraps around to a
   // length the SIMD path would accept.
   let s = "a".repeat(64)
-  assert_false(
-    s.char_length_eq(16, start_offset=2147483647, end_offset=-2147483633),
-  )
-  assert_false(
-    s.char_length_ge(16, start_offset=2147483647, end_offset=-2147483633),
-  )
-  assert_false(s.char_length_eq(16, start_offset=40, end_offset=20))
-  assert_false(s.char_length_ge(16, start_offset=40, end_offset=20))
-  assert_true(s.char_length_ge(0, start_offset=40, end_offset=20))
+  assert_false(s.char_length_eq(16, start=2147483647, end=-2147483633))
+  assert_false(s.char_length_ge(16, start=2147483647, end=-2147483633))
+  assert_false(s.char_length_eq(16, start=40, end=20))
+  assert_false(s.char_length_ge(16, start=40, end=20))
+  assert_true(s.char_length_ge(0, start=40, end=20))
 }
 
 ///|
@@ -311,11 +303,11 @@ test "quickcheck: char_length agrees with the scalar walk and the model" {
     let expected = reference_char_length(s, start, end)
     for delta in -9..<=9 {
       let n = expected + delta
-      guard s.char_length_eq(n, start_offset=start, end_offset=end) ==
+      guard s.char_length_eq(n, start~, end~) ==
         reference_char_length_cmp(s, n, start, end, true) else {
         return false
       }
-      guard s.char_length_ge(n, start_offset=start, end_offset=end) ==
+      guard s.char_length_ge(n, start~, end~) ==
         reference_char_length_cmp(s, n, start, end, false) else {
         return false
       }
@@ -350,7 +342,7 @@ test "panic char_length invalid pair straddling a block edge" {
 ///|
 test "panic char_length invalid pair with an unaligned start" {
   let s = "a".repeat(23) + char_length_units([0xDBFF, 0xD800]) + "b".repeat(30)
-  ignore(s.char_length(start_offset=3))
+  ignore(s.char_length(start=3))
 }
 
 ///|
@@ -363,7 +355,7 @@ test "panic char_length invalid pair in the scalar tail" {
 test "panic char_length invalid pair at the range end" {
   // The range ends right after the unit following the leading surrogate.
   let s = "a".repeat(23) + char_length_units([0xD800, 0x61]) + "b".repeat(30)
-  ignore(s.char_length(end_offset=25))
+  ignore(s.char_length(end=25))
 }
 
 ///|

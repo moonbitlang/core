@@ -6,7 +6,9 @@ import {
 }
 
 // Values
-pub fn[T : Step] iter(from~ : T, to~ : T, step? : T, inclusive? : Bool) -> Iter[T]
+#label_migration(end, alias=to, msg="Use end= instead")
+#label_migration(start, alias=from, msg="Use start= instead")
+pub fn[T : Step] iter(start~ : T, end~ : T, step? : T, inclusive? : Bool) -> Iter[T]
 
 // Errors
 

@@ -15,19 +15,19 @@
 ///|
 test "iter Int default step" {
   debug_inspect(
-    @range.iter(from=0, to=5).to_array(),
+    @range.iter(start=0, end=5).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=0, to=0).to_array(),
+    @range.iter(start=0, end=0).to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    @range.iter(from=5, to=0).to_array(),
+    @range.iter(start=5, end=0).to_array(),
     content=(
       #|[]
     ),
@@ -37,13 +37,13 @@ test "iter Int default step" {
 ///|
 test "iter Int with step" {
   debug_inspect(
-    @range.iter(from=0, to=10, step=3).to_array(),
+    @range.iter(start=0, end=10, step=3).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=100, to=101, step=4).to_array(),
+    @range.iter(start=100, end=101, step=4).to_array(),
     content=(
       #|[100]
     ),
@@ -53,19 +53,19 @@ test "iter Int with step" {
 ///|
 test "iter Int inclusive" {
   debug_inspect(
-    @range.iter(from=0, to=5, inclusive=true).to_array(),
+    @range.iter(start=0, end=5, inclusive=true).to_array(),
     content=(
       #|[0, 1, 2, 3, 4, 5]
     ),
   )
   debug_inspect(
-    @range.iter(from=0, to=0, inclusive=true).to_array(),
+    @range.iter(start=0, end=0, inclusive=true).to_array(),
     content=(
       #|[0]
     ),
   )
   debug_inspect(
-    @range.iter(from=0, to=10, step=3, inclusive=true).to_array(),
+    @range.iter(start=0, end=10, step=3, inclusive=true).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
@@ -75,25 +75,25 @@ test "iter Int inclusive" {
 ///|
 test "iter Int descending" {
   debug_inspect(
-    @range.iter(from=10, to=0, step=-1).to_array(),
+    @range.iter(start=10, end=0, step=-1).to_array(),
     content=(
       #|[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     ),
   )
   debug_inspect(
-    @range.iter(from=10, to=0, step=-3).to_array(),
+    @range.iter(start=10, end=0, step=-3).to_array(),
     content=(
       #|[10, 7, 4, 1]
     ),
   )
   debug_inspect(
-    @range.iter(from=10, to=0, step=-3, inclusive=true).to_array(),
+    @range.iter(start=10, end=0, step=-3, inclusive=true).to_array(),
     content=(
       #|[10, 7, 4, 1]
     ),
   )
   debug_inspect(
-    @range.iter(from=0, to=10, step=-1).to_array(),
+    @range.iter(start=0, end=10, step=-1).to_array(),
     content=(
       #|[]
     ),
@@ -103,19 +103,19 @@ test "iter Int descending" {
 ///|
 test "iter Int overflow at MAX_VALUE" {
   debug_inspect(
-    @range.iter(from=@int.MAX_VALUE - 2, to=@int.MAX_VALUE - 1).to_array(),
+    @range.iter(start=@int.MAX_VALUE - 2, end=@int.MAX_VALUE - 1).to_array(),
     content=(
       #|[2147483645]
     ),
   )
   debug_inspect(
-    @range.iter(from=@int.MAX_VALUE - 1, to=@int.MAX_VALUE, inclusive=true).to_array(),
+    @range.iter(start=@int.MAX_VALUE - 1, end=@int.MAX_VALUE, inclusive=true).to_array(),
     content=(
       #|[2147483646, 2147483647]
     ),
   )
   debug_inspect(
-    @range.iter(from=@int.MAX_VALUE, to=@int.MAX_VALUE, inclusive=true).to_array(),
+    @range.iter(start=@int.MAX_VALUE, end=@int.MAX_VALUE, inclusive=true).to_array(),
     content=(
       #|[2147483647]
     ),
@@ -125,19 +125,19 @@ test "iter Int overflow at MAX_VALUE" {
 ///|
 test "iter Int64" {
   debug_inspect(
-    @range.iter(from=0L, to=10L, step=3L).to_array(),
+    @range.iter(start=0L, end=10L, step=3L).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=10L, to=0L, step=-3L).to_array(),
+    @range.iter(start=10L, end=0L, step=-3L).to_array(),
     content=(
       #|[10, 7, 4, 1]
     ),
   )
   debug_inspect(
-    @range.iter(from=0x80000000L, to=0x80000000L + 10L, step=2L).to_array(),
+    @range.iter(start=0x80000000L, end=0x80000000L + 10L, step=2L).to_array(),
     content=(
       #|[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]
     ),
@@ -147,19 +147,19 @@ test "iter Int64" {
 ///|
 test "iter UInt" {
   debug_inspect(
-    @range.iter(from=0U, to=5U).to_array(),
+    @range.iter(start=0U, end=5U).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=0U, to=10U, step=3U).to_array(),
+    @range.iter(start=0U, end=10U, step=3U).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=5U, to=0U).to_array(),
+    @range.iter(start=5U, end=0U).to_array(),
     content=(
       #|[]
     ),
@@ -169,7 +169,7 @@ test "iter UInt" {
 ///|
 test "iter UInt64" {
   debug_inspect(
-    @range.iter(from=0UL, to=5UL).to_array(),
+    @range.iter(start=0UL, end=5UL).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
@@ -179,19 +179,19 @@ test "iter UInt64" {
 ///|
 test "iter Double" {
   debug_inspect(
-    @range.iter(from=0.0, to=1.0, step=0.25).to_array(),
+    @range.iter(start=0.0, end=1.0, step=0.25).to_array(),
     content=(
       #|[0, 0.25, 0.5, 0.75]
     ),
   )
   debug_inspect(
-    @range.iter(from=0.0, to=1.0, step=0.25, inclusive=true).to_array(),
+    @range.iter(start=0.0, end=1.0, step=0.25, inclusive=true).to_array(),
     content=(
       #|[0, 0.25, 0.5, 0.75, 1]
     ),
   )
   debug_inspect(
-    @range.iter(from=0.0, to=-1.0, step=-0.25).to_array(),
+    @range.iter(start=0.0, end=-1.0, step=-0.25).to_array(),
     content=(
       #|[0, -0.25, -0.5, -0.75]
     ),
@@ -201,7 +201,7 @@ test "iter Double" {
 ///|
 test "iter Double default step is 1.0" {
   debug_inspect(
-    @range.iter(from=0.0, to=4.5).to_array(),
+    @range.iter(start=0.0, end=4.5).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
@@ -212,7 +212,7 @@ test "iter Double default step is 1.0" {
 test "iter Double terminates on sub-precision step" {
   // 1e16 + 1.0 == 1e16 in IEEE 754 (double precision around 2^53),
   // so the loop must bail rather than infinite-loop.
-  let r = @range.iter(from=1.0e16, to=1.0e16 + 100.0, step=1.0)
+  let r = @range.iter(start=1.0e16, end=1.0e16 + 100.0, step=1.0)
     .take(5)
     .to_array()
   inspect(r.length() <= 1, content="true")
@@ -222,7 +222,7 @@ test "iter Double terminates on sub-precision step" {
 test "iter Double Inf step yields one and stops" {
   let inf = 1.0 / 0.0
   debug_inspect(
-    @range.iter(from=0.0, to=100.0, step=inf).to_array(),
+    @range.iter(start=0.0, end=100.0, step=inf).to_array(),
     content=(
       #|[0]
     ),
@@ -232,7 +232,7 @@ test "iter Double Inf step yields one and stops" {
 ///|
 test "iter Float" {
   debug_inspect(
-    @range.iter(from=Float(0.0), to=1.0, step=0.25).to_array(),
+    @range.iter(start=Float(0.0), end=1.0, step=0.25).to_array(),
     content=(
       #|[0, 0.25, 0.5, 0.75]
     ),
@@ -242,19 +242,19 @@ test "iter Float" {
 ///|
 test "iter Int16" {
   debug_inspect(
-    @range.iter(from=Int16(0), to=Int16(5)).to_array(),
+    @range.iter(start=Int16(0), end=Int16(5)).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=Int16(0), to=Int16(10), step=Int16(3)).to_array(),
+    @range.iter(start=Int16(0), end=Int16(10), step=Int16(3)).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
   )
   debug_inspect(
-    @range.iter(from=Int16(10), to=Int16(0), step=Int16(-1)).to_array(),
+    @range.iter(start=Int16(10), end=Int16(0), step=Int16(-1)).to_array(),
     content=(
       #|[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     ),
@@ -264,13 +264,13 @@ test "iter Int16" {
 ///|
 test "iter UInt16" {
   debug_inspect(
-    @range.iter(from=UInt16(0), to=UInt16(5)).to_array(),
+    @range.iter(start=UInt16(0), end=UInt16(5)).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=UInt16(0), to=UInt16(10), step=UInt16(3)).to_array(),
+    @range.iter(start=UInt16(0), end=UInt16(10), step=UInt16(3)).to_array(),
     content=(
       #|[0, 3, 6, 9]
     ),
@@ -280,13 +280,13 @@ test "iter UInt16" {
 ///|
 test "iter Byte" {
   debug_inspect(
-    @range.iter(from=Byte(0), to=Byte(5)).to_array(),
+    @range.iter(start=Byte(0), end=Byte(5)).to_array(),
     content=(
       #|[0x00, 0x01, 0x02, 0x03, 0x04]
     ),
   )
   debug_inspect(
-    @range.iter(from=Byte(250), to=Byte(255), inclusive=true).to_array(),
+    @range.iter(start=Byte(250), end=Byte(255), inclusive=true).to_array(),
     content=(
       #|[0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff]
     ),
@@ -296,21 +296,21 @@ test "iter Byte" {
 ///|
 test "iter BigInt" {
   debug_inspect(
-    @range.iter(from=0N, to=5N).to_array(),
+    @range.iter(start=0N, end=5N).to_array(),
     content=(
       #|[0, 1, 2, 3, 4]
     ),
   )
   debug_inspect(
-    @range.iter(from=10N, to=0N, step=-3N).to_array(),
+    @range.iter(start=10N, end=0N, step=-3N).to_array(),
     content=(
       #|[10, 7, 4, 1]
     ),
   )
   debug_inspect(
     @range.iter(
-      from=0N,
-      to=1000000000000000000000N,
+      start=0N,
+      end=1000000000000000000000N,
       step=200000000000000000000N,
     ).to_array(),
     content=(
@@ -328,19 +328,19 @@ test "iter BigInt" {
 ///|
 test "iter zero step yields empty (or [from] when inclusive at the boundary)" {
   debug_inspect(
-    @range.iter(from=0, to=10, step=0).to_array(),
+    @range.iter(start=0, end=10, step=0).to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    @range.iter(from=5, to=5, step=0, inclusive=true).to_array(),
+    @range.iter(start=5, end=5, step=0, inclusive=true).to_array(),
     content=(
       #|[5]
     ),
   )
   debug_inspect(
-    @range.iter(from=0.0, to=1.0, step=0.0).to_array(),
+    @range.iter(start=0.0, end=1.0, step=0.0).to_array(),
     content=(
       #|[]
     ),
@@ -351,19 +351,19 @@ test "iter zero step yields empty (or [from] when inclusive at the boundary)" {
 test "iter Double NaN step matches Double::until: yields [from] only when inclusive at equal bounds" {
   let nan = 0.0 / 0.0
   debug_inspect(
-    @range.iter(from=1.0, to=1.0, step=nan, inclusive=true).to_array(),
+    @range.iter(start=1.0, end=1.0, step=nan, inclusive=true).to_array(),
     content=(
       #|[1]
     ),
   )
   debug_inspect(
-    @range.iter(from=1.0, to=2.0, step=nan, inclusive=true).to_array(),
+    @range.iter(start=1.0, end=2.0, step=nan, inclusive=true).to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    @range.iter(from=1.0, to=1.0, step=nan).to_array(),
+    @range.iter(start=1.0, end=1.0, step=nan).to_array(),
     content=(
       #|[]
     ),
@@ -376,7 +376,7 @@ test "iter Double NaN end never matches inclusive" {
   // NaN as `to` with a finite forward step must not infinite-loop;
   // it terminates because `i == NaN` is always false.
   debug_inspect(
-    @range.iter(from=0.0, to=nan, step=1.0, inclusive=true).to_array(),
+    @range.iter(start=0.0, end=nan, step=1.0, inclusive=true).to_array(),
     content=(
       #|[]
     ),
@@ -389,20 +389,20 @@ test "iter Int MIN_VALUE descending and step" {
   // MIN_VALUE + MIN_VALUE wraps to 0, no progress, stops.
   let min = -2147483648
   debug_inspect(
-    @range.iter(from=0, to=min, step=min).to_array(),
+    @range.iter(start=0, end=min, step=min).to_array(),
     content=(
       #|[0]
     ),
   )
   debug_inspect(
-    @range.iter(from=0, to=min, step=min, inclusive=true).to_array(),
+    @range.iter(start=0, end=min, step=min, inclusive=true).to_array(),
     content=(
       #|[0, -2147483648]
     ),
   )
   // Plain descending into MIN_VALUE
   debug_inspect(
-    @range.iter(from=min + 2, to=min, step=-1, inclusive=true).to_array(),
+    @range.iter(start=min + 2, end=min, step=-1, inclusive=true).to_array(),
     content=(
       #|[-2147483646, -2147483647, -2147483648]
     ),
@@ -413,13 +413,13 @@ test "iter Int MIN_VALUE descending and step" {
 test "iter UInt wrap-around at MAX_VALUE" {
   let max = 4294967295U
   debug_inspect(
-    @range.iter(from=max - 1U, to=max, step=2U).to_array(),
+    @range.iter(start=max - 1U, end=max, step=2U).to_array(),
     content=(
       #|[4294967294]
     ),
   )
   debug_inspect(
-    @range.iter(from=max - 1U, to=max, inclusive=true).to_array(),
+    @range.iter(start=max - 1U, end=max, inclusive=true).to_array(),
     content=(
       #|[4294967294, 4294967295]
     ),
@@ -430,19 +430,19 @@ test "iter UInt wrap-around at MAX_VALUE" {
 test "iter via for-comprehension into array" {
   debug_inspect(
     [
-      for i in @range.iter(from=1, to=10, step=3) => i
+      for i in @range.iter(start=1, end=10, step=3) => i
     ],
     content="[1, 4, 7]",
   )
   debug_inspect(
     [
-      for i in @range.iter(from=0, to=5) => i * i
+      for i in @range.iter(start=0, end=5) => i * i
     ],
     content="[0, 1, 4, 9, 16]",
   )
   debug_inspect(
     [
-      for c in @range.iter(from=Byte(0), to=Byte(4)) => c
+      for c in @range.iter(start=Byte(0), end=Byte(4)) => c
     ],
     content="[0x00, 0x01, 0x02, 0x03]",
   )
@@ -451,7 +451,7 @@ test "iter via for-comprehension into array" {
 ///|
 test "iter is lazy" {
   let mut count = 0
-  for i in @range.iter(from=0, to=100) {
+  for i in @range.iter(start=0, end=100) {
     count += 1
     if i == 4 {
       break
@@ -466,7 +466,7 @@ test "iter Double computes each element as from + k * step" {
   // `step`. Repeated addition drifts, which showed up as an 11th element
   // (0.9999999999999999) and as `inclusive` never reaching `to`.
   debug_inspect(
-    @range.iter(from=0.0, to=1.0, step=0.1).to_array(),
+    @range.iter(start=0.0, end=1.0, step=0.1).to_array(),
     content=(
       #|[
       #|  0,
@@ -483,27 +483,27 @@ test "iter Double computes each element as from + k * step" {
     ),
   )
   debug_inspect(
-    @range.iter(from=0.0, to=1.0, step=0.1, inclusive=true).to_array().last(),
+    @range.iter(start=0.0, end=1.0, step=0.1, inclusive=true).to_array().last(),
     content=(
       #|Some(1)
     ),
   )
   debug_inspect(
-    @range.iter(from=1.0, to=0.0, step=-0.1, inclusive=true).to_array().last(),
+    @range.iter(start=1.0, end=0.0, step=-0.1, inclusive=true).to_array().last(),
     content=(
       #|Some(0)
     ),
   )
   // from + 3 * 0.1 is 0.30000000000000004, so an inclusive 0.3 is not hit
   debug_inspect(
-    @range.iter(from=0.0, to=0.3, step=0.1, inclusive=true).to_array(),
+    @range.iter(start=0.0, end=0.3, step=0.1, inclusive=true).to_array(),
     content=(
       #|[0, 0.1, 0.2]
     ),
   )
   // the documented workaround: iterate over integers and scale
   debug_inspect(
-    @range.iter(from=0, to=3, inclusive=true)
+    @range.iter(start=0, end=3, inclusive=true)
     .map(k => k.to_double() / 10.0)
     .to_array(),
     content=(
@@ -515,13 +515,13 @@ test "iter Double computes each element as from + k * step" {
 ///|
 test "iter Float computes each element as from + k * step" {
   debug_inspect(
-    @range.iter(from=Float(0), to=1.0, step=0.01).count(),
+    @range.iter(start=Float(0), end=1.0, step=0.01).count(),
     content=(
       #|100
     ),
   )
   debug_inspect(
-    @range.iter(from=Float(0), to=1.0, step=0.01, inclusive=true)
+    @range.iter(start=Float(0), end=1.0, step=0.01, inclusive=true)
     .to_array()
     .last()
     .map(Float::to_double),
@@ -535,17 +535,17 @@ test "iter Float computes each element as from + k * step" {
 test "iter Double direct stepping edge cases" {
   let inf = 1.0 / 0.0
   // element 0 is `from` itself, so a negative zero survives
-  let first = @range.iter(from=-0.0, to=1.0, step=0.5).to_array()[0]
+  let first = @range.iter(start=-0.0, end=1.0, step=0.5).to_array()[0]
   inspect(1.0 / first == -inf, content="true")
   // `from + k * step` overflowing to infinity is a real (last) element
   debug_inspect(
-    @range.iter(from=1.0e308, to=inf, step=1.0e308, inclusive=true).to_array(),
+    @range.iter(start=1.0e308, end=inf, step=1.0e308, inclusive=true).to_array(),
     content=(
       #|[1e+308, Infinity]
     ),
   )
   debug_inspect(
-    @range.iter(from=-inf, to=0.0).to_array(),
+    @range.iter(start=-inf, end=0.0).to_array(),
     content=(
       #|[-Infinity]
     ),
@@ -555,7 +555,9 @@ test "iter Double direct stepping edge cases" {
   // than yield a duplicate. The elements stay strictly increasing.
   let big = 9007199254740992.0
   debug_inspect(
-    @range.iter(from=big, to=big + 12.0, step=1.5).map(x => x - big).to_array(),
+    @range.iter(start=big, end=big + 12.0, step=1.5)
+    .map(x => x - big)
+    .to_array(),
     content=(
       #|[0, 2, 4]
     ),
@@ -568,13 +570,13 @@ test "iter Double survives k * step overflowing while from + k * step is finite"
   // 1e308, a representable (inclusive) end point, so it must not become
   // from + inf.
   debug_inspect(
-    @range.iter(from=-1.0e308, to=1.0e308, step=1.0e308, inclusive=true).to_array(),
+    @range.iter(start=-1.0e308, end=1.0e308, step=1.0e308, inclusive=true).to_array(),
     content=(
       #|[-1e+308, 0, 1e+308]
     ),
   )
   debug_inspect(
-    @range.iter(from=1.0e308, to=-1.0e308, step=-1.0e308, inclusive=true).to_array(),
+    @range.iter(start=1.0e308, end=-1.0e308, step=-1.0e308, inclusive=true).to_array(),
     content=(
       #|[1e+308, 0, -1e+308]
     ),
@@ -586,7 +588,7 @@ test "iter Double survives k * step overflowing while from + k * step is finite"
   // just below `to` rather than on it, exactly as the same range scaled down
   // by a power of two does (see the quickcheck on scale invariance).
   debug_inspect(
-    @range.iter(from=-1.2e308, to=6.0e307, step=3.0e307, inclusive=true)
+    @range.iter(start=-1.2e308, end=6.0e307, step=3.0e307, inclusive=true)
     .to_array()
     .last(),
     content=(
@@ -594,11 +596,23 @@ test "iter Double survives k * step overflowing while from + k * step is finite"
     ),
   )
   debug_inspect(
-    @range.iter(from=1.2e308, to=-6.0e307, step=-3.0e307, inclusive=true)
+    @range.iter(start=1.2e308, end=-6.0e307, step=-3.0e307, inclusive=true)
     .to_array()
     .last(),
     content=(
       #|Some(-5.999999999999998e+307)
     ),
+  )
+}
+
+///|
+#warnings("-deprecated")
+test "iter retains legacy from and to labels" {
+  debug_inspect(@range.iter(from=1, to=4).to_array(), content="[1, 2, 3]")
+  let from = 5
+  let to = 1
+  debug_inspect(
+    @range.iter(from~, to~, step=-2, inclusive=true).to_array(),
+    content="[5, 3, 1]",
   )
 }
