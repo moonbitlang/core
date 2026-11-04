@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#derive(Eq, Compare, @debug.Debug)
+#derive(Eq, Compare, Hash, @debug.Debug)
 #valtype
 struct Timestamp {
   sec : Int64

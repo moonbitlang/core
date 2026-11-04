@@ -43,6 +43,7 @@ options(
     "addr_utils.mbt": [ "native", "wasm" ],
     "connect_burst_test.mbt": [ "native", "wasm" ],
     "deprecated.mbt": [ "native", "wasm" ],
+    "extends.mbt": [ "native", "wasm" ],
     "dual_stack_test.mbt": [ "native", "wasm" ],
     "ffi.mbt": [ "native" ],
     "ffi.wasm.mbt": [ "wasm" ],

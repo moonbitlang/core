@@ -42,19 +42,19 @@ pub extend HttpProtocolError with @json.ToJson::{to_json}
 pub extend RequestMethod with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend RequestMethod with Eq::{not_equal, equal}
+pub extend RequestMethod with Eq::{not_equal}
 
 ///|
-#deprecated
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend RequestMethod with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+pub extend RequestMethod with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
-#deprecated
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend RequestMethod with Hash::{hash, hash_combine}
+pub extend RequestMethod with Hash::{hash_combine}
 
 ///|
 #deprecated
@@ -92,19 +92,19 @@ pub extend ResponseHeader with @json.ToJson::{to_json}
 pub extend Protocol with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Protocol with Eq::{not_equal, equal}
+pub extend Protocol with Eq::{not_equal}
 
 ///|
-#deprecated
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend Protocol with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+pub extend Protocol with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
-#deprecated
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Protocol with Hash::{hash, hash_combine}
+pub extend Protocol with Hash::{hash_combine}
 
 ///|
 #deprecated

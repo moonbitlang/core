@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend FileKind with Eq::{not_equal, equal}
+pub extend FileKind with Eq::{not_equal}
 
 ///|
 #deprecated
@@ -23,9 +23,9 @@ pub extend FileKind with Eq::{not_equal, equal}
 pub extend FileKind with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend FsEvent with Eq::{not_equal, equal}
+pub extend FsEvent with Eq::{not_equal}
 
 ///|
 #deprecated
@@ -33,21 +33,21 @@ pub extend FsEvent with Eq::{not_equal, equal}
 pub extend FsEvent with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Timestamp with Eq::{equal, not_equal}
+pub extend Timestamp with Eq::{not_equal}
 
 ///|
-#deprecated
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend Timestamp with Compare::{compare, op_lt, op_le, op_gt, op_ge}
+pub extend Timestamp with Compare::{op_lt, op_le, op_gt, op_ge}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Timestamp with Hash::{hash_combine}
 
 ///|
 #deprecated
 #doc(hidden)
 pub extend Timestamp with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend Timestamp with Sub::{sub}

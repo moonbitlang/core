@@ -13,19 +13,19 @@
 // limitations under the License.
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Addr with Eq::{not_equal, equal}
+pub extend Addr with Eq::{not_equal}
 
 ///|
-#deprecated
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend Addr with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+pub extend Addr with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
-#deprecated
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Addr with Hash::{hash, hash_combine}
+pub extend Addr with Hash::{hash_combine}
 
 ///|
 #deprecated

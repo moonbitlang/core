@@ -18,20 +18,14 @@
 pub extend CaseInsensitiveString with @json.ToJson::{to_json}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend CaseInsensitiveString with Eq::{not_equal, equal}
+pub extend CaseInsensitiveString with Eq::{not_equal}
 
 ///|
-#deprecated
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend CaseInsensitiveString with Compare::{
-  op_lt,
-  op_le,
-  op_ge,
-  compare,
-  op_gt,
-}
+pub extend CaseInsensitiveString with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated
@@ -44,6 +38,6 @@ pub extend CaseInsensitiveString with @debug.Debug::{to_repr}
 pub extend CaseInsensitiveString with Show::{output}
 
 ///|
-#deprecated
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend CaseInsensitiveString with Hash::{hash, hash_combine}
+pub extend CaseInsensitiveString with Hash::{hash_combine}

@@ -33,3 +33,10 @@ async test "AlreadyExists" {
     err => fail("incorrect error: \{err}")
   }
 }
+
+///|
+test "Kind promotes equal" {
+  let eq : (@os_error.Kind, @os_error.Kind) -> Bool = @os_error.Kind::equal
+  inspect(eq(NotFound, NotFound), content="true")
+  inspect(@os_error.Kind::NotFound.equal(AccessDenied), content="false")
+}

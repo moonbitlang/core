@@ -33,6 +33,7 @@ pub(all) enum Kind {
   OperationNotSupported
   Unknown
 }
+pub fn Kind::equal(Self, Self) -> Bool
 
 // Type aliases
 

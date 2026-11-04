@@ -38,6 +38,6 @@ pub extend Kind with @json.ToJson::{to_json}
 pub extend Kind with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Kind with Eq::{equal, not_equal}
+pub extend Kind with Eq::{not_equal}
