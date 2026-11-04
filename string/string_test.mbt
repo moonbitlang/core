@@ -873,46 +873,16 @@ test "offset_of_nth_char" {
 ///|
 test "offset_of_nth_char range" {
   let s = "a😭b😂c"
-  debug_inspect(
-    s.offset_of_nth_char(0, start_offset=1, end_offset=6),
-    content="Some(1)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(1, start_offset=1, end_offset=6),
-    content="Some(3)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(2, start_offset=1, end_offset=6),
-    content="Some(4)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(3, start_offset=1, end_offset=6),
-    content="None",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(4, start_offset=1, end_offset=6),
-    content="None",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(-1, start_offset=1, end_offset=6),
-    content="Some(4)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(-2, start_offset=1, end_offset=6),
-    content="Some(3)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(-3, start_offset=1, end_offset=6),
-    content="Some(1)",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(-4, start_offset=1, end_offset=6),
-    content="None",
-  )
-  debug_inspect(
-    s.offset_of_nth_char(-5, start_offset=1, end_offset=6),
-    content="None",
-  )
+  debug_inspect(s.offset_of_nth_char(0, start=1, end=6), content="Some(1)")
+  debug_inspect(s.offset_of_nth_char(1, start=1, end=6), content="Some(3)")
+  debug_inspect(s.offset_of_nth_char(2, start=1, end=6), content="Some(4)")
+  debug_inspect(s.offset_of_nth_char(3, start=1, end=6), content="None")
+  debug_inspect(s.offset_of_nth_char(4, start=1, end=6), content="None")
+  debug_inspect(s.offset_of_nth_char(-1, start=1, end=6), content="Some(4)")
+  debug_inspect(s.offset_of_nth_char(-2, start=1, end=6), content="Some(3)")
+  debug_inspect(s.offset_of_nth_char(-3, start=1, end=6), content="Some(1)")
+  debug_inspect(s.offset_of_nth_char(-4, start=1, end=6), content="None")
+  debug_inspect(s.offset_of_nth_char(-5, start=1, end=6), content="None")
 }
 
 ///|

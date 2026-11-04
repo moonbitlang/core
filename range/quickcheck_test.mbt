@@ -213,8 +213,8 @@ test "quickcheck: Int matches the exact-arithmetic model" {
       let max = 2147483647N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=from.to_int(),
-        to=to.to_int(),
+        start=from.to_int(),
+        end=to.to_int(),
         step=step.to_int(),
         inclusive~,
       )
@@ -234,8 +234,8 @@ test "quickcheck: Int64 matches the exact-arithmetic model" {
       let (a, b, c, inclusive) = input
       let (from, to, step) = build_case(i64_min, i64_max, a, b, c)
       @range.iter(
-        from=from.to_int64(),
-        to=to.to_int64(),
+        start=from.to_int64(),
+        end=to.to_int64(),
         step=step.to_int64(),
         inclusive~,
       )
@@ -257,8 +257,8 @@ test "quickcheck: UInt matches the exact-arithmetic model" {
       let max = 4294967295N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=from.to_uint(),
-        to=to.to_uint(),
+        start=from.to_uint(),
+        end=to.to_uint(),
         step=step.to_uint(),
         inclusive~,
       )
@@ -280,8 +280,8 @@ test "quickcheck: UInt64 matches the exact-arithmetic model" {
       let max = 18446744073709551615N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=from.to_uint64(),
-        to=to.to_uint64(),
+        start=from.to_uint64(),
+        end=to.to_uint64(),
         step=step.to_uint64(),
         inclusive~,
       )
@@ -303,8 +303,8 @@ test "quickcheck: Int16 matches the exact-arithmetic model" {
       let max = 32767N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=Int16::from_int(from.to_int()),
-        to=Int16::from_int(to.to_int()),
+        start=Int16::from_int(from.to_int()),
+        end=Int16::from_int(to.to_int()),
         step=Int16::from_int(step.to_int()),
         inclusive~,
       )
@@ -326,8 +326,8 @@ test "quickcheck: UInt16 matches the exact-arithmetic model" {
       let max = 65535N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=from.to_int().to_uint16(),
-        to=to.to_int().to_uint16(),
+        start=from.to_int().to_uint16(),
+        end=to.to_int().to_uint16(),
         step=step.to_int().to_uint16(),
         inclusive~,
       )
@@ -349,8 +349,8 @@ test "quickcheck: Byte matches the exact-arithmetic model" {
       let max = 255N
       let (from, to, step) = build_case(min, max, a, b, c)
       @range.iter(
-        from=from.to_int().to_byte(),
-        to=to.to_int().to_byte(),
+        start=from.to_int().to_byte(),
+        end=to.to_int().to_byte(),
         step=step.to_int().to_byte(),
         inclusive~,
       )
@@ -371,7 +371,7 @@ test "quickcheck: BigInt matches the exact-arithmetic model" {
     (input : (Int32, Int32, Int32, Bool)) => {
       let (a, b, c, inclusive) = input
       let (from, to, step) = build_case(i64_min, i64_max, a, b, c)
-      @range.iter(from~, to~, step~, inclusive~).take(CAP).to_array() ==
+      @range.iter(start=from, end=to, step~, inclusive~).take(CAP).to_array() ==
       model(from, to, step, inclusive, -unbounded, unbounded)
     },
     count=2000,
@@ -395,8 +395,8 @@ test "quickcheck: the general shape of an Int enumeration" {
       let max = 2147483647N
       let (from, to, step) = build_case(min, max, a, b, c)
       let values = @range.iter(
-          from=from.to_int(),
-          to=to.to_int(),
+          start=from.to_int(),
+          end=to.to_int(),
           step=step.to_int(),
           inclusive~,
         )
@@ -441,8 +441,8 @@ test "quickcheck: an inclusive range is the exclusive one plus at most its endpo
       let (from, to, step) = build_case(min, max, a, b, c)
       let run = (inclusive : Bool) => {
         @range.iter(
-          from=from.to_int(),
-          to=to.to_int(),
+          start=from.to_int(),
+          end=to.to_int(),
           step=step.to_int(),
           inclusive~,
         )
@@ -476,12 +476,12 @@ test "quickcheck: reversing the step reverses the enumeration" {
       let step = 1 + wrap_index(input.1, 9)
       let count = wrap_index(input.0 / 200, 30)
       let stop = start + step * count
-      let up = @range.iter(from=start, to=stop, step~).to_array()
+      let up = @range.iter(start~, end=stop, step~).to_array()
       if up.is_empty() {
         return true
       }
       let last = up[up.length() - 1]
-      let down = @range.iter(from=last, to=start, step=-step, inclusive=true).to_array()
+      let down = @range.iter(start=last, end=start, step=-step, inclusive=true).to_array()
       down.rev() == up
     },
     count=1000,
@@ -505,7 +505,7 @@ test "quickcheck: Double enumerations are monotonic, bounded, and finite" {
       let from = (wrap_index(a, 400) - 200).to_double() / 8.0
       let to = (wrap_index(b, 400) - 200).to_double() / 8.0
       let step = (wrap_index(c, 21) - 10).to_double() / 4.0
-      let values = @range.iter(from~, to~, step~, inclusive~)
+      let values = @range.iter(start=from, end=to, step~, inclusive~)
         .take(CAP)
         .to_array()
       if values.is_empty() {
@@ -552,10 +552,12 @@ test "quickcheck: Float agrees with Double on exactly representable values" {
       let from = (wrap_index(a, 400) - 200).to_double() / 8.0
       let to = (wrap_index(b, 400) - 200).to_double() / 8.0
       let step = (wrap_index(c, 21) - 10).to_double() / 4.0
-      let wide = @range.iter(from~, to~, step~, inclusive~).take(CAP).to_array()
+      let wide = @range.iter(start=from, end=to, step~, inclusive~)
+        .take(CAP)
+        .to_array()
       let narrow = @range.iter(
-          from=Float::from_double(from),
-          to=Float::from_double(to),
+          start=Float::from_double(from),
+          end=Float::from_double(to),
           step=Float::from_double(step),
           inclusive~,
         )
@@ -573,13 +575,13 @@ test "a sub-precision step terminates instead of spinning" {
   // and the iterator has to notice that it made no progress. Without
   // that check this would not terminate at all.
   inspect(
-    @range.iter(from=1.0e300, to=1.0e301, step=1.0).to_array().length(),
+    @range.iter(start=1.0e300, end=1.0e301, step=1.0).to_array().length(),
     content=(
       #|1
     ),
   )
   inspect(
-    @range.iter(from=Float(1.0e30), to=Float(1.0e31), step=1.0)
+    @range.iter(start=Float(1.0e30), end=Float(1.0e31), step=1.0)
     .to_array()
     .length(),
     content=(
@@ -594,25 +596,25 @@ test "a NaN endpoint yields nothing rather than looping" {
   // `Compare` on Double reports 0 against NaN, so the range check fails
   // immediately; the inclusive check uses `==`, which NaN also fails.
   inspect(
-    @range.iter(from=0.0, to=nan).to_array().length(),
+    @range.iter(start=0.0, end=nan).to_array().length(),
     content=(
       #|0
     ),
   )
   inspect(
-    @range.iter(from=nan, to=10.0).to_array().length(),
+    @range.iter(start=nan, end=10.0).to_array().length(),
     content=(
       #|0
     ),
   )
   inspect(
-    @range.iter(from=0.0, to=nan, inclusive=true).to_array().length(),
+    @range.iter(start=0.0, end=nan, inclusive=true).to_array().length(),
     content=(
       #|0
     ),
   )
   inspect(
-    @range.iter(from=0.0, to=10.0, step=nan).to_array().length(),
+    @range.iter(start=0.0, end=10.0, step=nan).to_array().length(),
     content=(
       #|0
     ),
@@ -620,7 +622,9 @@ test "a NaN endpoint yields nothing rather than looping" {
   // a NaN step with from == to still yields nothing but the endpoint,
   // because the step makes no progress
   inspect(
-    @range.iter(from=0.0, to=0.0, step=nan, inclusive=true).to_array().length(),
+    @range.iter(start=0.0, end=0.0, step=nan, inclusive=true)
+    .to_array()
+    .length(),
     content=(
       #|1
     ),
@@ -663,7 +667,7 @@ test "quickcheck: Double element k is exactly from + k * step" {
       let to = (wrap_index(b, 2001) - 1000).to_double() / 10.0
       let step = (wrap_index(c, 40) - 20).to_double() / 10.0
       guard step != 0.0 else { return true }
-      @range.iter(from~, to~, step~, inclusive~).to_array() ==
+      @range.iter(start=from, end=to, step~, inclusive~).to_array() ==
       double_reference(from, to, step, inclusive)
     },
     count=1000,
@@ -701,7 +705,7 @@ test "quickcheck: Float element k is from + k * step rounded from Double" {
           break
         }
       }
-      @range.iter(from~, to~, step~, inclusive~).to_array() == expected
+      @range.iter(start=from, end=to, step~, inclusive~).to_array() == expected
     },
     count=1000,
   )
@@ -720,10 +724,12 @@ test "quickcheck: Double near overflow agrees with the range scaled down by 2^64
       let to = (wrap_index(b, 3401) - 1700).to_double() * 1.0e305
       let magnitude = (wrap_index(c, 1700) + 1).to_double() * 1.0e305
       let step = if c % 2 == 0 { magnitude } else { -magnitude }
-      let big = @range.iter(from~, to~, step~, inclusive~).take(CAP).to_array()
+      let big = @range.iter(start=from, end=to, step~, inclusive~)
+        .take(CAP)
+        .to_array()
       let small = @range.iter(
-          from=from * scale,
-          to=to * scale,
+          start=from * scale,
+          end=to * scale,
           step=step * scale,
           inclusive~,
         )

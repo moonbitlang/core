@@ -333,30 +333,30 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 }
 
 ///|
-/// Creates an iterator over `from, from + step, from + 2*step, ...`
-/// while the value is on the correct side of `to`.
+/// Creates an iterator over `start, start + step, start + 2*step, ...`
+/// while the value is on the correct side of `end`.
 ///
 /// For `Float` and `Double`, element `k` is computed directly as
-/// `from + k * step` (for `Float`, in `Double` precision and then rounded)
+/// `start + k * step` (for `Float`, in `Double` precision and then rounded)
 /// rather than by adding `step` to the previous element, so rounding error
-/// does not accumulate: `iter(from=0.0, to=1.0, step=0.1)` has 10 elements.
-/// `inclusive=true` yields `to` only when some element equals it exactly,
-/// and `from + 3 * 0.1` is `0.30000000000000004`, so
-/// `iter(from=0.0, to=0.3, step=0.1, inclusive=true)` stops at `0.2`. To hit
+/// does not accumulate: `iter(start=0.0, end=1.0, step=0.1)` has 10 elements.
+/// `inclusive=true` yields `end` only when some element equals it exactly,
+/// and `start + 3 * 0.1` is `0.30000000000000004`, so
+/// `iter(start=0.0, end=0.3, step=0.1, inclusive=true)` stops at `0.2`. To hit
 /// decimal end points exactly, iterate over integers and scale, e.g.
-/// `iter(from=0, to=3, inclusive=true).map(k => k.to_double() / 10.0)`.
+/// `iter(start=0, end=3, inclusive=true).map(k => k.to_double() / 10.0)`.
 ///
 /// All three positional concepts are passed by label. `step` defaults
 /// to `T::step_one()` (the type's natural unit step), so a simple
-/// ascending range is just `iter(from=0, to=10)`. A negative step
+/// ascending range is just `iter(start=0, end=10)`. A negative step
 /// descends; a positive step ascends; a zero (or `NaN`) step yields
-/// the empty iterator — or just `[from]` when `inclusive=true` and
-/// `from == to`. By default `to` is exclusive; pass `inclusive=true`
+/// the empty iterator — or just `[start]` when `inclusive=true` and
+/// `start == end`. By default `end` is exclusive; pass `inclusive=true`
 /// to include it.
 ///
 /// The loop terminates as soon as the next element fails to make
 /// progress past the current one. For integral types this only happens at
-/// numeric overflow (e.g. `iter(from=MAX_VALUE - 1, to=MAX_VALUE,
+/// numeric overflow (e.g. `iter(start=MAX_VALUE - 1, end=MAX_VALUE,
 /// inclusive=true)` yields `[MAX_VALUE - 1, MAX_VALUE]` and stops).
 /// For `Float`/`Double` it also terminates as soon as the next element
 /// rounds to the current one, which prevents an otherwise silent infinite
@@ -367,7 +367,7 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 /// yields three elements). The elements are therefore always strictly
 /// monotonic.
 ///
-/// The inclusive end check uses `==` (so a `NaN` `to` never matches),
+/// The inclusive end check uses `==` (so a `NaN` `end` never matches),
 /// which keeps the iterator from looping when the comparison ordering
 /// is unordered.
 ///
@@ -380,28 +380,30 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 /// ```mbt nocheck
 /// test {
 ///   debug_inspect(
-///     @range.iter(from=0, to=10).to_array(),
+///     @range.iter(start=0, end=10).to_array(),
 ///     content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]",
 ///   )
 ///   debug_inspect(
-///     @range.iter(from=0, to=10, step=3).to_array(),
+///     @range.iter(start=0, end=10, step=3).to_array(),
 ///     content="[0, 3, 6, 9]",
 ///   )
 ///   debug_inspect(
-///     @range.iter(from=10, to=0, step=-3).to_array(),
+///     @range.iter(start=10, end=0, step=-3).to_array(),
 ///     content="[10, 7, 4, 1]",
 ///   )
 ///   debug_inspect(
-///     @range.iter(from=0, to=5, inclusive=true).to_array(),
+///     @range.iter(start=0, end=5, inclusive=true).to_array(),
 ///     content="[0, 1, 2, 3, 4, 5]",
 ///   )
 /// }
 /// ```
+#label_migration(start, alias=from, msg="Use start= instead")
+#label_migration(end, alias=to, msg="Use end= instead")
 pub fn[T : Step] iter(
-  from~ : T,
-  to~ : T,
+  start~ : T,
+  end~ : T,
   step~ : T = T::step_one(),
   inclusive~ : Bool = false,
 ) -> Iter[T] {
-  T::enumerate(from, to, step, inclusive)
+  T::enumerate(start, end, step, inclusive)
 }

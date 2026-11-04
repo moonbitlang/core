@@ -226,7 +226,7 @@ test "offset_of_nth_char out of range" {
 
 ///|
 test "panic char_length invalid range" {
-  ignore("abc".char_length(start_offset=2, end_offset=1))
+  ignore("abc".char_length(start=2, end=1))
 }
 
 ///|
@@ -295,15 +295,12 @@ test "String to_lower no uppercase" {
 
 ///|
 test "panic offset_of_nth_char invalid range" {
-  ignore("abc".offset_of_nth_char(0, start_offset=2, end_offset=1))
+  ignore("abc".offset_of_nth_char(0, start=2, end=1))
 }
 
 ///|
 test "offset_of_nth_char backward out of range" {
-  debug_inspect(
-    "abc".offset_of_nth_char(-2, start_offset=0, end_offset=1),
-    content="None",
-  )
+  debug_inspect("abc".offset_of_nth_char(-2, start=0, end=1), content="None")
 }
 
 ///|
@@ -333,4 +330,26 @@ test "to_array agrees with iter on surrogates" {
   debug_inspect(s[1:].to_array() == s[1:].iter().to_array(), content="true")
   debug_inspect(s.to_array().length(), content="5")
   debug_inspect("".to_array(), content="[]")
+}
+
+///|
+#warnings("-deprecated")
+test "character ranges retain legacy offset labels" {
+  let s = "x😀abz"
+  inspect(s.char_length(start_offset=1, end_offset=5), content="3")
+  inspect(s.char_length_eq(3, start_offset=1, end_offset=5), content="true")
+  inspect(s.char_length_ge(4, start_offset=1, end_offset=5), content="false")
+  debug_inspect(
+    s.offset_of_nth_char(2, start_offset=1, end_offset=5),
+    content="Some(4)",
+  )
+  debug_inspect(
+    s.offset_of_nth_char(-1, start_offset=1, end_offset=5),
+    content="Some(4)",
+  )
+  let start_offset = Some(1)
+  let end_offset = Some(5)
+  inspect(s.char_length(start_offset?, end_offset?), content="3")
+  inspect(s.char_length(end_offset=3), content="2")
+  inspect(s.char_length(start_offset=3), content="3")
 }
