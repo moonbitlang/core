@@ -82,7 +82,7 @@ fn f64x2_compare(
 
 ///|
 fn f32_nearest_even(value : @float.Float) -> @float.Float {
-  if value.is_nan() || value.is_inf() || value == 0.0F {
+  if !value.is_finite() || value == 0.0F {
     value
   } else {
     let down = value.floor()
@@ -103,7 +103,7 @@ fn f32_nearest_even(value : @float.Float) -> @float.Float {
 
 ///|
 fn f64_nearest_even(value : Double) -> Double {
-  if value.is_nan() || value.is_inf() || value == 0.0 {
+  if !value.is_finite() || value == 0.0 {
     value
   } else {
     let down = value.floor()

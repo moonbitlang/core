@@ -62,7 +62,7 @@ pub fn ln(x : Double) -> Double {
   let l7 = 1.479819860511658591e-01 // 3FC2F112 DF3E5244
   if x < 0.0 {
     return @double.not_a_number
-  } else if x.is_nan() || x.is_inf() {
+  } else if !x.is_finite() {
     return x
   } else if x == 0.0 {
     return @double.neg_infinity

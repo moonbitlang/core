@@ -131,7 +131,7 @@ fn normalize(f : Double) -> (Double, Int32) {
 
 ///|
 fn frexp(f : Double) -> (Double, Int32) {
-  if f == 0.0 || f.is_inf() || f.is_nan() {
+  if f == 0.0 || !f.is_finite() {
     return (f, 0)
   }
   let (norm_f, exp) = normalize(f)

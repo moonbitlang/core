@@ -37,7 +37,7 @@
 /// }
 /// ```
 pub fn sin(x : Double) -> Double {
-  if x.is_inf() || x.is_nan() {
+  if !x.is_finite() {
     return @double.not_a_number
   }
   let y = [0.0, 0.0]
@@ -80,7 +80,7 @@ pub fn sin(x : Double) -> Double {
 /// }
 /// ```
 pub fn cos(x : Double) -> Double {
-  if x.is_inf() || x.is_nan() {
+  if !x.is_finite() {
     return @double.not_a_number
   }
   let y = [0.0, 0.0]

@@ -326,7 +326,7 @@ pub fn Json::stringify(
           Number(n, repr~) =>
             match repr {
               None =>
-                if n.is_nan() || n.is_inf() {
+                if !n.is_finite() {
                   // Reuse Double's ToJson encoding and the string branch above.
                   continue Some(Json(n))
                 } else {

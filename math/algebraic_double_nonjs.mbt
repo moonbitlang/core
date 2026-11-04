@@ -43,7 +43,7 @@
 /// }
 /// ```
 pub fn cbrt(x : Double) -> Double {
-  if x.is_inf() || x.is_nan() || x == 0.0 {
+  if !x.is_finite() || x == 0.0 {
     return x
   }
   let b1 : UInt32 = 715094163 // B1 = (682-0.03306235651)*2**20
