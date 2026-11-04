@@ -27,7 +27,7 @@ pub extend Bench with @debug.Debug::{to_repr}
 pub extend Summary with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Summary with @json.ToJson::{to_json}
 

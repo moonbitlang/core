@@ -58,13 +58,20 @@ pub fn get_env_vars() -> Map[String, String] {
 }
 
 ///|
-/// Set an environment variable.
+/// Set an environment variable for the current process.
+///
+/// On JavaScript, this writes to `process.env`. If `process.env` is unavailable
+/// (for example, in a browser), it does nothing, and `get_env_var` keeps
+/// returning `None`.
 pub fn set_env_var(key : String, value : String) -> Unit {
   set_env_var_internal(key, value)
 }
 
 ///|
-/// Unset an environment variable.
+/// Unset an environment variable for the current process.
+///
+/// On JavaScript, this deletes the key from `process.env`. If `process.env` is
+/// unavailable (for example, in a browser), it does nothing.
 pub fn unset_env_var(key : String) -> Unit {
   unset_env_var_internal(key)
 }

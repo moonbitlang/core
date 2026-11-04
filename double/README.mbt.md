@@ -20,8 +20,13 @@ Both signed zeros hash equally. Other encodings, including NaN signs and
 payloads, need no hash normalization. Equality and hashing do not change stored
 bits or arithmetic: reciprocals of the two zeros still have opposite signs.
 
-An explicit, opt-in total comparator is separate from the ordinary traits and
-is deferred. It must not replace ordinary operators or generic comparison paths.
+For values that may contain NaNs, use the explicit, opt-in comparator
+`Double::total_compare`. It compares numbers numerically, makes every NaN less
+than every number, treats all NaNs as equal, and treats `-0.0` as equal to
+`0.0`, so it differs from IEEE `totalOrder`. It does not replace the ordinary
+operators or `compare`, and generic comparison paths do not use it: pass it
+explicitly to comparator-taking APIs such as `sort_by` and `binary_search_by`,
+using the same comparator for sorting and searching.
 
 ## Constants and Special Values
 

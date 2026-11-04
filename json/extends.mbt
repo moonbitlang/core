@@ -51,7 +51,7 @@ pub extend Json with FromJson::{from_json}
 pub extend Json with Show::{to_string, output}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Json with ToJson::{to_json}
 
@@ -76,7 +76,7 @@ pub extend JsonDecodeError with Eq::{not_equal}
 pub extend JsonDecodeError with Show::{output}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonDecodeError with ToJson::{to_json}
 
@@ -91,7 +91,7 @@ pub extend JsonPath with Eq::{not_equal}
 pub extend JsonPath with Show::{output}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonPath with ToJson::{to_json}
 
@@ -106,7 +106,7 @@ pub extend ParseError with Eq::{not_equal}
 pub extend ParseError with Show::{output}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ParseError with ToJson::{to_json}
 
@@ -116,6 +116,6 @@ pub extend ParseError with ToJson::{to_json}
 pub extend Position with Eq::{not_equal}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Position with ToJson::{to_json}
