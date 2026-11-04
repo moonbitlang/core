@@ -205,11 +205,17 @@ test "zip set_comment invalidates the preserved trailer" {
 }
 
 ///|
-test "zip Archive::clone isolates add/replace/remove mutations" {
+test "zip Archive::copy isolates entry and comment mutations" {
   let archive = @zip.Archive()
   archive.add("a.txt", b"a", compression=Store)
   archive.add("b.txt", b"b", compression=Store)
-  let fork = archive.clone()
+  archive.set_comment(b"original")
+  let fork = archive.copy()
+  inspect(fork.comment(), content="b\"original\"")
+  fork.set_comment(b"copied")
+  inspect(archive.comment(), content="b\"original\"")
+  archive.set_comment(b"updated")
+  inspect(fork.comment(), content="b\"copied\"")
   fork.add("c.txt", b"c")
   ignore(fork.replace("a.txt", b"a2"))
   ignore(fork.remove("b.txt"))
@@ -228,7 +234,7 @@ test "zip Archive::clone isolates add/replace/remove mutations" {
 }
 
 ///|
-test "zip Archive::clone preserves source records for byte-preserving writes" {
+test "zip Archive::copy preserves source records for byte-preserving writes" {
   let output = @buffer.Buffer()
   let writer = @zip.Writer(chunk => output.write_bytes(chunk))
   writer.add("a.txt", b"alpha", compression=Store)
@@ -238,8 +244,23 @@ test "zip Archive::clone preserves source records for byte-preserving writes" {
   writer.finish()
   let bytes = output.to_bytes()
   let parsed = @zip.read_all(bytes)
-  let fork = parsed.clone()
+  let fork = parsed.copy()
   @test.assert_eq(@zip.write(fork, preserve=true), bytes)
+}
+
+///|
+#warnings("-deprecated")
+test "zip Archive::clone remains compatible with copy" {
+  let archive = @zip.read_all(py_mini)
+  let cloned = archive.clone()
+  let copied = archive.copy()
+  inspect(
+    @zip.write(cloned, preserve=true) == @zip.write(copied, preserve=true),
+    content="true",
+  )
+  ignore(cloned.replace("a.txt", b"changed"))
+  inspect(archive.get("a.txt") == Some(b"hi"), content="true")
+  inspect(copied.get("a.txt") == Some(b"hi"), content="true")
 }
 
 ///|

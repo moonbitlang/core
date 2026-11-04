@@ -27,8 +27,8 @@ test "random state creation" {
     ),
   )
 
-  // Clone existing state
-  let rng3 = rng2.clone()
+  // Copy existing state
+  let rng3 = rng2.copy()
   debug_inspect(
     rng3,
     content=(
@@ -208,7 +208,7 @@ test "state management" {
   )
 
   // Create independent copy
-  let independent = rng.clone()
+  let independent = rng.copy()
 
   // Both should generate the same sequence from this point
   let val1 = rng.next_int()
