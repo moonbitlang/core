@@ -483,11 +483,19 @@ pub extend Tuple10 with Eq::{equal}
 
 ///|
 #doc(hidden)
+pub extend Tuple10 with Hash::{hash}
+
+///|
+#doc(hidden)
 pub extend Tuple11 with Compare::{compare}
 
 ///|
 #doc(hidden)
 pub extend Tuple11 with Eq::{equal}
+
+///|
+#doc(hidden)
+pub extend Tuple11 with Hash::{hash}
 
 ///|
 #doc(hidden)
@@ -499,11 +507,19 @@ pub extend Tuple12 with Eq::{equal}
 
 ///|
 #doc(hidden)
+pub extend Tuple12 with Hash::{hash}
+
+///|
+#doc(hidden)
 pub extend Tuple13 with Compare::{compare}
 
 ///|
 #doc(hidden)
 pub extend Tuple13 with Eq::{equal}
+
+///|
+#doc(hidden)
+pub extend Tuple13 with Hash::{hash}
 
 ///|
 #doc(hidden)
@@ -515,6 +531,10 @@ pub extend Tuple14 with Eq::{equal}
 
 ///|
 #doc(hidden)
+pub extend Tuple14 with Hash::{hash}
+
+///|
+#doc(hidden)
 pub extend Tuple15 with Compare::{compare}
 
 ///|
@@ -523,11 +543,19 @@ pub extend Tuple15 with Eq::{equal}
 
 ///|
 #doc(hidden)
+pub extend Tuple15 with Hash::{hash}
+
+///|
+#doc(hidden)
 pub extend Tuple16 with Compare::{compare}
 
 ///|
 #doc(hidden)
 pub extend Tuple16 with Eq::{equal}
+
+///|
+#doc(hidden)
+pub extend Tuple16 with Hash::{hash}
 
 ///|
 #doc(hidden)
@@ -611,11 +639,19 @@ pub extend Tuple8 with Eq::{equal}
 
 ///|
 #doc(hidden)
+pub extend Tuple8 with Hash::{hash}
+
+///|
+#doc(hidden)
 pub extend Tuple9 with Compare::{compare}
 
 ///|
 #doc(hidden)
 pub extend Tuple9 with Eq::{equal}
+
+///|
+#doc(hidden)
+pub extend Tuple9 with Hash::{hash}
 
 ///|
 pub extend UInt32 with Add::{add}
@@ -1198,6 +1234,11 @@ pub extend Tuple10 with Compare::{op_lt, op_le, op_ge, op_gt}
 pub extend Tuple10 with Eq::{not_equal}
 
 ///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple10 with Hash::{hash_combine}
+
+///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple10 with Show::{to_string, output}
@@ -1211,6 +1252,11 @@ pub extend Tuple11 with Compare::{op_lt, op_le, op_ge, op_gt}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple11 with Eq::{not_equal}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple11 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
@@ -1228,6 +1274,11 @@ pub extend Tuple12 with Compare::{op_lt, op_le, op_ge, op_gt}
 pub extend Tuple12 with Eq::{not_equal}
 
 ///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple12 with Hash::{hash_combine}
+
+///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple12 with Show::{to_string, output}
@@ -1241,6 +1292,11 @@ pub extend Tuple13 with Compare::{op_lt, op_le, op_ge, op_gt}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple13 with Eq::{not_equal}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple13 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
@@ -1258,6 +1314,11 @@ pub extend Tuple14 with Compare::{op_lt, op_le, op_ge, op_gt}
 pub extend Tuple14 with Eq::{not_equal}
 
 ///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple14 with Hash::{hash_combine}
+
+///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple14 with Show::{to_string, output}
@@ -1273,6 +1334,11 @@ pub extend Tuple15 with Compare::{op_lt, op_le, op_ge, op_gt}
 pub extend Tuple15 with Eq::{not_equal}
 
 ///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple15 with Hash::{hash_combine}
+
+///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple15 with Show::{to_string, output}
@@ -1286,6 +1352,11 @@ pub extend Tuple16 with Compare::{op_lt, op_le, op_ge, op_gt}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple16 with Eq::{not_equal}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple16 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
@@ -1423,6 +1494,11 @@ pub extend Tuple8 with Compare::{op_lt, op_le, op_ge, op_gt}
 pub extend Tuple8 with Eq::{not_equal}
 
 ///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple8 with Hash::{hash_combine}
+
+///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple8 with Show::{to_string, output}
@@ -1436,6 +1512,11 @@ pub extend Tuple9 with Compare::{op_lt, op_le, op_ge, op_gt}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple9 with Eq::{not_equal}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple9 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
