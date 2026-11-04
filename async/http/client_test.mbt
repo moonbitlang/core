@@ -251,3 +251,19 @@ async test "1XX response" {
     ),
   )
 }
+
+///|
+#cfg(target="js")
+async test "request rejects an invalid target" {
+  // constructing a JS client does not connect
+  let client = @http.ClientConnection("http://127.0.0.1:1")
+  defer client.close()
+  for path in ["/a\nb", "/a b", "/a\r\nX: 1", ""] {
+    let err = try client.request(Get, path) catch {
+      err => @debug.to_string(err)
+    } noraise {
+      _ => "sent"
+    }
+    assert_eq(err, "InvalidFormat")
+  }
+}

@@ -138,3 +138,14 @@ fn validate_chunk_extension(extension : StringView) -> Unit raise {
     }
   }
 }
+
+///|
+/// Validate an outgoing request target. It is written verbatim on the request
+/// line, so SP, CR, LF or another control character would let it inject
+/// headers or a second request.
+fn validate_request_target(target : StringView) -> Unit raise {
+  guard !target.is_empty() else { raise InvalidFormat }
+  for c in target.code_units() {
+    guard !(c is (0..<=0x20 | 0x7F)) else { raise InvalidFormat }
+  }
+}

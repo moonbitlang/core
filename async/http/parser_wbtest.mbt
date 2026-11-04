@@ -944,3 +944,240 @@ async test "skip_body after a buffered partial read allows an empty next body" {
   )
   inspect(response.code, content="204")
 }
+
+///|
+/// Parse one request from `data` and read its body; return the body, or the
+/// error raised on the way.
+async fn try_request(data : Bytes) -> String {
+  let source = @io.MemoryReader(w => w.write(data))
+  defer source.close()
+  let reader = Reader::new(source)
+  try {
+    let request = reader.read_request()
+    let body = @utf8.decode(reader.read_all())
+    let next = try reader.read_request() catch {
+      @io.ReaderClosed => ""
+      err => raise err
+    } noraise {
+      next => " next=\{next.path}"
+    }
+    "\{request.path} body=\{body}\{next}"
+  } catch {
+    err => @debug.to_string(err)
+  }
+}
+
+///|
+/// Parse one response from `data` and return its status code, or the error.
+async fn try_response(data : Bytes) -> String {
+  let source = @io.MemoryReader(w => w.write(data))
+  defer source.close()
+  let reader = Reader::new(source)
+  try {
+    let response = reader.read_response(
+      auto_decompress=false,
+      request_method=None,
+    )
+    let body = @utf8.decode(reader.read_all())
+    "\{response.code} body=\{body}"
+  } catch {
+    err => @debug.to_string(err)
+  }
+}
+
+///|
+async test "Content-Length uses strict 1*DIGIT grammar" {
+  let req = (cl : String) => {
+    let head = @utf8.encode("POST /a HTTP/1.1\r\nContent-Length: \{cl}\r\n\r\n")
+    head + b"abcGET /b HTTP/1.1\r\n\r\n"
+  }
+  inspect(try_request(req("3")), content="/a body=abc next=/b")
+  // optional whitespace around the value is legal
+  inspect(try_request(req(" 3 \t")), content="/a body=abc next=/b")
+  inspect(try_request(req("0_3")), content="BadRequest")
+  inspect(try_request(req("+3")), content="BadRequest")
+  inspect(try_request(req("-3")), content="BadRequest")
+  inspect(try_request(req("0x3")), content="BadRequest")
+  inspect(try_request(req("")), content="BadRequest")
+  inspect(try_request(req("3, 3")), content="BadRequest")
+  inspect(try_request(req("18446744073709551616")), content="BadRequest")
+}
+
+///|
+async test "chunk size uses strict 1*HEXDIG grammar" {
+  let req = (size : String) => {
+    let head = @utf8.encode(
+      "POST /a HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n\{size}\r\n",
+    )
+    head + b"abc\r\n0\r\n\r\nGET /b HTTP/1.1\r\n\r\n"
+  }
+  inspect(try_request(req("3")), content="/a body=abc next=/b")
+  inspect(try_request(req("03")), content="/a body=abc next=/b")
+  inspect(try_request(req("3 ;ext=1")), content="/a body=abc next=/b")
+  inspect(try_request(req("0x3")), content="BadRequest")
+  inspect(try_request(req("0_3")), content="BadRequest")
+  inspect(try_request(req("+3")), content="BadRequest")
+  inspect(try_request(req(" 3")), content="BadRequest")
+  inspect(try_request(req("10000000000000003")), content="BadRequest")
+}
+
+///|
+async test "Transfer-Encoding tolerates trailing whitespace" {
+  inspect(
+    try_request(
+      b"POST /a HTTP/1.1\r\nTransfer-Encoding: chunked \r\n\r\n3\r\nabc\r\n0\r\n\r\n",
+    ),
+    content="/a body=abc",
+  )
+}
+
+///|
+async test "reject Content-Length together with Transfer-Encoding" {
+  inspect(
+    try_request(
+      b"POST /a HTTP/1.1\r\nContent-Length: 100\r\nTransfer-Encoding: chunked\r\n\r\n3\r\nabc\r\n0\r\n\r\nGET /b HTTP/1.1\r\n\r\n",
+    ),
+    content="BadRequest",
+  )
+  inspect(
+    try_response(
+      b"HTTP/1.1 200 OK\r\nContent-Length: 3\r\nTransfer-Encoding: chunked\r\n\r\n3\r\nabc\r\n0\r\n\r\n",
+    ),
+    content="BadRequest",
+  )
+}
+
+///|
+async test "reject control characters in header values" {
+  inspect(
+    try_request(b"GET /a HTTP/1.1\r\nX: a\nTransfer-Encoding: chunked\r\n\r\n"),
+    content="BadRequest",
+  )
+  inspect(
+    try_request(b"GET /a HTTP/1.1\r\nX: a\rb\r\n\r\n"),
+    content="BadRequest",
+  )
+  inspect(
+    try_request(b"GET /a HTTP/1.1\r\nX: a\x00b\r\n\r\n"),
+    content="BadRequest",
+  )
+  // HTAB and obs-text are allowed
+  inspect(
+    try_request(b"GET /a HTTP/1.1\r\nX: a\tb\xe4\xb8\x80\r\n\r\n"),
+    content="/a body=",
+  )
+  // the request target must not contain control characters either
+  inspect(try_request(b"GET /a\nX: 1 HTTP/1.1\r\n\r\n"), content="BadRequest")
+}
+
+///|
+async test "status code must be exactly three digits" {
+  inspect(try_response(b"HTTP/1.1 200 OK\r\n\r\nabc"), content="200 body=abc")
+  inspect(try_response(b"HTTP/1.1 +2_00 OK\r\n\r\nabc"), content="BadRequest")
+  inspect(try_response(b"HTTP/1.1 0200 OK\r\n\r\nabc"), content="BadRequest")
+  inspect(try_response(b"HTTP/1.1 20 OK\r\n\r\nabc"), content="BadRequest")
+  // three characters, but not three digits
+  inspect(try_response(b"HTTP/1.1 +20 OK\r\n\r\nabc"), content="BadRequest")
+  inspect(try_response(b"HTTP/1.1 2_0 OK\r\n\r\nabc"), content="BadRequest")
+  inspect(try_response(b"HTTP/1.1  20 OK\r\n\r\nabc"), content="BadRequest")
+  inspect(try_response(b"HTTP/1.1 200 O\nK\r\n\r\nabc"), content="BadRequest")
+}
+
+///|
+async test "bodyless responses still validate framing headers" {
+  let responses : Array[(Bytes, RequestMethod?)] = [
+    (b"HTTP/1.1 204 No Content\r\nContent-Length: +3\r\n\r\n", None),
+    (
+      b"HTTP/1.1 304 Not Modified\r\nContent-Length: 3\r\nTransfer-Encoding: chunked\r\n\r\n",
+      None,
+    ),
+    (b"HTTP/1.1 200 OK\r\nContent-Length: 0_3\r\n\r\n", Some(Head)),
+    (b"HTTP/1.1 200 OK\r\nContent-Length: 0x3\r\n\r\n", Some(Connect)),
+  ]
+  for response in responses {
+    let (data, request_method) = response
+    let source = @io.MemoryReader(w => w.write(data))
+    defer source.close()
+    let reader = Reader::new(source)
+    let result = try
+      reader.read_response(auto_decompress=false, request_method~)
+    catch {
+      err => @debug.to_string(err)
+    } noraise {
+      response => response.code.to_string()
+    }
+    @test.assert_eq(result, "BadRequest")
+  }
+  // a valid Content-Length on a HEAD response is still fine
+  let source = @io.MemoryReader(w => {
+    w.write(b"HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\n")
+  })
+  defer source.close()
+  let response = Reader::new(source).read_response(
+    auto_decompress=false,
+    request_method=Some(Head),
+  )
+  inspect(response.code, content="200")
+}
+
+///|
+async test "header section size counts every byte on the wire" {
+  // "GET / HTTP/1.1\r\n" + "X: " + value + "\r\n" + "\r\n"
+  let fits = MAX_HEADER_SECTION_SIZE - 16 - 5 - 2
+  let req = (len : Int32) => {
+    let value = "a".repeat(len)
+    @utf8.encode("GET / HTTP/1.1\r\nX: \{value}\r\n\r\n")
+  }
+  inspect(req(fits).length(), content="65536")
+  inspect(try_request(req(fits)), content="/ body=")
+  inspect(try_request(req(fits + 1)), content="BadRequest")
+}
+
+///|
+async test "header section size and field count are limited" {
+  let big = "a".repeat(MAX_HEADER_SECTION_SIZE)
+  inspect(
+    try_request(@utf8.encode("GET /a HTTP/1.1\r\nX: \{big}\r\n\r\n")),
+    content="BadRequest",
+  )
+  // the limit applies to the request line too
+  inspect(
+    try_request(@utf8.encode("GET /\{big} HTTP/1.1\r\n\r\n")),
+    content="BadRequest",
+  )
+  let many = StringBuilder()
+  for i in 0..<(MAX_HEADER_COUNT + 1) {
+    many.write_string("X-\{i}: v\r\n")
+  }
+  inspect(
+    try_request(@utf8.encode("GET /a HTTP/1.1\r\n\{many}\r\n")),
+    content="BadRequest",
+  )
+  let ok = StringBuilder()
+  for i in 0..<MAX_HEADER_COUNT {
+    ok.write_string("X-\{i}: v\r\n")
+  }
+  inspect(
+    try_request(@utf8.encode("GET /a HTTP/1.1\r\n\{ok}\r\n")),
+    content="/a body=",
+  )
+  // trailers are limited the same way
+  inspect(
+    try_request(
+      @utf8.encode(
+        "POST /a HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n0\r\nX: \{big}\r\n\r\n",
+      ),
+    ),
+    content="BadRequest",
+  )
+  // and so are chunk-size lines
+  let ext = ";e=" + "a".repeat(MAX_CHUNK_LINE_SIZE)
+  inspect(
+    try_request(
+      @utf8.encode(
+        "POST /a HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n3\{ext}\r\nabc\r\n0\r\n\r\n",
+      ),
+    ),
+    content="BadRequest",
+  )
+}
