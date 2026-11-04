@@ -864,25 +864,29 @@ pub impl[K, V] Default for HashMap[K, V] with fn default() {
 /// returns a new map with the results, using the original keys.
 ///
 /// `f` may raise; the error propagates and `self` is left unchanged.
+///
+/// `f` must not modify `self`: the results are then unspecified, though
+/// memory-safe.
 pub fn[K, V, V2] HashMap::map(
   self : HashMap[K, V],
   f : (K, V) -> V2 raise?,
 ) -> HashMap[K, V2] raise? {
-  let other = {
-    capacity: self.capacity,
-    entries: FixedArray::make(self.capacity, None),
-    size: self.size,
-    capacity_mask: self.capacity_mask,
-  }
-  if self.size == 0 {
-    return other
-  }
-  for i in 0..<self.capacity {
-    if self.entries[i] is Some({ key, value, hash, psl, }) {
-      other.entries[i] = Some({ psl, key, value: f(key, value), hash, })
+  // `f` may modify `self`, so read the table captured here (a grow replaces
+  // `self.entries` but leaves this one intact) and count the entries actually
+  // written rather than trusting `self.size`.
+  let { entries, capacity, capacity_mask, .. } = self
+  let other_entries = FixedArray::make(capacity, None)
+  let mut size = 0
+  for i in 0..<capacity {
+    if entries[i] is Some({ key, value, hash, .. }) {
+      // Derive `psl` from the slot: a grow reuses entries and updates their
+      // stored `psl` for the new table.
+      let psl = (i - hash) & capacity_mask
+      other_entries[i] = Some({ psl, key, value: f(key, value), hash, })
+      size += 1
     }
   }
-  other
+  { capacity, entries: other_entries, size, capacity_mask, }
 }
 
 ///|

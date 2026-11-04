@@ -649,6 +649,9 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 /// `@hashset.from_array([for k in s if f(k) => k])` because each element's
 /// stored hash is reused: elements are never hashed again.
 ///
+/// `f` sees the elements `self` held when `filter` was called, even if `f`
+/// modifies `self`.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -665,15 +668,27 @@ pub fn[K] HashSet::filter(
   self : HashSet[K],
   f : (K) -> Bool raise?,
 ) -> HashSet[K] raise? {
-  // Collect first so the result can be sized for exactly the kept elements:
-  // a stored hash fits a table of any size. The entries are fresh because
-  // `psl` belongs to the table an entry sits in.
-  let kept : Array[Entry[K]] = []
+  // Snapshot the entries before calling `f`: `f` may modify `self`, which can
+  // move an entry the traversal has already visited to a slot it has not.
+  let kept : Array[Entry[K]] = Array(capacity=self.size)
   for entry in self.entries {
-    if entry is Some({ key, hash, .. }) && f(key) {
-      kept.push({ psl: 0, key, hash, })
+    if entry is Some(entry) {
+      kept.push(entry)
     }
   }
+  // Keep the elements `f` accepts, compacting in place. Collecting first lets
+  // the result be sized for exactly the kept elements: a stored hash fits a
+  // table of any size. The entries are fresh because `psl` belongs to the
+  // table an entry sits in.
+  let mut n = 0
+  for i in 0..<kept.length() {
+    let { key, hash, .. } = kept.unsafe_get(i)
+    if f(key) {
+      kept.unsafe_set(n, { psl: 0, key, hash, })
+      n += 1
+    }
+  }
+  kept.truncate(n)
   let other = new_hashset(
     default_init_capacity.max(capacity_for_length(kept.length())),
   )
