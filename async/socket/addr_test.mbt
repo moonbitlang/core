@@ -87,3 +87,15 @@ test "Parse IPv6 address with ipv4" {
   // Too many groups
   @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:127.0.0.1]:8080"))
 }
+
+///|
+async test "resolve accepts StringView slices" {
+  inspect(
+    @socket.Addr::resolve("[127.0.0.1]"[1:10], port=80),
+    content="127.0.0.1:80",
+  )
+  inspect(
+    @socket.Addr::resolve("[localhost]"[1:10], port=443, protocol=OnlyV4),
+    content="127.0.0.1:443",
+  )
+}

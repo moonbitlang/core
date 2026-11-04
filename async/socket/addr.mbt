@@ -409,7 +409,7 @@ pub(all) enum IpProtocolPreference {
 /// Preference on IPv4 v.s. IPv6 can be configured via `protocol`.
 /// See `IPProtocolPreference` for available options.
 pub async fn Addr::resolve(
-  host : String,
+  host : StringView,
   port~ : Int32,
   protocol~ : IpProtocolPreference = NoPreference,
 ) -> Addr {

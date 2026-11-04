@@ -164,7 +164,7 @@ pub fn Timestamp::sec(Self) -> Int64
 pub impl Sub for Timestamp
 
 type Watcher
-pub async fn Watcher::Watcher(String, debounce_timeout? : Int32, max_debounce_delay? : Int32, report_child_event? : Bool, report_event_on_init? : Bool, ignored_paths? : (String) -> Bool) -> Self
+pub async fn Watcher::Watcher(StringView, debounce_timeout? : Int32, max_debounce_delay? : Int32, report_child_event? : Bool, report_event_on_init? : Bool, ignored_paths? : (String) -> Bool) -> Self
 pub fn Watcher::close(Self) -> Unit
 pub async fn Watcher::wait(Self) -> Array[FsEvent]
 pub async fn Watcher::wait_any(Self) -> Unit

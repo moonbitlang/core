@@ -777,3 +777,18 @@ test "ZIP equality methods can be passed as functions across packages" {
   @test.assert_eq(compression_equal(Store, Store), true)
   @test.assert_eq(compression_equal(Store, Deflate), false)
 }
+
+///|
+test "archive add accepts StringView slices" {
+  let archive = @zip.Archive()
+  let name = "[目录🌙.txt]"
+  archive.add(name[1:name.length() - 1], b"payload")
+  let parsed = @zip.read_all(@zip.write(archive))
+  inspect(parsed.entries()[0].name(), content="目录🌙.txt")
+  debug_inspect(
+    parsed.get("目录🌙.txt"),
+    content=(
+      #|Some(<BytesView: [0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64]>)
+    ),
+  )
+}

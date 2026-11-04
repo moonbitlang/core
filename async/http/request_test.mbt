@@ -113,3 +113,26 @@ async test "request to an IPv6 address" {
     inspect(body, content="Host: [::1]:\{port}")
   }
 }
+
+///|
+#cfg(any(target="native", target="wasm"))
+async test "server write_string accepts StringView slices" {
+  @async.with_task_group() <| group => {
+    let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    defer server.close()
+    group.spawn_bg() <| () => {
+      let (conn, _) = server.accept()
+      defer conn.close()
+      let _ = conn.read_request()
+      conn.send_response(200, "OK")
+      conn.write_string("[你好🌙]"[1:5])
+      conn.write_string("[]"[1:1])
+      conn.end_response()
+    }
+    let (response, body) = @http.get_text(
+      "http://127.0.0.1:\{server.addr.port()}/",
+    )
+    inspect(response.code, content="200")
+    inspect(body, content="你好🌙")
+  }
+}

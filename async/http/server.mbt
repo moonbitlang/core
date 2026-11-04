@@ -177,7 +177,7 @@ pub async fn[X : Show] ServerConnection::write_string_interpolation(
 /// Performance will be improved in the future
 pub async fn ServerConnection::write_string(
   self : ServerConnection,
-  s : String,
+  s : StringView,
 ) -> Unit {
   self.text.write(s)
 }

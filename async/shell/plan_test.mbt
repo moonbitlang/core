@@ -55,6 +55,26 @@ test "defaults keep a command closed and inherited" {
 }
 
 ///|
+test "Cmd accepts StringView slices" {
+  let cmd = @shell.Cmd("[git]"[1:4], [], cwd="[工作🌙]"[1:5])
+  debug_inspect(
+    cmd,
+    content=(
+      #|{
+      #|  program: "git",
+      #|  arguments: [],
+      #|  cwd: Some("工作🌙"),
+      #|  env: {},
+      #|  inherit_env: true,
+      #|  stdin: None,
+      #|  stdout: Capture,
+      #|  stderr: Capture,
+      #|}
+    ),
+  )
+}
+
+///|
 test "a command does not alias the caller's collections" {
   let arguments = ["status"]
   let env = { "NO_COLOR": "1" }

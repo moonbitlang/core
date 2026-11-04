@@ -103,7 +103,7 @@ pub async fn Conn::from_http_client(
 /// ```
 #as_free_fn
 pub async fn Conn::connect(
-  url : String,
+  url : StringView,
   headers~ : @http.Headers = Map([]),
   proxy? : @http.ClientConnection,
 ) -> Conn {

@@ -43,7 +43,8 @@ async test "websocket basic" {
         content="ConnectionClosed(Normal, None)",
       )
     }
-    let client = @websocket.connect("ws://127.0.0.1:\{addr.port()}")
+    let url = "[ws://127.0.0.1:\{addr.port()}]"
+    let client = @websocket.connect(url[1:url.length() - 1])
     defer client.close()
     client.send_binary(b"abcd")
     let msg = client.recv()
