@@ -28,6 +28,23 @@ pub let all_signals : ReadOnlyArray[Int32] = ReadOnlyArray::makei(
 )
 
 ///|
+/// `SIGWINCH` on Unix, `-1` where it does not exist.
+/// It is always waited for by the signal thread on native, and recorded in
+/// `resize_state` instead of cancelling the program.
+#cfg(all(target="native", not(platform="windows")))
+let sigwinch : Int32 = 28
+
+///|
+/// There is no `SIGWINCH` on Windows
+#cfg(all(target="native", platform="windows"))
+let sigwinch : Int32 = -1
+
+///|
+/// The host delivers `SIGWINCH` only after `@tty` opens the terminal
+#cfg(target="wasm")
+let sigwinch : Int32 = if platform is Windows { -1 } else { 28 }
+
+///|
 /// Error raised when current event loop is cancelled by a registered cancellation signal
 pub suberror KilledBySignal {
   KilledBySignal(Int32)
@@ -62,12 +79,28 @@ let global_signal_handler_initialized : @ref.Ref[Bool] = Ref(false)
 /// Can be invoked after the event loop started or invoked multiple times.
 pub fn set_global_cancellation_signals(signals : ReadOnlyArray[Int32]) -> Unit {
   global_signal_handler_initialized.val = true
+  let signals = with_sigwinch(signals)
   set_global_cancellation_signals_ffi(
     all_signals,
     all_signals.length(),
     signals,
     signals.length(),
   )
+}
+
+///|
+/// Add `SIGWINCH` to `signals` for the native runtime
+#cfg(all(target="native", not(platform="windows")))
+fn with_sigwinch(signals : ReadOnlyArray[Int32]) -> ReadOnlyArray[Int32] {
+  ReadOnlyArray::from_array([..signals, sigwinch])
+}
+
+///|
+/// There is no `SIGWINCH` on Windows, and the wasm host delivers it itself
+/// once `@tty` opens the terminal
+#cfg(any(target="wasm", platform="windows"))
+fn with_sigwinch(signals : ReadOnlyArray[Int32]) -> ReadOnlyArray[Int32] {
+  signals
 }
 
 ///|

@@ -1,0 +1,23 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/internal/coroutine",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/os_error",
+}
+
+#cfg(target="native")
+import {
+  "moonbitlang/core/async/internal/c_buffer",
+}
+
+supported_targets = "-all+native+wasm"
+
+options(
+  "allow-experimental-packages": true,
+  experimental: true,
+  targets: { "ffi.native.mbt": [ "native" ], "ffi.wasm.mbt": [ "wasm" ] },
+)
