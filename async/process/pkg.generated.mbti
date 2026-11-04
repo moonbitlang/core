@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/signal",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -21,9 +22,9 @@ pub async fn redirect_from_file(String) -> SharedProcessInput
 
 pub async fn redirect_to_file(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
 
-pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler) -> ProcessResult
+pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, accepted_exit_code? : (Int32) -> Bool) -> ProcessResult
 
-pub async fn spawn(@async.TaskGroup, StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, no_wait? : Bool) -> Process
+pub async fn spawn(@async.TaskGroup, StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler, accepted_exit_code? : (Int32) -> Bool, no_wait? : Bool) -> Process
 
 pub async fn spawn_orphan(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool) -> OrphanProcess
 
@@ -32,6 +33,12 @@ pub async fn wait_pid(Int32) -> Int32
 pub fn write_to_process() -> (SharedProcessInput, WriteToProcess) raise
 
 // Errors
+#derive(@debug.Debug)
+pub suberror CommandFailed {
+  CommandFailed(Int32, program~ : String, args~ : ReadOnlyArray[String])
+}
+pub fn CommandFailed::to_string(Self) -> String
+pub impl Show for CommandFailed
 
 // Types and methods
 pub(all) struct CancellationHandler(async (Int32) -> Unit)

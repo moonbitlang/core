@@ -64,6 +64,28 @@ pub fn ProcessResult::stderr_text(self : ProcessResult) -> String raise {
 }
 
 ///|
+/// Error raised when `accepted_exit_code` rejects a command's exit code.
+/// It contains the rejected code and a copy of the command's program and
+/// arguments.
+#derive(@debug.Debug)
+pub suberror CommandFailed {
+  CommandFailed(Int32, program~ : String, args~ : ReadOnlyArray[String])
+}
+
+///|
+pub impl Show for CommandFailed with fn output(self, logger) {
+  let CommandFailed(code, program~, args~) = self
+  logger..write_string("command `").write_string(program)
+  for arg in args {
+    logger..write_char(' ').write_string(arg)
+  }
+  logger..write_string("` failed with exit code ").write_object(code)
+}
+
+///|
+pub extend CommandFailed with Show::{to_string}
+
+///|
 /// Execute a system process with command `cmd`,
 /// and provide `args` as extra arguments to `cmd`.
 ///
@@ -87,6 +109,12 @@ pub fn ProcessResult::stderr_text(self : ProcessResult) -> String raise {
 /// `.stdout_binary()`/`.stderr_binary()`/`.stdout_text()`/`.stderr_text()`
 /// on the returned `struct ProcessResult`.
 ///
+/// `accepted_exit_code` is called with the exit code after the process terminates normally.
+/// By default all exit codes are accepted and returned.
+/// If the predicate reports `false` on the child process' exit code,
+/// `run` raises `CommandFailed` with the rejected code, program, and arguments.
+/// The error code is not checked when `run` is cancelled.
+///
 /// All remaining arguments of `@process.run` have the same meaning as `@process.spawn`,
 /// see `@process.spawn` for more details.
 pub async fn run(
@@ -100,6 +128,7 @@ pub async fn run(
   cwd? : StringView,
   no_console_window~ : Bool = false,
   cancel_handler~ : CancellationHandler = graceful_cancel(timeout=5000),
+  accepted_exit_code~ : (Int32) -> Bool = _ => true,
 ) -> ProcessResult {
   let context = "@process.run()"
   let (process, stdin, stdout, stderr) = raw_spawn(
@@ -146,7 +175,16 @@ pub async fn run(
         }
         @coroutine.raise_cancellation_signal()
       }
-      Some(ret) => exit_code = ret
+      Some(ret) => {
+        guard accepted_exit_code(ret) else {
+          raise CommandFailed(
+            ret,
+            program=cmd.to_owned(),
+            args=ReadOnlyArray::from_array(args),
+          )
+        }
+        exit_code = ret
+      }
     }
   }
   { exit_code, stdout: stdout_result, stderr: stderr_result, }
@@ -171,22 +209,35 @@ pub struct Process {
   /// with `stderr=Collect`.
   /// In this case, it can be used to read from the stderr of the child process.
   stderr : ReadFromProcess
-  priv result : @async.Task[Int32]
+  priv result : @async.Task[Result[Int32, CommandFailed]]
 }
 
 ///|
-/// Wait for a process to terminate, return the exit code of the process
+/// Wait for a process to terminate and return its exit code.
 /// If the process is killed by a signal, the result would be `-signal_number`.
+///
+/// If the final exit code is rejected by the `accepted_exit_code` passed to
+/// `spawn`, this method raises `CommandFailed`, including when the exit code is
+/// produced while cancelling the process. A rejection caused by cancellation
+/// does not fail the process's task group.
 pub async fn Process::wait(self : Process) -> Int32 {
-  self.result.wait()
+  self.result.wait().unwrap_or_error()
 }
 
 ///|
 /// If the process already terminated, return its exit code.
 /// If the process is killed by a signal, the result would be `-signal_number`.
 /// If the process is still running, return `None`.
+///
+/// If the final exit code is rejected by the `accepted_exit_code` passed to
+/// `spawn`, this method raises `CommandFailed`, including when the exit code is
+/// produced while cancelling the process. A rejection caused by cancellation
+/// does not fail the process's task group.
 pub fn Process::try_wait(self : Process) -> Int32? raise {
-  self.result.try_wait()
+  match self.result.try_wait() {
+    Some(result) => Some(result.unwrap_or_error())
+    None => None
+  }
 }
 
 ///|
@@ -251,6 +302,13 @@ pub fn Process::cancel(self : Process) -> Unit {
 /// and the child process is a conlose application.
 /// `no_console_window` has no effect on non-Windows platforms.
 ///
+/// `accepted_exit_code` would be called with the process's final exit code.
+/// By default all exit codes are accepted.
+/// If `accepted_exit_code` reports `false` on the exit code,
+/// the child process will fail the task group and its waiters with `CommandFailed`.
+/// If the child process is cancelled, an unsucessful exit code no longer fail the task group,
+/// but `.wait()` and `.try_wait()` will still receive `CommandFailed`.
+///
 /// The child process can be cancelled manually via `.cancel()` on the returned `Process` object.
 /// The child may also get cancelled automatically by the task group.
 /// When the child process is cancelled, `cancel_handler` will be used to automatically stop the process.
@@ -275,6 +333,7 @@ pub async fn spawn(
   cwd? : StringView,
   no_console_window~ : Bool = false,
   cancel_handler~ : CancellationHandler = graceful_cancel(timeout=5000),
+  accepted_exit_code~ : (Int32) -> Bool = _ => true,
   no_wait? : Bool,
 ) -> Process {
   let context = "@process.spawn()"
@@ -303,9 +362,31 @@ pub async fn spawn(
             result = process.wait_pid(context~)
           }
         }
-        result
+        if accepted_exit_code(result) {
+          Ok(result)
+        } else {
+          // On cancellation, don't fail the whole task group for incorrect exit code.
+          // We still want `.wait()` to report the error, though,
+          // similar to how `@async.Task::wait` fail with `TaskAlreadyCancelled`
+          Err(
+            CommandFailed(
+              result,
+              program=cmd.to_owned(),
+              args=ReadOnlyArray::from_array(args),
+            ),
+          )
+        }
       }
-      Some(ret) => ret
+      Some(ret) => {
+        guard accepted_exit_code(ret) else {
+          raise CommandFailed(
+            ret,
+            program=cmd.to_owned(),
+            args=ReadOnlyArray::from_array(args),
+          )
+        }
+        Ok(ret)
+      }
     }
   })
   { pid, stdin, stdout, stderr, result, }

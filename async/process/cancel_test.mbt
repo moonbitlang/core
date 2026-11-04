@@ -114,6 +114,26 @@ async test "cancel process hard" {
 }
 
 ///|
+async test "rejected exit after cancellation fails wait only" {
+  let test_prog = sleep_prog.wait()
+  @async.with_task_group() <| group => {
+    let child = @process.spawn(
+      group,
+      test_prog,
+      ["10000"],
+      cancel_handler=@process.hard_cancel(),
+      accepted_exit_code=_ => false,
+    )
+    child.cancel()
+    guard @test.expect_error_async(() => child.wait())
+      is @process.CommandFailed(_, program~, ..) else {
+      fail("unexpected error")
+    }
+    inspect(program == test_prog, content="true")
+  }
+}
+
+///|
 async test "orphan process" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {

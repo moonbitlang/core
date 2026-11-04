@@ -5,6 +5,7 @@ import {
 #cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/debug",
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/coroutine",
   "moonbitlang/core/async/internal/fd_util",
