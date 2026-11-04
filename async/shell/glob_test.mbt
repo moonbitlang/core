@@ -74,6 +74,18 @@ async test "expansion finds what is on disk and nothing else" {
 }
 
 ///|
+async test "glob accepts StringView slices" {
+  let root = @fs.tmpdir(prefix="shell-glob-view")
+  defer @fs.rmdir(root, recursive=true)
+  make_tree(root, ["a.mbt", "b.txt"])
+  let padded = "[\{root}]"
+  debug_inspect(
+    @shell.glob("[*.mbt]"[1:6], cwd=padded[1:padded.length() - 1]),
+    content="[\"a.mbt\"]",
+  )
+}
+
+///|
 async test "matches come back in code-unit order, not by length" {
   let root = @fs.tmpdir(prefix="shell-glob-order")
   // No case differences here: macOS is case-insensitive by default, so

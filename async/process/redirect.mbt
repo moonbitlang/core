@@ -481,7 +481,7 @@ fn @fs.CreateMode::to_int(self : @fs.CreateMode) -> Int32 = "%identity"
 /// immediately and supports custom creation modes and permissions. Close the
 /// endpoint after passing it to the last child, or if spawning is abandoned.
 pub async fn redirect_to_file(
-  path : String,
+  path : StringView,
   append~ : Bool = false,
   create_mode~ : @fs.CreateMode = CreateOrTruncate,
   permission~ : Int32 = 0o644,
@@ -506,7 +506,7 @@ pub async fn redirect_to_file(
 /// function opens the file immediately. Children share one open file
 /// description and therefore one file offset. Close the endpoint after passing
 /// it to the last child, or if spawning is abandoned.
-pub async fn redirect_from_file(path : String) -> SharedProcessInput {
+pub async fn redirect_from_file(path : StringView) -> SharedProcessInput {
   let (file, _) = @event_loop.open(
     path,
     0, // read only

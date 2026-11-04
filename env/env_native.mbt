@@ -44,7 +44,7 @@ fn current_dir_internal() -> String? {
 }
 
 ///|
-fn get_env_var_internal(key : String) -> String? {
+fn get_env_var_internal(key : StringView) -> String? {
   let key = @os_string.OsString::from_string(key)
   let exists = @ref.Ref(false)
   let value = get_env_var_ffi(key, exists)
@@ -76,7 +76,7 @@ fn get_env_vars_internal() -> Map[String, String] {
 extern "c" fn get_env_vars_ffi() -> FixedArray[@os_string.OsString] = "moonbit_rt_get_env_vars"
 
 ///|
-fn set_env_var_internal(key : String, value : String) -> Unit {
+fn set_env_var_internal(key : StringView, value : StringView) -> Unit {
   set_env_var_ffi(
     @os_string.OsString::from_string(key),
     @os_string.OsString::from_string(value),
@@ -91,7 +91,7 @@ extern "c" fn set_env_var_ffi(
 ) -> Unit = "moonbit_rt_set_env_var"
 
 ///|
-fn unset_env_var_internal(key : String) -> Unit {
+fn unset_env_var_internal(key : StringView) -> Unit {
   unset_env_var_ffi(@os_string.OsString::from_string(key))
 }
 

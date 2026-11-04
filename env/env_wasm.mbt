@@ -34,7 +34,7 @@ fn string_append_char(handle : XStringCreateHandle, ch : Char) = "__moonbit_fs_u
 fn finish_create_string(handle : XStringCreateHandle) -> XExternString = "__moonbit_fs_unstable" "finish_create_string"
 
 ///|
-fn string_to_extern(s : String) -> XExternString {
+fn string_to_extern(s : StringView) -> XExternString {
   let handle = begin_create_string()
   for code_unit in s.code_units() {
     string_append_char(handle, code_unit.unsafe_to_char())
@@ -139,7 +139,7 @@ fn current_dir_internal() -> String? {
 fn current_dir_ffi() -> XExternString = "__moonbit_fs_unstable" "current_dir"
 
 ///|
-fn get_env_var_internal(key : String) -> String? {
+fn get_env_var_internal(key : StringView) -> String? {
   let key = string_to_extern(key)
   if get_env_var_exists_ffi(key) {
     Some(string_from_extern(get_env_var_ffi(key)))
@@ -168,7 +168,7 @@ fn get_env_vars_internal() -> Map[String, String] {
 fn get_env_vars_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "get_env_vars"
 
 ///|
-fn set_env_var_internal(key : String, value : String) -> Unit {
+fn set_env_var_internal(key : StringView, value : StringView) -> Unit {
   set_env_var_ffi(string_to_extern(key), string_to_extern(value))
 }
 
@@ -176,7 +176,7 @@ fn set_env_var_internal(key : String, value : String) -> Unit {
 fn set_env_var_ffi(key : XExternString, value : XExternString) = "__moonbit_fs_unstable" "set_env_var"
 
 ///|
-fn unset_env_var_internal(key : String) -> Unit {
+fn unset_env_var_internal(key : StringView) -> Unit {
   unset_env_var_ffi(string_to_extern(key))
 }
 

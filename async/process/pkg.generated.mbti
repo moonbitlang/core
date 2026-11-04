@@ -17,9 +17,9 @@ pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise
 
 pub fn read_from_process() -> (ReadFromProcess, SharedProcessOutput) raise
 
-pub async fn redirect_from_file(String) -> SharedProcessInput
+pub async fn redirect_from_file(StringView) -> SharedProcessInput
 
-pub async fn redirect_to_file(String, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
+pub async fn redirect_to_file(StringView, append? : Bool, create_mode? : @fs.CreateMode, permission? : Int32) -> SharedProcessOutput
 
 pub async fn run(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, cancel_handler? : CancellationHandler) -> ProcessResult
 

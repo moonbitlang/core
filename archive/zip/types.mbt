@@ -169,14 +169,14 @@ pub fn Archive::Archive() -> Archive {
 /// the local-header and descriptor layout; use `Writer` for chunked input.
 pub fn Archive::add(
   self : Archive,
-  name : String,
+  name : StringView,
   data : BytesView,
   compression~ : Compression = Deflate,
 ) -> Unit {
   let data = data.to_owned()
   self.original = None
   self.entries.push({
-    name,
+    name: name.to_owned(),
     data,
     compression,
     data_descriptor: false,

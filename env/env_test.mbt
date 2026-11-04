@@ -119,3 +119,19 @@ test "unicode env var round trip" {
   @test.assert_eq(@env.get_env_var(key), None)
   @test.assert_eq(@env.get_env_vars().get(key), None)
 }
+
+///|
+test "env vars accept StringView slices" {
+  let key = "__MOONBIT_CORE_ENV_VIEW_TEST_" + @env.now().to_string()
+  let padded = "[\{key}]"
+  let view = padded[1:padded.length() - 1]
+  defer @env.unset_env_var(key)
+  debug_inspect(@env.get_env_var(view), content="None")
+  @env.set_env_var(view, "[环境🌙]"[1:5])
+  debug_inspect(@env.get_env_var(view), content="Some(\"环境🌙\")")
+  debug_inspect(@env.get_env_vars().get(key), content="Some(\"环境🌙\")")
+  @env.set_env_var(view, "[]"[1:1])
+  debug_inspect(@env.get_env_var(view), content="Some(\"\")")
+  @env.unset_env_var(view)
+  debug_inspect(@env.get_env_var(key), content="None")
+}

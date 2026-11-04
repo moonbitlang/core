@@ -44,7 +44,11 @@ async fn watch_basic_test(
   test_dir.instantiate(path)
   defer @fs.rmdir(path, recursive=true)
 
-  let watcher = @fs.Watcher(path, report_child_event~)
+  let padded_path = "[\{path}]"
+  let watcher = @fs.Watcher(
+    padded_path[1:padded_path.length() - 1],
+    report_child_event~,
+  )
   defer watcher.close()
 
   async fn wait() {

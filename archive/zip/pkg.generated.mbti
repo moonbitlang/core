@@ -18,7 +18,7 @@ pub suberror ZipError {
 // Types and methods
 type Archive
 pub fn Archive::Archive() -> Self
-pub fn Archive::add(Self, String, BytesView, compression? : Compression) -> Unit
+pub fn Archive::add(Self, StringView, BytesView, compression? : Compression) -> Unit
 pub fn Archive::comment(Self) -> BytesView
 #alias(clone, deprecated)
 pub fn Archive::copy(Self) -> Self

@@ -40,7 +40,7 @@ pub struct Conn {
 }
 pub fn Conn::close(Self) -> Unit
 #as_free_fn
-pub async fn Conn::connect(String, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.ClientConnection) -> Self
+pub async fn Conn::connect(StringView, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.ClientConnection) -> Self
 pub async fn Conn::end_message(Self) -> Unit
 #as_free_fn
 pub async fn Conn::from_http_client(@http.ClientConnection, StringView, extra_headers? : Map[@http.CaseInsensitiveString, String]) -> Self

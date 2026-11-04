@@ -47,7 +47,7 @@ pub fn current_dir() -> String? {
 
 ///|
 /// Get an environment variable by key. Returns `None` if the key does not exist.
-pub fn get_env_var(key : String) -> String? {
+pub fn get_env_var(key : StringView) -> String? {
   get_env_var_internal(key)
 }
 
@@ -59,13 +59,13 @@ pub fn get_env_vars() -> Map[String, String] {
 
 ///|
 /// Set an environment variable.
-pub fn set_env_var(key : String, value : String) -> Unit {
+pub fn set_env_var(key : StringView, value : StringView) -> Unit {
   set_env_var_internal(key, value)
 }
 
 ///|
 /// Unset an environment variable.
-pub fn unset_env_var(key : String) -> Unit {
+pub fn unset_env_var(key : StringView) -> Unit {
   unset_env_var_internal(key)
 }
 

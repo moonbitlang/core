@@ -66,7 +66,8 @@ fn current_dir_internal() -> String? {
 }
 
 ///|
-fn get_env_var_internal(key : String) -> String? {
+fn get_env_var_internal(key : StringView) -> String? {
+  let key = key.to_owned()
   if is_env_var_exists_internal(key) {
     Some(get_env_var_value_internal(key))
   } else {
@@ -121,8 +122,8 @@ extern "js" fn get_env_vars_array_internal() -> FixedArray[String] =
   #| }
 
 ///|
-fn set_env_var_internal(key : String, value : String) -> Unit {
-  set_env_var_ffi(key, value)
+fn set_env_var_internal(key : StringView, value : StringView) -> Unit {
+  set_env_var_ffi(key.to_owned(), value.to_owned())
 }
 
 ///|
@@ -134,8 +135,8 @@ extern "js" fn set_env_var_ffi(key : String, value : String) -> Unit =
   #| }
 
 ///|
-fn unset_env_var_internal(key : String) -> Unit {
-  unset_env_var_ffi(key)
+fn unset_env_var_internal(key : StringView) -> Unit {
+  unset_env_var_ffi(key.to_owned())
 }
 
 ///|

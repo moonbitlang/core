@@ -6,14 +6,14 @@ import {
 }
 
 // Values
-pub async fn glob(String, cwd? : String) -> Array[String]
+pub async fn glob(StringView, cwd? : StringView) -> Array[String]
 
 // Errors
 
 // Types and methods
 #derive(@debug.Debug)
 type Cmd
-pub fn Cmd::Cmd(String, ArrayView[String], cwd? : String, env? : Map[String, String], inherit_env? : Bool, stdin? : Stdin, stdout? : Redirect, stderr? : Redirect) -> Self
+pub fn Cmd::Cmd(StringView, ArrayView[String], cwd? : StringView, env? : Map[String, String], inherit_env? : Bool, stdin? : Stdin, stdout? : Redirect, stderr? : Redirect) -> Self
 pub async fn Cmd::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
 pub async fn Cmd::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
 pub async fn Cmd::run(Self, timeout_ms? : Int32) -> Unit

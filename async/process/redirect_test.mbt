@@ -62,6 +62,24 @@ async test "redirect to file" {
 }
 
 ///|
+async test "redirect files accept StringView slices" {
+  let cat = cat.wait()
+  let dir = @fs.tmpdir(prefix="redirect-view")
+  defer @fs.rmdir(dir, recursive=true)
+  let input_path = "[\{dir}/input.txt]"
+  let output_path = "[\{dir}/output.txt]"
+  let input_view = input_path[1:input_path.length() - 1]
+  let output_view = output_path[1:output_path.length() - 1]
+  @fs.write_text(input_view, "sliced paths")
+  let input = @process.redirect_from_file(input_view)
+  defer input.close()
+  let output = @process.redirect_to_file(output_view)
+  defer output.close()
+  let _ = @process.run(cat, [], stdin=Shared(input), stdout=Shared(output))
+  inspect(@fs.read_text(output_view), content="sliced paths")
+}
+
+///|
 async test "merge multiple to file" {
   let output_file = "_build/process_redirect_merge_multiple_test_out.txt"
   defer @fs.remove(output_file)

@@ -464,7 +464,10 @@ fn in_ranges(members : Array[(Char, Char)], candidate : Char) -> Bool {
 ///   assert_true(sources.contains("execute.mbt"))
 /// }
 /// ```
-pub async fn glob(pattern : String, cwd~ : String = ".") -> Array[String] {
+pub async fn glob(
+  pattern : StringView,
+  cwd~ : StringView = ".",
+) -> Array[String] {
   // No filename can contain a NUL, and a C-string filesystem API would see a
   // truncated path — matching something the caller did not spell. Reject it
   // up front, exactly as `Cmd` does for process metadata.
@@ -475,7 +478,7 @@ pub async fn glob(pattern : String, cwd~ : String = ".") -> Array[String] {
     raise ShellError::NulByte("glob working directory")
   }
   let (root, segments, directories_only) = parse_path(
-    pattern,
+    pattern.to_owned(),
     windows=native_windows,
     escapes=!native_windows,
   )
@@ -484,7 +487,7 @@ pub async fn glob(pattern : String, cwd~ : String = ".") -> Array[String] {
   let (base, prefix, drive_relative) = match root {
     Rooted(root) => (root, root, false)
     DriveRelative(root) => (root, root, true)
-    Relative => (cwd, "", false)
+    Relative => (cwd.to_owned(), "", false)
     // Nothing is under a root that was never finished.
     Incomplete => return []
   }

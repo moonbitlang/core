@@ -211,7 +211,7 @@ pub async fn ServerConnection::skip_request_body(Self) -> Unit
 pub fn ServerConnection::trailer(Self) -> Map[CaseInsensitiveString, String]
 pub async fn ServerConnection::write(Self, BytesView) -> Unit
 pub async fn ServerConnection::write_reader(Self, &@io.BinaryReader) -> Unit
-pub async fn ServerConnection::write_string(Self, String) -> Unit
+pub async fn ServerConnection::write_string(Self, StringView) -> Unit
 pub async fn[X : Show] ServerConnection::write_string_interpolation(Self, X) -> Unit
 pub impl @io.BinaryReader for ServerConnection
 pub impl @io.BinaryWriter for ServerConnection
