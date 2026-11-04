@@ -420,6 +420,14 @@ fn Decoder::append_history_bytes(
   len : Int32,
 ) -> Unit {
   guard len > 0 else { return }
+  if len >= 32768 {
+    // Only the last 32 KiB can ever be referenced; a stored block may be up to
+    // 64 KiB, which would wrap the ring more than once.
+    self.history.unsafe_blit(0, src, src_offset + len - 32768, 32768)
+    self.history_pos = 0
+    self.history_len = 32768
+    return
+  }
   let first_len = @cmp.minimum(len, 32768 - self.history_pos)
   // Callers provide a valid source range; `first_len` is capped at the end of
   // the history ring.
