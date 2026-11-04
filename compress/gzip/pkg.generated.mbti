@@ -17,6 +17,7 @@ pub suberror GzipError {
   GzipError(GzipErrorKind, String)
 }
 pub fn GzipError::equal(Self, Self) -> Bool
+pub fn GzipError::to_string(Self) -> String
 pub impl Show for GzipError
 
 // Types and methods

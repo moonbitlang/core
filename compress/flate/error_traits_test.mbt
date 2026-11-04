@@ -125,3 +125,15 @@ test "InflateError upcast to Error" {
     ),
   )
 }
+
+///|
+test "InflateError::to_string is promoted" {
+  let err = inflate_error(b"\xff")
+  inspect(
+    err.to_string(),
+    content=(
+      #|Corrupt: corrupt: reserved block type
+    ),
+  )
+  assert_eq(err.to_string(), "\{err}")
+}

@@ -65,8 +65,6 @@ pub extend ZipError with Eq::{not_equal}
 pub extend ZipError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use string interpolation instead", skip_current_package=true)
-#doc(hidden)
 pub extend ZipError with Show::{to_string}
 
 ///|

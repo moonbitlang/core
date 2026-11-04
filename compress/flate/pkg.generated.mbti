@@ -20,6 +20,7 @@ pub suberror InflateError {
   InflateError(InflateErrorKind, String)
 }
 pub fn InflateError::equal(Self, Self) -> Bool
+pub fn InflateError::to_string(Self) -> String
 pub impl Show for InflateError
 
 // Types and methods

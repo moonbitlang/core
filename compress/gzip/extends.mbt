@@ -39,8 +39,6 @@ pub extend GzipError with Eq::{not_equal}
 pub extend GzipError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use string interpolation instead", skip_current_package=true)
-#doc(hidden)
 pub extend GzipError with Show::{to_string}
 
 ///|

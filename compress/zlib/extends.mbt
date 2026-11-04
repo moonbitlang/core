@@ -39,8 +39,6 @@ pub extend ZlibError with Eq::{not_equal}
 pub extend ZlibError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use string interpolation instead", skip_current_package=true)
-#doc(hidden)
 pub extend ZlibError with Show::{to_string}
 
 ///|
