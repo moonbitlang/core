@@ -37,7 +37,7 @@
 /// }
 /// ```
 pub fn tan(x : Double) -> Double {
-  if x.is_inf() || x.is_nan() {
+  if !x.is_finite() {
     return @double.not_a_number
   }
   let y = Array::make(2, 0.0)

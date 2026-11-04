@@ -331,7 +331,7 @@ fn split_uint64_for_float(value : UInt64) -> (@float.Float, @float.Float) {
 ///|
 /// Implements the non-unit `Double` interval path.
 fn Rand::double_in_range(self : Rand, min~ : Double, max~ : Double) -> Double {
-  guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
+  guard min.is_finite() && max.is_finite() else {
     abort("Rand::double: bounds must be finite")
   }
   let underflow_threshold = 4.0 * @double.min_positive
@@ -370,7 +370,7 @@ fn Rand::float_in_range(
   min~ : @float.Float,
   max~ : @float.Float,
 ) -> @float.Float {
-  guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
+  guard min.is_finite() && max.is_finite() else {
     abort("Rand::float: bounds must be finite")
   }
   let underflow_threshold = 4.0F * @float.min_positive

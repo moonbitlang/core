@@ -59,7 +59,7 @@
 /// }
 /// ```
 pub fn sinh(x : Double) -> Double {
-  if x.is_nan() || x.is_inf() {
+  if !x.is_finite() {
     return x
   }
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
@@ -259,7 +259,7 @@ pub fn tanh(x : Double) -> Double {
 /// }
 /// ```
 pub fn asinh(x : Double) -> Double {
-  if x.is_nan() || x.is_inf() {
+  if !x.is_finite() {
     return x
   }
   let one : Double = 1.0

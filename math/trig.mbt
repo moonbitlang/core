@@ -202,7 +202,7 @@ fn tanf_poly(x : @float.Float, odd : Bool) -> @float.Float {
 /// }
 /// ```
 pub fn sinf(x : @float.Float) -> @float.Float {
-  if x.is_nan() || x.is_inf() {
+  if !x.is_finite() {
     return @float.not_a_number
   }
   if x == 0.0 {
@@ -244,7 +244,7 @@ pub fn sinf(x : @float.Float) -> @float.Float {
 /// }
 /// ```
 pub fn cosf(x : @float.Float) -> @float.Float {
-  if x.is_nan() || x.is_inf() {
+  if !x.is_finite() {
     return @float.not_a_number
   }
   if x == 0.0 {
@@ -286,7 +286,7 @@ pub fn cosf(x : @float.Float) -> @float.Float {
 /// }
 /// ```
 pub fn tanf(x : @float.Float) -> @float.Float {
-  if x.is_nan() || x.is_inf() {
+  if !x.is_finite() {
     return @float.not_a_number
   }
   if x == 0.0 {
