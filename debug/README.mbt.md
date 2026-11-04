@@ -19,7 +19,9 @@ output. Some common cases:
 - Use `derive(Debug)` for custom types. Implement `Show` manually only for non-debug
   textual formats such as JSON, XML, or domain-specific display text.
 - Use `debug_inspect(value, content=...)` instead of `inspect(value, content=...)`.
-- Use `@debug.assert_eq(a, b)` instead of `@test.assert_eq(a, b)`.
+- `assert_eq(a, b)` calls need no change: the prelude's `assert_eq`,
+  `@test.assert_eq` and `@debug.assert_eq` are the same function. It reports
+  failures using `Debug`, so the compared type must implement `Debug`.
 - Use `\{Repr(value)}` in string interpolation instead of `\{value}` for composed values.
 - Use `@debug.to_string(value)` instead of `value.to_string()` for composed values,
   when the string is only used for debugging.

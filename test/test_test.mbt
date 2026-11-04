@@ -78,6 +78,23 @@ test "panic assert_raise fails when the callback does not raise" {
 }
 
 ///|
+test "assert_raise and expect_error failure message" {
+  let msg = "FAILED: expected error, but no error is raised"
+  guard @test.expect_error(() => @test.assert_raise(() => maybe_raise(false)))
+    is Failure(sync_assert) else {
+    @test.fail("expected Failure from assert_raise")
+  }
+  assert_true(sync_assert.has_suffix(msg))
+  guard @test.expect_error(() => {
+      let _ = @test.expect_error(() => maybe_raise(false))
+    })
+    is Failure(sync_expect) else {
+    @test.fail("expected Failure from expect_error")
+  }
+  assert_true(sync_expect.has_suffix(msg))
+}
+
+///|
 test "expect_error returns the raised error" {
   let err = @test.expect_error(() => maybe_raise(true))
   debug_inspect(

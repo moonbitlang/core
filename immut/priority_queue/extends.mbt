@@ -51,6 +51,6 @@ pub extend PriorityQueue with Hash::{hash_combine}
 pub extend PriorityQueue with Show::{output, to_string}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend PriorityQueue with @json.ToJson::{to_json}

@@ -96,8 +96,14 @@ pub async fn[X] with_timeout(
 ///
 /// - If `f` fail before `timeout`, `with_timeout_opt` will fail immediately.
 ///
-/// - If `f` is still running after `timeout` milliseconds,
-///   `with_timeout_opt` will return `None` immediately, and `f` will be cancelled.
+/// - If `f` is still running after `timeout` milliseconds, `f` is cancelled.
+///   `with_timeout_opt` does not return until `f` has terminated, including
+///   its `defer` blocks and any code protected by `protect_from_cancel`,
+///   so it can return later than `timeout`. It then returns `None`.
+///   If `f` returns a value anyway (for example because the remaining work
+///   was protected from cancellation), `with_timeout_opt` returns
+///   `Some(value)` instead, and if `f` raises an error during its cleanup,
+///   `with_timeout_opt` fails with that error.
 ///
 /// - If the whole `with_timeout_opt` call is cancelled before `f` completes,
 ///   `f` will be cancelled immediately

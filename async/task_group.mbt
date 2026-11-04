@@ -33,8 +33,10 @@ priv struct GroupDeferBlock(async () -> Unit nocancel)
 /// the whole task group will also raise that error,
 /// and all other remaining child tasks will be cancelled.
 ///
-/// The type parameter `X` in `TaskGroup[X]` is the result type of the group,
-/// see `with_task_group` for more detail.
+/// A task group produces no result value of its own:
+/// `with_task_group` returns `Unit`. To compute a value inside a group,
+/// assign it to a mutable variable declared outside the group,
+/// or start a task with `spawn` and retrieve its result with `Task::wait`.
 struct TaskGroup {
   children : @set.Set[@coroutine.Coroutine]
   parent : @coroutine.Coroutine
@@ -278,9 +280,29 @@ pub async fn with_task_group(
 }
 
 ///|
-/// Force a task group to terminate immediately.
-/// All child tasks in the group, including potentially the current one,
-/// will be cancelled.
+/// Request a task group to finish normally, cancelling the child tasks
+/// that are still running.
+///
+/// If the group is still running, this marks the group as successfully
+/// completed and cancels every child task in the group,
+/// including the current task if it belongs to the group.
+/// If the group is no longer running (it has already failed, been cancelled,
+/// or completed), this has no effect on the group.
+/// In both cases, if the current task is being cancelled
+/// (and is not inside `protect_from_cancel`), the call does not return:
+/// like any other async operation in a cancelled task,
+/// it raises the cancellation signal.
+///
+/// Despite the name, the group does not exit at once.
+/// As with any other cancellation, `with_task_group` still waits for every
+/// child task to terminate, including its `defer` blocks and code protected
+/// by `protect_from_cancel`, and then runs the group's `add_defer` blocks.
+/// If this call is what ended the group (the group was still running),
+/// `with_task_group` then returns normally, unless a group defer block,
+/// or a child task spawned without `allow_failure=true`, raises an error
+/// during that cleanup, in which case `with_task_group` fails with the last
+/// such error. If the group had already failed, been cancelled or completed,
+/// this call does not change how `with_task_group` ends.
 pub async fn TaskGroup::return_immediately(self : TaskGroup) -> Unit noraise {
   if self.state is Running {
     self.state = Done

@@ -291,3 +291,35 @@ async test "with_timeout_opt timeout" {
   }
   json_inspect(log, content=["task cancelled", "None", "200ms tick"])
 }
+
+///|
+async test "with_timeout_opt waits for cancelled f to clean up" {
+  let log = []
+  let result = @async.with_timeout_opt(50, () => {
+    defer log.push("f terminated")
+    ignore(@async.handle_cancellation(() => @async.sleep(1000)))
+    @async.protect_from_cancel(() => @async.sleep(100))
+    log.push("protected cleanup finished")
+    // The task is still cancelled, so this unprotected sleep ends `f`.
+    @async.sleep(1000)
+    1
+  })
+  log.push("with_timeout_opt returned \{@debug.to_string(result)}")
+  json_inspect(log, content=[
+    "protected cleanup finished", "f terminated", "with_timeout_opt returned None",
+  ])
+}
+
+///|
+async test "with_timeout_opt returns a value f produces after the timeout" {
+  let result = @async.with_timeout_opt(50, () => {
+    @async.protect_from_cancel(() => @async.sleep(100))
+    42
+  })
+  debug_inspect(
+    result,
+    content=(
+      #|Some(42)
+    ),
+  )
+}

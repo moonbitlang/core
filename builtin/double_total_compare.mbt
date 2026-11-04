@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Compares two values using MoonBit's total ordering.
+/// Compares two values numerically, except that every NaN is less than every
+/// number, all NaNs are equal, and `-0.0` equals `0.0`.
 ///
 /// Returns `-1`, `0`, or `1` when `self` is less than, equivalent to, or greater
 /// than `other`. Numbers follow numerical order, including infinities and

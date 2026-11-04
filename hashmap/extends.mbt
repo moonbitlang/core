@@ -40,6 +40,6 @@ pub extend HashMap with Default::{default}
 pub extend HashMap with Eq::{not_equal}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend HashMap with @json.ToJson::{to_json}

@@ -154,11 +154,7 @@ pub fn[T, E : Error] assert_raise(
   try f() catch {
     _ => ()
   } noraise {
-    _ =>
-      @builtin.fail(
-        "expected error, but program succeed without raising anything",
-        loc~,
-      )
+    _ => @builtin.fail("expected error, but no error is raised", loc~)
   }
 }
 
@@ -166,7 +162,8 @@ pub fn[T, E : Error] assert_raise(
 /// Assert that the given async callback raises an error.
 ///
 /// Use this when you only care that the callback raises, not what was raised.
-/// If you need to inspect the error value, use `@test.expect_error` instead.
+/// If you need to inspect the error value, use `@test.expect_error_async`
+/// instead.
 ///
 /// If the callback does not raise, the test fails at the call site of
 /// `assert_raise_async`.
@@ -197,11 +194,7 @@ pub fn[T, E : Error] expect_error(
   try f() catch {
     err => err
   } noraise {
-    _ =>
-      @builtin.fail(
-        "expected error, but program succeed without raising anything",
-        loc~,
-      )
+    _ => @builtin.fail("expected error, but no error is raised", loc~)
   }
 }
 

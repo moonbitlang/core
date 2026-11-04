@@ -57,6 +57,6 @@ pub extend HashSet with Eq::{not_equal}
 pub extend HashSet with @json.FromJson::{from_json}
 
 ///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend HashSet with @json.ToJson::{to_json}

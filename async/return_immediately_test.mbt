@@ -92,3 +92,29 @@ async test "return_immediately called outside" {
   }
   json_inspect(log, content=["inner group finished", "100ms tick"])
 }
+
+///|
+async test "return_immediately waits for child cleanup and group defers" {
+  let log = []
+  @async.with_task_group(root => {
+    root.add_defer(() => log.push("group defer"))
+    root.spawn_bg() <| () => {
+      defer log.push("sleeping child terminated")
+      @async.sleep(1000)
+    }
+    root.spawn_bg() <| () => {
+      ignore(@async.handle_cancellation(() => @async.sleep(1000)))
+      @async.protect_from_cancel(() => @async.sleep(100))
+      log.push("protected cleanup finished")
+    }
+    @async.sleep(50)
+    log.push("calling return_immediately")
+    root.return_immediately()
+    log.push("return_immediately returned")
+  })
+  log.push("with_task_group returned")
+  json_inspect(log, content=[
+    "calling return_immediately", "sleeping child terminated", "protected cleanup finished",
+    "group defer", "with_task_group returned",
+  ])
+}

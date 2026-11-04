@@ -14,7 +14,7 @@ flowchart LR
   S["text : StringView"] -->|"@json.parse<br/>raise ParseError"| J["Json (json enum)"]
   L["Json literal in source<br/>{ &quot;name&quot;: &quot;Alice&quot;, &quot;tags&quot;: [1, 2] }"] --> J
   J -->|"@json.from_json (T : FromJson)<br/>raise JsonDecodeError, reports a JsonPath"| T["typed value T"]
-  T -->|"@json.to_json (T : ToJson)"| J
+  T -->|"Json(value) (T : ToJson)"| J
   J -->|"stringify(escape_slash?, indent?, replacer?)"| O["String"]
 ```
 
