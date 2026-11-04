@@ -163,3 +163,15 @@ test "ZipError Show keeps a wide LimitExceeded on one line" {
     ),
   )
 }
+
+///|
+test "ZipError::to_string is promoted" {
+  let err = zip_error(b"not a zip archive at all, no EOCD here")
+  inspect(
+    err.to_string(),
+    content=(
+      #|MissingEndOfCentral: zip: end of central directory not found
+    ),
+  )
+  assert_eq(err.to_string(), "\{err}")
+}

@@ -73,6 +73,8 @@ Within the "safe to promote" set:
 - **`Show::to_string`**: promoted only for types with a **canonical string
   representation** (scalars, strings). Collections deprecate it toward
   `@debug.Debug` (there's no single canonical `Show` for a collection).
+  **Error types** with a `Show` impl count as canonical: their `Show` is the
+  human-readable message, so `to_string` is promoted (`fail(err.to_string())`).
   `Show::output` is never promoted (use `to_string` / `"\{x}"`).
 - **`Default::default`**: **deprecated** — a literal (`0`, `[]`, `None`, `""`,
   `b'\x00'`) or `Default::default()` via the trait bound is clearer, and it keeps

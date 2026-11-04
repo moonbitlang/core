@@ -42,8 +42,6 @@ pub extend InflateError with Eq::{not_equal}
 pub extend InflateError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use string interpolation instead", skip_current_package=true)
-#doc(hidden)
 pub extend InflateError with Show::{to_string}
 
 ///|

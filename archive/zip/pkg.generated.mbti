@@ -16,6 +16,7 @@ pub suberror ZipError {
   ZipError(ZipErrorKind, String)
 }
 pub fn ZipError::equal(Self, Self) -> Bool
+pub fn ZipError::to_string(Self) -> String
 pub impl Show for ZipError
 
 // Types and methods

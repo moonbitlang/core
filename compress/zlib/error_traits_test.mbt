@@ -124,3 +124,15 @@ test "ZlibError upcast to Error" {
     ),
   )
 }
+
+///|
+test "ZlibError::to_string is promoted" {
+  let err = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
+  inspect(
+    err.to_string(),
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+  assert_eq(err.to_string(), "\{err}")
+}

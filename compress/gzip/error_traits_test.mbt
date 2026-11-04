@@ -124,3 +124,15 @@ test "GzipError upcast to Error" {
     ),
   )
 }
+
+///|
+test "GzipError::to_string is promoted" {
+  let err = gzip_error(b"this is definitely not gzip data")
+  inspect(
+    err.to_string(),
+    content=(
+      #|InvalidHeader: gzip: bad magic
+    ),
+  )
+  assert_eq(err.to_string(), "\{err}")
+}
