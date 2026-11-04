@@ -394,3 +394,74 @@ test "panic Bytes range_equal overflowing self offset" {
 test "panic Bytes range_equal overflowing other offset" {
   b"abc".range_equal(b"abc", start=0, other_start=2147483647, len=1) |> ignore
 }
+
+///|
+test "panic FixedArray::blit_to negative len" {
+  let src = FixedArray::make(4, 1)
+  let dst = FixedArray::make(4, 0)
+  src.blit_to(dst, len=-1)
+}
+
+///|
+test "panic FixedArray::blit_to src_offset + len overflows" {
+  let src = FixedArray::make(4, 1)
+  let dst = FixedArray::make(4, 0)
+  src.blit_to(dst, len=1, src_offset=2147483647)
+}
+
+///|
+test "panic FixedArray::blit_to dst_offset + len overflows" {
+  let src = FixedArray::make(4, 1)
+  let dst = FixedArray::make(4, 0)
+  src.blit_to(dst, len=2, dst_offset=2147483647)
+}
+
+///|
+test "panic FixedArray::make_and_blit src_offset + len overflows" {
+  let src = FixedArray::make(4, 1)
+  FixedArray::make_and_blit(
+    src,
+    allocate_len=1,
+    init=0,
+    len=1,
+    src_offset=2147483647,
+  )
+  |> ignore
+}
+
+///|
+test "panic FixedArray::make_and_blit dst_offset + len overflows" {
+  let src = FixedArray::make(4, 1)
+  FixedArray::make_and_blit(
+    src,
+    allocate_len=1,
+    init=0,
+    len=2,
+    dst_offset=2147483647,
+  )
+  |> ignore
+}
+
+///|
+test "panic UninitializedArray::make_and_blit src_offset + len overflows" {
+  let src : UninitializedArray[Int32] = UninitializedArray::make(4)
+  UninitializedArray::make_and_blit(
+    src,
+    allocate_len=1,
+    len=1,
+    src_offset=2147483647,
+  )
+  |> ignore
+}
+
+///|
+test "panic UninitializedArray::make_and_blit dst_offset + len overflows" {
+  let src : UninitializedArray[Int32] = UninitializedArray::make(4)
+  UninitializedArray::make_and_blit(
+    src,
+    allocate_len=1,
+    len=2,
+    dst_offset=2147483647,
+  )
+  |> ignore
+}
