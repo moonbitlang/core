@@ -12,9 +12,12 @@ pub fn compress(BytesView, strategy? : @flate.Strategy, fast_store? : Bool) -> B
 pub fn decompress(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise GzipError
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub suberror GzipError {
   GzipError(GzipErrorKind, String)
 }
+pub fn GzipError::equal(Self, Self) -> Bool
+pub impl Show for GzipError
 
 // Types and methods
 type Decoder

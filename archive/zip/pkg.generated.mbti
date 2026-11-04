@@ -11,9 +11,12 @@ pub fn read_all(BytesView, limits? : ReadLimits, cancelled? : () -> Bool) -> Arc
 pub fn write(Archive, preserve? : Bool, max_output_bytes? : Int32, level? : Int32, fast_store? : Bool) -> Bytes raise ZipError
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub suberror ZipError {
   ZipError(ZipErrorKind, String)
 }
+pub fn ZipError::equal(Self, Self) -> Bool
+pub impl Show for ZipError
 
 // Types and methods
 type Archive
