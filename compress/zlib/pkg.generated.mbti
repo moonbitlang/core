@@ -12,9 +12,12 @@ pub fn compress(BytesView, strategy? : @flate.Strategy, dictionary? : BytesView,
 pub fn decompress(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise ZlibError
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub suberror ZlibError {
   ZlibError(ZlibErrorKind, String)
 }
+pub fn ZlibError::equal(Self, Self) -> Bool
+pub impl Show for ZlibError
 
 // Types and methods
 type Decoder

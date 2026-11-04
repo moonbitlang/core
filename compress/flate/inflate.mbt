@@ -47,8 +47,26 @@ pub(all) enum InflateErrorKind {
 
 ///|
 /// Error raised while decoding a raw DEFLATE stream.
+///
+/// `Show` prints `<kind>: <message>` on one line, such as
+/// `Corrupt: corrupt: reserved block type`.
+/// `@debug.Debug` prints the constructor form.
+#derive(Eq, @debug.Debug)
 pub suberror InflateError {
   InflateError(InflateErrorKind, String)
+}
+
+///|
+pub impl Show for InflateError with fn output(self, logger) {
+  let InflateError(kind, message) = self
+  // Sized kinds are written by hand so the line never wraps, whatever the
+  // width of the numbers; the rest use their debug spelling (the name).
+  match kind {
+    OutputLimitExceeded(limit~, observed~) =>
+      logger <+ "OutputLimitExceeded(limit=\{limit}, observed=\{observed})"
+    _ => logger.write_string(@debug.to_string(kind))
+  }
+  logger <+ ": \{message}"
 }
 
 ///|
