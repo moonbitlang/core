@@ -467,6 +467,7 @@ pub fn Double::floor(Double) -> Double
 pub fn Double::from_int(Int32) -> Double
 pub fn Double::hash(Double) -> Int32
 pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
+pub fn Double::is_finite(Double) -> Bool
 pub fn Double::is_inf(Double) -> Bool
 pub fn Double::is_nan(Double) -> Bool
 pub fn Double::is_neg_inf(Double) -> Bool
