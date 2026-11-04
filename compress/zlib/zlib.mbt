@@ -59,7 +59,7 @@ pub(all) enum ZlibErrorKind {
 /// `Show` prints `<kind>: <message>` on one line, such as
 /// `Truncated: zlib: input too short`.
 /// `@debug.Debug` prints the constructor form.
-#derive(Eq, @debug.Debug)
+#derive(@debug.Debug)
 pub suberror ZlibError {
   ZlibError(ZlibErrorKind, String)
 }

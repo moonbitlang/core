@@ -64,48 +64,27 @@ test "ZlibError Debug prints the constructor form" {
 }
 
 ///|
-test "ZlibError Eq compares kind and message" {
+fn error_kind(err : @zlib.ZlibError) -> @zlib.ZlibErrorKind {
+  match err {
+    ZlibError(kind, _) => kind
+  }
+}
+
+///|
+test "ZlibError is matched by kind" {
+  // The error doesn't implement `Eq`, because derived equality would compare the
+  // message text too. Callers match on the kind, which does implement `Eq`.
   let a = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
-  let b = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
   let c = zlib_error(@zlib.compress(b"hello, world"), max_output=4)
-  inspect(
-    a == b,
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a.equal(b),
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a == c,
-    content=(
-      #|false
-    ),
-  )
-  inspect(
-    a != c,
-    content=(
-      #|true
-    ),
-  )
-  // Same kind (`InvalidDeflate`), different message: not equal.
   let d = zlib_error(b"\x78\x9c\x01\x00\x00\x00\x00\x00\x00\x00\x00")
-  inspect(
-    d,
-    content=(
-      #|InvalidDeflate: stored block length mismatch
-    ),
-  )
-  inspect(
-    a == d,
-    content=(
-      #|false
-    ),
-  )
+  guard a is ZlibError(InvalidDeflate, _) && d is ZlibError(InvalidDeflate, _) else {
+    fail("expected InvalidDeflate, got \{a} and \{d}")
+  }
+  // Same kind, different message.
+  inspect(error_kind(a) == error_kind(d), content="true")
+  inspect("\{a}" == "\{d}", content="false")
+  // Different kinds.
+  inspect(error_kind(a) == error_kind(c), content="false")
 }
 
 ///|

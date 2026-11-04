@@ -76,7 +76,7 @@ pub(all) enum ZipErrorKind {
 /// `Show` prints `<kind>: <message>` on one line, such as
 /// `MissingEndOfCentral: zip: end of central directory not found`.
 /// `@debug.Debug` prints the constructor form.
-#derive(Eq, @debug.Debug)
+#derive(@debug.Debug)
 pub suberror ZipError {
   ZipError(ZipErrorKind, String)
 }

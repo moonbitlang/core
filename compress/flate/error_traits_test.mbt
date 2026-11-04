@@ -65,48 +65,27 @@ test "InflateError Debug prints the constructor form" {
 }
 
 ///|
-test "InflateError Eq compares kind and message" {
+fn error_kind(err : @flate.InflateError) -> @flate.InflateErrorKind {
+  match err {
+    InflateError(kind, _) => kind
+  }
+}
+
+///|
+test "InflateError is matched by kind" {
+  // The error doesn't implement `Eq`, because derived equality would compare the
+  // message text too. Callers match on the kind, which does implement `Eq`.
   let a = inflate_error(b"\xff")
-  let b = inflate_error(b"\xff")
   let c = inflate_error(b"")
-  inspect(
-    a == b,
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a.equal(b),
-    content=(
-      #|true
-    ),
-  )
-  inspect(
-    a == c,
-    content=(
-      #|false
-    ),
-  )
-  inspect(
-    a != c,
-    content=(
-      #|true
-    ),
-  )
-  // Same kind (`Corrupt`), different message: not equal.
   let d = inflate_error(b"\x01\x00\x00\x00\x00")
-  inspect(
-    d,
-    content=(
-      #|Corrupt: stored block length mismatch
-    ),
-  )
-  inspect(
-    a == d,
-    content=(
-      #|false
-    ),
-  )
+  guard a is InflateError(Corrupt, _) && d is InflateError(Corrupt, _) else {
+    fail("expected Corrupt, got \{a} and \{d}")
+  }
+  // Same kind, different message.
+  inspect(error_kind(a) == error_kind(d), content="true")
+  inspect("\{a}" == "\{d}", content="false")
+  // Different kinds.
+  inspect(error_kind(a) == error_kind(c), content="false")
 }
 
 ///|

@@ -55,7 +55,7 @@ pub(all) enum GzipErrorKind {
 /// `Show` prints `<kind>: <message>` on one line, such as
 /// `InvalidHeader: gzip: bad magic`.
 /// `@debug.Debug` prints the constructor form.
-#derive(Eq, @debug.Debug)
+#derive(@debug.Debug)
 pub suberror GzipError {
   GzipError(GzipErrorKind, String)
 }
