@@ -264,6 +264,7 @@ pub fn Archive::set_comment(self : Archive, comment : BytesView) -> Unit {
 /// entry payloads and source storage but owns a
 /// fresh entries array, so `add`/`replace`/`remove` on either side never
 /// affects the other.
+#alias(clone, deprecated="Use `Archive::copy` instead")
 pub fn Archive::copy(self : Archive) -> Archive {
   {
     entries: self.entries.copy(),

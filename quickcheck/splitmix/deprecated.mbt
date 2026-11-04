@@ -18,10 +18,3 @@
 pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
   RandomState(seed~)
 }
-
-///|
-/// Returns an independently mutable copy of this state.
-#deprecated("Use `RandomState::copy` instead")
-pub fn RandomState::clone(self : RandomState) -> RandomState {
-  self.copy()
-}

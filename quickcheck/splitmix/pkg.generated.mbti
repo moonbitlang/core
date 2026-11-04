@@ -14,8 +14,7 @@ import {
 type RandomState
 #as_free_fn(new, deprecated)
 pub fn RandomState::RandomState(seed? : UInt64) -> Self
-#deprecated
-pub fn RandomState::clone(Self) -> Self
+#alias(clone, deprecated)
 pub fn RandomState::copy(Self) -> Self
 #deprecated
 pub fn RandomState::new(seed? : UInt64) -> Self

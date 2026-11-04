@@ -41,6 +41,7 @@ pub fn RandomState::RandomState(seed~ : UInt64 = 37) -> RandomState {
 /// Returns an independently mutable copy of this state. Both states produce
 /// the same random sequence from this point; advancing either does not affect
 /// the other.
+#alias(clone, deprecated="Use `RandomState::copy` instead")
 pub fn RandomState::copy(self : RandomState) -> RandomState {
   { ..self, }
 }
