@@ -873,13 +873,12 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::unsafe_make_uninit(self.size)
-  let mut i = 0
+  // Treat size as a capacity hint; only expose elements actually written.
+  let arr = Array(capacity=self.size)
   for x = self.head {
     match x {
       Some({ key, value, next, .. }) => {
-        arr.unsafe_set(i, (key, value))
-        i += 1
+        arr.push((key, value))
         continue next
       }
       None => break
