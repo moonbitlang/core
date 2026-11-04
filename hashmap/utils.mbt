@@ -463,6 +463,10 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
 /// entry's stored hash is reused: keys are never hashed again and no tuples
 /// are allocated.
 ///
+/// `f` is called once for each key `self` held when `filter` was called, even
+/// if `f` modifies `self`. Each value is read as its key is reached, and the
+/// result keeps the value `f` was given.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -479,15 +483,27 @@ pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
   f : (K, V) -> Bool raise?,
 ) -> HashMap[K, V] raise? {
-  // Collect first so the result can be sized for exactly the kept entries:
-  // a stored hash fits a table of any size. The entries are fresh because
-  // `psl` belongs to the table an entry sits in.
-  let kept : Array[Entry[K, V]] = []
+  // Snapshot the entries before calling `f`: `f` may modify `self`, which can
+  // move an entry the traversal has already visited to a slot it has not.
+  let kept : Array[Entry[K, V]] = Array(capacity=self.size)
   for entry in self.entries {
-    if entry is Some({ key, value, hash, .. }) && f(key, value) {
-      kept.push({ psl: 0, key, value, hash, })
+    if entry is Some(entry) {
+      kept.push(entry)
     }
   }
+  // Keep the entries `f` accepts, compacting in place. Collecting first lets
+  // the result be sized for exactly the kept entries: a stored hash fits a
+  // table of any size. The entries are fresh because `psl` belongs to the
+  // table an entry sits in.
+  let mut n = 0
+  for i in 0..<kept.length() {
+    let { key, value, hash, .. } = kept.unsafe_get(i)
+    if f(key, value) {
+      kept.unsafe_set(n, { psl: 0, key, value, hash, })
+      n += 1
+    }
+  }
+  kept.truncate(n)
   let other = new_hashmap(
     if kept.is_empty() {
       default_init_capacity
