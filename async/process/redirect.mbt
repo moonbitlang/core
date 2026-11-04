@@ -480,10 +480,17 @@ fn @fs.CreateMode::to_int(self : @fs.CreateMode) -> Int32 = "%identity"
 /// `ToFile(path)` and `AppendFile(path)`, this function opens the file
 /// immediately and supports custom creation modes and permissions. Close the
 /// endpoint after passing it to the last child, or if spawning is abandoned.
+///
+/// `create_mode` is `CreateOrTruncate` by default,
+/// or `OpenOrCreate` if `append` is `true`, so that appending keeps the existing content.
 pub async fn redirect_to_file(
   path : String,
   append~ : Bool = false,
-  create_mode~ : @fs.CreateMode = CreateOrTruncate,
+  create_mode~ : @fs.CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
 ) -> SharedProcessOutput {
   let (file, _) = @event_loop.open(

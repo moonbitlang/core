@@ -70,6 +70,14 @@ pub async fn RawFd::read(
   offset~ : Int32 = 0,
   max_len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
+  guard offset >= 0 &&
+    offset <= buf.length() &&
+    max_len >= 0 &&
+    max_len <= buf.length() - offset else {
+    raise Failure::Failure(
+      "`@raw_fd.RawFd::read()`: destination range out of bounds",
+    )
+  }
   self.io.read(buf, offset~, len=max_len, context="@raw_fd.RawFd::read()")
 }
 
@@ -85,6 +93,14 @@ pub async fn RawFd::write(
   offset~ : Int32 = 0,
   len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
+  guard offset >= 0 &&
+    offset <= buf.length() &&
+    len >= 0 &&
+    len <= buf.length() - offset else {
+    raise Failure::Failure(
+      "`@raw_fd.RawFd::write()`: source range out of bounds",
+    )
+  }
   self.io.write(buf, offset~, len~, context="@raw_fd.RawFd::write()")
 }
 

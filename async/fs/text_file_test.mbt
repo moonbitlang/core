@@ -19,3 +19,44 @@ async test "text file" {
   defer @fs.remove(path)
   inspect(@fs.read_text(path), content="abcd")
 }
+
+///|
+async test "write_text append keeps existing content" {
+  let path = "_build/write_text_append_test"
+  @fs.write_text(path, "first\n")
+  defer @fs.remove(path)
+  // `append=true` used to truncate the file before appending
+  @fs.write_text(path, "second\n", append=true)
+  inspect(
+    @fs.read_text(path),
+    content=(
+      #|first
+      #|second
+      #|
+    ),
+  )
+  @fs.write_binary(path, b"third\n", append=true)
+  inspect(
+    @fs.read_text(path),
+    content=(
+      #|first
+      #|second
+      #|third
+      #|
+    ),
+  )
+  // without `append`, the default still truncates
+  @fs.write_text(path, "fourth\n")
+  inspect(@fs.read_text(path), content="fourth\n")
+}
+
+///|
+async test "write_text append creates missing file" {
+  let path = "_build/write_text_append_create_test"
+  @fs.remove(path) catch {
+    _ => ()
+  }
+  @fs.write_binary(path, b"abc", append=true)
+  defer @fs.remove(path)
+  inspect(@fs.read_text(path), content="abc")
+}

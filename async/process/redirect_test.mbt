@@ -189,3 +189,23 @@ async test "stdout=Discard" {
     }
   }
 }
+
+///|
+async test "redirect_to_file append keeps existing content" {
+  let output_file = "_build/process_redirect_to_file_append_test_out.txt"
+  @fs.write_text(output_file, "abcd")
+  defer @fs.remove(output_file)
+  // `append=true` used to truncate the file when opening it
+  let w = @process.redirect_to_file(output_file, append=true)
+  @async.with_task_group <| group => {
+    defer w.close()
+    let _ = @process.spawn(
+      group,
+      shell,
+      ["-c", "\{write_stdout} efgh"],
+      stdout=Shared(w),
+      extra_env={ "LANG": "en_US.UTF-8" },
+    )
+  }
+  inspect(@fs.read_text(output_file), content="abcdefgh")
+}

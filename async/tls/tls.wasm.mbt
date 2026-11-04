@@ -235,6 +235,8 @@ struct Tls {
   writer_ctrl : @io.BinaryWriterController
   mut shutdown : Bool
   mut closed : Bool
+  // The number of operations suspended while using `conn`, see `with_native_state`
+  mut active_ops : Int32
 }
 
 ///|
@@ -254,6 +256,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     writer_ctrl: BinaryWriterController(),
     shutdown: false,
     closed: false,
+    active_ops: 0,
   }
 }
 
@@ -333,6 +336,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   sni~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
+  check_client_host(host, trust)
   let host_name = match host {
     Some(host) => host
     None => ""
@@ -450,60 +454,64 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
   offset~,
   max_len~,
 ) {
-  let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
-  let write_buf = self.transport.write_buf
-  while controller.buffered() is read_buf &&
-        self.conn.read_plain(
-          in_buffer=controller.raw_buffer(),
-          in_buffer_offset=read_buf.start_offset(),
-          in_buffer_len=read_buf.length(),
-          out_buffer=write_buf.buf,
-          out_buffer_offset=write_buf.start + write_buf.len,
-          out_buffer_len=write_buf.buf.length() -
-            write_buf.start -
-            write_buf.len,
-          plain_buffer=buf,
-          plain_buffer_offset=offset,
-          plain_buffer_len=max_len,
-        )
-        is n {
-    let bytes_read = self.conn.bytes_read()
-    controller.drop(bytes_read)
-    let bytes_to_write = self.conn.bytes_to_write()
-    write_buf.len += bytes_to_write
-    if bytes_to_write > 0 {
-      self.transport.flush_write()
-    }
-    match n {
-      n if n > 0 => return n
-      TLS_CLOSED => {
-        self.shutdown()
-        return 0
+  self.with_native_state("@tls.Tls::read()") <| () => {
+    let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
+    let write_buf = self.transport.write_buf
+    while controller.buffered() is read_buf &&
+          self
+          .open_conn("@tls.Tls::read()")
+          .read_plain(
+            in_buffer=controller.raw_buffer(),
+            in_buffer_offset=read_buf.start_offset(),
+            in_buffer_len=read_buf.length(),
+            out_buffer=write_buf.buf,
+            out_buffer_offset=write_buf.start + write_buf.len,
+            out_buffer_len=write_buf.buf.length() -
+              write_buf.start -
+              write_buf.len,
+            plain_buffer=buf,
+            plain_buffer_offset=offset,
+            plain_buffer_len=max_len,
+          )
+          is n {
+      let bytes_read = self.conn.bytes_read()
+      controller.drop(bytes_read)
+      let bytes_to_write = self.conn.bytes_to_write()
+      write_buf.len += bytes_to_write
+      if bytes_to_write > 0 {
+        self.transport.flush_write()
       }
-      TLS_RENEGOTIATION =>
-        if self.is_client {
-          self.connect()
-        } else {
-          self.accept()
-        }
-      TLS_WOULD_BLOCK =>
-        if bytes_read > 0 || bytes_to_write > 0 {
-          continue
-        } else if self.transport.state is Closed &&
-          controller.buffered().length() == 0 {
-          return 0
-        } else if self.conn.wants_read() {
-          self.transport.read_more()
-        } else if self.conn.wants_write() {
-          self.transport.flush_write()
-        } else {
+      match n {
+        n if n > 0 => return n
+        TLS_CLOSED => {
+          self.shutdown()
           return 0
         }
-      TLS_ERROR => raise TlsError(self.conn.take_error_message())
-      _ => abort("unexpected status code \{n} from TLS read")
+        TLS_RENEGOTIATION =>
+          if self.is_client {
+            self.connect()
+          } else {
+            self.accept()
+          }
+        TLS_WOULD_BLOCK =>
+          if bytes_read > 0 || bytes_to_write > 0 {
+            continue
+          } else if self.transport.state is Closed &&
+            controller.buffered().length() == 0 {
+            return 0
+          } else if self.conn.wants_read() {
+            self.transport.read_more()
+          } else if self.conn.wants_write() {
+            self.transport.flush_write()
+          } else {
+            return 0
+          }
+        TLS_ERROR => raise TlsError(self.conn.take_error_message())
+        _ => abort("unexpected status code \{n} from TLS read")
+      }
+    } nobreak {
+      0
     }
-  } nobreak {
-    0
   }
 }
 
@@ -519,55 +527,59 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   offset~,
   len~,
 ) {
-  self.transport.flush_write()
-  let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
-  let write_buf = self.transport.write_buf
-  while controller.buffered() is read_buf &&
-        self.conn.write_plain(
-          in_buffer=controller.raw_buffer(),
-          in_buffer_offset=read_buf.start_offset(),
-          in_buffer_len=read_buf.length(),
-          out_buffer=write_buf.buf,
-          out_buffer_offset=write_buf.start + write_buf.len,
-          out_buffer_len=write_buf.buf.length() -
-            write_buf.start -
-            write_buf.len,
-          plain_buffer=buf,
-          plain_buffer_offset=offset,
-          plain_buffer_len=len,
-        )
-        is n {
-    let bytes_read = self.conn.bytes_read()
-    controller.drop(bytes_read)
-    let bytes_to_write = self.conn.bytes_to_write()
-    write_buf.len += bytes_to_write
-    if bytes_to_write > 0 {
-      self.transport.flush_write()
+  self.with_native_state("@tls.Tls::write()") <| () => {
+    self.transport.flush_write()
+    let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
+    let write_buf = self.transport.write_buf
+    while controller.buffered() is read_buf &&
+          self
+          .open_conn("@tls.Tls::write()")
+          .write_plain(
+            in_buffer=controller.raw_buffer(),
+            in_buffer_offset=read_buf.start_offset(),
+            in_buffer_len=read_buf.length(),
+            out_buffer=write_buf.buf,
+            out_buffer_offset=write_buf.start + write_buf.len,
+            out_buffer_len=write_buf.buf.length() -
+              write_buf.start -
+              write_buf.len,
+            plain_buffer=buf,
+            plain_buffer_offset=offset,
+            plain_buffer_len=len,
+          )
+          is n {
+      let bytes_read = self.conn.bytes_read()
+      controller.drop(bytes_read)
+      let bytes_to_write = self.conn.bytes_to_write()
+      write_buf.len += bytes_to_write
+      if bytes_to_write > 0 {
+        self.transport.flush_write()
+      }
+      match n {
+        n if n >= 0 => return n
+        TLS_RENEGOTIATION =>
+          if self.is_client {
+            self.connect()
+          } else {
+            self.accept()
+          }
+        TLS_WOULD_BLOCK =>
+          if bytes_read > 0 || bytes_to_write > 0 {
+            continue
+          } else if self.conn.wants_read() {
+            self.transport.read_more()
+          } else if self.conn.wants_write() {
+            return 0
+          } else {
+            return 0
+          }
+        TLS_CLOSED => raise ConnectionClosed
+        TLS_ERROR => raise TlsError(self.conn.take_error_message())
+        _ => abort("unexpected status code \{n} from TLS write")
+      }
+    } nobreak {
+      0
     }
-    match n {
-      n if n >= 0 => return n
-      TLS_RENEGOTIATION =>
-        if self.is_client {
-          self.connect()
-        } else {
-          self.accept()
-        }
-      TLS_WOULD_BLOCK =>
-        if bytes_read > 0 || bytes_to_write > 0 {
-          continue
-        } else if self.conn.wants_read() {
-          self.transport.read_more()
-        } else if self.conn.wants_write() {
-          return 0
-        } else {
-          return 0
-        }
-      TLS_CLOSED => raise ConnectionClosed
-      TLS_ERROR => raise TlsError(self.conn.take_error_message())
-      _ => abort("unexpected status code \{n} from TLS write")
-    }
-  } nobreak {
-    0
   }
 }
 
@@ -588,6 +600,23 @@ pub fn Tls::close(self : Tls) -> Unit {
   if self.transport.state is Normal {
     self.transport.state = Closed
   }
+  // An operation suspended in the middle of using the native state
+  // frees it when it resumes, see `Tls::with_native_state`
+  if self.active_ops == 0 {
+    self.free_native_state()
+  }
+}
+
+///|
+/// `conn`, after checking that it has not been closed.
+/// Used after each suspension point of operations wrapped by `with_native_state`.
+fn Tls::open_conn(self : Tls, context : String) -> TlsConnectionHandle raise {
+  self.check_not_closed(context)
+  self.conn
+}
+
+///|
+fn Tls::free_native_state(self : Tls) -> Unit {
   self.conn.free()
   ignore(self.host)
 }
@@ -602,23 +631,25 @@ pub fn Tls::close(self : Tls) -> Unit {
 /// if the application protocol has its own termination indication.
 pub async fn Tls::shutdown(self : Tls) -> Unit {
   guard !self.shutdown else {  }
-  self.shutdown = true
-  match self.transport.state {
-    Normal => ()
-    Closed => return
-    Error(err) => raise err
-  }
-  self.transport.flush_write()
-  match self.conn.shutdown() {
-    0 => ()
-    TLS_CLOSED => return
-    TLS_ERROR => raise TlsError(self.conn.take_error_message())
-    status => abort("unexpected status code \{status} from TLS shutdown")
-  }
-  if self.is_client {
-    self.connect()
-  } else {
-    self.accept()
+  self.with_native_state("@tls.Tls::shutdown()") <| () => {
+    self.shutdown = true
+    match self.transport.state {
+      Normal => ()
+      Closed => return
+      Error(err) => raise err
+    }
+    self.transport.flush_write()
+    match self.open_conn("@tls.Tls::shutdown()").shutdown() {
+      0 => ()
+      TLS_CLOSED => return
+      TLS_ERROR => raise TlsError(self.conn.take_error_message())
+      status => abort("unexpected status code \{status} from TLS shutdown")
+    }
+    if self.is_client {
+      self.connect()
+    } else {
+      self.accept()
+    }
   }
 }
 
@@ -631,6 +662,7 @@ pub async fn Tls::shutdown(self : Tls) -> Unit {
 ///
 /// Therefore the return type is `Bytes?` instead of `Bytes`.
 pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
+  self.check_not_closed("@tls.Tls::get_peer_certificate()")
   guard self.is_client else { None }
   let cert = self.conn.peer_certificate()
   guard !cert.is_null() else { raise TlsError(self.conn.take_error_message()) }
@@ -646,6 +678,7 @@ pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
 /// Return `tls-unique` type of channel binding data for this TLS connection,
 /// according to RFC 5929
 pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::unique_channel_binding()")
   let binding = self.conn.unique_channel_binding()
   guard !binding.is_null() else {
     raise TlsError(self.conn.take_error_message())
@@ -666,6 +699,7 @@ pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
 /// Not all TLS connection has such thing as a server certificate,
 /// so `tls-unique` is the more recommended approach when available.
 pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::server_endpoint_channel_binding()")
   let binding = self.conn.server_endpoint_channel_binding()
   guard !binding.is_null() else {
     raise TlsError(self.conn.take_error_message())

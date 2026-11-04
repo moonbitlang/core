@@ -57,6 +57,7 @@ options(
     "resolve_host_wasm_test.mbt": [ "wasm" ],
     "reuse_addr_test.mbt": [ "native", "wasm" ],
     "reuse_port_test.mbt": [ "native", "wasm" ],
+    "udp_send_bounds_test.mbt": [ "native", "wasm" ],
     "tcp.mbt": [ "native", "wasm" ],
     "udp.mbt": [ "native", "wasm" ],
   },

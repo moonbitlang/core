@@ -53,6 +53,7 @@ options(
     "deprecated.mbt": [ "native", "wasm" ],
     "dir.mbt": [ "native", "wasm" ],
     "dir_test.mbt": [ "native", "wasm" ],
+    "dir_wbtest.mbt": [ "native", "wasm" ],
     "eof_test.mbt": [ "native", "wasm" ],
     "file.mbt": [ "native", "wasm" ],
     "lock_test.mbt": [ "native", "wasm" ],

@@ -112,3 +112,31 @@ async test "mkdir recursive concurrent with shared parents" {
     ])
   }
 }
+
+///|
+async test "rmdir recursive does not follow a symlink root" {
+  let base = "_build/rmdir_symlink_root_test"
+  @fs.rmdir(base, recursive=true) catch {
+    _ => ()
+  }
+  @fs.mkdir("\{base}/target/inner", recursive=true)
+  defer @fs.rmdir(base, recursive=true)
+  @fs.write_text("\{base}/target/keep.txt", "keep")
+  @fs.write_text("\{base}/target/inner/keep.txt", "keep")
+  guard! @env.current_dir() is Some(cwd)
+  @fs.symlink("\{base}/link", target="\{cwd}/\{base}/target")
+  // `link` is not a directory, so `rmdir` must fail without touching the
+  // directory it points to. It used to empty `target` before failing.
+  @test.assert_raise_async(() => @fs.rmdir("\{base}/link", recursive=true))
+  @test.assert_raise_async(() => @fs.rmdir("\{base}/link/", recursive=true))
+  assert_true(@fs.exists("\{base}/target/keep.txt"))
+  assert_true(@fs.exists("\{base}/target/inner/keep.txt"))
+  assert_true(@fs.kind("\{base}/link", follow_symlink=false) is SymLink)
+}
+
+///|
+async test "rmdir recursive allow_missing" {
+  let path = "_build/rmdir_recursive_allow_missing_test"
+  @test.assert_raise_async(() => @fs.rmdir(path, recursive=true))
+  @fs.rmdir(path, recursive=true, allow_missing=true)
+}

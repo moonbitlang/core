@@ -53,3 +53,45 @@ test "readdir clear errno" {
     )
   }
 }
+
+///|
+async test "Directory::close is idempotent" {
+  for _ in 0..<16 {
+    let dir = @fs.opendir("async/fs/test_directory/dir1")
+    dir.close()
+    // closing twice used to free the entry buffer twice
+    dir.close()
+  }
+}
+
+///|
+async test "Directory::next after close raises" {
+  let dir = @fs.opendir("async/fs/test_directory/dir1")
+  // leave buffered entries behind, which used to be read from freed memory
+  guard dir.next() is Some(_) else { fail("expected an entry") }
+  dir.close()
+  @test.assert_raise_async(() => dir.next())
+  @test.assert_raise_async(() => dir.read_all())
+}
+
+///|
+async test "Directory::close while next is in progress" {
+  for _ in 0..<16 {
+    let dir = @fs.opendir("async/fs/test_directory/dir1")
+    let mut result = ""
+    @async.with_task_group() <| group => {
+      group.spawn_bg() <| () => {
+        result = try dir.next() catch {
+          _ => "raised"
+        } noraise {
+          _ => "returned"
+        }
+      }
+      // let `next` submit its readdir job, then close under it:
+      // the entry buffer it is reading into must outlive the job
+      @async.pause()
+      dir.close()
+    }
+    inspect(result, content="raised")
+  }
+}
