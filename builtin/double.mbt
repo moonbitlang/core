@@ -267,6 +267,32 @@ pub fn Double::is_neg_inf(self : Double) -> Bool {
 }
 
 ///|
+/// Checks whether a double-precision floating-point number is finite, that is,
+/// neither NaN nor positive or negative infinity.
+///
+/// Parameters:
+///
+/// * `self` : The double-precision floating-point number to check.
+///
+/// Returns `true` if the number is finite, `false` if it is NaN or infinite.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(42.0.is_finite(), content="true")
+///   inspect(@double.max_value.is_finite(), content="true")
+///   inspect(@double.infinity.is_finite(), content="false")
+///   inspect(@double.neg_infinity.is_finite(), content="false")
+///   inspect(@double.not_a_number.is_finite(), content="false")
+/// }
+/// ```
+pub fn Double::is_finite(self : Double) -> Bool {
+  // NaN fails both comparisons.
+  self >= double_min_value && self <= double_max_value
+}
+
+///|
 pub impl Hash for Double with fn hash_combine(self, hasher) {
   hasher.combine_double(self)
 }

@@ -102,6 +102,47 @@ test "Float::is_inf/special_values" {
 }
 
 ///|
+test "Float::is_finite/special_values" {
+  inspect(Float(0.0).is_finite(), content="true")
+  inspect(Float(-0.0).is_finite(), content="true")
+  inspect(Float(1.5).is_finite(), content="true")
+  inspect(@float.max_value.is_finite(), content="true")
+  inspect(@float.min_value.is_finite(), content="true")
+  inspect(@float.min_positive.is_finite(), content="true")
+  // smallest subnormal
+  inspect(Float::reinterpret_from_int(1).is_finite(), content="true")
+  inspect(@float.infinity.is_finite(), content="false")
+  inspect(@float.neg_infinity.is_finite(), content="false")
+  inspect(@float.not_a_number.is_finite(), content="false")
+  // a NaN with the sign bit and a non-default payload
+  inspect(Float::reinterpret_from_int(0xFF800001).is_finite(), content="false")
+  // overflow to infinity
+  inspect((@float.max_value * Float(2.0)).is_finite(), content="false")
+}
+
+///|
+test "Float::is_finite agrees with is_nan and is_inf" {
+  let values : Array[Float] = [
+    0.0,
+    -0.0,
+    1.0,
+    -1.0,
+    @float.max_value,
+    @float.min_value,
+    @float.min_positive,
+    Float::reinterpret_from_int(1),
+    @float.infinity,
+    @float.neg_infinity,
+    @float.not_a_number,
+    Float::reinterpret_from_int(0x7F800001),
+    Float::reinterpret_from_int(0xFFC00000),
+  ]
+  for x in values {
+    assert_true(x.is_finite() == !(x.is_nan() || x.is_inf()))
+  }
+}
+
+///|
 test "@float.Float::is_pos_inf/special_values" {
   inspect(@float.infinity.is_pos_inf(), content="true")
   inspect(@float.neg_infinity.is_pos_inf(), content="false")

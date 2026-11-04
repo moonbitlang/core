@@ -175,6 +175,51 @@ test "Double::is_inf" {
 }
 
 ///|
+test "Double::is_finite" {
+  inspect(0.0.is_finite(), content="true")
+  inspect((-0.0).is_finite(), content="true")
+  inspect(12345.678.is_finite(), content="true")
+  inspect(@double.max_value.is_finite(), content="true")
+  inspect(@double.min_value.is_finite(), content="true")
+  inspect(@double.min_positive.is_finite(), content="true")
+  // smallest subnormal
+  inspect(1L.reinterpret_as_double().is_finite(), content="true")
+  inspect(@double.infinity.is_finite(), content="false")
+  inspect(@double.neg_infinity.is_finite(), content="false")
+  inspect(@double.not_a_number.is_finite(), content="false")
+  // a NaN with the sign bit and a non-default payload
+  inspect(
+    0xFFF0_0000_0000_0001L.reinterpret_as_double().is_finite(),
+    content="false",
+  )
+  // overflow to infinity
+  inspect((@double.max_value * 2.0).is_finite(), content="false")
+  inspect((0.0 / 0.0).is_finite(), content="false")
+}
+
+///|
+test "Double::is_finite agrees with is_nan and is_inf" {
+  let values = [
+    0.0,
+    -0.0,
+    1.0,
+    -1.0,
+    @double.max_value,
+    @double.min_value,
+    @double.min_positive,
+    1L.reinterpret_as_double(),
+    @double.infinity,
+    @double.neg_infinity,
+    @double.not_a_number,
+    0x7FF0_0000_0000_0001L.reinterpret_as_double(),
+    0xFFF8_0000_0000_0000L.reinterpret_as_double(),
+  ]
+  for x in values {
+    @test.assert_eq(x.is_finite(), !(x.is_nan() || x.is_inf()))
+  }
+}
+
+///|
 test "Double::is_pos_inf" {
   assert_true(@double.infinity.is_pos_inf())
   assert_false(@double.neg_infinity.is_pos_inf())

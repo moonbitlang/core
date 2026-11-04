@@ -265,6 +265,32 @@ pub fn Float::is_nan(self : Float) -> Bool {
 }
 
 ///|
+/// Determines if the floating-point number is finite, that is, neither NaN nor
+/// positive or negative infinity.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to be checked.
+///
+/// Returns a boolean value indicating whether the number is finite.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Float(1.0).is_finite(), content="true")
+///   inspect(@float.max_value.is_finite(), content="true")
+///   inspect(@float.infinity.is_finite(), content="false")
+///   inspect(@float.neg_infinity.is_finite(), content="false")
+///   inspect(@float.not_a_number.is_finite(), content="false")
+/// }
+/// ```
+pub fn Float::is_finite(self : Float) -> Bool {
+  // NaN fails both comparisons.
+  self >= min_value && self <= max_value
+}
+
+///|
 /// Returns the minimum of two floating-point values.
 ///
 /// If exactly one argument is NaN, returns the other argument.
