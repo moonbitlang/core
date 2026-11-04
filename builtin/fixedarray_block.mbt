@@ -103,12 +103,13 @@ pub fn[T] FixedArray::make_and_blit(
   src_offset~ : Int32 = 0,
   dst_offset~ : Int32 = 0,
 ) -> FixedArray[T] {
+  // Compare by subtraction: `offset + len` can overflow.
   guard allocate_len >= 0 &&
     len >= 0 &&
     src_offset >= 0 &&
+    src_offset <= src.length() - len &&
     dst_offset >= 0 &&
-    src_offset + len <= src.length() &&
-    dst_offset + len <= allocate_len else {
+    dst_offset <= allocate_len - len else {
     abort(
       "bounds check failed: allocate_len = \{allocate_len}, src_offset = \{src_offset}, dst_offset = \{dst_offset}, len = \{len}, src.length = \{src.length()}",
     )
@@ -134,6 +135,7 @@ pub fn[T] FixedArray::make_and_blit(
 ///
 /// Throws a panic if:
 ///
+/// * `len`, `src_offset` or `dst_offset` is negative
 /// * `src_offset + len` exceeds the length of the source array
 /// * `dst_offset + len` exceeds the length of the destination array
 ///
@@ -159,10 +161,12 @@ pub fn[A] FixedArray::blit_to(
   src_offset~ : Int32 = 0,
   dst_offset~ : Int32 = 0,
 ) -> Unit {
-  guard dst_offset >= 0 &&
+  // Compare by subtraction: `offset + len` can overflow.
+  guard len >= 0 &&
     src_offset >= 0 &&
-    dst_offset + len <= dst.length() &&
-    src_offset + len <= self.length() else {
+    src_offset <= self.length() - len &&
+    dst_offset >= 0 &&
+    dst_offset <= dst.length() - len else {
     abort(
       "bounds check failed: dst_offset = \{dst_offset}, src_offset = \{src_offset}, len = \{len}, dst.length = \{dst.length()}, self.length = \{self.length()}",
     )
