@@ -41,6 +41,22 @@ async test "spawn_in_group cancel" {
 }
 
 ///|
+async test "rejected exit fails task group without wait" {
+  let sleep = sleep_prog.wait()
+  let err = @test.expect_error_async() <| () => {
+    @async.with_task_group() <| group => {
+      let _ = @process.spawn(group, sleep, ["0", "-exit-code", "42"], accepted_exit_code=code => {
+        code == 0
+      })
+    }
+  }
+  guard err is @process.CommandFailed(code, ..) else {
+    fail("unexpected error")
+  }
+  inspect(code, content="42")
+}
+
+///|
 async test "Process::wait" {
   let sleep = sleep_prog.wait()
   @async.with_task_group() <| group => {
