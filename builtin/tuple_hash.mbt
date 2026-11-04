@@ -95,3 +95,288 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] H
   hasher.combine(f)
   hasher.combine(g)
 }
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+] Hash for (A, B, C, D, E, F, G, H) with fn hash_combine(self, hasher) {
+  let (a, b, c, d, e, f, g, h) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I) with fn hash_combine(self, hasher) {
+  let (a, b, c, d, e, f, g, h, i) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J) with fn hash_combine(self, hasher) {
+  let (a, b, c, d, e, f, g, h, i, j) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K) with fn hash_combine(self, hasher) {
+  let (a, b, c, d, e, f, g, h, i, j, k) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+  L : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K, L) with fn hash_combine(
+  self,
+  hasher,
+) {
+  let (a, b, c, d, e, f, g, h, i, j, k, l) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+  hasher.combine(l)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+  L : Hash,
+  M : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K, L, M) with fn hash_combine(
+  self,
+  hasher,
+) {
+  let (a, b, c, d, e, f, g, h, i, j, k, l, m) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+  hasher.combine(l)
+  hasher.combine(m)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+  L : Hash,
+  M : Hash,
+  N : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K, L, M, N) with fn hash_combine(
+  self,
+  hasher,
+) {
+  let (a, b, c, d, e, f, g, h, i, j, k, l, m, n) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+  hasher.combine(l)
+  hasher.combine(m)
+  hasher.combine(n)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+  L : Hash,
+  M : Hash,
+  N : Hash,
+  O : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) with fn hash_combine(
+  self,
+  hasher,
+) {
+  let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+  hasher.combine(l)
+  hasher.combine(m)
+  hasher.combine(n)
+  hasher.combine(o)
+}
+
+///|
+pub impl[
+  A : Hash,
+  B : Hash,
+  C : Hash,
+  D : Hash,
+  E : Hash,
+  F : Hash,
+  G : Hash,
+  H : Hash,
+  I : Hash,
+  J : Hash,
+  K : Hash,
+  L : Hash,
+  M : Hash,
+  N : Hash,
+  O : Hash,
+  P : Hash,
+] Hash for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) with fn hash_combine(
+  self,
+  hasher,
+) {
+  let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) = self
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
+  hasher.combine(h)
+  hasher.combine(i)
+  hasher.combine(j)
+  hasher.combine(k)
+  hasher.combine(l)
+  hasher.combine(m)
+  hasher.combine(n)
+  hasher.combine(o)
+  hasher.combine(p)
+}
