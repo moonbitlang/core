@@ -15,7 +15,13 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend Queue with Compare::{compare}
+
+///|
 pub extend Queue with Eq::{equal}
+
+///|
+pub extend Queue with Hash::{hash}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -33,6 +39,16 @@ pub extend Queue with Show::{output, to_string}
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Queue with Default::{default}
+
+///|
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with Compare::{op_ge, op_gt, op_le, op_lt}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
