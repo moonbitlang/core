@@ -61,6 +61,8 @@ options(
     "named_pipe_test.mbt": [ "native" ],
     "pkg.generated.mbti": [ "native" ],
     "random_access_test.mbt": [ "native", "wasm" ],
+    "random_access_bounds_test.mbt": [ "native" ],
+    "random_access_bounds_wbtest.mbt": [ "native" ],
     "read_all_test.mbt": [ "native", "wasm" ],
     "realpath_test.mbt": [ "native", "wasm" ],
     "rename_test.mbt": [ "native", "wasm" ],

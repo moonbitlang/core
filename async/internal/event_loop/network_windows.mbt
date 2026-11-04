@@ -53,6 +53,7 @@ pub async fn IoHandle::recvfrom(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   handle.recvfrom_windows(buf, offset~, len~, addr~, context~)
 }
 
@@ -89,6 +90,7 @@ pub async fn IoHandle::sendto(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   handle.sendto_windows(buf, offset~, len~, addr~, context~)
 }
 

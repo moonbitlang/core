@@ -60,5 +60,6 @@ options(
     "reuse_port_test.mbt": [ "native", "wasm" ],
     "tcp.mbt": [ "native", "wasm" ],
     "udp.mbt": [ "native", "wasm" ],
+    "udp_bounds_test.mbt": [ "native" ],
   },
 )
