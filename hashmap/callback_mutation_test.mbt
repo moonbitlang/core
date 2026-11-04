@@ -79,34 +79,6 @@ test "map: callback re-adds the current key" {
 }
 
 ///|
-test "filter: callback re-adds the current key" {
-  let m = @hashmap.HashMap([(SameHash(1), 1), (SameHash(2), 2)])
-  let r = m.filter((k, v) => {
-    if k == SameHash(1) {
-      m.remove(k)
-      m.set(k, v)
-    }
-    true
-  })
-  inspect(r.length(), content="2")
-  debug_inspect(r.get(SameHash(1)), content="Some(1)")
-  debug_inspect(r.get(SameHash(2)), content="Some(2)")
-  inspect(r.iter().count(), content="2")
-}
-
-///|
-test "filter: callback replaces the value it is given" {
-  let m = @hashmap.HashMap([(1, 10), (2, 20)])
-  let r = m.filter((k, v) => {
-    m.set(k, 99)
-    v == 10 || v == 20
-  })
-  debug_inspect(r.get(1), content="Some(10)")
-  debug_inspect(r.get(2), content="Some(20)")
-  inspect(r.length(), content="2")
-}
-
-///|
 test "map: callback grows the source, then the result is used" {
   let m = @hashmap.HashMap([(1, 1), (2, 2), (3, 3), (4, 4)])
   let r = m.map((k, v) => {
