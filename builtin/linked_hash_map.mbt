@@ -937,8 +937,9 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 /// If `f` raises, iteration stops immediately and the error propagates.
 /// This method does not modify `self`.
 ///
-/// `f` sees the entries `self` held when `map` was called. If `f` modifies
-/// `self`, the result still holds exactly those keys, in that order.
+/// `f` is called once for each key `self` held when `map` was called, and the
+/// result holds exactly those keys in that order, even if `f` modifies `self`.
+/// Each value is read as its key is reached.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,
@@ -1164,8 +1165,9 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// `Map([for k, v in m if f(k, v) => (k, v)])` because each entry's stored
 /// hash is reused: keys are never hashed again and no tuples are allocated.
 ///
-/// `f` sees the entries `self` held when `filter` was called, even if `f`
-/// modifies `self`.
+/// `f` is called once for each key `self` held when `filter` was called, in
+/// that order, even if `f` modifies `self`. Each value is read as its key is
+/// reached, and the result keeps the value `f` was given.
 ///
 /// Example:
 ///
@@ -1198,27 +1200,30 @@ pub fn[K, V] Map::filter(
       None => break
     }
   }
-  // Keep the entries `f` accepts, compacting in place. Collecting first lets
-  // the result be sized for exactly the kept entries: a stored hash fits a
-  // table of any size, and the table never grows.
-  let mut n = 0
+  // Keep the entries `f` accepts, compacting in place, along with the value
+  // `f` saw: `f` may also replace values. Collecting first lets the result be
+  // sized for exactly the kept entries: a stored hash fits a table of any
+  // size, and the table never grows.
+  let values : Array[V] = Array(capacity=kept.length())
   for i in 0..<kept.length() {
     let entry = kept.unsafe_get(i)
-    if f(entry.key, entry.value) {
-      kept.unsafe_set(n, entry)
-      n += 1
+    let value = entry.value
+    if f(entry.key, value) {
+      kept.unsafe_set(values.length(), entry)
+      values.push(value)
     }
   }
-  kept.truncate(n)
+  let n = values.length()
   let other = new_map(
-    if kept.is_empty() {
+    if n == 0 {
       default_init_capacity
     } else {
-      capacity_for_length(kept.length())
+      capacity_for_length(n)
     },
   )
-  for entry in kept {
-    other.add_unique_with_hash(entry.key, entry.value, entry.hash)
+  for i in 0..<n {
+    let entry = kept.unsafe_get(i)
+    other.add_unique_with_hash(entry.key, values.unsafe_get(i), entry.hash)
   }
   other
 }

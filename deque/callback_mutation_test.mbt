@@ -194,3 +194,53 @@ test "search: Eq clears the source" {
   search_target.val = dq
   debug_inspect(dq.search(Probe(3)), content="Some(2)")
 }
+
+///|
+fn wrapped_deque_1234() -> @deque.Deque[Int32] {
+  // Capacity 4 with head at 2: the elements wrap past the end of the buffer.
+  let dq = @deque.Deque([], capacity=4)
+  dq.push_back(3)
+  dq.push_back(4)
+  dq.push_front(2)
+  dq.push_front(1)
+  dq
+}
+
+///|
+test "map/mapi: wrapped buffer, callback grows the source" {
+  let dq = wrapped_deque_1234()
+  let r = dq.map(x => {
+    dq.push_back(x)
+    x * 10
+  })
+  debug_inspect(r.to_array(), content="[10, 20, 30, 40]")
+  debug_inspect(dq.to_array(), content="[1, 2, 3, 4, 1, 2, 3, 4]")
+  let dq = wrapped_deque_1234()
+  let r = dq.mapi((i, x) => {
+    dq.push_front(x)
+    x * 10 + i
+  })
+  debug_inspect(r.to_array(), content="[10, 21, 32, 43]")
+}
+
+///|
+test "extract_if: wrapped buffer" {
+  let dq = wrapped_deque_1234()
+  let r = dq.extract_if(x => x % 2 == 0)
+  debug_inspect(r.to_array(), content="[2, 4]")
+  debug_inspect(dq.to_array(), content="[1, 3]")
+}
+
+///|
+test "extract_if: wrapped buffer, callback grows the source" {
+  // The result is unspecified, but the deque must stay usable.
+  let dq = wrapped_deque_1234()
+  let r = dq.extract_if(x => {
+    dq.push_back(x)
+    x % 2 == 0
+  })
+  debug_inspect(r.to_array(), content="[2, 4]")
+  inspect(dq.length() == dq.iter().count(), content="true")
+  dq.push_back(9)
+  inspect(dq.to_array().length() == dq.length(), content="true")
+}

@@ -92,6 +92,14 @@ fn[T] FixedArray::unsafe_make_and_blit(
 }
 
 ///|
+/// Whether `[offset, offset + len)` lies within `[0, length)`, for `len >= 0`
+/// and `length >= 0`. Compares by subtraction: `offset + len` can overflow.
+#inline
+fn range_fits(offset : Int32, len : Int32, length : Int32) -> Bool {
+  offset >= 0 && offset <= length - len
+}
+
+///|
 /// Creates a fixed array initialized with `init`, then blits `len` elements
 /// from `src` into it.
 #owned(src, init)
@@ -103,13 +111,10 @@ pub fn[T] FixedArray::make_and_blit(
   src_offset~ : Int32 = 0,
   dst_offset~ : Int32 = 0,
 ) -> FixedArray[T] {
-  // Compare by subtraction: `offset + len` can overflow.
   guard allocate_len >= 0 &&
     len >= 0 &&
-    src_offset >= 0 &&
-    src_offset <= src.length() - len &&
-    dst_offset >= 0 &&
-    dst_offset <= allocate_len - len else {
+    range_fits(src_offset, len, src.length()) &&
+    range_fits(dst_offset, len, allocate_len) else {
     abort(
       "bounds check failed: allocate_len = \{allocate_len}, src_offset = \{src_offset}, dst_offset = \{dst_offset}, len = \{len}, src.length = \{src.length()}",
     )
@@ -161,12 +166,9 @@ pub fn[A] FixedArray::blit_to(
   src_offset~ : Int32 = 0,
   dst_offset~ : Int32 = 0,
 ) -> Unit {
-  // Compare by subtraction: `offset + len` can overflow.
   guard len >= 0 &&
-    src_offset >= 0 &&
-    src_offset <= self.length() - len &&
-    dst_offset >= 0 &&
-    dst_offset <= dst.length() - len else {
+    range_fits(src_offset, len, self.length()) &&
+    range_fits(dst_offset, len, dst.length()) else {
     abort(
       "bounds check failed: dst_offset = \{dst_offset}, src_offset = \{src_offset}, len = \{len}, dst.length = \{dst.length()}, self.length = \{self.length()}",
     )

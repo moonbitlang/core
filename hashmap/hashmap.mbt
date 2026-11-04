@@ -865,8 +865,8 @@ pub impl[K, V] Default for HashMap[K, V] with fn default() {
 ///
 /// `f` may raise; the error propagates and `self` is left unchanged.
 ///
-/// `f` must not modify `self`: the results are then unspecified, though
-/// memory-safe.
+/// `f` must not modify `self`: the result is then unspecified (it may, for
+/// example, hold a key twice), though memory-safe.
 pub fn[K, V, V2] HashMap::map(
   self : HashMap[K, V],
   f : (K, V) -> V2 raise?,

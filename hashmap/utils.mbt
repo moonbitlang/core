@@ -463,8 +463,9 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
 /// entry's stored hash is reused: keys are never hashed again and no tuples
 /// are allocated.
 ///
-/// `f` sees the entries `self` held when `filter` was called, even if `f`
-/// modifies `self`.
+/// `f` is called once for each key `self` held when `filter` was called, even
+/// if `f` modifies `self`. Each value is read as its key is reached, and the
+/// result keeps the value `f` was given.
 ///
 /// Example:
 ///

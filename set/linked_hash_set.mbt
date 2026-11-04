@@ -711,8 +711,8 @@ pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
 /// because each element's stored hash is reused: elements are never hashed
 /// again.
 ///
-/// `f` sees the elements `self` held when `filter` was called, even if `f`
-/// modifies `self`.
+/// `f` is called once for each element `self` held when `filter` was called,
+/// in that order, even if `f` modifies `self`.
 ///
 /// Example:
 ///

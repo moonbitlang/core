@@ -649,8 +649,8 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 /// `@hashset.from_array([for k in s if f(k) => k])` because each element's
 /// stored hash is reused: elements are never hashed again.
 ///
-/// `f` sees the elements `self` held when `filter` was called, even if `f`
-/// modifies `self`.
+/// `f` is called once for each element `self` held when `filter` was called,
+/// even if `f` modifies `self`.
 ///
 /// Example:
 ///

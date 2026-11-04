@@ -206,13 +206,10 @@ pub fn[T] UninitializedArray::make_and_blit(
   src_offset~ : Int32 = 0,
   dst_offset~ : Int32 = 0,
 ) -> UninitializedArray[T] {
-  // Compare by subtraction: `offset + len` can overflow.
   guard allocate_len >= 0 &&
     len >= 0 &&
-    src_offset >= 0 &&
-    src_offset <= src.length() - len &&
-    dst_offset >= 0 &&
-    dst_offset <= allocate_len - len else {
+    range_fits(src_offset, len, src.length()) &&
+    range_fits(dst_offset, len, allocate_len) else {
     abort(
       "bounds check failed: allocate_len = \{allocate_len}, src_offset = \{src_offset}, dst_offset = \{dst_offset}, len = \{len}, src.length = \{src.length()}",
     )

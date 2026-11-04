@@ -93,3 +93,36 @@ test "filter: callback re-adds the current key" {
   debug_inspect(r.get(SameHash(2)), content="Some(2)")
   inspect(r.iter().count(), content="2")
 }
+
+///|
+test "filter: callback replaces the value it is given" {
+  let m = @hashmap.HashMap([(1, 10), (2, 20)])
+  let r = m.filter((k, v) => {
+    m.set(k, 99)
+    v == 10 || v == 20
+  })
+  debug_inspect(r.get(1), content="Some(10)")
+  debug_inspect(r.get(2), content="Some(20)")
+  inspect(r.length(), content="2")
+}
+
+///|
+test "map: callback grows the source, then the result is used" {
+  let m = @hashmap.HashMap([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let r = m.map((k, v) => {
+    if k == 1 {
+      for i in 100..<200 {
+        m.set(i, i)
+      }
+    }
+    v
+  })
+  for i in 10..<60 {
+    r.set(i, i)
+  }
+  r.remove(2)
+  inspect(r.length(), content="53")
+  inspect(r.iter().count(), content="53")
+  debug_inspect(r.get(2), content="None")
+  debug_inspect(r.get(3), content="Some(3)")
+}

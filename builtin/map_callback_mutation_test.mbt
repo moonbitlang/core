@@ -83,3 +83,26 @@ test "Map::filter: callback re-adds the current key" {
   inspect(r.length(), content="3")
   @debug.debug_inspect(r.to_array(), content="[(1, 1), (2, 2), (3, 3)]")
 }
+
+///|
+test "Map::filter: callback replaces the value it is given" {
+  let m = Map([(1, 10), (2, 20)])
+  let r = m.filter((k, v) => {
+    m.set(k, 99)
+    v == 10 || v == 20
+  })
+  @debug.debug_inspect(r.to_array(), content="[(1, 10), (2, 20)]")
+  @debug.debug_inspect(m.to_array(), content="[(1, 99), (2, 99)]")
+}
+
+///|
+test "Map::map: values are read as each key is reached" {
+  let m = Map([(1, 10), (2, 20)])
+  let r = m.map((k, v) => {
+    if k == 1 {
+      m.set(2, 99)
+    }
+    v
+  })
+  @debug.debug_inspect(r.to_array(), content="[(1, 10), (2, 99)]")
+}
