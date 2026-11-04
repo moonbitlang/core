@@ -13,8 +13,9 @@
 // limitations under the License.
 
 // A callback or iterator over a deque that the deque's owner modifies gets
-// unspecified results, but the results must stay memory-safe: an iterator
-// reads the elements the deque held when the iterator was created.
+// unspecified results, but the results must stay memory-safe. The expected
+// values record the current behaviour (the buffer is captured up front), not a
+// contract.
 
 ///|
 test "for-in: shrink and reallocate during iteration" {

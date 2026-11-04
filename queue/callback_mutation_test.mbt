@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// An iterator over a queue that is modified reads the elements the queue held
-// when the iterator was created.
+// An iterator over a queue that is modified gets unspecified results, but the
+// results must stay memory-safe. The expected values record the current
+// behaviour (the buffer is captured up front), not a contract.
 
 ///|
 test "iter: pop and reallocate during iteration" {

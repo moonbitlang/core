@@ -1587,11 +1587,8 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Returns an iterator that yields each element in the deque in order.
 ///
-/// The iterator reads the buffer slots that held the deque's elements when it
-/// was created, as `for .. in` does for `Array`: modifying the deque afterwards
-/// never changes which slots it reads or how many, though a slot the deque
-/// writes again in place (by `set`, or a push reusing a slot a pop vacated) is
-/// read with its new value.
+/// Modifying the deque while the iterator is in use gives unspecified, though
+/// memory-safe, results.
 ///
 /// Example:
 ///
