@@ -40,6 +40,7 @@ pub async fn IoHandle::recvfrom(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   if platform is Windows {
     handle.recvfrom_windows(buf, offset~, len~, addr~, context~)
   } else {
@@ -58,6 +59,7 @@ pub async fn IoHandle::sendto(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   if platform is Windows {
     handle.sendto_windows(buf, offset~, len~, addr~, context~)
   } else {

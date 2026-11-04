@@ -254,6 +254,24 @@ async fn IoHandle::read_console(
 }
 
 ///|
+/// Reject buffer ranges that would index outside `buf` before they reach
+/// native IO. Out-of-bounds ranges are user bugs, so abort like `arr[i]`
+/// instead of raising an ordinary IO error.
+fn check_io_buf_range(
+  buf_len : Int32,
+  offset : Int32,
+  len : Int32,
+  context : String,
+) -> Unit {
+  let buf_len = buf_len.to_int64()
+  let offset = offset.to_int64()
+  let len = len.to_int64()
+  guard offset >= 0 && len >= 0 && offset <= buf_len && len <= buf_len - offset else {
+    abort("\{context}: buffer range out of bounds")
+  }
+}
+
+///|
 /// Perform a read operation on an `IoHandle`.
 /// At most `len` bytes will be read into `buf[offset:]`.
 /// The number of bytes actually written will be returned on success.
@@ -267,6 +285,7 @@ pub async fn IoHandle::read(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   // TODO: port to Wasm
   let n = if platform is Windows && handle.kind is Console {
     handle.read_console(buf, offset~, len~, context~)
@@ -464,6 +483,7 @@ pub async fn IoHandle::write(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   // TODO: port to Wasm
   let n = if platform is Windows && handle.kind is Console {
     handle.write_console(buf, offset~, len~, context~)
@@ -493,6 +513,7 @@ pub async fn IoHandle::read_at(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   guard! !handle.is_async
   let job = Job::read(handle.fd, buf, offset, len, position~)
   defer job.free()
@@ -512,6 +533,7 @@ pub async fn IoHandle::write_at(
   context~ : String,
 ) -> Unit {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   guard! !handle.is_async
   guard handle.write_offset >= 0 else {
     raise Failure::Failure(
