@@ -73,6 +73,9 @@ struct Map[K, V] {
 // immediately before calling, so `shift_back` has a local caller-based proof
 // that does not depend on the list invariant. It carries that proof at its
 // definition, and it is what makes its `set_entry` call sound.
+//
+// `map` reads stored indices from a list its callback may have modified, so it
+// range-checks each one itself right before its unchecked access.
 
 ///|
 let default_init_capacity = 8
@@ -937,59 +940,64 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 /// If `f` raises, iteration stops immediately and the error propagates.
 /// This method does not modify `self`.
 ///
-/// `f` is called once for each key `self` held when `map` was called, and the
-/// result holds exactly those keys in that order, even if `f` modifies `self`.
-/// Each value is read as its key is reached.
+/// `f` must not modify `self` (insert or remove keys, or clear the map),
+/// including through aliases: the result is then unspecified, though
+/// memory-safe.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,
 ) -> Map[K, V2] raise? {
-  let { size, capacity, capacity_mask, grow_at, tail, .. } = self
+  let { size, capacity, capacity_mask, grow_at, .. } = self
   // copy structure
   let other = {
     capacity,
     entries: FixedArray::make(capacity, None),
-    size,
+    size: 0,
     capacity_mask,
     grow_at,
     head: None,
-    tail,
+    tail: -1,
   }
-  guard self.head is Some(first) else { return other }
-  // Snapshot the entries and their table slots before calling `f`: `f` may
-  // modify `self`, which can relink, move or drop entries.
-  let entries : UninitializedArray[Entry[K, V]] = UninitializedArray::make(size)
-  let slots : FixedArray[Int32] = FixedArray::make(size, 0)
-  let mut entry = first
-  for i in 0..<size {
-    entries[i] = entry
+  // If `f` modifies `self`, the links and slots read below may be stale. The
+  // result must still be well-formed, because `to_array` trusts `size` and the
+  // list: link each entry to the one written before it, derive `psl` from its
+  // slot, skip a slot that is out of range or already taken, and write at most
+  // `size` entries.
+  let mut tail = -1
+  let mut written = 0
+  for x = self.head, remaining = size, previous = (None : Entry[K, V2]?) {
+    guard remaining > 0 && x is Some({ next, hash, key, value, .. }) else {
+      break
+    }
     // The next entry's back-link identifies this entry's table slot.
     // For the last entry, the map stores that slot in `tail`.
-    match entry.next {
-      Some(next) => {
-        slots.unsafe_set(i, next.prev)
-        entry = next
-      }
-      None => slots.unsafe_set(i, tail)
+    let idx = match next {
+      Some(next) => next.prev
+      None => self.tail
     }
-  }
-  let mut prev = -1
-  let mut previous : Entry[K, V2]? = None
-  for i in 0..<size {
-    let { hash, key, value, .. } = entries[i]
-    let idx = slots.unsafe_get(i)
-    // Derive `psl` from the slot: a modification of `self` may have moved
-    // this entry and updated its stored `psl`.
-    let psl = (idx - hash) & capacity_mask
-    let new_entry = { prev, next: None, psl, hash, key, value: f(key, value), }
-    other.entries[idx] = Some(new_entry)
+    let new_value = f(key, value)
+    guard idx >= 0 && idx < capacity && other.entries.unsafe_get(idx) is None else {
+      continue next, remaining - 1, previous
+    }
+    let new_entry = {
+      prev: tail,
+      next: None,
+      psl: (idx - hash) & capacity_mask,
+      hash,
+      key,
+      value: new_value,
+    }
+    other.entries.unsafe_set(idx, Some(new_entry))
     match previous {
       Some(previous) => previous.next = Some(new_entry)
       None => other.head = Some(new_entry)
     }
-    prev = idx
-    previous = Some(new_entry)
+    tail = idx
+    written += 1
+    continue next, remaining - 1, Some(new_entry)
   }
+  other.tail = tail
+  other.size = written
   other
 }
 
@@ -1165,10 +1173,6 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// `Map([for k, v in m if f(k, v) => (k, v)])` because each entry's stored
 /// hash is reused: keys are never hashed again and no tuples are allocated.
 ///
-/// `f` is called once for each key `self` held when `filter` was called, in
-/// that order, even if `f` modifies `self`. Each value is read as its key is
-/// reached, and the result keeps the value `f` was given.
-///
 /// Example:
 ///
 /// ```mbt check
@@ -1188,42 +1192,29 @@ pub fn[K, V] Map::filter(
   self : Map[K, V],
   f : (K, V) -> Bool raise?,
 ) -> Map[K, V] raise? {
-  // Snapshot the entries before calling `f`: `f` may modify `self`, which can
-  // relink an entry the traversal has already visited after the current one.
-  let kept : Array[Entry[K, V]] = Array(capacity=self.size)
+  // Collect the kept entries first so the result can be sized for exactly
+  // them: a stored hash fits a table of any size, and the table never grows.
+  let kept : Array[Entry[K, V]] = []
   for x = self.head {
     match x {
-      Some({ next, .. } as entry) => {
-        kept.push(entry)
+      Some({ key, value, next, .. } as entry) => {
+        if f(key, value) {
+          kept.push(entry)
+        }
         continue next
       }
       None => break
     }
   }
-  // Keep the entries `f` accepts, compacting in place, along with the value
-  // `f` saw: `f` may also replace values. Collecting first lets the result be
-  // sized for exactly the kept entries: a stored hash fits a table of any
-  // size, and the table never grows.
-  let values : Array[V] = Array(capacity=kept.length())
-  for i in 0..<kept.length() {
-    let entry = kept.unsafe_get(i)
-    let value = entry.value
-    if f(entry.key, value) {
-      kept.unsafe_set(values.length(), entry)
-      values.push(value)
-    }
-  }
-  let n = values.length()
   let other = new_map(
-    if n == 0 {
+    if kept.is_empty() {
       default_init_capacity
     } else {
-      capacity_for_length(n)
+      capacity_for_length(kept.length())
     },
   )
-  for i in 0..<n {
-    let entry = kept.unsafe_get(i)
-    other.add_unique_with_hash(entry.key, values.unsafe_get(i), entry.hash)
+  for entry in kept {
+    other.add_unique_with_hash(entry.key, entry.value, entry.hash)
   }
   other
 }
