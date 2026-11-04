@@ -23,6 +23,11 @@ pub extend VectorMap with Hash::{hash}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend VectorMap with Default::{default}
+
+///|
 #deprecated("Use `Json(x)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend VectorMap with @json.ToJson::{to_json}

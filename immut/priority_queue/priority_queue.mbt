@@ -376,6 +376,13 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 }
 
 ///|
+/// The empty priority queue, same as `PriorityQueue([])` but with no
+/// `Compare` bound on `A`.
+pub impl[A] Default for PriorityQueue[A] with fn default() {
+  { node: Empty, size: 0, }
+}
+
+///|
 /// Return the length of the immutable priority queue.
 ///
 /// # Example

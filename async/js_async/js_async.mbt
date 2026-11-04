@@ -37,7 +37,13 @@ extern "js" fn JsValue::abort_error() -> JsValue =
 
 ///|
 extern "js" fn JsValue::to_string(v : JsValue) -> String =
-  #| (v) => v.toString()
+  #| (v) => {
+  #|   // A promise may reject with any value, including `null`, `undefined`
+  #|   // and objects whose conversion throws, so never let printing throw.
+  #|   try { return String(v) } catch (_) {}
+  #|   try { return Object.prototype.toString.call(v) } catch (_) {}
+  #|   return '[unprintable JavaScript value]'
+  #| }
 
 ///|
 /// A JavaScript exception wrapped in MoonBit error
@@ -49,6 +55,17 @@ suberror JsError {
 pub impl Show for JsError with fn output(self, logger) {
   let JsError(value) = self
   logger <+ "\{value.to_string()}"
+}
+
+///|
+/// Renders as an opaque `@js_async.JsError` node holding a best-effort string
+/// conversion of the JavaScript value (`String(value)`), the same text as
+/// `Show`. It never throws, whatever value the promise was rejected with.
+pub impl @debug.Debug for JsError with fn to_repr(self) {
+  @debug.Repr::opaque_(
+    "@js_async.JsError",
+    @debug.Repr::string(self.to_string()),
+  )
 }
 
 ///|

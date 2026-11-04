@@ -36,6 +36,7 @@ pub fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?
 pub fn[A : Compare] PriorityQueue::push(Self[A], A) -> Self[A]
 pub fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
 pub impl[A : Compare] Compare for PriorityQueue[A]
+pub impl[A] Default for PriorityQueue[A]
 pub impl[A : Compare] Eq for PriorityQueue[A]
 pub impl[A : Hash + Compare] Hash for PriorityQueue[A]
 #deprecated

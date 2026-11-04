@@ -49,6 +49,7 @@ pub fn[K, V] VectorMap::to_array(Self[K, V]) -> Array[(K, V)]
 pub fn[K : Eq + Hash, V] VectorMap::update(Self[K, V], K, (V?) -> V? raise?) -> Self[K, V] raise?
 #alias(elems, deprecated)
 pub fn[K, V] VectorMap::values(Self[K, V]) -> Iter[V]
+pub impl[K, V] Default for VectorMap[K, V]
 pub impl[K : Eq, V : Eq] Eq for VectorMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for VectorMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V]

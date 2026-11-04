@@ -537,3 +537,11 @@ test "a replaced entry keeps the key it was first inserted with" {
   let reinserted = built.remove(first).add(third, "z")
   inspect(reinserted.to_array()[0].0.tag, content="3")
 }
+
+///|
+test "Default is the empty map" {
+  let m : @vector_map.VectorMap[String, Int32] = Default::default()
+  inspect(m.is_empty(), content="true")
+  inspect(m == @vector_map.new(), content="true")
+  inspect(m.add("a", 1).length(), content="1")
+}

@@ -243,3 +243,12 @@ test "to_json" {
   let json = @json.to_json(pq)
   @json.json_inspect(json, content=[3, 2, 1])
 }
+
+///|
+test "Default is the empty queue" {
+  let q : @priority_queue.PriorityQueue[Int32] = Default::default()
+  inspect(q.is_empty(), content="true")
+  inspect(q.length(), content="0")
+  inspect(q == PriorityQueue([]), content="true")
+  debug_inspect(q.push(3).push(5).peek(), content="Some(5)")
+}

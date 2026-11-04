@@ -103,7 +103,7 @@ async test "ReadableStream propagates JS stream errors" {
   debug_inspect(
     err,
     content=(
-      #|<moonbitlang/core/async/js_async.JsError.JsError: ...>
+      #|<@js_async.JsError: "TypeError: expected stream failure">
     ),
   )
   // Cancelling an already errored JS ReadableStream returns a rejected promise.

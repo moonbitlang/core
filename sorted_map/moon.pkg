@@ -7,6 +7,7 @@ import {
 
 import {
   "moonbitlang/core/cmp",
+  "moonbitlang/core/immut/sorted_map" @immut/sorted_map,
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
   "moonbitlang/core/bench",

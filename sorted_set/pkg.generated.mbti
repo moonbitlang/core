@@ -19,6 +19,7 @@ type SortedSet[V]
 pub fn[V : Compare] SortedSet::SortedSet(ArrayView[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
 pub fn[V] SortedSet::clear(Self[V]) -> Unit
+pub fn[V : Compare] SortedSet::compare(Self[V], Self[V]) -> Int32
 pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 #alias(clone, deprecated)
 #alias(deep_clone, deprecated)
@@ -54,6 +55,7 @@ pub fn[V] SortedSet::singleton(V) -> Self[V]
 pub fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]
 pub fn[V] SortedSet::to_array(Self[V]) -> Array[V]
 pub fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
+pub impl[V : Compare] Compare for SortedSet[V]
 pub impl[K] Default for SortedSet[K]
 pub impl[V : Eq] Eq for SortedSet[V]
 #deprecated

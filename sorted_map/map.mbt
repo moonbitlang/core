@@ -25,6 +25,27 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) {
 }
 
 ///|
+/// Compares two maps: a map with fewer entries is smaller; maps of the same
+/// size are compared lexicographically by their `(key, value)` entries in
+/// ascending key order. This is the same ordering as
+/// `@immut/sorted_map.SortedMap`. It returns `0` exactly when the maps are
+/// equal under `==`, provided the `Compare` and `Eq` impls of `K` and `V` agree.
+pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with fn compare(
+  self,
+  other,
+) -> Int32 {
+  guard self.size == other.size else { return self.size - other.size }
+  let iter = self.iter()
+  let iter1 = other.iter()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    let cmp = a.compare(b)
+    guard cmp is 0 else { break cmp }
+  } nobreak {
+    0
+  }
+}
+
+///|
 fn[K, V] new_sorted_map() -> SortedMap[K, V] {
   { root: None, size: 0, }
 }

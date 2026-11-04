@@ -793,3 +793,16 @@ test "@vector.get/out_of_bounds" {
   debug_inspect(arr.get(-1), content="None")
   debug_inspect(arr.get(3), content="None")
 }
+
+///|
+test "Default is the empty vector" {
+  let v : @vector.Vector[Int32] = Default::default()
+  inspect(v.is_empty(), content="true")
+  inspect(v == @vector.new(), content="true")
+  debug_inspect(
+    v.push(1),
+    content=(
+      #|<Vector: [1]>
+    ),
+  )
+}

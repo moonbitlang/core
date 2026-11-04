@@ -51,7 +51,7 @@ async test "Promise::from_async cancellation 2" {
   debug_inspect(
     @test.expect_error_async(() => p.wait()),
     content=(
-      #|<moonbitlang/core/async/js_async.JsError.JsError: ...>
+      #|<@js_async.JsError: "AbortError">
     ),
   )
 }
@@ -380,3 +380,43 @@ extern "js" fn load_node_fsPromises() -> NodeJsFsPromises =
 
 ///|
 let fsPromises : NodeJsFsPromises = load_node_fsPromises()
+
+///|
+extern "js" fn rejected_with(kind : Int32) -> @js_async.Promise[Unit] =
+  #| (kind) => {
+  #|   const values = [
+  #|     null,
+  #|     undefined,
+  #|     Object.create(null),
+  #|     { toString() { throw new Error('no') } },
+  #|   ]
+  #|   return Promise.reject(values[kind])
+  #| }
+
+///|
+async test "JsError prints any rejection value without throwing" {
+  let reprs = []
+  let shows = []
+  for kind in 0..<4 {
+    let err = @test.expect_error_async(() => rejected_with(kind).wait())
+    reprs.push(@debug.to_string(err))
+    shows.push(err.to_string())
+  }
+  debug_inspect(
+    reprs,
+    content=(
+      #|[
+      #|  "<@js_async.JsError: \"null\">",
+      #|  "<@js_async.JsError: \"undefined\">",
+      #|  "<@js_async.JsError: \"[object Object]\">",
+      #|  "<@js_async.JsError: \"[object Object]\">",
+      #|]
+    ),
+  )
+  debug_inspect(
+    shows,
+    content=(
+      #|["null", "undefined", "[object Object]", "[object Object]"]
+    ),
+  )
+}

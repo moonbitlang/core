@@ -20,6 +20,12 @@ pub fn[K, V] VectorMap::new() -> VectorMap[K, V] {
 }
 
 ///|
+/// The empty map, same as `VectorMap::new()`.
+pub impl[K, V] Default for VectorMap[K, V] with fn default() {
+  VectorMap::new()
+}
+
+///|
 /// Create a map holding a single entry. `O(1)`.
 #as_free_fn
 pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] {

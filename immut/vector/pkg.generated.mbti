@@ -65,6 +65,7 @@ pub fn[A] Vector::take(Self[A], Int32) -> Self[A]
 pub fn[A] Vector::to_array(Self[A]) -> Array[A]
 pub impl[A] Add for Vector[A]
 pub impl[A : Compare] Compare for Vector[A]
+pub impl[A] Default for Vector[A]
 pub impl[A : Eq] Eq for Vector[A]
 pub impl[A : Hash] Hash for Vector[A]
 #deprecated

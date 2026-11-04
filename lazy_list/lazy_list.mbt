@@ -45,6 +45,12 @@ pub fn[A] LazyList::empty() -> LazyList[A] {
 }
 
 ///|
+/// The empty lazy list, same as `LazyList::empty()`.
+pub impl[A] Default for LazyList[A] with fn default() {
+  LazyList::empty()
+}
+
+///|
 /// Builds a lazy list holding the elements of `arr`, in order.
 ///
 /// The elements are copied when the list is built, so later changes to the
