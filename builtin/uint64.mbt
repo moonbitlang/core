@@ -108,3 +108,89 @@ pub fn UInt64::to_le_bytes(self : UInt64) -> Bytes {
     (self >> 56).to_byte(),
   ]
 }
+
+///|
+/// Returns the smaller of two unsigned 64-bit integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not greater than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt64(1).min(UInt64(2)), content="1")
+///   inspect(UInt64(2).min(UInt64(1)), content="1")
+///   inspect(UInt64(0).min(UInt64(0)), content="0")
+/// }
+/// ```
+pub fn UInt64::min(self : UInt64, other : UInt64) -> UInt64 {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the larger of two unsigned 64-bit integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not less than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt64(1).max(UInt64(2)), content="2")
+///   inspect(UInt64(2).max(UInt64(1)), content="2")
+///   inspect(UInt64(0).max(UInt64(0)), content="0")
+/// }
+/// ```
+pub fn UInt64::max(self : UInt64, other : UInt64) -> UInt64 {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps an unsigned 64-bit integer into the inclusive range [`min`, `max`].
+///
+/// Parameters:
+///
+/// * `self` : The value to clamp.
+/// * `min` : The lower bound of the range.
+/// * `max` : The upper bound of the range.
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt64(5).clamp(min=UInt64(0), max=UInt64(10)), content="5")
+///   inspect(UInt64(0).clamp(min=UInt64(2), max=UInt64(10)), content="2")
+///   inspect(UInt64(15).clamp(min=UInt64(0), max=UInt64(10)), content="10")
+/// }
+/// ```
+pub fn UInt64::clamp(self : UInt64, min~ : UInt64, max~ : UInt64) -> UInt64 {
+  guard! min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}

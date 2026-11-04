@@ -400,6 +400,7 @@ pub impl Sub for UInt16
 pub type UInt64
 pub fn UInt64::UInt64(UInt64) -> UInt64
 pub fn UInt64::add(UInt64, UInt64) -> UInt64
+pub fn UInt64::clamp(UInt64, min~ : UInt64, max~ : UInt64) -> UInt64
 pub fn UInt64::clz(UInt64) -> Int32
 pub fn UInt64::compare(UInt64, UInt64) -> Int32
 pub fn UInt64::ctz(UInt64) -> Int32
@@ -415,6 +416,8 @@ pub fn UInt64::lsl(UInt64, Int32) -> UInt64
 #deprecated
 pub fn UInt64::lsr(UInt64, Int32) -> UInt64
 pub fn UInt64::lxor(UInt64, UInt64) -> UInt64
+pub fn UInt64::max(UInt64, UInt64) -> UInt64
+pub fn UInt64::min(UInt64, UInt64) -> UInt64
 pub fn UInt64::mod(UInt64, UInt64) -> UInt64
 pub fn UInt64::mul(UInt64, UInt64) -> UInt64
 pub fn UInt64::popcnt(UInt64) -> Int32
