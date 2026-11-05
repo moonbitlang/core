@@ -10,7 +10,7 @@ The core component for tracking code execution:
 ///|
 test "coverage counter basics" {
   // Create a coverage counter for tracking 5 code points
-  let counter = @coverage.CoverageCounter::new(5)
+  let counter = @coverage.CoverageCounter(5)
 
   // Initially all counters should be zero
   inspect(counter.to_string(), content="[0, 0, 0, 0, 0]")
@@ -32,7 +32,7 @@ Use coverage counters to track which code paths are executed:
 ```mbt check
 ///|
 test "tracking execution paths" {
-  let counter = @coverage.CoverageCounter::new(3)
+  let counter = @coverage.CoverageCounter(3)
   fn conditional_function(
     x : Int32,
     coverage : @coverage.CoverageCounter,
@@ -69,7 +69,7 @@ Track coverage in loops and iterations:
 ```mbt check
 ///|
 test "loop coverage" {
-  let counter = @coverage.CoverageCounter::new(2)
+  let counter = @coverage.CoverageCounter(2)
   fn process_array(
     arr : Array[Int32],
     coverage : @coverage.CoverageCounter,
@@ -106,7 +106,7 @@ Track coverage across different functions:
 ```mbt check
 ///|
 test "function coverage" {
-  let counter = @coverage.CoverageCounter::new(4)
+  let counter = @coverage.CoverageCounter(4)
   fn math_operations(
     a : Int32,
     b : Int32,
@@ -154,7 +154,7 @@ Analyze coverage data to understand code execution:
 ```mbt check
 ///|
 test "coverage analysis" {
-  let counter = @coverage.CoverageCounter::new(6)
+  let counter = @coverage.CoverageCounter(6)
   fn complex_function(
     input : Int32,
     coverage : @coverage.CoverageCounter,
@@ -205,7 +205,7 @@ test "testing integration" {
 
   fn test_function_with_coverage() -> Bool {
     // This would normally have auto-generated coverage tracking
-    let counter = @coverage.CoverageCounter::new(2)
+    let counter = @coverage.CoverageCounter(2)
     fn helper(condition : Bool, cov : @coverage.CoverageCounter) -> String {
       if condition {
         cov.incr(0)
@@ -234,7 +234,7 @@ Generate and analyze coverage reports:
 ```mbt check
 ///|
 test "coverage reporting" {
-  let counter = @coverage.CoverageCounter::new(3)
+  let counter = @coverage.CoverageCounter(3)
 
   // Simulate some code execution
   counter.incr(0) // Line 1 executed
