@@ -251,9 +251,9 @@ fn[K, V] join(
         l.add_max_entry(k, v)
       }
     (Tree(lk, value=lv, ll, lr, size=ls), Tree(rk, value=rv, rl, rr, size=rs)) =>
-      if ls * ratio < rs {
+      if ls * DELTA < rs {
         balance(rk, rv, join(l, k, v, rl), rr)
-      } else if rs * ratio < ls {
+      } else if rs * DELTA < ls {
         balance(lk, lv, ll, join(lr, k, v, r))
       } else {
         make_tree(k, v, l, r)
@@ -288,8 +288,23 @@ fn[K, V] SortedMap::add_max_entry(
 }
 
 ///|
-/// The ratio between the sizes of the left and right subtrees.
-let ratio = 5
+/// Weight-balance parameter δ: a node is balanced when neither subtree holds
+/// more than `DELTA` times as many entries as the other (subtrees with fewer
+/// than 2 entries in total are always balanced).
+///
+/// (δ, γ) = (3, 2) is the pair Haskell's `Data.Map` uses, with the same
+/// size-based (not size + 1) tests as `balance` here. Hirai & Yamamoto,
+/// "Balancing weight-balanced trees" (JFP 2011), found that for this form of
+/// the algorithm every other small integer pair except (4, 2), including the
+/// (5, 1) used before, lets one `remove` leave a node unbalanced.
+const DELTA = 3
+
+///|
+/// Weight-balance parameter γ: when a node is out of balance, a single
+/// rotation is used iff the heavier child's inner subtree holds fewer than
+/// `GAMMA` times as many entries as its outer subtree; otherwise a double
+/// rotation is used.
+const GAMMA = 2
 
 ///|
 fn[K, V] balance(
@@ -341,22 +356,18 @@ fn[K, V] balance(
   let rn = r.length()
   if ln + rn < 2 {
     make_tree(key, value, l, r)
-  } else if rn > ratio * ln {
+  } else if rn > DELTA * ln {
     // right is too big
     guard! r is Tree(_, rl, rr, ..)
-    let rln = rl.length()
-    let rrn = rr.length()
-    if rln < rrn {
+    if rl.length() < GAMMA * rr.length() {
       single_l(key, value, l, r)
     } else {
       double_l(key, value, l, r)
     }
-  } else if ln > ratio * rn {
+  } else if ln > DELTA * rn {
     // left is too big
     guard! l is Tree(_, ll, lr, ..)
-    let lln = ll.length()
-    let lrn = lr.length()
-    if lrn < lln {
+    if lr.length() < GAMMA * ll.length() {
       single_r(key, value, l, r)
     } else {
       double_r(key, value, l, r)
@@ -395,7 +406,9 @@ test "remove" {
   let m3 = m1.remove(8)
   inspect(
     m3.debug_tree(),
-    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+    content=(
+      #|(1,one,(0,zero,_,_),(3,three,(2,two,_,_),_))
+    ),
   )
   let e : SortedMap[Int32, Int32] = Empty
   inspect(e.remove(1).debug_tree(), content="_")
@@ -507,7 +520,9 @@ test "split_max" {
   inspect(v, content="eight")
   inspect(
     r.debug_tree(),
-    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+    content=(
+      #|(1,one,(0,zero,_,_),(3,three,(2,two,_,_),_))
+    ),
   )
 }
 
@@ -571,6 +586,8 @@ test "split_max with non-empty tree" {
   inspect(v, content="eight")
   inspect(
     r.debug_tree(),
-    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+    content=(
+      #|(1,one,(0,zero,_,_),(3,three,(2,two,_,_),_))
+    ),
   )
 }

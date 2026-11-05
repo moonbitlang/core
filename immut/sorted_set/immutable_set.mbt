@@ -1021,8 +1021,23 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 ///|
-/// The ratio between the sizes of the left and right subtrees.
-const BALANCE_RATIO = 5
+/// Weight-balance parameter δ: a node is balanced when neither subtree holds
+/// more than `DELTA` times as many elements as the other (subtrees with fewer
+/// than 2 elements in total are always balanced).
+///
+/// (δ, γ) = (3, 2) is the pair Haskell's `Data.Set` uses, with the same
+/// size-based (not size + 1) tests as `balance` here. Hirai & Yamamoto,
+/// "Balancing weight-balanced trees" (JFP 2011), found that for this form of
+/// the algorithm every other small integer pair except (4, 2), including the
+/// (5, 1) used before, lets one `remove` leave a node unbalanced.
+const DELTA = 3
+
+///|
+/// Weight-balance parameter γ: when a node is out of balance, a single
+/// rotation is used iff the heavier child's inner subtree holds fewer than
+/// `GAMMA` times as many elements as its outer subtree; otherwise a double
+/// rotation is used.
+const GAMMA = 2
 
 ///|
 priv enum SplitBis[A] {
@@ -1101,11 +1116,11 @@ fn[A] balance(
   let right_size = right.length()
   if left_size + right_size < 2 {
     create(left, value, right)
-  } else if left_size > right_size * BALANCE_RATIO {
+  } else if left_size > right_size * DELTA {
     match left {
       Empty => abort("balance: left is empty.")
       Node(left=ll, value=lv, right=lr, ..) =>
-        if ll.length() >= lr.length() {
+        if lr.length() < GAMMA * ll.length() {
           create(ll, lv, create(lr, value, right))
         } else {
           match lr {
@@ -1115,11 +1130,11 @@ fn[A] balance(
           }
         }
     }
-  } else if right_size > left_size * BALANCE_RATIO {
+  } else if right_size > left_size * DELTA {
     match right {
       Empty => abort("balance: right is empty")
       Node(left=rl, value=rv, right=rr, ..) =>
-        if rr.length() >= rl.length() {
+        if rl.length() < GAMMA * rr.length() {
           create(create(left, value, rl), rv, rr)
         } else {
           match rl {
@@ -1168,9 +1183,9 @@ fn[A] join(
       Node(left=ll, value=lv, right=lr, size=ls),
       Node(left=rl, value=rv, right=rr, size=rs),
     ) =>
-      if ls > rs * BALANCE_RATIO {
+      if ls > rs * DELTA {
         balance(ll, lv, join(lr, value, right))
-      } else if rs > ls * BALANCE_RATIO {
+      } else if rs > ls * DELTA {
         balance(join(left, value, rl), rv, rr)
       } else {
         create(left, value, right)
