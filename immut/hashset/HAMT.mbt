@@ -248,8 +248,8 @@ fn[A : Eq + Hash] hash_set_from_iter_by_add(iter : Iter[A]) -> HashSet[A] {
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
-  for i = 0, set = new(); i < arr.length(); {
-    continue i + 1, set.add(arr[i])
+  for value in arr; set = new() {
+    continue set.add(value)
   } nobreak {
     set
   }
