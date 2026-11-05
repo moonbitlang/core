@@ -15,7 +15,7 @@
 ///|
 test "feature pipe" {
   let b : Bytes = b"hello"
-  let mut u = Bytes::new(b.length())
+  let mut u = Bytes::make(b.length(), b'\x00')
   let v = b
     |> x => {
       u = x
