@@ -159,16 +159,6 @@ test "from_iter empty iter" {
 }
 
 ///|
-fn rebuild_from_array_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
-  for n = data.length(), set = @hashset.new() {
-    match n {
-      0 => break set
-      _ => continue n - 1, set.add(data[n - 1])
-    }
-  }
-}
-
-///|
 fn rebuild_from_iter_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
   for value in data; set = @hashset.new() {
     continue set.add(value)
@@ -178,9 +168,9 @@ fn rebuild_from_iter_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
 }
 
 ///|
-test "from_array matches reverse add with duplicates" {
+test "from_array matches forward add with duplicates" {
   let data = Array::makei(256, i => (i * 1103515245 + 12345) & 63)
-  @test.assert_eq(@hashset.HashSet(data), rebuild_from_array_by_add(data))
+  @test.assert_eq(@hashset.HashSet(data), rebuild_from_iter_by_add(data))
 }
 
 ///|
@@ -338,12 +328,29 @@ impl Eq for SameKey with fn equal(self, other) {
 }
 
 ///|
-test "from_array duplicate keeps last representative" {
+test "from_array duplicate keeps first representative" {
   let set = @hashset.HashSet([SameKey(1, "first"), SameKey(1, "second")])
   let values = set.iter().to_array()
   @test.assert_eq(values.length(), 1)
   let SameKey(_, label) = values[0]
-  inspect(label, content="second")
+  inspect(label, content="first")
+}
+
+///|
+test "bulk from_array and from_iter keep the same first representatives" {
+  // Large enough to take the bulk-build path rather than repeated `add`.
+  let data = Array::makei(200, i => SameKey(i % 50, "\{i}"))
+  let labels = (set : @hashset.HashSet[SameKey]) => {
+    let out = Array::makei(50, _ => "")
+    for v in set {
+      let SameKey(k, label) = v
+      out[k] = label
+    }
+    out
+  }
+  let expected = Array::makei(50, i => "\{i}")
+  @test.assert_eq(labels(HashSet(data)), expected)
+  @test.assert_eq(labels(@hashset.from_iter(data.iter())), expected)
 }
 
 ///|
