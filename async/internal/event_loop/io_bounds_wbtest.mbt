@@ -13,17 +13,16 @@
 // limitations under the License.
 
 ///|
-async test "panic IoHandle::write_at rejects an out-of-bounds source" {
-  let path = "_build/write_at_bounds_test"
-  write_text(path, "", sync=Full)
-  defer remove(path)
-  let file = open(path, mode=ReadWrite)
-  defer file.close()
-  file.io.write_at(
-    b"ab",
-    offset=1,
-    len=2,
-    position=0,
-    context="write_at bounds test",
-  )
+test "panic check_io_buf_range rejects an offset past the end" {
+  check_io_buf_range(2, 1, 2, "test")
+}
+
+///|
+test "panic check_io_buf_range rejects a negative length" {
+  check_io_buf_range(2, 0, -1, "test")
+}
+
+///|
+test "check_io_buf_range accepts an exact fit" {
+  check_io_buf_range(2, 1, 1, "test")
 }
