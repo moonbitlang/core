@@ -1567,6 +1567,9 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Returns an iterator that yields each element in the deque in order.
 ///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1579,12 +1582,16 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// ```
 #alias(iterator, deprecated)
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
+  // Capture the buffer, head and length together, as `Array::iter` does
+  // through its view: reading the live `buf`/`head` with a captured `len`
+  // reaches unwritten slots, or divides by zero, once the deque is modified.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = 0
-  let len = self.len
   Iter::new(
     fn() {
       guard index < len else { None }
-      let elem = self.buf[(self.head + index) % self.buf.length()]
+      let elem = buf[wrap_index(head + index, cap)]
       index += 1
       Some(elem)
     },
@@ -1619,12 +1626,14 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(iterator2, deprecated)
 pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = 0
-  let len = self.len
   Iter2::new(
     fn() {
       guard index < len else { None }
-      let result = (index, self.buf[(self.head + index) % self.buf.length()])
+      let result = (index, buf[wrap_index(head + index, cap)])
       index += 1
       Some(result)
     },
@@ -1654,13 +1663,15 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  let len = self.len
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = len
   Iter::new(
     fn() {
       guard index > 0 else { None }
       index -= 1
-      Some(self.buf[(self.head + index) % self.buf.length()])
+      Some(buf[wrap_index(head + index, cap)])
     },
     size_hint=len,
   )
@@ -1693,14 +1704,16 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(rev_iterator2, deprecated)
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int32, A] {
-  let len = self.len
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut rev_index = len
   Iter2::new(
     fn() {
       guard rev_index > 0 else { None }
       let index = len - rev_index
       rev_index -= 1
-      Some((index, self.buf[(self.head + rev_index) % self.buf.length()]))
+      Some((index, buf[wrap_index(head + rev_index, cap)]))
     },
     size_hint=len,
   )
