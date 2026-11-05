@@ -268,3 +268,10 @@ pub fn UInt32::trunc_double(val : Double) -> UInt32 = "%f64.to_u32"
 /// (NaN and negative inputs give 0, too-large inputs give `@uint64.MAX_VALUE`).
 #deprecated("Use `Double::to_uint64` instead; `trunc_double` is undefined for NaN and out-of-range inputs", skip_current_package=true)
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
+
+///|
+/// Creates a new byte sequence of `len` zero bytes.
+#deprecated("Use `Bytes::make(len, b'\\x00')` instead")
+pub fn Bytes::new(len : Int32) -> Bytes {
+  Bytes::make(len, b'\x00')
+}

@@ -873,6 +873,7 @@ pub fn Bytes::length(Bytes) -> Int32
 pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int32
 pub fn Bytes::make(Int32, Byte) -> Bytes
 pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
+#deprecated
 pub fn Bytes::new(Int32) -> Bytes
 #deprecated
 pub fn Bytes::of_string(String) -> Bytes

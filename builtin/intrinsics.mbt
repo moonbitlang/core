@@ -1555,31 +1555,6 @@ pub fn Bytes::make(len : Int32, init : Byte) -> Bytes {
 fn Bytes::unsafe_make(len : Int32, init : Byte) -> Bytes = "%bytes_make"
 
 ///|
-/// Creates a new byte sequence filled with zero bytes.
-///
-/// Parameters:
-///
-/// * `length` : The length of the byte sequence to create. Must be a
-/// non-negative integer.
-///
-/// Returns a new byte sequence of the specified length, with all bytes
-/// initialized to zero.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = Bytes::new(3)
-///   inspect(bytes, content="b\"\\x00\\x00\\x00\"")
-///   let bytes = Bytes::new(0)
-///   inspect(bytes, content="b\"\"")
-/// }
-/// ```
-pub fn Bytes::new(len : Int32) -> Bytes {
-  Bytes::make(len, b'\x00')
-}
-
-///|
 /// Converts a 32-bit signed integer to a byte by taking its least significant 8
 /// bits. Any bits beyond the first 8 bits are truncated.
 ///

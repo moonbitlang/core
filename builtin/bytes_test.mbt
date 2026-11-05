@@ -188,7 +188,7 @@ test "equal" {
   copy_bytes.blit_from_bytes(0, HELLO_WORLD, 0, HELLO_WORLD.length())
   let copy_bytes = Bytes::from_array(copy_bytes)
   @test.assert_eq(HELLO_WORLD, copy_bytes)
-  @test.assert_not_eq(HELLO_WORLD, Bytes::new(10))
+  @test.assert_not_eq(HELLO_WORLD, Bytes::make(10, b'\x00'))
 }
 
 ///|

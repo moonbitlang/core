@@ -957,7 +957,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
     Some(value) => if value <= 0 { abort("negative length") } else { value }
   }
   if self.is_zero() {
-    return Bytes::new(maximum_int(1, minimum_length))
+    return Bytes::make(maximum_int(1, minimum_length), b'\x00')
   }
   if self.sign == Negative {
     abort("negative BigInt")
