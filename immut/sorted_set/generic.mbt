@@ -86,6 +86,9 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 
 ///|
 /// Creates a sorted set from an iterator of values.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
