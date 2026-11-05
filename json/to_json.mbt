@@ -140,11 +140,24 @@ pub impl ToJson for BytesView with fn to_json(self) -> Json {
     if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
       sb.write_char(byte.to_char())
     } else {
+      // Write the two hex digits directly: `byte.to_hex()` would allocate a
+      // fresh string for every escaped byte.
+      let value = byte.to_int()
       sb.write_string("\\x")
-      sb.write_string(byte.to_hex())
+      sb.write_char(lower_hex_digit(value >> 4))
+      sb.write_char(lower_hex_digit(value & 0x0f))
     }
   }
   Json::string(sb.to_string())
+}
+
+///|
+fn lower_hex_digit(value : Int32) -> Char {
+  if value < 10 {
+    (value + '0'.to_int()).unsafe_to_char()
+  } else {
+    (value - 10 + 'a'.to_int()).unsafe_to_char()
+  }
 }
 
 ///|
