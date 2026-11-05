@@ -18,7 +18,9 @@ pub impl @debug.Debug for JsError
 // Types and methods
 #external
 pub type AbortController
+pub fn AbortController::AbortController() -> Self
 pub fn AbortController::abort(Self) -> Unit
+#deprecated
 pub fn AbortController::new() -> Self
 pub fn AbortController::signal(Self) -> AbortSignal
 

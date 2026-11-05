@@ -243,7 +243,7 @@ pub async fn ClientConnection::end_request(
   ignore(on_informational_response)
   guard! self.request is Some(request)
   self.request = None
-  let abort_controller = @js_async.AbortController::new()
+  let abort_controller = @js_async.AbortController()
   let js_response = ClientConnection::request_ffi(
     request.uri,
     request.meth,

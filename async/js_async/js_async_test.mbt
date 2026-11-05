@@ -42,7 +42,7 @@ async test "Promise::from_async cancellation" {
 
 ///|
 async test "Promise::from_async cancellation 2" {
-  let controller = @js_async.AbortController::new()
+  let controller = @js_async.AbortController()
   let p = @js_async.Promise::from_async(abort_signal=controller.signal(), () => {
     @async.sleep(200)
   })
@@ -58,7 +58,7 @@ async test "Promise::from_async cancellation 2" {
 
 ///|
 async test "Promise::from_async cancellation 3" {
-  let controller = @js_async.AbortController::new()
+  let controller = @js_async.AbortController()
   let p = @js_async.Promise::from_async(abort_signal=controller.signal(), () => {
     @async.sleep(100)
   })
@@ -86,7 +86,7 @@ extern "js" fn abort_listener_count(signal : @js_async.AbortSignal) -> Int32 =
 
 ///|
 async test "Promise::from_async removes its abort listener after completion" {
-  let controller = @js_async.AbortController::new()
+  let controller = @js_async.AbortController()
   let signal = controller.signal()
   let promise = @js_async.Promise::from_async(abort_signal=signal, () => {
     @async.sleep(100)
@@ -98,7 +98,7 @@ async test "Promise::from_async removes its abort listener after completion" {
 
 ///|
 async test "Promise::from_async removes its abort listener after rejection" {
-  let controller = @js_async.AbortController::new()
+  let controller = @js_async.AbortController()
   let signal = controller.signal()
   let promise : @js_async.Promise[Unit] = @js_async.Promise::from_async(
     abort_signal=signal,
@@ -114,7 +114,7 @@ async test "Promise::from_async removes its abort listener after rejection" {
 
 ///|
 async test "Promise::from_async observes an already aborted signal" {
-  let controller = @js_async.AbortController::new()
+  let controller = @js_async.AbortController()
   let signal = controller.signal()
   controller.abort()
   let mut worker_started = false
