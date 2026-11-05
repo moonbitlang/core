@@ -128,12 +128,10 @@ fn diff_repr(
 }
 
 ///|
-/// Pretty-print a `ReprDelta`.
+/// Pretty-print a `ReprDelta` in full (no depth folding, so a difference at any
+/// depth is shown).
 ///
 /// Optional parameters:
-/// - `max_depth~`: maximum expansion depth; deeper subtrees are folded.
-///   Defaults to `Some(16)`; `None` disables folding. Values `<= 0` are
-///   treated as `1`.
 /// - `compact_threshold?`: compact-vs-multiline layout threshold (maximum line
 ///   width for keeping a node on one line).
 ///   Larger values prefer single-line output. Defaults to `70` when omitted.
@@ -141,51 +139,10 @@ fn diff_repr(
 ///   Defaults to `true` when omitted.
 fn pretty_print_delta(
   d : ReprDelta,
-  max_depth~ : Int32? = Some(default_max_depth),
   compact_threshold~ : Int32 = default_threshold,
   use_ansi~ : Bool = true,
 ) -> String {
-  let delta = prune_delta(max_depth, d)
-  print_content(render_delta(compact_threshold, use_ansi, delta).no_wrap())
-}
-
-///|
-/// Prune a `ReprDelta` using max_depth (replacing with `Same(Omitted, [])`).
-fn prune_delta(max_depth : Int32?, delta : ReprDelta) -> ReprDelta {
-  fn go(d : Int32, node : ReprDelta) -> ReprDelta {
-    if d <= 0 {
-      match node {
-        Same(label, children) =>
-          if children.is_empty() {
-            node
-          } else if !label.info_adds_depth() {
-            Same(label, children.map(child => go(d, child)))
-          } else {
-            Same(Repr::omitted(), [])
-          }
-        Different(_, _) | Extra1(_) | Extra2(_) => Same(Repr::omitted(), [])
-      }
-    } else {
-      match node {
-        Same(label, children) => {
-          let next_depth = if label.info_adds_depth() { d - 1 } else { d }
-          Same(label, children.map(child => go(next_depth, child)))
-        }
-        Different(left, right) =>
-          Different(
-            left.prune_info(max_depth=Some(d)),
-            right.prune_info(max_depth=Some(d)),
-          )
-        Extra1(x) => Extra1(x.prune_info(max_depth=Some(d)))
-        Extra2(x) => Extra2(x.prune_info(max_depth=Some(d)))
-      }
-    }
-  }
-
-  match max_depth {
-    None => delta
-    Some(depth) => go(Int32::max(1, depth), delta)
-  }
+  print_content(render_delta(compact_threshold, use_ansi, d).no_wrap())
 }
 
 ///|
