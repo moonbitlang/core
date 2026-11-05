@@ -117,8 +117,8 @@ fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
 fn[A : Compare] sorted_set_from_array_by_add(
   array : ArrayView[A],
 ) -> SortedSet[A] {
-  for i = 0, set = Empty; i < array.length(); {
-    continue i + 1, set.add(array[i])
+  for value in array; set = Empty {
+    continue set.add(value)
   } nobreak {
     set
   }
