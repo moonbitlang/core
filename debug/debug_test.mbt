@@ -213,3 +213,60 @@ test "debug_inspect reports locations when the check fails" {
     content="true",
   )
 }
+
+///|
+/// `leaf` wrapped in `depth` one-element JSON arrays.
+fn nested_json(leaf : Json, depth : Int32) -> Json {
+  let mut j = leaf
+  for _ in 0..<depth {
+    j = Json::array([j])
+  }
+  j
+}
+
+///|
+test "debug_inspect compares deep values unpruned" {
+  let a = nested_json(Json(1), 20)
+  let b = nested_json(Json(2), 20)
+  // `render` keeps its depth-16 default for human-facing output, so the two
+  // values still render identically there...
+  assert_eq(@debug.render(Repr(a)), @debug.render(Repr(b)))
+  assert_true(@debug.render(Repr(a)).contains("..."))
+  // ...but a snapshot check must not accept one for the other.
+  let pruned_b = @debug.render(Repr(b))
+  let full_b = @debug.render(Repr(b), max_depth=1000)
+  for expected in [pruned_b, full_b] {
+    let failed = try @debug.debug_inspect(a, content=expected) catch {
+      InspectError(_) => true
+    } noraise {
+      _ => false
+    }
+    assert_true(failed)
+  }
+  // The full rendering of `a` is what the check compares against.
+  @debug.debug_inspect(a, content=@debug.render(Repr(a), max_depth=1000))
+}
+
+///|
+test "debug_inspect snapshot of a deep value shows the full structure" {
+  @debug.debug_inspect(
+    nested_json(Json(1), 20),
+    content=(
+      #|Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Number(1)])])])])])])])])])])])])])])])])])])])])
+    ),
+  )
+}
+
+///|
+test "assert_eq failure message shows a deep difference" {
+  inspect(
+    output(() => {
+      @debug.assert_eq(nested_json(Json(1), 20), nested_json(Json(2), 20))
+    }),
+    content=(
+      #|FAILED: `Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Number(1)])])])])])])])])])])])])])])])])])])])]) != Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Number(2)])])])])])])])])])])])])])])])])])])])])`
+      #|diff:
+      #|Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Array([Number(-1 +2)])])])])])])])])])])])])])])])])])])])])
+    ),
+  )
+}

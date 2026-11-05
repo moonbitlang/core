@@ -131,8 +131,9 @@ fn diff_repr(
 /// Pretty-print a `ReprDelta`.
 ///
 /// Optional parameters:
-/// - `max_depth?`: maximum expansion depth; deeper subtrees are folded.
-///   Defaults to `16` when omitted. Values `<= 0` are treated as `1`.
+/// - `max_depth~`: maximum expansion depth; deeper subtrees are folded.
+///   Defaults to `Some(16)`; `None` disables folding. Values `<= 0` are
+///   treated as `1`.
 /// - `compact_threshold?`: compact-vs-multiline layout threshold (maximum line
 ///   width for keeping a node on one line).
 ///   Larger values prefer single-line output. Defaults to `70` when omitted.
@@ -140,14 +141,10 @@ fn diff_repr(
 ///   Defaults to `true` when omitted.
 fn pretty_print_delta(
   d : ReprDelta,
-  max_depth? : Int32,
+  max_depth~ : Int32? = Some(default_max_depth),
   compact_threshold~ : Int32 = default_threshold,
   use_ansi~ : Bool = true,
 ) -> String {
-  let max_depth : Int32? = match max_depth {
-    Some(_) => max_depth
-    None => Some(default_max_depth)
-  }
   let delta = prune_delta(max_depth, d)
   print_content(render_delta(compact_threshold, use_ansi, delta).no_wrap())
 }
