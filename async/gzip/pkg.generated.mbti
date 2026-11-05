@@ -31,7 +31,7 @@ type Encoder[W]
 #alias(new, deprecated)
 pub fn[W] Encoder::Encoder(W, mtime? : UInt32, extra_flags? : Byte, operating_system? : Byte) -> Self[W]
 pub async fn[W : @io.BinaryWriter] Encoder::end(Self[W]) -> Unit
-pub async fn[W : @io.BinaryWriter] Encoder::flush(Self[W]) -> Unit
+pub async fn[W : @io.BinaryWriter] Encoder::flush_partial_data(Self[W]) -> Unit
 pub async fn[W : @io.BinaryWriter] Encoder::write(Self[W], BytesView) -> Unit
 pub async fn[W : @io.BinaryWriter] Encoder::write_reader(Self[W], &@io.BinaryReader) -> Unit
 pub impl[W : @io.BinaryWriter] @io.BinaryWriter for Encoder[W]

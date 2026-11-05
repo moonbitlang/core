@@ -155,6 +155,11 @@ impl @io.BinaryWriterImpl for WriteToProcess with fn raw_write_impl(
 }
 
 ///|
+impl @io.BinaryWriterImpl for WriteToProcess with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend WriteToProcess with @io.BinaryWriter::{write, write_reader}
 
 ///|

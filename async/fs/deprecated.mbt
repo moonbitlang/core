@@ -51,3 +51,8 @@ pub extend Timestamp with Hash::{hash_combine}
 #deprecated
 #doc(hidden)
 pub extend Timestamp with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend File with @io.BinaryWriter::{flush_partial_data}

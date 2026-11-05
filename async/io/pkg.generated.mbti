@@ -26,6 +26,7 @@ pub fn BinaryWriterController::BinaryWriterController() -> Self
 type BufferedWriter[W]
 pub fn[W] BufferedWriter::capacity(Self[W]) -> Int32
 pub async fn[W : BinaryWriter] BufferedWriter::flush(Self[W]) -> Unit
+pub async fn[W : BinaryWriter] BufferedWriter::flush_partial_data(Self[W]) -> Unit
 pub fn[W] BufferedWriter::new(W, size? : Int32) -> Self[W]
 pub async fn[W : BinaryWriter] BufferedWriter::write(Self[W], BytesView) -> Unit
 pub async fn[W : BinaryWriter] BufferedWriter::write_reader(Self[W], &BinaryReader) -> Unit
@@ -120,11 +121,13 @@ pub(open) trait BinaryReaderImpl {
 pub(open) trait BinaryWriter : BinaryWriterImpl {
   async fn write(Self, BytesView) -> Unit = _
   async fn write_reader(Self, &BinaryReader) -> Unit = _
+  async fn flush_partial_data(Self) -> Unit = _
 }
 
 pub(open) trait BinaryWriterImpl {
   fn get_controller(Self) -> BinaryWriterController
   async fn raw_write_impl(Self, Bytes, offset~ : Int32, len~ : Int32) -> Int32
+  async fn flush_partial_data(Self) -> Unit
 }
 
 pub(open) trait TextReader {

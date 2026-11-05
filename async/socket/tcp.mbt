@@ -376,4 +376,9 @@ impl @io.BinaryWriterImpl for Tcp with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for Tcp with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend Tcp with @io.BinaryWriter::{write, write_reader}

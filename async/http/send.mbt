@@ -125,6 +125,12 @@ impl @io.BinaryWriterImpl for Sender with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for Sender with fn flush_partial_data(self) {
+  self.flush()
+  @io.BinaryWriter::flush_partial_data(self.writer)
+}
+
+///|
 impl @io.BinaryWriterImpl for Sender with fn raw_write_impl(
   self,
   buf,

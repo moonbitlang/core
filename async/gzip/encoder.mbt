@@ -54,12 +54,6 @@ async fn[W : @io.BinaryWriter] Encoder::flush_output(self : Encoder[W]) -> Unit 
 }
 
 ///|
-/// Make sure all currently written data are commited to the underlying writer
-pub async fn[W : @io.BinaryWriter] Encoder::flush(self : Encoder[W]) -> Unit {
-  self.flush_output()
-}
-
-///|
 /// Terminate a gzip stream, write trailers etc. and flush data to the underlying writer.
 pub async fn[W : @io.BinaryWriter] Encoder::end(self : Encoder[W]) -> Unit {
   if self.core.minimum_output_space(end=true) > self.buf.length() - self.buf_len {
@@ -107,4 +101,16 @@ impl[W : @io.BinaryWriter] @io.BinaryWriterImpl for Encoder[W] with fn get_contr
 }
 
 ///|
-pub extend Encoder with @io.BinaryWriter::{write, write_reader}
+impl[W : @io.BinaryWriter] @io.BinaryWriterImpl for Encoder[W] with fn flush_partial_data(
+  self,
+) {
+  self.flush_output()
+  @io.BinaryWriter::flush_partial_data(self.inner)
+}
+
+///|
+pub extend Encoder with @io.BinaryWriter::{
+  write,
+  write_reader,
+  flush_partial_data,
+}

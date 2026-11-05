@@ -164,6 +164,11 @@ impl @io.BinaryWriterImpl for ServerConnection with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for ServerConnection with fn flush_partial_data(self) {
+  @io.BinaryWriter::flush_partial_data(self.sender)
+}
+
+///|
 /// Integrate a `@http.ServerConnection` with string interpolation syntax
 pub async fn[X : Show] ServerConnection::write_string_interpolation(
   self : ServerConnection,
@@ -192,12 +197,10 @@ pub impl @io.BinaryWriter for ServerConnection with fn write_reader(
 }
 
 ///|
-pub extend ServerConnection with @io.BinaryWriter::{write, write_reader}
-
-///|
-/// Flush buffered data in the response body being sent, if any.
-pub async fn ServerConnection::flush(self : ServerConnection) -> Unit {
-  self.sender.flush()
+pub extend ServerConnection with @io.BinaryWriter::{
+  write,
+  write_reader,
+  flush_partial_data,
 }
 
 ///|

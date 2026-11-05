@@ -66,3 +66,8 @@ pub extend ResolveHostnameError with Show::{output}
 #deprecated
 #doc(hidden)
 pub extend IpProtocolPreference with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Tcp with @io.BinaryWriter::{flush_partial_data}

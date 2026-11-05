@@ -30,9 +30,20 @@
 /// `raw_write_impl` may write less than `len` bytes,
 /// but it should always write at least one byte on success.
 /// `raw_write_impl` should return as soon as possible after at least one byte of data is written.
+///
+/// `flush_partial_data` is the API used to immediately flush partial data.
+/// For writer transformers such as gzip, the whole writer stack should be flushed recursively.
+/// The flush is only best-effort: underlying implementation may choose to still buffer some data.
+/// `flush_partial_data` should be always UNNECESSARY for data integrity:
+/// stream termination should be a protocol specific operation (e.g. `@tls.Tls::shutdown()`).
+/// The only function of `flush_partial_data` is to ensure timely delivery of partial data.
+///
+/// `flush_partial_data` mainly deal with userland buffering.
+/// It should not, for example, synchronize data to disk for a file system writer.
 pub(open) trait BinaryWriterImpl {
   fn get_controller(Self) -> BinaryWriterController
   async fn raw_write_impl(Self, Bytes, offset~ : Int32, len~ : Int32) -> Int32
+  async fn flush_partial_data(Self) -> Unit
 }
 
 ///|
@@ -47,6 +58,7 @@ pub(open) trait BinaryWriterImpl {
 pub(open) trait BinaryWriter: BinaryWriterImpl {
   async fn write(Self, BytesView) -> Unit = _
   async fn write_reader(Self, &BinaryReader) -> Unit = _
+  async fn flush_partial_data(Self) -> Unit = _
 }
 
 ///|
@@ -80,4 +92,21 @@ impl BinaryWriter with fn write_reader(self, reader) {
     self.write(chunk)
     reader.drop_exactly(chunk.length())
   }
+}
+
+///|
+/// Flush all partial data and ensure they are delivered immediately.
+/// For writer transformers such as gzip writer, the underlying transport will be flushed as well.
+/// The flush is only best-effort: underlying implementation may choose to still buffer some data.
+///
+/// `flush_partial_data` IS NOT used to ensure stream integrity:
+/// stream termination such as `@tls.Tls::shutdown()` is a protocol-specific operation.
+/// The only purpose of `flush_partial_data` is to ensure timely delivery of partial data.
+/// If the user only cares about eventual integrity of data,
+/// `flush_partial_data` is always UNNECESSARY.
+///
+/// `flush_partial_data` mainly deal with userland buffering.
+/// It does not, for example, synchronize data to disk for a file system writer.
+impl BinaryWriter with fn flush_partial_data(self) {
+  BinaryWriterImpl::flush_partial_data(self)
 }
