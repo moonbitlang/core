@@ -201,19 +201,27 @@ fn Repr::render_repr(self : Repr, threshold : Int32) -> Content {
 ///
 /// Optional parameters:
 /// - `max_depth?`: maximum expansion depth; deeper subtrees are replaced with `...`.
-///   Defaults to `16` when `None`. Values `<= 0` are treated as `1`.
+///   Defaults to `16` when omitted, so the output is always depth-limited;
+///   pass a larger value (up to `@int.max_value`) to see deeper structure.
+///   Values `<= 0` are treated as `1`.
+///
+/// Snapshot checks (`debug_inspect`) and the failure message of `assert_eq`
+/// do not use this default: they render the whole `Repr`, so two values whose
+/// representations differ only below depth 16 still produce different text there.
 ///
 /// The compact-vs-multiline layout threshold is not configurable here: `render`
 /// always uses the internal default of `70`, keeping a node on one line when
 /// every line of its compacted form fits within that many characters.
 pub fn render(r : Repr, max_depth? : Int32) -> String {
-  let max_depth : Int32? = match max_depth {
-    Some(_) => max_depth
-    None => Some(default_max_depth)
-  }
-  let threshold = default_threshold
+  render_pruned(r, Some(max_depth.unwrap_or(default_max_depth)))
+}
+
+///|
+/// Render `r`, pruning it to `max_depth` first. `None` renders the whole tree;
+/// snapshot comparisons use that so that deep differences are never hidden.
+fn render_pruned(r : Repr, max_depth : Int32?) -> String {
   let info = r.prune_info(max_depth~)
-  print_content(info.render_repr(threshold).no_wrap())
+  print_content(info.render_repr(default_threshold).no_wrap())
 }
 
 ///|

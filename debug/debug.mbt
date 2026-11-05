@@ -183,6 +183,10 @@ pub impl Debug for SourceLoc with fn to_repr(self) {
 ///
 /// Raises an `InspectError` if the actual `Repr` does not match the expected content.
 ///
+/// The value is rendered in full: unlike `render`'s default, deep subtrees are
+/// not replaced with `...`, so a difference at any depth of the `Repr` fails
+/// the check.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -211,7 +215,9 @@ pub fn debug_inspect(
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
-  let actual = render(obj.to_repr())
+  // Compare the whole value: the depth-limited `render` default would let
+  // values that differ only in deep subtrees render to the same text.
+  let actual = render_pruned(obj.to_repr(), None)
   let want = content.unwrap_or("")
   if actual != want {
     // Only a failing check needs the locations; formatting them is most of
@@ -244,9 +250,14 @@ pub fn[T : Eq + Debug] assert_eq(
       None => {
         let repr_a = Repr(a)
         let repr_b = Repr(b)
-        let diff = pretty_print_delta(diff_repr(repr_a, repr_b), use_ansi=false)
+        // Unpruned, so a difference below the default depth is still shown.
+        let diff = pretty_print_delta(
+          diff_repr(repr_a, repr_b),
+          max_depth=None,
+          use_ansi=false,
+        )
         (
-          $|`\{render(repr_a)} != \{render(repr_b)}`
+          $|`\{render_pruned(repr_a, None)} != \{render_pruned(repr_b, None)}`
           $|diff:
           $|\{diff}
         )
