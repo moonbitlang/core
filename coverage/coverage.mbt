@@ -16,30 +16,32 @@
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
-struct CoverageCounter(FixedArray[UInt32])
+struct CoverageCounter {
+  counts : FixedArray[UInt32]
+}
 
 ///|
 /// Create a new coverage counter with the given size.
 ///
 #coverage.skip
-pub fn CoverageCounter::new(size : Int32) -> CoverageCounter {
-  CoverageCounter(FixedArray::make(size, 0))
+pub fn CoverageCounter::CoverageCounter(size : Int32) -> CoverageCounter {
+  { counts: FixedArray::make(size, 0), }
 }
 
 ///|
 /// Increment the specified tracking index.
 /// The compiler-generated caller must ensure `0 <= idx < size`, where `size`
-/// is the length supplied to `new`. This hot path uses unchecked array access.
+/// is the length supplied to `CoverageCounter`. This hot path uses unchecked array access.
 ///
 #coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int32) -> Unit {
-  let CoverageCounter(self) = self
+  let self = self.counts
   self.unsafe_set(idx, self.unsafe_get(idx) + 1)
 }
 
 ///|
 pub impl Show for CoverageCounter with fn output(self, logger) {
-  let CoverageCounter(self) = self
+  let self = self.counts
   logger.write_char('[')
   for i, v in self {
     if i != 0 {
@@ -145,7 +147,7 @@ pub fn end() -> Unit {
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   for x = counters {
     match x {
-      MCons((_, CoverageCounter(counter)), xs) => {
+      MCons((_, { counts: counter, }), xs) => {
         for i in 0..<counter.length() {
           counter[i] = 0
         }
@@ -187,13 +189,13 @@ fn coverage_log(
 
 ///|
 test "new_counter" {
-  let counter = CoverageCounter::new(2)
+  let counter = CoverageCounter(2)
   inspect(counter.to_string(), content="[0, 0]")
 }
 
 ///|
 test "incr_counter" {
-  let counter = CoverageCounter::new(10)
+  let counter = CoverageCounter(10)
   counter.incr(0)
   counter.incr(9)
   inspect(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
@@ -201,8 +203,8 @@ test "incr_counter" {
 
 ///|
 test "log" {
-  let test_counter_a = CoverageCounter::new(2)
-  let test_counter_b = CoverageCounter::new(2)
+  let test_counter_a = CoverageCounter(2)
+  let test_counter_b = CoverageCounter(2)
   test_counter_a.incr(0)
   test_counter_b.incr(1)
   let counters : MList[(String, CoverageCounter)] = MCons(
@@ -234,8 +236,8 @@ test "backslash escape" {
 
 ///|
 test "reset" {
-  let test_counter_a = CoverageCounter::new(2)
-  let test_counter_b = CoverageCounter::new(2)
+  let test_counter_a = CoverageCounter(2)
+  let test_counter_b = CoverageCounter(2)
   test_counter_a.incr(0)
   test_counter_b.incr(1)
   let counters : MList[(String, CoverageCounter)] = MCons(
