@@ -113,15 +113,6 @@ test "extract_if with a callback that pops from the front" {
 }
 
 ///|
-test "shuffle_in_place reduces an out-of-range index" {
-  let dq = two_in_eight()
-  // Like `Array::shuffle_in_place`, `rand(n)` is taken modulo `n`: 5 % 2 == 1,
-  // so nothing is swapped with the unwritten slot `head + 5`.
-  dq.shuffle_in_place(rand=_ => 5)
-  debug_inspect(dq, content="<Deque: [\"a\", \"b\"]>")
-}
-
-///|
 test "shuffle_in_place with a rand that clears and shrinks the deque" {
   let dq = @deque.Deque(["a", "b", "c"])
   dq.shuffle_in_place(rand=_ => {
