@@ -40,12 +40,19 @@ pub fn String::find(self : String, str : StringView) -> Int32? {
 }
 
 ///|
-/// Returns the offset of the first UTF-16 code unit equal to `code`, or None
-/// when there is none.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// view, of the first code unit equal to `code`. If there is none, it
+/// returns None.
 ///
 /// This searches raw UTF-16 code units and does not combine surrogate pairs:
 /// `code` may be either half of a pair. Use `find` with a one-character string
 /// when searching for a Unicode character.
+///
+/// ```mbt check
+/// test {
+///   inspect("xa😀z"[1:4].find_code_unit(0xDE00), content="Some(2)")
+/// }
+/// ```
 pub fn StringView::find_code_unit(self : StringView, code : UInt16) -> Int32? {
   let found = find_code_unit_from_view(self, 0, self.length(), code)
   if found < 0 {
@@ -56,8 +63,9 @@ pub fn StringView::find_code_unit(self : StringView, code : UInt16) -> Int32? {
 }
 
 ///|
-/// Returns the offset of the first UTF-16 code unit equal to `code`, or None
-/// when there is none.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the first code unit equal to `code`. If there is none, it
+/// returns None.
 ///
 /// This searches raw UTF-16 code units and does not combine surrogate pairs:
 /// `code` may be either half of a pair. Use `find` with a one-character string
@@ -168,8 +176,9 @@ pub fn String::rev_find(self : String, str : StringView) -> Int32? {
 }
 
 ///|
-/// Returns the offset of the last UTF-16 code unit equal to `code`, or None
-/// when there is none.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// view, of the last code unit equal to `code`. If there is none, it
+/// returns None.
 ///
 /// This searches raw UTF-16 code units and does not combine surrogate pairs:
 /// `code` may be either half of a pair. Use `rev_find` with a one-character
@@ -187,8 +196,9 @@ pub fn StringView::rev_find_code_unit(
 }
 
 ///|
-/// Returns the offset of the last UTF-16 code unit equal to `code`, or None
-/// when there is none.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the last code unit equal to `code`. If there is none, it
+/// returns None.
 ///
 /// This searches raw UTF-16 code units and does not combine surrogate pairs:
 /// `code` may be either half of a pair. Use `rev_find` with a one-character
