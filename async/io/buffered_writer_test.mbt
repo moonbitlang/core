@@ -19,7 +19,7 @@ async test "BufferedWriter" {
     let (r, w) = @io.pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let w = @io.BufferedWriter::new(w, size=4)
+      let w = @io.BufferedWriter(w, capacity=4)
       log <+ "2 bytes written\n"
       w.write(b"ab")
       @async.sleep(20)
@@ -59,7 +59,7 @@ async test "BufferedWriter::write_reader" {
     root.spawn_bg() <| () => {
       defer r2.close()
       defer w1.close()
-      let w1 = @io.BufferedWriter::new(w1, size=6)
+      let w1 = @io.BufferedWriter(w1, capacity=6)
       w1.write_reader(r2)
       w1.flush()
     }

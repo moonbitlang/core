@@ -31,3 +31,13 @@ pub extend PipeClosed with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend PipeClosed with @json.ToJson::{to_json}
+
+///|
+/// Create a buffered writer with fixed buffer size `size`.
+#deprecated("Use `BufferedWriter(writer, capacity=...)` instead")
+pub fn[W] BufferedWriter::new(
+  writer : W,
+  size~ : Int32 = 1024,
+) -> BufferedWriter[W] {
+  BufferedWriter(writer, capacity=size)
+}
