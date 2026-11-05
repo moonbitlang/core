@@ -21,7 +21,7 @@ async test "passthrough mode" {
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
-      let conn = @http.ServerConnection::new(conn)
+      let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
       debug_inspect(request.meth, content="Connect")
@@ -57,7 +57,7 @@ async test "passthrough mode remaining data" {
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
-      let conn = @http.ServerConnection::new(conn)
+      let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
       debug_inspect(request.meth, content="Get")
@@ -167,7 +167,7 @@ async test "proxied misc request" {
     }
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((conn, _) => {
-        let conn = @http.ServerConnection::new(conn)
+        let conn = @http.ServerConnection(conn)
         defer conn.close()
         for ;; {
           let request = conn.read_request()
@@ -237,7 +237,7 @@ async test "proxy at an IPv6 address" {
     group.spawn_bg() <| () => {
       defer proxy.close()
       let (conn, _) = proxy.accept()
-      let conn = @http.ServerConnection::new(conn)
+      let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
       debug_inspect(request.meth, content="Connect")
