@@ -79,16 +79,6 @@ pub fn register_hook(
 }
 
 ///|
-/// Kept outside `EventLoop` so its layout stays unchanged.
-let resize_state : @ref.Ref[Resize?] = {
-  let state : @ref.Ref[Resize?] = Ref(None)
-  register_hook(init=() => state.val = Some(Resize::new()), exit=() => {
-    state.val = None
-  })
-  state
-}
-
-///|
 fn EventLoop::new(max_worker_count~ : Int32) -> EventLoop raise {
   let bus = EventBus::new()
   errdefer bus.destroy()
@@ -244,8 +234,7 @@ fn EventLoop::handle_completed_job(self : Self, job_id : Int32) -> Unit {
   guard (job_id & (1 << 31)) == 0 else {
     // signal
     let signal = job_id ^ (1 << 31)
-    if signal == sigwinch {
-      resize_state.val.unwrap().notify()
+    if notify_resize(signal) {
       return
     }
     if self.main is Some(main) {

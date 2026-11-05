@@ -40,11 +40,6 @@ let sigwinch : Int32 = 28
 let sigwinch : Int32 = -1
 
 ///|
-/// The host delivers `SIGWINCH` only after `@tty` opens the terminal
-#cfg(target="wasm")
-let sigwinch : Int32 = if platform is Windows { -1 } else { 28 }
-
-///|
 /// Error raised when current event loop is cancelled by a registered cancellation signal
 pub suberror KilledBySignal {
   KilledBySignal(Int32)
@@ -96,11 +91,18 @@ fn with_sigwinch(signals : ReadOnlyArray[Int32]) -> ReadOnlyArray[Int32] {
 }
 
 ///|
-/// There is no `SIGWINCH` on Windows, and the wasm host delivers it itself
-/// once `@tty` opens the terminal
+/// There is no `SIGWINCH` on Windows, and no `@tty` on wasm
 #cfg(any(target="wasm", platform="windows"))
 fn with_sigwinch(signals : ReadOnlyArray[Int32]) -> ReadOnlyArray[Int32] {
   signals
+}
+
+///|
+/// There is no `@tty` on wasm, so no signal is a resize
+#cfg(target="wasm")
+fn notify_resize(signal : Int32) -> Bool {
+  ignore(signal)
+  false
 }
 
 ///|

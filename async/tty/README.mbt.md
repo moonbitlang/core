@@ -47,8 +47,7 @@ Notes:
 - `Tty` implements `@io.BinaryReader` and `@io.BinaryWriter`. Only one read, through
   `read_event` or the reader methods, may be in progress at a time;
   starting another one aborts the program, as with any other reader.
-- Native and wasm. On wasm it goes through moonrun, and a moonrun `--policy`
-  must set `tty = true`. On Windows `open()` opens the console
+- Native only. On Windows `open()` opens the console
   (`CONIN$`/`CONOUT$`). Console input is converted to the same VT byte stream
   as on Unix, and `Resize` is only reported in raw mode, where input is read
   as console input records. Raw mode needs VT support.

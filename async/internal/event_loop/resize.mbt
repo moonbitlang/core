@@ -58,3 +58,22 @@ fn Resize::new() -> Resize {
 fn Resize::notify(self : Resize) -> Unit {
   ignore(self)
 }
+
+///|
+/// Kept outside `EventLoop` so its layout stays unchanged.
+let resize_state : @ref.Ref[Resize?] = {
+  let state : @ref.Ref[Resize?] = Ref(None)
+  register_hook(init=() => state.val = Some(Resize::new()), exit=() => {
+    state.val = None
+  })
+  state
+}
+
+///|
+/// Record `signal` in `resize_state` if it is `SIGWINCH`.
+/// Return whether it was.
+fn notify_resize(signal : Int32) -> Bool {
+  guard signal == sigwinch else { return false }
+  resize_state.val.unwrap().notify()
+  true
+}

@@ -14,10 +14,9 @@ import {
   "moonbitlang/core/async/internal/c_buffer",
 }
 
-supported_targets = "-all+native+wasm"
+supported_targets = "-all+native"
 
 options(
   "allow-experimental-packages": true,
   experimental: true,
-  targets: { "ffi.native.mbt": [ "native" ], "ffi.wasm.mbt": [ "wasm" ] },
 )

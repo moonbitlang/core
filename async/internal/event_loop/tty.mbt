@@ -14,17 +14,16 @@
 
 ///|
 /// The reading side of a terminal opened by `@tty`.
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 struct Tty {
-  /// non-blocking and registered to the event bus on Unix,
-  /// a console input handle on Windows
+  /// a console input handle
   input : IoHandle
   console_buffer : WindowsConsoleBuffer
 }
 
 ///|
 /// The reading side of a terminal opened by `@tty`.
-#cfg(all(target="native", not(platform="windows")))
+#cfg(not(platform="windows"))
 struct Tty {
   /// non-blocking and registered to the event bus
   input : IoHandle
@@ -32,14 +31,14 @@ struct Tty {
 
 ///|
 /// Wrap the terminal input opened by `@tty`.
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 pub fn Tty::new(input~ : IoHandle) -> Tty {
   { input, console_buffer: WindowsConsoleBuffer(Console), }
 }
 
 ///|
 /// Wrap the terminal input opened by `@tty`.
-#cfg(all(target="native", not(platform="windows")))
+#cfg(not(platform="windows"))
 pub fn Tty::new(input~ : IoHandle) -> Tty {
   { input, }
 }
@@ -61,35 +60,9 @@ pub fn Tty::input_fd(self : Tty) -> @fd_util.Fd {
 /// Return `-1` for a resize, which may be reported after later input.
 /// With `block_resize`, like a blocked signal, a resize does not end the wait
 /// and stays pending until a read without `block_resize`.
-/// `raw` is whether line input is off. On Unix the kernel already applies it
-/// to reads; on Windows input is then read as console input records,
-/// the only source of resizes.
-#cfg(target="wasm")
-pub async fn Tty::read(
-  self : Tty,
-  buf : FixedArray[Byte],
-  offset~ : Int32,
-  len~ : Int32,
-  raw~ : Bool,
-  block_resize~ : Bool,
-  context~ : String,
-) -> Int32 {
-  @coroutine.check_cancellation()
-  if platform is Windows {
-    self.read_windows(buf, offset~, len~, raw~, block_resize~, context~)
-  } else {
-    self.read_unix(buf, offset~, len~, block_resize~, context~)
-  }
-}
-
-///|
-/// Wait for input or a resize, then read input.
-/// Return `-1` for a resize, which may be reported after later input.
-/// With `block_resize`, like a blocked signal, a resize does not end the wait
-/// and stays pending until a read without `block_resize`.
 /// `raw` is whether line input is off: then input is read as console input
 /// records, the only source of resizes.
-#cfg(all(target="native", platform="windows"))
+#cfg(platform="windows")
 pub async fn Tty::read(
   self : Tty,
   buf : FixedArray[Byte],
@@ -109,7 +82,7 @@ pub async fn Tty::read(
 /// With `block_resize`, like a blocked signal, a resize does not end the wait
 /// and stays pending until a read without `block_resize`.
 /// `raw` is whether line input is off; the kernel already applies it to reads.
-#cfg(all(target="native", not(platform="windows")))
+#cfg(not(platform="windows"))
 pub async fn Tty::read(
   self : Tty,
   buf : FixedArray[Byte],
@@ -162,7 +135,7 @@ async fn Tty::read_unix(
 }
 
 ///|
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 async fn Tty::read_windows(
   self : Tty,
   buf : FixedArray[Byte],
@@ -197,13 +170,13 @@ async fn Tty::read_windows(
 
 ///|
 /// `sizeof(INPUT_RECORD)` (20 bytes) in `UInt16` code units of the job buffer
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 const INPUT_RECORD_UNITS : Int32 = 10
 
 ///|
 /// Write `char` to `buf`, or to `pending` if it does not fit.
 /// Return the new number of bytes written to `buf`.
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 fn tty_emit_char(
   console : WindowsConsoleBuffer,
   char : Int32,
@@ -236,7 +209,7 @@ fn tty_emit_char(
 
 ///|
 /// Convert `buffer[:n]` to UTF-8 in `buf`. Return the number of bytes written.
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 fn tty_decode_input(
   console : WindowsConsoleBuffer,
   n : Int32,
@@ -298,7 +271,7 @@ fn tty_decode_input(
 }
 
 ///|
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 async fn Tty::read_console_input(
   self : Tty,
   buf : FixedArray[Byte],
@@ -344,5 +317,5 @@ async fn Tty::read_console_input(
 }
 
 ///|
-#cfg(any(target="wasm", platform="windows"))
+#cfg(platform="windows")
 priv struct ReadConsoleInputJob(Job)
