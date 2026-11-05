@@ -58,8 +58,9 @@ extern "C" fn init_ip_addr(addr : Bytes, ip : UInt32, port : Int32) -> Unit = "m
 fn init_ip_addr(addr : Bytes, ip : UInt32, port : Int32) -> Unit = "moonbitlang/async" "socket/init_ip_addr"
 
 ///|
-/// Create a new IPv4 address
-pub fn Addr::new(ip : UInt32, port : Int32) -> Addr {
+/// Create an IPv4 address from `ip` (in host byte order, e.g. `0x7F000001`
+/// for `127.0.0.1`) and `port`.
+pub fn Addr::from_ipv4(ip : UInt32, port~ : Int32) -> Addr {
   let addr = Bytes::make(ipv4_addr_size, 0)
   init_ip_addr(addr, ip, port)
   Addr(addr)
@@ -202,7 +203,7 @@ fn Addr::family(self : Addr) -> AddrFamily {
 }
 
 ///|
-let ipv4_any : @lazy.Lazy[Addr] = Lazy(() => Addr::new(0, 0))
+let ipv4_any : @lazy.Lazy[Addr] = Lazy(() => Addr::from_ipv4(0, port=0))
 
 ///|
 let ipv6_any : @lazy.Lazy[Addr] = Lazy(() => {
