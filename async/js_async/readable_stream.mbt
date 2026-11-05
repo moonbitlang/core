@@ -191,7 +191,7 @@ pub extend ReadableStream with @io.BinaryReader::{
 /// If the read end of the stream is cancelled from the JavaScript side,
 /// further write operations on the write end will fail with error.
 pub fn JsReadableStream::new_pipe() -> (JsReadableStream, @io.MemoryPipeWrite) {
-  let abort_controller = AbortController::new()
+  let abort_controller = AbortController()
   let abort_signal = abort_controller.signal()
   let (pipe_r, pipe_w) = @io.memory_pipe()
   fn pull(controller : ReadableStreamController) {

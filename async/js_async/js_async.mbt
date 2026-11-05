@@ -83,7 +83,7 @@ pub type AbortSignal
 
 ///|
 /// Create a new abort controller
-pub extern "js" fn AbortController::new() -> AbortController =
+pub extern "js" fn AbortController::AbortController() -> AbortController =
   #| () => new AbortController()
 
 ///|
@@ -202,7 +202,7 @@ pub async fn[X] Promise::wait(
 /// (i.e. the promised returned by `f` should properly handle the passed-in abort signal).
 /// For non-cancellable JavaScript code, use `Promise::wait()` directly.
 pub async fn[X] run_promise(f : (AbortSignal) -> Promise[X]) -> X {
-  let controller = AbortController::new()
+  let controller = AbortController()
   let promise = f(controller.signal())
   promise.wait(abort_controller=controller)
 }

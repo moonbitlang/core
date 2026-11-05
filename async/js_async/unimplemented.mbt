@@ -64,7 +64,7 @@ pub type AbortSignal
 /// Create a new abort controller
 #internal(unimplemented, "unimplemented in native backend")
 #coverage.skip
-pub fn AbortController::new() -> AbortController {
+pub fn AbortController::AbortController() -> AbortController {
   abort("unimplemented in native backend")
 }
 
