@@ -125,3 +125,44 @@ async test "request, status and header lines" {
     ),
   )
 }
+
+///|
+async test "lines with invalid UTF-8" {
+  let log = StringBuilder()
+  for
+    data in [
+      // a header name is checked before it is decoded
+      b"GET / HTTP/1.1\r\n\xff: v\r\n\r\n", b"GET / HTTP/1.1\r\nX: \xff\r\n\r\n",
+      b"GET /\xff HTTP/1.1\r\n\r\n", b"G\xffT / HTTP/1.1\r\n\r\n",
+    ] {
+    let outcome = read_line_outcome(data, async fn(reader) {
+      @debug.to_string(reader.read_request().headers)
+    })
+    log.write_string("\{outcome}\n")
+  }
+  for
+    data in [
+      b"HTTP/2 200\r\n\r\n", b"\xff 200\r\n\r\n", b"HTTP/1.1 2\xff0 OK\r\n\r\n",
+      b"HTTP/1.1 200 \xff\r\n\r\n",
+    ] {
+    let outcome = read_line_outcome(data, async fn(reader) {
+      let r = reader.read_response(auto_decompress=false, request_method=None)
+      "\{r.code} \{r.reason.escape()}"
+    })
+    log.write_string("\{outcome}\n")
+  }
+  inspect(
+    log.to_string(),
+    content=(
+      #|BadRequest
+      #|Malformed(<BytesView: [0xff]>)
+      #|Malformed(<BytesView: [0xff]>)
+      #|BadRequest
+      #|HttpVersionNotSupported("HTTP/2")
+      #|Malformed(<BytesView: [0xff]>)
+      #|BadRequest
+      #|Malformed(<BytesView: [0xff]>)
+      #|
+    ),
+  )
+}
