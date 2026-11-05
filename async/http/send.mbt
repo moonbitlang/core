@@ -112,7 +112,8 @@ const EMPTY_MESSAGE_HEADER_END : Bytes = b"Content-Length: 0\r\n\r\n"
 
 ///|
 /// Error raised when the user is sending a fixed length HTTP message body,
-/// but the actual length of the message body is incorrect.
+/// but the actual length of the message body is incorrect,
+/// or when the `Content-Length` header is not a decimal number.
 #derive(@debug.Debug, @json.ToJson)
 pub suberror IncorrectBodyLength
 
@@ -318,7 +319,11 @@ async fn Sender::send_headers(self : Sender, headers : Headers) -> Int64? {
       continue
     }
     if k == "Content-Length" {
-      let len = @string.parse_int64(v.trim(), base=10)
+      let len_str = v.trim()
+      guard len_str =~ re"^[0-9]+$" else { raise IncorrectBodyLength }
+      let len = @string.parse_int64(len_str, base=10) catch {
+        _ => raise IncorrectBodyLength
+      }
       content_length = Some(len)
     } else if forbidden_headers.contains(k) {
       continue

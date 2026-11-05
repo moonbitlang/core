@@ -87,3 +87,25 @@ test "Parse IPv6 address with ipv4" {
   // Too many groups
   @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:127.0.0.1]:8080"))
 }
+
+///|
+test "Parse address with non-decimal numbers" {
+  // leading zeros stay decimal
+  assert_eq(@socket.Addr::parse("010.0.0.1:080").to_string(), "10.0.0.1:80")
+  assert_eq(
+    @socket.Addr::parse("[::ffff:010.0.0.1]:8080").to_string(),
+    "[::ffff:10.0.0.1]:8080",
+  )
+  // base prefixes, underscores and signs
+  @test.assert_raise(() => @socket.Addr::parse("0x7f.0.0.1:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("0o17.0.0.1:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("1_0.0.0.1:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("+1.0.0.1:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("[::ffff:0x7f.0.0.1]:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("[::0x1]:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("[::1_2]:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:0x8]:8080"))
+  // a zone that is not decimal is looked up as an interface name
+  @test.assert_raise(() => @socket.Addr::parse("[::1%0x1]:8080"))
+  @test.assert_raise(() => @socket.Addr::parse("[::1%1_0]:8080"))
+}

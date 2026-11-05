@@ -993,3 +993,52 @@ async test "reject header injection" {
     )
   }
 }
+
+///|
+async test "send Content-Length that is not a decimal number" {
+  async fn send(value : String) -> String {
+    let mut outcome = "ok"
+    @async.with_task_group() <| group => {
+      let (r, w) = @io.pipe()
+      group.spawn_bg(no_wait=true) <| () => {
+        defer r.close()
+        while r.read() is Some(_) {
+
+        }
+      }
+      defer w.close()
+      let sender = Sender::new(w)
+      sender.send_response(200, "OK", cookies=[], request_method=Get, extra_headers={
+        "Content-Length": value,
+      }) catch {
+        e => {
+          outcome = @debug.to_string(e)
+          return
+        }
+      }
+      sender.write(b"abc")
+      sender.end_body()
+    }
+    outcome
+  }
+
+  let log = StringBuilder()
+  for
+    value in [" 3 ", "03", "+3", "-3", "0x3", "1_0", "", "9223372036854775808"] {
+    log.write_string("\{value.escape()} => \{send(value)}\n")
+  }
+  inspect(
+    log.to_string(),
+    content=(
+      #|" 3 " => ok
+      #|"03" => ok
+      #|"+3" => IncorrectBodyLength
+      #|"-3" => IncorrectBodyLength
+      #|"0x3" => IncorrectBodyLength
+      #|"1_0" => IncorrectBodyLength
+      #|"" => IncorrectBodyLength
+      #|"9223372036854775808" => IncorrectBodyLength
+      #|
+    ),
+  )
+}

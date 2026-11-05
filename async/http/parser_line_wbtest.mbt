@@ -166,3 +166,71 @@ async test "lines with invalid UTF-8" {
     ),
   )
 }
+
+///|
+async test "numeric fields accept plain digits only" {
+  let log = StringBuilder()
+  // RFC 9112: chunk-size = 1*HEXDIG
+  for line in ["1F", "01f", "0x1f", "1_f", "+1f", "-1f", " 1f"] {
+    let data = b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n" +
+      @utf8.encode(line) +
+      b"\r\n0123456789abcdef0123456789abcde\r\n0\r\n\r\n"
+    let outcome = read_line_outcome(data, async fn(reader) {
+      ignore(reader.read_response(auto_decompress=false, request_method=None))
+      reader.read_all().length().to_string()
+    })
+    log.write_string("chunk size \{line.escape()} => \{outcome}\n")
+  }
+  // RFC 9112: status-code = 3DIGIT
+  for code in ["099", "+200", "-200", "2_00", "0200", "20", "0x20"] {
+    let data = b"HTTP/1.1 " + @utf8.encode(code) + b" OK\r\n\r\n"
+    let outcome = read_line_outcome(data, async fn(reader) {
+      let r = reader.read_response(auto_decompress=false, request_method=None)
+      r.code.to_string()
+    })
+    log.write_string("status \{code.escape()} => \{outcome}\n")
+  }
+  // RFC 9110: Content-Length = 1*DIGIT
+  for
+    value in [
+      "10", "010", "1_0", "+10", "-1", "0x10", "10 ", "", "18446744073709551616",
+    ] {
+    let data = b"HTTP/1.1 200 OK\r\nContent-Length: " +
+      @utf8.encode(value) +
+      b"\r\n\r\n0123456789"
+    let outcome = read_line_outcome(data, async fn(reader) {
+      ignore(reader.read_response(auto_decompress=false, request_method=None))
+      reader.read_all().length().to_string()
+    })
+    log.write_string("Content-Length \{value.escape()} => \{outcome}\n")
+  }
+  inspect(
+    log.to_string(),
+    content=(
+      #|chunk size "1F" => 31
+      #|chunk size "01f" => 31
+      #|chunk size "0x1f" => BadRequest
+      #|chunk size "1_f" => BadRequest
+      #|chunk size "+1f" => BadRequest
+      #|chunk size "-1f" => BadRequest
+      #|chunk size " 1f" => BadRequest
+      #|status "099" => 99
+      #|status "+200" => BadRequest
+      #|status "-200" => BadRequest
+      #|status "2_00" => BadRequest
+      #|status "0200" => BadRequest
+      #|status "20" => BadRequest
+      #|status "0x20" => BadRequest
+      #|Content-Length "10" => 10
+      #|Content-Length "010" => 10
+      #|Content-Length "1_0" => BadRequest
+      #|Content-Length "+10" => BadRequest
+      #|Content-Length "-1" => BadRequest
+      #|Content-Length "0x10" => BadRequest
+      #|Content-Length "10 " => BadRequest
+      #|Content-Length "" => BadRequest
+      #|Content-Length "18446744073709551616" => BadRequest
+      #|
+    ),
+  )
+}
