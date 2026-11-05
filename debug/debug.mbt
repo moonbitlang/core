@@ -251,11 +251,7 @@ pub fn[T : Eq + Debug] assert_eq(
         let repr_a = Repr(a)
         let repr_b = Repr(b)
         // Unpruned, so a difference below the default depth is still shown.
-        let diff = pretty_print_delta(
-          diff_repr(repr_a, repr_b),
-          max_depth=None,
-          use_ansi=false,
-        )
+        let diff = pretty_print_delta(diff_repr(repr_a, repr_b), use_ansi=false)
         (
           $|`\{render_pruned(repr_a, None)} != \{render_pruned(repr_b, None)}`
           $|diff:
