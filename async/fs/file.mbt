@@ -340,6 +340,11 @@ impl @io.BinaryWriterImpl for File with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for File with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend File with @io.BinaryWriter::{write, write_reader}
 
 ///|
@@ -371,7 +376,7 @@ pub async fn File::write_at(
 /// Flush all in-memory data of an opened file to disk.
 /// If `only_data` is `true` (`false` by default),
 /// some metadata such as timestamp may not be flushed.
-/// Buf file content and important metadata such as file size are always flushed.
+/// But file content and important metadata such as file size are always flushed.
 pub async fn File::sync(self : File, only_data~ : Bool = false) -> Unit {
   self.io.fsync(only_data~, context="@fs.File::sync()")
 }

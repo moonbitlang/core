@@ -574,6 +574,12 @@ impl @io.BinaryWriterImpl for Tls with fn get_controller(self) {
 }
 
 ///|
+#cfg(not(platform="windows"))
+impl @io.BinaryWriterImpl for Tls with fn flush_partial_data(self) {
+  @io.BinaryWriter::flush_partial_data(self.transport.writer)
+}
+
+///|
 /// Close a TLS connection and release related resource.
 /// THIS FUNCTION MUST BE CALLED BEFORE CLOSING UNDERLYING TRANSPORT!!!
 ///

@@ -16,3 +16,8 @@
 #deprecated
 #doc(hidden)
 pub extend CommandFailed with Show::{output}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend WriteToProcess with @io.BinaryWriter::{flush_partial_data}

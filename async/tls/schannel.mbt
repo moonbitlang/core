@@ -439,6 +439,12 @@ impl @io.BinaryWriterImpl for Tls with fn get_controller(self) {
 
 ///|
 #cfg(platform="windows")
+impl @io.BinaryWriterImpl for Tls with fn flush_partial_data(self) {
+  @io.BinaryWriter::flush_partial_data(self.transport.writer)
+}
+
+///|
+#cfg(platform="windows")
 #borrow(ch)
 extern "C" fn Schannel::shutdown(ch : Schannel) -> Int32 = "moonbit_rt_schannel_shutdown"
 

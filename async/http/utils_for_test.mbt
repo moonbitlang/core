@@ -67,7 +67,7 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
           return
         }
         "/no-response-body" => {
-          conn..send_response(200, "OK").flush()
+          conn..send_response(200, "OK").flush_partial_data()
           @async.sleep(10000)
           return
         }
@@ -80,11 +80,11 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> Int32 {
           conn.send_response(200, "OK")
           log <+ "server: sending \{meth} response part 1\n"
           conn.text.write("\{meth} response part 1\n")
-          conn.flush()
+          conn.flush_partial_data()
           @async.sleep(300)
           log <+ "server: sending \{meth} response part 2\n"
           conn.text.write("\{meth} response part 2\n")
-          conn.flush()
+          conn.flush_partial_data()
         }
         "/informational" => {
           conn

@@ -749,7 +749,13 @@ impl @io.BinaryWriterImpl for Conn with fn get_controller(self) {
 }
 
 ///|
-pub extend Conn with @io.BinaryWriter::{write, write_reader}
+impl @io.BinaryWriterImpl for Conn with fn flush_partial_data(self) {
+  self.flush()
+  @io.BinaryWriter::flush_partial_data(self.transport)
+}
+
+///|
+pub extend Conn with @io.BinaryWriter::{write, write_reader, flush_partial_data}
 
 ///|
 /// Convenient helper for sending a single text message.

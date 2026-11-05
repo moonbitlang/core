@@ -88,6 +88,11 @@ impl @io.BinaryWriterImpl for DummyWriter with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for DummyWriter with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 impl @io.BinaryWriterImpl for DummyWriter with fn raw_write_impl(
   self,
   buf,

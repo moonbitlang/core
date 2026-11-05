@@ -114,4 +114,4 @@ pub extend Tls with @io.BinaryReader::{
 pub impl @io.BinaryWriter for Tls
 
 ///|
-pub extend Tls with @io.BinaryWriter::{write, write_reader}
+pub extend Tls with @io.BinaryWriter::{write, write_reader, flush_partial_data}
