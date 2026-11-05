@@ -7,7 +7,6 @@ import {
 #cfg(any(target="native", target="wasm", target="js"))
 import {
   "moonbitlang/core/buffer",
-  "moonbitlang/core/string",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/tls",
 }
@@ -15,7 +14,7 @@ import {
 #cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/int",
-  "moonbitlang/core/bytes",
+  "moonbitlang/core/string",
   "moonbitlang/core/set",
   "moonbitlang/core/cmp",
   "moonbitlang/core/encoding/utf8",
@@ -71,7 +70,6 @@ options(
     "deprecated.mbt": [ "native", "js", "wasm" ],
     "parser.mbt": [ "native", "wasm" ],
     "parser_wbtest.mbt": [ "native", "wasm" ],
-    "parser_line_wbtest.mbt": [ "native", "wasm" ],
     "parser_trailer_wbtest.mbt": [ "native", "wasm" ],
     "proxy_test.mbt": [ "native", "wasm" ],
     "request.mbt": [ "native", "js", "wasm" ],
