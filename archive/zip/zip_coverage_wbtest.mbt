@@ -960,3 +960,34 @@ test "CRC-32 computation honours ZIP cancellation" {
   @test.assert_eq(kind, Cancelled)
   assert_true(polls >= 4)
 }
+
+///|
+test "single-pass ZIP entry decoding polls cancellation while decoding" {
+  let data = Bytes::makei(1 << 20, i => (i / 7 % 251).to_byte())
+  let compressed = @flate.deflate_all(data)
+  let mut polls = 0
+  let decoded = inflate_declared_entry(
+    compressed,
+    data.length(),
+    data.length(),
+    EntryUncompressedBytes,
+    data.length(),
+    () => {
+      polls += 1
+      false
+    },
+  )
+  @test.assert_eq(decoded, data)
+  // At least one poll per 4 KiB of output.
+  assert_true(polls >= data.length() / 4096)
+}
+
+///|
+test "single-pass ZIP entry decoding preallocates only reachable sizes" {
+  assert_true(single_pass_reachable(0, 0, 0))
+  assert_true(single_pass_reachable(10, 10, 1))
+  assert_true(single_pass_reachable(1031, 2000, 0))
+  assert_true(!single_pass_reachable(11, 10, 1))
+  assert_true(!single_pass_reachable(1032, 2000, 0))
+  assert_true(!single_pass_reachable(0x7FFF_0000, 0x7FFF_FFFF, 12))
+}

@@ -85,6 +85,17 @@ test "compress output matches the original framing byte for byte" {
               "\{name} \{@debug.to_string(strategy)} dictionary=\{dictionary is Some(_)} fast_store=\{fast_store}",
             )
           }
+          // The fallback for inputs too large to reserve a bound for.
+          let fallback = zlib_frame(
+            input,
+            strategy,
+            dictionary,
+            fast_store,
+            reserve_limit=-1,
+          )
+          guard fallback == expected else {
+            fail("fallback \{name} \{@debug.to_string(strategy)}")
+          }
           @test.assert_eq(decompress(actual, dictionary?), input)
         }
       }
