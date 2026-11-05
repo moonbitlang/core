@@ -589,17 +589,13 @@ pub fn[V] SortedSet::eachi(
 ///|
 /// Converts the set to an array.
 pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
-  if self.size == 0 {
-    return []
-  }
-  let arr = Array::unsafe_make_uninit(self.size)
-  let mut n = 0
+  // Treat size as a capacity hint; only expose elements actually written.
+  let arr = Array(capacity=self.size)
   fn dfs(root : Node[V]?) -> Unit {
     if root is Some(root) {
       dfs(root.left)
       let v = root.value
-      arr.unsafe_set(n, v)
-      n += 1
+      arr.push(v)
       dfs(root.right)
     }
   }
