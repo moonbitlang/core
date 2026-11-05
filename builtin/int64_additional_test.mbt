@@ -37,7 +37,7 @@ test "int64 conversions and defaults" {
   let u_hi : UInt64 = 0x1_0000_0000UL
   @test.assert_eq(u_hi.clz(), 31)
   @test.assert_eq(u_hi.ctz(), 32)
-  @test.assert_eq(UInt64::trunc_double(1234567.89), 1234567UL)
+  @test.assert_eq(1234567.89.to_uint64(), 1234567UL)
 }
 
 ///|
