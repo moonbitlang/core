@@ -17,9 +17,10 @@
 // Hash-Array-Mapped-Trie (HAMT) is a persistent hash-table data structure.
 // It is a trie over the hash of keys (i.e. strings of binary digits)
 //
-// Every level in a HAMT can have up to 32 branches (5 digits),
-// so HAMT has a tree height of at most 7,
-// and is more efficient compared to most other tree data structures.
+// Every level in a HAMT can have up to 32 branches (5 digits).
+// The path uses six 5-bit segments (the low 30 bits of the hash), so a
+// HAMT has at most 6 levels of `Branch` above a `Flat` or a collision
+// `Leaf`, and is more efficient compared to most other tree data structures.
 //
 // HAMT uses bitmap-based sparse array to avoid space waste
 //
@@ -341,7 +342,9 @@ fn[K : Eq + Hash, V] hash_map_from_array(
 }
 
 ///|
-/// Filter entries that satisfy the predicate
+/// Filter entries that satisfy the predicate.
+///
+/// If the predicate keeps every entry, the original map is returned.
 #alias(filter_with_key, deprecated)
 pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
@@ -352,6 +355,9 @@ pub fn[K, V] HashMap::filter(
       Leaf(key1, value1, bucket) => {
         let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
         if pred(key1, value1) {
+          if new_bucket.length() == bucket.length() {
+            return Some(node)
+          }
           match new_bucket {
             Empty => Some(Flat(key1, value1, @path.exhausted))
             _ => Some(Leaf(key1, value1, new_bucket))
@@ -373,17 +379,37 @@ pub fn[K, V] HashMap::filter(
       Branch(children) =>
         match children.filter(go) {
           None => None
+          Some(new_children) if same_children(new_children, children) =>
+            Some(node)
           Some(new_children) => Some(collapse_branch(new_children))
         }
     }
   }
 
-  {
-    data: match self.data {
-      None => None
-      Some(node) => go(node)
-    },
+  match self.data {
+    None => self
+    Some(node) =>
+      match go(node) {
+        Some(new_node) if physical_equal(new_node, node) => self
+        new_data => { data: new_data, }
+      }
   }
+}
+
+///|
+/// Whether `filter` kept every child of a branch unchanged. `Node` is a
+/// reference type, so `physical_equal` means "the same subtree".
+fn[K, V] same_children(
+  new_children : @sparse_array.SparseArray[Node[K, V]],
+  children : @sparse_array.SparseArray[Node[K, V]],
+) -> Bool {
+  guard new_children.elem_info == children.elem_info else { return false }
+  for i in 0..<children.data.length() {
+    guard physical_equal(new_children.data[i], children.data[i]) else {
+      return false
+    }
+  }
+  true
 }
 
 ///|
@@ -540,9 +566,16 @@ fn[K : Eq, V] Node::remove_with_path(
 }
 
 ///|
+/// Returns true if the map has no entries. O(1), unlike `length`.
+pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
+  self.data is None
+}
+
+///|
 /// Calculate the size of a map.
 ///
-/// WARNING: this operation is `O(N)` in map size
+/// WARNING: this operation is `O(N)` in map size; use `is_empty` to test
+/// for emptiness
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
   fn node_size(node : Node[K, V]) {
