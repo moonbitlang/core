@@ -37,12 +37,12 @@ fn parse_ipv6(
   ip_str : StringView,
 ) -> (FixedArray[Byte], String?) raise InvalidAddr {
   // Extract optional zone suffix
-  let (ip_str, interface) = if ip_str.find("%") is Some(ip_end) {
-    let interface = ip_str[ip_end + 1:]
-    guard interface.length() > 0 else { raise InvalidAddr }
-    (ip_str[:ip_end], Some(interface.to_owned()))
-  } else {
-    (ip_str, None)
+  let (ip_str, interface) = lexmatch ip_str {
+    (re"^" + (re"[^%]*" as ip_str) + re"%", after=interface) => {
+      guard interface.length() > 0 else { raise InvalidAddr }
+      (ip_str, Some(interface.to_owned()))
+    }
+    ip_str => (ip_str, None)
   }
 
   let ip_bytes = match ip_str.split("::").collect() {
@@ -193,20 +193,26 @@ fn parse_ipv6_zone_suffix(zone : StringView, context~ : String) -> UInt32 raise 
 fn parse_ipv4_to_bytes(
   ip_str : StringView,
 ) -> (UInt32, UInt32, UInt32, UInt32) raise InvalidAddr {
-  let parts = ip_str.split(".").collect()
-  guard parts.length() == 4 else { raise InvalidAddr }
+  guard ip_str =~ (
+    re"^" +
+    (re"[^.]*" as a) +
+    re"\." +
+    (re"[^.]*" as b) +
+    re"\." +
+    (re"[^.]*" as c) +
+    re"\." +
+    (re"[^.]*" as d) +
+    re"$"
+  ) else {
+    raise InvalidAddr
+  }
   fn parse_octal(x : StringView) raise InvalidAddr {
     let value = @string.parse_uint(x) catch { _ => raise InvalidAddr }
     guard value < 256 else { raise InvalidAddr }
     value
   }
 
-  return (
-    parse_octal(parts[0]),
-    parse_octal(parts[1]),
-    parse_octal(parts[2]),
-    parse_octal(parts[3]),
-  )
+  (parse_octal(a), parse_octal(b), parse_octal(c), parse_octal(d))
 }
 
 ///|

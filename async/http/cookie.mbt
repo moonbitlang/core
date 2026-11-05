@@ -46,11 +46,16 @@ pub fn Cookie::Cookie(
 /// failing the whole response.
 #cfg(any(target="native", target="wasm"))
 fn Cookie::parse(line : StringView) -> Cookie? {
-  let (name_value, attrs) = match line.split_once(";") {
-    Some(pair) => pair
-    None => (line, "")
+  guard line =~ (
+    re"^" +
+    (re"[^;=]*" as name) +
+    re"=" +
+    (re"[^;]*" as value) +
+    re";?",
+    after=attrs,
+  ) else {
+    return None
   }
-  guard name_value.split_once("=") is Some((name, value)) else { return None }
   let name = name.to_owned()
   let value = value.to_owned()
   if attrs is "" {
@@ -66,23 +71,17 @@ fn Cookie::parse(line : StringView) -> Cookie? {
   let extensions = []
   for attr in attrs.split(";") {
     let attr = attr.trim()
-    if attr.split_once("=") is Some((name, value)) {
-      match name.to_lower() {
-        "path" => path = Some(value.to_owned())
-        "expires" => expires_raw = Some(value.to_owned())
-        "max-age" =>
-          if parse_max_age(value) is Some(value) {
-            max_age = Some(value)
-          }
-        "domain" => domain = Some(value.to_owned())
-        _ => extensions.push(attr.to_owned())
-      }
-    } else {
-      match attr.to_lower() {
-        "secure" => secure = true
-        "httponly" => http_only = true
-        _ => extensions.push(attr.to_owned())
-      }
+    lexmatch attr {
+      (re"^(?i:path)=", after=value) => path = Some(value.to_owned())
+      (re"^(?i:expires)=", after=value) => expires_raw = Some(value.to_owned())
+      (re"^(?i:max-age)=", after=value) =>
+        if parse_max_age(value) is Some(value) {
+          max_age = Some(value)
+        }
+      (re"^(?i:domain)=", after=value) => domain = Some(value.to_owned())
+      re"^(?i:secure)$" => secure = true
+      re"^(?i:httponly)$" => http_only = true
+      _ => extensions.push(attr.to_owned())
     }
   }
   Some({
@@ -104,10 +103,7 @@ fn Cookie::parse(line : StringView) -> Cookie? {
 /// is ignored as well, since it cannot be represented.
 #cfg(any(target="native", target="wasm"))
 fn parse_max_age(value : StringView) -> Int64? {
-  let digits = if value.has_prefix("-") { value[1:] } else { value }
-  guard digits.length() > 0 && digits.iter().all(c => c is ('0'..<='9')) else {
-    return None
-  }
+  guard value =~ re"^-?[0-9]+$" else { return None }
   try @string.parse_int64(value) catch {
     _ => None
   } noraise {

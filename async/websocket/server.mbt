@@ -41,11 +41,11 @@ pub async fn Conn::from_http_server(
 
   // Validate WebSocket handshake headers
   guard request.headers.get("upgrade") is Some(upgrade) &&
-    upgrade.to_lower() == "websocket" else {
+    upgrade =~ re"^(?i:websocket)$" else {
     bad_request("Missing or invalid Upgrade header")
   }
   guard request.headers.get("connection") is Some(connection) &&
-    connection.to_lower().contains("upgrade") else {
+    connection =~ (re"(?i:upgrade)", before=_, after=_) else {
     bad_request("Missing or invalid Connection header")
   }
   guard request.headers.get("sec-websocket-version") is Some(version) &&
