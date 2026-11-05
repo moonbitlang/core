@@ -17,9 +17,10 @@
 // Hash-Array-Mapped-Trie (HAMT) is a persistent hash-table data structure.
 // It is a trie over the hash of keys (i.e. strings of binary digits)
 //
-// Every level in a HAMT can have up to 32 branches (5 digits),
-// so HAMT has a tree height of at most 7,
-// and is more efficient compared to most other tree data structures.
+// Every level in a HAMT can have up to 32 branches (5 digits).
+// The path uses six 5-bit segments (the low 30 bits of the hash), so a
+// HAMT has at most 6 levels of `Branch` above a `Flat` or a collision
+// `Leaf`, and is more efficient compared to most other tree data structures.
 //
 // HAMT uses bitmap-based sparse array to avoid space waste
 //
