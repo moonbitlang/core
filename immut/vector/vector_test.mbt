@@ -806,3 +806,39 @@ test "Default is the empty vector" {
     ),
   )
 }
+
+///|
+test "makei calls f in ascending index order" {
+  // sizes with only a tail, a tail plus one or several leaves, no tail, and
+  // a tree deeper than one level
+  for n in [1, 32, 33, 34, 64, 100, 1024, 1100] {
+    let order : Array[Int32] = []
+    let v = @vector.makei(n, i => {
+      order.push(i)
+      i
+    })
+    @test.assert_eq(order, Array::makei(n, i => i))
+    @test.assert_eq(v.to_array(), Array::makei(n, i => i))
+  }
+  // a counter-based callback fills the vector in index order
+  let mut counter = 0
+  let v = @vector.makei(34, _ => {
+    counter += 1
+    counter - 1
+  })
+  @test.assert_eq(v.to_array(), Array::makei(34, i => i))
+  // the error from the lowest failing index is the one raised
+  let msg = try
+    @vector.makei(100, i => {
+      if i >= 40 {
+        fail("index \{i}")
+      }
+      i
+    })
+  catch {
+    Failure(msg) => msg
+  } noraise {
+    _ => "no error"
+  }
+  inspect(msg.has_suffix("index 40"), content="true")
+}

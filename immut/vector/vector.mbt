@@ -70,6 +70,10 @@ pub fn[A] Vector::make(len : Int32, value : A) -> Vector[A] {
 
 ///|
 /// Create a persistent vector with a given length and a function to generate values.
+///
+/// `f` is called exactly once per index, in ascending order
+/// (`f(0)`, `f(1)`, ..., `f(len - 1)`), like `Array::makei`. If `f` raises,
+/// the error from the lowest failing index is propagated.
 #as_free_fn
 pub fn[A] Vector::makei(
   len : Int32,
@@ -78,7 +82,7 @@ pub fn[A] Vector::makei(
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
-  let tail = FixedArray::makei(tail_len, i => f(tree_len + i))
+  // Build the leaves before the tail so that `f` sees ascending indices.
   let (tree, shift) = if tree_len == 0 {
     (Tree::empty(), 0)
   } else {
@@ -92,6 +96,7 @@ pub fn[A] Vector::makei(
     let shift = shift_of_leaf_count(leaves.length())
     (from_leaves(leaves, shift), shift)
   }
+  let tail = FixedArray::makei(tail_len, i => f(tree_len + i))
   make_t(tree, tail, len, shift)
 }
 
