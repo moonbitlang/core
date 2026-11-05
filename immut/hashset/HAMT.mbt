@@ -152,24 +152,13 @@ fn[A : Eq] build_hashset_node_by_add(
   start : Int32,
   end : Int32,
   depth : Int32,
-  reverse : Bool,
 ) -> Node[A] {
-  if reverse {
-    for i = end, node = (None : Node[A]?) {
-      if i == start {
-        break node.unwrap()
-      }
-      let node = entries[i - 1].add_to_node(node, depth)
-      continue i - 1, Some(node)
+  for i = start, node = (None : Node[A]?) {
+    if i == end {
+      break node.unwrap()
     }
-  } else {
-    for i = start, node = (None : Node[A]?) {
-      if i == end {
-        break node.unwrap()
-      }
-      let node = entries[i].add_to_node(node, depth)
-      continue i + 1, Some(node)
-    }
+    let node = entries[i].add_to_node(node, depth)
+    continue i + 1, Some(node)
   }
 }
 
@@ -179,14 +168,13 @@ fn[A : Eq] build_hashset_node_range(
   start : Int32,
   end : Int32,
   depth : Int32,
-  reverse : Bool,
 ) -> Node[A] {
   if end - start == 1 {
     let entry = entries[start]
     return Flat(entry.value, entry.path.advance(depth))
   }
   if depth == 5 {
-    return build_hashset_node_by_add(entries, start, end, depth, reverse)
+    return build_hashset_node_by_add(entries, start, end, depth)
   }
   let starts = FixedArray::make(32, 0)
   for i in start..<end {
@@ -228,7 +216,6 @@ fn[A : Eq] build_hashset_node_range(
     starts[first_idx],
     nexts[first_idx],
     depth + 1,
-    reverse,
   )
   if child_count == 1 {
     return match first_child {
@@ -248,7 +235,6 @@ fn[A : Eq] build_hashset_node_range(
       starts[idx],
       nexts[idx],
       depth + 1,
-      reverse,
     )
     continue idx + 1, out + 1
   }
@@ -262,14 +248,10 @@ fn[A : Eq + Hash] hash_set_from_iter_by_add(iter : Iter[A]) -> HashSet[A] {
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
-  for n = arr.length(), set = new() {
-    match (n, set) {
-      (0, set) => break set
-      (n, set) => {
-        let k = arr[n - 1]
-        continue n - 1, set.add(k)
-      }
-    }
+  for i = 0, set = new(); i < arr.length(); {
+    continue i + 1, set.add(arr[i])
+  } nobreak {
+    set
   }
 }
 
@@ -282,9 +264,7 @@ fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
     let value = arr[i]
     { value, path: @path.of(value), }
   })
-  {
-    data: Some(build_hashset_node_range(entries, 0, entries.length(), 0, true)),
-  }
+  { data: Some(build_hashset_node_range(entries, 0, entries.length(), 0)), }
 }
 
 ///|
@@ -612,6 +592,9 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
 
 ///|
 /// Creates a hash set from an iterator of values.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -627,11 +610,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
   if entries.is_empty() {
     new()
   } else {
-    {
-      data: Some(
-        build_hashset_node_range(entries, 0, entries.length(), 0, false),
-      ),
-    }
+    { data: Some(build_hashset_node_range(entries, 0, entries.length(), 0)), }
   }
 }
 
@@ -660,6 +639,9 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 /// Creates a hash set from an array of values.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 ///
 /// # Example
 ///
