@@ -50,7 +50,7 @@ pub fn String::find(self : String, str : StringView) -> Int32? {
 ///
 /// ```mbt check
 /// test {
-///   inspect("xa😀z"[1:4].find_code_unit(0xDE00), content="Some(2)")
+///   debug_inspect("xa😀z"[1:4].find_code_unit(0xDE00), content="Some(2)")
 /// }
 /// ```
 pub fn StringView::find_code_unit(self : StringView, code : UInt16) -> Int32? {
