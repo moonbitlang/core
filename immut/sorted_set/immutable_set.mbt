@@ -77,10 +77,10 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
 let sorted_set_sort_build_threshold = 64
 
 ///|
-/// Sort an owned buffer in place and build a set from it, keeping the LAST
+/// Sort an owned buffer in place and build a set from it, keeping the FIRST
 /// element of each equal run. `stable_sort` preserves the insertion order of
 /// equal elements, so that representative matches building the set by repeated
-/// `add` in reverse, which is what the array constructor does. The caller must
+/// `add` in order, which is what the array constructor does. The caller must
 /// own `buf` and not use it afterwards, since the elements are permuted in
 /// place.
 fn[A : Compare] sorted_set_from_unsorted_buffer(
@@ -92,7 +92,7 @@ fn[A : Compare] sorted_set_from_unsorted_buffer(
 }
 
 ///|
-// Drop duplicate runs from a sorted buffer in place, keeping the LAST element
+// Drop duplicate runs from a sorted buffer in place, keeping the FIRST element
 // of each run. The unique elements are packed at the front and their count is
 // returned; the tail is left untouched. Indices are monotonic
 // (write <= start <= end < len), so the unchecked accessors stay in bounds.
@@ -106,7 +106,7 @@ fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
     } nobreak {
       end
     }
-    buf.unsafe_set(write, buf.unsafe_get(end))
+    buf.unsafe_set(write, buf.unsafe_get(start))
     write += 1
     continue end + 1
   }
@@ -117,8 +117,8 @@ fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
 fn[A : Compare] sorted_set_from_array_by_add(
   array : ArrayView[A],
 ) -> SortedSet[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
-    continue i - 1, set.add(array[i])
+  for i = 0, set = Empty; i < array.length(); {
+    continue i + 1, set.add(array[i])
   } nobreak {
     set
   }
@@ -126,6 +126,9 @@ fn[A : Compare] sorted_set_from_array_by_add(
 
 ///|
 /// Initialize a `SortedSet` from an array.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 ///
 /// # Example
 ///
@@ -175,7 +178,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         end
       }
-      result.push(array[end])
+      result.push(array[start])
       continue end + 1
     }
   } else {
@@ -186,7 +189,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         start
       }
-      result.push(array[end])
+      result.push(array[start])
       continue start - 1
     }
   }
