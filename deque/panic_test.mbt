@@ -81,3 +81,12 @@ test "panic shuffle_in_place with a negative random index" {
   dq.pop_front() |> ignore
   dq.shuffle_in_place(rand=_ => -1)
 }
+
+///|
+test "panic shuffle_in_place with a random index above the range" {
+  @deque.Deque(
+    // `rand(2)` must return 0 or 1; 5 would reach the unwritten slot `head + 5`.
+    ["a", "b"],
+    capacity=8,
+  ).shuffle_in_place(rand=_ => 5)
+}
