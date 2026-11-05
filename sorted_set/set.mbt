@@ -30,6 +30,9 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 ///|
 /// Initialize a set from an array.
 ///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -100,7 +103,8 @@ fn[V] new_node_update_height(
 // Manipulations
 
 ///|
-/// Adds a value to the set. If the value already exists, it is replaced.
+/// Adds a value to the set. If an equal value is already present, the set is
+/// left unchanged (the existing value is kept).
 #owned(value)
 pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
@@ -636,6 +640,9 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 
 ///|
 /// Creates a set from an iterator of values.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -832,7 +839,6 @@ fn[V : Compare] add_node(root : Node[V]?, value : V) -> (Node[V]?, Bool) {
     Some(n) => {
       let comp = value.compare(n.value)
       if comp == 0 {
-        n.value = value
         (Some(n), false)
       } else {
         let (l, r) = (n.left, n.right)
