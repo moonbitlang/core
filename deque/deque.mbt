@@ -2550,8 +2550,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 ///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
-/// A result of `rand(n)` outside `0..<n` is reduced modulo `n`, as
-/// `Array::shuffle_in_place` does; if that leaves it negative, the call aborts.
+/// Aborts if `rand(n)` returns a value outside `0..<n`.
 #locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
@@ -2561,12 +2560,10 @@ pub fn[A] Deque::shuffle_in_place(
   let { buf, head, len, } = self
   let cap = buf.length()
   for i in len>..1 {
-    // As in `Array::shuffle_in_place`, reduce the index into `0..=i`, so it
-    // never reaches a slot outside the deque's elements.
-    let j = rand(i + 1) % (i + 1)
-    if j < 0 {
-      index_out_of_bounds(i + 1, j)
-    }
+    // `rand` is user code: check its result, so that a `j` outside `0..=i`
+    // cannot reach a slot outside the deque's elements.
+    let j = rand(i + 1)
+    guard j >= 0 && j <= i else { index_out_of_bounds(i + 1, j) }
     // Swap elements
     let i_pos = wrap_index(head + i, cap)
     let j_pos = wrap_index(head + j, cap)
@@ -2583,7 +2580,8 @@ pub fn[A] Deque::shuffle_in_place(
 ///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
-/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
+/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1.
+/// Aborts if it returns a value outside that range.
 pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int32) -> Int32) -> Deque[A] {
   // Create a copy of the original deque
   let new_deque = self.copy()
