@@ -626,3 +626,17 @@ test "JSON round-trip" {
     _ => fail("expected JsonDecodeError")
   }
 }
+
+///|
+test "add keeps the existing equal element" {
+  let s : @sorted_set.SortedSet[Keyed] = SortedSet([{ key: 1, payload: 10, }])
+  s.add({ key: 1, payload: 20, })
+  @test.assert_eq(s.length(), 1)
+  @test.assert_eq(s.iter().map(v => v.payload).to_array(), [10])
+  let s2 : @sorted_set.SortedSet[Keyed] = SortedSet([
+    { key: 2, payload: 1, },
+    { key: 1, payload: 2, },
+    { key: 2, payload: 3, },
+  ])
+  @test.assert_eq(s2.iter().map(v => v.payload).to_array(), [2, 1])
+}
