@@ -551,6 +551,7 @@ pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::exact_view(String, start? : Int32, end? : Int32) -> StringView
 pub fn String::find(String, StringView) -> Int32?
 pub fn String::find_by(String, (Char) -> Bool raise?) -> Int32? raise?
+pub fn String::find_code_unit(String, UInt16) -> Int32?
 pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
 #alias(from_iterator, deprecated)
@@ -586,6 +587,7 @@ pub fn String::rev(String) -> String
 pub fn String::rev_after(String, StringView) -> StringView?
 pub fn String::rev_before(String, StringView) -> StringView?
 pub fn String::rev_find(String, StringView) -> Int32?
+pub fn String::rev_find_code_unit(String, UInt16) -> Int32?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn String::rev_iter(String) -> Iter[Char]
@@ -1426,6 +1428,7 @@ pub fn StringView::escape(Self, quote? : Bool) -> Self
 pub fn StringView::exact_view(Self, start? : Int32, end? : Int32) -> Self
 pub fn StringView::find(Self, Self) -> Int32?
 pub fn StringView::find_by(Self, (Char) -> Bool raise?) -> Int32? raise?
+pub fn StringView::find_code_unit(Self, UInt16) -> Int32?
 pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 #alias(from_iterator, deprecated)
@@ -1458,6 +1461,7 @@ pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_after(Self, Self) -> Self?
 pub fn StringView::rev_before(Self, Self) -> Self?
 pub fn StringView::rev_find(Self, Self) -> Int32?
+pub fn StringView::rev_find_code_unit(Self, UInt16) -> Int32?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(Self) -> Iter[Char]
