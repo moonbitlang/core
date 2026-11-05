@@ -526,9 +526,16 @@ fn[K : Eq, V] Node::remove_with_path(
 }
 
 ///|
+/// Returns true if the map has no entries. O(1), unlike `length`.
+pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
+  self.data is None
+}
+
+///|
 /// Calculate the size of a map.
 ///
-/// WARNING: this operation is `O(N)` in map size
+/// WARNING: this operation is `O(N)` in map size; use `is_empty` to test
+/// for emptiness
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
   fn node_size(node : Node[K, V]) {
