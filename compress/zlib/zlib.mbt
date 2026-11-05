@@ -112,20 +112,55 @@ fn adler32_cancellable(
 }
 
 ///|
-/// Wrap a raw DEFLATE stream `deflated` of `input` in the zlib header/trailer.
+/// The largest input compressed into reserved frame storage. At this size
+/// `deflate_bound` adds under 0.1% for every strategy, so the frame fits an
+/// Int with room to spare.
+const RESERVED_FRAME_MAX_INPUT : Int32 = 0x7000_0000
+
+///|
+/// Compress `input` into a complete zlib stream. The DEFLATE stream is
+/// written straight after a reserved header, then the frame is copied once
+/// into its exact size. Larger inputs, or a stream that would not fit
+/// `deflate_bound` (which it always does), frame a separate DEFLATE result.
 fn zlib_frame(
   input : BytesView,
-  deflated : Bytes,
+  strategy : @flate.Strategy,
   dictionary : BytesView?,
+  fast_store : Bool,
+  reserve_limit~ : Int32 = RESERVED_FRAME_MAX_INPUT,
 ) -> Bytes {
-  let out = @buffer.Buffer()
-  for byte in zlib_header(dictionary) {
-    out.write_byte(byte)
+  let header = zlib_header(dictionary)
+  let header_size = header.length()
+  if input.length() <= reserve_limit {
+    let bound = @flate.deflate_bound(input.length(), strategy~)
+    let work = FixedArray::make(header_size + bound + 4, b'\x00')
+    let body = work.mut_view(start=header_size, end=header_size + bound)
+    let compressor = @flate.Compressor(strategy~, dictionary?, fast_store~)
+    if compressor.compress_into(input, body) is Some(deflated) {
+      header.blit_to(work, len=header_size)
+      put_trailer(work, header_size + deflated, input)
+      return Bytes::from_array(work[:header_size + deflated + 4])
+    }
   }
-  out.write_bytes(deflated)
+  let deflated = @flate.deflate_all(input, strategy~, dictionary?, fast_store~)
+  let out = FixedArray::make(header_size + deflated.length() + 4, b'\x00')
+  header.blit_to(out, len=header_size)
+  out.blit_from_bytes(header_size, deflated, 0, deflated.length())
+  put_trailer(out, header_size + deflated.length(), input)
+  out.unsafe_reinterpret_as_bytes()
+}
+
+///|
+/// Write the big-endian Adler-32 of `input` at `offset`.
+fn put_trailer(
+  out : FixedArray[Byte],
+  offset : Int32,
+  input : BytesView,
+) -> Unit {
   let adler = @checksum.adler32(input)
-  out.write_uint_be(adler)
-  out.to_bytes()
+  for i in 0..<4 {
+    out[offset + i] = (adler >> (24 - 8 * i)).to_byte()
+  }
 }
 
 ///|
@@ -138,11 +173,7 @@ pub fn compress(
   dictionary? : BytesView,
   fast_store~ : Bool = false,
 ) -> Bytes {
-  zlib_frame(
-    input,
-    @flate.deflate_all(input, strategy~, dictionary?, fast_store~),
-    dictionary,
-  )
+  zlib_frame(input, strategy, dictionary, fast_store)
 }
 
 ///|
