@@ -177,21 +177,6 @@ test "HAMT::from_iter empty" {
 }
 
 ///|
-fn rebuild_from_array_by_add(
-  data : Array[(Int32, Int32)],
-) -> @hashmap.HashMap[Int32, Int32] {
-  for n = data.length(), map = @hashmap.new() {
-    match n {
-      0 => break map
-      _ => {
-        let (k, v) = data[n - 1]
-        continue n - 1, map.add(k, v)
-      }
-    }
-  }
-}
-
-///|
 fn rebuild_from_iter_by_add(
   data : Array[(Int32, Int32)],
 ) -> @hashmap.HashMap[Int32, Int32] {
@@ -203,9 +188,9 @@ fn rebuild_from_iter_by_add(
 }
 
 ///|
-test "HAMT::from_array matches reverse add with duplicates" {
+test "HAMT::from_array matches forward add with duplicates" {
   let data = Array::makei(256, i => ((i * 1103515245 + 12345) & 63, i))
-  @test.assert_eq(@hashmap.HashMap(data), rebuild_from_array_by_add(data))
+  @test.assert_eq(@hashmap.HashMap(data), rebuild_from_iter_by_add(data))
 }
 
 ///|
@@ -218,9 +203,20 @@ test "HAMT::from_iter matches forward add with duplicates" {
 }
 
 ///|
-test "HAMT::from_array duplicate keeps first value" {
+test "HAMT::from_array duplicate keeps last value" {
   let map = @hashmap.HashMap([(1, "first"), (1, "second")])
-  @test.assert_eq(map.get(1), Some("first"))
+  @test.assert_eq(map.get(1), Some("second"))
+}
+
+///|
+test "HAMT bulk from_array and from_iter agree on last value" {
+  // Large enough to take the bulk-build path rather than repeated `add`.
+  let data = Array::makei(100, i => (i % 50, i))
+  let from_array = @hashmap.HashMap(data)
+  let from_iter = @hashmap.from_iter(data.iter())
+  @test.assert_eq(from_array.get(0), Some(50))
+  @test.assert_eq(from_iter.get(0), Some(50))
+  @test.assert_eq(from_array, from_iter)
 }
 
 ///|
@@ -1146,4 +1142,49 @@ test "HAMT::merge is alias for union" {
   debug_inspect(merged.get("a"), content="Some(1)")
   debug_inspect(merged.get("b"), content="Some(3)")
   debug_inspect(merged.get("c"), content="Some(4)")
+}
+
+///|
+/// Equal by `id` only, and every key hashes alike, so all keys share one
+/// collision bucket; `label` shows which key was stored.
+priv struct LabeledCollidingKey {
+  id : Int32
+  label : String
+}
+
+///|
+impl Eq for LabeledCollidingKey with fn equal(self, other) {
+  self.id == other.id
+}
+
+///|
+impl Hash for LabeledCollidingKey with fn hash_combine(_, hasher) {
+  hasher.combine_int(0)
+}
+
+///|
+test "HAMT duplicate key in a collision bucket keeps the first key, last value" {
+  let a_first = { id: 1, label: "first", }
+  let b = { id: 2, label: "b", }
+  let a_last = { id: 1, label: "last", }
+  let c = { id: 3, label: "c", }
+  let stored = (map : @hashmap.HashMap[LabeledCollidingKey, Int32]) => {
+    let out = []
+    for k, v in map {
+      if k.id == 1 {
+        out.push((k.label, v))
+      }
+    }
+    out
+  }
+  // `a` as the bucket's head entry, and as an entry in its tail.
+  for
+    pairs in [
+      [(a_first, 1), (b, 2), (a_last, 3)],
+      [(a_first, 1), (b, 2), (c, 4), (a_last, 3)],
+      [(b, 2), (a_first, 1), (c, 4), (a_last, 3)],
+    ] {
+    @test.assert_eq(stored(HashMap(pairs)), [("first", 3)])
+    @test.assert_eq(stored(@hashmap.from_iter(pairs.iter())), [("first", 3)])
+  }
 }

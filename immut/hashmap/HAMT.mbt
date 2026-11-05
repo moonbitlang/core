@@ -147,15 +147,20 @@ fn[K : Eq, V] Node::add_with_path(
   path : @path.Path,
 ) -> Node[K, V] {
   match self {
+    // An equal key keeps the stored key and takes the new value, as `Flat`
+    // does; bucket order is irrelevant to `Eq`, so the entry is updated in
+    // place.
     Leaf(key1, value1, bucket) =>
       if key == key1 {
-        Leaf(key, value, bucket)
+        Leaf(key1, value, bucket)
+      } else if bucket.find_index(kv => kv.0 == key) is Some(index) {
+        Leaf(
+          key1,
+          value1,
+          bucket.mapi((i, kv) => if i == index { (kv.0, value) } else { kv }),
+        )
       } else {
-        let new_bucket = match bucket.find_index(kv => kv.0 == key) {
-          None => bucket
-          Some(index) => bucket.remove_at(index)
-        }
-        Leaf(key, value, new_bucket.prepend((key1, value1)))
+        Leaf(key, value, bucket.prepend((key1, value1)))
       }
     Flat(key1, value1, path1) =>
       if path == path1 && key == key1 {
@@ -198,24 +203,13 @@ fn[K : Eq, V] build_hashmap_node_by_add(
   start : Int32,
   end : Int32,
   depth : Int32,
-  reverse : Bool,
 ) -> Node[K, V] {
-  if reverse {
-    for i = end, node = (None : Node[K, V]?) {
-      if i == start {
-        break node.unwrap()
-      }
-      let node = entries[i - 1].add_to_node(node, depth)
-      continue i - 1, Some(node)
+  for i = start, node = (None : Node[K, V]?) {
+    if i == end {
+      break node.unwrap()
     }
-  } else {
-    for i = start, node = (None : Node[K, V]?) {
-      if i == end {
-        break node.unwrap()
-      }
-      let node = entries[i].add_to_node(node, depth)
-      continue i + 1, Some(node)
-    }
+    let node = entries[i].add_to_node(node, depth)
+    continue i + 1, Some(node)
   }
 }
 
@@ -225,14 +219,13 @@ fn[K : Eq, V] build_hashmap_node_range(
   start : Int32,
   end : Int32,
   depth : Int32,
-  reverse : Bool,
 ) -> Node[K, V] {
   if end - start == 1 {
     let entry = entries[start]
     return Flat(entry.key, entry.value, entry.path.advance(depth))
   }
   if depth == 5 {
-    return build_hashmap_node_by_add(entries, start, end, depth, reverse)
+    return build_hashmap_node_by_add(entries, start, end, depth)
   }
   let starts = FixedArray::make(32, 0)
   for i in start..<end {
@@ -274,7 +267,6 @@ fn[K : Eq, V] build_hashmap_node_range(
     starts[first_idx],
     nexts[first_idx],
     depth + 1,
-    reverse,
   )
   if child_count == 1 {
     return match first_child {
@@ -294,7 +286,6 @@ fn[K : Eq, V] build_hashmap_node_range(
       starts[idx],
       nexts[idx],
       depth + 1,
-      reverse,
     )
     continue idx + 1, out + 1
   }
@@ -312,14 +303,11 @@ fn[K : Eq + Hash, V] hash_map_from_iter_by_add(
 fn[K : Eq + Hash, V] hash_map_from_array_by_add(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  for n = arr.length(), map = new() {
-    match (n, map) {
-      (0, map) => break map
-      (n, map) => {
-        let (k, v) = arr[n - 1]
-        continue n - 1, map.add(k, v)
-      }
-    }
+  for i = 0, map = new(); i < arr.length(); {
+    let (k, v) = arr[i]
+    continue i + 1, map.add(k, v)
+  } nobreak {
+    map
   }
 }
 
@@ -335,9 +323,7 @@ fn[K : Eq + Hash, V] hash_map_from_array(
     let (k, v) = kv
     { key: k, value: v, path: @path.of(k), }
   })
-  {
-    data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0, true)),
-  }
+  { data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0)), }
 }
 
 ///|
@@ -439,7 +425,8 @@ pub fn[K, V, A] HashMap::map(
 ///|
 /// Add a key-value pair to the hashmap.
 ///
-/// If a pair with the same key already exists, the old one is replaced
+/// If the key is already present, its value is replaced; the existing key is
+/// kept.
 #owned(value)
 pub fn[K : Eq + Hash, V] HashMap::add(
   self : HashMap[K, V],
@@ -910,6 +897,9 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 
 ///|
 /// Creates a hash map from an iterator of key-value pairs.
+///
+/// If a key appears more than once, the later value overrides the earlier one
+/// (the key that was seen first is kept), as if the pairs were `add`ed in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -927,11 +917,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
   if entries.is_empty() {
     new()
   } else {
-    {
-      data: Some(
-        build_hashmap_node_range(entries, 0, entries.length(), 0, false),
-      ),
-    }
+    { data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0)), }
   }
 }
 
@@ -963,6 +949,9 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 
 ///|
 /// Creates a hash map from an array of key-value pairs.
+///
+/// If a key appears more than once, the later value overrides the earlier one
+/// (the key that was seen first is kept), as if the pairs were `add`ed in order.
 ///
 /// # Example
 ///
