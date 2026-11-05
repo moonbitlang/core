@@ -90,5 +90,6 @@ options(
     "unimplemented.mbt": [ "wasm-gc" ],
     "worker_wbtest.mbt": [ "native", "wasm", "js" ],
     "thread_pool.wasm.mbt": [ "wasm" ],
+    "io_bounds_wbtest.mbt": [ "wasm" ],
   },
 )
