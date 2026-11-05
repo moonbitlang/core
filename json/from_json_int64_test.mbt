@@ -185,3 +185,16 @@ test "Int64/UInt64 round-trip through ToJson" {
   let u : UInt64 = @json.from_json(Json(18446744073709551615UL))
   inspect(u, content="18446744073709551615")
 }
+
+///|
+test "Int64/UInt64 FromJson fall back to the value when repr has no digits" {
+  // `Json::number` accepts any `repr`, including one that is not a digit run
+  // (a bare sign, or an empty string); the value is used instead.
+  let bare_sign = Json::number(7.0, repr="-")
+  let empty = Json::number(7.0, repr="")
+  inspect(
+    "\{decode_int64(bare_sign)} | \{decode_uint64(bare_sign)}",
+    content="7 | 7",
+  )
+  inspect("\{decode_int64(empty)} | \{decode_uint64(empty)}", content="7 | 7")
+}
