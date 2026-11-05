@@ -371,7 +371,9 @@ struct NodeJsReaddirOptions {
 ///|
 struct NodeJsFsPromises {
   readFile : (String, NodeJsReadFileOptions) -> @js_async.Promise[String]
-  readdir : (String, NodeJsReaddirOptions) -> @js_async.Promise[Array[String]]
+  readdir : (String, NodeJsReaddirOptions) -> @js_async.Promise[
+    FixedArray[String],
+  ]
 }
 
 ///|
