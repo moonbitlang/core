@@ -174,7 +174,7 @@ fn parse_full_ipv6_to_bytes(
 
 ///|
 fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
-  guard !group.is_empty() && group.length() <= 4 else { raise InvalidAddr }
+  guard group =~ re"^[0-9A-Fa-f]{1,4}$" else { raise InvalidAddr }
   @string.parse_uint(group, base=16) catch {
     _ => raise InvalidAddr
   }
@@ -182,6 +182,7 @@ fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
 
 ///|
 fn parse_ipv6_zone_suffix(zone : StringView, context~ : String) -> UInt32 raise {
+  guard zone =~ re"^[0-9]+$" else { return if_nametoindex(zone, context~) }
   try @string.parse_uint(zone) catch {
     _ => if_nametoindex(zone, context~)
   } noraise {
@@ -195,13 +196,13 @@ fn parse_ipv4_to_bytes(
 ) -> (UInt32, UInt32, UInt32, UInt32) raise InvalidAddr {
   guard ip_str =~ (
     re"^" +
-    (re"[^.]*" as a) +
+    (re"[0-9]+" as a) +
     re"\." +
-    (re"[^.]*" as b) +
+    (re"[0-9]+" as b) +
     re"\." +
-    (re"[^.]*" as c) +
+    (re"[0-9]+" as c) +
     re"\." +
-    (re"[^.]*" as d) +
+    (re"[0-9]+" as d) +
     re"$"
   ) else {
     raise InvalidAddr

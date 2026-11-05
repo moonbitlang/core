@@ -169,11 +169,11 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       }
       let len_str = lexmatch @utf8.decode(len_bytes) {
         re"^" +
-        (re"[^;]*?" as len_str) +
+        (re"[0-9A-Fa-f]+" as len_str) +
         re"[ \t]*" +
         CHUNK_EXTENSIONS +
         re"$" => len_str
-        re"^[^;]*$" as len_str => len_str
+        re"^[0-9A-Fa-f]+$" as len_str => len_str
         _ => raise BadRequest
       }
       let next_chunk_len = @string.parse_uint64(len_str, base=16) catch {
@@ -323,7 +323,10 @@ fn Reader::setup_message_body(
 ) -> Unit raise {
   let content_length = match headers.get("Content-Length") {
     None => None
-    Some(value) => Some(@string.parse_uint64(value, base=10))
+    Some(value) => {
+      guard value =~ re"^[0-9]+$" else { raise BadRequest }
+      Some(@string.parse_uint64(value, base=10) catch { _ => raise BadRequest })
+    }
   }
   let chunked = match headers.get("Transfer-Encoding") {
     None => false
@@ -438,7 +441,7 @@ async fn Reader::read_response(
     raise @io.ReaderClosed
   }
   let (code, reason) = lexmatch response_line {
-    (reb"^HTTP/1\.[01] " + (reb"[^ ]*" as code) + reb" ", after=reason) =>
+    (reb"^HTTP/1\.[01] " + (reb"[0-9]{3}" as code) + reb" ", after=reason) =>
       (code, reason)
     (reb"^HTTP/1\.[01] ", after=_) => raise BadRequest
     (reb"^" + (reb"[^ ]*" as protocol) + reb" ", after=_) =>
