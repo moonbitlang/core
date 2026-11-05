@@ -303,9 +303,8 @@ fn[K : Eq + Hash, V] hash_map_from_iter_by_add(
 fn[K : Eq + Hash, V] hash_map_from_array_by_add(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  for i = 0, map = new(); i < arr.length(); {
-    let (k, v) = arr[i]
-    continue i + 1, map.add(k, v)
+  for (k, v) in arr; map = new() {
+    continue map.add(k, v)
   } nobreak {
     map
   }
