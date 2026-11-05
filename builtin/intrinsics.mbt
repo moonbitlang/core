@@ -920,6 +920,24 @@ pub impl Default for Int32 with fn default() = "%i32_default"
 pub fn Int32::to_double(self : Int32) -> Double = "%i32_to_f64"
 
 ///|
+/// Returns the integer itself. Every other integer type, and `Byte`, `Char`
+/// and `Bool`, has a `to_int`: with this one, code that does not know whether
+/// a value is a `Byte`, a `UInt16` or an `Int`, such as generated code reading
+/// a table of either, can write `x.to_int()` for all of them. It costs nothing.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((-42).to_int(), content="-42")
+///   let small : Bytes = [7]
+///   let wide : ReadOnlyArray[Int32] = [700]
+///   inspect(small[0].to_int() + wide[0].to_int(), content="707")
+/// }
+/// ```
+pub fn Int32::to_int(self : Int32) -> Int32 = "%identity"
+
+///|
 /// reinterpret the signed int as unsigned int, when the value is
 /// non-negative, i.e, 0..=2^31-1, the value is the same. When the
 /// value is negative, it turns into a large number,

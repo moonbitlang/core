@@ -216,6 +216,7 @@ pub fn Int32::sub(Int32, Int32) -> Int32
 pub fn Int32::to_byte(Int32) -> Byte
 pub fn Int32::to_char(Int32) -> Char?
 pub fn Int32::to_double(Int32) -> Double
+pub fn Int32::to_int(Int32) -> Int32
 pub fn Int32::to_int64(Int32) -> Int64
 pub fn Int32::to_string(Int32, radix? : Int32) -> String
 #deprecated
