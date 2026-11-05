@@ -328,10 +328,7 @@ pub async fn ClientConnection::request(
     Trace => "TRACE"
     Patch => "PATCH"
     Extension(ext) => {
-      guard ext.length() > 0 else { raise InvalidMethod(ext) }
-      for c in ext.code_units() {
-        guard is_token_char(c) else { raise InvalidMethod(ext) }
-      }
+      guard ext =~ (re"^" + TOKEN + re"$") else { raise InvalidMethod(ext) }
       ext
     }
   }

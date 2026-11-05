@@ -39,17 +39,16 @@ pub suberror UriParseError {
 
 ///|
 fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
-  guard uri.find("://") is Some(protocol_len) else { raise InvalidFormat }
-  let protocol = match uri[:protocol_len] {
-    "http" => Http
-    "https" => Https
-    protocol => raise UnsupportedProtocol(protocol.to_owned())
+  let (protocol, uri) = lexmatch uri {
+    (re"^http://", after=uri) => (Http, uri)
+    (re"^https://", after=uri) => (Https, uri)
+    (re"^" + (re".*?" as protocol) + re"://", after=_) =>
+      raise UnsupportedProtocol(protocol.to_owned())
+    _ => raise InvalidFormat
   }
-  let uri = uri[protocol_len + 3:]
-  let (host, path) = if uri.find("/") is Some(i) {
-    uri.split_at(i)
-  } else {
-    (uri, "/")
+  let (host, path) = lexmatch uri {
+    re"^" + (re"[^/]*" as host) + (re"/.*" as path) + re"$" => (host, path)
+    host => (host, "/")
   }
   (protocol, host.to_owned(), path)
 }

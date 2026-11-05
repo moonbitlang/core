@@ -167,12 +167,14 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       guard self.transport.read_until(b"\r\n") is Some(len_bytes) else {
         raise @io.ReaderClosed
       }
-      let len_str = @utf8.decode(len_bytes)
-      let len_str = if len_str.find(";") is Some(semi_index) {
-        validate_chunk_extension(len_str[semi_index:])
-        len_str[:semi_index].trim_end(chars=" \t")
-      } else {
-        len_str
+      let len_str = lexmatch @utf8.decode(len_bytes) {
+        re"^" +
+        (re"[^;]*?" as len_str) +
+        re"[ \t]*" +
+        CHUNK_EXTENSIONS +
+        re"$" => len_str
+        re"^[^;]*$" as len_str => len_str
+        _ => raise BadRequest
       }
       let next_chunk_len = @string.parse_uint64(len_str, base=16) catch {
         _ => raise BadRequest
@@ -294,18 +296,11 @@ async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
       // empty line indicates end of header
       break
     }
-    guard header_line.find(b":") is Some(colon_index) else { raise BadRequest }
-    let key = CaseInsensitiveString(@utf8.decode(header_line[:colon_index]))
-    if !is_valid_http_header_field_name(key.0) {
+    guard header_line =~ (reb"^" + (TOKEN_BYTES as key) + reb": ?", after=value) else {
       raise BadRequest
     }
-    let value = if colon_index + 1 == header_line.length() {
-      ""
-    } else if header_line[colon_index + 1] == b' ' {
-      @utf8.decode(header_line[colon_index + 2:])
-    } else {
-      @utf8.decode(header_line[colon_index + 1:])
-    }
+    let key = CaseInsensitiveString(@utf8.decode(key))
+    let value = @utf8.decode(value)
     if key == "Set-Cookie" {
       if Cookie::parse(value) is Some(cookie) {
         cookies.push(cookie)
@@ -380,8 +375,17 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
   guard self.transport.read_until(b"\r\n") is Some(request_line) else {
     raise @io.ReaderClosed
   }
-  guard request_line.find(b" ") is Some(meth_len) else { raise BadRequest }
-  let meth = match request_line[:meth_len] {
+  guard request_line =~ (
+    reb"^" +
+    (TOKEN_BYTES as meth) +
+    reb" " +
+    (reb"[^ ]*" as path) +
+    reb" ",
+    after=protocol,
+  ) else {
+    raise BadRequest
+  }
+  let meth = match meth {
     b"GET" => Get
     b"HEAD" => Head
     b"POST" => Post
@@ -391,18 +395,10 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
     b"OPTIONS" => Options
     b"TRACE" => Trace
     b"PATCH" => Patch
-    name => {
-      guard name.length() > 0 else { raise BadRequest }
-      for c in name {
-        guard is_token_char(c.to_uint16()) else { raise BadRequest }
-      }
-      Extension(@utf8.decode(name))
-    }
+    name => Extension(@utf8.decode(name))
   }
-  let request_line = request_line[meth_len + 1:]
-  guard request_line.find(b" ") is Some(path_len) else { raise BadRequest }
-  let path = @utf8.decode(request_line[:path_len])
-  match request_line[path_len + 1:] {
+  let path = @utf8.decode(path)
+  match protocol {
     b"HTTP/1.1" | b"HTTP/1.0" => ()
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
   }
@@ -441,17 +437,18 @@ async fn Reader::read_response(
   guard self.transport.read_until(b"\r\n") is Some(response_line) else {
     raise @io.ReaderClosed
   }
-  guard response_line.find(b" ") is Some(protocol_len) else { raise BadRequest }
-  match response_line[:protocol_len] {
-    b"HTTP/1.1" | b"HTTP/1.0" => ()
-    protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
-  }
-  let response_line = response_line[protocol_len + 1:]
-  guard response_line.find(b" ") is Some(code_len) else { raise BadRequest }
-  let code = @string.parse_int(@utf8.decode(response_line[:code_len]), base=10) catch {
+  let (code, reason) = lexmatch response_line {
+    (reb"^HTTP/1\.[01] " + (reb"[^ ]*" as code) + reb" ", after=reason) =>
+      (code, reason)
+    (reb"^HTTP/1\.[01] ", after=_) => raise BadRequest
+    (reb"^" + (reb"[^ ]*" as protocol) + reb" ", after=_) =>
+      raise HttpVersionNotSupported(@utf8.decode(protocol))
     _ => raise BadRequest
   }
-  let reason = @utf8.decode(response_line[code_len + 1:])
+  let code = @string.parse_int(@utf8.decode(code), base=10) catch {
+    _ => raise BadRequest
+  }
+  let reason = @utf8.decode(reason)
   let (headers, cookies) = self.read_headers()
   if should_not_have_body(request_method, code) {
     self.body = Empty
