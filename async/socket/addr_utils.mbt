@@ -171,7 +171,7 @@ fn parse_full_ipv6_to_bytes(
 
 ///|
 fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
-  guard !group.is_empty() && group.length() <= 4 else { raise InvalidAddr }
+  guard group =~ re"^[0-9A-Fa-f]{1,4}$" else { raise InvalidAddr }
   @string.parse_uint(group, radix=16) catch {
     _ => raise InvalidAddr
   }
@@ -179,10 +179,9 @@ fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
 
 ///|
 fn parse_ipv6_zone_suffix(zone : StringView, context~ : String) -> UInt32 raise {
-  try @string.parse_uint(zone) catch {
+  guard zone =~ re"^[0-9]+$" else { return if_nametoindex(zone, context~) }
+  @string.parse_uint(zone, radix=10) catch {
     _ => if_nametoindex(zone, context~)
-  } noraise {
-    index => index
   }
 }
 
@@ -192,17 +191,18 @@ fn parse_ipv4_to_bytes(
 ) -> (UInt32, UInt32, UInt32, UInt32) raise InvalidAddr {
   let parts = ip_str.split(".").collect()
   guard parts.length() == 4 else { raise InvalidAddr }
-  fn parse_octal(x : StringView) raise InvalidAddr {
-    let value = @string.parse_uint(x) catch { _ => raise InvalidAddr }
+  fn parse_octet(x : StringView) raise InvalidAddr {
+    guard x =~ re"^[0-9]+$" else { raise InvalidAddr }
+    let value = @string.parse_uint(x, radix=10) catch { _ => raise InvalidAddr }
     guard value < 256 else { raise InvalidAddr }
     value
   }
 
   return (
-    parse_octal(parts[0]),
-    parse_octal(parts[1]),
-    parse_octal(parts[2]),
-    parse_octal(parts[3]),
+    parse_octet(parts[0]),
+    parse_octet(parts[1]),
+    parse_octet(parts[2]),
+    parse_octet(parts[3]),
   )
 }
 

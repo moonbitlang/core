@@ -180,6 +180,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       } else {
         len_str
       }
+      guard len_str =~ re"^[0-9A-Fa-f]+$" else { raise BadRequest }
       let next_chunk_len = @string.parse_uint64(len_str, radix=16) catch {
         _ => raise BadRequest
       }
@@ -339,7 +340,14 @@ fn Reader::setup_message_body(
 ) -> Unit raise {
   let content_length = match headers.get("Content-Length") {
     None => None
-    Some(value) => Some(@string.parse_uint64(value, radix=10))
+    Some(value) => {
+      guard value =~ re"^[0-9]+$" else { raise BadRequest }
+      Some(
+        @string.parse_uint64(value, radix=10) catch {
+          _ => raise BadRequest
+        },
+      )
+    }
   }
   let chunked = match headers.get("Transfer-Encoding") {
     None => false
@@ -458,11 +466,20 @@ async fn Reader::read_response(
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
   }
   let response_line = response_line[protocol_len + 1:]
-  guard response_line.find(b" ") is Some(code_len) else { raise BadRequest }
-  let code = @string.parse_int(@utf8.decode(response_line[:code_len]), radix=10) catch {
-    _ => raise BadRequest
+  guard response_line
+    is [
+      b'0'..<=b'9' as hundreds,
+      b'0'..<=b'9' as tens,
+      b'0'..<=b'9' as ones,
+      b' ',
+      .. reason,
+    ] else {
+    raise BadRequest
   }
-  let reason = @utf8.decode(response_line[code_len + 1:])
+  let code = (hundreds.to_int() - '0') * 100 +
+    (tens.to_int() - '0') * 10 +
+    (ones.to_int() - '0')
+  let reason = @utf8.decode(reason)
   let (headers, cookies) = self.read_headers()
   if should_not_have_body(request_method, code) {
     self.body = Empty
