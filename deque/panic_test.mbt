@@ -73,3 +73,16 @@ test "panic blit_to with overflowing source range" {
 test "panic drain with overflowing range" {
   @deque.from_array([1, 2, 3]).drain(start=1, len=0x7fffffff) |> ignore
 }
+
+///|
+test "panic shuffle with random index in unused capacity" {
+  let dq = @deque.Deque([(1, "a"), (2, "b")], capacity=8)
+  dq.shuffle_in_place(rand=_ => 4)
+}
+
+///|
+test "panic shuffle with negative random index" {
+  let dq = @deque.Deque([(1, "a"), (2, "b")], capacity=8)
+  dq.push_front((0, "z"))
+  dq.shuffle_in_place(rand=_ => -1)
+}
