@@ -134,14 +134,23 @@ pub impl ToJson for Bytes with fn to_json(self : Bytes) -> Json {
 }
 
 ///|
+/// Lowercase hex digit for `d` in `0..<16`, matching `Byte::to_hex`.
+fn hex_digit(d : Int32) -> Char {
+  (if d < 10 { d + '0' } else { d - 10 + 'a' }).unsafe_to_char()
+}
+
+///|
 pub impl ToJson for BytesView with fn to_json(self) -> Json {
   let sb = StringBuilder()
   for byte in self {
     if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
       sb.write_char(byte.to_char())
     } else {
-      sb.write_string("\\x")
-      sb.write_string(byte.to_hex())
+      let b = byte.to_int()
+      sb.write_char('\\')
+      sb.write_char('x')
+      sb.write_char(hex_digit(b >> 4))
+      sb.write_char(hex_digit(b & 0xF))
     }
   }
   Json::string(sb.to_string())
