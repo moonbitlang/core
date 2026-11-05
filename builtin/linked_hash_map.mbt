@@ -73,6 +73,9 @@ struct Map[K, V] {
 // immediately before calling, so `shift_back` has a local caller-based proof
 // that does not depend on the list invariant. It carries that proof at its
 // definition, and it is what makes its `set_entry` call sound.
+//
+// `map` reads stored indices from a list its callback may have modified, so it
+// range-checks each one itself right before its unchecked access.
 
 ///|
 let default_init_capacity = 8
@@ -873,13 +876,12 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::unsafe_make_uninit(self.size)
-  let mut i = 0
+  // Treat size as a capacity hint; only expose elements actually written.
+  let arr = Array(capacity=self.size)
   for x = self.head {
     match x {
       Some({ key, value, next, .. }) => {
-        arr.unsafe_set(i, (key, value))
-        i += 1
+        arr.push((key, value))
         continue next
       }
       None => break
@@ -937,25 +939,35 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 /// If `f` raises, iteration stops immediately and the error propagates.
 /// This method does not modify `self`.
 ///
-/// `f` must not structurally modify `self` (insert or remove keys, or clear the
-/// map), including through aliases. Doing so results in undefined behavior.
+/// `f` must not modify `self` (insert or remove keys, or clear the map),
+/// including through aliases: the result is then unspecified, though
+/// memory-safe.
 pub fn[K, V, V2] Map::map(
   self : Map[K, V],
   f : (K, V) -> V2 raise?,
 ) -> Map[K, V2] raise? {
+  let { size, capacity, capacity_mask, grow_at, .. } = self
   // copy structure
   let other = {
-    capacity: self.capacity,
-    entries: FixedArray::make(self.capacity, None),
-    size: self.size,
-    capacity_mask: self.capacity_mask,
-    grow_at: self.grow_at,
+    capacity,
+    entries: FixedArray::make(capacity, None),
+    size: 0,
+    capacity_mask,
+    grow_at,
     head: None,
-    tail: self.tail,
+    tail: -1,
   }
-  guard self.head is Some(first) else { return other }
-  for entry = first, previous = (None : Entry[K, V2]?) {
-    let { prev, next, psl, hash, key, value, } = entry
+  // If `f` modifies `self`, the links and slots read below may be stale. The
+  // result must still be well-formed, because `to_array` trusts `size` and the
+  // list: link each entry to the one written before it, derive `psl` from its
+  // slot, skip a slot that is out of range or already taken, and write at most
+  // `size` entries.
+  let mut tail = -1
+  let mut written = 0
+  for x = self.head, remaining = size, previous = (None : Entry[K, V2]?) {
+    guard remaining > 0 && x is Some({ next, hash, key, value, .. }) else {
+      break
+    }
     // The next entry's back-link identifies this entry's table slot.
     // For the last entry, the map stores that slot in `tail`.
     let idx = match next {
@@ -963,17 +975,28 @@ pub fn[K, V, V2] Map::map(
       None => self.tail
     }
     let new_value = f(key, value)
-    let new_entry = { prev, next: None, psl, hash, key, value: new_value, }
-    other.entries[idx] = Some(new_entry)
+    guard idx >= 0 && idx < capacity && other.entries.unsafe_get(idx) is None else {
+      continue next, remaining - 1, previous
+    }
+    let new_entry = {
+      prev: tail,
+      next: None,
+      psl: (idx - hash) & capacity_mask,
+      hash,
+      key,
+      value: new_value,
+    }
+    other.entries.unsafe_set(idx, Some(new_entry))
     match previous {
       Some(previous) => previous.next = Some(new_entry)
       None => other.head = Some(new_entry)
     }
-    match next {
-      Some(next) => continue next, Some(new_entry)
-      None => break
-    }
+    tail = idx
+    written += 1
+    continue next, remaining - 1, Some(new_entry)
   }
+  other.tail = tail
+  other.size = written
   other
 }
 

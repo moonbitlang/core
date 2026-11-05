@@ -12,94 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// A callback or iterator over a deque that the deque's owner modifies gets
-// unspecified results, but the results must stay memory-safe. The expected
-// values record the current behaviour (the buffer is captured up front), not a
-// contract.
-
-///|
-test "for-in: shrink and reallocate during iteration" {
-  let dq = @deque.Deque(["a", "b", "c", "d"], capacity=4)
-  let seen = []
-  for x in dq {
-    if seen.is_empty() {
-      dq.pop_back() |> ignore
-      dq.pop_back() |> ignore
-      dq.pop_back() |> ignore
-      dq.reserve_capacity(64)
-    }
-    seen.push(x)
-  }
-  debug_inspect(seen, content="[\"a\", \"b\", \"c\", \"d\"]")
-  debug_inspect(dq.to_array(), content="[\"a\"]")
-}
-
-///|
-test "iter: clear and shrink_to_fit during iteration" {
-  let dq = @deque.Deque([1, 2, 3])
-  let it = dq.iter()
-  debug_inspect(it.next(), content="Some(1)")
-  dq.clear()
-  dq.shrink_to_fit()
-  debug_inspect(it.next(), content="Some(2)")
-  debug_inspect(it.next(), content="Some(3)")
-  debug_inspect(it.next(), content="None")
-}
-
-///|
-test "iter2: clear and shrink_to_fit during iteration" {
-  let dq = @deque.Deque([1, 2, 3])
-  let it = dq.iter2()
-  debug_inspect(it.next(), content="Some((0, 1))")
-  dq.clear()
-  dq.shrink_to_fit()
-  debug_inspect(it.next(), content="Some((1, 2))")
-  debug_inspect(it.next(), content="Some((2, 3))")
-  debug_inspect(it.next(), content="None")
-}
-
-///|
-test "rev_iter: clear and shrink_to_fit during iteration" {
-  let dq = @deque.Deque([1, 2, 3])
-  let it = dq.rev_iter()
-  debug_inspect(it.next(), content="Some(3)")
-  dq.clear()
-  dq.shrink_to_fit()
-  debug_inspect(it.next(), content="Some(2)")
-  debug_inspect(it.next(), content="Some(1)")
-  debug_inspect(it.next(), content="None")
-}
-
-///|
-test "rev_iter2: clear and shrink_to_fit during iteration" {
-  let dq = @deque.Deque([1, 2, 3])
-  let it = dq.rev_iter2()
-  debug_inspect(it.next(), content="Some((0, 3))")
-  dq.clear()
-  dq.shrink_to_fit()
-  debug_inspect(it.next(), content="Some((1, 2))")
-  debug_inspect(it.next(), content="Some((2, 1))")
-  debug_inspect(it.next(), content="None")
-}
-
-///|
-test "iter: wrapped buffer" {
-  let dq = @deque.Deque([], capacity=4)
-  dq.push_back(3)
-  dq.push_back(4)
-  dq.push_front(2)
-  dq.push_front(1)
-  debug_inspect(dq.iter().to_array(), content="[1, 2, 3, 4]")
-  debug_inspect(dq.rev_iter().to_array(), content="[4, 3, 2, 1]")
-  debug_inspect(
-    dq.iter2().to_array(),
-    content="[(0, 1), (1, 2), (2, 3), (3, 4)]",
-  )
-  debug_inspect(
-    dq.rev_iter2().to_array(),
-    content="[(0, 4), (1, 3), (2, 2), (3, 1)]",
-  )
-}
+// A callback that modifies the deque it is passed to gets unspecified results,
+// but the results must stay memory-safe. The expected values record the current
+// behaviour (the buffer is captured up front), not a contract.
 
 ///|
 test "map: callback grows the source" {

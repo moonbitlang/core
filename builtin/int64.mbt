@@ -909,28 +909,6 @@ pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 
 ///|
-/// Converts a double-precision floating-point number to an unsigned 64-bit
-/// integer by truncating its decimal part. This is a raw conversion function
-/// that does not handle special cases like NaN or infinity.
-///
-/// Parameters:
-///
-/// * `value` : The double-precision floating-point number to be truncated and
-/// converted.
-///
-/// Returns an unsigned 64-bit integer. The decimal part of the input is
-/// discarded (truncated towards zero).
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(UInt64::trunc_double(42.75), content="42")
-/// }
-/// ```
-pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
-
-///|
 /// Converts an unsigned 32-bit integer to an unsigned 64-bit integer by
 /// zero-extending it. The resulting value preserves the original number's
 /// magnitude while using 64 bits to represent it.

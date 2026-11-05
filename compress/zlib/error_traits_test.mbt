@@ -1,0 +1,117 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+fn zlib_error(input : BytesView, max_output? : Int32) -> @zlib.ZlibError {
+  try @zlib.decompress(input, max_output?) catch {
+    e => e
+  } noraise {
+    _ => abort("expected a ZlibError")
+  }
+}
+
+///|
+test "ZlibError Show prints kind and message" {
+  let bad = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
+  inspect(
+    bad,
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+  inspect(
+    "\{bad}",
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+  inspect(
+    zlib_error(@zlib.compress(b"hello, world"), max_output=4),
+    content=(
+      #|OutputLimitExceeded(limit=4, observed=5): decoded output exceeds its byte limit
+    ),
+  )
+}
+
+///|
+test "ZlibError Debug prints the constructor form" {
+  @debug.debug_inspect(
+    zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00"),
+    content=(
+      #|ZlibError(InvalidDeflate, "corrupt: reserved block type")
+    ),
+  )
+  @debug.debug_inspect(
+    zlib_error(@zlib.compress(b"hello, world"), max_output=4),
+    content=(
+      #|ZlibError(
+      #|  OutputLimitExceeded(limit=4, observed=5),
+      #|  "decoded output exceeds its byte limit",
+      #|)
+    ),
+  )
+}
+
+///|
+fn error_kind(err : @zlib.ZlibError) -> @zlib.ZlibErrorKind {
+  match err {
+    ZlibError(kind, _) => kind
+  }
+}
+
+///|
+test "ZlibError is matched by kind" {
+  // The error doesn't implement `Eq`, because derived equality would compare the
+  // message text too. Callers match on the kind, which does implement `Eq`.
+  let a = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
+  let c = zlib_error(@zlib.compress(b"hello, world"), max_output=4)
+  let d = zlib_error(b"\x78\x9c\x01\x00\x00\x00\x00\x00\x00\x00\x00")
+  guard a is ZlibError(InvalidDeflate, _) && d is ZlibError(InvalidDeflate, _) else {
+    fail("expected InvalidDeflate, got \{a} and \{d}")
+  }
+  // Same kind, different message.
+  inspect(error_kind(a) == error_kind(d), content="true")
+  inspect("\{a}" == "\{d}", content="false")
+  // Different kinds.
+  inspect(error_kind(a) == error_kind(c), content="false")
+}
+
+///|
+test "ZlibError upcast to Error" {
+  let err : Error = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
+  inspect(
+    err,
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+  inspect(
+    "\{err}",
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+}
+
+///|
+test "ZlibError::to_string is promoted" {
+  let err = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
+  inspect(
+    err.to_string(),
+    content=(
+      #|InvalidDeflate: corrupt: reserved block type
+    ),
+  )
+  assert_eq(err.to_string(), "\{err}")
+}

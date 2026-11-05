@@ -233,10 +233,10 @@ pub fn[T] Array::new(capacity~ : Int32 = 0) -> Array[T] {
 /// would not advance, so all of the cases above terminate. Its results differ
 /// from this function's wherever rounding error has accumulated, wherever this
 /// function would repeat an element, and for a zero `step`:
-/// `@range.iter(from=x, to=x, step=0.0, inclusive=true)` yields `[x]`, while
+/// `@range.iter(start=x, end=x, step=0.0, inclusive=true)` yields `[x]`, while
 /// this function yields nothing. For exact decimal end points, iterate over
 /// integers and scale, e.g. `(0).until(10).map(k => k.to_double() / 10.0)`.
-#deprecated("Use `@range.iter(from=start, to=end, step=..., inclusive=...)` instead; `Double::until` accumulates rounding error")
+#deprecated("Use `@range.iter(start=start, end=end, step=..., inclusive=...)` instead; `Double::until` accumulates rounding error")
 #coverage.skip
 pub fn Double::until(
   self : Double,
@@ -246,3 +246,25 @@ pub fn Double::until(
 ) -> Iter[Double] {
   until_impl(self, end, step, inclusive)
 }
+
+///|
+/// Raw `Double` to `UInt` truncation, with no handling of NaN, negative,
+/// infinite or out-of-range inputs. For those inputs the result depends on the
+/// backend: js wraps modulo 2^32, wasm traps, and native is undefined
+/// behaviour.
+///
+/// Deprecated: use `Double::to_uint`, which saturates on every backend
+/// (NaN and negative inputs give 0, too-large inputs give `@uint.MAX_VALUE`).
+#deprecated("Use `Double::to_uint` instead; `trunc_double` is undefined for NaN and out-of-range inputs", skip_current_package=true)
+pub fn UInt32::trunc_double(val : Double) -> UInt32 = "%f64.to_u32"
+
+///|
+/// Raw `Double` to `UInt64` truncation, with no handling of NaN, negative,
+/// infinite or out-of-range inputs. For those inputs the result depends on the
+/// backend: js throws a `RangeError`, wasm traps, and native is undefined
+/// behaviour.
+///
+/// Deprecated: use `Double::to_uint64`, which saturates on every backend
+/// (NaN and negative inputs give 0, too-large inputs give `@uint64.MAX_VALUE`).
+#deprecated("Use `Double::to_uint64` instead; `trunc_double` is undefined for NaN and out-of-range inputs", skip_current_package=true)
+pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"

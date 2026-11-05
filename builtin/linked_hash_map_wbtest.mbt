@@ -409,6 +409,20 @@ test "to_array" {
 }
 
 ///|
+test "to_array tolerates a size that disagrees with the list" {
+  let map = { 1: "one", 2: "two", 3: "three" }
+  // A mutating callback can leave stale metadata. Array construction must
+  // neither write past its allocation nor expose uninitialized elements.
+  for size in [0, 1, 3, 5] {
+    map.size = size
+    assert_true(map.to_array() == [(1, "one"), (2, "two"), (3, "three")])
+  }
+  let empty : Map[Int32, String] = Map([])
+  empty.size = 3
+  inspect(empty.to_array().length(), content="0")
+}
+
+///|
 test "set_existing_key" {
   let m = Map([])
   m.set("a", 1)

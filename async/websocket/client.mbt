@@ -60,11 +60,11 @@ pub async fn Conn::from_http_client(
 
   // Validate WebSocket handshake headers
   guard response.headers.get("upgrade") is Some(upgrade) &&
-    upgrade.to_lower() == "websocket" else {
+    upgrade =~ re"^(?i:websocket)$" else {
     raise HandshakeRejected("Missing or invalid Upgrade header", response)
   }
   guard response.headers.get("connection") is Some(connection) &&
-    connection.to_lower().contains("upgrade") else {
+    connection =~ (re"(?i:upgrade)", before=_, after=_) else {
     raise HandshakeRejected("Missing or invalid Connection header", response)
   }
   guard response.headers.get("sec-websocket-accept") is Some(accept_key) else {
@@ -107,22 +107,17 @@ pub async fn Conn::connect(
   headers~ : @http.Headers = Map([]),
   proxy? : @http.ClientConnection,
 ) -> Conn {
-  guard url.find("://") is Some(protocol_len) else {
-    abort("`@websocket.Conn::connect()`: invalid URL: missing protocol")
-  }
-  let http_protocol = match url[:protocol_len] {
-    "ws" => "http"
-    "wss" => "https"
-    protocol =>
+  let (http_protocol, url) = lexmatch url {
+    (re"^ws://", after=url) => ("http", url)
+    (re"^wss://", after=url) => ("https", url)
+    (re"^" + (re".*?" as protocol) + re"://", after=_) =>
       abort("`@websocket.Conn::connect()`: invalid protocol \{protocol}")
+    _ => abort("`@websocket.Conn::connect()`: invalid URL: missing protocol")
   }
-  let url = url[protocol_len + 3:]
-  let (host, path) = if url.find("/") is Some(i) {
-    (url[:i], url[i:])
-  } else {
-    (url, "/")
+  let (host, path) = lexmatch url {
+    re"^" + (re"[^/]*" as host) + (re"/.*" as path) + re"$" => (host, path)
+    host => (host, "/")
   }
-  let path : StringView = if path == "" { "/" } else { path }
   let conn = @http.ClientConnection("\{http_protocol}://\{host}", proxy?)
   Conn::from_http_client(conn, path, extra_headers=headers)
 }

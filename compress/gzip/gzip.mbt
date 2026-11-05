@@ -51,8 +51,26 @@ pub(all) enum GzipErrorKind {
 ///|
 /// Structured gzip decoding failure: a stable category plus a human-readable
 /// diagnostic.
+///
+/// `Show` prints `<kind>: <message>` on one line, such as
+/// `InvalidHeader: gzip: bad magic`.
+/// `@debug.Debug` prints the constructor form.
+#derive(@debug.Debug)
 pub suberror GzipError {
   GzipError(GzipErrorKind, String)
+}
+
+///|
+pub impl Show for GzipError with fn output(self, logger) {
+  let GzipError(kind, message) = self
+  // Sized kinds are written by hand so the line never wraps, whatever the
+  // width of the numbers; the rest use their debug spelling (the name).
+  match kind {
+    OutputLimitExceeded(limit~, observed~) =>
+      logger <+ "OutputLimitExceeded(limit=\{limit}, observed=\{observed})"
+    _ => logger.write_string(@debug.to_string(kind))
+  }
+  logger <+ ": \{message}"
 }
 
 ///|

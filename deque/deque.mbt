@@ -1587,8 +1587,8 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Returns an iterator that yields each element in the deque in order.
 ///
-/// Modifying the deque while the iterator is in use gives unspecified, though
-/// memory-safe, results.
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// Example:
 ///
@@ -1602,8 +1602,9 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// ```
 #alias(iterator, deprecated)
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
-  // Snapshot the deque, as `for .. in` does for `Array`: if the deque is
-  // modified, the iterator still reads the elements it held at creation.
+  // Capture the buffer, head and length together, as `Array::iter` does
+  // through its view: reading the live `buf`/`head` with a captured `len`
+  // reaches unwritten slots, or divides by zero, once the deque is modified.
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut index = 0
@@ -1645,7 +1646,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(iterator2, deprecated)
 pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
-  // Snapshot the deque; see `Deque::iter`.
+  // Capture the buffer, head and length together; see `Deque::iter`.
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut index = 0
@@ -1682,7 +1683,7 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  // Snapshot the deque; see `Deque::iter`.
+  // Capture the buffer, head and length together; see `Deque::iter`.
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut index = len
@@ -1723,7 +1724,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(rev_iterator2, deprecated)
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int32, A] {
-  // Snapshot the deque; see `Deque::iter`.
+  // Capture the buffer, head and length together; see `Deque::iter`.
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut rev_index = len

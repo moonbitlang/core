@@ -42,10 +42,10 @@
 /// element would not advance, so all of the cases above terminate. Its results
 /// differ from this function's wherever rounding error has accumulated,
 /// wherever this function would repeat an element, and for a zero `step`:
-/// `@range.iter(from=x, to=x, step=0.0, inclusive=true)` yields `[x]`, while
+/// `@range.iter(start=x, end=x, step=0.0, inclusive=true)` yields `[x]`, while
 /// this function yields nothing. For exact decimal end points, iterate over
 /// integers and scale, e.g. `(0).until(10).map(k => Float::from_int(k) / 10.0)`.
-#deprecated("Use `@range.iter(from=start, to=end, step=..., inclusive=...)` instead; `Float::until` accumulates rounding error")
+#deprecated("Use `@range.iter(start=start, end=end, step=..., inclusive=...)` instead; `Float::until` accumulates rounding error")
 #coverage.skip
 pub fn Float::until(
   self : Float,

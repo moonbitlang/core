@@ -72,8 +72,27 @@ pub(all) enum ZipErrorKind {
 
 ///|
 /// Structured ZIP failure: a stable category plus a human-readable diagnostic.
+///
+/// `Show` prints `<kind>: <message>` on one line, such as
+/// `MissingEndOfCentral: zip: end of central directory not found`.
+/// `@debug.Debug` prints the constructor form.
+#derive(@debug.Debug)
 pub suberror ZipError {
   ZipError(ZipErrorKind, String)
+}
+
+///|
+pub impl Show for ZipError with fn output(self, logger) {
+  let ZipError(kind, message) = self
+  // Sized kinds are written by hand so the line never wraps, whatever the
+  // width of the numbers; the rest use their debug spelling.
+  match kind {
+    LimitExceeded(kind~, limit~, observed~) =>
+      logger <+
+        $|LimitExceeded(kind=\{@debug.to_string(kind)}, limit=\{limit}, observed=\{observed})
+    _ => logger.write_string(@debug.to_string(kind))
+  }
+  logger <+ ": \{message}"
 }
 
 ///|

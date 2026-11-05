@@ -678,3 +678,60 @@ test "group without context splits on every equal run and emits no empty edits" 
     ],
   )
 }
+
+///|
+test "group with a huge context keeps hunk lengths within the input" {
+  // Regression: `group` compared `len > context * 2`, which overflows for
+  // large contexts, so it split the input and emitted `Equal` edits with
+  // `len=context`, far past the end of the input.
+  let old = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9][:]
+  let new = [0, 1, 2, 3, 4, 50, 6, 7, 8, 9][:]
+  let d = @diff.Diff(old~, new~)
+  let whole = d.group(context=10)
+  @debug.debug_inspect(
+    whole.map(h => h.edits().to_owned()),
+    content=(
+      #|[
+      #|  [
+      #|    Equal(old_index=0, new_index=0, len=5),
+      #|    Delete(old_index=5, old_len=1, new_index=5),
+      #|    Insert(old_index=6, new_index=5, new_len=1),
+      #|    Equal(old_index=6, new_index=6, len=4),
+      #|  ],
+      #|]
+    ),
+  )
+  for context in [1 << 30, @int.MAX_VALUE] {
+    let hunks = d.group(context~)
+    assert_eq(hunks.length(), 1)
+    assert_eq(hunks[0].edits().to_owned(), whole[0].edits().to_owned())
+    let mut old_len = 0
+    let mut new_len = 0
+    for edit in hunks[0].edits() {
+      match edit {
+        Equal(len~, ..) => {
+          old_len += len
+          new_len += len
+        }
+        Delete(old_len=n, ..) => old_len += n
+        Insert(new_len=n, ..) => new_len += n
+      }
+    }
+    assert_eq(old_len, old.length())
+    assert_eq(new_len, new.length())
+  }
+  // A small context is unaffected.
+  @debug.debug_inspect(
+    d.group(context=1).map(h => h.edits().to_owned()),
+    content=(
+      #|[
+      #|  [
+      #|    Equal(old_index=4, new_index=4, len=1),
+      #|    Delete(old_index=5, old_len=1, new_index=5),
+      #|    Insert(old_index=6, new_index=5, new_len=1),
+      #|    Equal(old_index=6, new_index=6, len=1),
+      #|  ],
+      #|]
+    ),
+  )
+}

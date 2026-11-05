@@ -19,19 +19,7 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int32? {
   let pattern_len = str.length()
   match pattern_len {
     0 => Some(0)
-    1 => {
-      let found = find_code_unit_from_view(
-        self,
-        0,
-        self.length(),
-        str.unsafe_get(0),
-      )
-      if found < 0 {
-        None
-      } else {
-        Some(found)
-      }
-    }
+    1 => self.find_code_unit(str.unsafe_get(0))
     _ =>
       if pattern_len > self.length() {
         None
@@ -49,6 +37,41 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int32? {
 /// substring is not found, it returns None.
 pub fn String::find(self : String, str : StringView) -> Int32? {
   self[:].find(str)
+}
+
+///|
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// view, of the first code unit equal to `code`. If there is none, it
+/// returns None.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs:
+/// `code` may be either half of a pair. Use `find` with a one-character string
+/// when searching for a Unicode character.
+///
+/// ```mbt check
+/// test {
+///   debug_inspect("xa😀z"[1:4].find_code_unit(0xDE00), content="Some(2)")
+/// }
+/// ```
+pub fn StringView::find_code_unit(self : StringView, code : UInt16) -> Int32? {
+  let found = find_code_unit_from_view(self, 0, self.length(), code)
+  if found < 0 {
+    None
+  } else {
+    Some(found)
+  }
+}
+
+///|
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the first code unit equal to `code`. If there is none, it
+/// returns None.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs:
+/// `code` may be either half of a pair. Use `find` with a one-character string
+/// when searching for a Unicode character.
+pub fn String::find_code_unit(self : String, code : UInt16) -> Int32? {
+  self[:].find_code_unit(code)
 }
 
 ///|
@@ -132,19 +155,7 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int32? {
   let pattern_len = str.length()
   match pattern_len {
     0 => Some(self.length())
-    1 => {
-      let found = rev_find_code_unit_from_view(
-        self,
-        0,
-        self.length(),
-        str.unsafe_get(0),
-      )
-      if found < 0 {
-        None
-      } else {
-        Some(found)
-      }
-    }
+    1 => self.rev_find_code_unit(str.unsafe_get(0))
     _ =>
       if pattern_len > self.length() {
         None
@@ -162,6 +173,38 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int32? {
 /// substring. If the substring is not found, it returns None.
 pub fn String::rev_find(self : String, str : StringView) -> Int32? {
   self[:].rev_find(str)
+}
+
+///|
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// view, of the last code unit equal to `code`. If there is none, it
+/// returns None.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs:
+/// `code` may be either half of a pair. Use `rev_find` with a one-character
+/// string when searching for a Unicode character.
+pub fn StringView::rev_find_code_unit(
+  self : StringView,
+  code : UInt16,
+) -> Int32? {
+  let found = rev_find_code_unit_from_view(self, 0, self.length(), code)
+  if found < 0 {
+    None
+  } else {
+    Some(found)
+  }
+}
+
+///|
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the last code unit equal to `code`. If there is none, it
+/// returns None.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs:
+/// `code` may be either half of a pair. Use `rev_find` with a one-character
+/// string when searching for a Unicode character.
+pub fn String::rev_find_code_unit(self : String, code : UInt16) -> Int32? {
+  self[:].rev_find_code_unit(code)
 }
 
 ///|
@@ -1092,6 +1135,51 @@ test "contains_code_unit SIMD blocks and view bounds" {
   let wide = "01234567abcd😀efgh"
   inspect(wide.contains_code_unit(0xD83D), content="true")
   inspect(wide.contains_code_unit(0xDE00), content="true")
+}
+
+///|
+test "find_code_unit" {
+  assert_true("hello".find_code_unit(('l' : UInt16)) == Some(2))
+  assert_true("hello".find_code_unit(('x' : UInt16)) == None)
+  assert_true("".find_code_unit(('x' : UInt16)) == None)
+  assert_true("xhellox"[1:6].find_code_unit(('l' : UInt16)) == Some(2))
+  assert_true("xhellox"[1:6].find_code_unit(('x' : UInt16)) == None)
+  assert_true("a😀b😀".find_code_unit(0xD83D) == Some(1))
+  assert_true("a😀b😀".find_code_unit(0xDE00) == Some(2))
+  let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
+  assert_true(leading_surrogate.find_code_unit(0xD800) == Some(0))
+}
+
+///|
+test "rev_find_code_unit" {
+  assert_true("hello".rev_find_code_unit(('l' : UInt16)) == Some(3))
+  assert_true("hello".rev_find_code_unit(('x' : UInt16)) == None)
+  assert_true("".rev_find_code_unit(('x' : UInt16)) == None)
+  assert_true("xhellox"[1:6].rev_find_code_unit(('l' : UInt16)) == Some(3))
+  assert_true("xhellox"[1:6].rev_find_code_unit(('x' : UInt16)) == None)
+  assert_true("a😀b😀".rev_find_code_unit(0xD83D) == Some(4))
+  assert_true("a😀b😀".rev_find_code_unit(0xDE00) == Some(5))
+}
+
+///|
+test "find_code_unit SIMD blocks and view bounds" {
+  let str = "01234567abcdefghZ01234567abcdefghZ"
+  for i in 0..<17 {
+    let code = str.unsafe_get(i)
+    assert_true(str.find_code_unit(code) == Some(i))
+    assert_true(str.rev_find_code_unit(code) == Some(i + 17))
+    assert_true(str.find_code_unit(code) == str.find(str[i:i + 1]))
+    assert_true(str.rev_find_code_unit(code) == str.rev_find(str[i:i + 1]))
+  }
+  assert_true(str.find_code_unit(('x' : UInt16)) == None)
+  let view = ("x" + str + "y")[1:35]
+  assert_true(view.find_code_unit(('x' : UInt16)) == None)
+  assert_true(view.rev_find_code_unit(('y' : UInt16)) == None)
+  assert_true(view.find_code_unit(('Z' : UInt16)) == Some(16))
+  assert_true(view.rev_find_code_unit(('0' : UInt16)) == Some(17))
+  let wide = "01234567abcd😀efgh01234567abcd😀efgh"
+  assert_true(wide.find_code_unit(0xD83D) == Some(12))
+  assert_true(wide.rev_find_code_unit(0xDE00) == Some(31))
 }
 
 ///|

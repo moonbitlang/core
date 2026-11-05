@@ -15,9 +15,12 @@ pub fn inflate_exact(BytesView, dictionary? : BytesView, max_output? : Int32, ca
 pub fn inflate_prefix(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
 
 // Errors
+#derive(@debug.Debug)
 pub suberror InflateError {
   InflateError(InflateErrorKind, String)
 }
+pub fn InflateError::to_string(Self) -> String
+pub impl Show for InflateError
 
 // Types and methods
 type Compressor

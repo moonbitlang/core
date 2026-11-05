@@ -116,7 +116,9 @@ fn[T] group_edits(
           len
         }
         // Split if this equal range is large enough
-        if len > context * 2 {
+        // `len > context * 2`, written so it cannot overflow: both `len`
+        // and `context` are non-negative here, so `len - context` cannot.
+        if len - context > context {
           if context > 0 {
             pending.push(Equal(old_index~, new_index~, len=context))
           }

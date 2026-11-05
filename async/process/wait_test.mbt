@@ -45,6 +45,28 @@ async test "wait exitcode" {
 }
 
 ///|
+async test "accepted exit code" {
+  let test_prog = sleep_prog.wait()
+  let args : ReadOnlyArray[String] = ["0", "-exit-code", "42"]
+  let result = @process.run(test_prog, args, accepted_exit_code=code => {
+    code == 42
+  })
+  inspect(result.exit_code, content="42")
+  try
+    @process.run(test_prog, args, accepted_exit_code=code => code == 0)
+  catch {
+    @process.CommandFailed(code, program~, args~) => {
+      inspect(code, content="42")
+      inspect(program == test_prog, content="true")
+      inspect(args.length(), content="3")
+    }
+    _ => fail("unexpected error")
+  } noraise {
+    _ => fail("expected the exit code to be rejected")
+  }
+}
+
+///|
 async test "wait_pid" {
   let log = StringBuilder()
   let test_prog = sleep_prog.wait()

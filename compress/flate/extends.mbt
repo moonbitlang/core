@@ -29,6 +29,19 @@ pub extend InputMode with @debug.Debug::{to_repr}
 pub extend InflateErrorKind with Eq::{equal}
 
 ///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend InflateError with @debug.Debug::{to_repr}
+
+///|
+pub extend InflateError with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or string interpolation instead", skip_current_package=true)
+#doc(hidden)
+pub extend InflateError with Show::{output}
+
+///|
 pub extend Status with Eq::{equal}
 
 ///|

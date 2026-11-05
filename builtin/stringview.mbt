@@ -156,7 +156,7 @@ pub fn StringView::unsafe_charcode_at(
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
 pub fn StringView::char_length(self : StringView) -> Int32 {
-  self.str().char_length(start_offset=self.start(), end_offset=self.end())
+  self.str().char_length(start=self.start(), end=self.end())
 }
 
 ///|
@@ -1051,9 +1051,7 @@ pub fn StringView::exact_view(
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn StringView::char_length_eq(self : StringView, len : Int32) -> Bool {
-  self
-  .str()
-  .char_length_eq(len, start_offset=self.start(), end_offset=self.end())
+  self.str().char_length_eq(len, start=self.start(), end=self.end())
 }
 
 ///|
@@ -1061,9 +1059,7 @@ pub fn StringView::char_length_eq(self : StringView, len : Int32) -> Bool {
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn StringView::char_length_ge(self : StringView, len : Int32) -> Bool {
-  self
-  .str()
-  .char_length_ge(len, start_offset=self.start(), end_offset=self.end())
+  self.str().char_length_ge(len, start=self.start(), end=self.end())
 }
 
 ///|
@@ -1071,9 +1067,7 @@ pub fn StringView::char_length_ge(self : StringView, len : Int32) -> Bool {
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
 pub fn StringView::offset_of_nth_char(self : StringView, i : Int32) -> Int32? {
-  if self
-    .str()
-    .offset_of_nth_char(i, start_offset=self.start(), end_offset=self.end())
+  if self.str().offset_of_nth_char(i, start=self.start(), end=self.end())
     is Some(index) {
     Some(index - self.start())
   } else {
