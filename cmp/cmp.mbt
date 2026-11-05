@@ -46,7 +46,9 @@ pub impl[T : Show] Show for Reverse[T] with fn output(self, logger) {
 
 ///|
 pub impl[T : Compare] Compare for Reverse[T] with fn compare(a, b) {
-  -a.0.compare(b.0)
+  // Swap the operands rather than negating: `compare` may return
+  // `Int::MIN_VALUE`, and `-MIN_VALUE` overflows back to `MIN_VALUE`.
+  b.0.compare(a.0)
 }
 
 ///|
