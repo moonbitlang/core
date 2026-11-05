@@ -338,6 +338,7 @@ pub fn UInt32::to_int64(UInt32) -> Int64
 pub fn UInt32::to_string(UInt32, radix? : Int32) -> String
 pub fn UInt32::to_uint16(UInt32) -> UInt16
 pub fn UInt32::to_uint64(UInt32) -> UInt64
+#deprecated
 pub fn UInt32::trunc_double(Double) -> UInt32
 pub impl Add for UInt32
 pub impl BitAnd for UInt32
@@ -438,6 +439,7 @@ pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 pub fn UInt64::to_string(UInt64, radix? : Int32) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt32
 pub fn UInt64::to_uint16(UInt64) -> UInt16
+#deprecated
 pub fn UInt64::trunc_double(Double) -> UInt64
 pub impl Add for UInt64
 pub impl BitAnd for UInt64

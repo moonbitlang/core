@@ -920,27 +920,6 @@ pub impl Default for Int32 with fn default() = "%i32_default"
 pub fn Int32::to_double(self : Int32) -> Double = "%i32_to_f64"
 
 ///|
-/// Converts a double-precision floating-point number to an unsigned 32-bit
-/// integer by truncating the decimal part. When the input is NaN or negative,
-/// returns 0. When the input exceeds the maximum value of UInt (4294967295),
-/// returns 4294967295.
-///
-/// Parameters:
-///
-/// * `value` : The double-precision floating-point number to be converted.
-///
-/// Returns an unsigned 32-bit integer representing the truncated value.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(UInt32::trunc_double(42.75), content="42")
-/// }
-/// ```
-pub fn UInt32::trunc_double(val : Double) -> UInt32 = "%f64.to_u32"
-
-///|
 /// reinterpret the signed int as unsigned int, when the value is
 /// non-negative, i.e, 0..=2^31-1, the value is the same. When the
 /// value is negative, it turns into a large number,
