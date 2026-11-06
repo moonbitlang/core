@@ -30,14 +30,14 @@ struct BufferedWriter[W] {
 }
 
 ///|
-/// Create a buffered writer with fixed buffer size `size`.
-pub fn[W] BufferedWriter::new(
+/// Create a buffered writer with a fixed buffer of `capacity` bytes.
+pub fn[W] BufferedWriter::BufferedWriter(
   writer : W,
-  size~ : Int32 = 1024,
+  capacity~ : Int32 = 1024,
 ) -> BufferedWriter[W] {
   {
     writer,
-    buf: FixedArray::make(size, 0),
+    buf: FixedArray::make(capacity, 0),
     len: 0,
     ctrl: BinaryWriterController(),
   }
