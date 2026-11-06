@@ -1908,6 +1908,28 @@ test "unaligned memory offsets" {
 }
 
 ///|
+test "i8x16 bitmask exhausts all sign patterns and ignores payload bits" {
+  for mask in 0..<0x10000 {
+    let mut low = 0UL
+    let mut high = 0UL
+    for lane in 0..<8 {
+      low = low | (((mask >> lane) & 1).to_uint64() << (lane * 8 + 7))
+      high = high | (((mask >> (lane + 8)) & 1).to_uint64() << (lane * 8 + 7))
+    }
+    assert_eq(@v128.i8x16_bitmask(@v128.i64x2_const(low, high)), mask)
+    assert_eq(
+      @v128.i8x16_bitmask(
+        @v128.i64x2_const(
+          low | 0x7f7f7f7f7f7f7f7fUL,
+          high | 0x7f7f7f7f7f7f7f7fUL,
+        ),
+      ),
+      mask,
+    )
+  }
+}
+
+///|
 test "bitmask lane patterns" {
   inspect(@v128.i8x16_bitmask(@v128.i8x16_splat(0xff)), content="65535")
   inspect(@v128.i8x16_bitmask(@v128.i8x16_splat(0x7f)), content="0")
