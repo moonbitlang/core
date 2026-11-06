@@ -56,10 +56,15 @@ test "BytesLexbuf reports source EOF while buffered input remains" {
   inspect(lexbuf.__eof_reached(), content="false")
   lexbuf.__refill()
   inspect(lexbuf.__eof_reached(), content="false")
+  // Retain the byte, consume it, and refill up to EOF.
+  lexbuf.__retain_from_cursor()
   lexbuf.__advance(1)
   lexbuf.__refill()
+  lexbuf.__commit_to(0)
   inspect(lexbuf.__eof_reached(), content="true")
+  inspect(lexbuf.__get_cursor(), content="0")
   inspect(lexbuf.__buffer_end(), content="1")
+  inspect(lexbuf.__unsafe_code_unit_at(0), content="97")
 }
 
 ///|
