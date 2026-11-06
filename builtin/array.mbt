@@ -1436,8 +1436,7 @@ pub fn[T] Array::any(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
 /// the elements that were in it, and they are released once later pushes reuse
 /// those slots, the buffer grows, or the array is dropped. Call
 /// `Array::release_unused` to overwrite them at once, or `Array::shrink_to_fit`
-/// to hand the buffer back entirely. On the JavaScript backend the removed
-/// elements are released right away and `Array::release_unused` is a no-op.
+/// to hand the buffer back entirely.
 ///
 /// # Example
 /// ```mbt check
@@ -2663,7 +2662,7 @@ pub impl[T] Default for Array[T] with fn default() {
 ///   @test.assert_eq(array.last(), Some(4))
 /// }
 /// ```
-#internal(unsafe, "Panic if the array is empty on non-JS backend.")
+#internal(unsafe, "Panic if the array is empty.")
 #doc(hidden)
 pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
   self.unsafe_pop() |> ignore
@@ -2689,9 +2688,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// keeps referring to them: they are released once those slots are reused by
 /// later pushes, once the buffer grows, or once the array is dropped. Call
 /// `Array::release_unused` to overwrite them at once, or `Array::shrink_to_fit`
-/// to move the survivors into an exact-size buffer. On the JavaScript backend
-/// the removed elements are released right away and `Array::release_unused` is a
-/// no-op.
+/// to move the survivors into an exact-size buffer.
 ///
 /// Example:
 ///
