@@ -142,9 +142,8 @@ fn[K : Eq, V] HashMap::set_with_hash(
       None => {
         // Need to insert new entry - check if grow is needed first
         if self.size >= self.capacity / 2 {
-          self.grow()
-          // Restart search with new capacity_mask
-          continue 0, hash & self.capacity_mask
+          self.grow_and_insert(key, value, hash)
+          return
         }
         let entry = { psl, key, value, hash, }
         self.entries.unsafe_set(idx, Some(entry))
@@ -160,9 +159,8 @@ fn[K : Eq, V] HashMap::set_with_hash(
         if psl > curr_entry.psl {
           // Need to insert and push away - check if grow is needed first
           if self.size >= self.capacity / 2 {
-            self.grow()
-            // Restart search with new capacity_mask
-            continue 0, hash & self.capacity_mask
+            self.grow_and_insert(key, value, hash)
+            return
           }
           self.push_away(idx, curr_entry)
           let entry = { psl, key, value, hash, }
@@ -562,8 +560,7 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
     }
   }
   if self.size >= self.capacity / 2 {
-    self.grow()
-    self.set_with_hash(key, default, hash)
+    self.grow_and_insert(key, default, hash)
   } else {
     if push_away is Some(entry) {
       self.push_away(idx, entry)
@@ -817,6 +814,22 @@ fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
       self.rehash_place_entry(entry)
     }
   }
+}
+
+///|
+/// Grow the table, then insert `key`, which the caller has just probed for and
+/// found absent. The entry is placed directly in the new table, without
+/// probing for (and comparing) the key again.
+#owned(value)
+fn[K, V] HashMap::grow_and_insert(
+  self : HashMap[K, V],
+  key : K,
+  value : V,
+  hash : Int32,
+) -> Unit {
+  self.grow()
+  self.rehash_place_entry({ psl: 0, key, value, hash, })
+  self.size += 1
 }
 
 ///|

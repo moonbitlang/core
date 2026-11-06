@@ -193,9 +193,8 @@ fn[K : Eq, V] Map::set_with_hash(
       None => {
         // Need to insert new entry - check if grow is needed first
         if self.size >= self.grow_at {
-          self.grow()
-          // Restart search with new capacity_mask
-          continue 0, hash & self.capacity_mask
+          self.grow_and_insert(key, value, hash)
+          return
         }
         let entry = { prev: self.tail, next: None, psl, key, value, hash, }
         self.add_entry_to_tail(idx, entry)
@@ -210,9 +209,8 @@ fn[K : Eq, V] Map::set_with_hash(
         if psl > curr_entry.psl {
           // Need to insert and push away - check if grow is needed first
           if self.size >= self.grow_at {
-            self.grow()
-            // Restart search with new capacity_mask
-            continue 0, hash & self.capacity_mask
+            self.grow_and_insert(key, value, hash)
+            return
           }
           self.push_away(idx, curr_entry)
           let entry = { prev: self.tail, next: None, psl, key, value, hash, }
@@ -459,8 +457,7 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
     }
   }
   if self.size >= self.grow_at {
-    self.grow()
-    self.set_with_hash(key, default, hash)
+    self.grow_and_insert(key, default, hash)
   } else {
     if push_away is Some(entry) {
       self.push_away(idx, entry)
@@ -684,6 +681,21 @@ fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
       }
     }
   }
+}
+
+///|
+/// Grow the table, then insert `key`, which the caller has just probed for and
+/// found absent. The entry is placed directly in the new table, without
+/// probing for (and comparing) the key again.
+#owned(value)
+fn[K, V] Map::grow_and_insert(
+  self : Map[K, V],
+  key : K,
+  value : V,
+  hash : Int32,
+) -> Unit {
+  self.grow()
+  self.rehash_place_entry({ prev: -1, next: None, psl: 0, key, value, hash, })
 }
 
 ///|
