@@ -58,7 +58,7 @@ pub fn Process::from_pid(pid : Int32, context~ : String) -> Process raise {
 
 ///|
 #cfg(target="native")
-#borrow(out)
+#borrow(handle, out)
 extern "C" fn get_process_result(
   handle : @fd_util.Fd,
   pid : Int32,
@@ -68,7 +68,7 @@ extern "C" fn get_process_result(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(out)
+#borrow(handle, out)
 fn get_process_result(
   handle : @fd_util.Fd,
   pid : Int32,

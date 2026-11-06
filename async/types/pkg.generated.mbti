@@ -6,6 +6,10 @@ package "moonbitlang/core/async/types"
 // Errors
 
 // Types and methods
+type Fd
+pub impl Eq for Fd
+pub impl Hash for Fd
+
 pub(all) enum Platform {
   Linux
   MacOS
@@ -13,6 +17,5 @@ pub(all) enum Platform {
 }
 
 // Type aliases
-pub type Fd = UInt64
 
 // Traits

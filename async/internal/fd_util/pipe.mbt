@@ -28,7 +28,7 @@ pub fn pipe(
   write_end_is_async~ : Bool,
   context~ : String,
 ) -> (Fd, Fd) raise {
-  let fds : FixedArray[Int32] = [0, 0]
+  let fds : FixedArray[Fd] = [Fd::from_unix(0), Fd::from_unix(0)]
   if 0 != pipe_ffi(fds) {
     @os_error.check_errno(context)
   }
@@ -75,11 +75,13 @@ extern "C" fn create_named_pipe_client(
 ///|
 /// This should only be used for testing
 #cfg(platform="windows")
+#borrow(server)
 pub extern "C" fn connect_named_pipe_server_sync(server : Fd) -> Unit = "moonbit_rt_connect_named_pipe_server"
 
 ///|
 /// Disconnect a named pipe server. This should only be used for testing
 #cfg(platform="windows")
+#borrow(server)
 pub extern "C" fn disconnect_named_pipe_server(server : Fd) -> Unit = "moonbit_rt_disconnect_named_pipe_server"
 
 ///|

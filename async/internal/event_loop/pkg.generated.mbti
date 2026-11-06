@@ -31,7 +31,7 @@ pub async fn access(StringView, Access, context~ : String) -> Int32
 
 pub let all_signals : ReadOnlyArray[Int32]
 
-pub async fn atime(UInt64, context~ : String) -> (Int64, Int32)
+pub async fn atime(@types.Fd, context~ : String) -> (Int64, Int32)
 
 pub async fn atime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
 
@@ -39,29 +39,29 @@ pub let check_fd_leak : @ref.Ref[Bool]
 
 pub async fn chmod(StringView, Int32, context~ : String) -> Unit
 
-pub async fn ctime(UInt64, context~ : String) -> (Int64, Int32)
+pub async fn ctime(@types.Fd, context~ : String) -> (Int64, Int32)
 
 pub async fn ctime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
 
-pub async fn file_kind_by_path(StringView, parent~ : UInt64, follow_symlink~ : Bool, context~ : String) -> @fd_util.FileKind
+pub async fn file_kind_by_path(StringView, parent~ : @types.Fd, follow_symlink~ : Bool, context~ : String) -> @fd_util.FileKind
 
-pub async fn file_size(UInt64, context~ : String) -> Int64
+pub async fn file_size(@types.Fd, context~ : String) -> Int64
 
 pub async fn file_size_of_path(StringView, context~ : String) -> Int64
 
-pub async fn fstatx(UInt64, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
+pub async fn fstatx(@types.Fd, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
 
 pub fn get_current_event_loop() -> @ref.Ref[EventLoop?]
 
 pub async fn getaddrinfo(StringView, context~ : String) -> Result[AddrInfo, String]
 
-pub async fn inotify_add_watch(UInt64, StringView, is_dir~ : Bool, context~ : String) -> UInt64
+pub async fn inotify_add_watch(@types.Fd, StringView, is_dir~ : Bool, context~ : String) -> @types.Fd
 
-pub async fn kind_of_fd(UInt64, context~ : String) -> @fd_util.FileKind
+pub async fn kind_of_fd(@types.Fd, context~ : String) -> @fd_util.FileKind
 
 pub async fn mkdir(StringView, mode~ : Int32, context~ : String) -> Unit
 
-pub async fn mtime(UInt64, context~ : String) -> (Int64, Int32)
+pub async fn mtime(@types.Fd, context~ : String) -> (Int64, Int32)
 
 pub async fn mtime_by_path(StringView, follow_symlink~ : Bool, context~ : String) -> (Int64, Int32)
 
@@ -89,11 +89,11 @@ pub fn set_global_cancellation_signals(ReadOnlyArray[Int32]) -> Unit
 
 pub async fn sleep(Int32) -> Unit noraise
 
-pub async fn spawn_unix(@os_string.OsString, UInt64, env~ : UInt64, stdin~ : UInt64, stdout~ : UInt64, stderr~ : UInt64, is_orphan~ : Bool, cwd~ : @os_string.OsString?, context~ : String) -> Process
+pub async fn spawn_unix(@os_string.OsString, UInt64, env~ : UInt64, stdin~ : @types.Fd, stdout~ : @types.Fd, stderr~ : @types.Fd, is_orphan~ : Bool, cwd~ : @os_string.OsString?, context~ : String) -> Process
 
-pub async fn spawn_windows(@os_string.OsString, env~ : UInt64, stdin~ : UInt64, stdout~ : UInt64, stderr~ : UInt64, cwd~ : @os_string.OsString?, no_console_window~ : Bool, is_orphan~ : Bool, context~ : String) -> Process
+pub async fn spawn_windows(@os_string.OsString, env~ : UInt64, stdin~ : @types.Fd, stdout~ : @types.Fd, stderr~ : @types.Fd, cwd~ : @os_string.OsString?, no_console_window~ : Bool, is_orphan~ : Bool, context~ : String) -> Process
 
-pub async fn statx(StringView, parent~ : UInt64, follow_symlink~ : Bool, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
+pub async fn statx(StringView, parent~ : @types.Fd, follow_symlink~ : Bool, UInt32, FixedArray[Byte], Int32, context~ : String) -> Unit
 
 pub let stderr : Result[IoHandle, Error]
 
@@ -139,8 +139,8 @@ pub async fn IoHandle::bind(Self, Bytes, context~ : String) -> Unit
 pub fn IoHandle::close(Self) -> Unit
 pub async fn IoHandle::connect(Self, Bytes, context~ : String) -> Unit
 pub fn IoHandle::detach_from_event_loop(Self) -> Unit
-pub fn IoHandle::fd(Self) -> UInt64
-pub fn IoHandle::from_fd(UInt64, kind~ : @fd_util.FileKind, is_async? : Bool, read_only? : Bool) -> Self raise
+pub fn IoHandle::fd(Self) -> @types.Fd
+pub fn IoHandle::from_fd(@types.Fd, kind~ : @fd_util.FileKind, is_async? : Bool, read_only? : Bool) -> Self raise
 pub async fn IoHandle::fsync(Self, only_data~ : Bool, context~ : String) -> Unit
 pub fn IoHandle::kind(Self) -> @fd_util.FileKind
 pub async fn IoHandle::lock(Self, exclusive~ : Bool, context~ : String) -> Unit

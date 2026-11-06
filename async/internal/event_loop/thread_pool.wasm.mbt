@@ -80,7 +80,7 @@ fn Worker::check_cancellation_retry(worker : Worker) -> Bool {
 
 ///|
 #unsafe_skip_stub_check
-#borrow(output)
+#borrow(notify_recv, output)
 fn fetch_completion_ffi(
   notify_recv : @fd_util.Fd,
   output : FixedArray[Int32],
@@ -161,6 +161,7 @@ fn Job::run_sync(self : Job, context~ : String) -> Int32 raise {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn JobHandle::read(
   fd : @fd_util.Fd,
   len : Int32,
@@ -193,7 +194,7 @@ fn Job::read(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(fd, buf)
 fn JobHandle::write(
   fd : @fd_util.Fd,
   buf : Bytes,
@@ -219,6 +220,7 @@ fn Job::write(
 // Counts and offsets at this boundary are UTF-16 code units. The host owns the
 // buffer while a worker is running; the completion callback copies it back.
 #unsafe_skip_stub_check
+#borrow(fd)
 fn JobHandle::read_console(fd : @fd_util.Fd, len : Int32) -> JobHandle = "moonbitlang/async" "thread_pool/make_read_console_job"
 
 ///|
@@ -245,7 +247,7 @@ fn Job::read_console(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(fd, buf)
 fn JobHandle::write_console(
   fd : @fd_util.Fd,
   buf : FixedArray[UInt16],
@@ -368,6 +370,7 @@ pub const STAT_CREATE_TIME : UInt32 = 0x0080
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn JobHandle::fstatx(
   fd : @fd_util.Fd,
   request : UInt32,
@@ -388,7 +391,7 @@ fn Job::fstatx(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(path)
+#borrow(parent, path)
 fn JobHandle::statx(
   path : @os_string.OsString,
   path_len~ : Int32 = path.to_string().length(),
@@ -451,6 +454,7 @@ fn Job::chmod(path : @os_string.OsString, mode : Int32) -> Job {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn JobHandle::fsync(fd : @fd_util.Fd, only_data : Bool) -> JobHandle = "moonbitlang/async" "thread_pool/make_fsync_job"
 
 ///|
@@ -460,6 +464,7 @@ fn Job::fsync(fd : @fd_util.Fd, only_data : Bool) -> Job {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn JobHandle::flock(fd : @fd_util.Fd, exclusive : Bool) -> JobHandle = "moonbitlang/async" "thread_pool/make_flock_job"
 
 ///|
@@ -549,7 +554,7 @@ fn Job::rmdir(path : @os_string.OsString) -> Job {
 
 ///|
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(dir, buf)
 fn JobHandle::readdir(
   dir : @fd_util.Fd,
   buf : @c_buffer.Buffer,
@@ -569,7 +574,7 @@ fn Job::readdir(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(addr)
+#borrow(socket, addr)
 fn JobHandle::bind(
   socket : @fd_util.Fd,
   addr : Bytes,
@@ -630,7 +635,7 @@ priv struct SpawnJob(Job)
 
 ///|
 #unsafe_skip_stub_check
-#borrow(path)
+#borrow(path, stdin, stdout, stderr)
 fn JobHandle::spawn_unix_ffi(
   path : @os_string.OsString,
   path_len~ : Int32 = path.to_string().length(),
@@ -682,7 +687,7 @@ fn Job::spawn_unix(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(command_line)
+#borrow(command_line, stdin, stdout, stderr)
 fn JobHandle::spawn_windows_ffi(
   command_line : @os_string.OsString,
   command_line_len~ : Int32 = command_line.to_string().length(),
@@ -746,6 +751,7 @@ fn SpawnJob::result_handle(job : SpawnJob) -> @fd_util.Fd {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(handle)
 fn JobHandle::wait_for_process(handle : @fd_util.Fd, pid~ : Int32) -> JobHandle = "moonbitlang/async" "thread_pool/make_wait_for_process_job"
 
 ///|
@@ -755,7 +761,7 @@ fn Job::wait_for_process(handle : @fd_util.Fd, pid~ : Int32) -> Job {
 
 ///|
 #unsafe_skip_stub_check
-#borrow(path)
+#borrow(inotify, path)
 fn JobHandle::inotify_add_watch(
   inotify : @fd_util.Fd,
   path : @os_string.OsString,

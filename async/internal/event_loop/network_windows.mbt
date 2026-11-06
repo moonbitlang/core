@@ -96,11 +96,13 @@ pub async fn IoHandle::sendto(
 
 ///|
 #cfg(platform="windows")
+#borrow(sock)
 extern "C" fn connect_windows(sock : @fd_util.Fd, result : IoResult) -> Int32 = "moonbit_rt_async_connect"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(sock)
 fn IoResultHandle::connect_ffi(
   sock : @fd_util.Fd,
   result : IoResultHandle,
@@ -114,11 +116,13 @@ fn connect_windows(sock : @fd_util.Fd, result : IoResult) -> Int32 {
 
 ///|
 #cfg(platform="windows")
+#borrow(sock)
 extern "C" fn setup_connected_socket_ffi(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_setup_connected_socket"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(sock)
 fn setup_connected_socket_ffi(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/setup_connected_socket/windows"
 
 ///|
@@ -156,6 +160,7 @@ pub async fn IoHandle::connect(
 
 ///|
 #cfg(platform="windows")
+#borrow(server_sock, conn_sock)
 extern "C" fn accept_windows_ffi(
   server_sock : @fd_util.Fd,
   conn_sock : @fd_util.Fd,
@@ -165,6 +170,7 @@ extern "C" fn accept_windows_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(server_sock, conn_sock)
 fn IoResultHandle::accept_ffi(
   server_sock : @fd_util.Fd,
   conn_sock : @fd_util.Fd,
@@ -183,6 +189,7 @@ fn accept_windows_ffi(
 
 ///|
 #cfg(platform="windows")
+#borrow(listen_sock, accept_sock)
 extern "C" fn setup_accepted_socket_ffi(
   listen_sock : @fd_util.Fd,
   accept_sock : @fd_util.Fd,
@@ -191,6 +198,7 @@ extern "C" fn setup_accepted_socket_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(listen_sock, accept_sock)
 fn setup_accepted_socket_ffi(
   listen_sock : @fd_util.Fd,
   accept_sock : @fd_util.Fd,

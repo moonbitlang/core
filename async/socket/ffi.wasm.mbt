@@ -54,7 +54,7 @@ fn make_udp_socket(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(multi_addr, local_addr)
+#borrow(sock, multi_addr, local_addr)
 fn join_multicast_group_ffi(
   sock : @fd_util.Fd,
   multi_addr : Addr,
@@ -77,7 +77,7 @@ fn join_multicast_group(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(multi_addr)
+#borrow(sock, multi_addr)
 fn join_multicast_group_v6_ffi(
   sock : @fd_util.Fd,
   multi_addr : Addr,
@@ -99,7 +99,7 @@ fn join_multicast_group_v6(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(local_addr)
+#borrow(sock, local_addr)
 fn set_multicast_interface_ffi(
   sock : @fd_util.Fd,
   local_addr : Addr,
@@ -119,6 +119,7 @@ fn set_multicast_interface(
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn set_multicast_interface_v6_ffi(
   sock : @fd_util.Fd,
   interface_index : UInt32,
@@ -137,6 +138,7 @@ fn set_multicast_interface_v6(
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn set_multicast_ttl_ffi(
   sock : @fd_util.Fd,
   ttl : Int32,
@@ -157,6 +159,7 @@ fn set_multicast_ttl(
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn set_multicast_loopback_ffi(
   sock : @fd_util.Fd,
   loopback : Bool,
@@ -177,15 +180,17 @@ fn set_multicast_loopback(
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn set_ipv6_only(sock : @fd_util.Fd, ipv6_only : Bool) -> Int32 = "moonbitlang/async" "socket/set_ipv6_only"
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn listen_ffi(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/listen"
 
 ///|
 #unsafe_skip_stub_check
-#borrow(addr)
+#borrow(sock, addr)
 fn connect_ffi(
   sock : @fd_util.Fd,
   addr : Addr,
@@ -194,18 +199,22 @@ fn connect_ffi(
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn disable_nagle(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/disable_nagle"
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn allow_reuse_addr(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/allow_reuse_addr"
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn allow_reuse_port(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/allow_reuse_port"
 
 ///|
 #unsafe_skip_stub_check
+#borrow(sock)
 fn enable_keepalive_ffi(
   sock : @fd_util.Fd,
   keep_idle : Int32,
@@ -215,7 +224,7 @@ fn enable_keepalive_ffi(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(addr_out)
+#borrow(sock, addr_out)
 fn getsockname_ffi(
   sock : @fd_util.Fd,
   addr_out : Addr,
