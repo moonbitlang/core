@@ -18,7 +18,13 @@
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_add(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => u8_lane(value, i) + u8_lane(other, i))
+  // Sum the low seven bits without carrying into neighboring bytes, then
+  // restore each byte's high bit modulo 256.
+  fn add_bytes(a : UInt64, b : UInt64) -> UInt64 {
+    ((a & 0x7f7f7f7f7f7f7f7fUL) + (b & 0x7f7f7f7f7f7f7f7fUL)) ^
+    ((a ^ b) & 0x8080808080808080UL)
+  }
+  make(add_bytes(lo(value), lo(other)), add_bytes(hi(value), hi(other)))
 }
 
 ///|
