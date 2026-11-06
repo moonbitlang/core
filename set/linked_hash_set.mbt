@@ -176,18 +176,28 @@ pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
 
 ///|
 fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow()
+          continue 0, hash & self.capacity_mask
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
+          if self.size >= self.grow_at {
+            self.grow()
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
           break (idx, psl)
         }
@@ -259,31 +269,9 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int32) -> Unit {
 /// }
 /// ```
 pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
-  let hash = Hash::hash(key)
-  // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries.unsafe_get(idx) {
-      None => break (idx, psl, true)
-      Some(curr_entry) => {
-        if curr_entry.hash == hash && curr_entry.key == key {
-          break (idx, psl, false)
-        }
-        if psl > curr_entry.psl {
-          self.push_away(idx, curr_entry)
-          break (idx, psl, true)
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
-      }
-    }
-  }
-  if added {
-    let entry = { prev: self.tail, next: None, psl, key, hash, }
-    self.add_entry_to_tail(idx, entry)
-  }
-  added
+  let size = self.size
+  self.add_with_hash(key, Hash::hash(key))
+  self.size > size
 }
 
 ///|
