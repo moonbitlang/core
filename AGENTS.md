@@ -53,7 +53,9 @@ Within the "safe to promote" set:
 
 - **Operators** (`add`, `sub`, `mul`, `div`, `mod`, `neg`, `land`, `lor`, `lxor`,
   `shl`, `shr`): promoted on every type — the named method is a first-class value
-  the operator syntax can't give you.
+  the operator syntax can't give you. Exception: `Path::div` stays deprecated
+  toward `/` or `join`, because `Path::join` already provides the same operation
+  as a first-class function with a clearer name.
 - **`Compare::compare`, `Eq::equal`, `Hash::hash`**: promoted **uniformly on
   every type** that impls them (they're all in `builtin`, no cycle, and it keeps
   the surface uniform). Exactly **one** method per trait is promoted — the
@@ -75,6 +77,9 @@ Within the "safe to promote" set:
   `@debug.Debug` (there's no single canonical `Show` for a collection).
   **Error types** with a `Show` impl count as canonical: their `Show` is the
   human-readable message, so `to_string` is promoted (`fail(err.to_string())`).
+  `CoverageCounter::to_string` also stays promoted: its `Show` renders the
+  counter representation used by coverage reporting. Wrapping an array does
+  not make it a general-purpose collection without a canonical string form.
   `Show::output` is never promoted (use `to_string` / `"\{x}"`).
 - **`Default::default`**: **deprecated** — a literal (`0`, `[]`, `None`, `""`,
   `b'\x00'`) or `Default::default()` via the trait bound is clearer, and it keeps

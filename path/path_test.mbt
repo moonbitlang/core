@@ -116,12 +116,3 @@ test "node-compatible top-level dispatch smoke" {
     inspect(@path.Path::extname(".hidden"), content="")
   }
 }
-
-///|
-test "Path::div is promoted as a first-class method" {
-  let div : (@path.Path, @path.Path) -> @path.Path = @path.Path::div
-  let a : @path.Path = "a"
-  let b : @path.Path = "b"
-  inspect(div(a, b) == a / b, content="true")
-  inspect(a.div(b) == a.join(b), content="true")
-}
