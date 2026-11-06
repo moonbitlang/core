@@ -595,15 +595,19 @@ pub async fn read_text(
 ///|
 /// Write binary data to a file located at `path`.
 /// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_binary(
   path : StringView,
   content : BytesView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,
@@ -620,15 +624,19 @@ pub async fn write_binary(
 ///|
 /// Write UTF-8 encoded text data to a file located at `path`.
 /// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_text(
   path : StringView,
   content : StringView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,

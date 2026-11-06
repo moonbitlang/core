@@ -157,6 +157,10 @@ stream position is independent of the write stream position.
 Use `write_binary` for bytes, `write_text` for UTF-8 text, or write through an
 open `File` (and its `.text` view):
 
+By default, `write_binary` and `write_text` create a missing file or truncate an
+existing file. With `append=true`, they create a missing file or append to an
+existing file without truncating it.
+
 ```moonbit check
 ///|
 #cfg(target="native")
