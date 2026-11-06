@@ -34,7 +34,7 @@ pub struct ServerConnection {
 /// and must not be specified in `headers`:
 /// 
 /// - Content-Length, Transfer-Encoding
-pub fn ServerConnection::new(
+pub fn ServerConnection::ServerConnection(
   conn : @socket.Tcp,
   headers~ : Headers = Map([]),
 ) -> ServerConnection {
@@ -280,7 +280,7 @@ pub fn Server::close(self : Server) -> Unit {
 /// Return the new HTTP connection and the address of peer.
 pub async fn Server::accept(self : Server) -> (ServerConnection, @socket.Addr) {
   let (conn, addr) = self.server.accept()
-  (ServerConnection::new(conn, headers=self.headers), addr)
+  (ServerConnection(conn, headers=self.headers), addr)
 }
 
 ///|
@@ -325,7 +325,7 @@ pub async fn Server::run_forever(
   max_connections? : Int32,
 ) -> Unit {
   self.server.run_forever(allow_failure?, max_connections?) <| ((conn, _) => {
-    let conn = ServerConnection::new(conn, headers=self.headers)
+    let conn = ServerConnection(conn, headers=self.headers)
     defer conn.close()
     for ;; {
       let request = conn.read_request()

@@ -187,6 +187,7 @@ pub struct ServerConnection {
   text : @io.Utf8TextView
   // private fields
 }
+pub fn ServerConnection::ServerConnection(@socket.Tcp, headers? : Map[CaseInsensitiveString, String]) -> Self
 pub fn ServerConnection::client_addr(Self) -> @socket.Addr
 pub fn ServerConnection::close(Self) -> Unit
 pub async fn ServerConnection::drop_all(Self) -> Int64
@@ -194,6 +195,7 @@ pub async fn ServerConnection::drop_exactly(Self, Int32) -> Unit
 pub async fn ServerConnection::end_response(Self) -> Unit
 pub async fn ServerConnection::enter_passthrough_mode(Self) -> Unit
 pub async fn ServerConnection::flush(Self) -> Unit
+#deprecated
 pub fn ServerConnection::new(@socket.Tcp, headers? : Map[CaseInsensitiveString, String]) -> Self
 pub async fn ServerConnection::peek(Self) -> BytesView?
 pub async fn ServerConnection::peek_at_least(Self, Int32) -> BytesView
