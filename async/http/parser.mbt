@@ -56,6 +56,91 @@ pub suberror HttpProtocolError {
 }
 
 ///|
+/// Maximum size in bytes of a header section as sent on the wire: the start
+/// line and the header fields, or the trailer fields, each with its CRLF,
+/// plus the empty line that ends the section.
+const MAX_HEADER_SECTION_SIZE = 65536
+
+///|
+/// Maximum number of fields in a header section or a trailer section.
+const MAX_HEADER_COUNT = 256
+
+///|
+/// Maximum size in bytes of a chunk-size line, including chunk extensions.
+const MAX_CHUNK_LINE_SIZE = 4096
+
+///|
+/// Parse `1*DIGIT`, as used by `Content-Length` and the status code.
+/// Unlike `@string.parse_uint64`, no sign, base prefix or `_` is accepted.
+fn parse_http_decimal(s : StringView) -> UInt64 raise HttpProtocolError {
+  guard !s.is_empty() else { raise BadRequest }
+  let mut value = 0UL
+  for c in s.code_units() {
+    guard c is ('0'..<='9') else { raise BadRequest }
+    let digit = (c.to_int() - '0'.to_int()).to_uint64()
+    guard value <= (0xFFFF_FFFF_FFFF_FFFFUL - digit) / 10 else {
+      raise BadRequest
+    }
+    value = value * 10 + digit
+  }
+  value
+}
+
+///|
+/// Parse `1*HEXDIG`, as used by the chunk size.
+/// Unlike `@string.parse_uint64`, no sign, `0x` prefix or `_` is accepted.
+fn parse_http_hex(s : StringView) -> UInt64 raise HttpProtocolError {
+  guard !s.is_empty() else { raise BadRequest }
+  let mut value = 0UL
+  for c in s.code_units() {
+    let digit = match c {
+      '0'..<='9' => c.to_int() - '0'.to_int()
+      'a'..<='f' => c.to_int() - 'a'.to_int() + 10
+      'A'..<='F' => c.to_int() - 'A'.to_int() + 10
+      _ => raise BadRequest
+    }
+    guard value >> 60 == 0 else { raise BadRequest }
+    value = (value << 4) | digit.to_uint64()
+  }
+  value
+}
+
+///|
+/// Whether `b` is a control character not allowed in a field value or a
+/// reason phrase (everything below SP except HTAB, and DEL).
+fn is_forbidden_ctl(b : Byte) -> Bool {
+  (b < b' ' && b != b'\t') || b == b'\x7f'
+}
+
+///|
+/// Read a CRLF-terminated line from the transport, without the CRLF.
+/// Raise `BadRequest` if the line is longer than `max_len` bytes,
+/// and `ReaderClosed` if the transport ends before the CRLF.
+async fn Reader::read_line(self : Reader, max_len : Int32) -> Bytes {
+  let controller = @io.BinaryReaderImpl::get_controller(self.transport)
+  for searched = 0 {
+    let data = controller.buffered()
+    if data[searched:].find(b"\r\n") is Some(index) {
+      let len = searched + index
+      guard len <= max_len else { raise BadRequest }
+      let line = data[:len].to_owned()
+      self.transport.drop_exactly(len + 2)
+      break line
+    }
+    // a line of `max_len` bytes plus the CR of its CRLF
+    guard data.length() <= max_len + 1 else { raise BadRequest }
+    guard @io.BinaryReaderImpl::ensure_buffered(
+      self.transport,
+      data.length() + 1,
+    ) else {
+      raise @io.ReaderClosed
+    }
+    // the CR of the CRLF may be the last byte already searched
+    continue @cmp.maximum(data.length() - 1, 0)
+  }
+}
+
+///|
 /// Decode some data from current chunk, perform gzip decompression if necessary.
 /// At most `limit` bytes of data will be read from the underlying transport,
 /// and decoded into `buf[offset:offset+max_len]`.
@@ -164,9 +249,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       }
     }
     Chunked(0) => {
-      guard self.transport.read_until(b"\r\n") is Some(len_bytes) else {
-        raise @io.ReaderClosed
-      }
+      let len_bytes = self.read_line(MAX_CHUNK_LINE_SIZE)
       let len_str = @utf8.decode(len_bytes)
       let len_str = if len_str.find(";") is Some(semi_index) {
         validate_chunk_extension(len_str[semi_index:])
@@ -174,11 +257,9 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       } else {
         len_str
       }
-      let next_chunk_len = @string.parse_uint64(len_str, base=16) catch {
-        _ => raise BadRequest
-      }
+      let next_chunk_len = parse_http_hex(len_str)
       guard next_chunk_len > 0 else {
-        let (trailer, cookies) = self.read_headers()
+        let (trailer, cookies) = self.read_headers(MAX_HEADER_SECTION_SIZE)
         guard cookies.is_empty() else { raise BadRequest }
         if self.gzip is Some(gzip) {
           guard gzip.is_finished() else { raise BadRequest }
@@ -283,29 +364,33 @@ impl @io.BinaryReaderImpl for Reader with fn get_controller(self) {
 extend Reader with @io.BinaryReader::{drop_all}
 
 ///|
-async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
+/// Read header (or trailer) fields up to the empty line that ends them.
+/// At most `budget` bytes, CRLFs included, and `MAX_HEADER_COUNT` fields are
+/// accepted.
+async fn Reader::read_headers(
+  self : Reader,
+  budget : Int32,
+) -> (Headers, Array[Cookie]) {
   let headers : Headers = Map([])
   let cookies = []
-  for ;; {
-    guard self.transport.read_until(b"\r\n") is Some(header_line) else {
-      raise @io.ReaderClosed
-    }
+  for remaining = budget, count = 0 {
+    let header_line = self.read_line(remaining - 2)
     if header_line.length() is 0 {
       // empty line indicates end of header
       break
     }
+    guard count < MAX_HEADER_COUNT else { raise BadRequest }
     guard header_line.find(b":") is Some(colon_index) else { raise BadRequest }
     let key = CaseInsensitiveString(@utf8.decode(header_line[:colon_index]))
     if !is_valid_http_header_field_name(key.0) {
       raise BadRequest
     }
-    let value = if colon_index + 1 == header_line.length() {
-      ""
-    } else if header_line[colon_index + 1] == b' ' {
-      @utf8.decode(header_line[colon_index + 2:])
-    } else {
-      @utf8.decode(header_line[colon_index + 1:])
+    let raw_value = header_line[colon_index + 1:]
+    for b in raw_value {
+      guard !is_forbidden_ctl(b) else { raise BadRequest }
     }
+    // only SP and HTAB are optional whitespace around a field value
+    let value = @utf8.decode(raw_value).trim(chars=" \t").to_owned()
     if key == "Set-Cookie" {
       if Cookie::parse(value) is Some(cookie) {
         cookies.push(cookie)
@@ -316,8 +401,27 @@ async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
         Some(value0) => headers[key] = "\{value0},\{value}"
       }
     }
+    continue remaining - header_line.length() - 2, count + 1
   }
   (headers, cookies)
+}
+
+///|
+/// Validate the headers that frame a message body, and return the parsed
+/// `Content-Length`. This also applies to messages that have no body (such as
+/// responses to HEAD, or 204 and 304 responses), so that they are rejected
+/// exactly when a peer framing them differently would be confused.
+fn validate_framing_headers(headers : Headers) -> UInt64? raise {
+  let content_length = match headers.get("Content-Length") {
+    None => None
+    Some(value) => Some(parse_http_decimal(value))
+  }
+  // A message with both is a request smuggling vector (RFC 9112 section 6.3):
+  // a peer that frames by Content-Length disagrees about where it ends.
+  guard content_length is None || !headers.contains("Transfer-Encoding") else {
+    raise BadRequest
+  }
+  content_length
 }
 
 ///|
@@ -326,10 +430,7 @@ fn Reader::setup_message_body(
   headers : Headers,
   default~ : BodyKind,
 ) -> Unit raise {
-  let content_length = match headers.get("Content-Length") {
-    None => None
-    Some(value) => Some(@string.parse_uint64(value, base=10))
-  }
+  let content_length = validate_framing_headers(headers)
   let chunked = match headers.get("Transfer-Encoding") {
     None => false
     Some(encoding) if CaseInsensitiveString(encoding) == "chunked" => true
@@ -377,9 +478,8 @@ fn Reader::setup_message_body(
 async fn Reader::read_request(self : Reader) -> RequestHeader {
   guard! self.body is Empty
   self.trailer = None
-  guard self.transport.read_until(b"\r\n") is Some(request_line) else {
-    raise @io.ReaderClosed
-  }
+  let request_line = self.read_line(MAX_HEADER_SECTION_SIZE - 2)
+  let budget = MAX_HEADER_SECTION_SIZE - request_line.length() - 2
   guard request_line.find(b" ") is Some(meth_len) else { raise BadRequest }
   let meth = match request_line[:meth_len] {
     b"GET" => Get
@@ -400,13 +500,18 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
     }
   }
   let request_line = request_line[meth_len + 1:]
-  guard request_line.find(b" ") is Some(path_len) else { raise BadRequest }
+  guard request_line.find(b" ") is Some(path_len) && path_len > 0 else {
+    raise BadRequest
+  }
+  for b in request_line[:path_len] {
+    guard b > b' ' && b != b'\x7f' else { raise BadRequest }
+  }
   let path = @utf8.decode(request_line[:path_len])
   match request_line[path_len + 1:] {
     b"HTTP/1.1" | b"HTTP/1.0" => ()
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
   }
-  let (headers, cookies) = self.read_headers()
+  let (headers, cookies) = self.read_headers(budget)
   guard cookies.length() is 0 else { raise BadRequest }
   self.setup_message_body(headers, default=Empty)
   { meth, path, headers, }
@@ -438,22 +543,25 @@ async fn Reader::read_response(
   self.auto_decompress = auto_decompress
   guard! self.body is Empty
   self.trailer = None
-  guard self.transport.read_until(b"\r\n") is Some(response_line) else {
-    raise @io.ReaderClosed
-  }
+  let response_line = self.read_line(MAX_HEADER_SECTION_SIZE - 2)
+  let budget = MAX_HEADER_SECTION_SIZE - response_line.length() - 2
   guard response_line.find(b" ") is Some(protocol_len) else { raise BadRequest }
   match response_line[:protocol_len] {
     b"HTTP/1.1" | b"HTTP/1.0" => ()
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
   }
   let response_line = response_line[protocol_len + 1:]
-  guard response_line.find(b" ") is Some(code_len) else { raise BadRequest }
-  let code = @string.parse_int(@utf8.decode(response_line[:code_len]), base=10) catch {
-    _ => raise BadRequest
+  guard response_line.find(b" ") is Some(code_len) && code_len == 3 else {
+    raise BadRequest
+  }
+  let code = parse_http_decimal(@utf8.decode(response_line[:code_len])).to_int()
+  for b in response_line[code_len + 1:] {
+    guard !is_forbidden_ctl(b) else { raise BadRequest }
   }
   let reason = @utf8.decode(response_line[code_len + 1:])
-  let (headers, cookies) = self.read_headers()
+  let (headers, cookies) = self.read_headers(budget)
   if should_not_have_body(request_method, code) {
+    ignore(validate_framing_headers(headers))
     self.body = Empty
     self.trailer = Some({})
   } else {

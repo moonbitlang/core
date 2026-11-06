@@ -309,6 +309,12 @@ pub async fn ClientConnection::end_request(
 /// The request body can still be sent incrementally,
 /// but if the actual body being sent is shorter and longer than the provided length,
 /// an error will be raised.
+///
+/// Nothing is sent if the request is invalid: `path` must be non-empty and
+/// contain no space or control character (`InvalidFormat`), header names must
+/// be tokens, header values must not contain CR, LF or other control
+/// characters except HTAB, and `Content-Length` must be a decimal number
+/// (`BadRequest`).
 pub async fn ClientConnection::request(
   self : ClientConnection,
   meth : RequestMethod,

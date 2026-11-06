@@ -32,6 +32,8 @@ priv struct Sender {
   ctrl : @io.BinaryWriterController
   headers : Bytes
   has_accept_encoding : Bool
+  /// whether every persistent header passed to `Sender::new` can be sent
+  persistent_headers_valid : Bool
 }
 
 ///|
@@ -40,24 +42,42 @@ let forbidden_headers : @set.Set[CaseInsensitiveString] = Set([
 ])
 
 ///|
-fn sanitize_header_value(s : String) -> String {
-  for c in s.code_units(); crlf_count = 0 {
-    if c is ('\r' | '\n') {
-      continue crlf_count + 1
-    }
+/// Whether `s` is free of control characters other than HTAB, i.e. it can be
+/// sent as a field value or a reason phrase without changing the framing.
+fn is_valid_field_value(s : StringView) -> Bool {
+  for c in s.code_units() {
+    guard !(c is (0..<0x09 | 0x0A..<0x20 | 0x7F)) else { return false }
   } nobreak {
-    guard crlf_count > 0 else {
-      // fast path: no CRLF detected, return immediately
-      s
+    true
+  }
+}
+
+///|
+/// Parse an outgoing `Content-Length` with the same grammar the parser uses.
+fn parse_outgoing_content_length(value : StringView) -> Int64 raise {
+  let len = parse_http_decimal(value.trim(chars=" \t"))
+  guard len <= 0x7FFF_FFFF_FFFF_FFFFUL else { raise BadRequest }
+  len.reinterpret_as_int64()
+}
+
+///|
+/// Validate the headers of an outgoing message before anything is written,
+/// so that a rejected message neither reaches the wire nor leaves a partial
+/// header in the send buffer.
+/// Header names must be tokens, and header values must not contain CR, LF or
+/// other control characters except HTAB: they are rejected, not rewritten.
+fn Sender::validate_headers(
+  self : Sender,
+  extra_headers : Headers,
+) -> Unit raise {
+  guard self.persistent_headers_valid else { raise BadRequest }
+  for k, v in extra_headers {
+    guard is_valid_http_header_field_name(k.0) && is_valid_field_value(v) else {
+      raise BadRequest
     }
-    let buf = StringBuilder(size_hint=s.length() - crlf_count)
-    for c in s {
-      match c {
-        '\r' | '\n' => ()
-        c => buf.write_char(c)
-      }
+    if k == "Content-Length" {
+      ignore(parse_outgoing_content_length(v))
     }
-    buf.to_string()
   }
 }
 
@@ -66,10 +86,13 @@ fn[W : @io.BinaryWriter] Sender::new(
   w : W,
   headers~ : Headers = Map([]),
 ) -> Sender {
+  let mut persistent_headers_valid = true
   let header_text = @buffer.Buffer()
   let mut has_accept_encoding = false
   for k, v in headers {
-    if !is_valid_http_header_field_name(k.0) {
+    if !is_valid_http_header_field_name(k.0) || !is_valid_field_value(v) {
+      // reported when the first message is sent
+      persistent_headers_valid = false
       continue
     }
     if !forbidden_headers.contains(k) {
@@ -79,7 +102,7 @@ fn[W : @io.BinaryWriter] Sender::new(
       header_text
       ..write_string_utf8(k.0)
       ..write_bytes(b": ")
-      ..write_string_utf8(sanitize_header_value(v))
+      ..write_string_utf8(v)
       .write_bytes(b"\r\n")
     }
   }
@@ -89,6 +112,7 @@ fn[W : @io.BinaryWriter] Sender::new(
     send_buf: FixedArray::make(1024, 0),
     send_len: 0,
     ctrl: BinaryWriterController(),
+    persistent_headers_valid,
     headers: header_text.contents(),
     has_accept_encoding,
   }
@@ -318,7 +342,7 @@ async fn Sender::send_headers(self : Sender, headers : Headers) -> Int64? {
       continue
     }
     if k == "Content-Length" {
-      let len = @string.parse_int64(v.trim(), base=10)
+      let len = parse_outgoing_content_length(v)
       content_length = Some(len)
     } else if forbidden_headers.contains(k) {
       continue
@@ -326,7 +350,7 @@ async fn Sender::send_headers(self : Sender, headers : Headers) -> Int64? {
     self
     ..write(@utf8.encode(k.0))
     ..write(b": ")
-    ..write(@utf8.encode(sanitize_header_value(v)))
+    ..write(@utf8.encode(v))
     .write(b"\r\n")
   }
   content_length
@@ -340,6 +364,8 @@ async fn Sender::send_request(
   path : StringView,
   extra_headers~ : Headers,
 ) -> Bool {
+  validate_request_target(path)
+  self.validate_headers(extra_headers)
   guard! self.mode is SendingHeader
   match meth {
     Get => self.write(b"GET ")
@@ -388,12 +414,25 @@ async fn Sender::send_response(
   cookies~ : Array[Cookie],
   request_method~ : RequestMethod,
 ) -> Unit {
+  guard is_valid_field_value(reason) else { raise BadRequest }
+  self.validate_headers(extra_headers)
+  for cookie in cookies {
+    let fields = [cookie.name, cookie.value, ..cookie.extensions]
+    for field in [cookie.path, cookie.expires_raw, cookie.domain] {
+      if field is Some(field) {
+        fields.push(field)
+      }
+    }
+    guard fields.iter().all(field => is_valid_field_value(field)) else {
+      raise BadRequest
+    }
+  }
   guard! self.mode is SendingHeader
   let content_length = self
     ..write(b"HTTP/1.1 ")
     ..write(encode_int(code, base=10))
     ..write(b" ")
-    ..write(@utf8.encode(sanitize_header_value(reason)))
+    ..write(@utf8.encode(reason))
     ..write(b"\r\n")
     ..write(self.headers)
     .send_headers(extra_headers)
