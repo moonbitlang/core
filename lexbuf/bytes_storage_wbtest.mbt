@@ -121,24 +121,43 @@ test "BytesLexbufStorage discards complete chunks and preserves absolute offsets
 }
 
 ///|
-test "BytesLexbufStorage joins a range across several chunks" {
-  let storage = BytesLexbufStorage()
+test "BytesLexbufStorage joins every range across several chunks" {
   let big = LEXBUF_MERGED_CHUNK_LIMIT + 1
-  storage.append(b"\x00".repeat(big))
-  storage.append(b"\xff".repeat(big))
-  storage.append(b"\x80".repeat(big))
-  // From the last byte of the first chunk to the first byte of the third.
-  let view = storage.get_bytesview(big - 1, 2 * big + 1)
-  inspect(view.length(), content="67")
-  inspect(view.unsafe_get(0).to_int(), content="0")
-  inspect(view.unsafe_get(1).to_int(), content="255")
-  inspect(view.unsafe_get(65).to_int(), content="255")
-  inspect(view.unsafe_get(66).to_int(), content="128")
-  // A range that ends exactly at a chunk end.
-  inspect(storage.get_bytesview(big - 1, 2 * big).length(), content="66")
-  // Bytes above 0x7F read as 128 to 255.
-  inspect(storage.unsafe_code_unit_at(big), content="255")
-  inspect(storage.unsafe_code_unit_at(2 * big), content="128")
+  // Varied bytes, none zero, so a missing or shifted copy changes the result.
+  let chunks = [0, 1, 2].map(k => {
+    Bytes::makei(big, i => ((k * big + i) * 7 % 255 + 1).to_byte())
+  })
+  let all = chunks[0] + chunks[1] + chunks[2]
+  let storage = BytesLexbufStorage()
+  for chunk in chunks {
+    storage.append(chunk)
+  }
+  inspect(storage.chunks.length(), content="3")
+  for start in 0..<=all.length() {
+    for end in start..<=all.length() {
+      assert_true(
+        storage.get_bytesview(start, end) == all[start:end],
+        msg="range \{start}..\{end}",
+      )
+    }
+  }
+  // After discarding the first chunk, offsets stay absolute.
+  storage.discard_before(big + 3)
+  for start in (big + 3)..<=all.length() {
+    for end in start..<=all.length() {
+      assert_true(storage.get_bytesview(start, end) == all[start:end])
+    }
+  }
+}
+
+///|
+test "BytesLexbufStorage reads bytes above 0x7F as 128 to 255" {
+  let storage = BytesLexbufStorage()
+  storage.append(b"\x00\x7f\x80\xff")
+  inspect(storage.unsafe_code_unit_at(0), content="0")
+  inspect(storage.unsafe_code_unit_at(1), content="127")
+  inspect(storage.unsafe_code_unit_at(2), content="128")
+  inspect(storage.unsafe_code_unit_at(3), content="255")
 }
 
 ///|
