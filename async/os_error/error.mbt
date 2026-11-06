@@ -50,7 +50,7 @@ pub impl Show for OsError with fn output(self, logger) -> Unit {
 ///|
 pub impl @debug.Debug for OsError with fn to_repr(self) {
   @debug.Repr::opaque_(
-    "@os_error.OSError",
+    "@os_error.OsError",
     @debug.Repr::string(self.to_string()),
   )
 }
