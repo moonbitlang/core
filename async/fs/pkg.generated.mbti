@@ -56,9 +56,9 @@ pub async fn tmpdir(prefix~ : StringView) -> String
 
 pub async fn walk(StringView, async (String, Array[String]) -> Unit, exclude? : (String) -> Bool, max_concurrency? : Int32, allow_failure? : Bool) -> Unit
 
-pub async fn write_binary(StringView, BytesView, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode, append? : Bool) -> Unit
+pub async fn write_binary(StringView, BytesView, append? : Bool, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode) -> Unit
 
-pub async fn write_text(StringView, StringView, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode, append? : Bool) -> Unit
+pub async fn write_text(StringView, StringView, append? : Bool, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode) -> Unit
 
 // Errors
 

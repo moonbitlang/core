@@ -594,30 +594,27 @@ pub async fn read_text(
 
 ///|
 /// Write binary data to a file located at `path`.
-/// If `create_mode` is omitted, it defaults to `OpenOrCreate` when `append=true`,
-/// and `CreateOrTruncate` otherwise. An explicit `create_mode` is always honored,
-/// including truncation combined with append. These rules also apply to empty content.
-/// `sync` defaults to `Data`. See `open` for the meaning of the other options.
+/// The meaning of `sync`, `append`, `create_mode` and `permission`,
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_binary(
   path : StringView,
   content : BytesView,
-  create_mode? : CreateMode,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,
     mode=WriteOnly,
     sync~,
     append~,
-    create_mode=create_mode.unwrap_or(
-      if append {
-        OpenOrCreate
-      } else {
-        CreateOrTruncate
-      },
-    ),
+    create_mode~,
     permission~,
   )
   defer file.close()
@@ -626,30 +623,27 @@ pub async fn write_binary(
 
 ///|
 /// Write UTF-8 encoded text data to a file located at `path`.
-/// If `create_mode` is omitted, it defaults to `OpenOrCreate` when `append=true`,
-/// and `CreateOrTruncate` otherwise. An explicit `create_mode` is always honored,
-/// including truncation combined with append. These rules also apply to empty content.
-/// `sync` defaults to `Data`. See `open` for the meaning of the other options.
+/// The meaning of `sync`, `append`, `create_mode` and `permission`,
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_text(
   path : StringView,
   content : StringView,
-  create_mode? : CreateMode,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,
     mode=WriteOnly,
     sync~,
     append~,
-    create_mode=create_mode.unwrap_or(
-      if append {
-        OpenOrCreate
-      } else {
-        CreateOrTruncate
-      },
-    ),
+    create_mode~,
     permission~,
   )
   defer file.close()

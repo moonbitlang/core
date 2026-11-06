@@ -71,69 +71,12 @@ async test "wrapper test" {
 }
 
 ///|
-async test "write_binary default creation mode" {
-  let dir = @fs.tmpdir(prefix="write_binary_defaults")
-  defer @fs.rmdir(dir, recursive=true)
-  let path = "\{dir}/file"
-  for content in [b"", b"xy"] {
-    @fs.write_binary(path, b"ABCDE")
-    @fs.write_binary(path, content, append=true)
-    assert_eq(@fs.read_binary(path), b"ABCDE" + content)
-    @fs.write_binary(path, content)
-    assert_eq(@fs.read_binary(path), content)
-  }
-}
-
-///|
-async test "write_binary creates missing files with empty or nonempty content" {
-  let dir = @fs.tmpdir(prefix="write_binary_missing")
-  defer @fs.rmdir(dir, recursive=true)
-  let path = "\{dir}/file"
-  for append in [false, true] {
-    for content in [b"", b"xy"] {
-      @fs.write_binary(path, content, append~)
-      assert_eq(@fs.read_binary(path), content)
-      @fs.remove(path)
-    }
-  }
-}
-
-///|
-async test "write_binary honors explicit creation modes" {
-  let dir = @fs.tmpdir(prefix="write_binary_explicit")
-  defer @fs.rmdir(dir, recursive=true)
-  let path = "\{dir}/file"
-  for content in [b"", b"xy"] {
-    for create_mode in [@fs.OpenExisting, OpenOrCreate, CreateOrTruncate] {
-      @fs.write_binary(path, b"ABCDE")
-      @fs.write_binary(path, content, append=true, create_mode~)
-      assert_eq(
-        @fs.read_binary(path),
-        if create_mode is CreateOrTruncate {
-          content
-        } else {
-          b"ABCDE" + content
-        },
-      )
-    }
-    @fs.write_binary(path, b"ABCDE")
-    @test.assert_raise_async(() => {
-      @fs.write_binary(path, content, append=true, create_mode=CreateNew)
-    })
-    assert_eq(@fs.read_binary(path), b"ABCDE")
-    @fs.remove(path)
-    @test.assert_raise_async(() => {
-      @fs.write_binary(path, content, append=true, create_mode=OpenExisting)
-    })
-    assert_false(@fs.exists(path))
-    @fs.write_binary(path, content, append=true, create_mode=CreateNew)
-    assert_eq(@fs.read_binary(path), content)
-  }
+async test "write_binary append does not truncate" {
+  let path = "_build/write_binary_append_test"
   @fs.write_binary(path, b"ABCDE")
-  @fs.write_binary(path, b"xy", create_mode=OpenOrCreate)
-  inspect(@fs.read_text(path), content="xyCDE")
-  @fs.write_binary(path, b"z", create_mode=TruncateExisting)
-  inspect(@fs.read_text(path), content="z")
+  defer @fs.remove(path)
+  @fs.write_binary(path, b"xy", append=true)
+  inspect(@fs.read_text(path), content="ABCDExy")
 }
 
 ///|

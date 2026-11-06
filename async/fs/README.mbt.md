@@ -159,9 +159,7 @@ open `File` (and its `.text` view):
 
 By default, `write_binary` and `write_text` create a missing file or truncate an
 existing file. With `append=true`, they create a missing file or append to an
-existing file without truncating it. An explicit `create_mode` overrides this
-default, including when combined with `append=true`. Empty content follows the
-same rules: default append preserves an existing file and creates a missing one.
+existing file without truncating it.
 
 ```moonbit check
 ///|
