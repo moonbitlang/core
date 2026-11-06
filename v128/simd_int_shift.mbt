@@ -194,11 +194,12 @@ pub fn i64x2_all_true(value : V128) -> Bool {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_bitmask(value : V128) -> Int32 {
-  let mut result = 0
-  for i in 0..<16 {
-    result = result | (((u8_lane(value, i).to_int() >> 7) & 1) << i)
-  }
-  result
+  // In the scalar fallback, collect eight sign bits at once. After masking,
+  // the wrapping product places bit 7 of byte i at bit 56 + i; all other
+  // product bits are discarded by the shift. Lane zero becomes bit zero.
+  let low = ((lo(value) & 0x8080808080808080UL) * 0x0002040810204081UL) >> 56
+  let high = ((hi(value) & 0x8080808080808080UL) * 0x0002040810204081UL) >> 56
+  low.to_int() | (high.to_int() << 8)
 }
 
 ///|
