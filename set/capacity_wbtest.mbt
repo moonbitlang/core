@@ -21,14 +21,15 @@ test "empty constructor" {
 
 ///|
 test "constructor capacity" {
+  // `capacity` counts elements: 16 elements need 32 buckets at a 13/16 load.
   let empty : Set[Int32] = Set([], capacity=16)
-  @test.assert_eq(empty.capacity, 16)
+  @test.assert_eq(empty.capacity, 32)
   @test.assert_eq(empty.length(), 0)
   let below_length = Set([1, 2, 3], capacity=2)
   @test.assert_eq(below_length.capacity, 4)
   @test.assert_eq(below_length.length(), 3)
   let above_length = Set([1, 2, 3], capacity=16)
-  @test.assert_eq(above_length.capacity, 16)
+  @test.assert_eq(above_length.capacity, 32)
   @debug.debug_inspect(above_length.to_array(), content="[1, 2, 3]")
 }
 

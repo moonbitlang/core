@@ -14,5 +14,7 @@
 
 ///|
 fn calc_grow_threshold(capacity : Int32) -> Int32 {
-  capacity * 13 / 16
+  // Divide first to avoid overflow for large power-of-two bucket counts.
+  // The remainder preserves the rounding for tables smaller than 16 buckets.
+  capacity / 16 * 13 + capacity % 16 * 13 / 16
 }

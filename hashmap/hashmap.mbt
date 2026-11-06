@@ -40,15 +40,22 @@ fn[K, V] new_hashmap(capacity : Int32) -> HashMap[K, V] {
 }
 
 ///|
+/// Smallest bucket count that holds `length` entries without growing. The map
+/// grows once it is half full, so this is `2 * length` rounded up to a power of
+/// two.
 fn capacity_for_length(length : Int32) -> Int32 {
+  // 2^30 is the largest positive power-of-two bucket count in Int32.
+  guard length <= 0x40000000 / 2 else { abort("HashMap capacity overflow") }
   (length * 2).next_power_of_two()
 }
 
 ///|
 /// Creates a new hash map from an array of key-value pairs. Pairs with duplicate
 /// keys will keep the latest value, overwriting the previous ones.
-/// The optional `capacity` is treated as a minimum initial capacity and will be
-/// rounded up to the smallest power of 2 that can hold the requested capacity.
+/// The optional `capacity` reserves room for at least that many total entries
+/// without growing, including the entries in `arr`. A hint smaller than
+/// `arr.length()` is ignored. Without a hint, an empty map uses a small default
+/// size. Aborts if the requested entry count exceeds the supported table size.
 ///
 /// Parameters:
 ///
@@ -82,7 +89,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ) -> HashMap[K, V] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity.max(capacity_for_length(length))
+    Some(capacity) => capacity_for_length(capacity.max(length))
     None =>
       if length == 0 {
         default_init_capacity
