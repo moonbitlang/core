@@ -30,7 +30,12 @@ fn[K] new_hashset(capacity : Int32) -> HashSet[K] {
 }
 
 ///|
+/// Smallest bucket count that holds `length` entries without growing.
 fn capacity_for_length(length : Int32) -> Int32 {
+  // 2^30 is the largest positive power-of-two bucket count in Int32.
+  guard length <= calc_grow_threshold(0x40000000) else {
+    abort("HashSet capacity overflow")
+  }
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -40,8 +45,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 
 ///|
 /// Creates a hash set containing all elements from the given array.
-/// The optional `capacity` is treated as a minimum initial capacity and will be
-/// rounded up to the smallest power of 2 that can hold the requested capacity.
+/// The optional `capacity` reserves room for at least that many total elements
+/// without growing, including the elements in `arr`. A hint smaller than
+/// `arr.length()` is ignored. Without a hint, an empty set uses a small default
+/// size. Aborts if the requested element count exceeds the supported table size.
 #alias(from_array)
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
@@ -52,8 +59,8 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ) -> HashSet[K] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) | (None with capacity = default_init_capacity) =>
-      capacity.max(capacity_for_length(length))
+    Some(capacity) => capacity_for_length(capacity.max(length))
+    None => default_init_capacity.max(capacity_for_length(length))
   }
   let m = new_hashset(capacity)
   arr.each(e => m.add(e))
@@ -690,7 +697,9 @@ pub fn[K] HashSet::filter(
 
 ///|
 fn calc_grow_threshold(capacity : Int32) -> Int32 {
-  capacity * 13 / 16
+  // Divide first to avoid overflow for large power-of-two bucket counts.
+  // The remainder preserves the rounding for tables smaller than 16 buckets.
+  capacity / 16 * 13 + capacity % 16 * 13 / 16
 }
 
 ///|

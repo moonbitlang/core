@@ -965,7 +965,8 @@ test "update_or_default: f removes the present key" {
 test "get_or_init: init removes a key on the probe path and inserts another" {
   // Id(16) probes slot 0 (Id(0)) and then slot 1. `init` empties slot 0
   // and adds a key elsewhere, so the length is unchanged when it returns.
-  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(0), 0)], capacity=16)
+  // `capacity=8` entries gives 16 buckets, so Id(0) and Id(16) collide.
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(0), 0)], capacity=8)
   let v = m.get_or_init(Id(16), () => {
     m.remove(Id(0))
     m.set(Id(5), 5)
