@@ -21,3 +21,13 @@
 pub fn[K] HashSet::new(capacity~ : Int32 = default_init_capacity) -> HashSet[K] {
   new_hashset(capacity)
 }
+
+///|
+/// Returns the number of buckets in the internal table.
+///
+/// Deprecated: the bucket count is an implementation detail. Size the table
+/// with the constructor's `capacity` hint instead.
+#deprecated("The bucket count is an implementation detail; the constructor's `capacity` hint is the only sizing control")
+pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int32 {
+  self.capacity
+}

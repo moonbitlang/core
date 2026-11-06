@@ -506,12 +506,6 @@ pub fn[K] Set::length(self : Set[K]) -> Int32 {
 }
 
 ///|
-/// Get the capacity of the set.
-pub fn[K] Set::capacity(self : Set[K]) -> Int32 {
-  self.capacity
-}
-
-///|
 /// Check if the hash set is empty.
 pub fn[K] Set::is_empty(self : Set[K]) -> Bool {
   self.size == 0

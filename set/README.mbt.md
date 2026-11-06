@@ -14,9 +14,9 @@ test "creating sets" {
   inspect(empty_set.length(), content="0")
   inspect(empty_set.is_empty(), content="true")
 
-  // Set with initial capacity
+  // Set pre-sized with a `capacity` hint
   let set_with_capacity : @set.Set[Int32] = Set([], capacity=16)
-  inspect(set_with_capacity.capacity(), content="16")
+  inspect(set_with_capacity.is_empty(), content="true")
 
   // From array
   let from_array = @set.Set([1, 2, 3, 2, 1]) // Duplicates are removed

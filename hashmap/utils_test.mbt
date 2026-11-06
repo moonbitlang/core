@@ -13,21 +13,6 @@
 // limitations under the License.
 
 ///|
-test "capacity" {
-  let m = @hashmap.HashMap([])
-  inspect(m.capacity(), content="8")
-  m.set("a", 1)
-  m.set("b", 2)
-  m.set("c", 3)
-  m.set("d", 4)
-  m.set("e", 5)
-  m.set("f", 6)
-  m.set("g", 7)
-  m.set("h", 8)
-  inspect(m.capacity(), content="16")
-}
-
-///|
 test "T::retain - keep even values" {
   let map = @hashmap.from_array([
     ("a", 1),

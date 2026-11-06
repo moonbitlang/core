@@ -5,6 +5,10 @@ import {
 }
 
 import {
+  "moonbitlang/core/test",
+} for "wbtest"
+
+import {
   "moonbitlang/core/json",
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",

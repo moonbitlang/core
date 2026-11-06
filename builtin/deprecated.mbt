@@ -275,3 +275,13 @@ pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 pub fn Bytes::new(len : Int32) -> Bytes {
   Bytes::make(len, b'\x00')
 }
+
+///|
+/// Returns the number of buckets in the internal table.
+///
+/// Deprecated: the bucket count is an implementation detail. Size the table
+/// with the constructor's `capacity` hint, which counts entries.
+#deprecated("The bucket count is an implementation detail; the constructor's `capacity` hint is the only sizing control")
+pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int32 {
+  self.capacity
+}

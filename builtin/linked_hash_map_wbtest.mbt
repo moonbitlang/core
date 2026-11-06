@@ -319,15 +319,15 @@ test "grow" {
   m.set("Scala", 5)
   m.set("Julia", 5)
   assert_true(m.length() == 6)
-  assert_true(m.capacity() == 8)
+  assert_true(m.capacity == 8)
   m.set("Cobol", 5)
   assert_true(m.length() == 7)
-  assert_true(m.capacity() == 16)
+  assert_true(m.capacity == 16)
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
   assert_true(m.length() == 10)
-  assert_true(m.capacity() == 16)
+  assert_true(m.capacity == 16)
   // assert_eq(
   //   m._debug_entries(),
   //   "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",

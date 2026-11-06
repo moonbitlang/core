@@ -19,6 +19,7 @@ type HashMap[K, V]
 pub fn[K : Hash + Eq, V] HashMap::HashMap(ArrayView[(K, V)], capacity? : Int32) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] HashMap::at(Self[K, V], K) -> V
+#deprecated
 pub fn[K, V] HashMap::capacity(Self[K, V]) -> Int32
 pub fn[K, V] HashMap::clear(Self[K, V]) -> Unit
 pub fn[K : Hash + Eq, V] HashMap::contains(Self[K, V], K) -> Bool

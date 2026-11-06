@@ -72,7 +72,6 @@ test "bench Map::from_json entries=100 source_capacity=131072" (it : @bench.T) {
   for i in 0..<100 {
     object[i.to_string()] = Json::number(i.to_double())
   }
-  assert_eq(object.capacity(), 131072)
   let input = Json::object(object)
   it.bench(fn() {
     let decoded : Map[String, Int32] = try! @json.from_json(input)
