@@ -14,7 +14,7 @@ test "creating sets" {
   inspect(empty_set.length(), content="0")
   inspect(empty_set.is_empty(), content="true")
 
-  // Set with room for 16 elements before it needs to grow
+  // Set pre-sized with a `capacity` hint
   let set_with_capacity : @set.Set[Int32] = Set([], capacity=16)
   inspect(set_with_capacity.is_empty(), content="true")
 

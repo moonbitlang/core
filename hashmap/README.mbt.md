@@ -89,8 +89,8 @@ test {
 ## Size
 
 You can use `length()` to get the number of key-value pairs in the map. If you
-know roughly how many entries a map will hold, pass that count as `capacity`
-when creating it, so filling it does not rehash along the way.
+know roughly how large a map will get, pass a `capacity` hint when creating it
+to pre-size the table.
 
 ```mbt check
 ///|

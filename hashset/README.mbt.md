@@ -50,8 +50,8 @@ test {
 ## Size
 
 You can use `length()` to get the number of keys in the set. If you know
-roughly how many keys a set will hold, pass that count as `capacity` when
-creating it, so filling it does not rehash along the way.
+roughly how large a set will get, pass a `capacity` hint when creating it to
+pre-size the table.
 
 ```mbt check
 ///|

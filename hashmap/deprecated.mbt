@@ -30,7 +30,7 @@ pub fn[K, V] HashMap::new(
 /// Returns the number of buckets in the internal table.
 ///
 /// Deprecated: the bucket count is an implementation detail. Size the table
-/// with the constructor's `capacity` hint, which counts entries.
+/// with the constructor's `capacity` hint instead.
 #deprecated("The bucket count is an implementation detail; the constructor's `capacity` hint is the only sizing control")
 pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int32 {
   self.capacity
