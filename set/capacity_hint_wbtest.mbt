@@ -36,3 +36,9 @@ test "capacity hint counts the initial entries" {
     assert_true(m.capacity == buckets)
   }
 }
+
+///|
+test "panic Set capacity hint exceeds the maximum entry count" {
+  // One more than floor(2^30 * 13 / 16); reject before allocating.
+  let _ : Set[Int32] = Set([], capacity=0x34000001)
+}
