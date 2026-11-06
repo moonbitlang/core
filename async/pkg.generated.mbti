@@ -90,7 +90,8 @@ pub async fn TaskGroup::return_immediately(Self) -> Unit noraise
 pub fn[X] TaskGroup::spawn(Self, async () -> X, no_wait? : Bool, allow_failure? : Bool, loc~ : SourceLoc) -> Task[X]
 #callsite(autofill(loc))
 pub fn TaskGroup::spawn_bg(Self, async () -> Unit, no_wait? : Bool, allow_failure? : Bool, loc~ : SourceLoc) -> Unit
-pub fn TaskGroup::spawn_loop(Self, async () -> Unit, no_wait? : Bool, allow_failure? : Bool, retry? : RetryMethod, max_retry? : Int32, fatal_error? : (Error) -> Bool) -> Unit
+#callsite(autofill(loc))
+pub fn TaskGroup::spawn_loop(Self, async () -> Unit, no_wait? : Bool, allow_failure? : Bool, retry? : RetryMethod, max_retry? : Int32, fatal_error? : (Error) -> Bool, loc~ : SourceLoc) -> Unit
 
 pub struct Timer {
   duration : Int32

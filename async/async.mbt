@@ -77,12 +77,14 @@ pub suberror TimeoutError
 ///
 /// Note that `with_timeout` will succeed as long as `f` completes,
 /// and the result of `f` is never silently discarded.
+#callsite(autofill(loc))
 pub async fn[X] with_timeout(
   time : Int32,
   f : async () -> X,
   error~ : Error = TimeoutError,
+  loc~ : SourceLoc,
 ) -> X {
-  match with_timeout_opt(time, f) {
+  match with_timeout_opt(time, f, loc~) {
     Some(result) => result
     None => raise error
   }
@@ -110,10 +112,15 @@ pub async fn[X] with_timeout(
 ///
 /// Note that `with_timeout_opt` will succeed as long as `f` completes,
 /// and the result of `f` is never silently discarded.
-pub async fn[X] with_timeout_opt(time : Int32, f : async () -> X) -> X? {
+#callsite(autofill(loc))
+pub async fn[X] with_timeout_opt(
+  time : Int32,
+  f : async () -> X,
+  loc~ : SourceLoc,
+) -> X? {
   let mut result = None
   let status = @coroutine.handle_cancellation <| () => {
-    with_task_group() <| group => {
+    with_task_group(loc~) <| group => {
       group.spawn_bg(no_wait=true) <| () => {
         sleep(time)
         group.return_immediately()
