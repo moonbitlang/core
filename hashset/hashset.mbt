@@ -336,12 +336,6 @@ pub fn[K] HashSet::length(self : HashSet[K]) -> Int32 {
 }
 
 ///|
-/// Returns the current capacity of the internal storage.
-pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int32 {
-  self.capacity
-}
-
-///|
 /// Returns `true` if the set contains no elements.
 pub fn[K] HashSet::is_empty(self : HashSet[K]) -> Bool {
   self.size == 0
@@ -779,7 +773,7 @@ test "clear" {
   let m : HashSet[MyString] = new_hashset(default_init_capacity)
   m.clear()
   inspect(m.length(), content="0")
-  inspect(m.capacity(), content="8")
+  inspect(m.capacity, content="8")
   for entry in m.entries {
     @test.assert_same_object(entry, None)
   }

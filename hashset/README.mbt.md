@@ -47,16 +47,19 @@ test {
 }
 ```
 
-## Size & Capacity
+## Size
 
-You can use `length()` to get the number of keys in the set, or `capacity()` to get the current capacity.
+You can use `length()` to get the number of keys in the set. If you know
+roughly how many keys a set will hold, pass that count as `capacity` when
+creating it, so filling it does not rehash along the way.
 
 ```mbt check
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
   @test.assert_eq(set.length(), 3)
-  @test.assert_eq(set.capacity(), 8)
+  let sized : @hashset.HashSet[String] = HashSet([], capacity=100)
+  @test.assert_eq(sized.length(), 0)
 }
 ```
 

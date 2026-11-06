@@ -89,16 +89,22 @@ test {
 }
 ```
 
-### Size & Capacity
+### Size
 
-You can use `length()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
+You can use `length()` to get the number of key-value pairs in the map. If you
+know roughly how many entries a map will hold, pass that count as `capacity`
+when creating it, so filling it does not rehash along the way.
 
 ```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
   inspect(map.length(), content="3")
-  inspect(map.capacity(), content="4")
+  let sized : Map[String, Int32] = Map([], capacity=100)
+  for i in 0..<100 {
+    sized[i.to_string()] = i
+  }
+  inspect(sized.length(), content="100")
 }
 ```
 

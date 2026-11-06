@@ -86,16 +86,19 @@ test {
 }
 ```
 
-## Size & Capacity
+## Size
 
-You can use `length()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
+You can use `length()` to get the number of key-value pairs in the map. If you
+know roughly how many entries a map will hold, pass that count as `capacity`
+when creating it, so filling it does not rehash along the way.
 
 ```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.length(), 3)
-  @test.assert_eq(map.capacity(), 8)
+  let sized : @hashmap.HashMap[String, Int32] = HashMap([], capacity=100)
+  @test.assert_eq(sized.length(), 0)
 }
 ```
 

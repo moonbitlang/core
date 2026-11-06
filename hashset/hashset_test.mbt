@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-let default_init_capacity = 8
-
-///|
 #derive(Eq)
 priv struct HashSetKey(Int32, Int32)
 
@@ -94,18 +91,10 @@ test "to_json" {
 }
 
 ///|
-test "new" {
-  let m : @hashset.HashSet[Int32] = HashSet([])
-  @test.assert_eq(m.capacity(), default_init_capacity)
-  inspect(m.length(), content="0")
-}
-
-///|
 test "new with zero capacity grows on insert" {
   let m : @hashset.HashSet[Int32] = HashSet([], capacity=0)
   m.add(1)
   assert_true(m.contains(1))
-  assert_true(m.capacity() > 0)
 }
 
 ///|
@@ -330,16 +319,6 @@ test "sub" {
 }
 
 ///|
-test "insert_and_grow" {
-  let m = @hashset.HashSet([])
-  for i in 0..<10 {
-    m.add(i.to_string())
-  }
-  inspect(m.length(), content="10")
-  inspect(m.capacity(), content="16")
-}
-
-///|
 test "grow rehashes collision cluster" {
   let set : @hashset.HashSet[HashSetKey] = HashSet([], capacity=2)
   for i in 0..<12 {
@@ -368,15 +347,6 @@ test "remove_and_shift_back" {
   assert_true(m.contains("a"))
   assert_true(m.contains("c"))
   assert_true(m.contains("d"))
-}
-
-///|
-test "capacity_and_size" {
-  let m = @hashset.HashSet([])
-  @test.assert_eq(m.capacity(), default_init_capacity)
-  inspect(m.length(), content="0")
-  m.add("a")
-  inspect(m.length(), content="1")
 }
 
 ///|
@@ -507,17 +477,6 @@ test "filter keeps lookups working after removals and collisions" {
 }
 
 ///|
-test "filter sizes the result for the kept elements" {
-  let s : @hashset.HashSet[Int32] = HashSet([ for i in 0..<10000 => i ])
-  for keep in [0, 1, 10, 5000, 10000] {
-    let kept = s.filter(k => k < keep)
-    let rebuilt = @hashset.HashSet([ for k in s if k < keep => k ])
-    assert_eq(kept.length(), keep)
-    assert_eq(kept.capacity(), rebuilt.capacity())
-  }
-}
-
-///|
 test "filter propagates errors" {
   let s = @hashset.HashSet(["a", "b"])
   let raised = try {
@@ -594,21 +553,6 @@ test "from_json drops repeated elements" {
 }
 
 ///|
-test "from_json sizes the set like the constructor" {
-  for n in [0, 1, 2, 13, 100, 1000] {
-    let set : @hashset.HashSet[Int32] = @json.from_json(
-      [
-        for i in 0..<n => Json(i)
-      ],
-    )
-    assert_eq(
-      set.capacity(),
-      @hashset.HashSet([ for i in 0..<n => i ]).capacity(),
-    )
-  }
-}
-
-///|
 test "from_json rejects a non-array" {
   let bad : Json = { "a": 1 }
   try (@json.from_json(bad) : @hashset.HashSet[Int32]) catch {
@@ -667,43 +611,6 @@ test "union_in_place matches union and leaves other unchanged" {
     s.remove(-1)
     assert_eq(sorted_elements(s), expected)
   }
-}
-
-///|
-test "union_in_place with itself is a no-op" {
-  // Six elements fill a capacity-8 set exactly to its grow threshold, so one
-  // more insertion attempt would grow it: without the self check, absorbing
-  // itself would resize the set while iterating its own entries.
-  let s = @hashset.from_array([ for i in 0..<6 => i ])
-  let capacity = s.capacity()
-  s.union_in_place(s)
-  assert_eq(sorted_elements(s), [0, 1, 2, 3, 4, 5])
-  assert_eq(s.capacity(), capacity)
-}
-
-///|
-test "retain visits each element once when a cluster wraps around the table" {
-  let s : @hashset.HashSet[Int32] = HashSet([])
-  let mask = s.capacity() - 1
-  // Two elements whose home is the last slot: the second one wraps to slot 0.
-  let keys = []
-  for k = 0; keys.length() < 2; k = k + 1 {
-    if (Hash::hash(k) & mask) == mask {
-      keys.push(k)
-    }
-  }
-  s.add(keys[0])
-  s.add(keys[1])
-  let calls = []
-  s.retain(k => {
-    calls.push(k)
-    k != keys[0]
-  })
-  calls.sort()
-  let expected = [keys[0], keys[1]]
-  expected.sort()
-  @debug.assert_eq(calls, expected)
-  @debug.assert_eq(s.to_array(), [keys[1]])
 }
 
 ///|

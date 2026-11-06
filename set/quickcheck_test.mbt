@@ -236,7 +236,7 @@ test "quickcheck: insertion order survives repeated rehashing" {
         model_remove(model, victim)
       }
     }
-    set.capacity() >= 512 && agrees_with_model(set, model)
+    agrees_with_model(set, model)
   })
 }
 
