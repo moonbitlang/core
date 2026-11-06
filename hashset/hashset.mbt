@@ -90,35 +90,35 @@ fn[K : Eq] HashSet::add_with_hash(
   key : K,
   hash : Int32,
 ) -> Unit {
-  // Probe without mutating: find the key, or the slot a new entry would take
-  // and the entry it would displace.
-  let (idx, psl, displaced) = for psl = 0, idx = hash & self.capacity_mask {
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. The check sits right before a new entry would be
+  // placed, ahead of any slot mutation.
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
     // it, so it is in bounds for `entries`, whose length is `capacity`.
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl, None)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow_and_add(key, hash)
+          return
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
-          break (idx, psl, Some(curr_entry))
+          if self.size >= self.grow_at {
+            self.grow_and_add(key, hash)
+            return
+          }
+          self.push_away(idx, curr_entry)
+          break (idx, psl)
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
-  }
-  // The key is absent. Grow only now, so re-adding a present key never
-  // reallocates; after growing, place the entry directly instead of probing
-  // (and comparing keys) again.
-  if self.size >= self.grow_at {
-    self.grow()
-    self.rehash_place_entry({ psl: 0, key, hash, })
-    self.size += 1
-    return
-  }
-  if displaced is Some(curr_entry) {
-    self.push_away(idx, curr_entry)
   }
   let entry = { psl, key, hash, }
   self.set_entry(entry, idx)
@@ -299,6 +299,16 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
       self.rehash_place_entry(entry)
     }
   }
+}
+
+///|
+/// Grow the table, then add `key`, which the caller has just probed for and
+/// found absent. The entry is placed directly in the new table, without
+/// probing for (and comparing) the key again.
+fn[K] HashSet::grow_and_add(self : HashSet[K], key : K, hash : Int32) -> Unit {
+  self.grow()
+  self.rehash_place_entry({ psl: 0, key, hash, })
+  self.size += 1
 }
 
 ///|

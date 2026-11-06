@@ -176,33 +176,34 @@ pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
 
 ///|
 fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
-  // Probe without mutating: find the key, or the slot a new entry would take
-  // and the entry it would displace.
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. The check sits right before a new entry would be
+  // placed, ahead of any slot mutation.
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, displaced) = for psl = 0, idx = hash & self.capacity_mask {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl, None)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow_and_add(key, hash)
+          return
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
-          break (idx, psl, Some(curr_entry))
+          if self.size >= self.grow_at {
+            self.grow_and_add(key, hash)
+            return
+          }
+          self.push_away(idx, curr_entry)
+          break (idx, psl)
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
-  }
-  // The key is absent. Grow only now, so re-adding a present key never
-  // reallocates; after growing, place the entry directly instead of probing
-  // (and comparing keys) again. `rehash_place_entry` links it at the tail.
-  if self.size >= self.grow_at {
-    self.grow()
-    self.rehash_place_entry({ prev: -1, next: None, psl: 0, key, hash, })
-    return
-  }
-  if displaced is Some(curr_entry) {
-    self.push_away(idx, curr_entry)
   }
   let entry = { prev: self.tail, next: None, psl, key, hash, }
   self.add_entry_to_tail(idx, entry)
@@ -454,6 +455,15 @@ fn[K] Set::grow(self : Set[K]) -> Unit {
       }
     }
   }
+}
+
+///|
+/// Grow the table, then add `key`, which the caller has just probed for and
+/// found absent. The entry is placed directly in the new table, without
+/// probing for (and comparing) the key again.
+fn[K] Set::grow_and_add(self : Set[K], key : K, hash : Int32) -> Unit {
+  self.grow()
+  self.rehash_place_entry({ prev: -1, next: None, psl: 0, key, hash, })
 }
 
 ///|
