@@ -86,3 +86,75 @@ test "panic StringScanner rejects a cursor inside a surrogate pair" {
 test "panic StringScanner rejects a cursor inside a pair of a sliced view" {
   @lexbuf.StringScanner("\u{1F600}a\u{1F600}b"[2:], cursor=2) |> ignore
 }
+
+///|
+test "panic BytesLexbuf rejects an unretained view" {
+  let chunks = [|b"a"|]
+  let lexbuf = @lexbuf.BytesLexbuf::from_fn(() => chunks.next())
+  lexbuf.__refill()
+  lexbuf.__get_bytesview(0, 1) |> ignore
+}
+
+///|
+test "panic BytesLexbuf rejects a commit without retention" {
+  let chunks = [|b"a"|]
+  let lexbuf = @lexbuf.BytesLexbuf::from_fn(() => chunks.next())
+  lexbuf.__refill()
+  lexbuf.__commit_to(0)
+}
+
+///|
+test "panic BytesLexbuf rejects refill with unread input" {
+  let chunks = [|b"a"|]
+  let lexbuf = @lexbuf.BytesLexbuf::from_fn(() => chunks.next())
+  lexbuf.__refill()
+  lexbuf.__refill()
+}
+
+///|
+test "panic AsyncBytesLexbuf rejects an unretained view" {
+  let scheduler = LexbufTestScheduler::new()
+  let lexbuf = @lexbuf.AsyncBytesLexbuf::from_fn(async fn() {
+    scheduler.pause()
+    Some(b"a")
+  })
+  lexbuf.__get_bytesview(0, 0) |> ignore
+}
+
+///|
+test "panic AsyncBytesLexbuf rejects a commit without retention" {
+  let scheduler = LexbufTestScheduler::new()
+  let lexbuf = @lexbuf.AsyncBytesLexbuf::from_fn(async fn() {
+    scheduler.pause()
+    Some(b"a")
+  })
+  lexbuf.__commit_to(0)
+}
+
+///|
+test "panic AsyncBytesLexbuf rejects refill with unread input" {
+  let scheduler = LexbufTestScheduler::new()
+  scheduler.run_async(async fn() {
+    let lexbuf = @lexbuf.AsyncBytesLexbuf::from_fn(async fn() {
+      scheduler.pause()
+      Some(b"a")
+    })
+    lexbuf.__refill()
+    lexbuf.__refill()
+  })
+}
+
+///|
+test "panic BytesScanner rejects a negative cursor" {
+  @lexbuf.BytesScanner(b"abc", cursor=-1) |> ignore
+}
+
+///|
+test "panic BytesScanner rejects a cursor past the end" {
+  @lexbuf.BytesScanner(b"abc", cursor=4) |> ignore
+}
+
+///|
+test "panic BytesScanner rejects a cursor past the end of a sliced view" {
+  @lexbuf.BytesScanner(b"xxabc"[2:], cursor=4) |> ignore
+}

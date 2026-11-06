@@ -6,10 +6,26 @@ package "moonbitlang/core/lexbuf"
 // Errors
 
 // Types and methods
+pub struct AsyncBytesLexbuf {
+  // private fields
+}
+pub fn AsyncBytesLexbuf::from_fn(async () -> Bytes?) -> Self
+
 pub struct AsyncLexbuf {
   // private fields
 }
 pub fn AsyncLexbuf::from_fn(async () -> String?) -> Self
+
+pub struct BytesLexbuf {
+  // private fields
+}
+pub fn BytesLexbuf::from_fn(() -> Bytes?) -> Self
+
+pub(all) struct BytesScanner {
+  data : BytesView
+  mut cursor : Int32
+}
+pub fn BytesScanner::BytesScanner(BytesView, cursor? : Int32) -> Self
 
 pub struct Lexbuf {
   // private fields
