@@ -16,6 +16,12 @@
 /// A `MutArrayView` represents a view into a section of an array without copying the data.
 /// The view provides read-write access to elements of the underlying array.
 ///
+/// Changing an array's length while a view of it is alive is a program error,
+/// as it is for `ArrayView`. The view keeps its original bounds and buffer, so
+/// what it reads is always a valid value of `T` but is otherwise unspecified,
+/// and once the array has grown into a new buffer, writes through the view no
+/// longer reach the array.
+///
 /// # Example
 ///
 /// ```mbt check

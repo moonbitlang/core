@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+test "mutable view writes stop reaching an array that has grown" {
+  let arr : Array[Int32] = Array(capacity=1)
+  arr.push(1)
+  let view = arr.mut_view()
+  arr.push(2) // Exceeds the capacity, so the array moves to a new buffer.
+  view[0] = 42
+  inspect(view[0], content="42")
+  inspect(arr[0], content="1")
+}
+
+///|
 test "array_mut_sub" {
   let arr = [1, 2, 3, 4, 5]
   let view = arr.mut_view()

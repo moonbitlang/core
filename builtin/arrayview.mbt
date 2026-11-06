@@ -35,10 +35,6 @@
 /// unused capacity in place, and `Array::shrink_to_fit` moves the survivors
 /// into an exact-size buffer and lets the old one go.
 ///
-/// On the JavaScript backend this guarantee does not yet hold: operations such
-/// as `Array::pop` shrink the underlying JavaScript array, so a view reaching
-/// past the array's current length observes `undefined`.
-///
 /// # Example
 ///
 /// ```mbt check
