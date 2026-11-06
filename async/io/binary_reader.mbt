@@ -30,11 +30,12 @@
 /// but it should always read at least one byte on success,
 /// and a zero return value should always indicate EOF.
 /// `raw_read_impl` should return as soon as possible after at least one byte of data is read.
-/// It must not raise `ReaderClosed` to indicate its own EOF; return zero instead.
-/// A transformed reader should translate `ReaderClosed` raised by an inner
-/// reader into an error that describes the malformed or truncated transformed
-/// stream instead of propagating it.
+/// It must not raise `UnexpectedEof` to indicate its own EOF; return zero instead.
+/// Any error raised by `raw_read_impl`, including errors propagated from an
+/// inner reader, is wrapped in `TransportError` by the `BinaryReader` layer.
 pub(open) trait BinaryReaderImpl {
+  /// Return a short name identifying this reader in error context.
+  fn name(Self) -> String
   fn get_controller(Self) -> BinaryReaderController
   async fn raw_read_impl(
     Self,
@@ -42,13 +43,6 @@ pub(open) trait BinaryReaderImpl {
     offset~ : Int32,
     max_len~ : Int32,
   ) -> Int32
-  /// Ensure that the reader controller buffers at least `min_len` bytes.
-  /// Return `false` if this reader reaches EOF first. Any shorter trailing data
-  /// remains buffered.
-  ///
-  /// Compared to `BinaryReader::peek_at_least`, this method does not synthesize
-  /// `ReaderClosed` on EOF, and can be used to reliably detect early EOF.
-  async fn ensure_buffered(Self, Int32) -> Bool = _
 }
 
 ///|
@@ -61,44 +55,38 @@ pub(open) trait BinaryReaderImpl {
 /// When overridden for a reader-specific optimization,
 /// the alternative implementation should respect behavior of the default implementation.
 pub(open) trait BinaryReader: BinaryReaderImpl {
-  async fn read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 = _
-  async fn read(Self) -> Bytes? = _
-  async fn read_at_least(Self, Int32) -> Bytes = _
-  async fn peek(Self) -> BytesView? = _
-  async fn peek_at_least(Self, Int32) -> BytesView = _
-  async fn read_exactly(Self, len : Int32) -> Bytes = _
-  async fn drop_exactly(Self, len : Int32) -> Unit = _
-  async fn peek_exactly(Self, len : Int32) -> BytesView = _
-  async fn read_all(Self) -> Bytes = _
-  async fn drop_all(Self) -> Int64 = _
-  async fn read_until(Self, pattern : BytesView, include_delimiter? : Bool) -> Bytes? = _
-  async fn peek_until(Self, pattern : BytesView, include_delimiter? : Bool) -> BytesView? = _
+  async fn read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError = _
+  async fn read(Self) -> Bytes? raise ReaderError = _
+  async fn read_at_least(Self, Int32) -> Bytes raise ReaderError = _
+  async fn peek(Self) -> BytesView? raise ReaderError = _
+  async fn peek_at_least(Self, Int32) -> BytesView raise ReaderError = _
+  async fn read_exactly(Self, len : Int32) -> Bytes raise ReaderError = _
+  async fn drop_exactly(Self, len : Int32) -> Unit raise ReaderError = _
+  async fn peek_exactly(Self, len : Int32) -> BytesView raise ReaderError = _
+  async fn read_all(Self) -> Bytes raise ReaderError = _
+  async fn drop_all(Self) -> Int64 raise ReaderError = _
+  async fn read_until(Self, pattern : BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError = _
+  async fn peek_until(Self, pattern : BytesView, include_delimiter? : Bool) -> BytesView? raise ReaderError = _
 }
 
 ///|
-/// Error raised by binary reader APIs when the binary stream reaches EOF
-/// before enough data can be fetched according to user request
+/// Error raised by `@io.BinaryReader` API
 #derive(@debug.Debug, @json.ToJson)
-pub(all) suberror ReaderClosed
-
-///|
-impl BinaryReaderImpl with fn ensure_buffered(self, min_len : Int32) {
-  let controller = BinaryReaderImpl::get_controller(self)
-  controller.enlarge_to(min_len)
-  while controller.buf_len < min_len {
-    let offset = controller.buf_start + controller.buf_len
-    let n = BinaryReaderImpl::raw_read_impl(
-      self,
-      controller.buf,
-      offset~,
-      max_len=controller.buf.length() - offset,
-    )
-    if n is 0 {
-      return false
-    }
-    controller.buf_len += n
-  }
-  true
+pub(all) suberror ReaderError {
+  /// Error raised by binary reader APIs when the binary stream reaches EOF
+  /// before enough data can be fetched according to user request
+  UnexpectedEof
+  /// Raised when the amount of data to be returned in some reader API exceeds limit.
+  /// The limit can be either explicit user request,
+  /// or implicit from length restriction of `Bytes` etc.
+  LengthLimitExceeded
+  /// When using `@io.BinaryReader` API, error raised by the underlying reader implementation
+  /// will be wrapped in `TransportError`, so that callers can classify the source of error
+  /// for reader transformers.
+  ///
+  /// The positional parameter of `TransportError` is the actual error,
+  /// and `context` is a simple text description of the reader.
+  TransportError(Error, context~ : String)
 }
 
 ///|
@@ -115,13 +103,15 @@ impl BinaryReader with fn read_into(
   max_len~ = dst.length() - offset,
 ) {
   guard max_len > 0 else {
-    raise Failure("`BinaryReader::read_into()`: `max_len` must not be zero")
+    abort("`BinaryReader::read_into()`: `max_len` must not be zero")
   }
   let controller = BinaryReaderImpl::get_controller(self)
   if controller.buf_len > 0 {
     controller.blit_to(dst, offset~, max_len~)
   } else {
-    BinaryReaderImpl::raw_read_impl(self, dst, offset~, max_len~)
+    BinaryReaderImpl::raw_read_impl(self, dst, offset~, max_len~) catch {
+      err => raise TransportError(err, context=BinaryReaderImpl::name(self))
+    }
   }
 }
 
@@ -150,7 +140,7 @@ impl BinaryReader with fn read(self) {
 /// `reader.read_at_least(min_len)` fetches and returns an owned chunk containing
 /// at least `min_len` bytes. The returned chunk may be larger than `min_len`.
 ///
-/// If EOF is reached before enough data is fetched, `ReaderClosed` will be raised.
+/// If EOF is reached before enough data is fetched, `UnexpectedEof` will be raised.
 /// Any shorter trailing data remains buffered and can be fetched through another
 /// reader operation later.
 ///
@@ -183,10 +173,11 @@ impl BinaryReader with fn read_at_least(self, min_len : Int32) {
 /// the underlying reader implementation is cancellation safe.
 /// When `reader.peek()` is cancelled, no data will be lost.
 impl BinaryReader with fn peek(self) {
-  if BinaryReaderImpl::ensure_buffered(self, 1) {
-    Some(BinaryReaderImpl::get_controller(self).buffered())
-  } else {
-    None
+  try self.peek_at_least(1) catch {
+    UnexpectedEof => None
+    err => raise err
+  } noraise {
+    data => Some(data)
   }
 }
 
@@ -198,7 +189,7 @@ impl BinaryReader with fn peek(self) {
 /// The returned view is valid only until another operation is invoked on the
 /// same reader. Use `.to_owned()` to keep the data persistently.
 ///
-/// If EOF is reached before enough data is fetched, `ReaderClosed` will be
+/// If EOF is reached before enough data is fetched, `UnexpectedEof` will be
 /// raised. Any shorter trailing data remains buffered and can be fetched by a
 /// later reader operation.
 ///
@@ -206,16 +197,30 @@ impl BinaryReader with fn peek(self) {
 /// reader implementation is cancellation safe. When it is cancelled, no data
 /// will be lost.
 impl BinaryReader with fn peek_at_least(self, min_len : Int32) {
-  guard BinaryReaderImpl::ensure_buffered(self, min_len) else {
-    raise ReaderClosed
+  let controller = BinaryReaderImpl::get_controller(self)
+  controller.enlarge_to(min_len)
+  while controller.buf_len < min_len {
+    let offset = controller.buf_start + controller.buf_len
+    let n = BinaryReaderImpl::raw_read_impl(
+      self,
+      controller.buf,
+      offset~,
+      max_len=controller.buf.length() - offset,
+    ) catch {
+      err => raise TransportError(err, context=BinaryReaderImpl::name(self))
+    }
+    if n is 0 {
+      raise UnexpectedEof
+    }
+    controller.buf_len += n
   }
-  BinaryReaderImpl::get_controller(self).buffered()
+  controller.buffered()
 }
 
 ///|
 /// `reader.read_exactly(len)` reads exactly `len` bytes from the reader.
 /// It will wait until enough number of bytes is available.
-/// If EOF is reached before enough data is read, `ReaderClosed` will be raised.
+/// If EOF is reached before enough data is read, `UnexpectedEof` will be raised.
 impl BinaryReader with fn read_exactly(self, len) {
   let buf = FixedArray::make(len, b'\x00')
   for received = 0; received < len; {
@@ -225,7 +230,7 @@ impl BinaryReader with fn read_exactly(self, len) {
       max_len=len - received,
     )
     if new_received is 0 {
-      raise ReaderClosed
+      raise UnexpectedEof
     }
     continue received + new_received
   }
@@ -235,7 +240,7 @@ impl BinaryReader with fn read_exactly(self, len) {
 ///|
 /// `reader.drop_exactly(len)` drops exactly `len` bytes from the reader.
 /// `drop_exactly` waits until enough bytes are available.
-/// If EOF is reached before enough data is dropped, `ReaderClosed` will be raised.
+/// If EOF is reached before enough data is dropped, `UnexpectedEof` will be raised.
 impl BinaryReader with fn drop_exactly(self, len) {
   let controller = BinaryReaderImpl::get_controller(self)
   if controller.buf_len >= len {
@@ -252,9 +257,11 @@ impl BinaryReader with fn drop_exactly(self, len) {
       controller.buf,
       offset=controller.buf_start,
       max_len=controller.buf.length() - controller.buf_start,
-    )
+    ) catch {
+      err => raise TransportError(err, context=BinaryReaderImpl::name(self))
+    }
     if n is 0 {
-      raise ReaderClosed
+      raise UnexpectedEof
     }
     if dropped + n >= len {
       let remaining = dropped + n - len
@@ -278,7 +285,7 @@ impl BinaryReader with fn drop_exactly(self, len) {
 /// after any other `BinaryReader` operation is invoked on the same reader.
 /// If the data need to be kept persistent, copy it via `.to_owned()`.
 ///
-/// If EOF is reached before enough data is read, `ReaderClosed` will be raised.
+/// If EOF is reached before enough data is read, `UnexpectedEof` will be raised.
 /// In this case remaining data remain buffered, and can be fetched by other reader operations later.
 ///
 /// `reader.peek_exactly()` is cancellation safe as long as
@@ -295,7 +302,7 @@ pub async fn[R : BinaryReader] read_all_binary(
   reader : R,
   prefix_list~ : FixedArray[BytesView] = [],
   chunk_size~ : Int32 = 4096,
-) -> Bytes {
+) -> Bytes raise ReaderError {
   let buffer_list = []
   let mut buffer = FixedArray::make(chunk_size, b'\x00')
   let mut offset = 0
@@ -314,7 +321,7 @@ pub async fn[R : BinaryReader] read_all_binary(
     len
   }
   if buffer_list.length() > (@int.MAX_VALUE - offset - prefix_len) / chunk_size {
-    raise Failure::Failure("@io.read_all_binary(): data length exceeds `Int`")
+    raise LengthLimitExceeded
   }
   let total_size = prefix_len + buffer_list.length() * chunk_size + offset
   let result = FixedArray::make(total_size, b'0')
@@ -358,7 +365,9 @@ impl BinaryReader with fn drop_all(self) {
       controller.buf,
       offset=controller.buf_start,
       max_len=controller.buf.length() - controller.buf_start,
-    )
+    ) catch {
+      err => raise TransportError(err, context=BinaryReaderImpl::name(self))
+    }
     if n is 0 {
       break dropped
     }
@@ -439,7 +448,7 @@ impl BinaryReader with fn peek_until(
   let controller = BinaryReaderImpl::get_controller(self)
   let pattern_len = pattern.length()
   guard pattern_len > 0 else {
-    raise Failure("BinaryReader::peek_until() requires a non-empty pattern")
+    abort("BinaryReader::peek_until() requires a non-empty pattern")
   }
   for search_start = 0 {
     let search_region = controller.buffered()[search_start:]
@@ -453,12 +462,12 @@ impl BinaryReader with fn peek_until(
       return Some(controller.buffered()[:end_index])
     }
     let old_len = controller.buf_len
-    guard BinaryReaderImpl::ensure_buffered(self, old_len + 1) else {
-      return if controller.buf_len == 0 {
-        None
-      } else {
-        Some(controller.buffered())
-      }
+    try self.peek_at_least(old_len + 1) catch {
+      UnexpectedEof if controller.buf_len == 0 => return None
+      UnexpectedEof => return Some(controller.buffered())
+      err => raise err
+    } noraise {
+      _ => ()
     }
     continue @cmp.maximum(0, old_len - pattern_len + 1)
   }

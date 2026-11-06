@@ -32,6 +32,13 @@ pub fn[R] Decoder::Decoder(inner : R) -> Decoder[R] {
 pub impl[R : @io.BinaryReader] @io.BinaryReader for Decoder[R]
 
 ///|
+impl[R : @io.BinaryReader] @io.BinaryReaderImpl for Decoder[R] with fn name(
+  _self,
+) {
+  "@gzip.Decoder"
+}
+
+///|
 impl[R : @io.BinaryReader] @io.BinaryReaderImpl for Decoder[R] with fn get_controller(
   self,
 ) {

@@ -120,6 +120,11 @@ pub suberror IncorrectBodyLength
 impl @io.BinaryWriter for Sender
 
 ///|
+impl @io.BinaryWriterImpl for Sender with fn name(_self) {
+  "@http.Sender"
+}
+
+///|
 impl @io.BinaryWriterImpl for Sender with fn get_controller(self) {
   self.ctrl
 }
@@ -201,7 +206,10 @@ impl @io.BinaryWriterImpl for Sender with fn raw_write_impl(
 }
 
 ///|
-impl @io.BinaryWriter for Sender with fn write_reader(self, reader) {
+async fn Sender::optimized_write_reader(
+  self : Sender,
+  reader : &@io.BinaryReader,
+) -> Unit {
   match self.mode {
     SendingHeader =>
       for ;; {
@@ -244,7 +252,7 @@ impl @io.BinaryWriter for Sender with fn write_reader(self, reader) {
       )
       self.send_len += NON_EMPTY_MESSAGE_HEADER_END.length()
       self.mode = SendingBody
-      self.write_reader(reader)
+      self.optimized_write_reader(reader)
     }
     SendingBody => {
       self.flush()
@@ -271,7 +279,15 @@ impl @io.BinaryWriter for Sender with fn write_reader(self, reader) {
 }
 
 ///|
-extend Sender with @io.BinaryWriter::{write, write_reader}
+impl @io.BinaryWriter for Sender with fn write_reader(self, reader) {
+  self.optimized_write_reader(reader) catch {
+    @io.ReaderError::_ as err => raise err
+    err => raise @io.WriterError::TransportError(err, context="@http.Sender")
+  }
+}
+
+///|
+extend Sender with @io.BinaryWriter::{write}
 
 ///|
 async fn Sender::end_body(self : Sender) -> Unit {

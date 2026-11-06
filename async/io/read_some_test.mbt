@@ -67,7 +67,7 @@ async test "read_at_least fixed minimum" {
         log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
-      @io.ReaderClosed => ()
+      @io.UnexpectedEof => ()
       err => raise err
     }
   }
@@ -98,7 +98,7 @@ async test "read_at_least increasing minimum" {
         log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
-      @io.ReaderClosed => ()
+      @io.UnexpectedEof => ()
       err => raise err
     }
   }
@@ -127,10 +127,10 @@ async test "read_at_least preserves a short EOF tail" {
       w.write(b"abc")
     }
     try r.read_at_least(4) |> ignore catch {
-      @io.ReaderClosed => ()
+      UnexpectedEof => ()
       err => raise err
     } noraise {
-      _ => fail("expected ReaderClosed")
+      _ => fail("expected UnexpectedEof")
     }
     assert_eq(r.read(), Some(b"abc"))
     assert_eq(r.read(), None)
@@ -147,10 +147,10 @@ async test "peek_at_least preserves and does not consume a short EOF tail" {
       w.write(b"abc")
     }
     try r.peek_at_least(4) |> ignore catch {
-      @io.ReaderClosed => ()
+      UnexpectedEof => ()
       err => raise err
     } noraise {
-      _ => fail("expected ReaderClosed")
+      _ => fail("expected UnexpectedEof")
     }
     guard r.peek() is Some(first) else { fail("missing buffered tail") }
     assert_eq(first, b"abc")

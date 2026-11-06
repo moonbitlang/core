@@ -83,6 +83,13 @@ impl[W : BinaryWriter] BinaryWriterImpl for BufferedWriter[W] with fn raw_write_
 }
 
 ///|
+impl[W : BinaryWriter] BinaryWriterImpl for BufferedWriter[W] with fn name(
+  _self,
+) {
+  "@io.BufferedWriter"
+}
+
+///|
 impl[W : BinaryWriter] BinaryWriterImpl for BufferedWriter[W] with fn get_controller(
   self,
 ) {
