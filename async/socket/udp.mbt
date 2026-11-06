@@ -253,7 +253,7 @@ pub async fn UdpServer::UdpServer(
 /// There is no simple way to implement multicast-only IPv6 socket on Linux/MacOS.
 pub async fn UdpServer::multicast(
   multi_addr : Addr,
-  interface_addr~ : Addr = Addr::new(0, 0),
+  interface_addr~ : Addr = Addr::from_ipv4(0, port=0),
 ) -> UdpServer {
   let context = "@socket.UdpServer::multicast()"
   let family = multi_addr.family()
@@ -264,7 +264,7 @@ pub async fn UdpServer::multicast(
   let io = @event_loop.IoHandle::from_fd(sock, kind=Socket)
   errdefer io.close()
   if @event_loop.platform is Windows {
-    let local_addr = Addr::new(0, multi_addr.port())
+    let local_addr = Addr::from_ipv4(0, port=multi_addr.port())
     io.bind(local_addr.0, context~)
   } else {
     io.bind(multi_addr.0, context~)
@@ -369,7 +369,7 @@ pub fn UdpServer::set_multicast_loopback(
 pub fn UdpServer::join_multicast_group(
   self : UdpServer,
   multi_addr : Addr,
-  interface_addr~ : Addr = Addr::new(0, 0),
+  interface_addr~ : Addr = Addr::from_ipv4(0, port=0),
 ) -> Unit raise {
   let context = "@socket.UdpServer::join_multicast_group()"
   guard self.addr.family() is IPv4 else { abort("\{context} is IPv4 only") }

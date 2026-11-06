@@ -28,7 +28,7 @@ fn Addr::parse_ip(
     Addr::new_ipv6(ip_bytes, port, scope_id~)
   } else {
     let ip = parse_ipv4(host)
-    Addr::new(ip, port)
+    Addr::from_ipv4(ip, port~)
   }
 }
 

@@ -66,3 +66,10 @@ pub extend ResolveHostnameError with Show::{output}
 #deprecated
 #doc(hidden)
 pub extend IpProtocolPreference with @debug.Debug::{to_repr}
+
+///|
+/// Create a new IPv4 address.
+#deprecated("Use `Addr::from_ipv4(ip, port=...)` instead")
+pub fn Addr::new(ip : UInt32, port : Int32) -> Addr {
+  Addr::from_ipv4(ip, port~)
+}
