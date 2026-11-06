@@ -69,18 +69,58 @@ pub impl FromJson for Int32 with fn from_json(json, path) {
 }
 
 ///|
+/// Whether `s` is an optionally negative run of decimal digits (`-?[0-9]+`),
+/// which `parse_int64`/`parse_uint64` read exactly.
+fn is_integer_literal(s : String) -> Bool {
+  let digits : StringView = if s is ['-', .. rest] { rest } else { s }
+  if digits.is_empty() {
+    return false
+  }
+  for c in digits {
+    guard c is ('0'..<='9') else { return false }
+  }
+  true
+}
 
 ///|
+/// Largest magnitude a `Number` without `repr` may have for `Int64`/`UInt64`
+/// decoding: 2^53 - 1. Up to here every integral `Double` stands for exactly
+/// one integer; from 2^53 on, a neighbouring literal (2^53 + 1) rounds to the
+/// same `Double`, so the value would be a guess.
+const MAX_EXACT_INTEGER : Double = 9007199254740991.0
+
+///|
+/// Accepts a JSON number, or a string (the form `ToJson for Int64` writes)
+/// parsed as before: an optional sign, digits, and the usual `0x`/`0o`/`0b`
+/// prefixes and `_` separators.
+///
+/// A number whose `repr` is a run of decimal digits (as `parse` keeps for integers
+/// beyond 2^53 - 1, or for every number with `preserve_number_repr=true`) is
+/// decoded from those exact digits. Otherwise the number must be integral and
+/// within ±(2^53 - 1).
 pub impl FromJson for Int64 with fn from_json(json, path) {
-  guard json is String(str) else {
-    decode_error(
-      path, "Int64::from_json: expected number in string representation",
-    )
-  }
-  @internal/strconv.parse_int64(str) catch {
-    Failure::Failure(error) =>
-      decode_error(path, "Int64::from_json: parsing failure \{error}")
-    error => decode_error(path, "Int64::from_json: parsing failure \{error}")
+  match json {
+    String(str) =>
+      @internal/strconv.parse_int64(str) catch {
+        Failure::Failure(error) =>
+          decode_error(path, "Int64::from_json: parsing failure \{error}")
+        error =>
+          decode_error(path, "Int64::from_json: parsing failure \{error}")
+      }
+    Number(_, repr=Some(repr)) if is_integer_literal(repr) =>
+      @internal/strconv.parse_int64(repr) catch {
+        _ => decode_error(path, "Int64::from_json: overflow")
+      }
+    Number(n, ..) => {
+      guard n == n.floor() else {
+        decode_error(path, "Int64::from_json: expected integer")
+      }
+      guard n >= -MAX_EXACT_INTEGER && n <= MAX_EXACT_INTEGER else {
+        decode_error(path, "Int64::from_json: overflow")
+      }
+      n.to_int64()
+    }
+    _ => decode_error(path, "Int64::from_json: expected number or string")
   }
 }
 
@@ -100,18 +140,37 @@ pub impl FromJson for UInt32 with fn from_json(json, path) {
 }
 
 ///|
-
-///|
+/// Accepts a JSON number, or a string (the form `ToJson for UInt64` writes)
+/// parsed as before: digits, and the usual `0x`/`0o`/`0b` prefixes and `_`
+/// separators.
+///
+/// A number whose `repr` is a run of decimal digits without `-` is decoded from
+/// those exact digits. Otherwise the number must be integral and within
+/// 0..=2^53 - 1.
 pub impl FromJson for UInt64 with fn from_json(json, path) {
-  guard json is String(str) else {
-    decode_error(
-      path, "UInt64::from_json: expected number in string representation",
-    )
-  }
-  @internal/strconv.parse_uint64(str) catch {
-    Failure::Failure(error) =>
-      decode_error(path, "UInt64::from_json: parsing failure \{error}")
-    error => decode_error(path, "UInt64::from_json: parsing failure \{error}")
+  match json {
+    String(str) =>
+      @internal/strconv.parse_uint64(str) catch {
+        Failure::Failure(error) =>
+          decode_error(path, "UInt64::from_json: parsing failure \{error}")
+        error =>
+          decode_error(path, "UInt64::from_json: parsing failure \{error}")
+      }
+    Number(_, repr=Some(repr)) if !repr.has_prefix("-") &&
+      is_integer_literal(repr) =>
+      @internal/strconv.parse_uint64(repr) catch {
+        _ => decode_error(path, "UInt64::from_json: overflow")
+      }
+    Number(n, ..) => {
+      guard n == n.floor() else {
+        decode_error(path, "UInt64::from_json: expected integer")
+      }
+      guard n >= 0.0 && n <= MAX_EXACT_INTEGER else {
+        decode_error(path, "UInt64::from_json: overflow")
+      }
+      n.to_uint64()
+    }
+    _ => decode_error(path, "UInt64::from_json: expected number or string")
   }
 }
 
@@ -193,13 +252,11 @@ fn[X : FromJson] decode_elements(
   a : Array[Json],
   path : JsonPath,
 ) -> Array[X] raise JsonDecodeError {
-  // The test cannot fail; it only narrows the binding so that `index` becomes
-  // assignable, letting every element share one path node. See `JsonPath`.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res : Array[X] = Array(capacity=a.length())
   for i, x in a {
-    new_path.index = i
-    res.push(FromJson::from_json(x, new_path))
+    // A fresh path node per element: `FromJson` is an open trait, so an impl
+    // may keep `path` (or a `JsonDecodeError` carrying it) beyond this call.
+    res.push(FromJson::from_json(x, path.add_index(i)))
   }
   res
 }
@@ -221,15 +278,12 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
   if len == 0 {
     return []
   }
-  // As above: the test cannot fail, it just makes `index` assignable.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
-    FromJson::from_json(a.unsafe_get(0), new_path),
+    FromJson::from_json(a.unsafe_get(0), path.add_index(0)),
   )
   for i in 1..<len {
-    new_path.index = i
-    res[i] = FromJson::from_json(a.unsafe_get(i), new_path)
+    res[i] = FromJson::from_json(a.unsafe_get(i), path.add_index(i))
   }
   res
 }
@@ -245,12 +299,8 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
     decode_error(path, "Map::from_json: expected object")
   }
   let res = Map([], capacity=obj.length())
-  // As above: the test cannot fail, it just makes `key` assignable.
-  guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
-  // Map::map_with_key
   for k, v in obj {
-    new_path.key = k
-    res[k] = FromJson::from_json(v, new_path)
+    res[k] = FromJson::from_json(v, path.add_key(k))
   }
   res
 }

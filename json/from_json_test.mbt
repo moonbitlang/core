@@ -758,20 +758,15 @@ test "Bool from_json error handling" {
 
 ///|
 test "Int64 from_json error handling" {
-  let json_number = Json::number(123)
+  let json_bool = Json::boolean(true)
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_number) : Int64)),
+    () => ignore((@json.from_json(json_bool) : Int64)),
     "expected Int64 decode failure",
   )
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError(
-      #|  (
-      #|    <JsonPath: "">,
-      #|    "Int64::from_json: expected number in string representation",
-      #|  ),
-      #|)
+      #|JsonDecodeError((<JsonPath: "">, "Int64::from_json: expected number or string"))
     ),
   )
   let json_invalid_string = Json("not a number")
@@ -804,20 +799,15 @@ test "UInt from_json error handling" {
 
 ///|
 test "UInt64 from_json error handling" {
-  let json_number = Json::number(123)
+  let json_bool = Json::boolean(true)
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_number) : UInt64)),
+    () => ignore((@json.from_json(json_bool) : UInt64)),
     "expected UInt64 decode failure",
   )
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError(
-      #|  (
-      #|    <JsonPath: "">,
-      #|    "UInt64::from_json: expected number in string representation",
-      #|  ),
-      #|)
+      #|JsonDecodeError((<JsonPath: "">, "UInt64::from_json: expected number or string"))
     ),
   )
   let json_invalid_string = Json("not a number")
