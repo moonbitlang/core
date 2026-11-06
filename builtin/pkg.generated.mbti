@@ -943,7 +943,7 @@ pub fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] Array::exact_view(Self[T], start? : Int32, end? : Int32) -> ArrayView[T]
-pub fn[T] Array::extract_if(Self[T], (T) -> Bool raise?) -> Self[T] raise?
+pub fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
 pub fn[A] Array::fill(Self[A], A, start? : Int32, end? : Int32) -> Unit
 pub fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 pub fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
@@ -977,10 +977,10 @@ pub fn[T] Array::make(Int32, T) -> Self[T]
 pub fn[T] Array::makei(Int32, (Int32) -> T raise?) -> Self[T] raise?
 pub fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 #alias(map_inplace, deprecated)
-pub fn[T] Array::map_in_place(Self[T], (T) -> T raise?) -> Unit raise?
+pub fn[T] Array::map_in_place(Self[T], (T) -> T) -> Unit
 pub fn[T, U] Array::mapi(Self[T], (Int32, T) -> U raise?) -> Self[U] raise?
 #alias(mapi_inplace, deprecated)
-pub fn[T] Array::mapi_in_place(Self[T], (Int32, T) -> T raise?) -> Unit raise?
+pub fn[T] Array::mapi_in_place(Self[T], (Int32, T) -> T) -> Unit
 pub fn[T] Array::mut_view(Self[T], start? : Int32, end? : Int32) -> MutArrayView[T]
 #deprecated
 pub fn[T] Array::new(capacity? : Int32) -> Self[T]
@@ -992,8 +992,8 @@ pub fn[T] Array::remove(Self[T], Int32) -> T
 pub fn[T] Array::repeat(Self[T], Int32) -> Self[T]
 pub fn[T] Array::reserve_capacity(Self[T], Int32) -> Unit
 pub fn[T] Array::resize(Self[T], Int32, T) -> Unit
-pub fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?
-pub fn[A] Array::retain_map(Self[A], (A) -> A? raise?) -> Unit raise?
+pub fn[T] Array::retain(Self[T], (T) -> Bool) -> Unit
+pub fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit
 pub fn[T] Array::rev(Self[T]) -> Self[T]
 pub fn[T] Array::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::rev_eachi(Self[T], (Int32, T) -> Unit raise?) -> Unit raise?

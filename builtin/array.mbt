@@ -1476,6 +1476,9 @@ pub fn[T, U] Array::map(
 ///|
 /// Maps a function over the elements of the array in place.
 ///
+/// The callback must not raise. Use `Array::map` for a fallible mapping and
+/// commit the result only after it succeeds.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1486,10 +1489,7 @@ pub fn[T, U] Array::map(
 /// ```
 #locals(f)
 #alias(map_inplace, deprecated)
-pub fn[T] Array::map_in_place(
-  self : Array[T],
-  f : (T) -> T raise?,
-) -> Unit raise? {
+pub fn[T] Array::map_in_place(self : Array[T], f : (T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(v)
   }
@@ -1524,6 +1524,9 @@ pub fn[T, U] Array::mapi(
 ///|
 /// Maps a function over the elements of the array with index in place.
 ///
+/// The callback must not raise. Use `Array::mapi` for a fallible mapping and
+/// commit the result only after it succeeds.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1534,10 +1537,7 @@ pub fn[T, U] Array::mapi(
 /// ```
 #locals(f)
 #alias(mapi_inplace, deprecated)
-pub fn[T] Array::mapi_in_place(
-  self : Array[T],
-  f : (Int32, T) -> T raise?,
-) -> Unit raise? {
+pub fn[T] Array::mapi_in_place(self : Array[T], f : (Int32, T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -2058,6 +2058,9 @@ pub fn[T] Array::swap(self : Array[T], i : Int32, j : Int32) -> Unit {
 /// function, modifying the array in place. The order of remaining elements is
 /// preserved.
 ///
+/// The predicate must not raise. Use `Array::filter` for a fallible predicate
+/// and commit the result only after it succeeds.
+///
 /// Parameters:
 ///
 /// * `array` : The array to be filtered.
@@ -2080,7 +2083,7 @@ pub fn[T] Array::swap(self : Array[T], i : Int32, j : Int32) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
+pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool) -> Unit {
   let len = self.length()
   let write = for read, v in self; write = 0 {
     if f(v) {
@@ -2349,6 +2352,9 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// extracted elements are removed from the original array and returned as a new
 /// array. The relative order of the extracted elements is preserved.
 ///
+/// The predicate must not raise. For fallible selection, compute the selection
+/// decisions before removing any elements from the array.
+///
 /// Parameters:
 ///
 /// * `array` : The array to extract elements from.
@@ -2369,10 +2375,7 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::extract_if(
-  self : Array[T],
-  f : (T) -> Bool raise?,
-) -> Array[T] raise? {
+pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
   let removed = []
   for read in 0..<self.length(); write = 0 {
     let elem = self[read]
@@ -2707,6 +2710,9 @@ pub fn[A] Array::truncate(self : Array[A], len : Int32) -> Unit {
 ///|
 /// In-place filter and map for Array
 ///
+/// The callback must not raise. Use `Array::filter_map` for a fallible mapping
+/// and commit the result only after it succeeds.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -2716,10 +2722,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int32) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Array::retain_map(
-  self : Array[A],
-  f : (A) -> A? raise?,
-) -> Unit raise? {
+pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
   if self.is_empty() {
     return
   }
