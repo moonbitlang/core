@@ -203,6 +203,11 @@ impl @io.BinaryReaderImpl for File with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for File with fn name(_self) {
+  "@fs.File"
+}
+
+///|
 impl @io.BinaryReaderImpl for File with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -292,7 +297,7 @@ pub async fn File::read_exactly_at(
   self : File,
   len : Int32,
   position~ : Int64,
-) -> Bytes {
+) -> Bytes raise @io.ReaderError {
   let buf = FixedArray::make(len, b'\x00')
   let n = self.io.read_at(
     buf,
@@ -300,9 +305,11 @@ pub async fn File::read_exactly_at(
     len~,
     position~,
     context="@fs.File::read_exactly_at()",
-  )
+  ) catch {
+    err => raise TransportError(err, context="@fs.File")
+  }
   if n < len {
-    raise @io.ReaderClosed
+    raise UnexpectedEof
   }
   buf.unsafe_reinterpret_as_bytes()
 }
@@ -332,6 +339,11 @@ impl @io.BinaryWriterImpl for File with fn raw_write_impl(
     len~,
     context="impl @io.BinaryWriter for @fs.File",
   )
+}
+
+///|
+impl @io.BinaryWriterImpl for File with fn name(_self) {
+  "@fs.File"
 }
 
 ///|

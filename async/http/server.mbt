@@ -82,6 +82,11 @@ impl @io.BinaryReaderImpl for ServerConnection with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for ServerConnection with fn name(_self) {
+  "@http.ServerConnection"
+}
+
+///|
 impl @io.BinaryReaderImpl for ServerConnection with fn get_controller(self) {
   @io.BinaryReaderImpl::get_controller(self.reader)
 }
@@ -159,6 +164,11 @@ impl @io.BinaryWriterImpl for ServerConnection with fn raw_write_impl(
 }
 
 ///|
+impl @io.BinaryWriterImpl for ServerConnection with fn name(_self) {
+  "@http.ServerConnection"
+}
+
+///|
 impl @io.BinaryWriterImpl for ServerConnection with fn get_controller(self) {
   @io.BinaryWriterImpl::get_controller(self.sender)
 }
@@ -193,7 +203,14 @@ pub impl @io.BinaryWriter for ServerConnection with fn write_reader(
   reader,
 ) {
   guard! !(self.sender.mode is SendingHeader)
-  self.sender.write_reader(reader)
+  self.sender.optimized_write_reader(reader) catch {
+    @io.ReaderError::_ as err => raise err
+    err =>
+      raise @io.WriterError::TransportError(
+        err,
+        context="@http.ServerConnection",
+      )
+  }
 }
 
 ///|

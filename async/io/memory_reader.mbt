@@ -58,6 +58,11 @@ pub fn MemoryReader::close(self : MemoryReader) -> Unit {
 pub impl BinaryReader for MemoryReader
 
 ///|
+impl BinaryReaderImpl for MemoryReader with fn name(_self) {
+  "@io.MemoryReader"
+}
+
+///|
 impl BinaryReaderImpl for MemoryReader with fn get_controller(self) {
   BinaryReaderImpl::get_controller(self.reader)
 }

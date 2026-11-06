@@ -103,7 +103,10 @@ async test "ReadableStream propagates JS stream errors" {
   debug_inspect(
     err,
     content=(
-      #|<@js_async.JsError: "TypeError: expected stream failure">
+      #|TransportError(
+      #|  <@js_async.JsError: "TypeError: expected stream failure">,
+      #|  context="@js.ReadableStream",
+      #|)
     ),
   )
   // Cancelling an already errored JS ReadableStream returns a rejected promise.

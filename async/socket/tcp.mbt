@@ -332,6 +332,11 @@ impl @io.BinaryReaderImpl for Tcp with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for Tcp with fn name(_self) {
+  "@socket.Tcp"
+}
+
+///|
 impl @io.BinaryReaderImpl for Tcp with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -368,6 +373,11 @@ impl @io.BinaryWriterImpl for Tcp with fn raw_write_impl(
     len~,
     context="impl @io.BinaryWriter for @socket.Tcp",
   )
+}
+
+///|
+impl @io.BinaryWriterImpl for Tcp with fn name(_self) {
+  "@socket.Tcp"
 }
 
 ///|

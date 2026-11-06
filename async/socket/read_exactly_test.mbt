@@ -104,7 +104,7 @@ async test "read_exactly failure" {
     content=(
       #|first message sent
       #|first message: abcd
-      #|ReaderClosed
+      #|UnexpectedEof
       #|
     ),
   )

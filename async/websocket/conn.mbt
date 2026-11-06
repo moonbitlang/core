@@ -546,6 +546,11 @@ pub async fn Conn::recv(self : Conn) -> Message {
 pub impl @io.BinaryReader for Message
 
 ///|
+impl @io.BinaryReaderImpl for Message with fn name(_self) {
+  "@websocket.Conn"
+}
+
+///|
 impl @io.BinaryReaderImpl for Message with fn get_controller(self) {
   self.conn.reader_ctrl
 }
@@ -741,6 +746,11 @@ impl @io.BinaryWriterImpl for Conn with fn raw_write_impl(
   self.write_buf.blit_from_bytes(write_buf_offset, buf, offset, len)
   self.write_len += len
   len
+}
+
+///|
+impl @io.BinaryWriterImpl for Conn with fn name(_self) {
+  "@websocket.Conn"
 }
 
 ///|

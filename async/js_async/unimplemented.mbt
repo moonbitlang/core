@@ -205,6 +205,12 @@ pub impl @io.BinaryReader for ReadableStream
 
 ///|
 #coverage.skip
+impl @io.BinaryReaderImpl for ReadableStream with fn name(_self) {
+  "@js.ReadableStream"
+}
+
+///|
+#coverage.skip
 impl @io.BinaryReaderImpl for ReadableStream with fn get_controller(_) {
   abort("unimplemented in native backend")
 }
