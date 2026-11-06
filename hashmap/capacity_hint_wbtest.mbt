@@ -36,3 +36,9 @@ test "capacity hint counts the initial entries" {
     assert_true(m.capacity == buckets)
   }
 }
+
+///|
+test "panic HashMap capacity hint exceeds the maximum entry count" {
+  // One more than 2^30 / 2 entries; reject before allocating.
+  let _ : HashMap[Int32, Int32] = HashMap([], capacity=0x20000001)
+}
