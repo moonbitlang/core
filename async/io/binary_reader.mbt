@@ -80,6 +80,8 @@ pub(all) suberror ReaderError {
   /// The limit can be either explicit user request,
   /// or implicit from length restriction of `Bytes` etc.
   LengthLimitExceeded
+  /// Raised when `@io.TextReader` fail to decode binary data into text
+  MalformedText
   /// When using `@io.BinaryReader` API, error raised by the underlying reader implementation
   /// will be wrapped in `TransportError`, so that callers can classify the source of error
   /// for reader transformers.
