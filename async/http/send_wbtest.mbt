@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+extend Sender with @io.BinaryWriter::{write_reader}
+
+///|
 async test "send_request basic" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.pipe()
@@ -53,7 +56,7 @@ async test "send_request stream" {
         "Host": "x.y.org",
         "User-Agent": "MoonBit",
       })
-      sender..write_reader(file).end_body()
+      sender..optimized_write_reader(file).end_body()
     }
     defer r.close()
     inspect(
@@ -673,7 +676,7 @@ async test "sender write incorrect length" {
     @debug.debug_inspect(
       @test.expect_error_async(() => sender.write(data)),
       content=(
-        #|IncorrectBodyLength
+        #|TransportError(IncorrectBodyLength, context="@http.Sender")
       ),
     )
   }
@@ -699,7 +702,7 @@ async test "sender write_reader incorrect length" {
     @debug.debug_inspect(
       @test.expect_error_async(() => sender.write_reader(license_file)),
       content=(
-        #|IncorrectBodyLength
+        #|TransportError(IncorrectBodyLength, context="@http.Sender")
       ),
     )
   }
@@ -956,7 +959,7 @@ async test "HEAD response with non-empty body" {
       @debug.debug_inspect(
         @test.expect_error_async(() => sender..write(b"abcd").end_body()),
         content=(
-          #|IncorrectBodyLength
+          #|TransportError(IncorrectBodyLength, context="@http.Sender")
         ),
       )
     }

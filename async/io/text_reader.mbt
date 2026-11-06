@@ -84,19 +84,20 @@ pub impl TextReader for Utf8Reader with fn read(self) {
     return Some(text)
   }
 
-  guard BinaryReaderImpl::ensure_buffered(
-    inner,
-    binary.length() + missing_bytes,
-  ) else {
-    // The decode operation here should fail
-    let data = controller.buffered()
-    let text = @utf8.decode(data)
-    inner.drop_exactly(data.length())
-    return Some(text)
+  try inner.peek_at_least(binary.length() + missing_bytes) catch {
+    UnexpectedEof => {
+      // The decode operation here should fail
+      let data = controller.buffered()
+      let text = @utf8.decode(data)
+      inner.drop_exactly(data.length())
+      return Some(text)
+    }
+    err => raise err
+  } noraise {
+    _ =>
+      // We have obtained enough data, retry again
+      self.read()
   }
-
-  // We have obtained enough data, retry again
-  self.read()
 }
 
 ///|

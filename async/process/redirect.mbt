@@ -52,6 +52,11 @@ pub fn ReadFromProcess::close(self : ReadFromProcess) -> Unit {
 pub impl @io.BinaryReader for ReadFromProcess
 
 ///|
+impl @io.BinaryReaderImpl for ReadFromProcess with fn name(_self) {
+  "@process.ReadFromProcess"
+}
+
+///|
 impl @io.BinaryReaderImpl for ReadFromProcess with fn get_controller(self) {
   self.ctrl
 }
@@ -128,6 +133,11 @@ pub fn WriteToProcess::close(self : WriteToProcess) -> Unit {
 
 ///|
 pub impl @io.BinaryWriter for WriteToProcess
+
+///|
+impl @io.BinaryWriterImpl for WriteToProcess with fn name(_self) {
+  "@process.WriteToProcess"
+}
 
 ///|
 impl @io.BinaryWriterImpl for WriteToProcess with fn get_controller(self) {

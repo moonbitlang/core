@@ -37,18 +37,26 @@ test "BinaryReaderController reserves aligned prefix storage" {
 }
 
 ///|
-priv struct EnsureBufferedTestReader {
+priv struct ReaderErrorTestReader {
   ctrl : BinaryReaderController
   fail : Bool
 }
 
 ///|
-impl BinaryReaderImpl for EnsureBufferedTestReader with fn get_controller(self) {
+impl BinaryReader for ReaderErrorTestReader
+
+///|
+impl BinaryReaderImpl for ReaderErrorTestReader with fn get_controller(self) {
   self.ctrl
 }
 
 ///|
-impl BinaryReaderImpl for EnsureBufferedTestReader with fn raw_read_impl(
+impl BinaryReaderImpl for ReaderErrorTestReader with fn name(_self) {
+  "wrapper"
+}
+
+///|
+impl BinaryReaderImpl for ReaderErrorTestReader with fn raw_read_impl(
   self,
   _buf,
   offset~,
@@ -57,20 +65,28 @@ impl BinaryReaderImpl for EnsureBufferedTestReader with fn raw_read_impl(
   ignore(offset)
   ignore(max_len)
   if self.fail {
-    raise ReaderClosed
+    raise UnexpectedEof
   }
   0
 }
 
 ///|
-async test "ensure_buffered distinguishes EOF from an inner ReaderClosed" {
+extend ReaderErrorTestReader with BinaryReader::{peek_at_least}
+
+///|
+async test "reader API distinguishes EOF from an inner UnexpectedEof" {
   let eof_reader = { ctrl: BinaryReaderController(), fail: false, }
-  assert_false(BinaryReaderImpl::ensure_buffered(eof_reader, 1))
+  @debug.debug_inspect(
+    @test.expect_error_async(() => eof_reader.peek_at_least(1)),
+    content=(
+      #|UnexpectedEof
+    ),
+  )
   let failing_reader = { ctrl: BinaryReaderController(), fail: true, }
-  try BinaryReaderImpl::ensure_buffered(failing_reader, 1) |> ignore catch {
-    ReaderClosed => ()
-    err => raise err
-  } noraise {
-    _ => fail("expected inner ReaderClosed")
-  }
+  @debug.debug_inspect(
+    @test.expect_error_async(() => failing_reader.peek_at_least(1)),
+    content=(
+      #|TransportError(UnexpectedEof, context="wrapper")
+    ),
+  )
 }

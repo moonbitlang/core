@@ -41,6 +41,8 @@
 /// `flush_partial_data` mainly deal with userland buffering.
 /// It should not, for example, synchronize data to disk for a file system writer.
 pub(open) trait BinaryWriterImpl {
+  /// Return a short name identifying this writer in error context.
+  fn name(Self) -> String
   fn get_controller(Self) -> BinaryWriterController
   async fn raw_write_impl(Self, Bytes, offset~ : Int32, len~ : Int32) -> Int32
   async fn flush_partial_data(Self) -> Unit
@@ -56,9 +58,22 @@ pub(open) trait BinaryWriterImpl {
 /// When overridden for a writer-specific optimization,
 /// the alternative implementation should respect behavior of the default implementation.
 pub(open) trait BinaryWriter: BinaryWriterImpl {
-  async fn write(Self, BytesView) -> Unit = _
+  async fn write(Self, BytesView) -> Unit raise WriterError = _
   async fn write_reader(Self, &BinaryReader) -> Unit = _
   async fn flush_partial_data(Self) -> Unit = _
+}
+
+///|
+/// Error raised by `@io.BinaryWriter` API
+#derive(@debug.Debug, @json.ToJson)
+pub(all) suberror WriterError {
+  /// When using `@io.BinaryWriter` API, error raised by the underlying writer implementation
+  /// will be wrapped in `TransportError`, so that callers can classify the source of error
+  /// for reader transformers.
+  ///
+  /// The positional parameter of `TransportError` is the actual error,
+  /// and `context` is a simple text description of the writer.
+  TransportError(Error, context~ : String)
 }
 
 ///|
@@ -79,7 +94,9 @@ impl BinaryWriter with fn write(self, data) {
       buf,
       offset~,
       len=end - offset,
-    )
+    ) catch {
+      err => raise TransportError(err, context=BinaryWriterImpl::name(self))
+    }
     continue offset + progress
   }
 }
@@ -87,6 +104,9 @@ impl BinaryWriter with fn write(self, data) {
 ///|
 /// `writer.write_reader(reader)` continuously reads from input stream `reader`
 /// and writes all its content to `writer` until EOF is reached.
+///
+/// `write_reader` only raises two kinds of error: `@io.ReaderError` from the reader,
+/// or `@io.WriterError` from the writer.
 impl BinaryWriter with fn write_reader(self, reader) {
   while reader.peek() is Some(chunk) {
     self.write(chunk)

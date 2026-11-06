@@ -90,6 +90,11 @@ impl @io.BinaryReaderImpl for PipeRead with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for PipeRead with fn name(_self) {
+  "@pipe.PipeRead"
+}
+
+///|
 impl @io.BinaryReaderImpl for PipeRead with fn get_controller(self) {
   self.ctrl
 }
@@ -126,6 +131,11 @@ impl @io.BinaryWriterImpl for PipeWrite with fn raw_write_impl(
     len~,
     context="impl @io.BinaryWriter for @pipe.PipeWrite",
   )
+}
+
+///|
+impl @io.BinaryWriterImpl for PipeWrite with fn name(_self) {
+  "@pipe.PipeWrite"
 }
 
 ///|
