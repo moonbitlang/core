@@ -20,4 +20,5 @@ import {
 
 import {
   "moonbitlang/core/async",
+  "moonbitlang/core/test",
 } for "wbtest"

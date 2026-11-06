@@ -147,7 +147,10 @@ async test "bad client" {
     debug_inspect(
       server_result_queue.get(),
       content=(
-        #|ProtocolError("New message within a fragmented message")
+        #|TransportError(
+        #|  ProtocolError("New message within a fragmented message"),
+        #|  context="@websocket.Conn",
+        #|)
       ),
     )
 
@@ -166,7 +169,10 @@ async test "bad client" {
     debug_inspect(
       server_result_queue.get(),
       content=(
-        #|ProtocolError("New message within a fragmented message")
+        #|TransportError(
+        #|  ProtocolError("New message within a fragmented message"),
+        #|  context="@websocket.Conn",
+        #|)
       ),
     )
 

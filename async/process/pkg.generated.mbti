@@ -101,18 +101,18 @@ pub struct ReadFromProcess {
   // private fields
 }
 pub fn ReadFromProcess::close(Self) -> Unit
-pub async fn ReadFromProcess::drop_all(Self) -> Int64
-pub async fn ReadFromProcess::drop_exactly(Self, Int32) -> Unit
-pub async fn ReadFromProcess::peek(Self) -> BytesView?
-pub async fn ReadFromProcess::peek_at_least(Self, Int32) -> BytesView
-pub async fn ReadFromProcess::peek_exactly(Self, Int32) -> BytesView
-pub async fn ReadFromProcess::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn ReadFromProcess::read(Self) -> Bytes?
-pub async fn ReadFromProcess::read_all(Self) -> Bytes
-pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes
-pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes
-pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn ReadFromProcess::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn ReadFromProcess::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
+pub async fn ReadFromProcess::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn ReadFromProcess::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ReadFromProcess::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ReadFromProcess::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn ReadFromProcess::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn ReadFromProcess::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub impl @io.BinaryReader for ReadFromProcess
 
 type SharedProcessInput
@@ -126,7 +126,7 @@ pub struct WriteToProcess {
   // private fields
 }
 pub fn WriteToProcess::close(Self) -> Unit
-pub async fn WriteToProcess::write(Self, BytesView) -> Unit
+pub async fn WriteToProcess::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn WriteToProcess::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryWriter for WriteToProcess
 

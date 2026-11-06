@@ -508,6 +508,11 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
+}
+
+///|
 impl @io.BinaryReaderImpl for Tls with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -569,6 +574,11 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   } nobreak {
     0
   }
+}
+
+///|
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|

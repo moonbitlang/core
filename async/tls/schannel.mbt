@@ -309,6 +309,12 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
 
 ///|
 #cfg(platform="windows")
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
+}
+
+///|
+#cfg(platform="windows")
 impl @io.BinaryReaderImpl for Tls with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -429,6 +435,12 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
     let errno = @errno_util.get_errno()
     raise TlsError(@errno_util.errno_to_string(errno))
   }
+}
+
+///|
+#cfg(platform="windows")
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|

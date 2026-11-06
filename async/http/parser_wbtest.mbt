@@ -114,7 +114,7 @@ async test "read_request fixed body early EOF" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -854,7 +854,7 @@ async test "fixed length early EOF" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -879,7 +879,7 @@ async test "chunked early EOF: within chunk" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -904,7 +904,7 @@ async test "chunked early EOF: chunk boundary" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }

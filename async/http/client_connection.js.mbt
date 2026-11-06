@@ -164,6 +164,11 @@ impl @io.BinaryWriterImpl for ClientConnection with fn raw_write_impl(
 }
 
 ///|
+impl @io.BinaryWriterImpl for ClientConnection with fn name(_self) {
+  "@http.ClientConnection"
+}
+
+///|
 impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
   guard! self.request is Some(request)
   request.ctrl
@@ -183,6 +188,11 @@ pub extend ClientConnection with @io.BinaryWriter::{
 
 ///|
 pub impl @io.BinaryReader for ClientConnection
+
+///|
+impl @io.BinaryReaderImpl for ClientConnection with fn name(_self) {
+  "@http.ClientConnection"
+}
 
 ///|
 impl @io.BinaryReaderImpl for ClientConnection with fn get_controller(self) {
@@ -251,9 +261,8 @@ pub async fn ClientConnection::end_request(
     body=request.body.contents(),
     signal=abort_controller.signal(),
   ).wait(abort_controller~)
-  self.response_body = Some(
-    @js_async.ReadableStream::from_js(js_response.body()),
-  )
+  let body_stream = @js_async.ReadableStream::from_js(js_response.body())
+  self.response_body = Some(body_stream)
   let headers : Headers = Map([])
   for entry in js_response.headers().to_array() {
     headers[entry[0]] = entry[1]

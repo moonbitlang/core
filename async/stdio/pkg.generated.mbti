@@ -19,19 +19,19 @@ pub struct Input {
   text : @io.Utf8Reader
   // private fields
 }
-pub async fn Input::drop_all(Self) -> Int64
-pub async fn Input::drop_exactly(Self, Int32) -> Unit
+pub async fn Input::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn Input::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
 pub fn Input::fd(Self) -> UInt64 raise
-pub async fn Input::peek(Self) -> BytesView?
-pub async fn Input::peek_at_least(Self, Int32) -> BytesView
-pub async fn Input::peek_exactly(Self, Int32) -> BytesView
-pub async fn Input::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn Input::read(Self) -> Bytes?
-pub async fn Input::read_all(Self) -> Bytes
-pub async fn Input::read_at_least(Self, Int32) -> Bytes
-pub async fn Input::read_exactly(Self, Int32) -> Bytes
-pub async fn Input::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn Input::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn Input::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn Input::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn Input::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn Input::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn Input::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn Input::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn Input::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn Input::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn Input::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn Input::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub impl @io.BinaryReader for Input
 
 pub struct Output {
@@ -39,7 +39,7 @@ pub struct Output {
   // private fields
 }
 pub fn Output::fd(Self) -> UInt64 raise
-pub async fn Output::write(Self, BytesView) -> Unit
+pub async fn Output::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn Output::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryWriter for Output
 
