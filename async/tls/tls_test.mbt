@@ -337,3 +337,215 @@ async test "client custom root certificate rejects different root" {
     }
   }
 }
+
+///|
+async test "read and write after close raise" {
+  @async.with_task_group() <| root => {
+    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+    root.spawn_bg() <| () => {
+      defer {
+        server_read_from_client.close()
+        server_write_to_client.close()
+      }
+      let server = test_server(server_read_from_client, server_write_to_client)
+      defer server.close()
+      server.write(b"1234")
+      server.read_all() |> ignore
+    }
+    root.spawn_bg() <| () => {
+      defer {
+        client_read_from_server.close()
+        client_write_to_server.close()
+      }
+      let client = @tls.Tls::client_from_pair(
+        client_read_from_server,
+        client_write_to_server,
+        trust=NoVerification,
+      )
+      inspect(@utf8.decode(client.read_exactly(4)), content="1234")
+      client.close()
+      // closing twice is harmless
+      client.close()
+      // these used to dereference the freed `SSL` object
+      @test.assert_raise_async(() => client.read_exactly(4))
+      @test.assert_raise_async(() => client.write(b"abcd"))
+      @test.assert_raise_async(() => client.shutdown())
+    }
+  }
+}
+
+///|
+async test "client without host rejects verifying trust roots" {
+  // `host=""` names no server either (the wasm backend encodes a missing host as "")
+  for host in [None, Some("")] {
+    @async.with_task_group() <| root => {
+      let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+      let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+      root.spawn_bg() <| () => {
+        defer {
+          server_read_from_client.close()
+          server_write_to_client.close()
+        }
+        // the client gives up before or during the handshake
+        try {
+          let server = custom_root_test_server(
+            server_read_from_client, server_write_to_client, "async/tls/test_keys/valid_root_key.pem",
+            "async/tls/test_keys/valid_root_cert.pem", "async/tls/test_keys/valid_root_cert.pfx",
+          )
+          server.close()
+        } catch {
+          _ => ()
+        }
+      }
+      root.spawn_bg() <| () => {
+        defer {
+          client_read_from_server.close()
+          client_write_to_server.close()
+        }
+        // A certificate chain that verifies says nothing about *which* server
+        // sent it. Without `host` there is no name to check, so the handshake
+        // must not silently succeed.
+        @test.assert_raise_async <| () => {
+          let client = @tls.Tls::client_from_pair(
+            client_read_from_server,
+            client_write_to_server,
+            host?,
+            trust=CustomPemFile("async/tls/test_keys/valid_root_cert.pem"),
+          )
+          client.close()
+        }
+      }
+    }
+  }
+}
+
+///|
+async test "client rejects certificate for a different host" {
+  @async.with_task_group() <| root => {
+    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+    root.spawn_bg() <| () => {
+      defer {
+        server_read_from_client.close()
+        server_write_to_client.close()
+      }
+      try {
+        let server = custom_root_test_server(
+          server_read_from_client, server_write_to_client, "async/tls/test_keys/valid_root_key.pem",
+          "async/tls/test_keys/valid_root_cert.pem", "async/tls/test_keys/valid_root_cert.pfx",
+        )
+        server.close()
+      } catch {
+        _ => ()
+      }
+    }
+    root.spawn_bg() <| () => {
+      defer {
+        client_read_from_server.close()
+        client_write_to_server.close()
+      }
+      @test.assert_raise_async <| () => {
+        let client = @tls.Tls::client_from_pair(
+          client_read_from_server,
+          client_write_to_server,
+          host="not-whatever.example",
+          trust=CustomPemFile("async/tls/test_keys/valid_root_cert.pem"),
+        )
+        client.close()
+      }
+    }
+  }
+}
+
+///|
+async test "client rejects host containing NUL" {
+  // OpenSSL reads `host` as a C string: a leading NUL used to leave no name
+  // to verify, and an interior NUL used to verify only the prefix.
+  for host in ["\u{0}whatever", "whatever\u{0}.evil.example"] {
+    @async.with_task_group() <| root => {
+      let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+      let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+      root.spawn_bg() <| () => {
+        defer {
+          server_read_from_client.close()
+          server_write_to_client.close()
+        }
+        try {
+          let server = custom_root_test_server(
+            server_read_from_client, server_write_to_client, "async/tls/test_keys/valid_root_key.pem",
+            "async/tls/test_keys/valid_root_cert.pem", "async/tls/test_keys/valid_root_cert.pfx",
+          )
+          server.close()
+        } catch {
+          _ => ()
+        }
+      }
+      root.spawn_bg() <| () => {
+        defer {
+          client_read_from_server.close()
+          client_write_to_server.close()
+        }
+        @test.assert_raise_async <| () => {
+          let client = @tls.Tls::client_from_pair(
+            client_read_from_server,
+            client_write_to_server,
+            host~,
+            sni=false,
+            trust=CustomPemFile("async/tls/test_keys/valid_root_cert.pem"),
+          )
+          client.close()
+        }
+      }
+    }
+  }
+}
+
+///|
+async test "close while read is in progress" {
+  @async.with_task_group() <| root => {
+    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+    let closed = @async.Queue(kind=Unbounded)
+    root.spawn_bg() <| () => {
+      defer {
+        server_read_from_client.close()
+        server_write_to_client.close()
+      }
+      let server = test_server(server_read_from_client, server_write_to_client)
+      defer server.close()
+      // only send data once the client has been closed under its pending read
+      closed.get()
+      server.write(b"late")
+      server.read_all() |> ignore
+    }
+    root.spawn_bg() <| () => {
+      defer {
+        client_read_from_server.close()
+        client_write_to_server.close()
+      }
+      let client = @tls.Tls::client_from_pair(
+        client_read_from_server,
+        client_write_to_server,
+        trust=NoVerification,
+      )
+      let mut result = ""
+      @async.with_task_group() <| group => {
+        group.spawn_bg() <| () => {
+          // suspends waiting for the transport, then resumes after `close`:
+          // it used to call into the freed `SSL` object
+          result = try client.read() catch {
+            _ => "raised"
+          } noraise {
+            Some(data) => "read \{data.length()} bytes"
+            None => "eof"
+          }
+        }
+        @async.sleep(50)
+        client.close()
+        closed.put(())
+      }
+      inspect(result, content="raised")
+    }
+  }
+}

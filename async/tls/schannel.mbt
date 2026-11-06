@@ -126,6 +126,8 @@ struct Tls {
   mut curr_msg_trailer : Int32
   mut shutdown : Bool
   mut closed : Bool
+  // The number of operations suspended while using `context`, see `with_native_state`
+  mut active_ops : Int32
 }
 
 ///|
@@ -141,6 +143,16 @@ pub fn Tls::close(self : Tls) -> Unit {
   if self.transport.state is Normal {
     self.transport.state = Closed
   }
+  // An operation suspended in the middle of using the native state
+  // frees it when it resumes, see `Tls::with_native_state`
+  if self.active_ops == 0 {
+    self.free_native_state()
+  }
+}
+
+///|
+#cfg(platform="windows")
+fn Tls::free_native_state(self : Tls) -> Unit {
   self.context.free()
 }
 
@@ -189,7 +201,9 @@ async fn Tls::connect(self : Tls) -> Unit {
 /// `trust` specifies which servers are trusted and how certificate validation is performed.
 /// See `TrustedRoot` for more details. The default is `SystemRoot`.
 ///
-/// If `host` is present, it will be used to verify the peer's certificate.
+/// `host` is the expected name of the server, and is used to verify the
+/// peer's certificate. It is required unless `trust` is `NoVerification`,
+/// see `Tls::client` for more details.
 ///
 /// If `host` is present and `sni` is `true` (`true` by default),
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
@@ -202,6 +216,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   sni~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
+  check_client_host(host, trust)
   ignore(sni)
   let context = Schannel::new()
   let transport = Transport::new(reader, writer)
@@ -216,6 +231,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
     transport,
     shutdown: false,
     closed: false,
+    active_ops: 0,
   }
   errdefer tls.close()
   if context.init_client(verify=trust is SystemRoot) is err && err != 0 {
@@ -301,6 +317,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
     curr_msg_trailer: 0,
     shutdown: false,
     closed: false,
+    active_ops: 0,
   }
   errdefer tls.close()
   tls.accept()
@@ -338,56 +355,60 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
   if self.closed {
     return 0
   }
-  let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
-  while self.curr_msg_remaining == 0 {
-    let read_buf = controller.buffered()
-    let ret = self.context.read(
-      controller.raw_buffer(),
-      offset=read_buf.start_offset(),
-      len=read_buf.length(),
-    )
-    match ret {
-      Completed => {
-        let msg_size = self.context.bytes_read()
-        controller.drop(self.context.header_size())
-        self.curr_msg_trailer = self.context.msg_trailer()
-        self.curr_msg_remaining = msg_size -
-          self.context.header_size() -
-          self.curr_msg_trailer
-      }
-      WantRead if read_buf.length() == 0 && self.transport.state is Closed =>
-        return 0
-      WantRead => self.transport.read_more()
-      Eof => {
-        self.shutdown()
-        return 0
-      }
-      WantWrite => panic()
-      Error => {
-        let errno = @errno_util.get_errno()
-        raise TlsError(@errno_util.errno_to_string(errno))
-      }
-      ReNegotiation =>
-        if self.is_client {
-          self.connect()
-        } else {
-          self.accept()
+  self.with_native_state("@tls.Tls::read()") <| () => {
+    let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
+    while self.curr_msg_remaining == 0 {
+      // this loop suspends, and `close` may be called meanwhile
+      self.check_not_closed("@tls.Tls::read()")
+      let read_buf = controller.buffered()
+      let ret = self.context.read(
+        controller.raw_buffer(),
+        offset=read_buf.start_offset(),
+        len=read_buf.length(),
+      )
+      match ret {
+        Completed => {
+          let msg_size = self.context.bytes_read()
+          controller.drop(self.context.header_size())
+          self.curr_msg_trailer = self.context.msg_trailer()
+          self.curr_msg_remaining = msg_size -
+            self.context.header_size() -
+            self.curr_msg_trailer
         }
+        WantRead if read_buf.length() == 0 && self.transport.state is Closed =>
+          return 0
+        WantRead => self.transport.read_more()
+        Eof => {
+          self.shutdown()
+          return 0
+        }
+        WantWrite => panic()
+        Error => {
+          let errno = @errno_util.get_errno()
+          raise TlsError(@errno_util.errno_to_string(errno))
+        }
+        ReNegotiation =>
+          if self.is_client {
+            self.connect()
+          } else {
+            self.accept()
+          }
+      }
     }
-  }
 
-  // check if there is remaining data
-  let len = @cmp.minimum(self.curr_msg_remaining, max_len)
-  let read_buf = controller.buffered()
-  controller
-  .raw_buffer()
-  .blit_to(buf, len~, src_offset=read_buf.start_offset(), dst_offset=offset)
-  controller.drop(len)
-  self.curr_msg_remaining -= len
-  if self.curr_msg_remaining == 0 {
-    controller.drop(self.curr_msg_trailer)
+    // check if there is remaining data
+    let len = @cmp.minimum(self.curr_msg_remaining, max_len)
+    let read_buf = controller.buffered()
+    controller
+    .raw_buffer()
+    .blit_to(buf, len~, src_offset=read_buf.start_offset(), dst_offset=offset)
+    controller.drop(len)
+    self.curr_msg_remaining -= len
+    if self.curr_msg_remaining == 0 {
+      controller.drop(self.curr_msg_trailer)
+    }
+    len
   }
-  len
 }
 
 ///|
@@ -408,6 +429,7 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   offset~,
   len~,
 ) {
+  self.check_not_closed("@tls.Tls::write()")
   let write_buf = self.transport.write_buf
   guard! write_buf.len == 0
   let max_len = write_buf.buf.length() -
@@ -453,19 +475,21 @@ extern "C" fn Schannel::shutdown(ch : Schannel) -> Int32 = "moonbit_rt_schannel_
 #cfg(platform="windows")
 pub async fn Tls::shutdown(self : Tls) -> Unit {
   guard !self.shutdown else {  }
-  self.shutdown = true
-  match self.transport.state {
-    Normal => ()
-    Closed => return
-    Error(err) => raise err
-  }
-  if self.context.shutdown() is err && err != 0 {
-    raise TlsError(@errno_util.errno_to_string(err))
-  }
-  if self.is_client {
-    self.connect()
-  } else {
-    self.accept()
+  self.with_native_state("@tls.Tls::shutdown()") <| () => {
+    self.shutdown = true
+    match self.transport.state {
+      Normal => ()
+      Closed => return
+      Error(err) => raise err
+    }
+    if self.context.shutdown() is err && err != 0 {
+      raise TlsError(@errno_util.errno_to_string(err))
+    }
+    if self.is_client {
+      self.connect()
+    } else {
+      self.accept()
+    }
   }
 }
 
@@ -538,6 +562,7 @@ extern "C" fn Schannel::server_endpoint_channel_binding(
 /// Therefore the return type is `Bytes?` instead of `Bytes`.
 #cfg(platform="windows")
 pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
+  self.check_not_closed("@tls.Tls::get_peer_certificate()")
   let cert = self.context.get_peer_certificate()
   if cert.0.is_null() {
     @os_error.check_errno("@tls.Tls::get_peer_certificate()")
@@ -569,6 +594,7 @@ fn ChannelBinding::to_bytes(self : ChannelBinding) -> Bytes {
 /// according to RFC 5929
 #cfg(platform="windows")
 pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::unique_channel_binding()")
   let binding = self.context.unique_channel_binding()
   if binding.0.is_null() {
     let errno = @errno_util.get_errno()
@@ -588,6 +614,7 @@ pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
 /// so `tls-unique` is the more recommended approach when available.
 #cfg(platform="windows")
 pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::server_endpoint_channel_binding()")
   let binding = self.context.server_endpoint_channel_binding()
   if binding.0.is_null() {
     let errno = @errno_util.get_errno()

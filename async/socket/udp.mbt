@@ -494,6 +494,24 @@ pub async fn UdpServer::recvfrom(
 }
 
 ///|
+/// Validate that `buf[offset:offset + len]` stays inside `buf`
+/// before the range is forwarded to native send calls,
+/// which perform no bounds checking of their own.
+fn check_send_bounds(
+  buf : Bytes,
+  offset~ : Int32,
+  len~ : Int32,
+  context~ : String,
+) -> Unit raise {
+  guard offset >= 0 &&
+    offset <= buf.length() &&
+    len >= 0 &&
+    len <= buf.length() - offset else {
+    raise Failure::Failure("\{context}: source range out of bounds")
+  }
+}
+
+///|
 /// Send data through a UDP client.
 ///
 /// UDP is a datagram based protocol, every call of `send` will send exactly one packet.
@@ -508,6 +526,7 @@ pub async fn UdpClient::send(
   len~ : Int32 = buf.length() - offset,
 ) -> Unit {
   let context = "@socket.UdpClient::send()"
+  check_send_bounds(buf, offset~, len~, context~)
   let _ = match self.dst_addr {
     Some(Addr(addr)) => self.io.sendto(buf, offset~, len~, addr~, context~)
     None => self.io.write(buf, offset~, len~, context~)
@@ -534,6 +553,7 @@ pub async fn UdpServer::sendto(
       "multicast-only sockets created with `@socket.UdpServer::multicast()` cannot be used for sending",
     )
   }
+  check_send_bounds(buf, offset~, len~, context="@socket.UdpServer::sendto()")
   self.io.sendto(
     buf,
     offset~,

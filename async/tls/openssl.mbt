@@ -325,6 +325,8 @@ struct Tls {
   writer_ctrl : @io.BinaryWriterController
   mut shutdown : Bool
   mut closed : Bool
+  // The number of operations suspended while using `ssl`, see `with_native_state`
+  mut active_ops : Int32
 }
 
 ///|
@@ -350,6 +352,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     writer_ctrl: BinaryWriterController(),
     shutdown: false,
     closed: false,
+    active_ops: 0,
   }
 }
 
@@ -395,7 +398,9 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
 /// `trust` specifies which servers are trusted and how certificate validation is performed.
 /// See `TrustedRoot` for more details. The default is `SystemRoot`.
 ///
-/// If `host` is present, it will be used to verify the peer's certificate.
+/// `host` is the expected name of the server, and is used to verify the
+/// peer's certificate. It is required unless `trust` is `NoVerification`,
+/// see `Tls::client` for more details.
 ///
 /// If `host` is present and `sni` is `true` (`true` by default),
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
@@ -407,6 +412,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   sni~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
+  check_client_host(host, trust)
   load_openssl()
   let ctx = match trust {
     NoVerification | SystemRoot => client_ctx.force()
@@ -513,31 +519,35 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
   offset~,
   max_len~,
 ) {
-  let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
-  let n = while self.ssl.read(buf, offset, max_len) is ret {
-    if ret > 0 {
-      break ret
+  let context = "@tls.Tls::read()"
+  self.with_native_state(context) <| () => {
+    let controller = @io.BinaryReaderImpl::get_controller(self.transport.reader)
+    let n = while self.ssl.read(buf, offset, max_len) is ret {
+      if ret > 0 {
+        break ret
+      }
+      let err = self.ssl.get_error(ret)
+      if err is SSL_ERROR_ZERO_RETURN {
+        // the peer initiates closure
+        self.shutdown()
+        break 0
+      }
+      if self.transport.state is Closed && controller.buffered().length() is 0 {
+        // Not all TLS client/servers close the connection properly.
+        // Some peers just close the underlying TCP connection
+        // without performing a TLS closure.
+        // So we treat this case as normal here.
+        break 0
+      }
+      self.handle_error(err)
+      self.check_not_closed(context)
+    } nobreak {
+      0
     }
-    let err = self.ssl.get_error(ret)
-    if err is SSL_ERROR_ZERO_RETURN {
-      // the peer initiates closure
-      self.shutdown()
-      break 0
-    }
-    if self.transport.state is Closed && controller.buffered().length() is 0 {
-      // Not all TLS client/servers close the connection properly.
-      // Some peers just close the underlying TCP connection
-      // without performing a TLS closure.
-      // So we treat this case as normal here.
-      break 0
-    }
-    self.handle_error(err)
-  } nobreak {
-    0
+    // imposible
+    self.transport.flush_write()
+    n
   }
-  // imposible
-  self.transport.flush_write()
-  n
 }
 
 ///|
@@ -554,17 +564,21 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   offset~,
   len~,
 ) {
-  let n = while self.ssl.write(buf, offset, len) is ret {
-    if ret > 0 {
-      break ret
+  let context = "@tls.Tls::write()"
+  self.with_native_state(context) <| () => {
+    let n = while self.ssl.write(buf, offset, len) is ret {
+      if ret > 0 {
+        break ret
+      }
+      self.handle_error(self.ssl.get_error(ret))
+      self.check_not_closed(context)
+    } nobreak {
+      0
     }
-    self.handle_error(self.ssl.get_error(ret))
-  } nobreak {
-    0
+    // imposible
+    self.transport.flush_write()
+    n
   }
-  // imposible
-  self.transport.flush_write()
-  n
 }
 
 ///|
@@ -586,6 +600,16 @@ pub fn Tls::close(self : Tls) -> Unit {
   if self.transport.state is Normal {
     self.transport.state = Closed
   }
+  // An operation suspended in the middle of using the native state
+  // frees it when it resumes, see `Tls::with_native_state`
+  if self.active_ops == 0 {
+    self.free_native_state()
+  }
+}
+
+///|
+#cfg(not(platform="windows"))
+fn Tls::free_native_state(self : Tls) -> Unit {
   self.ssl.free()
   self.ctx.free()
   // We must make sure the host string lives longer than `self.ssl`
@@ -613,17 +637,21 @@ pub fn Tls::close(self : Tls) -> Unit {
 #cfg(not(platform="windows"))
 pub async fn Tls::shutdown(self : Tls) -> Unit {
   guard !self.shutdown else {  }
-  self.shutdown = true
-  match self.transport.state {
-    Normal => ()
-    Closed => raise ConnectionClosed
-    Error(err) => raise err
-  }
-  while self.ssl.shutdown() is ret && ret < 0 {
-    let err = self.ssl.get_error(ret)
-    self.handle_error(err)
-  } nobreak {
-    self.transport.flush_write()
+  let context = "@tls.Tls::shutdown()"
+  self.with_native_state(context) <| () => {
+    self.shutdown = true
+    match self.transport.state {
+      Normal => ()
+      Closed => raise ConnectionClosed
+      Error(err) => raise err
+    }
+    while self.ssl.shutdown() is ret && ret < 0 {
+      let err = self.ssl.get_error(ret)
+      self.handle_error(err)
+      self.check_not_closed(context)
+    } nobreak {
+      self.transport.flush_write()
+    }
   }
 }
 
@@ -637,6 +665,7 @@ pub async fn Tls::shutdown(self : Tls) -> Unit {
 /// Therefore the return type is `Bytes?` instead of `Bytes`.
 #cfg(not(platform="windows"))
 pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
+  self.check_not_closed("@tls.Tls::get_peer_certificate()")
   guard self.is_client else { None }
   let cert = self.ssl.get_certificate(is_client=true)
   if cert.0.is_null() {
@@ -659,6 +688,7 @@ pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
 /// according to RFC 5929
 #cfg(not(platform="windows"))
 pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::unique_channel_binding()")
   let len = self.ssl.unique_channel_binding_length(is_client=self.is_client)
   guard len > 0 else {
     if err_peek_error_code() != 0 {
@@ -679,6 +709,7 @@ pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
 /// so `tls-unique` is the more recommended approach when available.
 #cfg(not(platform="windows"))
 pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
+  self.check_not_closed("@tls.Tls::server_endpoint_channel_binding()")
   let cert = self.ssl.get_certificate(is_client=self.is_client)
   if cert.0.is_null() {
     if err_peek_error_code() != 0 {

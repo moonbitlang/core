@@ -66,6 +66,12 @@ pub async fn mkdir(
 /// If `recursive` is `false`,
 /// `path` must be an empty directory, otherwise `rmdir` will fail.
 ///
+/// When removing recursively, symbolic links inside `path` are removed,
+/// not the files they point to, and if `path` itself is a symbolic link,
+/// `rmdir` fails without removing anything (use `remove` to remove the link).
+/// Symbolic links in the parent directories of `path` are still followed,
+/// and the checks are not atomic with respect to concurrent changes to the tree.
+///
 /// Unless `allow_missing=true` (`false` by default),
 /// an error will be raised if the target file does not exist.
 ///
@@ -77,28 +83,75 @@ pub async fn rmdir(
 ) -> Unit nocancel {
   let context = "@fs.rmdir()"
   if recursive {
-    let base = if @event_loop.platform is Windows {
-      path.trim_end(chars="/\\")
-    } else {
-      path.trim_end(chars="/")
-    }
-    @async.protect_from_cancel <| () => {
+    let windows = @event_loop.platform is Windows
+    let found = @async.protect_from_cancel <| () => {
+      // Never traverse a symbolic link to a directory:
+      // `rmdir(link, recursive=true)` must not delete the contents of the target.
+      // Trailing separators make the OS resolve a symbolic link,
+      // so the check is done on the path without them.
+      let kind = @event_loop.file_kind_by_path(
+        strip_trailing_separators(path, windows~),
+        parent=@fd_util.invalid_fd,
+        follow_symlink=false,
+        context~,
+      ) catch {
+        @os_error.OsError(NotFound, ..) if allow_missing => return false
+        err => raise err
+      }
+      guard kind is Directory else {
+        raise @os_error.from_errno(
+          @errno_util.not_directory,
+          context="\{context}: \{path.escape()}",
+        )
+      }
       let dir = opendir_aux(path, context~)
       defer dir.close()
       while dir.next_aux(include_special=false, include_hidden=true, context~)
             is Some(ent) {
-        let child_path = "\{base}/\{ent.name}"
+        let child_path = join_child_path(path, ent.name, windows~)
         if ent.is_dir {
           rmdir(child_path, recursive=true)
         } else {
           @event_loop.remove(child_path, context~)
         }
       }
+      true
     }
+    guard found else { return }
   }
   @event_loop.rmdir(path, context~) catch {
     @os_error.OsError(NotFound, ..) if allow_missing => ()
     err => raise err
+  }
+}
+
+///|
+/// Remove trailing path separators from `path`,
+/// unless that would change which file `path` refers to:
+/// `/` is the root directory, and on Windows `C:\` is the root of drive `C`
+/// while `C:` is the current directory of drive `C`.
+fn strip_trailing_separators(path : StringView, windows~ : Bool) -> StringView {
+  let stripped = if windows {
+    path.trim_end(chars="/\\")
+  } else {
+    path.trim_end(chars="/")
+  }
+  match stripped {
+    "" => path
+    [.., ':'] if windows => path
+    _ => stripped
+  }
+}
+
+///|
+/// The path of the entry `name` inside the directory `dir`.
+/// On Windows, `C:` is the current directory of drive `C`,
+/// so its entries are `C:name`, not `C:/name` (which is in the root of `C`).
+fn join_child_path(dir : StringView, name : String, windows~ : Bool) -> String {
+  match dir {
+    [.., '/'] => "\{dir}\{name}"
+    [.., '\\' | ':'] if windows => "\{dir}\{name}"
+    _ => "\{dir}/\{name}"
   }
 }
 
@@ -128,13 +181,22 @@ struct Directory {
   // - Windows: nonzero unless EOF
   mut job_ret : Int32
   mut state : DirectoryState
+  mut closed : Bool
+  // The number of operations suspended while using `buf`.
+  // `buf` is freed by the last of them if the directory is closed meanwhile.
+  mut active_ops : Int32
 }
 
 ///|
-/// Close a directory object, release associated resource
+/// Close a directory object, release associated resource.
+/// This function is idempotent: it is safe to call `.close()` multiple times.
 pub fn Directory::close(self : Directory) -> Unit {
+  guard !self.closed else { return }
+  self.closed = true
   self.io.close()
-  self.buf.0.free()
+  if self.active_ops == 0 {
+    self.buf.0.free()
+  }
 }
 
 ///|
@@ -185,6 +247,8 @@ fn Directory::from_io_handle(io : @event_loop.IoHandle) -> Directory {
     count: 0,
     job_ret: 0,
     state: NeedMoreEntry,
+    closed: false,
+    active_ops: 0,
   }
 }
 
@@ -310,6 +374,37 @@ async fn Directory::next_aux(
   restart~ : Bool = false,
   context~ : String,
 ) -> DirectoryEntry? {
+  dir.check_not_closed(context~)
+  // `close` may be called while this operation is suspended.
+  // Keep `buf` alive until the operation is done.
+  dir.active_ops += 1
+  defer {
+    dir.active_ops -= 1
+    if dir.closed && dir.active_ops == 0 {
+      dir.buf.0.free()
+    }
+  }
+  dir.next_entry(include_hidden~, include_special~, restart~, context~)
+}
+
+///|
+fn Directory::check_not_closed(
+  dir : Directory,
+  context~ : String,
+) -> Unit raise {
+  guard !dir.closed else {
+    raise Failure::Failure("\{context}: directory is already closed")
+  }
+}
+
+///|
+async fn Directory::next_entry(
+  dir : Directory,
+  include_hidden~ : Bool,
+  include_special~ : Bool,
+  restart~ : Bool,
+  context~ : String,
+) -> DirectoryEntry? {
   match dir.state {
     NoMoreEntry => return None
     HasBufferedEntry => ()
@@ -317,6 +412,7 @@ async fn Directory::next_aux(
       dir.offset = 0
       dir.count = 0
       dir.job_ret = dir.io.readdir(dir.buf.0, dir.buf_len, restart~, context~)
+      dir.check_not_closed(context~)
       if dir.job_ret is 0 {
         dir.state = NoMoreEntry
         return None
@@ -338,14 +434,24 @@ async fn Directory::next_aux(
     dir.state = NeedMoreEntry
   }
   if !include_hidden && dir.buf.entry_is_hidden(offset) {
-    return dir.next_aux(include_special~, include_hidden~, context~)
+    return dir.next_entry(
+      include_special~,
+      include_hidden~,
+      restart=false,
+      context~,
+    )
   }
   let name = dir.buf.0.decode_as_os_string(
     offset=offset + dir.buf.entry_name_offset(offset),
     len=dir.buf.entry_name_len(offset),
   )
   if !include_special && name is ("." | "..") {
-    return dir.next_aux(include_special~, include_hidden~, context~)
+    return dir.next_entry(
+      include_special~,
+      include_hidden~,
+      restart=false,
+      context~,
+    )
   }
   let is_dir = match dir.buf.entry_is_dir(offset) {
     0 => false
@@ -357,6 +463,7 @@ async fn Directory::next_aux(
         follow_symlink=false,
         context~,
       )
+      dir.check_not_closed(context~)
       kind is Directory
     }
   }
