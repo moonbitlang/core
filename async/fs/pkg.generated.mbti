@@ -3,6 +3,7 @@ package "moonbitlang/core/async/fs"
 
 import {
   "moonbitlang/core/async/io",
+  "moonbitlang/core/async/types",
   "moonbitlang/core/debug",
 }
 
@@ -91,7 +92,7 @@ pub fn File::close(Self) -> Unit
 pub async fn File::ctime(Self) -> Timestamp
 pub async fn File::drop_all(Self) -> Int64
 pub async fn File::drop_exactly(Self, Int32) -> Unit
-pub fn File::fd(Self) -> UInt64
+pub fn File::fd(Self) -> @types.Fd
 pub fn File::kind(Self) -> FileKind
 pub async fn File::lock(Self, Lock) -> Unit
 pub async fn File::mtime(Self) -> Timestamp

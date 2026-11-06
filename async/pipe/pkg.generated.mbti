@@ -3,6 +3,7 @@ package "moonbitlang/core/async/pipe"
 
 import {
   "moonbitlang/core/async/io",
+  "moonbitlang/core/async/types",
 }
 
 // Values
@@ -15,7 +16,7 @@ type PipeRead
 pub fn PipeRead::close(Self) -> Unit
 pub async fn PipeRead::drop_all(Self) -> Int64
 pub async fn PipeRead::drop_exactly(Self, Int32) -> Unit
-pub fn PipeRead::fd(Self) -> UInt64
+pub fn PipeRead::fd(Self) -> @types.Fd
 pub async fn PipeRead::peek(Self) -> BytesView?
 pub async fn PipeRead::peek_at_least(Self, Int32) -> BytesView
 pub async fn PipeRead::peek_exactly(Self, Int32) -> BytesView
@@ -30,7 +31,7 @@ pub impl @io.BinaryReader for PipeRead
 
 type PipeWrite
 pub fn PipeWrite::close(Self) -> Unit
-pub fn PipeWrite::fd(Self) -> UInt64
+pub fn PipeWrite::fd(Self) -> @types.Fd
 pub async fn PipeWrite::write(Self, BytesView) -> Unit
 pub async fn PipeWrite::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryWriter for PipeWrite

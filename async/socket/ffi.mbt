@@ -19,7 +19,7 @@ extern "C" fn make_tcp_socket_ffi(family : AddrFamily) -> @fd_util.Fd = "moonbit
 #cfg(not(platform="windows"))
 fn make_tcp_socket(family : AddrFamily, context~ : String) -> @fd_util.Fd raise {
   let sock = make_tcp_socket_ffi(family)
-  if sock < 0 {
+  if !@fd_util.fd_is_valid(sock) {
     @os_error.check_errno(context)
   }
   @fd_util.set_cloexec(sock, context~)
@@ -50,7 +50,7 @@ fn make_udp_socket(
   context~ : String,
 ) -> @fd_util.Fd raise {
   let sock = make_udp_socket_ffi(family, multicast~)
-  if sock < 0 {
+  if !@fd_util.fd_is_valid(sock) {
     @os_error.check_errno(context)
   }
   @fd_util.set_cloexec(sock, context~)
@@ -72,7 +72,7 @@ fn make_udp_socket(
 }
 
 ///|
-#borrow(multi_addr, local_addr)
+#borrow(sock, multi_addr, local_addr)
 extern "C" fn join_multicast_group_ffi(
   sock : @fd_util.Fd,
   multi_addr : Addr,
@@ -92,7 +92,7 @@ fn join_multicast_group(
 }
 
 ///|
-#borrow(multi_addr)
+#borrow(sock, multi_addr)
 extern "C" fn join_multicast_group_v6_ffi(
   sock : @fd_util.Fd,
   multi_addr : Addr,
@@ -112,7 +112,7 @@ fn join_multicast_group_v6(
 }
 
 ///|
-#borrow(local_addr)
+#borrow(sock, local_addr)
 extern "C" fn set_multicast_interface_ffi(
   sock : @fd_util.Fd,
   local_addr : Addr,
@@ -130,6 +130,7 @@ fn set_multicast_interface(
 }
 
 ///|
+#borrow(sock)
 extern "C" fn set_multicast_interface_v6_ffi(
   sock : @fd_util.Fd,
   interface_index : UInt32,
@@ -147,6 +148,7 @@ fn set_multicast_interface_v6(
 }
 
 ///|
+#borrow(sock)
 extern "C" fn set_multicast_ttl_ffi(
   sock : @fd_util.Fd,
   ttl : Int32,
@@ -166,6 +168,7 @@ fn set_multicast_ttl(
 }
 
 ///|
+#borrow(sock)
 extern "C" fn set_multicast_loopback_ffi(
   sock : @fd_util.Fd,
   loopback : Bool,
@@ -185,25 +188,31 @@ fn set_multicast_loopback(
 }
 
 ///|
+#borrow(sock)
 extern "C" fn set_ipv6_only(sock : @fd_util.Fd, dual_stack : Bool) -> Int32 = "moonbit_rt_set_ipv6_only"
 
 ///|
+#borrow(sock)
 extern "C" fn listen_ffi(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_listen"
 
 ///|
-#borrow(addr)
+#borrow(sock, addr)
 extern "C" fn connect_ffi(sock : @fd_util.Fd, addr : Addr) -> Int32 = "moonbit_rt_udp_client_connect"
 
 ///|
+#borrow(sock)
 extern "C" fn disable_nagle(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_disable_nagle"
 
 ///|
+#borrow(sock)
 extern "C" fn allow_reuse_addr(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_allow_reuse_addr"
 
 ///|
+#borrow(sock)
 extern "C" fn allow_reuse_port(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_allow_reuse_port"
 
 ///|
+#borrow(sock)
 extern "C" fn enable_keepalive_ffi(
   sock : @fd_util.Fd,
   keep_idle : Int32,
@@ -212,7 +221,7 @@ extern "C" fn enable_keepalive_ffi(
 ) -> Int32 = "moonbit_rt_enable_keepalive"
 
 ///|
-#borrow(addr_out)
+#borrow(sock, addr_out)
 extern "C" fn getsockname_ffi(sock : @fd_util.Fd, addr_out : Addr) -> Int32 = "moonbit_rt_getsockname"
 
 ///|

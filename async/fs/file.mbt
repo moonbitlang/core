@@ -407,11 +407,13 @@ pub async fn File::lock(self : File, lock : Lock) -> Unit {
 
 ///|
 #cfg(target="native")
+#borrow(fd)
 extern "C" fn try_lock_ffi(fd : @fd_util.Fd, exclusive~ : Bool) -> Int32 = "moonbit_rt_try_lock_file"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn try_lock_ffi(fd : @fd_util.Fd, exclusive~ : Bool) -> Int32 = "moonbitlang/async" "fs/try_lock_file"
 
 ///|
@@ -442,11 +444,13 @@ pub fn File::try_lock(self : File, lock : Lock) -> Bool raise {
 
 ///|
 #cfg(target="native")
+#borrow(fd)
 extern "C" fn unlock_ffi(fd : @fd_util.Fd) -> Int32 = "moonbit_rt_unlock_file"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn unlock_ffi(fd : @fd_util.Fd) -> Int32 = "moonbitlang/async" "fs/unlock_file"
 
 ///|

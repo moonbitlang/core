@@ -255,6 +255,7 @@ fn IoResultHandle::event(self : IoResultHandle) -> Int32 = "moonbitlang/async" "
 
 ///|
 #unsafe_skip_stub_check
+#borrow(handle)
 fn IoResultHandle::cancel_ffi(
   self : IoResultHandle,
   handle : @fd_util.Fd,
@@ -267,6 +268,7 @@ fn IoResult::cancel_ffi(self : IoResult, handle : @fd_util.Fd) -> Int32 {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(handle)
 fn IoResultHandle::status_ffi(
   result : IoResultHandle,
   handle : @fd_util.Fd,

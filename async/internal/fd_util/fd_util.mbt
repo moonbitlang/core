@@ -18,6 +18,7 @@ pub type Fd = @types.Fd
 
 ///|
 #cfg(not(platform="windows"))
+#borrow(fd)
 extern "C" fn fd_is_nonblocking_ffi(fd : Fd) -> Int32 = "moonbit_rt_fd_is_nonblocking"
 
 ///|
@@ -33,6 +34,7 @@ pub fn fd_is_nonblocking(fd : Fd, context~ : String) -> Bool raise {
 
 ///|
 #cfg(not(platform="windows"))
+#borrow(fd)
 extern "C" fn set_nonblocking_ffi(fd : Fd) -> Int32 = "moonbit_rt_set_nonblocking"
 
 ///|
@@ -46,6 +48,7 @@ pub fn set_nonblocking(fd : Fd, context~ : String) -> Unit raise {
 
 ///|
 #cfg(not(platform="windows"))
+#borrow(fd)
 extern "C" fn set_cloexec_ffi(fd : Fd) -> Int32 = "moonbit_rt_set_cloexec"
 
 ///|
@@ -59,6 +62,7 @@ pub fn set_cloexec(fd : Fd, context~ : String) -> Unit raise {
 
 ///|
 #cfg(not(platform="windows"))
+#borrow(fd)
 extern "C" fn close_ffi(fd : Fd) -> Int32 = "close"
 
 ///|
@@ -75,6 +79,7 @@ pub fn close(fd : Fd, kind~ : FileKind, context~ : String) -> Unit raise {
 
 ///|
 #cfg(platform="windows")
+#borrow(fd)
 extern "C" fn close_ffi(fd : Fd, is_socket~ : Bool) -> Int32 = "moonbit_rt_close_fd"
 
 ///|
@@ -105,13 +110,21 @@ pub fn fd_is_valid(fd : Fd) -> Bool {
 }
 
 ///|
+#cfg(not(platform="windows"))
+fn Fd::from_unix(raw : Int32) -> Fd = "%identity"
+
+///|
 /// `-1` on Unix systems or `INVALID_HANDLE_VALUE` on Windows
 #cfg(not(platform="windows"))
-pub let invalid_fd : Fd = -1
+pub let invalid_fd : Fd = Fd::from_unix(-1)
+
+///|
+#cfg(not(platform="windows"))
+fn Fd::to_unix(fd : Fd) -> Int32 = "%identity"
 
 ///|
 /// Check if a file descriptor is valid
 #cfg(not(platform="windows"))
 pub fn fd_is_valid(fd : Fd) -> Bool {
-  fd >= 0
+  fd.to_unix() >= 0
 }

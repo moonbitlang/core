@@ -3,6 +3,7 @@ package "moonbitlang/core/async/stdio"
 
 import {
   "moonbitlang/core/async/io",
+  "moonbitlang/core/async/types",
 }
 
 // Values
@@ -21,7 +22,7 @@ pub struct Input {
 }
 pub async fn Input::drop_all(Self) -> Int64
 pub async fn Input::drop_exactly(Self, Int32) -> Unit
-pub fn Input::fd(Self) -> UInt64 raise
+pub fn Input::fd(Self) -> @types.Fd raise
 pub async fn Input::peek(Self) -> BytesView?
 pub async fn Input::peek_at_least(Self, Int32) -> BytesView
 pub async fn Input::peek_exactly(Self, Int32) -> BytesView
@@ -38,7 +39,7 @@ pub struct Output {
   text : @io.Utf8Writer
   // private fields
 }
-pub fn Output::fd(Self) -> UInt64 raise
+pub fn Output::fd(Self) -> @types.Fd raise
 pub async fn Output::write(Self, BytesView) -> Unit
 pub async fn Output::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryWriter for Output

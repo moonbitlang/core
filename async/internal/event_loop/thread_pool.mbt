@@ -17,6 +17,7 @@
 priv type Worker
 
 ///|
+#borrow(event_bus)
 extern "C" fn init_thread_pool_ffi(event_bus : EventBus) -> @fd_util.Fd = "moonbit_rt_init_thread_pool"
 
 ///|
@@ -57,7 +58,7 @@ extern "C" fn Worker::check_cancellation_retry(worker : Worker) -> Bool = "moonb
 
 ///|
 #cfg(not(platform="windows"))
-#borrow(output)
+#borrow(notify_recv, output)
 extern "C" fn fetch_completion_ffi(
   notify_recv : @fd_util.Fd,
   output : FixedArray[Int32],
@@ -84,6 +85,7 @@ fn Job::copy_output(self : Job) -> Unit {
 
 ///|
 #owned(buf)
+#borrow(fd)
 extern "C" fn Job::read(
   fd : @fd_util.Fd,
   buf : FixedArray[Byte],
@@ -95,6 +97,7 @@ extern "C" fn Job::read(
 
 ///|
 #owned(buf)
+#borrow(fd)
 extern "C" fn Job::write(
   fd : @fd_util.Fd,
   buf : Bytes,
@@ -106,6 +109,7 @@ extern "C" fn Job::write(
 
 ///|
 #owned(buf)
+#borrow(fd)
 extern "C" fn Job::read_console(
   fd : @fd_util.Fd,
   buf : FixedArray[UInt16],
@@ -115,6 +119,7 @@ extern "C" fn Job::read_console(
 
 ///|
 #owned(buf)
+#borrow(fd)
 extern "C" fn Job::write_console(
   fd : @fd_util.Fd,
   buf : FixedArray[UInt16],
@@ -180,6 +185,7 @@ pub const STAT_CREATE_TIME : UInt32 = 0x0080
 
 ///|
 #owned(buf)
+#borrow(fd)
 extern "C" fn Job::fstatx(
   fd : @fd_util.Fd,
   request : UInt32,
@@ -189,6 +195,7 @@ extern "C" fn Job::fstatx(
 
 ///|
 #owned(path, buf)
+#borrow(parent)
 extern "C" fn Job::statx(
   path : @os_string.OsString,
   request : UInt32,
@@ -216,9 +223,11 @@ extern "C" fn Job::access(path : @os_string.OsString, access : Access) -> Job = 
 extern "C" fn Job::chmod(path : @os_string.OsString, mode : Int32) -> Job = "moonbit_rt_make_chmod_job"
 
 ///|
+#borrow(fd)
 extern "C" fn Job::fsync(fd : @fd_util.Fd, only_data : Bool) -> Job = "moonbit_rt_make_fsync_job"
 
 ///|
+#borrow(fd)
 extern "C" fn Job::flock(fd : @fd_util.Fd, exclusive : Bool) -> Job = "moonbit_rt_make_flock_job"
 
 ///|
@@ -250,6 +259,7 @@ extern "C" fn Job::mkdir(path : @os_string.OsString, mode : Int32) -> Job = "moo
 extern "C" fn Job::rmdir(path : @os_string.OsString) -> Job = "moonbit_rt_make_rmdir_job"
 
 ///|
+#borrow(dir)
 extern "C" fn Job::readdir(
   dir : @fd_util.Fd,
   buf : @c_buffer.Buffer,
@@ -270,6 +280,7 @@ priv struct SpawnJob(Job)
 ///|
 #cfg(not(platform="windows"))
 #owned(path, args, env)
+#borrow(stdin, stdout, stderr)
 extern "C" fn Job::spawn_unix_ffi(
   path : @os_string.OsString,
   args : @c_buffer.Buffer,
@@ -283,6 +294,7 @@ extern "C" fn Job::spawn_unix_ffi(
 ///|
 #cfg(platform="windows")
 #owned(command_line, env)
+#borrow(stdin, stdout, stderr)
 extern "C" fn Job::spawn_windows_ffi(
   command_line : @os_string.OsString,
   env~ : @c_buffer.Buffer,
@@ -363,10 +375,12 @@ fn Job::spawn_windows(
 
 ///|
 // `handle` is used by Windows, `pid` is used by Linux
+#borrow(handle)
 extern "C" fn Job::wait_for_process(handle : @fd_util.Fd, pid~ : Int32) -> Job = "moonbit_rt_make_wait_for_process_job"
 
 ///|
 #owned(addr)
+#borrow(socket)
 extern "C" fn Job::bind(socket : @fd_util.Fd, addr : Bytes) -> Job = "moonbit_rt_make_bind_job"
 
 ///|
@@ -379,6 +393,7 @@ extern "C" fn Job::get_getaddrinfo_result(job : Job) -> AddrInfo = "moonbit_rt_g
 ///|
 #cfg(not(platform="windows"))
 #owned(path)
+#borrow(inotify)
 extern "C" fn Job::inotify_add_watch(
   inotify : @fd_util.Fd,
   path : @os_string.OsString,

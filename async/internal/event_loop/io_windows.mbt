@@ -91,11 +91,13 @@ async fn IoHandle::wait_write_result(
 
 ///|
 #cfg(platform="windows")
+#borrow(fd)
 extern "C" fn read_windows(fd : @fd_util.Fd, result : IoResult) -> Int32 = "moonbit_rt_async_read"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn read_io_result_ffi(fd : @fd_util.Fd, result : IoResultHandle) -> Int32 = "moonbitlang/async" "io/read/windows"
 
 ///|
@@ -177,11 +179,13 @@ async fn IoHandle::read_via_event_bus(
 
 ///|
 #cfg(platform="windows")
+#borrow(fd)
 extern "C" fn write_windows(fd : @fd_util.Fd, result : IoResult) -> Int32 = "moonbit_rt_async_write"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn write_io_result_ffi(fd : @fd_util.Fd, result : IoResultHandle) -> Int32 = "moonbitlang/async" "io/write/windows"
 
 ///|

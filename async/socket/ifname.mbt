@@ -48,13 +48,14 @@ let global_ifname_socket : @ref.Ref[@fd_util.Fd] = {
 }
 
 ///|
-#borrow(name)
+#borrow(global_sock, name)
 extern "C" fn if_nametoindex_ffi(
   global_sock : @fd_util.Fd,
   name : @os_string.OsString,
 ) -> UInt32 = "moonbit_rt_if_nametoindex"
 
 ///|
+#borrow(global_sock)
 extern "C" fn if_indextoname_ffi(
   global_sock : @fd_util.Fd,
   index : UInt32,

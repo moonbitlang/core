@@ -36,9 +36,11 @@ const ProcessEvent = 4
 extern "C" fn EventBus::new() -> EventBus = "moonbit_rt_event_bus_create"
 
 ///|
+#borrow(self)
 extern "C" fn EventBus::destroy(self : EventBus) = "moonbit_rt_event_bus_destroy"
 
 ///|
+#borrow(self, fd)
 extern "C" fn EventBus::register_ffi(
   self : EventBus,
   fd : @fd_util.Fd,
@@ -63,12 +65,14 @@ fn EventBus::register(
 
 ///|
 #cfg(not(platform="windows"))
+#borrow(self)
 extern "C" fn EventBus::register_pid_ffi(self : EventBus, pid : Int32) -> Int32 = "moonbit_rt_event_bus_register_pid"
 
 ///|
 /// Return `true` if the PID is successfully registered.
 /// Return `false` if the process has already terminated.
 #cfg(not(platform="windows"))
+#borrow(self)
 fn EventBus::register_pid(self : EventBus, pid : Int32) -> Bool raise {
   let ret = self.register_pid_ffi(pid)
   if ret == -1 {
@@ -78,6 +82,7 @@ fn EventBus::register_pid(self : EventBus, pid : Int32) -> Bool raise {
 }
 
 ///|
+#borrow(self, fd)
 extern "C" fn EventBus::remove_ffi(self : EventBus, fd : @fd_util.Fd) -> Int32 = "moonbit_rt_event_bus_remove"
 
 ///|
@@ -92,6 +97,7 @@ fn EventBus::remove(self : EventBus, fd : @fd_util.Fd) -> Unit raise {
 priv type Event
 
 ///|
+#borrow(self)
 extern "C" fn EventBus::get_event(self : EventBus, index : Int32) -> Event = "moonbit_rt_event_list_get"
 
 ///|
@@ -99,8 +105,12 @@ extern "C" fn Event::fd(self : Event) -> @fd_util.Fd = "moonbit_rt_event_get_fd"
 
 ///|
 #cfg(not(platform="windows"))
+fn @fd_util.Fd::to_unix(fd : @fd_util.Fd) -> Int32 = "%identity"
+
+///|
+#cfg(not(platform="windows"))
 fn Event::pid(self : Event) -> Int32 {
-  self.fd()
+  self.fd().to_unix()
 }
 
 ///|
@@ -116,12 +126,14 @@ extern "C" fn Event::io_result(self : Event) -> IoResult = "moonbit_rt_event_get
 extern "C" fn Event::bytes_transferred(self : Event) -> Int32 = "moonbit_rt_event_get_bytes_transferred"
 
 ///|
+#borrow(self)
 extern "C" fn EventBus::wait(self : EventBus, timeout~ : Int32) -> Int32 = "moonbit_rt_event_bus_wait"
 
 ///|
 priv struct EventBusWaiter(@c_buffer.Buffer)
 
 ///|
+#borrow(bus)
 extern "C" fn EventBus::spawn_waiter(
   bus : EventBus,
   wakeup_callback~ : FuncRef[() -> Unit],
