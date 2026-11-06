@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// --- promoted: kept as regular methods ---
+
 ///|
-// `CoverageCounter` is a collection, so per AGENTS.md its `Show::to_string`
-// is not promoted. The policy would point callers at `@debug.Debug`, but this
-// package is injected into `builtin` under `--enable-coverage`, so it cannot
-// depend on `@debug`; `Show` stays the only way to print it.
-#deprecated("`CoverageCounter` is a collection with no canonical string form; use string interpolation or `Show::to_string` via the trait instead", skip_current_package=true)
+pub extend CoverageCounter with Show::{to_string}
+
+// --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
-pub extend CoverageCounter with Show::{output, to_string}
+pub extend CoverageCounter with Show::{output}
