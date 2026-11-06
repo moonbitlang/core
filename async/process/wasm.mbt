@@ -111,5 +111,6 @@ async fn raw_spawn(
         is_orphan~,
         context~,
       )
+    @event_loop.Platform::.. => panic()
   }
 }

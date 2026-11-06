@@ -63,6 +63,7 @@ pub impl Hash for Fd with fn hash_combine(self, hasher) {
 ///|
 /// Current operating system running the program.
 /// For Wasm backend, the actual operating system can only be known at runtime.
+#non_exhaustive
 pub(all) enum Platform {
   Linux = 0
   MacOS = 1

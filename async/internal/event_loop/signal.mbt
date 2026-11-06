@@ -171,6 +171,7 @@ fn setup_signal_handler() -> Unit raise {
   match platform {
     Linux | MacOS => setup_signal_handler_unix()
     Windows => setup_signal_handler_windows()
+    Platform::.. => panic()
   }
 }
 
@@ -181,6 +182,7 @@ fn EventLoop::terminate_signal_handler(evloop : EventLoop) -> Unit raise {
   match platform {
     Linux | MacOS => evloop.terminate_signal_handler_unix()
     Windows => evloop.terminate_signal_handler_windows()
+    Platform::.. => panic()
   }
 }
 

@@ -169,5 +169,6 @@ pub fn Timer::new(Int32, () -> Unit) -> Self
 pub(all) struct WindowsWatcherBuf(UInt64)
 
 // Type aliases
+pub using @types {type Platform}
 
 // Traits

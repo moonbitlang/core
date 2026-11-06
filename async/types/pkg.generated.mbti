@@ -10,6 +10,7 @@ type Fd
 pub impl Eq for Fd
 pub impl Hash for Fd
 
+#non_exhaustive
 pub(all) enum Platform {
   Linux
   MacOS

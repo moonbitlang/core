@@ -77,6 +77,7 @@ async test "cancel process timeout" {
     match @event_loop.platform {
       Linux | MacOS => inspect(child.wait(), content="-9")
       Windows => inspect(child.wait(), content="1")
+      @event_loop.Platform::.. => panic()
     }
     let t_process_terminates = @async.now()
     let t1 = t_receive_graceful_termination.wait() - t_cancel
@@ -107,6 +108,7 @@ async test "cancel process hard" {
     match @event_loop.platform {
       Linux | MacOS => inspect(child.wait(), content="-9")
       Windows => inspect(child.wait(), content="1")
+      @event_loop.Platform::.. => panic()
     }
     let t1 = @async.now()
     inspect((t1 - t0) / 250, content="0")

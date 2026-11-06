@@ -59,6 +59,7 @@ let errno_table : Map[Int32, Kind] = match @env_util.platform {
       (@errno.windows_ERROR_CONNECTION_REFUSED, ConnectionRefused),
       (@errno.windows_ERROR_NOT_SUPPORTED, OperationNotSupported),
     ])
+  @env_util.Platform::.. => panic()
 }
 
 ///|
