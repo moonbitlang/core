@@ -216,6 +216,7 @@ pub fn Int32::sub(Int32, Int32) -> Int32
 pub fn Int32::to_byte(Int32) -> Byte
 pub fn Int32::to_char(Int32) -> Char?
 pub fn Int32::to_double(Int32) -> Double
+pub fn Int32::to_int(Int32) -> Int32
 pub fn Int32::to_int64(Int32) -> Int64
 pub fn Int32::to_string(Int32, radix? : Int32) -> String
 #deprecated
@@ -338,6 +339,7 @@ pub fn UInt32::to_int64(UInt32) -> Int64
 pub fn UInt32::to_string(UInt32, radix? : Int32) -> String
 pub fn UInt32::to_uint16(UInt32) -> UInt16
 pub fn UInt32::to_uint64(UInt32) -> UInt64
+#deprecated
 pub fn UInt32::trunc_double(Double) -> UInt32
 pub impl Add for UInt32
 pub impl BitAnd for UInt32
@@ -438,6 +440,7 @@ pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 pub fn UInt64::to_string(UInt64, radix? : Int32) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt32
 pub fn UInt64::to_uint16(UInt64) -> UInt16
+#deprecated
 pub fn UInt64::trunc_double(Double) -> UInt64
 pub impl Add for UInt64
 pub impl BitAnd for UInt64
@@ -551,6 +554,7 @@ pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::exact_view(String, start? : Int32, end? : Int32) -> StringView
 pub fn String::find(String, StringView) -> Int32?
 pub fn String::find_by(String, (Char) -> Bool raise?) -> Int32? raise?
+pub fn String::find_code_unit(String, UInt16) -> Int32?
 pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
 #alias(from_iterator, deprecated)
@@ -586,6 +590,7 @@ pub fn String::rev(String) -> String
 pub fn String::rev_after(String, StringView) -> StringView?
 pub fn String::rev_before(String, StringView) -> StringView?
 pub fn String::rev_find(String, StringView) -> Int32?
+pub fn String::rev_find_code_unit(String, UInt16) -> Int32?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn String::rev_iter(String) -> Iter[Char]
@@ -869,6 +874,7 @@ pub fn Bytes::length(Bytes) -> Int32
 pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int32
 pub fn Bytes::make(Int32, Byte) -> Bytes
 pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
+#deprecated
 pub fn Bytes::new(Int32) -> Bytes
 #deprecated
 pub fn Bytes::of_string(String) -> Bytes
@@ -1426,6 +1432,7 @@ pub fn StringView::escape(Self, quote? : Bool) -> Self
 pub fn StringView::exact_view(Self, start? : Int32, end? : Int32) -> Self
 pub fn StringView::find(Self, Self) -> Int32?
 pub fn StringView::find_by(Self, (Char) -> Bool raise?) -> Int32? raise?
+pub fn StringView::find_code_unit(Self, UInt16) -> Int32?
 pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 #alias(from_iterator, deprecated)
@@ -1458,6 +1465,7 @@ pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_after(Self, Self) -> Self?
 pub fn StringView::rev_before(Self, Self) -> Self?
 pub fn StringView::rev_find(Self, Self) -> Int32?
+pub fn StringView::rev_find_code_unit(Self, UInt16) -> Int32?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(Self) -> Iter[Char]

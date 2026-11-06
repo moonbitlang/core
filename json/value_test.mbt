@@ -288,3 +288,16 @@ test "debug repr for json" {
     ),
   )
 }
+
+///|
+test "Bytes::to_json escapes non-printable bytes as lowercase hex" {
+  guard Json(b"\x00\x0f\x1f\x7f\x9a\xff A~\"\\") is String(s) else {
+    fail("expected a JSON string")
+  }
+  inspect(
+    s,
+    content=(
+      #|\x00\x0f\x1f\x7f\x9a\xff A~\x22\x5c
+    ),
+  )
+}

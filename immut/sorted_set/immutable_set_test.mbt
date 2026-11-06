@@ -366,17 +366,17 @@ test "SortedSet ordered duplicates" {
 }
 
 ///|
-test "SortedSet ordered duplicates keep reverse insertion representative" {
+test "SortedSet ordered duplicates keep first representative" {
   let set = @sorted_set.SortedSet([
     { rank: 1, label: "first", },
     { rank: 1, label: "second", },
     { rank: 2, label: "third", },
   ])
-  @test.assert_eq(set.to_array().map(v => v.label), ["second", "third"])
+  @test.assert_eq(set.to_array().map(v => v.label), ["first", "third"])
 }
 
 ///|
-test "SortedSet large unordered duplicates keep reverse insertion representative" {
+test "SortedSet large unordered duplicates keep first representative" {
   let values = Array::makei(70, i => {
     if i == 5 {
       { rank: 10, label: "first", }
@@ -393,7 +393,34 @@ test "SortedSet large unordered duplicates keep reverse insertion representative
       matched.push(value.label)
     }
   }
-  @test.assert_eq(matched, ["second"])
+  @test.assert_eq(matched, ["first"])
+}
+
+///|
+test "SortedSet descending duplicates keep first representative" {
+  let set = @sorted_set.SortedSet([
+    { rank: 3, label: "a", },
+    { rank: 2, label: "first", },
+    { rank: 2, label: "second", },
+    { rank: 1, label: "b", },
+  ])
+  @test.assert_eq(set.to_array().map(v => v.label), ["b", "first", "a"])
+}
+
+///|
+test "SortedSet small unordered duplicates keep first representative" {
+  let values = [
+    { rank: 2, label: "first", },
+    { rank: 1, label: "x", },
+    { rank: 2, label: "second", },
+    { rank: 3, label: "y", },
+  ]
+  let set = @sorted_set.SortedSet(values)
+  @test.assert_eq(set.to_array().map(v => v.label), ["x", "first", "y"])
+  @test.assert_eq(
+    @sorted_set.from_iter(values.iter()).to_array().map(v => v.label),
+    ["x", "first", "y"],
+  )
 }
 
 ///|

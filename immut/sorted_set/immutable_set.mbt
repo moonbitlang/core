@@ -77,10 +77,10 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
 let sorted_set_sort_build_threshold = 64
 
 ///|
-/// Sort an owned buffer in place and build a set from it, keeping the LAST
+/// Sort an owned buffer in place and build a set from it, keeping the FIRST
 /// element of each equal run. `stable_sort` preserves the insertion order of
 /// equal elements, so that representative matches building the set by repeated
-/// `add` in reverse, which is what the array constructor does. The caller must
+/// `add` in order, which is what the array constructor does. The caller must
 /// own `buf` and not use it afterwards, since the elements are permuted in
 /// place.
 fn[A : Compare] sorted_set_from_unsorted_buffer(
@@ -92,7 +92,7 @@ fn[A : Compare] sorted_set_from_unsorted_buffer(
 }
 
 ///|
-// Drop duplicate runs from a sorted buffer in place, keeping the LAST element
+// Drop duplicate runs from a sorted buffer in place, keeping the FIRST element
 // of each run. The unique elements are packed at the front and their count is
 // returned; the tail is left untouched. Indices are monotonic
 // (write <= start <= end < len), so the unchecked accessors stay in bounds.
@@ -106,7 +106,7 @@ fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
     } nobreak {
       end
     }
-    buf.unsafe_set(write, buf.unsafe_get(end))
+    buf.unsafe_set(write, buf.unsafe_get(start))
     write += 1
     continue end + 1
   }
@@ -117,8 +117,8 @@ fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int32 {
 fn[A : Compare] sorted_set_from_array_by_add(
   array : ArrayView[A],
 ) -> SortedSet[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
-    continue i - 1, set.add(array[i])
+  for value in array; set = Empty {
+    continue set.add(value)
   } nobreak {
     set
   }
@@ -126,6 +126,9 @@ fn[A : Compare] sorted_set_from_array_by_add(
 
 ///|
 /// Initialize a `SortedSet` from an array.
+///
+/// Of several equal values, the first one is kept, as if the values were
+/// `add`ed in order.
 ///
 /// # Example
 ///
@@ -175,7 +178,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         end
       }
-      result.push(array[end])
+      result.push(array[start])
       continue end + 1
     }
   } else {
@@ -186,7 +189,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         start
       }
-      result.push(array[end])
+      result.push(array[start])
       continue start - 1
     }
   }
@@ -1021,8 +1024,23 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 ///|
-/// The ratio between the sizes of the left and right subtrees.
-const BALANCE_RATIO = 5
+/// Weight-balance parameter δ: a node is balanced when neither subtree holds
+/// more than `DELTA` times as many elements as the other (subtrees with fewer
+/// than 2 elements in total are always balanced).
+///
+/// (δ, γ) = (3, 2) is the pair Haskell's `Data.Set` uses, with the same
+/// size-based (not size + 1) tests as `balance` here. Hirai & Yamamoto,
+/// "Balancing weight-balanced trees" (JFP 2011), found that for this form of
+/// the algorithm every other small integer pair except (4, 2), including the
+/// (5, 1) used before, lets one `remove` leave a node unbalanced.
+const DELTA = 3
+
+///|
+/// Weight-balance parameter γ: when a node is out of balance, a single
+/// rotation is used iff the heavier child's inner subtree holds fewer than
+/// `GAMMA` times as many elements as its outer subtree; otherwise a double
+/// rotation is used.
+const GAMMA = 2
 
 ///|
 priv enum SplitBis[A] {
@@ -1101,11 +1119,11 @@ fn[A] balance(
   let right_size = right.length()
   if left_size + right_size < 2 {
     create(left, value, right)
-  } else if left_size > right_size * BALANCE_RATIO {
+  } else if left_size > right_size * DELTA {
     match left {
       Empty => abort("balance: left is empty.")
       Node(left=ll, value=lv, right=lr, ..) =>
-        if ll.length() >= lr.length() {
+        if lr.length() < GAMMA * ll.length() {
           create(ll, lv, create(lr, value, right))
         } else {
           match lr {
@@ -1115,11 +1133,11 @@ fn[A] balance(
           }
         }
     }
-  } else if right_size > left_size * BALANCE_RATIO {
+  } else if right_size > left_size * DELTA {
     match right {
       Empty => abort("balance: right is empty")
       Node(left=rl, value=rv, right=rr, ..) =>
-        if rr.length() >= rl.length() {
+        if rl.length() < GAMMA * rr.length() {
           create(create(left, value, rl), rv, rr)
         } else {
           match rl {
@@ -1168,9 +1186,9 @@ fn[A] join(
       Node(left=ll, value=lv, right=lr, size=ls),
       Node(left=rl, value=rv, right=rr, size=rs),
     ) =>
-      if ls > rs * BALANCE_RATIO {
+      if ls > rs * DELTA {
         balance(ll, lv, join(lr, value, right))
-      } else if rs > ls * BALANCE_RATIO {
+      } else if rs > ls * DELTA {
         balance(join(left, value, rl), rv, rr)
       } else {
         create(left, value, right)

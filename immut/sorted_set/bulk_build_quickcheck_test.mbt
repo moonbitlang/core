@@ -22,12 +22,11 @@
 //
 // `from_iter` deliberately does NOT bulk-build: it folds `add`, so its live
 // memory stays proportional to the distinct elements rather than to the length
-// of the iterator. It is checked here anyway, because the two entry points
-// disagree about which of several equal elements survives — the constructor
-// keeps the LAST, `from_iter` the FIRST — and that difference is exactly what a
-// future attempt to share their implementations would break. With `Int`
-// elements it is invisible, so `BElem` compares on `id` only and carries a
-// `tag` that makes the survivor observable.
+// of the iterator. It is checked here anyway, because both entry points must
+// agree on which of several equal elements survives — the FIRST, as if the
+// values were `add`ed in order — and every bulk path has to preserve that.
+// With `Int` elements it is invisible, so `BElem` compares on `id` only and
+// carries a `tag` that makes the survivor observable.
 //
 // Note that quickcheck's generated arrays cannot reach the duplicate-free
 // paths on their own — it sizes element `i` by `i`, so an `Array[Int]` of
@@ -57,21 +56,12 @@ impl Compare for BElem with fn compare(self, other) {
 }
 
 ///|
-/// `keep_last=true` models the constructor, `false` models `from_iter`.
-fn bulk_set_model(values : ArrayView[BElem], keep_last~ : Bool) -> Array[BElem] {
+/// Models both the constructor and `from_iter`: the first of several equal
+/// elements survives.
+fn bulk_set_model(values : ArrayView[BElem]) -> Array[BElem] {
   let out : Array[BElem] = []
   for value in values {
-    let mut seen = false
-    for i, entry in out {
-      if entry.id == value.id {
-        if keep_last {
-          out[i] = value
-        }
-        seen = true
-        break
-      }
-    }
-    if !seen {
+    if !out.iter().any(entry => entry.id == value.id) {
       out.push(value)
     }
   }
@@ -159,18 +149,14 @@ test "quickcheck: bulk set build agrees with the model on every input shape" {
     (raw : Array[Int32]) => {
       for shape in bulk_set_shapes(raw) {
         let (_, values) = shape
-        // The constructor keeps the last equal element...
-        if !bulk_set_agrees(
-            @sorted_set.SortedSet(values).to_array(),
-            bulk_set_model(values, keep_last=true),
-          ) {
+        // Both entry points keep the first equal element.
+        let model = bulk_set_model(values)
+        if !bulk_set_agrees(@sorted_set.SortedSet(values).to_array(), model) {
           return false
         }
-        // ...while `from_iter` keeps the first. Both must still be strictly
-        // ascending and hold the same ids.
         if !bulk_set_agrees(
             @sorted_set.from_iter(values.iter()).to_array(),
-            bulk_set_model(values, keep_last=false),
+            model,
           ) {
           return false
         }

@@ -60,14 +60,11 @@ pub fn[T] ArrayView::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `FixedArray::exact_view` to validate bounds, or `FixedArray::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%fixedarray.unsafe_view")
 pub fn[T] FixedArray::unsafe_view(
   self : FixedArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> ArrayView[T] {
-  unsafe_cast_fixedarray_to_uninitializedarray(self).unsafe_view(start~, end~)
-}
+) -> ArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -79,14 +76,11 @@ pub fn[T] FixedArray::unsafe_view(
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `ReadOnlyArray::exact_view` to validate bounds, or `ReadOnlyArray::clamped_view`
 /// (also available as `self[start:end]`) to clamp them.
-#intrinsic("%readonlyarray.unsafe_view")
 pub fn[T] ReadOnlyArray::unsafe_view(
   self : ReadOnlyArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> ArrayView[T] {
-  self.unsafe_reinterpret_to_fixed_array().unsafe_view(start~, end~)
-}
+) -> ArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a view without checking or clamping bounds.
@@ -134,18 +128,11 @@ pub fn[T] Array::unsafe_mut_view(
 /// The caller must ensure `0 <= start <= end <= self.length()`.
 /// Invalid bounds can cause undefined behavior; a panic is not guaranteed.
 /// Use `FixedArray::mut_view` to validate bounds.
-#intrinsic("%fixedarray.unsafe_mut_view")
 pub fn[T] FixedArray::unsafe_mut_view(
   self : FixedArray[T],
   start~ : Int32,
   end~ : Int32,
-) -> MutArrayView[T] {
-  MutArrayView::make_view(
-    unsafe_cast_fixedarray_to_uninitializedarray(self),
-    start,
-    end,
-  )
-}
+) -> MutArrayView[T] = "%arrayview.make_view"
 
 ///|
 /// Creates a mutable view without checking or clamping bounds.

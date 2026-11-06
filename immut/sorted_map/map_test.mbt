@@ -499,3 +499,19 @@ test "higher-order functions propagate callback errors" {
   inspect(m.fold(init=0, (acc, k, _) => acc + k), content="6")
   inspect(m.rev_fold(init="", (acc, _, v) => acc + v), content="cba")
 }
+
+///|
+test "remove of an absent key returns the original map" {
+  let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+  inspect(physical_equal(empty.remove(1), empty), content="true")
+  let m = @sorted_map.SortedMap(Array::makei(100, i => (i * 2, i)))
+  // absent keys below, between, and above the present ones
+  for key in [-1, 1, 51, 99, 199, 1000] {
+    @test.assert_eq(physical_equal(m.remove(key), m), true)
+  }
+  // removing a present key still builds a new map
+  let removed = m.remove(50)
+  inspect(physical_equal(removed, m), content="false")
+  inspect(removed.length(), content="99")
+  inspect(removed.contains(50), content="false")
+}

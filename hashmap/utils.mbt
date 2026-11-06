@@ -153,19 +153,11 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 /// }
 /// ```
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
-  if self.size == 0 {
-    return []
-  }
-  let res = Array::unsafe_make_uninit(self.size)
-  let mut n = 0
+  // Treat size as a capacity hint; only expose elements actually written.
+  let res = Array(capacity=self.size)
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, value, .. }) {
-      let pair = (key, value)
-      res.unsafe_set(n, pair)
-      n += 1
-      if n == self.size {
-        break
-      }
+      res.push((key, value))
     }
   }
   res

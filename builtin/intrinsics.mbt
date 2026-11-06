@@ -920,25 +920,22 @@ pub impl Default for Int32 with fn default() = "%i32_default"
 pub fn Int32::to_double(self : Int32) -> Double = "%i32_to_f64"
 
 ///|
-/// Converts a double-precision floating-point number to an unsigned 32-bit
-/// integer by truncating the decimal part. When the input is NaN or negative,
-/// returns 0. When the input exceeds the maximum value of UInt (4294967295),
-/// returns 4294967295.
-///
-/// Parameters:
-///
-/// * `value` : The double-precision floating-point number to be converted.
-///
-/// Returns an unsigned 32-bit integer representing the truncated value.
+/// Returns the integer itself. Every other integer type, and `Byte`, `Char`
+/// and `Bool`, has a `to_int`: with this one, code that does not know whether
+/// a value is a `Byte`, a `UInt16` or an `Int`, such as generated code reading
+/// a table of either, can write `x.to_int()` for all of them. It costs nothing.
 ///
 /// Example:
 ///
 /// ```mbt check
 /// test {
-///   inspect(UInt32::trunc_double(42.75), content="42")
+///   inspect((-42).to_int(), content="-42")
+///   let small : Bytes = [7]
+///   let wide : ReadOnlyArray[Int32] = [700]
+///   inspect(small[0].to_int() + wide[0].to_int(), content="707")
 /// }
 /// ```
-pub fn UInt32::trunc_double(val : Double) -> UInt32 = "%f64.to_u32"
+pub fn Int32::to_int(self : Int32) -> Int32 = "%identity"
 
 ///|
 /// reinterpret the signed int as unsigned int, when the value is
@@ -1574,31 +1571,6 @@ pub fn Bytes::make(len : Int32, init : Byte) -> Bytes {
 
 ///|
 fn Bytes::unsafe_make(len : Int32, init : Byte) -> Bytes = "%bytes_make"
-
-///|
-/// Creates a new byte sequence filled with zero bytes.
-///
-/// Parameters:
-///
-/// * `length` : The length of the byte sequence to create. Must be a
-/// non-negative integer.
-///
-/// Returns a new byte sequence of the specified length, with all bytes
-/// initialized to zero.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = Bytes::new(3)
-///   inspect(bytes, content="b\"\\x00\\x00\\x00\"")
-///   let bytes = Bytes::new(0)
-///   inspect(bytes, content="b\"\"")
-/// }
-/// ```
-pub fn Bytes::new(len : Int32) -> Bytes {
-  Bytes::make(len, b'\x00')
-}
 
 ///|
 /// Converts a 32-bit signed integer to a byte by taking its least significant 8

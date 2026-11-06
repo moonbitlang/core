@@ -327,7 +327,7 @@ test "shrink immutable hash map" {
       #|  <HashMap: { 3: 6, 4: 2 }>,
       #|  <HashMap: { 3: 0, 4: 2 }>,
       #|  <HashMap: { 2: 2, 3: 7 }>,
-      #|  <HashMap: { 3: 7 }>,
+      #|  <HashMap: { 3: 2 }>,
       #|  <HashMap: { 0: 2, 3: 7 }>,
       #|  <HashMap: { 3: 7, 4: 1 }>,
       #|  <HashMap: { 3: 7, 4: 0 }>,

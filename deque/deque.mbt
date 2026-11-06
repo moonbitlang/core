@@ -1078,6 +1078,9 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 ///|
 /// Maps a function over the elements of the deque.
 ///
+/// If `f` modifies the deque, the result is memory-safe but otherwise
+/// unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1091,21 +1094,25 @@ pub fn[A, U] Deque::map(
   self : Deque[A],
   f : (A) -> U raise?,
 ) -> Deque[U] raise? {
-  let cap = self.buf.length()
-  if self.len == 0 {
+  // Capture the buffer, head and length together: `f` may modify `self`.
+  let { buf: src, head, len, } = self
+  let cap = src.length()
+  if len == 0 {
     new_deque(0)
   } else {
-    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i in 0..<self.len {
-      let idx = (self.head + i) % cap
-      buf[i] = f(self.buf[idx])
+    let buf : UninitializedArray[U] = UninitializedArray::make(len)
+    for i in 0..<len {
+      buf[i] = f(src[wrap_index(head + i, cap)])
     }
-    { buf, len: self.len, head: 0, }
+    { buf, len, head: 0, }
   }
 }
 
 ///|
 /// Maps a function over the elements of the deque with index.
+///
+/// If `f` modifies the deque, the result is memory-safe but otherwise
+/// unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -1120,16 +1127,17 @@ pub fn[A, U] Deque::mapi(
   self : Deque[A],
   f : (Int32, A) -> U raise?,
 ) -> Deque[U] raise? {
-  let cap = self.buf.length()
-  if self.len == 0 {
+  // Capture the buffer, head and length together: `f` may modify `self`.
+  let { buf: src, head, len, } = self
+  let cap = src.length()
+  if len == 0 {
     new_deque(0)
   } else {
-    let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
-    for i in 0..<self.len {
-      let idx = (self.head + i) % cap
-      buf[i] = f(i, self.buf[idx])
+    let buf : UninitializedArray[U] = UninitializedArray::make(len)
+    for i in 0..<len {
+      buf[i] = f(i, src[wrap_index(head + i, cap)])
     }
-    { buf, len: self.len, head: 0, }
+    { buf, len, head: 0, }
   }
 }
 
@@ -1170,10 +1178,12 @@ pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
 /// }
 /// ```
 pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int32? {
-  let cap = self.buf.length()
-  for i in 0..<self.len {
-    let idx = (self.head + i) % cap
-    if self.buf[idx] == value {
+  // Capture the buffer, head and length together: the `Eq` implementation
+  // may modify `self`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
+  for i in 0..<len {
+    if buf[wrap_index(head + i, cap)] == value {
       return Some(i)
     }
   }
@@ -1208,6 +1218,9 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// Extracts elements from a deque that satisfy a given predicate function. The
 /// extracted elements are removed from the original deque and returned as a new
 /// deque. The relative order of the extracted elements is preserved.
+///
+/// If `f` modifies the deque, the result is memory-safe but otherwise
+/// unspecified.
 /// 
 /// Parameters:
 /// 
@@ -1231,21 +1244,27 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 #locals(f)
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   guard !self.is_empty() else { from_array([]) }
+  // Work on the buffer, head and length captured up front, and finish with
+  // `truncate`, as `Deque::retain` does: `f` may modify `self`, and
+  // `truncate` only ever shrinks the live range, so it stays initialized.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let removed = from_array([])
-  for read in 0..<self.length(); write = 0 {
-    let elem = self[read]
+  let kept_len = for read in 0..<len; write = 0 {
+    let elem = buf[wrap_index(head + read, cap)]
     if f(elem) {
       removed.push_back(elem)
       continue write
     } else {
       if read != write {
-        self[write] = elem
+        buf[wrap_index(head + write, cap)] = elem
       }
       continue write + 1
     }
+  } nobreak {
+    write
   }
-  let removed_len = removed.length()
-  self.len -= removed_len
+  self.truncate(kept_len)
   removed
 }
 
@@ -1567,6 +1586,9 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Returns an iterator that yields each element in the deque in order.
 ///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1579,12 +1601,16 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// ```
 #alias(iterator, deprecated)
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
+  // Capture the buffer, head and length together, as `Array::iter` does
+  // through its view: reading the live `buf`/`head` with a captured `len`
+  // reaches unwritten slots, or divides by zero, once the deque is modified.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = 0
-  let len = self.len
   Iter::new(
     fn() {
       guard index < len else { None }
-      let elem = self.buf[(self.head + index) % self.buf.length()]
+      let elem = buf[wrap_index(head + index, cap)]
       index += 1
       Some(elem)
     },
@@ -1619,12 +1645,14 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(iterator2, deprecated)
 pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = 0
-  let len = self.len
   Iter2::new(
     fn() {
       guard index < len else { None }
-      let result = (index, self.buf[(self.head + index) % self.buf.length()])
+      let result = (index, buf[wrap_index(head + index, cap)])
       index += 1
       Some(result)
     },
@@ -1654,13 +1682,15 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  let len = self.len
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut index = len
   Iter::new(
     fn() {
       guard index > 0 else { None }
       index -= 1
-      Some(self.buf[(self.head + index) % self.buf.length()])
+      Some(buf[wrap_index(head + index, cap)])
     },
     size_hint=len,
   )
@@ -1693,14 +1723,16 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(rev_iterator2, deprecated)
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int32, A] {
-  let len = self.len
+  // Capture the buffer, head and length together; see `Deque::iter`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
   let mut rev_index = len
   Iter2::new(
     fn() {
       guard rev_index > 0 else { None }
       let index = len - rev_index
       rev_index -= 1
-      Some((index, self.buf[(self.head + rev_index) % self.buf.length()]))
+      Some((index, buf[wrap_index(head + rev_index, cap)]))
     },
     size_hint=len,
   )
@@ -2518,22 +2550,29 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 ///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
+/// A result of `rand(n)` outside `0..<n` is reduced modulo `n`, as
+/// `Array::shuffle_in_place` does; if that leaves it negative, the call aborts.
 #locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
   rand~ : (Int32) -> Int32,
 ) -> Unit {
-  let n = self.len
-  let buf_length = self.buf.length()
-  for i in n>..1 {
-    let j = rand(i + 1)
-    // Calculate circular buffer positions
-    let i_pos = (self.head + i) % buf_length
-    let j_pos = (self.head + j) % buf_length
+  // Capture the buffer, head and length together: `rand` may modify `self`.
+  let { buf, head, len, } = self
+  let cap = buf.length()
+  for i in len>..1 {
+    // As in `Array::shuffle_in_place`, reduce the index into `0..=i`, so it
+    // never reaches a slot outside the deque's elements.
+    let j = rand(i + 1) % (i + 1)
+    if j < 0 {
+      index_out_of_bounds(i + 1, j)
+    }
     // Swap elements
-    let tmp = self.buf[i_pos]
-    self.buf[i_pos] = self.buf[j_pos]
-    self.buf[j_pos] = tmp
+    let i_pos = wrap_index(head + i, cap)
+    let j_pos = wrap_index(head + j, cap)
+    let tmp = buf[i_pos]
+    buf[i_pos] = buf[j_pos]
+    buf[j_pos] = tmp
   }
 }
 
