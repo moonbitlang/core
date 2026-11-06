@@ -30,3 +30,50 @@ test "add of a present key does not grow a full Set" {
   assert_true(set.capacity == buckets * 2)
   assert_true(set.iter().collect() == [0, 1, 2, 3, 4, 5, 6])
 }
+
+///|
+/// A key whose hash always collides, counting equality checks.
+priv struct Collide(Int32)
+
+///|
+priv struct Counter {
+  mut val : Int32
+}
+
+///|
+let collide_eq_calls : Counter = { val: 0, }
+
+///|
+impl Hash for Collide with fn hash(_) {
+  0
+}
+
+///|
+impl Hash for Collide with fn hash_combine(_, hasher) {
+  hasher.combine_int(0)
+}
+
+///|
+impl Eq for Collide with fn equal(self, other) {
+  collide_eq_calls.val += 1
+  self.0 == other.0
+}
+
+///|
+test "adding the key that triggers growth compares each key once" {
+  let set : Set[Collide] = Set([])
+  for i in 0..<set.grow_at {
+    set.add(Collide(i))
+  }
+  let size = set.size
+  let buckets = set.capacity
+  collide_eq_calls.val = 0
+  set.add(Collide(size))
+  assert_true(set.capacity == buckets * 2)
+  // Every existing key shares the hash, so one probe compares each once;
+  // re-probing after growing would compare them all a second time.
+  assert_true(collide_eq_calls.val == size)
+  for i in 0..<=size {
+    assert_true(set.contains(Collide(i)))
+  }
+}
