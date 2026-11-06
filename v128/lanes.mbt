@@ -310,3 +310,43 @@ fn i16_max_s(a : UInt16, b : UInt16) -> UInt16 {
 fn i16_avgr_u(a : UInt16, b : UInt16) -> UInt16 {
   ((a.to_uint() + b.to_uint() + 1) / 2).to_uint16()
 }
+
+///|
+// Apply the byte operation in UInt32 words, then pack the four results.
+#inline
+fn zip_u8x4_by(
+  left : UInt32,
+  right : UInt32,
+  f : (Byte, Byte) -> Byte,
+) -> UInt32 {
+  f(left.to_byte(), right.to_byte()).to_uint() |
+  (f((left >> 8).to_byte(), (right >> 8).to_byte()).to_uint() << 8) |
+  (f((left >> 16).to_byte(), (right >> 16).to_byte()).to_uint() << 16) |
+  (f((left >> 24).to_byte(), (right >> 24).to_byte()).to_uint() << 24)
+}
+
+///|
+// Extract each UInt32 word once; the callback defines only the lane operation.
+#inline
+fn zip_u8x16_by(value : V128, other : V128, f : (Byte, Byte) -> Byte) -> V128 {
+  let left_low = lo(value)
+  let left_high = hi(value)
+  let right_low = lo(other)
+  let right_high = hi(other)
+  let w0 = zip_u8x4_by(left_low.to_uint(), right_low.to_uint(), f)
+  let w1 = zip_u8x4_by(
+    (left_low >> 32).to_uint(),
+    (right_low >> 32).to_uint(),
+    f,
+  )
+  let w2 = zip_u8x4_by(left_high.to_uint(), right_high.to_uint(), f)
+  let w3 = zip_u8x4_by(
+    (left_high >> 32).to_uint(),
+    (right_high >> 32).to_uint(),
+    f,
+  )
+  make(
+    w0.to_uint64() | (w1.to_uint64() << 32),
+    w2.to_uint64() | (w3.to_uint64() << 32),
+  )
+}
