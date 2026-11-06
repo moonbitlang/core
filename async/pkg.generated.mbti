@@ -37,9 +37,11 @@ pub async fn sleep(Int32) -> Unit noraise
 #callsite(autofill(loc))
 pub async fn with_task_group(async (TaskGroup) -> Unit, loc~ : SourceLoc) -> Unit
 
-pub async fn[X] with_timeout(Int32, async () -> X, error? : Error) -> X
+#callsite(autofill(loc))
+pub async fn[X] with_timeout(Int32, async () -> X, error? : Error, loc~ : SourceLoc) -> X
 
-pub async fn[X] with_timeout_opt(Int32, async () -> X) -> X?
+#callsite(autofill(loc))
+pub async fn[X] with_timeout_opt(Int32, async () -> X, loc~ : SourceLoc) -> X?
 
 // Errors
 pub(all) suberror BreakFromSpawnLoop

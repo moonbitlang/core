@@ -67,7 +67,7 @@ fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
 /// Encoding type for a X509 certificate file
 pub(all) enum X509FileType {
   PEM = 1
-  ANS1 = 2
+  DER = 2
 }
 
 ///|
