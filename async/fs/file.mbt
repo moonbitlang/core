@@ -594,13 +594,14 @@ pub async fn read_text(
 
 ///|
 /// Write binary data to a file located at `path`.
-/// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// If `create_mode` is omitted, it defaults to `OpenOrCreate` when `append=true`,
+/// and `CreateOrTruncate` otherwise. An explicit `create_mode` is always honored,
+/// including truncation combined with append. These rules also apply to empty content.
+/// `sync` defaults to `Data`. See `open` for the meaning of the other options.
 pub async fn write_binary(
   path : StringView,
   content : BytesView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  create_mode? : CreateMode,
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
   append~ : Bool = false,
@@ -610,7 +611,13 @@ pub async fn write_binary(
     mode=WriteOnly,
     sync~,
     append~,
-    create_mode~,
+    create_mode=create_mode.unwrap_or(
+      if append {
+        OpenOrCreate
+      } else {
+        CreateOrTruncate
+      },
+    ),
     permission~,
   )
   defer file.close()
@@ -619,13 +626,14 @@ pub async fn write_binary(
 
 ///|
 /// Write UTF-8 encoded text data to a file located at `path`.
-/// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// If `create_mode` is omitted, it defaults to `OpenOrCreate` when `append=true`,
+/// and `CreateOrTruncate` otherwise. An explicit `create_mode` is always honored,
+/// including truncation combined with append. These rules also apply to empty content.
+/// `sync` defaults to `Data`. See `open` for the meaning of the other options.
 pub async fn write_text(
   path : StringView,
   content : StringView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  create_mode? : CreateMode,
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
   append~ : Bool = false,
@@ -635,7 +643,13 @@ pub async fn write_text(
     mode=WriteOnly,
     sync~,
     append~,
-    create_mode~,
+    create_mode=create_mode.unwrap_or(
+      if append {
+        OpenOrCreate
+      } else {
+        CreateOrTruncate
+      },
+    ),
     permission~,
   )
   defer file.close()
