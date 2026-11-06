@@ -91,16 +91,16 @@ fn[K : Eq] HashSet::add_with_hash(
   hash : Int32,
 ) -> Unit {
   // Grow only once the key is known to be absent, so re-adding a present key
-  // never reallocates. The check sits right before a new entry would be
-  // placed, ahead of any slot mutation.
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
     // it, so it is in bounds for `entries`, whose length is `capacity`.
     match self.entries.unsafe_get(idx) {
       None => {
         if self.size >= self.grow_at {
-          self.grow_and_add(key, hash)
-          return
+          self.grow()
+          continue 0, hash & self.capacity_mask
         }
         break (idx, psl)
       }
@@ -110,8 +110,8 @@ fn[K : Eq] HashSet::add_with_hash(
         }
         if psl > curr_entry.psl {
           if self.size >= self.grow_at {
-            self.grow_and_add(key, hash)
-            return
+            self.grow()
+            continue 0, hash & self.capacity_mask
           }
           self.push_away(idx, curr_entry)
           break (idx, psl)
@@ -299,16 +299,6 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
       self.rehash_place_entry(entry)
     }
   }
-}
-
-///|
-/// Grow the table, then add `key`, which the caller has just probed for and
-/// found absent. The entry is placed directly in the new table, without
-/// probing for (and comparing) the key again.
-fn[K] HashSet::grow_and_add(self : HashSet[K], key : K, hash : Int32) -> Unit {
-  self.grow()
-  self.rehash_place_entry({ psl: 0, key, hash, })
-  self.size += 1
 }
 
 ///|

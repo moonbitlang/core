@@ -177,15 +177,15 @@ pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
 ///|
 fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
   // Grow only once the key is known to be absent, so re-adding a present key
-  // never reallocates. The check sits right before a new entry would be
-  // placed, ahead of any slot mutation.
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       None => {
         if self.size >= self.grow_at {
-          self.grow_and_add(key, hash)
-          return
+          self.grow()
+          continue 0, hash & self.capacity_mask
         }
         break (idx, psl)
       }
@@ -195,8 +195,8 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
         }
         if psl > curr_entry.psl {
           if self.size >= self.grow_at {
-            self.grow_and_add(key, hash)
-            return
+            self.grow()
+            continue 0, hash & self.capacity_mask
           }
           self.push_away(idx, curr_entry)
           break (idx, psl)
@@ -455,15 +455,6 @@ fn[K] Set::grow(self : Set[K]) -> Unit {
       }
     }
   }
-}
-
-///|
-/// Grow the table, then add `key`, which the caller has just probed for and
-/// found absent. The entry is placed directly in the new table, without
-/// probing for (and comparing) the key again.
-fn[K] Set::grow_and_add(self : Set[K], key : K, hash : Int32) -> Unit {
-  self.grow()
-  self.rehash_place_entry({ prev: -1, next: None, psl: 0, key, hash, })
 }
 
 ///|
