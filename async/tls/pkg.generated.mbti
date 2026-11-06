@@ -58,7 +58,7 @@ pub(all) enum TrustedRoot {
 
 pub(all) enum X509FileType {
   PEM
-  ANS1
+  DER
 }
 
 // Type aliases
