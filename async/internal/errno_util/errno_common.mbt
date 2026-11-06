@@ -18,6 +18,7 @@ pub let not_directory : Int32 = match @env_util.platform {
   Linux => linux_ENOTDIR
   MacOS => macos_ENOTDIR
   Windows => windows_ERROR_DIRECTORY
+  @env_util.Platform::.. => panic()
 }
 
 ///|
@@ -26,6 +27,7 @@ pub let not_supported : Int32 = match @env_util.platform {
   Linux => linux_ENOTSUP
   MacOS => macos_ENOTSUP
   Windows => windows_ERROR_NOT_SUPPORTED
+  @env_util.Platform::.. => panic()
 }
 
 ///|
@@ -34,6 +36,7 @@ pub let operation_aborted : Int32 = match @env_util.platform {
   Linux => linux_EINTR
   MacOS => macos_EINTR
   Windows => windows_ERROR_OPERATION_ABORTED
+  @env_util.Platform::.. => panic()
 }
 
 ///|
@@ -42,6 +45,7 @@ pub let lock_violation : Int32 = match @env_util.platform {
   Linux => linux_EWOULDBLOCK
   MacOS => macos_EWOULDBLOCK
   Windows => windows_ERROR_LOCK_VIOLATION
+  @env_util.Platform::.. => panic()
 }
 
 ///|
@@ -99,6 +103,7 @@ pub fn errno_is_nonblocking_io_error(errno : Int32) -> Bool {
       errno == macos_EWOULDBLOCK
     Windows =>
       errno == windows_ERROR_IO_INCOMPLETE || errno == windows_ERROR_IO_PENDING
+    @env_util.Platform::.. => panic()
   }
 }
 

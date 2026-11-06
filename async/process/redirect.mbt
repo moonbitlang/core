@@ -190,6 +190,7 @@ pub(all) enum ProcessInput {
 let null_device : String = match @event_loop.platform {
   Linux | MacOS => "/dev/null"
   Windows => "NUL"
+  @event_loop.Platform::.. => panic()
 }
 
 ///|

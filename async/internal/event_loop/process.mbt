@@ -112,5 +112,6 @@ pub async fn Process::wait_pid(self : Process, context~ : String) -> Int32 {
   match platform {
     Linux | MacOS => self.wait_pid_unix(context~)
     Windows => self.wait_pid_windows(context~)
+    Platform::.. => panic()
   }
 }

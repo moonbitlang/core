@@ -23,6 +23,7 @@ fn PlatformEventLoopExtra::new() -> Self raise {
   match platform {
     Linux | MacOS => Unix(UnixEventLoopExtra::new())
     Windows => Windows(WindowsEventLoopExtra::new())
+    Platform::.. => panic()
   }
 }
 
