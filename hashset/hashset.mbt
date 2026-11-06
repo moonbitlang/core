@@ -90,19 +90,29 @@ fn[K : Eq] HashSet::add_with_hash(
   key : K,
   hash : Int32,
 ) -> Unit {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
     // it, so it is in bounds for `entries`, whose length is `capacity`.
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow()
+          continue 0, hash & self.capacity_mask
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
+          if self.size >= self.grow_at {
+            self.grow()
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
           break (idx, psl)
         }
