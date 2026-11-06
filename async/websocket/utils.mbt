@@ -45,24 +45,44 @@ fn generate_accept_key(client_key : String) -> String raise {
 }
 
 ///|
-fn verify_utf8(data : BytesView, remaining~ : Int32) -> Int32 raise {
-  for i = 0, remaining = remaining; i < data.length(); {
-    match (remaining, data.unsafe_get(i)) {
-      (0, 0..<0x80) => continue i + 1, 0
-      (0, 0xc0..<0xe0) => continue i + 1, 1
-      (0, 0xe0..<0xf0) => continue i + 1, 2
-      (0, 0xf0..<0xf8) => continue i + 1, 3
-      (0, _) => {
-        ignore(@utf8.decode(data[i:i + 1]))
-        panic()
-      }
-      (remaining, 0x80..<0xc0) => continue i + 1, remaining - 1
-      (_, byte) => {
-        ignore(@utf8.decode([0xc0, byte]))
-        panic()
-      }
+/// Raised by `verify_utf8` with the offset of the offending byte.
+#derive(@debug.Debug)
+priv suberror InvalidUtf8 {
+  InvalidUtf8(Int32)
+}
+
+///|
+/// Incrementally validate UTF-8 (RFC 3629), rejecting overlong forms,
+/// surrogates and code points above U+10FFFF.
+///
+/// `remaining` is the state left by the previous chunk, and the new state is
+/// returned. `0` means the input ends on a character boundary, `1..=3` means
+/// that many continuation bytes (`80..BF`) are still expected, and `4..=7`
+/// means the next byte is the first continuation byte of a character whose
+/// lead byte restricts it:
+///
+/// - `4`: after `E0`, `A0..BF` follows, then 1 more
+/// - `5`: after `ED`, `80..9F` follows, then 1 more
+/// - `6`: after `F0`, `90..BF` follows, then 2 more
+/// - `7`: after `F4`, `80..8F` follows, then 2 more
+fn verify_utf8(data : BytesView, remaining~ : Int32) -> Int32 raise InvalidUtf8 {
+  for i = 0, state = remaining; i < data.length(); {
+    let next = match (state, data.unsafe_get(i)) {
+      (0, 0x00..<=0x7f) => 0
+      (0, 0xc2..<=0xdf) => 1
+      (0, 0xe0) => 4
+      (0, 0xe1..<=0xec | 0xee..<=0xef) => 2
+      (0, 0xed) => 5
+      (0, 0xf0) => 6
+      (0, 0xf1..<=0xf3) => 3
+      (0, 0xf4) => 7
+      (1..<=3, 0x80..<=0xbf) => state - 1
+      (4, 0xa0..<=0xbf) | (5, 0x80..<=0x9f) => 1
+      (6, 0x90..<=0xbf) | (7, 0x80..<=0x8f) => 2
+      _ => raise InvalidUtf8(i)
     }
+    continue i + 1, next
   } nobreak {
-    remaining
+    state
   }
 }
