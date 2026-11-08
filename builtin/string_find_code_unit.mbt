@@ -116,8 +116,13 @@ fn rev_find_code_unit_from_string(
 }
 
 ///|
-// SIMD code-unit scanner for linear-memory backends. The vector loop scans
-// eight UTF-16 code units at a time, then the scalar tail handles the remainder.
+// SIMD code-unit scanner for linear-memory backends. It scans
+// sixteen-code-unit blocks from the start and returns the lowest matching
+// offset. The block loop tests both halves with one `any_true` and builds a
+// bitmask only on a hit. Fewer than eight leftover code units at the tail are
+// covered by one load of the last eight code units of the window; the lanes it
+// shares with the earlier loads held no match, so its lowest match is the
+// answer.
 #cfg(any(target="native", target="wasm"))
 fn find_code_unit_from_string(
   data : String,
@@ -129,22 +134,54 @@ fn find_code_unit_from_string(
   if data.unsafe_get(start) == code {
     return start
   }
+  guard end - start >= 8 else {
+    return find_code_unit_scalar(data, start + 1, end, code)
+  }
   let code_v = i16x8_splat(code)
-  let tail_start = for pos = start; pos + 8 <= end; {
+  // Compare remaining lengths: `pos + 16` could overflow near `Int32` max.
+  let pos = for pos = start; end - pos >= 16; {
+    let lo = i16x8_eq(v128_load_i16x8(data, pos), code_v)
+    let hi = i16x8_eq(v128_load_i16x8(data, pos + 8), code_v)
+    if v128_any_true(v128_or(lo, hi)) {
+      let lo_mask = i16x8_bitmask(lo)
+      if lo_mask != 0 {
+        return pos + lo_mask.ctz()
+      }
+      return pos + 8 + i16x8_bitmask(hi).ctz()
+    }
+    continue pos + 16
+  } nobreak {
+    pos
+  }
+  let pos = if end - pos >= 8 {
     let mask = i16x8_bitmask(i16x8_eq(v128_load_i16x8(data, pos), code_v))
     if mask != 0 {
       return pos + mask.ctz()
     }
-    continue pos + 8
-  } nobreak {
+    pos + 8
+  } else {
     pos
   }
-  find_code_unit_scalar(data, tail_start, end, code)
+  // Skips a load that would only rescan lanes already known not to match.
+  guard pos < end else { return -1 }
+  // `end - start >= 8`, so the load ending at `end` stays in bounds.
+  let tail = end - 8
+  let mask = i16x8_bitmask(i16x8_eq(v128_load_i16x8(data, tail), code_v))
+  if mask != 0 {
+    tail + mask.ctz()
+  } else {
+    -1
+  }
 }
 
 ///|
 // SIMD reverse code-unit scanner for linear-memory backends. It scans
-// eight-code-unit chunks from the end and returns the highest matching offset.
+// sixteen-code-unit blocks from the end and returns the highest matching
+// offset. The block loop tests both halves with one `any_true` and builds a
+// bitmask only on a hit. Fewer than eight leftover code units at the head are
+// covered by one load of the first eight code units of the window; the lanes it
+// shares with the earlier loads held no match, so its highest match is the
+// answer.
 #cfg(any(target="native", target="wasm"))
 fn rev_find_code_unit_from_string(
   data : String,
@@ -156,20 +193,42 @@ fn rev_find_code_unit_from_string(
   if data.unsafe_get(end - 1) == code {
     return end - 1
   }
+  guard end - start >= 8 else {
+    return rev_find_code_unit_scalar(data, start, end - 1, code)
+  }
   let code_v = i16x8_splat(code)
-  let head_end = for pos = end; pos - 8 >= start; {
-    let chunk_start = pos - 8
-    let mask = i16x8_bitmask(
-      i16x8_eq(v128_load_i16x8(data, chunk_start), code_v),
-    )
-    if mask != 0 {
-      return chunk_start + 31 - mask.clz()
+  let pos = for pos = end; pos - 16 >= start; {
+    let hi = i16x8_eq(v128_load_i16x8(data, pos - 8), code_v)
+    let lo = i16x8_eq(v128_load_i16x8(data, pos - 16), code_v)
+    if v128_any_true(v128_or(hi, lo)) {
+      let hi_mask = i16x8_bitmask(hi)
+      if hi_mask != 0 {
+        return pos - 8 + 31 - hi_mask.clz()
+      }
+      return pos - 16 + 31 - i16x8_bitmask(lo).clz()
     }
-    continue chunk_start
+    continue pos - 16
   } nobreak {
     pos
   }
-  rev_find_code_unit_scalar(data, start, head_end, code)
+  let pos = if pos - 8 >= start {
+    let mask = i16x8_bitmask(i16x8_eq(v128_load_i16x8(data, pos - 8), code_v))
+    if mask != 0 {
+      return pos - 8 + 31 - mask.clz()
+    }
+    pos - 8
+  } else {
+    pos
+  }
+  // Skips a load that would only rescan lanes already known not to match.
+  guard pos > start else { return -1 }
+  // `end - start >= 8`, so the load at `start` stays in bounds.
+  let mask = i16x8_bitmask(i16x8_eq(v128_load_i16x8(data, start), code_v))
+  if mask != 0 {
+    start + 31 - mask.clz()
+  } else {
+    -1
+  }
 }
 
 ///|
