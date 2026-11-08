@@ -971,25 +971,162 @@ async test "reject header injection" {
     let (r, w) = @io.pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let sender = Sender::new(w, headers={
-        "Host": "x.y.org\nInjected: xxx",
-        "User-\nAgent": "MoonBit",
-      })
-      let _ = sender.send_response(200, "Ok", cookies=[], request_method=Head, extra_headers={
-        "Content-Length": "42",
+      let bad_headers : Array[Headers] = [
+        { "Host": "x.y.org\nInjected: xxx" },
+        { "User-\nAgent": "MoonBit" },
+      ]
+      for headers in bad_headers {
+        let sender = Sender::new(w, headers~)
+        @debug.debug_inspect(
+          @test.expect_error_async(() => {
+            sender.send_response(200, "Ok", cookies=[], request_method=Head, extra_headers={})
+          }),
+          content="BadRequest",
+        )
+      }
+    }
+    defer r.close()
+    // nothing reaches the wire
+    inspect(r.read_all() |> @bytes_util.ascii_to_string, content="")
+  }
+}
+
+///|
+/// The valid request that `sender_output` sends after the rejected one,
+/// as rendered by `@bytes_util.ascii_to_string`.
+let ok_request = "GET /ok HTTP/1.1\\r\nAccept-Encoding: identity\\r\n\\r\n"
+
+///|
+/// Run `f` on a fresh sender and return everything it wrote, after `f` has
+/// sent one rejected message followed by a valid request.
+async fn sender_output(f : async (Sender) -> Unit) -> String {
+  let mut output = ""
+  @async.with_task_group() <| root => {
+    let (r, w) = @io.pipe()
+    root.spawn_bg() <| () => {
+      defer w.close()
+      let sender = Sender::new(w)
+      f(sender)
+      // a rejected message leaves the sender usable
+      let _ = sender.send_request(Get, "/ok", extra_headers={
+        "Accept-Encoding": "identity",
       })
       sender.end_body()
     }
     defer r.close()
-    inspect(
-      r.read_all() |> @bytes_util.ascii_to_string,
-      content=(
-        #|HTTP/1.1 200 Ok\r
-        #|Host: x.y.orgInjected: xxx\r
-        #|Content-Length: 42\r
-        #|\r
-        #|
-      ),
-    )
+    output = r.read_all() |> @bytes_util.ascii_to_string
   }
+  output
+}
+
+///|
+async test "reject CRLF in request target" {
+  let targets = [
+    "/x HTTP/1.1\r\nX-Injected: 1\r\n\r\nGET /admin", "/a b", "/a\nb", "/a\u{00}",
+    "/a\u{7f}", "",
+  ]
+  for target in targets {
+    let output = sender_output(sender => {
+      @debug.debug_inspect(
+        @test.expect_error_async(() => {
+          ignore(sender.send_request(Get, target, extra_headers={}))
+        }),
+        content="InvalidFormat",
+      )
+    })
+    @test.assert_eq(output, ok_request)
+  }
+}
+
+///|
+async test "reject CR/LF in outgoing header values and names" {
+  let bad_headers : Array[Headers] = [
+    { "X": "a\r\nX-Injected: 1" },
+    { "X": "a\nb" },
+    { "X": "a\rb" },
+    { "X": "a\u{00}b" },
+    { "X\r\nY": "1" },
+    { "": "1" },
+    { "Content-Length": "0_3" },
+    { "Content-Length": "-1" },
+    { "Content-Length": "0x3" },
+    { "Content-Length": "9223372036854775808" },
+  ]
+  for extra_headers in bad_headers {
+    let output = sender_output(sender => {
+      @debug.debug_inspect(
+        @test.expect_error_async(() => {
+          ignore(sender.send_request(Post, "/", extra_headers~))
+        }),
+        content="BadRequest",
+      )
+    })
+    @test.assert_eq(output, ok_request)
+  }
+}
+
+///|
+async test "outgoing Content-Length allows optional whitespace" {
+  let output = sender_output(sender => {
+    let _ = sender.send_request(Post, "/", extra_headers={
+      "Content-Length": " 3 ",
+      "X": "a\tb",
+    })
+    sender..write(b"abc").end_body()
+  })
+  inspect(
+    output,
+    content=(
+      #|POST / HTTP/1.1\r
+      #|Content-Length:  3 \r
+      #|X: a\tb\r
+      #|Accept-Encoding: gzip,identity\r
+      #|\r
+      #|abcGET /ok HTTP/1.1\r
+      #|Accept-Encoding: identity\r
+      #|\r
+      #|
+    ),
+  )
+}
+
+///|
+async test "reject CR/LF in reason phrase and cookies" {
+  let cookies = [
+    Cookie("a", "b\r\nX-Injected: 1"),
+    Cookie("a", "b", path="/\n"),
+    Cookie("a", "b", extensions=["x\r\ny"]),
+  ]
+  for cookie in cookies {
+    let output = sender_output(sender => {
+      @debug.debug_inspect(
+        @test.expect_error_async(() => {
+          sender.send_response(
+            200,
+            "OK",
+            cookies=[cookie],
+            request_method=Get,
+            extra_headers={},
+          )
+        }),
+        content="BadRequest",
+      )
+    })
+    @test.assert_eq(output, ok_request)
+  }
+  let output = sender_output(sender => {
+    @debug.debug_inspect(
+      @test.expect_error_async(() => {
+        sender.send_response(
+          200,
+          "OK\r\nX-Injected: 1",
+          cookies=[],
+          request_method=Get,
+          extra_headers={},
+        )
+      }),
+      content="BadRequest",
+    )
+  })
+  @test.assert_eq(output, ok_request)
 }

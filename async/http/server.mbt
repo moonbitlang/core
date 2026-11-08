@@ -34,6 +34,9 @@ pub struct ServerConnection {
 /// and must not be specified in `headers`:
 /// 
 /// - Content-Length, Transfer-Encoding
+///
+/// A persistent header that cannot be sent as is (see `send_response`) makes
+/// every `send_response` on this connection raise `BadRequest`.
 pub fn ServerConnection::new(
   conn : @socket.Tcp,
   headers~ : Headers = Map([]),
@@ -229,6 +232,10 @@ pub async fn ServerConnection::end_response(self : ServerConnection) -> Unit {
 /// The request body can still be sent incrementally,
 /// but if the actual body being sent is shorter and longer than the provided length,
 /// an error will be raised.
+///
+/// Nothing is sent if the response is invalid: header names must be tokens,
+/// and header values, `reason` and cookie fields must not contain CR, LF or
+/// other control characters except HTAB (`BadRequest`).
 pub async fn ServerConnection::send_response(
   self : ServerConnection,
   code : Int32,

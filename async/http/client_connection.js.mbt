@@ -303,6 +303,9 @@ extern "js" fn ClientConnection::request_ffi(
 /// The headers mentioned in
 /// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_request_header
 /// must not be set in `extra_headers`.
+///
+/// `path` must be non-empty and contain no space or control character,
+/// otherwise `InvalidFormat` is raised and nothing is sent.
 #warnings("-unused_async")
 pub async fn ClientConnection::request(
   self : ClientConnection,
@@ -311,6 +314,7 @@ pub async fn ClientConnection::request(
   extra_headers~ : Headers = Map([]),
 ) -> Unit {
   guard! self.request is None
+  validate_request_target(path)
   let protocol = match self.protocol {
     Http => "http://"
     Https => "https://"
