@@ -158,3 +158,33 @@ test "bench find one code unit absent n=4096" (it : @bench.T) {
   let str = String::make(4096, 'a')
   it.bench(() => it.keep(str.find("z")))
 }
+
+///|
+test "bench find two anchors absent n=24" (it : @bench.T) {
+  let str = String::make(24, 'a')
+  it.bench(() => it.keep(str.find("az")))
+}
+
+///|
+test "bench find two anchors absent n=40" (it : @bench.T) {
+  let str = String::make(40, 'a')
+  it.bench(() => it.keep(str.find("az")))
+}
+
+///|
+test "bench find two anchors absent n=4096" (it : @bench.T) {
+  let str = String::make(4096, 'a')
+  it.bench(() => it.keep(str.find("az")))
+}
+
+///|
+test "bench rev_find two anchors absent n=40" (it : @bench.T) {
+  let str = String::make(40, 'a')
+  it.bench(() => it.keep(str.rev_find("za")))
+}
+
+///|
+test "bench rev_find two anchors absent n=4096" (it : @bench.T) {
+  let str = String::make(4096, 'a')
+  it.bench(() => it.keep(str.rev_find("za")))
+}

@@ -439,8 +439,9 @@ fn rev_find_short_candidate_from_view(
 }
 
 ///|
-// SIMD short-pattern prefilter: match first and last bytes before scalar
-// verification of the unchecked middle range.
+// SIMD short-pattern prefilter: match first and last bytes, 32 candidate
+// positions (two 16-lane vectors) per iteration, before scalar verification
+// of the unchecked middle range.
 #cfg(any(target="native", target="wasm"))
 fn find_short_candidate_from_bytes(
   data : Bytes,
@@ -452,7 +453,31 @@ fn find_short_candidate_from_bytes(
 ) -> Int32 {
   let first_v = i8x16_splat(first)
   let last_v = i8x16_splat(last)
-  let tail_start = for pos = start; pos + 16 <= candidate_end; {
+  // Two 16-candidate vectors per iteration, tested with one `any_true`; the
+  // bitmask is built only on a hit. Comparing remaining lengths keeps
+  // `pos + 32` from overflowing.
+  let pos = for pos = start; candidate_end - pos >= 32; {
+    let lo = v128_and(
+      i8x16_eq(data.v128_load(pos), first_v),
+      i8x16_eq(data.v128_load(pos + last_offset), last_v),
+    )
+    let hi = v128_and(
+      i8x16_eq(data.v128_load(pos + 16), first_v),
+      i8x16_eq(data.v128_load(pos + 16 + last_offset), last_v),
+    )
+    if v128_any_true(v128_or(lo, hi)) {
+      let lo_bits = i8x16_bitmask(lo)
+      if lo_bits != 0 {
+        return pos + lo_bits.ctz()
+      }
+      return pos + 16 + i8x16_bitmask(hi).ctz()
+    }
+    continue pos + 32
+  } nobreak {
+    pos
+  }
+  // Performance only: keeps the scalar tail under 16 candidates.
+  let tail_start = if candidate_end - pos >= 16 {
     let mask = v128_and(
       i8x16_eq(data.v128_load(pos), first_v),
       i8x16_eq(data.v128_load(pos + last_offset), last_v),
@@ -461,8 +486,8 @@ fn find_short_candidate_from_bytes(
     if bits != 0 {
       return pos + bits.ctz()
     }
-    continue pos + 16
-  } nobreak {
+    pos + 16
+  } else {
     pos
   }
   for pos in tail_start..<candidate_end {
@@ -476,8 +501,10 @@ fn find_short_candidate_from_bytes(
 }
 
 ///|
-// SIMD reverse short-pattern prefilter: scan candidate positions from the end,
-// matching first and last bytes before scalar verification.
+// SIMD reverse first/last-byte prefilter, used by the reverse search for every
+// multi-byte pattern length: scan candidate positions from the end, 32 per
+// iteration (two 16-lane vectors), matching first and last bytes before scalar
+// verification.
 #cfg(any(target="native", target="wasm"))
 fn rev_find_short_candidate_from_bytes(
   data : Bytes,
@@ -489,7 +516,30 @@ fn rev_find_short_candidate_from_bytes(
 ) -> Int32 {
   let first_v = i8x16_splat(first)
   let last_v = i8x16_splat(last)
-  let head_end = for pos = candidate_end; pos - 16 >= start; {
+  // Two 16-candidate vectors per iteration, tested with one `any_true`; the
+  // bitmask is built only on a hit.
+  let pos = for pos = candidate_end; pos - 32 >= start; {
+    let hi = v128_and(
+      i8x16_eq(data.v128_load(pos - 16), first_v),
+      i8x16_eq(data.v128_load(pos - 16 + last_offset), last_v),
+    )
+    let lo = v128_and(
+      i8x16_eq(data.v128_load(pos - 32), first_v),
+      i8x16_eq(data.v128_load(pos - 32 + last_offset), last_v),
+    )
+    if v128_any_true(v128_or(hi, lo)) {
+      let hi_bits = i8x16_bitmask(hi)
+      if hi_bits != 0 {
+        return pos - 16 + 31 - hi_bits.clz()
+      }
+      return pos - 32 + 31 - i8x16_bitmask(lo).clz()
+    }
+    continue pos - 32
+  } nobreak {
+    pos
+  }
+  // Performance only: keeps the scalar head under 16 candidates.
+  let head_end = if pos - 16 >= start {
     let chunk_start = pos - 16
     let mask = v128_and(
       i8x16_eq(data.v128_load(chunk_start), first_v),
@@ -499,8 +549,8 @@ fn rev_find_short_candidate_from_bytes(
     if bits != 0 {
       return chunk_start + 31 - bits.clz()
     }
-    continue chunk_start
-  } nobreak {
+    chunk_start
+  } else {
     pos
   }
   for pos in head_end>..start {
