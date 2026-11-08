@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-/// The `lexscan` token lexers send only malformed input to their `*_slow`
-/// fallbacks, so `parse` never reaches the fallbacks' success branches. The
-/// fallbacks are still complete lexers: if a DFA missed a valid form, the
-/// fallback would lex it correctly. These tests call them directly on valid
-/// input to keep that property checked.
+/// `lex_value` sends only malformed input to `lex_value_slow`, so `parse`
+/// never reaches its success branches. It is still a complete lexer: if the
+/// DFA missed a valid form, `lex_value_slow` would lex it correctly. This test
+/// calls it directly on valid input to keep that property checked.
 fn slow_path_token(token : Token) -> String {
   match token {
     Null => "null"
@@ -81,43 +80,6 @@ test "lex_value_slow lexes every valid value token" {
       #|  ("01", "Invalid character '1' at line 1, column 1", 1),
       #|  ("] (not allowed)", "Invalid character ']' at line 1, column 0", 1),
       #|]
-    ),
-  )
-}
-
-///|
-test "punctuation slow paths lex valid tokens" {
-  let after_array = [" ,", "]"].map(input => {
-    let ctx = ParseContext::make(input)
-    let token = try! ctx.lex_after_array_value_slow()
-    (input, slow_path_token(token), ctx.sc.cursor)
-  })
-  let after_object = [" ,", "}"].map(input => {
-    let ctx = ParseContext::make(input)
-    let token = try! ctx.lex_after_object_value_slow()
-    (input, slow_path_token(token), ctx.sc.cursor)
-  })
-  let ctx = ParseContext::make(" :")
-  try! ctx.lex_after_property_name_slow()
-  let after_name = ctx.sc.cursor
-  let property_name = [" }", " \"k\""].map(input => {
-    let ctx = ParseContext::make(input)
-    let (token, offset) = try! ctx.lex_property_name_slow()
-    (input, slow_path_token(token), offset, ctx.sc.cursor)
-  })
-  let ctx = ParseContext::make(" \"k\"")
-  let (token, offset) = try! ctx.lex_property_name2_slow()
-  let property_name2 = (slow_path_token(token), offset, ctx.sc.cursor)
-  @debug.debug_inspect(
-    (after_array, after_object, after_name, property_name, property_name2),
-    content=(
-      #|(
-      #|  [(" ,", ",", 2), ("]", "]", 1)],
-      #|  [(" ,", ",", 2), ("}", "}", 1)],
-      #|  2,
-      #|  [(" }", "}", 1, 2), (" \"k\"", "String(k)", 1, 4)],
-      #|  ("String(k)", 1, 4),
-      #|)
     ),
   )
 }
