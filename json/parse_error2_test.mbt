@@ -65,3 +65,52 @@ test "invalid characters after numbers and structural tokens keep their start" {
     }
   }
 }
+
+///|
+/// Number prefixes inside containers and after whitespace, where `lex_value`
+/// lexes the number with a DFA and sends prefixes that do not finish as a
+/// number to the character-by-character lexer. The errors must be the ones
+/// that lexer reports.
+test "number prefix errors inside containers" {
+  let inputs = [
+    "[1.]", "[1.,2]", "[1e]", "[1e+]", "[1E-,", "[-]", "[ -a]", "[01]", "[-01]",
+    "[00]", "[1.e5]", "[1e5.3]", "[0x1]", "{\"a\":1.}", "{\"a\": 1e}", "{\"a\":00}",
+    " 1.", "\t1e+ ", "\n-", " 1.5e",
+  ]
+  let results = inputs.map(input => {
+    let result = try {
+      @json.parse(input) |> ignore
+      "ok"
+    } catch {
+      err => err.to_string()
+    }
+    (input, result)
+  })
+  debug_inspect(
+    results,
+    content=(
+      #|[
+      #|  ("[1.]", "Invalid character ']' at line 1, column 3"),
+      #|  ("[1.,2]", "Invalid character ',' at line 1, column 3"),
+      #|  ("[1e]", "Invalid character ']' at line 1, column 3"),
+      #|  ("[1e+]", "Invalid character ']' at line 1, column 4"),
+      #|  ("[1E-,", "Invalid character ',' at line 1, column 4"),
+      #|  ("[-]", "Invalid character ']' at line 1, column 2"),
+      #|  ("[ -a]", "Invalid character 'a' at line 1, column 3"),
+      #|  ("[01]", "Invalid character '1' at line 1, column 2"),
+      #|  ("[-01]", "Invalid character '1' at line 1, column 3"),
+      #|  ("[00]", "Invalid character '0' at line 1, column 2"),
+      #|  ("[1.e5]", "Invalid character 'e' at line 1, column 3"),
+      #|  ("[1e5.3]", "Invalid character '.' at line 1, column 4"),
+      #|  ("[0x1]", "Invalid character 'x' at line 1, column 2"),
+      #|  ("{\"a\":1.}", "Invalid character '}' at line 1, column 7"),
+      #|  ("{\"a\": 1e}", "Invalid character '}' at line 1, column 8"),
+      #|  ("{\"a\":00}", "Invalid character '0' at line 1, column 6"),
+      #|  (" 1.", "Unexpected end of file"),
+      #|  ("\t1e+ ", "Invalid character ' ' at line 1, column 4"),
+      #|  ("\n-", "Unexpected end of file"),
+      #|  (" 1.5e", "Unexpected end of file"),
+      #|]
+    ),
+  )
+}

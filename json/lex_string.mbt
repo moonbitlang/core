@@ -14,7 +14,7 @@
 
 ///|
 fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
-  let string_start = ctx.offset
+  let string_start = ctx.sc.cursor
   // Fast path for ordinary strings: scan raw UTF-16 code units and materialize
   // the slice directly when there are no escapes or control characters. On
   // SIMD targets, this loop checks `LEX_STRING_SCALAR_UNITS` code units, so a
@@ -30,7 +30,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   for i in string_start..<scalar_end {
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       // The scan bounds guarantee these offsets are inside the input. Preserve
       // raw code units, including unmatched surrogates, when copying the text.
       let base = ctx.input.start_offset()
@@ -38,12 +38,12 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
         .data()
         .unsafe_substring(start=base + string_start, end=base + i)
     } else if c == '\\' {
-      ctx.offset = i
+      ctx.sc.cursor = i
       return ctx.lex_string_slow(string_start)
     } else if c < ' ' {
       // Unescaped control characters (U+0000..U+001F, including \n, \r,
       // \t) are invalid inside a JSON string.
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       ctx.invalid_char(shift=-1)
     }
   }
@@ -106,20 +106,20 @@ fn ParseContext::lex_string_long(
   guard i < ctx.end_offset else { raise InvalidEof }
   let c = ctx.input.unsafe_get(i)
   if c == '"' {
-    ctx.offset = i + 1
+    ctx.sc.cursor = i + 1
     ctx.input.data().unsafe_substring(start=base + string_start, end=base + i)
   } else if c == '\\' {
-    ctx.offset = i
+    ctx.sc.cursor = i
     ctx.lex_string_slow(string_start)
   } else {
-    ctx.offset = i + 1
+    ctx.sc.cursor = i + 1
     ctx.invalid_char(shift=-1)
   }
 }
 
 ///|
-/// Lexes the rest of a string that contains escapes. `ctx.offset` is at a
-/// backslash, and `run_start..ctx.offset` is literal content not yet copied.
+/// Lexes the rest of a string that contains escapes. `ctx.sc.cursor` is at a
+/// backslash, and `run_start..ctx.sc.cursor` is literal content not yet copied.
 fn ParseContext::lex_string_slow(
   ctx : ParseContext,
   run_start : Int32,
@@ -138,17 +138,17 @@ fn ParseContext::lex_string_slow(
   // is the backslash, which sets `scalar_limit`. If the addition wraps, the
   // switch just happens sooner; either scan finds the same unit.)
   let mut scalar_limit = 0
-  for i = ctx.offset {
+  for i = ctx.sc.cursor {
     guard i < end else { raise InvalidEof }
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       if start > 0 && i > start {
         buf.write_view(ctx.input[start:i])
       }
       break
     } else if c == '\\' {
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       if start > 0 && i > start {
         buf.write_view(ctx.input[start:i])
       }
@@ -162,9 +162,9 @@ fn ParseContext::lex_string_slow(
         Some('\\') => buf.write_char('\\')
         Some('/') => buf.write_char('/')
         Some('u') => {
-          // The backslash that opened this escape. `ctx.offset` is just
+          // The backslash that opened this escape. `ctx.sc.cursor` is just
           // past the `u`, and `\` and `u` are one code unit each.
-          let escape_start = ctx.offset - 2
+          let escape_start = ctx.sc.cursor - 2
           let c = ctx.lex_hex_digits(4)
           if c is (0xD800..<=0xDBFF) {
             // A leading-surrogate escape is only meaningful as the first
@@ -202,14 +202,14 @@ fn ParseContext::lex_string_slow(
         Some(c) => ctx.invalid_char(shift=-c.utf16_len())
         None => raise InvalidEof
       }
-      start = ctx.offset
+      start = ctx.sc.cursor
       if LEX_STRING_ESCAPE_SIMD {
-        scalar_limit = ctx.offset + LEX_STRING_SCALAR_UNITS
+        scalar_limit = ctx.sc.cursor + LEX_STRING_SCALAR_UNITS
       }
-      continue ctx.offset
+      continue ctx.sc.cursor
     } else if c < ' ' {
       // An unescaped control character.
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       ctx.invalid_char(shift=-1)
     } else if !LEX_STRING_ESCAPE_SIMD || i < scalar_limit {
       continue i + 1
@@ -296,7 +296,7 @@ fn[T] ParseContext::unpaired_surrogate(
   ctx : ParseContext,
   escape_start : Int32,
 ) -> T raise ParseError {
-  ctx.invalid_char(shift=escape_start - ctx.offset)
+  ctx.invalid_char(shift=escape_start - ctx.sc.cursor)
 }
 
 ///|
