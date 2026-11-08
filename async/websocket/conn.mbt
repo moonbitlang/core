@@ -212,11 +212,23 @@ pub fn Conn::close(self : Conn) -> Unit {
 /// - `Conn::close` should be called anyway, even if `send_close` is called
 /// - `Conn::send_close` should only be called when everything goes well.
 ///    For example it should NOT be called when protocol error or network error occurs.
+///
+/// Codes that RFC 6455 forbids in a Close frame (`Abnormal`, 1005, 1015, and
+/// anything outside 1000-1003, 1007-1014 and 3000-4999) and reasons longer
+/// than 123 bytes are refused with an error, and the connection stays open.
 pub async fn Conn::send_close(
   self : Conn,
   code~ : CloseCode = Normal,
   reason? : String,
 ) -> Unit {
+  // validate before changing state, so that a rejected call leaves the
+  // connection open
+  guard code.is_sendable() else {
+    fail("Close code \{code.to_uint16()} must not be sent")
+  }
+  if reason is Some(reason) && @utf8.encode(reason).length() > 123 {
+    fail("Close reason too long")
+  }
   if self.closed is Some(err) {
     raise err
   } else {
@@ -313,13 +325,38 @@ async fn[X] Conn::protocol_error(
 }
 
 ///|
+/// Fail the connection because the transport ended in the middle of a frame:
+/// a truncated frame is an abnormal closure, not the end of a message.
+fn[X] Conn::truncated(self : Conn) -> X raise {
+  let err : WebSocketError = ConnectionClosed(Abnormal, None)
+  if self.closed is None {
+    self.closed = Some(err)
+  }
+  raise err
+}
+
+///|
+/// Read `len` bytes of the current frame header.
+async fn Conn::read_header_bytes(self : Conn, len : Int32) -> Bytes {
+  self.transport.read_exactly(len) catch {
+    @io.ReaderClosed => self.truncated()
+    err => raise err
+  }
+}
+
+///|
 async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
   if self.closed is Some(err) {
     raise err
   }
 
+  // EOF between frames is reported as `ReaderClosed`,
+  // EOF inside a frame as an abnormal closure.
+  guard @io.BinaryReader::peek(self.transport) is Some(_) else {
+    raise @io.ReaderClosed
+  }
   // Read first two bytes
-  guard! self.transport.read_exactly(2)
+  guard! self.read_header_bytes(2)
     is [
       u1be(fin),
       u1be(rsv1),
@@ -351,13 +388,13 @@ async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
 
   // Validate payload length according to RFC 6455 Section 5.2
   if payload_len == 126L {
-    guard! self.transport.read_exactly(2) is [u16be(len)]
+    guard! self.read_header_bytes(2) is [u16be(len)]
     payload_len = len.to_int64()
     if payload_len < 126L {
       self.protocol_error("Invalid payload length format")
     }
   } else if payload_len == 127L {
-    guard! self.transport.read_exactly(8) is [u64be(len)]
+    guard! self.read_header_bytes(8) is [u64be(len)]
     payload_len = len.reinterpret_as_int64()
     if payload_len < 0L {
       self.protocol_error("Invalid payload length format")
@@ -366,9 +403,20 @@ async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
       self.protocol_error("Invalid payload length format")
     }
   }
+  // RFC 6455 section 5.1: clients mask every frame and servers never do.
+  // We are a client exactly when we mask our own frames.
+  if (masked != 0) == (self.write_mask is Some(_)) {
+    self.protocol_error(
+      if masked != 0 {
+        "Frames from a server must not be masked"
+      } else {
+        "Frames from a client must be masked"
+      },
+    )
+  }
   self.read_mask = if masked != 0 {
     self.mask_offset = 0
-    Some(self.transport.read_exactly(4))
+    Some(self.read_header_bytes(4))
   } else {
     None
   }
@@ -394,7 +442,7 @@ async fn Conn::handle_ping(self : Conn, frame : FrameHeader) -> Unit {
       offset=payload_start + received,
       max_len=len - received,
     )
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -421,7 +469,7 @@ async fn Conn::handle_pong(self : Conn, frame : FrameHeader) -> Unit {
       offset=received,
       max_len=len - received,
     )
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -454,7 +502,7 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
       offset=payload_start + received,
       max_len=len - received,
     )
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -462,6 +510,12 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
   }
   let payload = reply.unsafe_reinterpret_as_bytes()[payload_start:]
   let (close_code, reason) = if payload is [u16be(code), .. reason] {
+    // RFC 6455 section 7.4: codes that must not appear in a Close frame are
+    // a protocol error, and must not be echoed back either
+    let close_code = CloseCode::from_uint(code)
+    guard close_code.is_sendable() else {
+      self.protocol_error("Invalid close code \{code}")
+    }
     let reason = @utf8.decode(reason) catch {
       _ =>
         self.protocol_error(
@@ -470,7 +524,9 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
         )
     }
     let reason = if reason.length() is 0 { None } else { Some(reason) }
-    (CloseCode::from_uint(code), reason)
+    (close_code, reason)
+  } else if payload.length() == 1 {
+    self.protocol_error("Close frame payload of length 1")
   } else {
     // the `close` packet we receive is empty
     (Normal, None)
@@ -575,6 +631,18 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
     // if we are not in the last frame of a message,
     // the end of this frame is the end of the whole message
     if conn.read_opcode is None {
+      if conn.utf8_remaining > 0 {
+        // the message ends in the middle of a UTF-8 character
+        conn.protocol_error(
+          "Text message is not valid UTF8",
+          code=InvalidFramePayload,
+        ) catch {
+          err => {
+            self.state = Error(err)
+            raise err
+          }
+        }
+      }
       self.state = Closed
       if conn.curr_message is Some(message) {
         message.text.close()
@@ -618,6 +686,13 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
       self.state = Error(err)
       raise err
     }
+  }
+  if n == 0 && max_len > 0 {
+    // the transport ended in the middle of a frame: report a truncated
+    // message as an abnormal closure, not as the end of the message
+    let err = conn.truncated() catch { err => err }
+    self.state = Error(err)
+    raise err
   }
   conn.curr_frame_remaining -= n.to_int64()
   if conn.read_mask is Some(mask) {

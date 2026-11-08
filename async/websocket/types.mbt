@@ -99,6 +99,14 @@ fn CloseCode::to_uint16(self : CloseCode) -> UInt16 {
 }
 
 ///|
+/// Whether the code may be sent in a Close frame (RFC 6455 section 7.4).
+/// `Abnormal` (1006), 1005 and 1015 only report conditions locally, and
+/// other codes outside 1000-1014 and 3000-4999 are reserved or invalid.
+fn CloseCode::is_sendable(self : CloseCode) -> Bool {
+  self.to_uint16() is (1000..<=1003 | 1007..<=1014 | 3000..<=4999)
+}
+
+///|
 fn CloseCode::from_uint(code : UInt32) -> CloseCode {
   match code {
     1000 => Normal
