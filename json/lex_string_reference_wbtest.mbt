@@ -23,11 +23,11 @@
 fn ParseContext::lex_string_reference(
   ctx : ParseContext,
 ) -> String raise ParseError {
-  let string_start = ctx.offset
+  let string_start = ctx.sc.cursor
   for i in string_start..<ctx.end_offset {
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       let base = ctx.input.start_offset()
       return ctx.input
         .data()
@@ -35,7 +35,7 @@ fn ParseContext::lex_string_reference(
     } else if c == '\\' {
       return ctx.lex_string_slow_reference()
     } else if c < ' ' {
-      ctx.offset = i + 1
+      ctx.sc.cursor = i + 1
       ctx.invalid_char(shift=-1)
     }
   }
@@ -47,7 +47,7 @@ fn ParseContext::lex_string_slow_reference(
   ctx : ParseContext,
 ) -> String raise ParseError {
   let buf = StringBuilder()
-  let mut start = ctx.offset
+  let mut start = ctx.sc.cursor
   fn flush(end : Int32) {
     if start > 0 && end > start {
       buf.write_view(ctx.input[start:end])
@@ -57,11 +57,11 @@ fn ParseContext::lex_string_slow_reference(
   for ;; {
     match ctx.read_char() {
       Some('"') => {
-        flush(ctx.offset - 1)
+        flush(ctx.sc.cursor - 1)
         break
       }
       Some('\\') => {
-        flush(ctx.offset - 1)
+        flush(ctx.sc.cursor - 1)
         match ctx.read_char() {
           Some('b') => buf.write_char('\b')
           Some('f') => buf.write_char('\u{0C}')
@@ -72,7 +72,7 @@ fn ParseContext::lex_string_slow_reference(
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
-            let escape_start = ctx.offset - 2
+            let escape_start = ctx.sc.cursor - 2
             let c = ctx.lex_hex_digits(4)
             if c is (0xD800..<=0xDBFF) {
               match ctx.read_char() {
@@ -101,7 +101,7 @@ fn ParseContext::lex_string_slow_reference(
           Some(c) => ctx.invalid_char(shift=-c.utf16_len())
           None => raise InvalidEof
         }
-        start = ctx.offset
+        start = ctx.sc.cursor
       }
       Some(ch) =>
         if ch.to_int() < 32 {
@@ -127,7 +127,7 @@ fn lex_string_outcome(
   reference~ : Bool,
 ) -> (Result[String, ParseError], Int32) {
   let ctx = ParseContext::make(input)
-  ctx.offset = 1
+  ctx.sc.cursor = 1
   let result = Ok(
     if reference {
       ctx.lex_string_reference()
@@ -137,7 +137,7 @@ fn lex_string_outcome(
   ) catch {
     err => Err(err)
   }
-  (result, if result is Err(InvalidEof) { -1 } else { ctx.offset })
+  (result, if result is Err(InvalidEof) { -1 } else { ctx.sc.cursor })
 }
 
 ///|

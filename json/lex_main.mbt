@@ -13,7 +13,10 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::lex_value(
+/// Character-by-character lexer for a value. `lex_value` calls it only for
+/// input its DFA does not lex, which is always an error, so this function
+/// decides which error is reported and where.
+fn ParseContext::lex_value_slow(
   ctx : ParseContext,
   allow_rbracket~ : Bool,
 ) -> Token raise ParseError {
@@ -49,12 +52,12 @@ fn ParseContext::lex_value(
     Some('-') =>
       match ctx.read_char() {
         Some('0') => {
-          let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 2)
+          let { value: n, repr, } = ctx.lex_zero(start=ctx.sc.cursor - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some('1'..<='9') => {
           let { value: n, repr, } = ctx.lex_decimal_integer(
-            start=ctx.offset - 2,
+            start=ctx.sc.cursor - 2,
           )
           return Number(n, repr.map(repr => repr.to_owned()))
         }
@@ -62,11 +65,11 @@ fn ParseContext::lex_value(
         None => raise InvalidEof
       }
     Some('0') => {
-      let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 1)
+      let { value: n, repr, } = ctx.lex_zero(start=ctx.sc.cursor - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('1'..<='9') => {
-      let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.offset - 1)
+      let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.sc.cursor - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('"') => {
@@ -75,5 +78,53 @@ fn ParseContext::lex_value(
     }
     Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
+  }
+}
+
+///|
+/// Lexes the token that starts a value, skipping leading whitespace. A single
+/// DFA skips the whitespace, recognizes the token and validates a whole
+/// number, so a number is converted by `lex_number_end` without being lexed
+/// again. Every input the DFA does not lex is malformed; it goes to
+/// `lex_value_slow` with the cursor before the token (before its leading
+/// whitespace, or at the start of an incomplete number), so the error is the
+/// one that lexer reports.
+fn ParseContext::lex_value(
+  ctx : ParseContext,
+  allow_rbracket~ : Bool,
+) -> Token raise ParseError {
+  lexscan ctx.sc with longest {
+    re"^[ \t\r\n]*[{]" => LBrace
+    re"^[ \t\r\n]*\[" => LBracket
+    re"^[ \t\r\n]*\"" => String(ctx.lex_string())
+    re"^[ \t\r\n]*" +
+    (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+\-]?[0-9]+)?" as num) => {
+      let num_end = ctx.sc.cursor
+      let { value: n, repr, } = ctx.lex_number_end(
+        num_end - num.length(),
+        num_end,
+      )
+      Number(n, repr.map(repr => repr.to_owned()))
+    }
+    re"^[ \t\r\n]*null" => Null
+    re"^[ \t\r\n]*true" => True
+    re"^[ \t\r\n]*false" => False
+    re"^[ \t\r\n]*\]" =>
+      if allow_rbracket {
+        RBracket
+      } else {
+        ctx.invalid_char(shift=-1)
+      }
+    // A prefix that starts like a number but does not finish as one, such
+    // as `1.` or `1e+`, is longer than any valid number match, so this case
+    // wins. `lexscan` has already moved the cursor past the prefix; move it
+    // back to the start of the number so `lex_value_slow` lexes it again and
+    // reports the error at the usual position.
+    re"^[ \t\r\n]*" +
+    (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][+\-]?[0-9]*)?" as prefix) => {
+      ctx.sc.cursor -= prefix.length()
+      ctx.lex_value_slow(allow_rbracket~)
+    }
+    _ => ctx.lex_value_slow(allow_rbracket~)
   }
 }

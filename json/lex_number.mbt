@@ -271,10 +271,10 @@ fn ParseContext::lex_decimal_integer(
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..<='9') => continue
       Some(c) => {
-        ctx.offset -= c.utf16_len()
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.sc.cursor -= c.utf16_len()
+        return ctx.lex_number_end(start, ctx.sc.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.sc.cursor)
     }
   }
 }
@@ -301,10 +301,10 @@ fn ParseContext::lex_decimal_fraction(
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..<='9') => continue
       Some(c) => {
-        ctx.offset -= c.utf16_len()
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.sc.cursor -= c.utf16_len()
+        return ctx.lex_number_end(start, ctx.sc.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.sc.cursor)
     }
   }
 }
@@ -343,10 +343,10 @@ fn ParseContext::lex_decimal_exponent_integer(
     match ctx.read_char() {
       Some('0'..<='9') => continue
       Some(c) => {
-        ctx.offset -= c.utf16_len()
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.sc.cursor -= c.utf16_len()
+        return ctx.lex_number_end(start, ctx.sc.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.sc.cursor)
     }
   }
 }
@@ -360,14 +360,14 @@ fn ParseContext::lex_zero(
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
     Some('0'..<='9') => {
-      ctx.offset -= 1
+      ctx.sc.cursor -= 1
       ctx.invalid_char()
     }
     Some(c) => {
-      ctx.offset -= c.utf16_len()
-      return ctx.lex_number_end(start, ctx.offset)
+      ctx.sc.cursor -= c.utf16_len()
+      return ctx.lex_number_end(start, ctx.sc.cursor)
     }
-    None => return ctx.lex_number_end(start, ctx.offset)
+    None => return ctx.lex_number_end(start, ctx.sc.cursor)
   }
 }
 

@@ -14,7 +14,11 @@
 
 ///|
 priv struct ParseContext {
-  mut offset : Int32
+  /// Scans `input`: `sc.data` is `input`, and `sc.cursor` is the offset of
+  /// the next code unit to read. The hot token lexers use `lexscan sc`, which
+  /// advances the cursor without slicing the input; the rest of the lexer
+  /// reads and writes `sc.cursor` directly.
+  sc : @lexbuf.StringScanner
   input : StringView
   end_offset : Int32
   reject_duplicate_keys : Bool
@@ -28,7 +32,7 @@ fn ParseContext::make(
   preserve_number_repr~ : Bool = false,
 ) -> ParseContext {
   {
-    offset: 0,
+    sc: { data: input, cursor: 0, },
     input,
     end_offset: input.length(),
     reject_duplicate_keys,
