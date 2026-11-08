@@ -101,6 +101,47 @@ test "rev_find one code unit across SIMD blocks and view bounds" {
 }
 
 ///|
+test "find and rev_find one code unit at every pair of offsets of every view" {
+  // Reaches both halves of the sixteen-unit block, the single eight-unit
+  // step, and the overlapping edge load from every alignment, in both
+  // directions. Two matches in one block or edge load pin which lane wins;
+  // `first == second` or `first < 0` places a single match, and views that
+  // exclude every match cover the no-match cases.
+  let n = 40
+  for first in -1..<n {
+    for second in first.max(0)..<n {
+      let str = String::from_array(
+        Array::makei(n, i => if i == first || i == second { 'z' } else { 'a' }),
+      )
+      for start in 0..<=n {
+        for end in start..<=n {
+          let in_view = (i : Int32) => i >= start && i < end
+          let lowest = if in_view(first) {
+            Some(first - start)
+          } else if in_view(second) {
+            Some(second - start)
+          } else {
+            None
+          }
+          let highest = if in_view(second) {
+            Some(second - start)
+          } else if in_view(first) {
+            Some(first - start)
+          } else {
+            None
+          }
+          let view = str[start:end]
+          assert_eq(view.find("z"), lowest)
+          assert_eq(view.find_code_unit(0x7A), lowest)
+          assert_eq(view.rev_find("z"), highest)
+          assert_eq(view.rev_find_code_unit(0x7A), highest)
+        }
+      }
+    }
+  }
+}
+
+///|
 test "find and rev_find isolated surrogate code units" {
   let leading = String::from_array([(0xD800).unsafe_to_char()])
   let str = "01234567" + leading + "abcdefgh" + leading
