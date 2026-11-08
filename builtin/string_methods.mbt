@@ -570,8 +570,9 @@ fn string_contains_code_unit(
 }
 
 ///|
-// Scan eight UTF-16 code units at a time on linear-memory backends, then scan
-// the remaining tail one code unit at a time.
+// Scan sixteen UTF-16 code units (two vectors, tested with one `any_true`) at
+// a time on linear-memory backends, then at most one more eight-unit vector,
+// then the remaining tail one code unit at a time.
 #cfg(any(target="native", target="wasm"))
 fn string_contains_code_unit(
   str : String,
@@ -583,12 +584,24 @@ fn string_contains_code_unit(
     return string_contains_code_unit_scalar(str, start, end, code)
   }
   let needle = i16x8_splat(code)
-  let tail_start = for pos = start; pos + 8 <= end; {
+  // Compare remaining lengths: `pos + 16` could overflow near `Int32` max.
+  let pos = for pos = start; end - pos >= 16; {
+    let lo = i16x8_eq(v128_load_i16x8(str, pos), needle)
+    let hi = i16x8_eq(v128_load_i16x8(str, pos + 8), needle)
+    if v128_any_true(v128_or(lo, hi)) {
+      return true
+    }
+    continue pos + 16
+  } nobreak {
+    pos
+  }
+  // Performance only: keeps the scalar tail under eight code units.
+  let tail_start = if end - pos >= 8 {
     if v128_any_true(i16x8_eq(v128_load_i16x8(str, pos), needle)) {
       return true
     }
-    continue pos + 8
-  } nobreak {
+    pos + 8
+  } else {
     pos
   }
   string_contains_code_unit_scalar(str, tail_start, end, code)
@@ -2406,7 +2419,8 @@ fn find_ascii_lowercase_code_unit(
 // `data[start:start + len]` in the inclusive range `first..=last`. Requires
 // `len > 0` and `first <= last`. Check the first code unit scalarly so strings
 // that start with a match retain the lowest possible startup cost. Then scan
-// full blocks eight UTF-16 code units at a time and finish with a scalar tail.
+// sixteen UTF-16 code units at a time, then at most one more eight-unit block,
+// and finish with a scalar tail.
 // moonc does not inline functions containing loops, so the bounds stay
 // runtime arguments; they only feed the splats before the loop and the scalar
 // checks, leaving the vector loop body the same as with literal bounds.
@@ -2425,8 +2439,31 @@ fn find_ascii_range_code_unit_simd(
   }
   let range_start = i16x8_splat(first)
   let range_width = i16x8_splat(last - first)
-  // `end - pos` cannot overflow, unlike `pos + 8`.
-  let tail_start = for pos = start; end - pos >= 8; {
+  // `end - pos` cannot overflow, unlike `pos + 16`. Two vectors are tested
+  // with one `any_true`; a hit is located by the scalar scan of that block.
+  let pos = for pos = start; end - pos >= 16; {
+    let lo = i16x8_le_u(
+      i16x8_sub(v128_load_i16x8(data, pos), range_start),
+      range_width,
+    )
+    let hi = i16x8_le_u(
+      i16x8_sub(v128_load_i16x8(data, pos + 8), range_start),
+      range_width,
+    )
+    if v128_any_true(v128_or(lo, hi)) {
+      for i in pos..<(pos + 16) {
+        let code_unit = data.unsafe_get(i)
+        if code_unit >= first && code_unit <= last {
+          return Some(i - start)
+        }
+      }
+    }
+    continue pos + 16
+  } nobreak {
+    pos
+  }
+  // Performance only: keeps the scalar tail under eight code units.
+  let tail_start = if end - pos >= 8 {
     let code_units = v128_load_i16x8(data, pos)
     let in_range = i16x8_le_u(i16x8_sub(code_units, range_start), range_width)
     if v128_any_true(in_range) {
@@ -2437,8 +2474,8 @@ fn find_ascii_range_code_unit_simd(
         }
       }
     }
-    continue pos + 8
-  } nobreak {
+    pos + 8
+  } else {
     pos
   }
   for i in tail_start..<end {
