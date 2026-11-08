@@ -14,14 +14,14 @@
 
 ///|
 fn ParseContext::read_char(ctx : ParseContext) -> Char? {
-  if ctx.offset < ctx.end_offset {
-    let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-    ctx.offset += 1
+  if ctx.sc.cursor < ctx.end_offset {
+    let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
+    ctx.sc.cursor += 1
     if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
+      if ctx.sc.cursor < ctx.end_offset {
+        let c2 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
+          ctx.sc.cursor += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
           return Some(c3.unsafe_to_char())
         }
@@ -49,9 +49,9 @@ fn ParseContext::expect_char(
   ctx : ParseContext,
   c : Char,
 ) -> Unit raise ParseError {
-  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-  ctx.offset += 1
+  guard ctx.sc.cursor < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
+  ctx.sc.cursor += 1
   let c0 = c.to_int()
   if c0 <= 0xFFFF {
     // c0 is a valid character in the BMP.
@@ -62,15 +62,15 @@ fn ParseContext::expect_char(
     // c0 is not bmp code point
     // c1 has to be surrogate pair otherwise it is invalid
     guard c1 is (SURROGATE_LOW_CHAR..<=SURROGATE_HIGH_CHAR) &&
-      ctx.offset < ctx.end_offset else {
+      ctx.sc.cursor < ctx.end_offset else {
       ctx.invalid_char(shift=-1)
     }
-    let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
+    let c2 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
     let c3 = (c1 << 10) + c2 - 0x35fdc00
     if c3 != c0 {
       ctx.invalid_char(shift=-1)
     } else {
-      ctx.offset += 1 // consume and move forward
+      ctx.sc.cursor += 1 // consume and move forward
     }
   }
 }
@@ -82,9 +82,9 @@ fn ParseContext::expect_ascii_char(
   ctx : ParseContext,
   c : Byte,
 ) -> Unit raise ParseError {
-  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-  ctx.offset += 1
+  guard ctx.sc.cursor < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
+  ctx.sc.cursor += 1
   if c.to_int() != c1 {
     ctx.invalid_char(shift=-1)
   }
@@ -120,19 +120,16 @@ test "expect_char with surrogate pair" {
 }
 
 ///|
-// Hot path: this runs at the start of every `lex_value` and
-// `lex_after_*` step. The previous `lexmatch` path constructed a
-// fresh `StringView` of the remaining input on every call, which
-// shows up as a top allocation source in JSON parsing workloads.
-// JSON whitespace is ASCII-only, so we can scan UTF-16 code units
-// directly on the existing input view with the same semantics.
+// Skips JSON whitespace (ASCII only, RFC 8259 §2). The token lexers skip
+// whitespace inside their `lexscan` DFAs; this is used by their slow paths
+// and by `parse` after the top-level value.
 //
 // `offset` is held in a local for the duration of the scan so each
 // consumed whitespace character is one `local.set` instead of a
-// `struct.set` against `ctx`.
+// `struct.set` against the scanner.
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   let end = ctx.end_offset
-  ctx.offset = for offset = ctx.offset {
+  ctx.sc.cursor = for offset = ctx.sc.cursor {
     if offset >= end {
       break offset
     }
@@ -148,29 +145,31 @@ test "lex_skip_whitespace" {
   // Empty input: nothing to skip.
   let ctx = ParseContext::make("")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.sc.cursor, content=0)
   // Only whitespace: offset advances to end.
   let ctx = ParseContext::make("   \t\r\n")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=6)
+  json_inspect(ctx.sc.cursor, content=6)
   // Mixed whitespace before a token: stops at the first non-ws byte.
   let ctx = ParseContext::make(" \t\r\n{")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=4)
+  json_inspect(ctx.sc.cursor, content=4)
   // No leading whitespace: offset unchanged.
   let ctx = ParseContext::make("{}")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.sc.cursor, content=0)
   // Non-ASCII / Unicode whitespace (e.g. U+00A0 NBSP) must NOT be
   // treated as JSON whitespace — RFC 8259 limits the set to the four
   // ASCII chars handled above.
   let ctx = ParseContext::make("\u{00A0}x")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.sc.cursor, content=0)
 }
 
 ///|
-fn ParseContext::lex_after_array_value(
+/// Slow path of `lex_after_array_value`, reached only on malformed input.
+/// It decides which error is reported and where.
+fn ParseContext::lex_after_array_value_slow(
   ctx : ParseContext,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
@@ -183,7 +182,9 @@ fn ParseContext::lex_after_array_value(
 }
 
 ///|
-fn ParseContext::lex_after_property_name(
+/// Slow path of `lex_after_property_name`, reached only on malformed input.
+/// It decides which error is reported and where.
+fn ParseContext::lex_after_property_name_slow(
   ctx : ParseContext,
 ) -> Unit raise ParseError {
   ctx.lex_skip_whitespace()
@@ -195,7 +196,9 @@ fn ParseContext::lex_after_property_name(
 }
 
 ///|
-fn ParseContext::lex_after_object_value(
+/// Slow path of `lex_after_object_value`, reached only on malformed input.
+/// It decides which error is reported and where.
+fn ParseContext::lex_after_object_value_slow(
   ctx : ParseContext,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
@@ -210,11 +213,13 @@ fn ParseContext::lex_after_object_value(
 ///|
 /// In the context of `{`, try to lex token `}` or a property name,
 /// otherwise raise an error.
-fn ParseContext::lex_property_name(
+/// This is the slow path of `lex_property_name`, reached only on malformed
+/// input.
+fn ParseContext::lex_property_name_slow(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
   ctx.lex_skip_whitespace()
-  let offset = ctx.offset
+  let offset = ctx.sc.cursor
   match ctx.read_char() {
     Some('}') => (RBrace, offset)
     Some('"') => {
@@ -230,11 +235,13 @@ fn ParseContext::lex_property_name(
 /// In the context of `{ ...,` try to lex a property name,
 /// otherwise raise an error.
 /// since it is in comma context, `}` is not allowed.
-fn ParseContext::lex_property_name2(
+/// This is the slow path of `lex_property_name2`, reached only on malformed
+/// input.
+fn ParseContext::lex_property_name2_slow(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
   ctx.lex_skip_whitespace()
-  let offset = ctx.offset
+  let offset = ctx.sc.cursor
   match ctx.read_char() {
     Some('"') => {
       let s = ctx.lex_string()
@@ -250,5 +257,79 @@ test "expect_char at the upper BMP boundary" {
   let ctx = ParseContext::make("\u{FFFF}😀")
   ctx.expect_char('\u{FFFF}')
   ctx.expect_char('😀')
-  json_inspect(ctx.offset, content=3)
+  json_inspect(ctx.sc.cursor, content=3)
+}
+
+///|
+/// Lexes `,` or `]` after an array element, skipping leading whitespace.
+/// Anything else goes to `lex_after_array_value_slow` with the cursor
+/// unchanged.
+fn ParseContext::lex_after_array_value(
+  ctx : ParseContext,
+) -> Token raise ParseError {
+  lexscan ctx.sc {
+    re"^[ \t\r\n]*," => Comma
+    re"^[ \t\r\n]*\]" => RBracket
+    _ => ctx.lex_after_array_value_slow()
+  }
+}
+
+///|
+/// Lexes the `:` after a property name, skipping leading whitespace.
+/// Anything else goes to `lex_after_property_name_slow` with the cursor
+/// unchanged.
+fn ParseContext::lex_after_property_name(
+  ctx : ParseContext,
+) -> Unit raise ParseError {
+  lexscan ctx.sc {
+    re"^[ \t\r\n]*:" => ()
+    _ => ctx.lex_after_property_name_slow()
+  }
+}
+
+///|
+/// Lexes `,` or `}` after a property value, skipping leading whitespace.
+/// Anything else goes to `lex_after_object_value_slow` with the cursor
+/// unchanged.
+fn ParseContext::lex_after_object_value(
+  ctx : ParseContext,
+) -> Token raise ParseError {
+  lexscan ctx.sc {
+    re"^[ \t\r\n]*," => Comma
+    re"^[ \t\r\n]*[}]" => RBrace
+    _ => ctx.lex_after_object_value_slow()
+  }
+}
+
+///|
+/// In the context of `{`, lexes `}` or a property name, skipping leading
+/// whitespace, and returns the token with the offset of its first character.
+/// Anything else goes to `lex_property_name_slow` with the cursor unchanged.
+fn ParseContext::lex_property_name(
+  ctx : ParseContext,
+) -> (Token, Int32) raise ParseError {
+  lexscan ctx.sc {
+    re"^[ \t\r\n]*\"" => {
+      let offset = ctx.sc.cursor - 1
+      (String(ctx.lex_string()), offset)
+    }
+    re"^[ \t\r\n]*[}]" => (RBrace, ctx.sc.cursor - 1)
+    _ => ctx.lex_property_name_slow()
+  }
+}
+
+///|
+/// In the context of `{ ...,`, lexes a property name, skipping leading
+/// whitespace, and returns it with the offset of its opening quote. Anything
+/// else goes to `lex_property_name2_slow` with the cursor unchanged.
+fn ParseContext::lex_property_name2(
+  ctx : ParseContext,
+) -> (Token, Int32) raise ParseError {
+  lexscan ctx.sc {
+    re"^[ \t\r\n]*\"" => {
+      let offset = ctx.sc.cursor - 1
+      (String(ctx.lex_string()), offset)
+    }
+    _ => ctx.lex_property_name2_slow()
+  }
 }
