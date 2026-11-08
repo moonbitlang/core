@@ -81,7 +81,6 @@ test "lex_value_slow lexes every valid value token" {
       #|  ("01", "Invalid character '1' at line 1, column 1", 1),
       #|  ("] (not allowed)", "Invalid character ']' at line 1, column 0", 1),
       #|]
-
     ),
   )
 }
