@@ -553,3 +553,69 @@ test "Int16 constructor syntax" {
   let x : Int16 = 42
   inspect(Int16(x), content="42")
 }
+
+///|
+test "Int16 clz/ctz/popcnt match a bitwise reference for every value" {
+  for i in -32768..<32768 {
+    let x = Int16::from_int(i)
+    let bits = i & 0xFFFF
+    let mut clz = 0
+    for b = 15; b >= 0 && ((bits >> b) & 1) == 0; b = b - 1 {
+      clz += 1
+    }
+    let mut ctz = 0
+    while ctz < 16 && ((bits >> ctz) & 1) == 0 {
+      ctz += 1
+    }
+    let mut popcnt = 0
+    for b in 0..<16 {
+      popcnt += (bits >> b) & 1
+    }
+    assert_eq((x.clz(), x.ctz(), x.popcnt()), (clz, ctz, popcnt))
+  }
+  inspect(@int16.MIN_VALUE.clz(), content="0")
+  inspect(@int16.MAX_VALUE.clz(), content="1")
+  inspect(@int16.MAX_VALUE.popcnt(), content="15")
+}
+
+///|
+test "Int16 min, max, clamp are signed" {
+  inspect(@int16.MIN_VALUE.min(@int16.MAX_VALUE), content="-32768")
+  inspect(@int16.MIN_VALUE.max(@int16.MAX_VALUE), content="32767")
+  inspect(Int16(-1).clamp(min=Int16(-1), max=Int16(-1)), content="-1")
+  inspect(
+    @int16.MIN_VALUE.clamp(min=Int16(-100), max=Int16(100)),
+    content="-100",
+  )
+}
+
+///|
+test "Int16 to_double" {
+  for i in [-32768, -1, 0, 1, 32767] {
+    assert_eq(Int16::from_int(i).to_double(), i.to_double())
+  }
+}
+
+///|
+test "Int16 from_uint and from_uint64 keep the low 16 bits" {
+  for x in [0U, 1U, 0x7FFFU, 0x8000U, 0xFFFFU, 0x10000U, 0xFFFF_FFFFU] {
+    assert_eq(Int16::from_uint(x), Int16::from_int(x.reinterpret_as_int()))
+    assert_eq(
+      Int16::from_uint64(x.to_uint64() | 0xABCD_0000_0000_0000UL),
+      Int16::from_uint(x),
+    )
+  }
+  inspect(Int16::from_uint(0x8000U), content="-32768")
+  inspect(Int16::from_uint64(0x7FFFUL), content="32767")
+}
+
+///|
+test "Int16 to_uint and to_uint64 sign-extend, then wrap" {
+  for i in -32768..<32768 {
+    let x = Int16::from_int(i)
+    assert_eq(x.to_uint(), i.reinterpret_as_uint())
+    assert_eq(x.to_uint64(), i.to_uint64())
+    // Same bits as going through Int64.
+    assert_eq(x.to_uint64(), x.to_int64().reinterpret_as_uint64())
+  }
+}
