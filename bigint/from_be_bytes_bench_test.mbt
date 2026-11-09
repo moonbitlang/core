@@ -13,18 +13,18 @@
 // limitations under the License.
 
 ///|
-fn from_octets_bench_data(len : Int32) -> Bytes {
+fn from_be_bytes_bench_data(len : Int32) -> Bytes {
   Bytes::makei(len, i => ((i * 37 + 11) & 0xff).to_byte())
 }
 
 ///|
-test "bench BigInt::from_octets n=64" (it : @bench.T) {
-  let data = from_octets_bench_data(64)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_octets(data)) })
+test "bench BigInt::from_be_bytes n=64" (it : @bench.T) {
+  let data = from_be_bytes_bench_data(64)
+  it.bench(fn() { it.keep(@bigint.BigInt::from_be_bytes(data)) })
 }
 
 ///|
-test "bench BigInt::from_octets n=1024" (it : @bench.T) {
-  let data = from_octets_bench_data(1024)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_octets(data)) })
+test "bench BigInt::from_be_bytes n=1024" (it : @bench.T) {
+  let data = from_be_bytes_bench_data(1024)
+  it.bench(fn() { it.keep(@bigint.BigInt::from_be_bytes(data)) })
 }
