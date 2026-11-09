@@ -102,7 +102,6 @@ pub async fn File::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
 pub async fn File::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
 pub async fn File::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn File::read_all(Self) -> Bytes raise @io.ReaderError
-#label_migration(max_len, alias=len, msg="Use max_len= instead")
 pub async fn File::read_at(Self, FixedArray[Byte], position~ : Int64, offset? : Int32, max_len? : Int32) -> Int32
 pub async fn File::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn File::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
