@@ -59,14 +59,14 @@ async fn Transport::read_more(self : Transport) -> Unit {
   }
   let controller = @io.BinaryReaderImpl::get_controller(self.reader)
   let prev_len = controller.buffered().length()
-  try @io.BinaryReaderImpl::ensure_buffered(self.reader, prev_len + 1) catch {
+  try self.reader.peek_at_least(prev_len + 1) catch {
+    UnexpectedEof => self.state = Closed
     err => {
       self.state = Error(err)
       raise err
     }
   } noraise {
-    true => ()
-    false => self.state = Closed
+    _ => ()
   }
 }
 

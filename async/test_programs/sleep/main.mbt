@@ -19,6 +19,9 @@ extern "C" fn register_termination_handler() = "register_termination_handler"
 extern "C" fn set_swallow_cancel_signal() = "set_swallow_cancel_signal"
 
 ///|
+extern "C" fn use_stderr_in_stub() = "set_use_stderr"
+
+///|
 extern "C" fn exit(code : Int32) = "exit"
 
 ///|
@@ -30,6 +33,7 @@ async fn main {
   let mut msg_after_init = None
   let mut use_default_handler = false
   let mut wait_on_init = false
+  let mut use_stderr = false
   for args = @env.args()[1:] {
     match args {
       [] => break
@@ -65,6 +69,11 @@ async fn main {
         wait_on_init = true
         continue rest
       }
+      ["-stderr", ..rest] => {
+        use_stderr = true
+        use_stderr_in_stub()
+        continue rest
+      }
       [['-', ..] as flag, ..] => fail("unrecognized argument \{flag}")
       [t, .. rest] => {
         time = @string.parse_int(t)
@@ -72,7 +81,12 @@ async fn main {
       }
     }
   }
-  defer (if msg_finally is Some(msg) { println(msg) })
+  let output = if use_stderr { @stdio.stderr } else { @stdio.stdout }
+  defer (
+    if msg_finally is Some(msg) {
+      if use_stderr { eprintln(msg) } else { println(msg) }
+    }
+  )
   if wait_on_init {
     ignore(@stdio.stdin.read())
   }
@@ -81,11 +95,11 @@ async fn main {
     register_termination_handler()
   }
   if msg_after_init is Some(msg) {
-    @stdio.stdout.text.write("\{msg}\n")
+    output.text.write("\{msg}\n")
   }
   @async.sleep(time)
   if msg_after_sleep is Some(msg) {
-    @stdio.stdout.text.write("\{msg}\n")
+    output.text.write("\{msg}\n")
   }
   exit(exit_code)
 }

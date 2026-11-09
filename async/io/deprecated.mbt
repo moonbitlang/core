@@ -15,12 +15,22 @@
 ///|
 #deprecated
 #doc(hidden)
-pub extend ReaderClosed with @debug.Debug::{to_repr}
+pub extend ReaderError with @debug.Debug::{to_repr}
 
 ///|
 #deprecated
 #doc(hidden)
-pub extend ReaderClosed with @json.ToJson::{to_json}
+pub extend ReaderError with @json.ToJson::{to_json}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend WriterError with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend WriterError with @json.ToJson::{to_json}
 
 ///|
 #deprecated

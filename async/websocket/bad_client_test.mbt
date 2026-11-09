@@ -16,7 +16,7 @@
 async test "bad client" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     let server_result_queue = @async.Queue(kind=Unbounded)
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => {
@@ -147,7 +147,10 @@ async test "bad client" {
     debug_inspect(
       server_result_queue.get(),
       content=(
-        #|ProtocolError("New message within a fragmented message")
+        #|TransportError(
+        #|  ProtocolError("New message within a fragmented message"),
+        #|  context="@websocket.Conn",
+        #|)
       ),
     )
 
@@ -166,7 +169,10 @@ async test "bad client" {
     debug_inspect(
       server_result_queue.get(),
       content=(
-        #|ProtocolError("New message within a fragmented message")
+        #|TransportError(
+        #|  ProtocolError("New message within a fragmented message"),
+        #|  context="@websocket.Conn",
+        #|)
       ),
     )
 

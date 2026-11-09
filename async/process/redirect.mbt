@@ -52,6 +52,11 @@ pub fn ReadFromProcess::close(self : ReadFromProcess) -> Unit {
 pub impl @io.BinaryReader for ReadFromProcess
 
 ///|
+impl @io.BinaryReaderImpl for ReadFromProcess with fn name(_self) {
+  "@process.ReadFromProcess"
+}
+
+///|
 impl @io.BinaryReaderImpl for ReadFromProcess with fn get_controller(self) {
   self.ctrl
 }
@@ -128,6 +133,11 @@ pub fn WriteToProcess::close(self : WriteToProcess) -> Unit {
 
 ///|
 pub impl @io.BinaryWriter for WriteToProcess
+
+///|
+impl @io.BinaryWriterImpl for WriteToProcess with fn name(_self) {
+  "@process.WriteToProcess"
+}
 
 ///|
 impl @io.BinaryWriterImpl for WriteToProcess with fn get_controller(self) {
@@ -234,7 +244,7 @@ async fn ProcessInput::init_stdin(
       )
       (Some(file), no_input)
     }
-    Shared(obj) => (Some(obj.0), no_input)
+    Shared(obj) => (Some(obj.io), no_input)
   }
 }
 
@@ -345,7 +355,7 @@ async fn ProcessOutput::init_stdout(
       (no_output, Some(file))
     }
     DuplicateStdout => panic()
-    Shared(output) => (no_output, Some(output.0))
+    Shared(output) => (no_output, Some(output.io))
   }
 }
 
@@ -386,12 +396,24 @@ fn ProcessOutput::close(
 /// A caller-owned input endpoint that can be shared by multiple child processes.
 /// Pass it as `stdin=Shared(input)`, then close it after it has been passed to
 /// the last child, or if spawning is abandoned.
-struct SharedProcessInput(@event_loop.IoHandle)
+struct SharedProcessInput {
+  // The reference counting is mainly for use in `Cmd`'s complex composite commands
+  mut rc : Int32
+  io : @event_loop.IoHandle
+}
+
+///|
+fn SharedProcessInput::incref(self : SharedProcessInput) -> Unit {
+  self.rc += 1
+}
 
 ///|
 /// Closes a shared process input channel and releases its resources.
 pub fn SharedProcessInput::close(self : SharedProcessInput) -> Unit {
-  self.0.close()
+  self.rc -= 1
+  if self.rc is 0 {
+    self.io.close()
+  }
 }
 
 ///|
@@ -399,12 +421,24 @@ pub fn SharedProcessInput::close(self : SharedProcessInput) -> Unit {
 /// processes. Pass it as `stdout=Shared(output)` or `stderr=Shared(output)`,
 /// then close it after it has been passed to the last child, or if spawning is
 /// abandoned.
-struct SharedProcessOutput(@event_loop.IoHandle)
+struct SharedProcessOutput {
+  // The reference counting is mainly for use in `Cmd`'s complex composite commands
+  mut rc : Int32
+  io : @event_loop.IoHandle
+}
+
+///|
+fn SharedProcessOutput::incref(self : SharedProcessOutput) -> Unit {
+  self.rc += 1
+}
 
 ///|
 /// Closes a shared process output channel and releases its resources.
 pub fn SharedProcessOutput::close(self : SharedProcessOutput) -> Unit {
-  self.0.close()
+  self.rc -= 1
+  if self.rc is 0 {
+    self.io.close()
+  }
 }
 
 ///|
@@ -426,7 +460,7 @@ pub fn read_from_process() -> (ReadFromProcess, SharedProcessOutput) raise {
   )
   let r = @event_loop.IoHandle::from_fd(r, kind=Pipe)
   let w = @event_loop.IoHandle::from_fd(w, kind=Pipe, is_async=false)
-  (ReadFromProcess(Some(r)), SharedProcessOutput(w))
+  (ReadFromProcess(Some(r)), { rc: 1, io: w, })
 }
 
 ///|
@@ -450,7 +484,7 @@ pub fn write_to_process() -> (SharedProcessInput, WriteToProcess) raise {
   )
   let r = @event_loop.IoHandle::from_fd(r, kind=Pipe, is_async=false)
   let w = @event_loop.IoHandle::from_fd(w, kind=Pipe)
-  (SharedProcessInput(r), WriteToProcess(Some(w)))
+  ({ rc: 1, io: r, }, WriteToProcess(Some(w)))
 }
 
 ///|
@@ -472,7 +506,7 @@ pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise {
   )
   let r = @event_loop.IoHandle::from_fd(r, kind=Pipe, is_async=false)
   let w = @event_loop.IoHandle::from_fd(w, kind=Pipe, is_async=false)
-  (SharedProcessInput(r), SharedProcessOutput(w))
+  ({ rc: 1, io: r, }, { rc: 1, io: w, })
 }
 
 ///|
@@ -501,7 +535,7 @@ pub async fn redirect_to_file(
     mode=permission,
     context="@process.redirect_to_file()",
   )
-  SharedProcessOutput(file)
+  { rc: 1, io: file, }
 }
 
 ///|
@@ -522,5 +556,5 @@ pub async fn redirect_from_file(path : String) -> SharedProcessInput {
     mode=0,
     context="@process.redirect_from_file()",
   )
-  SharedProcessInput(file)
+  { rc: 1, io: file, }
 }

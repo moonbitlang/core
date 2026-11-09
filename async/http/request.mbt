@@ -22,7 +22,7 @@ pub(all) enum Protocol {
 
 ///|
 /// The default port of a HTTP protocol
-pub fn Protocol::default_port(p : Protocol) -> Int32 {
+pub fn Protocol::default_port(p : Protocol) -> UInt16 {
   match p {
     Http => 80
     Https => 443
@@ -59,7 +59,7 @@ fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
 fn resolve_host(
   host : StringView,
   protocol~ : Protocol,
-) -> (StringView, Int32) raise {
+) -> (StringView, UInt16) raise {
   if host =~ (
       re"^" +
       (re".*" as host) +
@@ -69,7 +69,7 @@ fn resolve_host(
     ) {
     let port = @string.parse_int(port_str) catch { _ => raise InvalidFormat }
     guard port is (1..<65536) else { raise InvalidFormat }
-    (host, port)
+    (host, port.to_uint16())
   } else {
     (host, protocol.default_port())
   }

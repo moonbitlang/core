@@ -542,6 +542,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
 
 ///|
 #cfg(not(platform="windows"))
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
+}
+
+///|
+#cfg(not(platform="windows"))
 impl @io.BinaryReaderImpl for Tls with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -565,6 +571,12 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   // imposible
   self.transport.flush_write()
   n
+}
+
+///|
+#cfg(not(platform="windows"))
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|

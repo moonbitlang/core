@@ -39,6 +39,7 @@ options(
   experimental: true,
   targets: {
     "addr.mbt": [ "native", "wasm" ],
+    "os_addr.mbt": [ "native", "wasm" ],
     "addr_test.mbt": [ "native", "wasm" ],
     "addr_utils.mbt": [ "native", "wasm" ],
     "connect_burst_test.mbt": [ "native", "wasm" ],

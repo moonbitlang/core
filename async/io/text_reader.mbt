@@ -25,9 +25,9 @@
 /// `read_until()` is similar to `BinaryReader::read_until`,
 /// except that it operates over text instead of binary input.
 pub(open) trait TextReader {
-  async fn read(Self) -> String?
-  async fn read_all(Self) -> String
-  async fn read_until(Self, StringView, include_delimiter? : Bool) -> String?
+  async fn read(Self) -> String? raise ReaderError
+  async fn read_all(Self) -> String raise ReaderError
+  async fn read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
 }
 
 ///|
@@ -79,30 +79,36 @@ pub impl TextReader for Utf8Reader with fn read(self) {
     data => (data, 0)
   }
   if data.length() > 0 {
-    let text = @utf8.decode(data)
+    let text = @utf8.decode(data) catch { Malformed(_) => raise MalformedText }
     inner.drop_exactly(data.length())
     return Some(text)
   }
 
-  guard BinaryReaderImpl::ensure_buffered(
-    inner,
-    binary.length() + missing_bytes,
-  ) else {
-    // The decode operation here should fail
-    let data = controller.buffered()
-    let text = @utf8.decode(data)
-    inner.drop_exactly(data.length())
-    return Some(text)
+  try inner.peek_at_least(binary.length() + missing_bytes) catch {
+    UnexpectedEof => {
+      // The decode operation here should fail
+      let data = controller.buffered()
+      let text = @utf8.decode(data) catch {
+        Malformed(_) => raise MalformedText
+      }
+      inner.drop_exactly(data.length())
+      return Some(text)
+    }
+    err => raise err
+  } noraise {
+    _ =>
+      // We have obtained enough data, retry again
+      self.read()
   }
-
-  // We have obtained enough data, retry again
-  self.read()
 }
 
 ///|
 pub impl TextReader for Utf8Reader with fn read_all(self) {
   guard! self.inner is Some(inner)
-  @utf8.decode(inner.read_all())
+  let data = inner.read_all()
+  @utf8.decode(data) catch {
+    Malformed(_) => raise MalformedText
+  }
 }
 
 ///|
@@ -115,7 +121,12 @@ pub impl TextReader for Utf8Reader with fn read_until(
   let pattern_bytes = @utf8.encode(pattern)
   match inner.read_until(pattern_bytes, include_delimiter~) {
     None => None
-    Some(result) => Some(@utf8.decode(result))
+    Some(result) => {
+      let text = @utf8.decode(result) catch {
+        Malformed(_) => raise MalformedText
+      }
+      Some(text)
+    }
   }
 }
 

@@ -94,6 +94,13 @@ impl[W : @io.BinaryWriter] @io.BinaryWriterImpl for Encoder[W] with fn raw_write
 }
 
 ///|
+impl[W : @io.BinaryWriter] @io.BinaryWriterImpl for Encoder[W] with fn name(
+  _self,
+) {
+  "@gzip.Encoder"
+}
+
+///|
 impl[W : @io.BinaryWriter] @io.BinaryWriterImpl for Encoder[W] with fn get_controller(
   self,
 ) {
