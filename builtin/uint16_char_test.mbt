@@ -135,6 +135,6 @@ test "Byte min, max, clamp compare unsigned" {
 
 ///|
 test "Bool to_byte" {
-  inspect(true.to_byte(), content="b'\\x01'")
-  inspect(false.to_byte(), content="b'\\x00'")
+  inspect(true.to_byte().to_int(), content="1")
+  inspect(false.to_byte().to_int(), content="0")
 }
