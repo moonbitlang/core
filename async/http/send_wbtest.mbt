@@ -993,3 +993,56 @@ async test "reject header injection" {
     )
   }
 }
+
+///|
+priv struct CountingWriter {
+  inner : &@io.BinaryWriter
+  mut max_write : Int32
+}
+
+///|
+impl @io.BinaryWriter for CountingWriter
+
+///|
+impl @io.BinaryWriterImpl for CountingWriter with fn get_controller(self) {
+  @io.BinaryWriterImpl::get_controller(self.inner)
+}
+
+///|
+impl @io.BinaryWriterImpl for CountingWriter with fn flush_partial_data(self) {
+  @io.BinaryWriterImpl::flush_partial_data(self.inner)
+}
+
+///|
+impl @io.BinaryWriterImpl for CountingWriter with fn raw_write_impl(
+  self,
+  buf,
+  offset~,
+  len~,
+) {
+  if len > self.max_write {
+    self.max_write = len
+  }
+  @io.BinaryWriterImpl::raw_write_impl(self.inner, buf, offset~, len~)
+}
+
+///|
+async test "sender fixed large write bypasses send buffer" {
+  @async.with_task_group() <| group => {
+    let (r, w) = @io.pipe()
+    let counter = { inner: w, max_write: 0, }
+    group.spawn_bg() <| () => {
+      defer w.close()
+      let body = Bytes::make(64 * 1024, b'x')
+      let sender = Sender::new(counter)
+      sender.send_response(200, "OK", cookies=[], request_method=Get, extra_headers={
+        "Content-Length": body.length().to_string(),
+      })
+      sender..write(body).end_body()
+    }
+    defer r.close()
+    let response = r.read_all()
+    assert_true(response.length() > 64 * 1024)
+    assert_true(counter.max_write > 1024)
+  }
+}

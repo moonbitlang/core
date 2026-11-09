@@ -152,6 +152,20 @@ impl @io.BinaryWriterImpl for Sender with fn raw_write_impl(
       if self.send_len >= self.send_buf.length() {
         self.flush()
       }
+      // If the buffer is empty and the payload is already large enough to
+      // fill it, write straight to the underlying writer. This avoids an
+      // extra copy and the 1 KiB write boundaries for file-serving bodies
+      // written in one call, while small writes are still coalesced below.
+      if self.send_len == 0 && len >= self.send_buf.length() {
+        let n = @io.BinaryWriterImpl::raw_write_impl(
+          self.writer,
+          buf,
+          offset~,
+          len~,
+        )
+        mode.remaining -= n.to_int64()
+        return n
+      }
       let len = @cmp.minimum(self.send_buf.length() - self.send_len, len)
       self.send_buf.blit_from_bytes(self.send_len, buf, offset, len)
       self.send_len += len
