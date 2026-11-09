@@ -49,4 +49,9 @@ async test "read_at" {
   let n = r.read_at(buf, position=5)
   inspect(n, content="1")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[:n], content="f")
+  // `max_len` caps the read even when more data is available
+  let buf = FixedArray::make(4, b'\x00')
+  let n = r.read_at(buf, position=1, offset=1, max_len=2)
+  inspect(n, content="2")
+  json_inspect(buf.unsafe_reinterpret_as_bytes()[1:3], content="bc")
 }

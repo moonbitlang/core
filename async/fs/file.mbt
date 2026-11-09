@@ -269,17 +269,24 @@ pub extend File with @io.BinaryReader::{
 /// as a stream (i.e. using `@io.BinaryReader` and `@io.BinaryWriter` APIs),
 /// so it is safe to perform multiple `read_at` on the same file simutaneously.
 ///
-/// Up to `len` bytes of data will be read into `buf[offset:]`.
+/// Up to `max_len` bytes of data will be read into `buf[offset:]`.
 /// The number of bytes actually read would be returned.
-/// The number of read bytes will be smaller than `len` only when EOF is reached.
+/// The number of read bytes will be smaller than `max_len` only when EOF is reached.
+#label_migration(max_len, alias=len, msg="Use max_len= instead")
 pub async fn File::read_at(
   self : File,
   buf : FixedArray[Byte],
   position~ : Int64,
   offset~ : Int32 = 0,
-  len~ : Int32 = buf.length() - offset,
+  max_len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
-  self.io.read_at(buf, offset~, len~, position~, context="@fs.File::read_at()")
+  self.io.read_at(
+    buf,
+    offset~,
+    len=max_len,
+    position~,
+    context="@fs.File::read_at()",
+  )
 }
 
 ///|
