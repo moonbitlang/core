@@ -176,6 +176,50 @@ test "BytesScanner is BytesScannable" {
 }
 
 ///|
+test "StringScanner set_scan_cursor accepts every character boundary" {
+  // "a😀b": a at 0, the pair at 1 and 2, b at 3.
+  let scanner = @lexbuf.StringScanner("xa\u{1F600}b"[1:])
+  for cursor in [4, 3, 1, 0] {
+    @lexbuf.Scannable::set_scan_cursor(scanner, cursor)
+    assert_eq(scanner.cursor, cursor)
+  }
+  let empty = @lexbuf.StringScanner("abc"[2:2])
+  @lexbuf.Scannable::set_scan_cursor(empty, 0)
+  inspect(empty.cursor, content="0")
+}
+
+///|
+test "BytesScanner set_scan_cursor accepts every offset in range" {
+  let scanner = @lexbuf.BytesScanner(b"xabc"[1:])
+  for cursor in [3, 0, 2] {
+    @lexbuf.BytesScannable::set_scan_cursor(scanner, cursor)
+    assert_eq(scanner.cursor, cursor)
+  }
+  let empty = @lexbuf.BytesScanner(b"abc"[2:2])
+  @lexbuf.BytesScannable::set_scan_cursor(empty, 0)
+  inspect(empty.cursor, content="0")
+}
+
+///|
+test "panic StringScanner set_scan_cursor rejects a negative cursor" {
+  let scanner = @lexbuf.StringScanner("ab")
+  @lexbuf.Scannable::set_scan_cursor(scanner, -1)
+}
+
+///|
+test "panic StringScanner set_scan_cursor rejects a pair inside a slice" {
+  // "a😀": a at 0, the pair at 1 and 2.
+  let scanner = @lexbuf.StringScanner("xa\u{1F600}"[1:])
+  @lexbuf.Scannable::set_scan_cursor(scanner, 2)
+}
+
+///|
+test "panic BytesScanner set_scan_cursor rejects a cursor past the end" {
+  let scanner = @lexbuf.BytesScanner(b"abc"[:1])
+  @lexbuf.BytesScannable::set_scan_cursor(scanner, 2)
+}
+
+///|
 test "panic StringScanner set_scan_cursor rejects a cursor past the end" {
   let scanner = @lexbuf.StringScanner("abc"[:1])
   @lexbuf.Scannable::set_scan_cursor(scanner, 2)
