@@ -9,6 +9,7 @@ import {
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/bench",
+  "moonbitlang/core/random",
 } for "test"
 
 options(
