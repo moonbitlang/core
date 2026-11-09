@@ -53,12 +53,14 @@ async test "protect_from_cancel" {
 ///|
 async test "protect_from_cancel wait" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   @async.with_task_group(root => {
     root.spawn_bg() <| () => {
       @async.sleep(200)
       log <+ "200ms tick\n"
       @async.sleep(200)
       log <+ "400ms tick\n"
+      ticked.signal()
     }
     @async.with_task_group(group => {
       group.spawn_bg() <| () => {
@@ -67,7 +69,7 @@ async test "protect_from_cancel wait" {
         raise Err
       }
       @async.protect_from_cancel() <| () => {
-        @async.sleep(500)
+        ticked.wait()
         log <+ "critial job finished\n"
       }
     }) catch {
@@ -91,16 +93,18 @@ async test "protect_from_cancel wait" {
 ///|
 async test "protect_from_cancel with_timeout" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   @async.with_task_group() <| root => {
     root.spawn_bg() <| () => {
       @async.sleep(200)
       log <+ "200ms tick\n"
       @async.sleep(200)
       log <+ "400ms tick\n"
+      ticked.signal()
     }
     @async.with_timeout_opt(300, () => {
       @async.protect_from_cancel() <| () => {
-        @async.sleep(500)
+        ticked.wait()
         log <+ "critial job finished\n"
       }
     })
@@ -122,6 +126,7 @@ async test "protect_from_cancel with_timeout" {
 ///|
 async test "protect_from_cancel fail" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   let result : Error = @test.expect_error_async <| () => {
     (
       @async.with_task_group(root => {
@@ -130,10 +135,11 @@ async test "protect_from_cancel fail" {
           log <+ "200ms tick\n"
           @async.sleep(200)
           log <+ "400ms tick\n"
+          ticked.signal()
         }
         @async.with_timeout(300, () => {
           @async.protect_from_cancel() <| () => {
-            @async.sleep(500)
+            ticked.wait()
             log <+ "critial job fail\n"
             raise Err
           }
@@ -155,17 +161,19 @@ async test "protect_from_cancel fail" {
 ///|
 async test "protect_from_cancel nested1" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   @async.with_task_group() <| root => {
     root.spawn_bg() <| () => {
       @async.sleep(200)
       log <+ "200ms tick\n"
       @async.sleep(200)
       log <+ "400ms tick\n"
+      ticked.signal()
     }
     @async.with_timeout_opt(300, () => {
       @async.protect_from_cancel() <| () => {
         @async.protect_from_cancel() <| () => {
-          @async.sleep(500)
+          ticked.wait()
           log <+ "critial job finished\n"
         }
       }
@@ -188,22 +196,25 @@ async test "protect_from_cancel nested1" {
 ///|
 async test "protect_from_cancel nested2" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   @async.with_task_group() <| root => {
     root.spawn_bg() <| () => {
       @async.sleep(200)
       log <+ "200ms tick\n"
+      ticked.signal()
       @async.sleep(200)
       log <+ "400ms tick\n"
+      ticked.signal()
       @async.sleep(200)
       log <+ "600ms tick\n"
     }
     @async.with_timeout_opt(100, () => {
       @async.protect_from_cancel() <| () => {
         @async.protect_from_cancel() <| () => {
-          @async.sleep(300)
+          ticked.wait()
           log <+ "inner critial job finished\n"
         }
-        @async.sleep(200)
+        ticked.wait()
         log <+ "outer critial job finished\n"
       }
     })
@@ -300,11 +311,13 @@ async test "cancel while scheduled" {
 ///|
 async test "error in async cancel" {
   let log = StringBuilder()
+  let ticked = @async.Cond()
   @async.with_task_group() <| root => {
     root.spawn_bg() <| () => {
       for _ in 0..<2 {
         @async.sleep(300)
         log <+ "tick\n"
+        ticked.signal()
       }
     }
     @async.with_task_group(group => {
@@ -312,7 +325,7 @@ async test "error in async cancel" {
         errdefer {
           log <+ "performing async cleanup\n"
           @async.protect_from_cancel() <| () => {
-            @async.sleep(300)
+            ticked.wait()
             log <+ "raising error from async cleanup\n"
             raise Err
           }
