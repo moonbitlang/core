@@ -10,6 +10,8 @@ import {
 #deprecated
 pub fn chacha8(seed? : Bytes) -> &Source
 
+pub fn int32(limit? : Int32) -> Int32
+
 #deprecated
 pub fn new(seed? : Bytes) -> Rand
 

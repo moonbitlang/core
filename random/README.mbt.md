@@ -8,6 +8,23 @@ The `Rand` type wraps a `Source` trait object that produces 64-bit random values
 
 ## Create
 
+For everyday integer generation, use `int32` without creating a generator:
+
+```mbt check
+///|
+test {
+  let die = @random.int32(limit=6) + 1
+  inspect(die >= 1 && die <= 6, content="true")
+}
+```
+
+`int32(limit=n)` returns an unbiased integer in `[0, n)` for positive `n`.
+Omitting `limit` returns a value in `[0, 2^31)`; explicitly passing a zero or
+negative limit aborts. Calls share a generator initialized on first use with the same
+seeding behavior as `Rand()`. Create a `Rand` when you need an independent
+stream or a reproducible seed. Calls to the shared generator from multiple
+threads require external synchronization.
+
 Create a generator with the default ChaCha8 source:
 
 ```mbt check
