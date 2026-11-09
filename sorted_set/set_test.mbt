@@ -640,3 +640,26 @@ test "add keeps the existing equal element" {
   ])
   @test.assert_eq(s2.iter().map(v => v.payload).to_array(), [2, 1])
 }
+
+///|
+test "each: callback removes the current element" {
+  // Which elements `each` visits is unspecified (here 3 may be skipped), but
+  // the removal takes effect and the set stays consistent.
+  let s = @sorted_set.SortedSet([1, 2, 3, 4])
+  s.each(k => if k == 2 { s.remove(2) })
+  debug_inspect(s.to_array(), content="[1, 3, 4]")
+  inspect(s.length(), content="3")
+}
+
+///|
+test "iter: set cleared mid-iteration" {
+  let s = @sorted_set.SortedSet([1, 2, 3])
+  let mut n = 0
+  for _ in s.iter() {
+    n += 1
+    s.clear()
+  }
+  inspect(n >= 1, content="true")
+  inspect(s.length(), content="0")
+  inspect(s.iter().count(), content="0")
+}

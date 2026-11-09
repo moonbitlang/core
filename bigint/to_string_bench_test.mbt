@@ -23,7 +23,7 @@ fn make_decimal(digits : Int32) -> @bigint.BigInt {
   for _ in 1..<digits {
     buf.write_char('9')
   }
-  @bigint.BigInt::from_string(buf.to_string())
+  try! @bigint.parse_bigint(buf.to_string())
 }
 
 ///|

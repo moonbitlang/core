@@ -493,7 +493,7 @@ test "Unit" {
 
 ///|
 test "bigint" {
-  let u = Json(BigInt::from_string("10238490123489120893478175871203124819"))
+  let u = Json(10238490123489120893478175871203124819N)
   let v : BigInt = @json.from_json(u)
   inspect(v, content="10238490123489120893478175871203124819")
 }

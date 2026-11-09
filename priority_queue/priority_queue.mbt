@@ -127,6 +127,9 @@ pub fn[A : Compare] PriorityQueue::to_array(
 
 ///|
 /// Returns an iterator over elements in descending priority order.
+///
+/// Modifying the queue while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 #alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.to_array().iter()

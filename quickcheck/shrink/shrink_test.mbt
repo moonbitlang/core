@@ -110,7 +110,7 @@ test "shrink uint16" {
 
 ///|
 test "shrink arbitrary-precision bigint" {
-  let input = @bigint.BigInt::from_string("100000000000000000000")
+  let input = 100000000000000000000N
   let zero = @bigint.BigInt::from_int(0)
   let candidates = @shrink.Shrink::shrink(input).collect()
   let tail = candidates.length() - 3
@@ -137,7 +137,7 @@ test "shrink arbitrary-precision bigint" {
 
 ///|
 test "shrink negative arbitrary-precision bigint" {
-  let input = @bigint.BigInt::from_string("-100000000000000000000")
+  let input = -100000000000000000000N
   let zero = @bigint.BigInt::from_int(0)
   let candidates = @shrink.Shrink::shrink(input).collect()
   let tail = candidates.length() - 3

@@ -187,3 +187,66 @@ test "bench BytesView::rev_find long dense miss n=4096" (it : @bench.T) {
   let pattern = Bytes::makei(40, i => if i == 39 { b'Z' } else { b'a' })
   it.bench(fn() { it.keep(data.rev_find(pattern)) })
 }
+
+///|
+test "bench BytesView::find single byte miss n=8" (it : @bench.T) {
+  let data = Bytes::makei(8, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.find(b"Z")) })
+}
+
+///|
+test "bench BytesView::find single byte miss n=24" (it : @bench.T) {
+  let data = Bytes::makei(24, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.find(b"Z")) })
+}
+
+///|
+test "bench BytesView::find single byte miss n=40" (it : @bench.T) {
+  let data = Bytes::makei(40, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.find(b"Z")) })
+}
+
+///|
+test "bench BytesView::find single byte miss n=256" (it : @bench.T) {
+  let data = Bytes::makei(256, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.find(b"Z")) })
+}
+
+///|
+test "bench BytesView::rev_find single byte miss n=8" (it : @bench.T) {
+  let data = Bytes::makei(8, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.rev_find(b"Z")) })
+}
+
+///|
+test "bench BytesView::rev_find single byte miss n=24" (it : @bench.T) {
+  let data = Bytes::makei(24, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.rev_find(b"Z")) })
+}
+
+///|
+test "bench BytesView::rev_find single byte miss n=40" (it : @bench.T) {
+  let data = Bytes::makei(40, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.rev_find(b"Z")) })
+}
+
+///|
+test "bench BytesView::rev_find single byte miss n=256" (it : @bench.T) {
+  let data = Bytes::makei(256, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.rev_find(b"Z")) })
+}
+
+///|
+test "bench BytesView::rev_find single byte miss n=32" (it : @bench.T) {
+  let data = Bytes::makei(32, _ => b'a')
+  let view = data[:]
+  it.bench(fn() { it.keep(view.rev_find(b"Z")) })
+}

@@ -1146,3 +1146,50 @@ test "update_or_default: f replaces the present key" {
     ),
   )
 }
+
+///|
+test "Map::each: callback inserts and removes keys" {
+  // Which entries `each` visits is unspecified, but the map stays consistent.
+  let m = Map([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let mut done = false
+  m.each((k, _) => {
+    if k == 2 && !done {
+      done = true
+      m.remove(2)
+      m.remove(3)
+      for i in 100..<164 {
+        m.set(i, i)
+      }
+    }
+  })
+  inspect(m.length(), content="66")
+  inspect(m.iter().count(), content="66")
+  debug_inspect(m.get(3), content="None")
+}
+
+///|
+test "Map::iter: map cleared mid-iteration" {
+  let m = Map([(1, 1), (2, 2), (3, 3)])
+  let mut n = 0
+  for _ in m.iter() {
+    n += 1
+    m.clear()
+  }
+  inspect(n >= 1, content="true")
+  inspect(m.length(), content="0")
+  inspect(m.iter().count(), content="0")
+}
+
+///|
+test "Map::retain: callback removes another key" {
+  let m = Map([(1, 1), (2, 2), (3, 3), (4, 4)])
+  m.retain((k, _) => {
+    if k == 1 {
+      m.remove(3)
+    }
+    k != 2
+  })
+  inspect(m.iter().count() == m.length(), content="true")
+  debug_inspect(m.get(2), content="None")
+  debug_inspect(m.get(3), content="None")
+}

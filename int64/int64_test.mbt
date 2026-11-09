@@ -21,8 +21,8 @@ test "Int64 overflow" {
 }
 
 ///|
-test "Int64::from_int" {
-  inspect(Int64::from_int(1256), content="1256")
+test "Int::to_int64" {
+  inspect((1256).to_int64(), content="1256")
 }
 
 ///|

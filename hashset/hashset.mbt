@@ -360,6 +360,9 @@ pub fn[K] HashSet::is_empty(self : HashSet[K]) -> Bool {
 
 ///|
 /// Calls `f` on each element in the set.
+///
+/// If `f` structurally modifies the set (adds or removes elements, or clears
+/// it), the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K] HashSet::each(
   self : HashSet[K],
@@ -374,6 +377,9 @@ pub fn[K] HashSet::each(
 
 ///|
 /// Calls `f` on each element with its index (0-based).
+///
+/// If `f` structurally modifies the set (adds or removes elements, or clears
+/// it), the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K] HashSet::eachi(
   self : HashSet[K],
@@ -398,6 +404,10 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 
 ///|
 /// Returns an iterator over the elements of the set.
+///
+/// If the set is structurally modified (elements added or removed, or the set
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator, deprecated)
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
   let mut i = 0
@@ -614,7 +624,8 @@ pub impl[K : Eq] Sub for HashSet[K] with fn sub(self, other) {
 ///
 /// `true` means *keep*, as with `HashSet::filter`, which returns a new set
 /// and leaves `self` unchanged; use `retain` when the original is no longer
-/// needed. `f` must not modify the set.
+/// needed. `f` must not modify the set: the result is then unspecified,
+/// though memory-safe.
 #locals(f)
 pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   guard self.size > 0 else { return }
@@ -659,6 +670,9 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 /// is faster than rebuilding from a comprehension such as
 /// `@hashset.from_array([for k in s if f(k) => k])` because each element's
 /// stored hash is reused: elements are never hashed again.
+///
+/// If `f` structurally modifies `self` (adds or removes elements, or clears
+/// it), the result is unspecified, though memory-safe.
 ///
 /// Example:
 ///

@@ -34,9 +34,9 @@ pub fn is_close(
 
 ///|
 /// Create from `int`.
-#deprecated("Use `Double::from_int` instead")
+#deprecated("Use `x.to_double()` (`Int::to_double`) instead")
 pub fn from_int(i : Int32) -> Double {
-  Double::from_int(i)
+  i.to_double()
 }
 
 ///|

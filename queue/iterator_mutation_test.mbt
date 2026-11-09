@@ -22,3 +22,22 @@ test "iter after pop does not read unwritten slots" {
   q.pop() |> ignore
   debug_inspect(it.to_array(), content="[\"b\"]")
 }
+
+///|
+test "each with a callback that pops and pushes" {
+  // Which elements `each` visits is unspecified, but the queue stays
+  // consistent.
+  let q = @queue.Queue([1, 2, 3, 4])
+  let mut done = false
+  q.each(x => {
+    if x == 2 && !done {
+      done = true
+      q.pop() |> ignore
+      for i in 100..<140 {
+        q.push(i)
+      }
+    }
+  })
+  inspect(q.length(), content="43")
+  inspect(q.iter().count(), content="43")
+}

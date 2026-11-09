@@ -39,43 +39,8 @@ test "panic negative shift right" {
 }
 
 ///|
-test "panic from_string empty" {
-  @bigint.BigInt::from_string("") |> ignore
-}
-
-///|
-test "panic from_string sign only" {
-  @bigint.BigInt::from_string("-") |> ignore
-}
-
-///|
-test "panic from_string invalid character" {
-  @bigint.BigInt::from_string("12a") |> ignore
-}
-
-///|
-test "panic from_string invalid digit for radix" {
-  @bigint.BigInt::from_string("2", radix=2) |> ignore
-}
-
-///|
-test "panic from_string invalid radix" {
-  @bigint.BigInt::from_string("10", radix=1) |> ignore
-}
-
-///|
 test "panic to_string invalid radix" {
   1N.to_string(radix=37) |> ignore
-}
-
-///|
-test "panic from_string radix 16 empty" {
-  @bigint.BigInt::from_string("", radix=16) |> ignore
-}
-
-///|
-test "panic from_string radix 16 invalid character" {
-  @bigint.BigInt::from_string("g", radix=16) |> ignore
 }
 
 ///|

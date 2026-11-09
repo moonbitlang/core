@@ -68,7 +68,7 @@ test "basic operations" {
   inspect(Double::signum(2.0), content="1")
 
   // Type conversion
-  inspect(Double::from_int(42), content="42")
+  inspect((42).to_double(), content="42")
 }
 ```
 

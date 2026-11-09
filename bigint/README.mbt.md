@@ -22,11 +22,11 @@ test "creating bigint values" {
   inspect(big3, content="9223372036854775807")
 
   // From strings
-  let big4 = @bigint.BigInt::from_string("123456789012345678901234567890")
+  let big4 = @string.parse_bigint("123456789012345678901234567890")
   inspect(big4, content="123456789012345678901234567890")
 
   // From hexadecimal strings
-  let big5 = @bigint.BigInt::from_string("1a2b3c4d5e6f", radix=16)
+  let big5 = @string.parse_bigint("1a2b3c4d5e6f", base=16)
   inspect(big5, content="28772997619311")
 }
 ```
@@ -173,14 +173,14 @@ test "string conversions" {
   let hex = big.to_string(radix=16)
   inspect(hex, content="ff")
 
-  // Parse from hex (radix=16)
-  let from_radix16 = @bigint.BigInt::from_string("deadbeef", radix=16)
+  // Parse from hex (base=16)
+  let from_radix16 = @string.parse_bigint("deadbeef", base=16)
   inspect(from_radix16, content="3735928559")
 
   // Round-trip conversion
   let original = 98765432109876543210N
   let as_string = original.to_string()
-  let parsed_back = @bigint.BigInt::from_string(as_string)
+  let parsed_back = @string.parse_bigint(as_string)
   inspect(original == parsed_back, content="true")
 }
 ```
@@ -259,7 +259,7 @@ test "json serialization" {
   @debug.debug_inspect(json, content="String(\"12345678901234567890\")")
 
   // Large numbers that exceed JavaScript's safe integer range
-  let very_big = @bigint.BigInt::from_string("123456789012345678901234567890")
+  let very_big = 123456789012345678901234567890N
   let big_json = Json(very_big)
   @debug.debug_inspect(
     big_json,

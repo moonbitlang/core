@@ -46,6 +46,10 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 /// Returns an iterator that yields tuples of `(key, value)` for each entry in
 /// the map, in unspecified order.
 ///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -87,6 +91,10 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 /// Returns an iterator that yields tuples of `(key, value)` for each entry in
 /// the map, in unspecified order.
 /// This is mainly used for `for _, _ in ..` loops.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator2, deprecated)
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -219,6 +227,9 @@ pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
 /// * `action` : A function that takes a key and a value as arguments and
 /// performs some action. The function should not return any value.
 ///
+/// If `action` structurally modifies the map (inserts or removes keys, or
+/// clears it), the result is unspecified, though memory-safe.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -254,6 +265,9 @@ pub fn[K, V] HashMap::each(
 /// 
 /// Notice that the order of iteration is not guaranteed.
 ///
+/// If `callback` structurally modifies the map (inserts or removes keys, or
+/// clears it), the result is unspecified, though memory-safe.
+///
 /// Parameters:
 ///
 /// * `self` : The hash map to iterate over.
@@ -287,6 +301,10 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// Returns an iterator that yields each key in the hash map in unspecified order.
 /// The keys are yielded in the same order as they appear in the internal storage.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 ///
 /// Example:
 ///
@@ -328,6 +346,10 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// Returns an iterator that yields each value in the hash map in unspecified order.
 /// The values are yielded in the same order as they appear in the internal storage.
 ///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -365,7 +387,8 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///
 /// `true` means *keep*, as with `HashMap::filter`, which returns a new map
 /// and leaves `self` unchanged; use `retain` when the original is no longer
-/// needed. `f` must not modify the map.
+/// needed. `f` must not modify the map: the result is then unspecified,
+/// though memory-safe.
 ///
 /// Parameters:
 ///
@@ -431,6 +454,9 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
 /// `@hashmap.from_array([for k, v in m if f(k, v) => (k, v)])` because each
 /// entry's stored hash is reused: keys are never hashed again and no tuples
 /// are allocated.
+///
+/// If `f` structurally modifies `self` (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 ///
 /// Example:
 ///

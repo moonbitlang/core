@@ -508,6 +508,9 @@ pub fn[K] Set::is_empty(self : Set[K]) -> Bool {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion.
+///
+/// If `f` structurally modifies the set (adds or removes keys, or clears it),
+/// the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
   for x = self.head {
@@ -523,6 +526,9 @@ pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
+///
+/// If `f` structurally modifies the set (adds or removes keys, or clears it),
+/// the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K] Set::eachi(
   self : Set[K],
@@ -550,6 +556,10 @@ pub fn[K] Set::clear(self : Set[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
+///
+/// If the set is structurally modified (keys added or removed, or the set
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator, deprecated)
 pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
   let mut curr_entry = self.head
@@ -646,7 +656,8 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 ///
 /// `true` means *keep*, as with `Set::filter`, which returns a new set and
 /// leaves `self` unchanged; use `retain` when the original is no longer
-/// needed. `f` must not modify the set.
+/// needed. `f` must not modify the set: the result is then unspecified,
+/// though memory-safe.
 ///
 /// Example:
 ///
@@ -699,6 +710,9 @@ pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
 /// than rebuilding from a comprehension such as `Set([for k in s if f(k) => k])`
 /// because each element's stored hash is reused: elements are never hashed
 /// again.
+///
+/// If `f` structurally modifies `self` (adds or removes keys, or clears it),
+/// the result is unspecified, though memory-safe.
 ///
 /// Example:
 ///

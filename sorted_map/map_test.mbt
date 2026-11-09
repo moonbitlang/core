@@ -483,3 +483,42 @@ test "copy independence" {
   debug_inspect(map2.get(2), content="Some(\"x\")")
   debug_inspect(map2.get(4), content="Some(\"d\")")
 }
+
+///|
+test "each: callback removes the current key" {
+  // Which entries `each` visits is unspecified (here 3 may be skipped), but
+  // the removal takes effect and the map stays consistent.
+  let m = @sorted_map.SortedMap([(1, 1), (2, 2), (3, 3), (4, 4)])
+  m.each((k, _) => if k == 2 { m.remove(2) })
+  debug_inspect(m.to_array(), content="[(1, 1), (3, 3), (4, 4)]")
+  inspect(m.length(), content="3")
+}
+
+///|
+test "each: callback inserts many keys" {
+  let m = @sorted_map.SortedMap([(1, 1), (2, 2), (3, 3)])
+  let mut done = false
+  m.each((k, _) => {
+    if k == 2 && !done {
+      done = true
+      for i in 100..<164 {
+        m.set(i, i)
+      }
+    }
+  })
+  inspect(m.length(), content="67")
+  inspect(m.iter().count(), content="67")
+}
+
+///|
+test "iter: map cleared mid-iteration" {
+  let m = @sorted_map.SortedMap([(1, 1), (2, 2), (3, 3)])
+  let mut n = 0
+  for _ in m.iter() {
+    n += 1
+    m.clear()
+  }
+  inspect(n >= 1, content="true")
+  inspect(m.length(), content="0")
+  inspect(m.iter().count(), content="0")
+}
