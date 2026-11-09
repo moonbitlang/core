@@ -19,6 +19,31 @@ test "basic int operations" {
 }
 ```
 
+## Division and Remainder
+
+`/` truncates towards zero, and `%` takes the sign of the dividend.
+
+For every fixed-width integer type (`Int32`, `Int64`, `UInt32`, `UInt64`, and `Int16`, `UInt16` and `Byte`, which divide through `Int32`), a zero divisor is a program error, and so is dividing the minimum `Int32` or `Int64` by `-1` with either operator. These cases have no portable result. Depending on the backend and build mode, the program may abort or get an arbitrary value, so don't rely on any particular outcome. `BigInt` is different: it always panics on a zero divisor.
+
+Check the divisor first if it can come from untrusted input:
+
+```mbt check
+///|
+test "checked division" {
+  fn checked_div(a : Int32, b : Int32) -> Int32? {
+    if b == 0 || (a == @int.MIN_VALUE && b == -1) {
+      None
+    } else {
+      Some(a / b)
+    }
+  }
+
+  debug_inspect(checked_div(-7, 2), content="Some(-3)")
+  debug_inspect(checked_div(7, 0), content="None")
+  debug_inspect(checked_div(@int.MIN_VALUE, -1), content="None")
+}
+```
+
 ## Byte Conversion
 
 An integer's byte representation, in both big-endian and little-endian formats, is produced with a `Buffer`:
