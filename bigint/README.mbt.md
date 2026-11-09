@@ -26,7 +26,7 @@ test "creating bigint values" {
   inspect(big4, content="123456789012345678901234567890")
 
   // From hexadecimal strings
-  let big5 = @string.parse_bigint("1a2b3c4d5e6f", base=16)
+  let big5 = @string.parse_bigint("1a2b3c4d5e6f", radix=16)
   inspect(big5, content="28772997619311")
 }
 ```
@@ -174,7 +174,7 @@ test "string conversions" {
   inspect(hex, content="ff")
 
   // Parse from hex (base=16)
-  let from_radix16 = @string.parse_bigint("deadbeef", base=16)
+  let from_radix16 = @string.parse_bigint("deadbeef", radix=16)
   inspect(from_radix16, content="3735928559")
 
   // Round-trip conversion

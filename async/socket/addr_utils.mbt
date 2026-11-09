@@ -172,7 +172,7 @@ fn parse_full_ipv6_to_bytes(
 ///|
 fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
   guard !group.is_empty() && group.length() <= 4 else { raise InvalidAddr }
-  @string.parse_uint(group, base=16) catch {
+  @string.parse_uint(group, radix=16) catch {
     _ => raise InvalidAddr
   }
 }

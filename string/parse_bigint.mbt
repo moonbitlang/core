@@ -22,12 +22,13 @@
 /// ```mbt check
 /// test {
 ///   inspect(@string.parse_bigint("12345"), content="12345")
-///   inspect(@string.parse_bigint("-ff", base=16), content="-255")
+///   inspect(@string.parse_bigint("-ff", radix=16), content="-255")
 /// }
 /// ```
+#label_migration(radix, alias=base, msg="Use radix= instead")
 pub fn parse_bigint(
   str : StringView,
-  base~ : Int32 = 10,
+  radix~ : Int32 = 10,
 ) -> @bigint.BigInt raise {
-  @bigint.parse_bigint(str, base~)
+  @bigint.parse_bigint(str, base=radix)
 }

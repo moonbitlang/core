@@ -15,7 +15,7 @@
 ///|
 test "@string.parse_bigint" {
   inspect(@string.parse_bigint("42"), content="42")
-  inspect(@string.parse_bigint("deadbeef", base=16), content="3735928559")
+  inspect(@string.parse_bigint("deadbeef", radix=16), content="3735928559")
   assert_true(
     @test.expect_error(() => @string.parse_bigint("not-a-number"))
     is Failure::Failure("invalid syntax"),
