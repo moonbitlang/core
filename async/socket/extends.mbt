@@ -20,3 +20,12 @@ pub extend Addr with Compare::{compare}
 
 ///|
 pub extend Addr with Hash::{hash}
+
+///|
+pub extend IpAddr with Eq::{equal}
+
+///|
+pub extend IpAddr with Compare::{compare}
+
+///|
+pub extend IpAddr with Hash::{hash}

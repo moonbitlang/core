@@ -39,6 +39,39 @@ test "Parse invalid IPv4 address" {
 }
 
 ///|
+test "Parse IP address" {
+  inspect(@socket.IpAddr("127.0.0.1"), content="127.0.0.1")
+  let ipv6 = @socket.IpAddr("2a02:6b8::11:11")
+  inspect(ipv6, content="[2a02:6b8::11:11]")
+  assert_eq(ipv6, IpAddr("[2a02:6b8::11:11]"))
+  inspect(@socket.IpAddr("::ffff:192.0.2.33"), content="[::ffff:192.0.2.33]")
+}
+
+///|
+test "Construct IP address" {
+  inspect(@socket.IpAddr::v4(0x7f000001), content="127.0.0.1")
+  inspect(
+    @socket.IpAddr::v6(
+      b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01",
+    ),
+    content="[::1]",
+  )
+}
+
+///|
+test "Parse invalid IP address" {
+  @test.assert_raise(() => @socket.IpAddr(""))
+  @test.assert_raise(() => @socket.IpAddr("127.0.0.1:8080"))
+  @test.assert_raise(() => @socket.IpAddr("256.0.0.1"))
+  @test.assert_raise(() => @socket.IpAddr("1:2::6::8"))
+}
+
+///|
+test "panic IpAddr::v6 rejects an invalid address length" {
+  @socket.IpAddr::v6(b"") |> ignore
+}
+
+///|
 async test "Parse IPv6 address" {
   let addr = @socket.Addr::parse("[2a02:6b8::11:11]:8080")
   assert_eq(addr.to_string(), "[2a02:6b8::11:11]:8080")

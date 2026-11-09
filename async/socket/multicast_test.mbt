@@ -17,7 +17,7 @@ async test "multicast basic" {
   let log = []
   @async.with_task_group <| group => {
     let addr = @socket.Addr::parse("239.0.0.1:4200")
-    let interface_addr = @socket.Addr::parse("127.0.0.1:0")
+    let interface_addr = @socket.IpAddr("127.0.0.1")
     group.spawn_bg(no_wait=true) <| () => {
       let server1 = @socket.UdpServer::multicast(addr, interface_addr~)
       defer server1.close()
@@ -56,10 +56,10 @@ async test "multicast basic" {
 async test "multicast discovery then unicast" {
   let log = []
   @async.with_task_group <| group => {
-    let interface_addr = @socket.Addr::parse("127.0.0.1:0")
+    let interface_addr = @socket.IpAddr("127.0.0.1")
     let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:0"))
     defer server.close()
-    let multicast_addr = @socket.Addr::parse("239.0.0.1:\{server.addr.port()}")
+    let multicast_addr = @socket.Addr::parse("239.0.0.1:\{server.addr.port}")
     server.join_multicast_group(multicast_addr, interface_addr~)
     group.spawn_bg() <| () => {
       let client = @socket.UdpClient(multicast_addr)
@@ -121,7 +121,7 @@ async test "multicast no loopback" {
       }
     }
     let client = @socket.UdpClient(
-      @socket.Addr::parse("239.0.0.1:\{server.addr.port()}"),
+      @socket.Addr::parse("239.0.0.1:\{server.addr.port}"),
     )
     defer client.close()
     client.set_multicast_ttl(0)
@@ -150,8 +150,8 @@ async test "multicast discovery then unicast v6" {
   @async.with_task_group <| group => {
     let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
     defer server.close()
-    let port = server.addr.port()
-    let multicast_addr = @socket.Addr::parse("[ff02::1]:\{server.addr.port()}")
+    let port = server.addr.port
+    let multicast_addr = @socket.Addr::parse("[ff02::1]:\{server.addr.port}")
     server.join_multicast_group_v6(
       multicast_addr,
       interface=test_interface.wait(),
@@ -205,7 +205,7 @@ async test "multicast no loopback v6" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     let multicast_addr = @socket.Addr::parse("[ff02::1]:\{port}")
     group.spawn_bg(no_wait=true) <| () => {
       defer server.close()

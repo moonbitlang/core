@@ -26,28 +26,6 @@
 pub fn Double::Double(self : Double) -> Double = "%identity"
 
 ///|
-/// Converts an integer to a double-precision floating-point number.
-///
-/// Parameters:
-///
-/// * `integer` : The integer value to be converted.
-///
-/// Returns a double-precision floating-point number representing the given
-/// integer value.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(Double::from_int(42), content="42")
-///   inspect(Double::from_int(-1), content="-1")
-/// }
-/// ```
-pub fn Double::from_int(i : Int32) -> Double {
-  i.to_double()
-}
-
-///|
 /// Returns the absolute value of a double-precision floating-point number.
 ///
 /// Parameters:

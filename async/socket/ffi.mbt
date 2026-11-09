@@ -75,15 +75,15 @@ fn make_udp_socket(
 #borrow(sock, multi_addr, local_addr)
 extern "C" fn join_multicast_group_ffi(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
-  local_addr : Addr,
+  multi_addr : OsAddr,
+  local_addr : OsAddr,
 ) -> Int32 = "moonbit_rt_join_multicast_group"
 
 ///|
 fn join_multicast_group(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
-  local_addr : Addr,
+  multi_addr : OsAddr,
+  local_addr : OsAddr,
   context~ : String,
 ) -> Unit raise {
   if join_multicast_group_ffi(sock, multi_addr, local_addr) < 0 {
@@ -95,14 +95,14 @@ fn join_multicast_group(
 #borrow(sock, multi_addr)
 extern "C" fn join_multicast_group_v6_ffi(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
+  multi_addr : OsAddr,
   interface_index : UInt32,
 ) -> Int32 = "moonbit_rt_join_multicast_group_v6"
 
 ///|
 fn join_multicast_group_v6(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
+  multi_addr : OsAddr,
   interface_index : UInt32,
   context~ : String,
 ) -> Unit raise {
@@ -115,13 +115,13 @@ fn join_multicast_group_v6(
 #borrow(sock, local_addr)
 extern "C" fn set_multicast_interface_ffi(
   sock : @fd_util.Fd,
-  local_addr : Addr,
+  local_addr : OsAddr,
 ) -> Int32 = "moonbit_rt_set_multicast_interface"
 
 ///|
 fn set_multicast_interface(
   sock : @fd_util.Fd,
-  local_addr : Addr,
+  local_addr : OsAddr,
   context~ : String,
 ) -> Unit raise {
   if set_multicast_interface_ffi(sock, local_addr) < 0 {
@@ -197,7 +197,7 @@ extern "C" fn listen_ffi(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_listen"
 
 ///|
 #borrow(sock, addr)
-extern "C" fn connect_ffi(sock : @fd_util.Fd, addr : Addr) -> Int32 = "moonbit_rt_udp_client_connect"
+extern "C" fn connect_ffi(sock : @fd_util.Fd, addr : OsAddr) -> Int32 = "moonbit_rt_udp_client_connect"
 
 ///|
 #borrow(sock)
@@ -222,15 +222,15 @@ extern "C" fn enable_keepalive_ffi(
 
 ///|
 #borrow(sock, addr_out)
-extern "C" fn getsockname_ffi(sock : @fd_util.Fd, addr_out : Addr) -> Int32 = "moonbit_rt_getsockname"
+extern "C" fn getsockname_ffi(sock : @fd_util.Fd, addr_out : OsAddr) -> Int32 = "moonbit_rt_getsockname"
 
 ///|
 fn getsockname(
   sock : @fd_util.Fd,
   family : AddrFamily,
   context~ : String,
-) -> Addr raise {
-  let addr = Addr::empty(family)
+) -> OsAddr raise {
+  let addr = OsAddr::empty(family)
   if getsockname_ffi(sock, addr) < 0 {
     @os_error.check_errno(context)
   }

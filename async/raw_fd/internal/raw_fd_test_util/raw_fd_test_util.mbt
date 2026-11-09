@@ -17,6 +17,16 @@
 pub extern "C" fn make_udp_socket() -> @fd_util.Fd = "raw_fd_test_make_udp_socket"
 
 ///|
+#borrow(sock)
+extern "C" fn connect_ffi(
+  sock : @fd_util.Fd,
+  ip : UInt32,
+  port : Int32,
+) -> Int32 = "raw_fd_test_connect"
+
+///|
 /// Connect a UDP socket to `addr`
-#borrow(sock, addr)
-pub extern "C" fn connect(sock : @fd_util.Fd, addr : @socket.Addr) -> Int32 = "raw_fd_test_connect"
+pub fn connect(sock : @fd_util.Fd, addr : @socket.Addr) -> Int32 {
+  guard! addr.ip is Ipv4(ip)
+  connect_ffi(sock, ip, addr.port.to_int())
+}

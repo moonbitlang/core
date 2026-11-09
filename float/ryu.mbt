@@ -79,7 +79,7 @@ fn f2s_multiple_of_power_of_2_32(value : UInt32, p : Int32) -> Bool {
 fn f2s_mul_shift_32(m : UInt32, factor : UInt64, shift : Int32) -> UInt32 {
   let factor_lo = factor & 0xFFFFFFFFUL
   let factor_hi = factor >> 32
-  let m = UInt64::extend_uint(m)
+  let m = m.to_uint64()
   let bits0 = m * factor_lo
   let bits1 = m * factor_hi
   let sum = (bits0 >> 32) + bits1

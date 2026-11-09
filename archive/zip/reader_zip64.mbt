@@ -167,8 +167,8 @@ fn data_descriptor_matches(
     if zip64 {
       reader.read_u64_raw() == comp_size && reader.read_u64_raw() == uncomp_size
     } else {
-      UInt64::extend_uint(reader.read_u32_raw()) == comp_size &&
-      UInt64::extend_uint(reader.read_u32_raw()) == uncomp_size
+      reader.read_u32_raw().to_uint64() == comp_size &&
+      reader.read_u32_raw().to_uint64() == uncomp_size
     }
   } catch {
     _ => false
@@ -237,5 +237,5 @@ fn local_size_matches(
   if raw == MAX_U32 {
     return zip64 is Some(_) && zip64_matches
   }
-  UInt64::extend_uint(raw) == expected && zip64_matches
+  raw.to_uint64() == expected && zip64_matches
 }

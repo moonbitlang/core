@@ -26,26 +26,6 @@
 pub fn Int64::Int64(self : Int64) -> Int64 = "%identity"
 
 ///|
-/// Converts a 32-bit integer (`Int`) to a 64-bit integer (`Int64`).
-///
-/// Parameters:
-///
-/// * `i` : The integer value to be converted.
-///
-/// Returns the converted 64-bit integer (`Int64`) value.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(Int64::from_int(42), content="42")
-/// }
-/// ```
-pub fn Int64::from_int(i : Int32) -> Int64 {
-  i.to_int64()
-}
-
-///|
 /// Computes the absolute value of a 64-bit integer.
 ///
 /// Parameters:
@@ -911,30 +891,6 @@ pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 
 ///|
-/// Converts an unsigned 32-bit integer to an unsigned 64-bit integer by
-/// zero-extending it. The resulting value preserves the original number's
-/// magnitude while using 64 bits to represent it.
-///
-/// Parameters:
-///
-/// * `value` : The unsigned 32-bit integer (`UInt`) to be converted.
-///
-/// Returns an unsigned 64-bit integer (`UInt64`) representing the same numerical
-/// value as the input.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = 42U
-///   inspect(UInt64::extend_uint(n), content="42")
-///   let max = 4294967295U // Maximum value of UInt
-///   inspect(UInt64::extend_uint(max), content="4294967295")
-/// }
-/// ```
-pub fn UInt64::extend_uint(val : UInt32) -> UInt64 = "%u32.to_u64"
-
-///|
 /// Converts a 32-bit signed integer to a 64-bit signed integer. All 32-bit
 /// integers can be represented exactly in 64-bit integer format, so the
 /// conversion is lossless.
@@ -1082,27 +1038,6 @@ pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinte
 /// }
 /// ```
 pub fn Double::reinterpret_as_uint64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
-
-///|
-/// Converts an unsigned 64-bit integer to a double-precision floating-point
-/// number. The conversion is exact for integers up to 53 bits (the size of the
-/// mantissa in a double-precision number), but may lose precision for larger
-/// values.
-///
-/// Parameters:
-///
-/// * `value` : The unsigned 64-bit integer to be converted.
-///
-/// Returns a double-precision floating-point number representing the same
-/// numerical value as the input.
-///
-/// Example:
-///
-/// ```skip
-///   let n = 12345678901234567890UL
-///   inspect(Double::convert_uint64(n), content="12345678901234567000")
-/// ```
-pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 
 ///|
 /// Reinterprets a 64-bit signed integer as an unsigned 64-bit integer without

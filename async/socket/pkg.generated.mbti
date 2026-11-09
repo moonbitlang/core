@@ -23,20 +23,36 @@ pub impl Show for ResolveHostnameError
 
 // Types and methods
 #derive(Compare, Eq, Hash)
-type Addr
+pub struct Addr {
+  ip : IpAddr
+  port : UInt16
+}
+pub fn Addr::Addr(IpAddr, UInt16) -> Self
 pub fn Addr::compare(Self, Self) -> Int32
 pub fn Addr::equal(Self, Self) -> Bool
 pub fn Addr::hash(Self) -> Int32
-pub fn Addr::ip(Self) -> UInt32
-pub fn Addr::is_ipv6(Self) -> Bool
-pub fn Addr::is_multicast(Self) -> Bool
-pub fn Addr::new(UInt32, Int32) -> Self
 pub fn Addr::parse(StringView) -> Self raise
-pub fn Addr::port(Self) -> Int32
-pub async fn Addr::resolve(String, port~ : Int32, protocol? : IpProtocolPreference) -> Self
+pub async fn Addr::resolve(StringView, port~ : UInt16, protocol? : IpProtocolPreference) -> Self
 pub fn Addr::to_string(Self) -> String
 pub impl Show for Addr
 pub impl @debug.Debug for Addr
+
+#derive(Compare, Eq, Hash)
+pub enum IpAddr {
+  Ipv4(UInt32)
+  Ipv6(Bytes, scope_id~ : UInt32)
+}
+#alias(parse)
+pub fn IpAddr::IpAddr(StringView) -> Self raise
+pub fn IpAddr::compare(Self, Self) -> Int32
+pub fn IpAddr::equal(Self, Self) -> Bool
+pub fn IpAddr::hash(Self) -> Int32
+pub fn IpAddr::is_multicast(Self) -> Bool
+pub fn IpAddr::to_string(Self) -> String
+pub fn IpAddr::v4(UInt32) -> Self
+pub fn IpAddr::v6(Bytes, scope_id? : UInt32) -> Self
+pub impl Show for IpAddr
+pub impl @debug.Debug for IpAddr
 
 #derive(@debug.Debug)
 pub(all) enum IpProtocolPreference {
@@ -54,7 +70,7 @@ pub struct Tcp {
 pub fn Tcp::addr(Self) -> Addr
 pub fn Tcp::close(Self) -> Unit
 pub async fn Tcp::connect(Addr) -> Self
-pub async fn Tcp::connect_to_host(StringView, port~ : Int32, protocol? : IpProtocolPreference) -> Self
+pub async fn Tcp::connect_to_host(StringView, port~ : UInt16, protocol? : IpProtocolPreference) -> Self
 pub async fn Tcp::drop_all(Self) -> Int64
 pub async fn Tcp::drop_exactly(Self, Int32) -> Unit
 pub fn Tcp::enable_keepalive(Self, idle_before_keep_alive? : Int32, keep_alive_count? : Int32, keep_alive_interval? : Int32) -> Unit raise
@@ -97,7 +113,7 @@ pub fn UdpClient::fd(Self) -> @types.Fd
 pub async fn UdpClient::recv(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
 pub async fn UdpClient::recvfrom(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> (Int32, Addr)
 pub async fn UdpClient::send(Self, Bytes, offset? : Int32, len? : Int32) -> Unit
-pub fn UdpClient::set_multicast_interface(Self, Addr) -> Unit raise
+pub fn UdpClient::set_multicast_interface(Self, IpAddr) -> Unit raise
 pub fn UdpClient::set_multicast_interface_v6(Self, String) -> Unit raise
 pub fn UdpClient::set_multicast_loopback(Self, Bool) -> Unit raise
 pub fn UdpClient::set_multicast_ttl(Self, Int32) -> Unit raise
@@ -110,12 +126,12 @@ pub struct UdpServer {
 pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool) -> Self
 pub fn UdpServer::close(Self) -> Unit
 pub fn UdpServer::fd(Self) -> @types.Fd
-pub fn UdpServer::join_multicast_group(Self, Addr, interface_addr? : Addr) -> Unit raise
+pub fn UdpServer::join_multicast_group(Self, Addr, interface_addr? : IpAddr) -> Unit raise
 pub fn UdpServer::join_multicast_group_v6(Self, Addr, interface? : String) -> Unit raise
-pub async fn UdpServer::multicast(Addr, interface_addr? : Addr) -> Self
+pub async fn UdpServer::multicast(Addr, interface_addr? : IpAddr) -> Self
 pub async fn UdpServer::recvfrom(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> (Int32, Addr)
 pub async fn UdpServer::sendto(Self, Bytes, Addr, offset? : Int32, len? : Int32) -> Unit
-pub fn UdpServer::set_multicast_interface(Self, Addr) -> Unit raise
+pub fn UdpServer::set_multicast_interface(Self, IpAddr) -> Unit raise
 pub fn UdpServer::set_multicast_interface_v6(Self, String) -> Unit raise
 pub fn UdpServer::set_multicast_loopback(Self, Bool) -> Unit raise
 pub fn UdpServer::set_multicast_ttl(Self, Int32) -> Unit raise
