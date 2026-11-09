@@ -123,7 +123,7 @@ async test "write cancel" {
   inspect(
     log.to_string(),
     content=(
-      #|writing byte b'\x61'
+      #|writing byte 97
       #|
     ),
   )

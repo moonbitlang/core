@@ -7,8 +7,8 @@ Constants for the `Byte` type (8-bit unsigned integer).
 ```mbt check
 ///|
 test {
-  inspect(@byte.MIN_VALUE, content="b'\\x00'")
-  inspect(@byte.MAX_VALUE, content="b'\\xFF'")
+  inspect(@byte.MIN_VALUE, content="0")
+  inspect(@byte.MAX_VALUE, content="255")
 }
 ```
 
