@@ -83,6 +83,7 @@ pub type AbortSignal
 
 ///|
 /// Create a new abort controller
+#alias(new, deprecated="Use `AbortController()` instead")
 pub extern "js" fn AbortController::AbortController() -> AbortController =
   #| () => new AbortController()
 

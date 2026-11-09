@@ -21,11 +21,3 @@ pub extend JsError with Show::{output}
 #deprecated("Use `@debug.Debug` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsError with @debug.Debug::{to_repr}
-
-///|
-/// Create a new abort controller.
-#deprecated("Use `AbortController()` instead")
-#coverage.skip
-pub fn AbortController::new() -> AbortController {
-  AbortController()
-}

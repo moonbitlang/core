@@ -62,6 +62,7 @@ pub type AbortSignal
 
 ///|
 /// Create a new abort controller
+#alias(new, deprecated="Use `AbortController()` instead")
 #internal(unimplemented, "unimplemented in native backend")
 #coverage.skip
 pub fn AbortController::AbortController() -> AbortController {
