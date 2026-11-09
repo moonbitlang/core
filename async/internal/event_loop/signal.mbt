@@ -28,6 +28,14 @@ pub let all_signals : ReadOnlyArray[Int32] = ReadOnlyArray::makei(
 )
 
 ///|
+#cfg(all(target="native", not(platform="windows")))
+const SIGWINCH : Int32 = 28
+
+///|
+#cfg(any(target="wasm", platform="windows"))
+const SIGWINCH : Int32 = -1
+
+///|
 /// Error raised when current event loop is cancelled by a registered cancellation signal
 pub suberror KilledBySignal {
   KilledBySignal(Int32)
@@ -62,12 +70,25 @@ let global_signal_handler_initialized : @ref.Ref[Bool] = Ref(false)
 /// Can be invoked after the event loop started or invoked multiple times.
 pub fn set_global_cancellation_signals(signals : ReadOnlyArray[Int32]) -> Unit {
   global_signal_handler_initialized.val = true
+  let signals = if SIGWINCH < 0 {
+    signals
+  } else {
+    ReadOnlyArray::from_array([..signals, SIGWINCH])
+  }
   set_global_cancellation_signals_ffi(
     all_signals,
     all_signals.length(),
     signals,
     signals.length(),
   )
+}
+
+///|
+/// There is no `@tty` on wasm, so no signal is a resize
+#cfg(target="wasm")
+fn notify_resize(signal : Int32) -> Bool {
+  ignore(signal)
+  false
 }
 
 ///|
