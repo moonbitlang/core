@@ -144,7 +144,7 @@ pub(all) enum Protocol {
   Https
 }
 pub fn Protocol::compare(Self, Self) -> Int32
-pub fn Protocol::default_port(Self) -> Int32
+pub fn Protocol::default_port(Self) -> UInt16
 pub fn Protocol::equal(Self, Self) -> Bool
 pub fn Protocol::hash(Self) -> Int32
 

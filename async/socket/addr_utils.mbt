@@ -13,36 +13,34 @@
 // limitations under the License.
 
 ///|
-fn Addr::parse_ip(
+// TODO: faster implementation
+fn IpAddr::parse_aux(
   host : StringView,
-  port~ : Int32,
+  require_bracket~ : Bool,
   context~ : String,
-) -> Addr raise {
+) -> IpAddr raise {
   if host is ['[', .. ipv6_str, ']'] {
-    let (ip_bytes, interface) = parse_ipv6(ipv6_str)
-    let scope_id = if interface is Some(interface) {
-      parse_ipv6_zone_suffix(interface, context~)
-    } else {
-      0
-    }
-    Addr::new_ipv6(ip_bytes, port, scope_id~)
+    parse_ipv6(ipv6_str, context~)
   } else {
-    let ip = parse_ipv4(host)
-    Addr::new(ip, port)
+    try parse_ipv4(host) catch {
+      _ if !require_bracket => parse_ipv6(host, context~)
+      err => raise err
+    } noraise {
+      ip => Ipv4(ip)
+    }
   }
 }
 
 ///|
-fn parse_ipv6(
-  ip_str : StringView,
-) -> (FixedArray[Byte], String?) raise InvalidAddr {
+fn parse_ipv6(ip_str : StringView, context~ : String) -> IpAddr raise {
   // Extract optional zone suffix
-  let (ip_str, interface) = if ip_str.find("%") is Some(ip_end) {
+  let (ip_str, scope_id) = if ip_str.find("%") is Some(ip_end) {
     let interface = ip_str[ip_end + 1:]
     guard interface.length() > 0 else { raise InvalidAddr }
-    (ip_str[:ip_end], Some(interface.to_owned()))
+    let scope_id = parse_ipv6_zone_suffix(interface, context~)
+    (ip_str[:ip_end], scope_id)
   } else {
-    (ip_str, None)
+    (ip_str, 0)
   }
 
   let ip_bytes = match ip_str.split("::").collect() {
@@ -55,8 +53,7 @@ fn parse_ipv6(
       raise InvalidAddr
   }
 
-  // Parse the IPv6 address into a byte array
-  (ip_bytes, interface)
+  Ipv6(ip_bytes.unsafe_reinterpret_as_bytes(), scope_id~)
 }
 
 ///|
@@ -216,11 +213,11 @@ fn parse_ipv4(input : StringView) -> UInt32 raise InvalidAddr {
 }
 
 ///|
-fn parse_port(port_str : StringView) -> Int32 raise InvalidAddr {
+fn parse_port(port_str : StringView) -> UInt16 raise InvalidAddr {
   guard !port_str.is_empty() else { raise InvalidAddr }
   let port = @string.parse_int(port_str) catch { _ => raise InvalidAddr }
   guard 0 <= port && port < 65536 else { raise InvalidAddr }
-  port
+  port.to_uint16()
 }
 
 ///|

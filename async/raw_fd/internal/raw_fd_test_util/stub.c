@@ -23,6 +23,7 @@
 #else
 
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 typedef int HANDLE;
 typedef int SOCKET;
@@ -51,6 +52,10 @@ HANDLE raw_fd_test_make_udp_socket() {
 }
 
 MOONBIT_FFI_EXPORT
-int raw_fd_test_connect(HANDLE sock, struct sockaddr *addr) {
-  return connect((SOCKET)sock, addr, Moonbit_array_length(addr));
+int raw_fd_test_connect(HANDLE sock, uint32_t ip, int32_t port) {
+  struct sockaddr_in addr;
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  addr.sin_addr.s_addr = htonl(ip);
+  return connect((SOCKET)sock, (struct sockaddr*)&addr, sizeof(struct sockaddr_in));
 }

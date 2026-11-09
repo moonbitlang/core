@@ -15,6 +15,31 @@
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
+pub extend IpAddr with Eq::{not_equal}
+
+///|
+#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
+#doc(hidden)
+pub extend IpAddr with Compare::{op_lt, op_le, op_ge, op_gt}
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
+#doc(hidden)
+pub extend IpAddr with Hash::{hash_combine}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend IpAddr with Show::{output}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend IpAddr with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Addr with Eq::{not_equal}
 
 ///|

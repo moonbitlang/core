@@ -32,9 +32,7 @@ async test "passthrough mode" {
         log.push("server received: \{packet}")
       }
     }
-    let client = @http.ClientConnection(
-      "http://127.0.0.1:\{server_addr.port()}",
-    )
+    let client = @http.ClientConnection("http://127.0.0.1:\{server_addr.port}")
     defer client.close()
     let response = client..request(Connect, "/path").end_request()
     inspect(response.code, content="200")
@@ -68,7 +66,7 @@ async test "passthrough mode remaining data" {
       inspect(conn.text.read_all(), content="remaining data")
     }
     let client = @socket.Tcp::connect(
-      @socket.Addr::parse("127.0.0.1:\{server_addr.port()}"),
+      @socket.Addr::parse("127.0.0.1:\{server_addr.port}"),
     )
     defer client.close()
     client.write(b"GET / HTTP/1.1\r\n\r\nremaining data")
@@ -91,7 +89,7 @@ async fn handle_connect(
   }
   let client = try {
     let host = request.path[:index]
-    let port = @string.parse_int(request.path[index + 1:])
+    let port = @string.parse_uint(request.path[index + 1:]).to_uint16()
     @socket.Tcp::connect_to_host(host, port~)
   } catch {
     err if !@async.is_being_cancelled() => {
@@ -115,7 +113,7 @@ async test "proxied https request" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
@@ -135,7 +133,7 @@ async test "proxied http request" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
@@ -156,7 +154,7 @@ async test "proxied misc request" {
   let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
   let proxy_server_addr = proxy_server.addr
   let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-  let port = server.addr.port()
+  let port = server.addr.port
   @async.with_task_group() <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((req, conn) => {
@@ -178,7 +176,7 @@ async test "proxied misc request" {
       })
     }
     async fn proxy() {
-      @http.ClientConnection("http://127.0.0.1:\{proxy_server_addr.port()}")
+      @http.ClientConnection("http://127.0.0.1:\{proxy_server_addr.port}")
     }
 
     let _ = @http.get_text("http://127.0.0.1:\{port}", proxy=proxy())
@@ -198,7 +196,7 @@ async test "proxied misc request" {
 ///|
 async test "proxy error" {
   let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-  let port = proxy_server.addr.port()
+  let port = proxy_server.addr.port
   @async.with_task_group() <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((_, conn) => {
@@ -231,7 +229,7 @@ async test "proxy error" {
 async test "proxy at an IPv6 address" {
   @async.with_task_group() <| group => {
     let proxy = @socket.TcpServer(@socket.Addr::parse("[::1]:0"))
-    let proxy_port = proxy.addr.port()
+    let proxy_port = proxy.addr.port
     group.spawn_bg() <| () => {
       defer proxy.close()
       let (conn, _) = proxy.accept()
