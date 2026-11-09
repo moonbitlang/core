@@ -282,7 +282,6 @@ async fn[X] moonbitlang_async_retry(
 ///
 /// The `max_concurrency` parameter limits the number of tasks that can run concurrently.
 /// If not specified, all tasks run at once.
-#label_migration(max_concurrency, alias=max_concurrent, msg="Use max_concurrency= instead")
 pub async fn[X] all(
   tasks : ArrayView[async () -> X],
   max_concurrency? : Int32,
@@ -326,7 +325,6 @@ pub async fn[X] all(
 /// `any` requires at least one task and will fail if the array is empty.
 #callsite(autofill(loc))
 #warnings("-fragile_catch_all")
-#label_migration(max_concurrency, alias=max_concurrent, msg="Use max_concurrency= instead")
 pub async fn[X] any(
   tasks : ArrayView[async () -> X],
   max_concurrency? : Int32,
