@@ -5304,3 +5304,17 @@ test "Int64 hash combine" {
   hasher.combine(42L)
   inspect(hasher.finalize() != 0, content="true")
 }
+
+///|
+test "Int64::to_uint keeps the low 32 bits" {
+  let values : Array[Int64] = [
+    0L, 1L, -1L, 2147483647L, 2147483648L, 4294967295L, 4294967296L, 0x1_2345_6789L,
+    -4294967296L, 9223372036854775807L, -9223372036854775808L,
+  ]
+  for x in values {
+    assert_eq(x.to_uint(), x.reinterpret_as_uint64().to_uint())
+    assert_eq(x.to_uint().reinterpret_as_int(), x.to_int())
+  }
+  inspect(0x1_2345_6789L.to_uint(), content="591751049")
+  inspect((-4294967296L).to_uint(), content="0")
+}
