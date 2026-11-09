@@ -23,6 +23,7 @@ struct CoverageCounter {
 ///|
 /// Create a new coverage counter with the given size.
 ///
+#alias(new, deprecated="Use `CoverageCounter(size)` instead")
 #coverage.skip
 pub fn CoverageCounter::CoverageCounter(size : Int32) -> CoverageCounter {
   { counts: FixedArray::make(size, 0), }
