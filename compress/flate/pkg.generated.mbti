@@ -10,9 +10,11 @@ pub fn deflate_all(BytesView, strategy? : Strategy, dictionary? : BytesView, fas
 
 pub fn deflate_bound(Int32, strategy? : Strategy) -> Int32
 
-pub fn inflate_exact(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Bytes raise InflateError
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
+pub fn inflate_exact(BytesView, dictionary? : BytesView, max_output_bytes? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Bytes raise InflateError
 
-pub fn inflate_prefix(BytesView, dictionary? : BytesView, max_output? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
+pub fn inflate_prefix(BytesView, dictionary? : BytesView, max_output_bytes? : Int32, cancelled? : () -> Bool, two_pass? : Bool) -> Decompressed raise InflateError
 
 // Errors
 #derive(@debug.Debug)
@@ -44,7 +46,8 @@ pub fn Decompressed::equal(Self, Self) -> Bool
 
 type Decompressor
 pub fn Decompressor::Decompressor(dictionary? : BytesView) -> Self
-pub fn Decompressor::decompress(Self, BytesView, mode? : InputMode, max_output? : Int32, cancelled? : () -> Bool) -> Decompressed raise InflateError
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
+pub fn Decompressor::decompress(Self, BytesView, mode? : InputMode, max_output_bytes? : Int32, cancelled? : () -> Bool) -> Decompressed raise InflateError
 pub fn Decompressor::decompress_into(Self, BytesView, MutArrayView[Byte], mode? : InputMode, cancelled? : () -> Bool) -> DecompressResult raise InflateError
 
 #derive(Eq, @debug.Debug)

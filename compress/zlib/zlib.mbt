@@ -146,19 +146,20 @@ pub fn compress(
 }
 
 ///|
-/// Decode zlib data and verify its Adler-32 trailer. `max_output` caps decoded
+/// Decode zlib data and verify its Adler-32 trailer. `max_output_bytes` caps decoded
 /// bytes (default: `Bytes` capacity); exceeding it raises `OutputLimitExceeded`,
 /// a negative value `InvalidArgument`. Supply `dictionary` for an FDICT stream.
 /// `cancelled` is polled at entry, every
 /// 4 KiB decoded or checksummed; true raises `Cancelled`.
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
 pub fn decompress(
   input : BytesView,
   dictionary? : BytesView,
-  max_output? : Int32,
+  max_output_bytes? : Int32,
   cancelled? : () -> Bool,
 ) -> Bytes raise ZlibError {
-  if max_output is Some(limit) && limit < 0 {
-    raise ZlibError(InvalidArgument, "max_output must be non-negative")
+  if max_output_bytes is Some(limit) && limit < 0 {
+    raise ZlibError(InvalidArgument, "max_output_bytes must be non-negative")
   }
   check_cancelled(cancelled)
   let n = input.length()
@@ -192,7 +193,7 @@ pub fn decompress(
   let out = @flate.inflate_exact(
     input[payload_start:n - 4],
     dictionary?=dict,
-    max_output?,
+    max_output_bytes?,
     cancelled?,
   ) catch {
     error => raise wrap_inflate_error(error)

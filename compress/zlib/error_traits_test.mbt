@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-fn zlib_error(input : BytesView, max_output? : Int32) -> @zlib.ZlibError {
-  try @zlib.decompress(input, max_output?) catch {
+fn zlib_error(input : BytesView, max_output_bytes? : Int32) -> @zlib.ZlibError {
+  try @zlib.decompress(input, max_output_bytes?) catch {
     e => e
   } noraise {
     _ => abort("expected a ZlibError")
@@ -37,7 +37,7 @@ test "ZlibError Show prints kind and message" {
     ),
   )
   inspect(
-    zlib_error(@zlib.compress(b"hello, world"), max_output=4),
+    zlib_error(@zlib.compress(b"hello, world"), max_output_bytes=4),
     content=(
       #|OutputLimitExceeded(limit=4, observed=5): decoded output exceeds its byte limit
     ),
@@ -53,7 +53,7 @@ test "ZlibError Debug prints the constructor form" {
     ),
   )
   @debug.debug_inspect(
-    zlib_error(@zlib.compress(b"hello, world"), max_output=4),
+    zlib_error(@zlib.compress(b"hello, world"), max_output_bytes=4),
     content=(
       #|ZlibError(
       #|  OutputLimitExceeded(limit=4, observed=5),
@@ -75,7 +75,7 @@ test "ZlibError is matched by kind" {
   // The error doesn't implement `Eq`, because derived equality would compare the
   // message text too. Callers match on the kind, which does implement `Eq`.
   let a = zlib_error(b"\x78\x9c\xff\x00\x00\x00\x00\x00\x00\x00")
-  let c = zlib_error(@zlib.compress(b"hello, world"), max_output=4)
+  let c = zlib_error(@zlib.compress(b"hello, world"), max_output_bytes=4)
   let d = zlib_error(b"\x78\x9c\x01\x00\x00\x00\x00\x00\x00\x00\x00")
   guard a is ZlibError(InvalidDeflate, _) && d is ZlibError(InvalidDeflate, _) else {
     fail("expected InvalidDeflate, got \{a} and \{d}")
