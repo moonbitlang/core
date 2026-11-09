@@ -148,6 +148,11 @@ pub fn RawFdStream::close(self : RawFdStream) -> Unit {
 pub impl @io.BinaryReader for RawFdStream
 
 ///|
+impl @io.BinaryReaderImpl for RawFdStream with fn name(_self) {
+  "@raw_fd.RawFdStream"
+}
+
+///|
 impl @io.BinaryReaderImpl for RawFdStream with fn get_controller(self) {
   self.reader_ctrl
 }
@@ -199,6 +204,11 @@ impl @io.BinaryWriterImpl for RawFdStream with fn raw_write_impl(
     len~,
     context="impl @io.BinaryWriter for @raw_fd.RawFdStream",
   )
+}
+
+///|
+impl @io.BinaryWriterImpl for RawFdStream with fn name(_self) {
+  "@raw_fd.RawFdStream"
 }
 
 ///|

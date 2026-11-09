@@ -100,25 +100,25 @@ pub struct ClientConnection {
 #alias(new, deprecated)
 pub async fn ClientConnection::ClientConnection(String, headers? : Map[CaseInsensitiveString, String], proxy? : Self, trust? : @tls.TrustedRoot) -> Self
 pub fn ClientConnection::close(Self) -> Unit
-pub async fn ClientConnection::drop_all(Self) -> Int64
-pub async fn ClientConnection::drop_exactly(Self, Int32) -> Unit
+pub async fn ClientConnection::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn ClientConnection::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
 pub async fn ClientConnection::end_request(Self, on_informational_response? : async (ResponseHeader) -> Unit) -> ResponseHeader
 pub async fn ClientConnection::enter_passthrough_mode(Self) -> Unit
 pub async fn ClientConnection::flush_partial_data(Self) -> Unit
-pub async fn ClientConnection::peek(Self) -> BytesView?
-pub async fn ClientConnection::peek_at_least(Self, Int32) -> BytesView
-pub async fn ClientConnection::peek_exactly(Self, Int32) -> BytesView
-pub async fn ClientConnection::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn ClientConnection::read(Self) -> Bytes?
-pub async fn ClientConnection::read_all(Self) -> Bytes
-pub async fn ClientConnection::read_at_least(Self, Int32) -> Bytes
-pub async fn ClientConnection::read_exactly(Self, Int32) -> Bytes
-pub async fn ClientConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn ClientConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn ClientConnection::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn ClientConnection::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ClientConnection::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ClientConnection::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn ClientConnection::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn ClientConnection::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn ClientConnection::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ClientConnection::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ClientConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ClientConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn ClientConnection::request(Self, RequestMethod, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> Unit
 pub async fn ClientConnection::skip_response_body(Self) -> Unit
 pub fn ClientConnection::trailer(Self) -> Map[CaseInsensitiveString, String]
-pub async fn ClientConnection::write(Self, BytesView) -> Unit
+pub async fn ClientConnection::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn ClientConnection::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryReader for ClientConnection
 pub impl @io.BinaryWriter for ClientConnection
@@ -198,27 +198,27 @@ pub struct ServerConnection {
 }
 pub fn ServerConnection::client_addr(Self) -> @socket.Addr
 pub fn ServerConnection::close(Self) -> Unit
-pub async fn ServerConnection::drop_all(Self) -> Int64
-pub async fn ServerConnection::drop_exactly(Self, Int32) -> Unit
+pub async fn ServerConnection::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn ServerConnection::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
 pub async fn ServerConnection::end_response(Self) -> Unit
 pub async fn ServerConnection::enter_passthrough_mode(Self) -> Unit
 pub async fn ServerConnection::flush_partial_data(Self) -> Unit
 pub fn ServerConnection::new(@socket.Tcp, headers? : Map[CaseInsensitiveString, String]) -> Self
-pub async fn ServerConnection::peek(Self) -> BytesView?
-pub async fn ServerConnection::peek_at_least(Self, Int32) -> BytesView
-pub async fn ServerConnection::peek_exactly(Self, Int32) -> BytesView
-pub async fn ServerConnection::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn ServerConnection::read(Self) -> Bytes?
-pub async fn ServerConnection::read_all(Self) -> Bytes
-pub async fn ServerConnection::read_at_least(Self, Int32) -> Bytes
-pub async fn ServerConnection::read_exactly(Self, Int32) -> Bytes
-pub async fn ServerConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn ServerConnection::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn ServerConnection::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ServerConnection::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ServerConnection::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn ServerConnection::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn ServerConnection::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn ServerConnection::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ServerConnection::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ServerConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
 pub async fn ServerConnection::read_request(Self) -> RequestHeader
-pub async fn ServerConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn ServerConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn ServerConnection::send_response(Self, Int32, String, extra_headers? : Map[CaseInsensitiveString, String], cookies? : Array[Cookie]) -> Unit
 pub async fn ServerConnection::skip_request_body(Self) -> Unit
 pub fn ServerConnection::trailer(Self) -> Map[CaseInsensitiveString, String]
-pub async fn ServerConnection::write(Self, BytesView) -> Unit
+pub async fn ServerConnection::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn ServerConnection::write_reader(Self, &@io.BinaryReader) -> Unit
 pub async fn ServerConnection::write_string(Self, String) -> Unit
 pub async fn[X : Show] ServerConnection::write_string_interpolation(Self, X) -> Unit

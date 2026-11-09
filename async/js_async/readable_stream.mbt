@@ -136,6 +136,11 @@ pub fn ReadableStream::close(self : ReadableStream) -> Unit {
 pub impl @io.BinaryReader for ReadableStream
 
 ///|
+impl @io.BinaryReaderImpl for ReadableStream with fn name(_self) {
+  "@js.ReadableStream"
+}
+
+///|
 impl @io.BinaryReaderImpl for ReadableStream with fn get_controller(self) {
   @io.BinaryReaderImpl::get_controller(self.read_end as &@io.BinaryReader)
 }

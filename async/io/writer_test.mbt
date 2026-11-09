@@ -93,6 +93,11 @@ impl @io.BinaryWriterImpl for DummyWriter with fn flush_partial_data(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for DummyWriter with fn name(_self) {
+  "DummyWriter"
+}
+
+///|
 impl @io.BinaryWriterImpl for DummyWriter with fn raw_write_impl(
   self,
   buf,

@@ -54,6 +54,11 @@ impl @io.BinaryReaderImpl for Input with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for Input with fn name(_self) {
+  "@stdio.Input"
+}
+
+///|
 impl @io.BinaryReaderImpl for Input with fn get_controller(self) {
   self.ctrl
 }
@@ -108,6 +113,11 @@ impl @io.BinaryWriterImpl for Output with fn raw_write_impl(
   self.io
   .unwrap_or_error()
   .write(buf, offset~, len~, context="impl @io.BinaryWriter for @stdio.Output")
+}
+
+///|
+impl @io.BinaryWriterImpl for Output with fn name(_self) {
+  "@stdio.Output"
 }
 
 ///|
