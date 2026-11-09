@@ -21,7 +21,7 @@
 /// everything else, including well-formed pairs, unchanged.
 fn repair_utf16(text : String) -> String {
   let units = text.code_units()
-  let out = StringBuilder(size_hint=2 * units.length())
+  let out = StringBuilder(capacity=2 * units.length())
   let mut i = 0
   while i < units.length() {
     let unit = units[i]

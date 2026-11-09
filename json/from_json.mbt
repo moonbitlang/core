@@ -327,7 +327,7 @@ pub impl FromJson for Bytes with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Bytes::from_json: expected string")
   }
-  let buffer = @buffer.Buffer(size_hint=a.length())
+  let buffer = @buffer.Buffer(capacity=a.length())
   for x = a[:] {
     match x {
       [] => break

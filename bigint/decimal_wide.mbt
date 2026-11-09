@@ -77,7 +77,7 @@ fn format_decimal(value : BigInt) -> String {
   let builder = StringBuilder(
     // An oversized result cannot be preallocated through the Int-sized API;
     // let the builder grow instead of truncating the hint to a negative value.
-    size_hint=if digit_hint <= 2147483647L { digit_hint.to_int() } else { 0 },
+    capacity=if digit_hint <= 2147483647L { digit_hint.to_int() } else { 0 },
   )
   if value.sign == Negative {
     builder.write_char('-')

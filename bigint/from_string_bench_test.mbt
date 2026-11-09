@@ -17,7 +17,7 @@
 /// pattern and a non-zero leading digit.
 fn decimal_digits(digits : Int32) -> String {
   guard digits >= 1 else { abort("decimal_digits: digits must be >= 1") }
-  let buf = StringBuilder(size_hint=digits)
+  let buf = StringBuilder(capacity=digits)
   buf.write_char('7')
   for i in 1..<digits {
     buf.write_char(Int32::unsafe_to_char('0' + (i * 7 + i / 13) % 10))

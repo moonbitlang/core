@@ -28,7 +28,7 @@ pub fn String::make(length : Int32, value : Char) -> String {
   if value.to_int() <= 0xFFFF {
     unsafe_make_string(length, value)
   } else {
-    let buf = StringBuilder(size_hint=2 * length)
+    let buf = StringBuilder(capacity=2 * length)
     for _ in 0..<length {
       buf.write_char(value)
     }
@@ -951,7 +951,7 @@ pub fn String::equal_ignore_ascii_case(self : String, other : String) -> Bool {
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : ArrayView[Char]) -> String {
-  let buf = StringBuilder(size_hint=chars.length() * 4)
+  let buf = StringBuilder(capacity=chars.length() * 4)
   for c in chars {
     buf.write_char(c)
   }

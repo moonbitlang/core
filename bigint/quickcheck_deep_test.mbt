@@ -416,20 +416,20 @@ test "recursive decimal conversion at power-table boundaries" {
   // zero padding on either side of every recursive split.
   for digits in ([607, 608, 609, 1215, 1216, 1217, 2432] : Array[_]) {
     let power = 10N.pow(@bigint.BigInt::from_int(digits))
-    let exact = StringBuilder(size_hint=digits + 1)
+    let exact = StringBuilder(capacity=digits + 1)
     exact.write_char('1')
     for _ in 0..<digits {
       exact.write_char('0')
     }
     assert_eq(power.to_string(), exact.to_string())
 
-    let below = StringBuilder(size_hint=digits)
+    let below = StringBuilder(capacity=digits)
     for _ in 0..<digits {
       below.write_char('9')
     }
     assert_eq((power - 1N).to_string(), below.to_string())
 
-    let above = StringBuilder(size_hint=digits + 1)
+    let above = StringBuilder(capacity=digits + 1)
     above.write_char('1')
     for _ in 1..<digits {
       above.write_char('0')

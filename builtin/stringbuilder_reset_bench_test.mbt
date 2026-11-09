@@ -15,7 +15,7 @@
 ///|
 test "bench StringBuilder full convert reset 4096" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=8)
+    let builder = StringBuilder(capacity=8)
     for _ in 0..<4096 {
       builder.write_string("abcdefgh")
       it.keep(builder.to_string())
@@ -27,7 +27,7 @@ test "bench StringBuilder full convert reset 4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder partial convert reset 4096" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=16)
+    let builder = StringBuilder(capacity=16)
     for _ in 0..<4096 {
       builder.write_string("abcdefgh")
       it.keep(builder.to_string())
@@ -39,7 +39,7 @@ test "bench StringBuilder partial convert reset 4096" (it : @bench.T) {
 ///|
 test "bench StringBuilder write reset without conversion 4096" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=8)
+    let builder = StringBuilder(capacity=8)
     for _ in 0..<4096 {
       builder.write_string("abcdefgh")
       it.keep(builder)

@@ -43,7 +43,7 @@ fn wrap_index(value : Int32, modulus : Int32) -> Int32 {
 
 ///|
 fn model_decode_lossy(payload : Array[Byte]) -> String {
-  let buf = StringBuilder(size_hint=payload.length())
+  let buf = StringBuilder(capacity=payload.length())
   for b in payload {
     if b <= b'\x7F' {
       buf.write_char(b.to_int().unsafe_to_char())

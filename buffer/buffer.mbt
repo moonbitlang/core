@@ -23,7 +23,7 @@
 /// # Usage
 ///
 /// ```mbt nocheck
-///   let buf = Buffer(size_hint=100)
+///   let buf = Buffer(capacity=100)
 ///   buf.write_string_utf16le("Tes")
 ///   buf.write_char_utf16le('t')
 ///   inspect(
@@ -147,7 +147,7 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.Buffer(size_hint=10)
+///   let buf = @buffer.Buffer(capacity=10)
 ///   inspect(buf.length(), content="0")
 ///   buf.write_string_utf16le("test")
 ///   inspect(buf.length(), content="8")
@@ -155,17 +155,17 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 /// ```
 #deprecated("use `Buffer()` instead (with `Buffer` in scope via the prelude)")
 pub fn new(size_hint~ : Int32 = 0) -> Buffer {
-  Buffer(size_hint~)
+  Buffer(capacity=size_hint)
 }
 
 ///|
 /// Creates a new extensible buffer. Enables the constructor-call syntax
-/// `Buffer()` (also `Buffer(size_hint=N)`) when `Buffer` is in scope, e.g.
+/// `Buffer()` (also `Buffer(capacity=N)`) when `Buffer` is in scope, e.g.
 /// via the prelude.
 ///
 /// Parameters:
 ///
-/// * `size_hint` : Initial capacity of the buffer in bytes. Defaults to 0.
+/// * `capacity` : Initial capacity of the buffer in bytes. Defaults to 0.
 ///
 /// Returns a new `Buffer`.
 ///
@@ -178,8 +178,9 @@ pub fn new(size_hint~ : Int32 = 0) -> Buffer {
 ///   inspect(buf.length(), content="8")
 /// }
 /// ```
-pub fn Buffer::Buffer(size_hint~ : Int32 = 0) -> Buffer {
-  let initial = if size_hint < 1 { 1 } else { size_hint }
+#label_migration(capacity, alias=size_hint, msg="Use capacity= instead")
+pub fn Buffer::Buffer(capacity~ : Int32 = 0) -> Buffer {
+  let initial = if capacity < 1 { 1 } else { capacity }
   let data = FixedArray::make(initial, b'\x00')
   { data, len: 0, }
 }
@@ -188,7 +189,7 @@ pub fn Buffer::Buffer(size_hint~ : Int32 = 0) -> Buffer {
 /// Create a buffer from a bytes.
 pub fn from_bytes(bytes : BytesView) -> Buffer {
   let val_len = bytes.length()
-  let buf = Buffer(size_hint=val_len)
+  let buf = Buffer(capacity=val_len)
   // Inline write_bytes because the exact capacity is known.
   // SAFETY: known bytes size
   buf.data.blit_from_bytes(0, bytes.data(), bytes.start_offset(), val_len)
@@ -199,7 +200,7 @@ pub fn from_bytes(bytes : BytesView) -> Buffer {
 ///|
 /// Create a buffer from an array.
 pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
-  let buf = Buffer(size_hint=arr.length())
+  let buf = Buffer(capacity=arr.length())
   // Inline write_byte because the exact capacity is known.
   // SAFETY: the buffer was sized for `arr.length()` bytes, so every index
   // below stays within `data`.

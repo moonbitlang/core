@@ -213,7 +213,7 @@ test "log" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = StringBuilder(size_hint=1024)
+  let buf = StringBuilder(capacity=1024)
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -246,7 +246,7 @@ test "reset" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = StringBuilder(size_hint=1024)
+  let buf = StringBuilder(capacity=1024)
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -257,7 +257,7 @@ test "reset" {
     ),
   )
   coverage_reset(counters)
-  let buf = StringBuilder(size_hint=1024)
+  let buf = StringBuilder(capacity=1024)
   coverage_log(counters, buf)
   inspect(
     buf,

@@ -73,7 +73,7 @@ pub impl Arbitrary for Char with fn arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for String with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  let buf = StringBuilder(size_hint=len * 2)
+  let buf = StringBuilder(capacity=len * 2)
   for i in 0..<len {
     let c : Char = Arbitrary::arbitrary(i, rs)
     buf.write_char(c)

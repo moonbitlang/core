@@ -15,7 +15,7 @@
 ///|
 /// Append-path benchmarks. The buffer is allocated once outside the timed
 /// closure and rewound with `reset()`, so each run measures only the append
-/// loop: `Buffer(size_hint=n)` would otherwise charge every run a malloc plus
+/// loop: `Buffer(capacity=n)` would otherwise charge every run a malloc plus
 /// a zero-fill of the whole capacity, on freshly handed-back memory.
 ///
 /// Each run keeps the buffer itself rather than `buf.length()`: the length is
@@ -28,7 +28,7 @@ let buffer_bench_piece = "abcdefghijklmnop"
 
 ///|
 test "bench Buffer::write_byte n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats)
   it.bench(fn() {
     buf.reset()
     for i in 0..<buffer_bench_repeats {
@@ -40,7 +40,7 @@ test "bench Buffer::write_byte n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint16_be n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats * 2)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats * 2)
   it.bench(fn() {
     buf.reset()
     for i in 0..<buffer_bench_repeats {
@@ -52,7 +52,7 @@ test "bench Buffer::write_uint16_be n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint_le n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats * 4)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats * 4)
   it.bench(fn() {
     buf.reset()
     for i in 0..<buffer_bench_repeats {
@@ -64,7 +64,7 @@ test "bench Buffer::write_uint_le n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint64_be n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats * 8)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats * 8)
   it.bench(fn() {
     buf.reset()
     for i in 0..<buffer_bench_repeats {
@@ -76,7 +76,7 @@ test "bench Buffer::write_uint64_be n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_char_utf8 ASCII n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats)
   it.bench(fn() {
     buf.reset()
     for _ in 0..<buffer_bench_repeats {
@@ -89,7 +89,7 @@ test "bench Buffer::write_char_utf8 ASCII n=4096" (it : @bench.T) {
 ///|
 test "bench Buffer::write_char_utf8 non-BMP n=4096" (it : @bench.T) {
   let ch = (0x1F923).unsafe_to_char()
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats * 4)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats * 4)
   it.bench(fn() {
     buf.reset()
     for _ in 0..<buffer_bench_repeats {
@@ -101,7 +101,7 @@ test "bench Buffer::write_char_utf8 non-BMP n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_char_utf16le BMP n=4096" (it : @bench.T) {
-  let buf = @buffer.Buffer(size_hint=buffer_bench_repeats * 2)
+  let buf = @buffer.Buffer(capacity=buffer_bench_repeats * 2)
   it.bench(fn() {
     buf.reset()
     for _ in 0..<buffer_bench_repeats {
@@ -114,7 +114,7 @@ test "bench Buffer::write_char_utf16le BMP n=4096" (it : @bench.T) {
 ///|
 test "bench Buffer::write_string_utf16le chunks n=4096" (it : @bench.T) {
   let piece = buffer_bench_piece
-  let buf = @buffer.Buffer(size_hint=piece.length() * buffer_bench_repeats * 2)
+  let buf = @buffer.Buffer(capacity=piece.length() * buffer_bench_repeats * 2)
   it.bench(fn() {
     buf.reset()
     for _ in 0..<buffer_bench_repeats {

@@ -155,7 +155,7 @@ test "from_iter empty iterator" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder(size_hint=5)
+  let buf = StringBuilder(capacity=5)
   b"abcde".iter().each(x => buf <+ "\{x}")
   inspect(buf, content="979899100101")
   buf.reset()
@@ -165,7 +165,7 @@ test "iter" {
 
 ///|
 test "iter2" {
-  let buf = StringBuilder(size_hint=5)
+  let buf = StringBuilder(capacity=5)
   let keys = []
   b"abcde"
   .iter2()

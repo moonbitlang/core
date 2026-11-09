@@ -90,7 +90,7 @@ test "intersect" {
 ///|
 test "each" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let result = StringBuilder(size_hint=10)
+  let result = StringBuilder(capacity=10)
   set.each(x => result <+ "\{x}")
   inspect(result.to_string(), content="123456789")
   let set : @sorted_set.SortedSet[Int32] = SortedSet([])
@@ -100,7 +100,7 @@ test "each" {
 ///|
 test "eachi" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  let result = StringBuilder(size_hint=10)
+  let result = StringBuilder(capacity=10)
   set.eachi((i, x) => result <+ "[\{i}-\{x}]")
   inspect(
     result.to_string(),

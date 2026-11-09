@@ -58,7 +58,7 @@ test "to_array" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let v = @priority_queue.from_array([1, 2, 3])
   for e in v {
     buf <+ "[\{e}]"

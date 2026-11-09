@@ -66,7 +66,7 @@ test "create buffer from iterator" {
 
 ///|
 test "length method" {
-  let buf = @buffer.Buffer(size_hint=100)
+  let buf = @buffer.Buffer(capacity=100)
   inspect(buf.length(), content="0")
   buf.write_string_utf16le("Test")
   inspect(buf.length(), content="8")
@@ -74,7 +74,7 @@ test "length method" {
 
 ///|
 test "is_empty method" {
-  let buf = @buffer.Buffer(size_hint=100)
+  let buf = @buffer.Buffer(capacity=100)
   inspect(buf.is_empty(), content="true")
   buf.write_string_utf16le("Test")
   inspect(buf.is_empty(), content="false")
@@ -82,7 +82,7 @@ test "is_empty method" {
 
 ///|
 test "expect method with matching content" {
-  let buf = @buffer.Buffer(size_hint=100)
+  let buf = @buffer.Buffer(capacity=100)
   buf.write_string_utf16le("Test")
   inspect(
     buf.to_bytes(),
@@ -94,7 +94,7 @@ test "expect method with matching content" {
 
 ///|
 test "buffer grows beyond its initial capacity" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_string_utf16le(
     "This is a test string that is longer than the initial capacity",
   )
@@ -103,7 +103,7 @@ test "buffer grows beyond its initial capacity" {
 
 ///|
 test "write UTF-16LE string view" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_string_utf16le("Hello, World!"[7:12])
   inspect(
     buf.to_bytes(),
@@ -115,7 +115,7 @@ test "write UTF-16LE string view" {
 
 ///|
 test "write_byte method" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
   inspect(
@@ -142,7 +142,7 @@ test "write_utf8 method" {
 
 ///|
 test "to_bytes method" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_string_utf16le("Test")
   let bytes = buf.to_bytes()
   inspect(bytes.length(), content="8") // Each character in "Test" is 2 bytes
@@ -150,7 +150,7 @@ test "to_bytes method" {
 
 ///|
 test "write_bytes" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")
   buf.write_bytes(b"5\x006\x007\x008\x00")
   inspect(
@@ -163,7 +163,7 @@ test "write_bytes" {
 
 ///|
 test "write_uint64_le method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_uint64_le(0xdeadbeefaabbccdd)
   buf.write_uint64_le(0xfacefeedaabbccdd)
   inspect(
@@ -176,7 +176,7 @@ test "write_uint64_le method" {
 
 ///|
 test "write_uint64_be method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_uint64_be(0xdeadbeefaabbccdd)
   buf.write_uint64_be(0xfacefeedaabbccdd)
   inspect(
@@ -189,7 +189,7 @@ test "write_uint64_be method" {
 
 ///|
 test "write_int64_le method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_int64_le(-2)
   buf.write_int64_le(0xdeadbeeffacefeed)
   inspect(
@@ -202,7 +202,7 @@ test "write_int64_le method" {
 
 ///|
 test "write_int64_be method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_int64_be(-2)
   buf.write_int64_be(0xdeadbeef)
   inspect(
@@ -215,7 +215,7 @@ test "write_int64_be method" {
 
 ///|
 test "write_uint_le method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_uint_le(0xdeadbeef)
   buf.write_uint_le(0xdeadc0de)
   inspect(
@@ -228,7 +228,7 @@ test "write_uint_le method" {
 
 ///|
 test "write_uint_be method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_uint_be(0xdeadbeef)
   buf.write_uint_be(0xdeadc0de)
   inspect(
@@ -241,7 +241,7 @@ test "write_uint_be method" {
 
 ///|
 test "write_int_le method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_int_le(-2)
   buf.write_int_le(0xdeadbeef)
   inspect(
@@ -254,7 +254,7 @@ test "write_int_le method" {
 
 ///|
 test "write_int_be method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_int_be(-2)
   buf.write_int_be(0xdeadbeef)
   inspect(
@@ -267,7 +267,7 @@ test "write_int_be method" {
 
 ///|
 test "write_string_utf16be and view" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_string_utf16be("AZ")
   inspect(
     buf.to_bytes(),
@@ -298,7 +298,7 @@ test "panic Buffer::write_char_utf16be out of range" {
 
 ///|
 test "write_double_le method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_double_le(-2)
   buf.write_double_le(3.14)
   inspect(
@@ -311,7 +311,7 @@ test "write_double_le method" {
 
 ///|
 test "write_double_be method" {
-  let buf = @buffer.Buffer(size_hint=16)
+  let buf = @buffer.Buffer(capacity=16)
   buf.write_double_be(-2)
   buf.write_double_be(3.14)
   inspect(
@@ -324,7 +324,7 @@ test "write_double_be method" {
 
 ///|
 test "write_float_le method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_float_le(-2)
   buf.write_float_le(3.14)
   inspect(
@@ -337,7 +337,7 @@ test "write_float_le method" {
 
 ///|
 test "write_float_be method" {
-  let buf = @buffer.Buffer(size_hint=8)
+  let buf = @buffer.Buffer(capacity=8)
   buf.write_float_be(-2)
   buf.write_float_be(3.14)
   inspect(
@@ -371,7 +371,7 @@ test "write_iter" {
 
 ///|
 test "write_bytesview" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_bytesview(b"Test"[1:3])
   inspect(
     buf.contents(),
@@ -395,7 +395,7 @@ test "write_stringview" {
 
 ///|
 test "write_char_utf8" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_char_utf8('A')
   buf.write_char_utf8('α')
   buf.write_char_utf8('啊')
@@ -410,7 +410,7 @@ test "write_char_utf8" {
 
 ///|
 test "write_char_utf16le" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_char_utf16le('A')
   buf.write_char_utf16le('α')
   buf.write_char_utf16le('啊')
@@ -425,7 +425,7 @@ test "write_char_utf16le" {
 
 ///|
 test "write_char_utf16be" {
-  let buf = @buffer.Buffer(size_hint=10)
+  let buf = @buffer.Buffer(capacity=10)
   buf.write_char_utf16be('A')
   buf.write_char_utf16be('α')
   buf.write_char_utf16be('啊')
@@ -479,7 +479,7 @@ test "write_bom_utf16be" {
 
 ///|
 test "write_uint16_le method" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_uint16_le(Int32::to_uint16(0x1234))
   buf.write_uint16_le(Int32::to_uint16(0xabcd))
   inspect(
@@ -492,7 +492,7 @@ test "write_uint16_le method" {
 
 ///|
 test "write_uint16_be method" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_uint16_be(Int32::to_uint16(0x1234))
   buf.write_uint16_be(Int32::to_uint16(0xabcd))
   inspect(
@@ -505,7 +505,7 @@ test "write_uint16_be method" {
 
 ///|
 test "write_int16_le method" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_int16_le(Int16(-2))
   buf.write_int16_le(Int16(0x1234))
   inspect(
@@ -518,7 +518,7 @@ test "write_int16_le method" {
 
 ///|
 test "write_int16_be method" {
-  let buf = @buffer.Buffer(size_hint=4)
+  let buf = @buffer.Buffer(capacity=4)
   buf.write_int16_be(Int16(-2))
   buf.write_int16_be(Int16(0x1234))
   inspect(

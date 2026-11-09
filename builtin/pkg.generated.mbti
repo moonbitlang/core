@@ -1349,7 +1349,8 @@ pub impl Show for SourceLoc
 
 type StringBuilder
 #alias(new, deprecated)
-pub fn StringBuilder::StringBuilder(size_hint? : Int32) -> Self
+#label_migration(capacity, alias=size_hint, msg="Use capacity= instead")
+pub fn StringBuilder::StringBuilder(capacity? : Int32) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
 pub fn StringBuilder::reset(Self, keep_capacity? : Bool) -> Unit
 pub fn StringBuilder::to_string(Self) -> String

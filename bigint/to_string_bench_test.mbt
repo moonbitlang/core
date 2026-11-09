@@ -18,7 +18,7 @@
 /// requested width.
 fn make_decimal(digits : Int32) -> @bigint.BigInt {
   guard digits >= 1 else { abort("make_decimal: digits must be >= 1") }
-  let buf = StringBuilder(size_hint=digits)
+  let buf = StringBuilder(capacity=digits)
   buf.write_char('1')
   for _ in 1..<digits {
     buf.write_char('9')

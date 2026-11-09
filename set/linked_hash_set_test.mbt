@@ -141,7 +141,7 @@ test "each" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let map = @set.Set(["a", "b", "c"])
   map.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[a][b][c]")

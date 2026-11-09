@@ -22,19 +22,19 @@ let stringbuilder_large_sizes : ReadOnlyArray[Int32] = [
 ///|
 test "bench StringBuilder reserve 1 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[0]
-  it.bench(fn() { it.keep(StringBuilder(size_hint=units)) })
+  it.bench(fn() { it.keep(StringBuilder(capacity=units)) })
 }
 
 ///|
 test "bench StringBuilder reserve 8 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[1]
-  it.bench(fn() { it.keep(StringBuilder(size_hint=units)) })
+  it.bench(fn() { it.keep(StringBuilder(capacity=units)) })
 }
 
 ///|
 test "bench StringBuilder reserve 32 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[2]
-  it.bench(fn() { it.keep(StringBuilder(size_hint=units)) })
+  it.bench(fn() { it.keep(StringBuilder(capacity=units)) })
 }
 
 ///|
@@ -42,7 +42,7 @@ test "bench StringBuilder build 1 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[0]
   let source = String::make(units, 'x')
   it.bench(fn() {
-    let builder = StringBuilder(size_hint=units)
+    let builder = StringBuilder(capacity=units)
     builder.write_string(source)
     it.keep(builder.to_string())
   })
@@ -53,7 +53,7 @@ test "bench StringBuilder build 8 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[1]
   let source = String::make(units, 'x')
   it.bench(fn() {
-    let builder = StringBuilder(size_hint=units)
+    let builder = StringBuilder(capacity=units)
     builder.write_string(source)
     it.keep(builder.to_string())
   })
@@ -64,7 +64,7 @@ test "bench StringBuilder build 32 MiB" (it : @bench.T) {
   let units = stringbuilder_large_sizes[2]
   let source = String::make(units, 'x')
   it.bench(fn() {
-    let builder = StringBuilder(size_hint=units)
+    let builder = StringBuilder(capacity=units)
     builder.write_string(source)
     it.keep(builder.to_string())
   })

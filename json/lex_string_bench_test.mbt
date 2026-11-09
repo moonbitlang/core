@@ -30,7 +30,7 @@ fn lex_string_bench_array(count : Int32, body : (Int32) -> String) -> String {
 ///|
 /// `len` code units of varied ASCII text with no escapes.
 fn lex_string_bench_text(len : Int32, seed : Int32) -> String {
-  let buf = StringBuilder(size_hint=len)
+  let buf = StringBuilder(capacity=len)
   for i in 0..<len {
     buf.write_char((('a' : Int32) + (i * 7 + seed) % 26).unsafe_to_char())
   }

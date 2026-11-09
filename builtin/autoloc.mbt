@@ -117,7 +117,7 @@ pub impl Show for ArgsLoc with fn output(self, logger) {
 /// Returns a JSON array string where each element is either a JSON object
 /// describing a source location or "null".
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
-  let buf = StringBuilder(size_hint=10)
+  let buf = StringBuilder(capacity=10)
   let ArgsLoc(self) = self
   buf.write_char('[')
   for i, item in self {

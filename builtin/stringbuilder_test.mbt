@@ -38,7 +38,7 @@ test "is_empty method" {
 
 ///|
 test "reset does not mutate returned string" {
-  let buf = StringBuilder(size_hint=10)
+  let buf = StringBuilder(capacity=10)
   buf.write_string("hello")
   let first = buf.to_string()
   buf.reset()
@@ -48,15 +48,15 @@ test "reset does not mutate returned string" {
 }
 
 ///|
-test "StringBuilder size_hint zero grows" {
-  let buf = StringBuilder(size_hint=0)
+test "StringBuilder capacity zero grows" {
+  let buf = StringBuilder(capacity=0)
   buf.write_string("hello")
   inspect(buf.to_string(), content="hello")
 }
 
 ///|
-test "panic StringBuilder constructor negative size_hint" {
-  ignore(StringBuilder(size_hint=-1))
+test "panic StringBuilder constructor negative capacity" {
+  ignore(StringBuilder(capacity=-1))
 }
 
 ///|
@@ -132,8 +132,8 @@ test "UTF-16 StringBuilder copies offset views across block boundaries" {
   let input = "ab汉😀Bé汉😁z".repeat(8)
   for start in [0, 1, 3, 7, 8, 15] {
     for len in 0..<66 {
-      for size_hint in [0, 256] {
-        let builder = StringBuilder(size_hint~)
+      for capacity in [0, 256] {
+        let builder = StringBuilder(capacity~)
         builder.write_string("prefix")
         builder.write_view(input[start:start + len])
         let first = builder.to_string()
@@ -149,7 +149,7 @@ test "UTF-16 StringBuilder copies offset views across block boundaries" {
 test "UTF-16 StringBuilder appends returned strings through growth and reset" {
   for len in [7, 8, 9, 15, 16, 17, 31, 32, 33, 65] {
     let input = "ab汉😀Bé汉😁z".repeat(8)[:len].to_owned()
-    let builder = StringBuilder(size_hint=len)
+    let builder = StringBuilder(capacity=len)
     builder.write_string(input)
     let first = builder.to_string()
     builder.write_string(first)

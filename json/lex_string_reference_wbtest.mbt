@@ -176,7 +176,7 @@ let near_miss_units : Array[UInt16] = [
 
 ///|
 fn string_of_units(units : Array[UInt16]) -> String {
-  let buf = StringBuilder(size_hint=units.length())
+  let buf = StringBuilder(capacity=units.length())
   for unit in units {
     buf.write_char(unit.unsafe_to_char())
   }

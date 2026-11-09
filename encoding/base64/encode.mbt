@@ -43,7 +43,7 @@ fn encode_scalar(bytes : BytesView, padding~ : Bool = true) -> String {
   if remainder != 0 {
     size_hint += if padding is true { 4 } else { remainder + 1 }
   }
-  let builder = StringBuilder(size_hint~)
+  let builder = StringBuilder(capacity=size_hint)
   for remaining = bytes {
     match remaining {
       [b0, b1, b2, .. rest] => {

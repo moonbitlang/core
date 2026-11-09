@@ -24,7 +24,7 @@
 /// the unsigned SIMD comparisons). With `allow_surrogates=false` the
 /// surrogate range is remapped so the string is well-formed UTF-16.
 fn adversarial_string(seeds : Array[Int32], allow_surrogates~ : Bool) -> String {
-  let buf = StringBuilder(size_hint=seeds.length())
+  let buf = StringBuilder(capacity=seeds.length())
   for seed in seeds {
     let code = adversarial_unit(seed)
     let code = if !allow_surrogates && code is (0xD800..<=0xDFFF) {
@@ -61,7 +61,7 @@ fn adversarial_unit(seed : Int32) -> UInt16 {
 /// is emitted as a complete pair, so surrogate pairs sit next to escapes
 /// without ever being split.
 fn valid_adversarial_string(seeds : Array[Int32]) -> String {
-  let buf = StringBuilder(size_hint=seeds.length() * 2)
+  let buf = StringBuilder(capacity=seeds.length() * 2)
   for seed in seeds {
     let code = adversarial_unit(seed).to_int()
     let char = if code is (0xD800..<=0xDBFF) {
@@ -82,7 +82,7 @@ fn valid_adversarial_string(seeds : Array[Int32]) -> String {
 /// Per-code-unit model of `escape`, written directly from the JSON string
 /// grammar with no fast path and no SIMD.
 fn model_escape(str : String, escape_slash : Bool) -> String {
-  let buf = StringBuilder(size_hint=str.length())
+  let buf = StringBuilder(capacity=str.length())
   for code in str.code_units() {
     match code.to_int() {
       0x22 => buf <+ "\\\""
@@ -163,7 +163,7 @@ test "quickcheck: stringify/parse roundtrip on adversarial strings" {
 test "need_escape boundary sweep" {
   let specials : Array[UInt16] = ['"', '\\', '\n', 0x00, 0x1F]
   fn place(len : Int32, pos : Int32, special : UInt16) -> String {
-    let buf = StringBuilder(size_hint=len)
+    let buf = StringBuilder(capacity=len)
     for i in 0..<len {
       if i == pos {
         buf.write_char(special.unsafe_to_char())
