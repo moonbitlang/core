@@ -146,7 +146,7 @@ test "iteri" {
 
 ///|
 test "iter_take_each" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()

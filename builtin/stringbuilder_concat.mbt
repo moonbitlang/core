@@ -22,18 +22,19 @@ struct StringBuilder {
 ///
 /// Parameters:
 ///
-/// * `size_hint` : An optional initial capacity hint for the internal buffer,
+/// * `capacity` : The initial capacity of the internal buffer,
 /// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
-/// buffer. `size_hint` may be ignored on some platforms, JS for example.
+/// buffer. `capacity` may be ignored on some platforms, JS for example.
 ///
 /// Returns a new `StringBuilder` instance.
 ///
-/// Aborts if `size_hint` is negative.
+/// Aborts if `capacity` is negative.
 ///
 #alias(new, deprecated="Use `StringBuilder()` instead")
-pub fn StringBuilder::StringBuilder(size_hint~ : Int32 = 8) -> StringBuilder {
-  guard size_hint >= 0 else { abort("size_hint must be non-negative") }
-  ignore(size_hint)
+#label_migration(capacity, alias=size_hint, msg="Use capacity= instead")
+pub fn StringBuilder::StringBuilder(capacity~ : Int32 = 8) -> StringBuilder {
+  guard capacity >= 0 else { abort("capacity must be non-negative") }
+  ignore(capacity)
   { val: "", }
 }
 

@@ -38,7 +38,7 @@ pub impl Show for Float with fn to_string(self) {
   let length = digits.length()
   // The exponent of the first digit.
   let exp = exponent + length - 1
-  let builder = StringBuilder(size_hint=16)
+  let builder = StringBuilder(capacity=16)
   if bits >> 31 != 0U {
     builder.write_char('-')
   }

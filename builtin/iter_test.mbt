@@ -17,7 +17,7 @@ test "empty" {
   // the `[||]` literal is preferred at call sites, but `Iter::empty` is still
   // public API and needs its own coverage
   let iter : Iter[Char] = Iter::empty()
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.each(x => exb.write_char(x))
   inspect(exb)
 }
@@ -26,7 +26,7 @@ test "empty" {
 test "singleton" {
   // likewise `Iter::singleton`, the constructor behind `[|x|]`
   let iter = Iter::singleton('1')
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.each(x => exb.write_char(x))
   inspect(exb, content="1")
 }
@@ -34,7 +34,7 @@ test "singleton" {
 ///|
 test "repeat" {
   let iter = Iter::repeat('1')
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   for n in iter[:3] {
     exb.write_char(n)
   }
@@ -62,7 +62,7 @@ test "count_if" {
 ///|
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.take(3).each(x => exb.write_char(x))
   inspect(exb, content="123")
   // normal take
@@ -99,7 +99,7 @@ test "take" {
 ///|
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.take(10).concat(Iter::repeat('6').take(1)).each(x => exb.write_char(x))
   inspect(exb, content="123456")
 }
@@ -107,7 +107,7 @@ test "take2" {
 ///|
 test "take_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.take_while(x => x != '4').each(x => exb.write_char(x))
   inspect(exb, content="123")
 }
@@ -115,7 +115,7 @@ test "take_while" {
 ///|
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.take_while(x => x != '4').concat([|'6'|]).each(x => exb.write_char(x))
   inspect(exb, content="1236")
 }
@@ -147,7 +147,7 @@ test "take_while5" {
 ///|
 test "map_while1" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
   .each(x => exb <+ "\{x}\n")
@@ -165,7 +165,7 @@ test "map_while1" {
 ///|
 test "map_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
   .concat([|6|])
@@ -215,7 +215,7 @@ test "map_while5" {
 ///|
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.drop(3).each(x => exb.write_char(x))
   inspect(exb, content="45")
 }
@@ -230,7 +230,7 @@ test "sub" {
 ///|
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.drop_while(x => x != '4').each(x => exb.write_char(x))
   inspect(exb, content="45")
 }
@@ -248,7 +248,7 @@ test "drop_while2" {
 ///|
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   let res = iter
     .drop_while(x => x < 3)
     .concat([|6|])
@@ -275,7 +275,7 @@ test "drop_while4" {
 ///|
 test "filter" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.filter(x => x != '4').each(x => exb.write_char(x))
   inspect(exb, content="1235")
 }
@@ -283,7 +283,7 @@ test "filter" {
 ///|
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter
   .map(x => (x.to_int() + 1).to_char().unwrap())
   .each(x => exb.write_char(x))
@@ -375,7 +375,7 @@ test "size_hint" {
 ///|
 test "mapi" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter
   .mapi((i, x) => (i + x.to_int()).to_char().unwrap())
   .each(x => exb.write_char(x))
@@ -418,7 +418,7 @@ test "filter_map" {
 ///|
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.flat_map(x => Iter::repeat(x).take(2)).each(x => exb.write_char(x))
   inspect(exb, content="1122334455")
 }
@@ -426,7 +426,7 @@ test "flat_map" {
 ///|
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.flat_map(x => [|x|]).each(x => exb.write_char(x))
   inspect(exb, content="12345")
 }
@@ -457,7 +457,7 @@ test "find_first2" {
 ///|
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   iter.tap(x => exb.write_char(x)).each(x => exb.write_char(x))
   inspect(exb, content="1122334455")
 }
@@ -467,7 +467,7 @@ test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
   let combined_iter = Iter::concat(iter1, iter2)
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   combined_iter.each(x => exb.write_char(x))
   inspect(exb, content="123456")
 }
@@ -743,7 +743,7 @@ test "until" {
 ///|
 test "each" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder(size_hint=5)
+  let exb = StringBuilder(capacity=5)
   iter.each(x => exb.write_char(x))
   inspect(exb, content="12345")
 }
@@ -751,7 +751,7 @@ test "each" {
 ///|
 test "eachi" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let exb = StringBuilder(size_hint=5)
+  let exb = StringBuilder(capacity=5)
   iter.eachi((i, x) => exb <+ "\{x + i}")
   inspect(exb, content="13579")
 }
@@ -838,7 +838,7 @@ fn Tree::iter(self : Tree) -> Iter[Int32] {
 test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   tree.iter().each(x => exb <+ "\{x}")
   inspect(exb, content="12345")
 }

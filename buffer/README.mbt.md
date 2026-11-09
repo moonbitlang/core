@@ -11,7 +11,7 @@ Create an empty buffer, optionally with a capacity hint to reduce reallocations:
 test {
   let buf = @buffer.Buffer()
   @test.assert_eq(buf.is_empty(), true)
-  let buf2 = @buffer.Buffer(size_hint=1024)
+  let buf2 = @buffer.Buffer(capacity=1024)
   @test.assert_eq(buf2.length(), 0)
 }
 ```
@@ -240,7 +240,7 @@ Pre-allocate capacity to minimize reallocations when the final size is known:
 ```mbt check
 ///|
 test {
-  let buf = @buffer.Buffer(size_hint=1024)
+  let buf = @buffer.Buffer(capacity=1024)
   for i in 0..<100 {
     buf.write_int_le(i)
   }

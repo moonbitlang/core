@@ -61,7 +61,7 @@ test "bench StringBuilder default single 64k-unit string" (it : @bench.T) {
 ///|
 test "bench StringBuilder explicit zero 8 ASCII chars" (it : @bench.T) {
   it.bench(() => {
-    let builder = StringBuilder(size_hint=0)
+    let builder = StringBuilder(capacity=0)
     for _ in 0..<8 {
       builder.write_char('x')
     }

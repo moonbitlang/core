@@ -28,7 +28,7 @@
 /// each surrogate pair is decoded into one supplementary `Char`, since
 /// `unsafe_to_char` must not be given a surrogate half.
 fn escape_units_to_string(units : ArrayView[Int32]) -> String {
-  let buf = StringBuilder(size_hint=units.length())
+  let buf = StringBuilder(capacity=units.length())
   for i = 0; i < units.length(); {
     let u = units[i]
     if u is (0xD800..<=0xDBFF) &&

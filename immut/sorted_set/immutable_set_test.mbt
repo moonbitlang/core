@@ -684,7 +684,7 @@ test "iter" {
 
 ///|
 test "iter_loop" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.SortedSet
   for x in set {
     buf.write_object(x)

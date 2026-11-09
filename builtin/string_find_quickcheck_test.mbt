@@ -22,7 +22,7 @@
 
 ///|
 fn bools_to_ab(bits : Array[Bool]) -> String {
-  let sb = StringBuilder(size_hint=bits.length())
+  let sb = StringBuilder(capacity=bits.length())
   for b in bits {
     sb.write_char(if b { 'a' } else { 'b' })
   }
@@ -62,7 +62,7 @@ test "quickcheck: fallback-forcing inputs agree with naive references" {
       // block-start candidate passes the anchor test and fails verification
       let flip = 1 +
         (flip0 % (m - 2).reinterpret_as_uint()).reinterpret_as_int()
-      let sb = StringBuilder(size_hint=m)
+      let sb = StringBuilder(capacity=m)
       for i in 0..<m {
         let c = needle.unsafe_get(i)
         if i == flip {
@@ -76,7 +76,7 @@ test "quickcheck: fallback-forcing inputs agree with naive references" {
       // 70 corrupted blocks on each side exhaust the budget in both
       // directions before any mixture hit; the mixture randomizes genuine
       // occurrences and further decoys in the middle
-      let buf = StringBuilder(size_hint=(mix.length() + 140) * m)
+      let buf = StringBuilder(capacity=(mix.length() + 140) * m)
       for _ in 0..<70 {
         buf.write_string(corrupted)
       }

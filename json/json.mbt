@@ -285,7 +285,7 @@ pub fn Json::stringify(
   indent~ : Int32 = 0,
   replacer? : Replacer,
 ) -> String {
-  let buf = StringBuilder(size_hint=0)
+  let buf = StringBuilder(capacity=0)
   let indent_cache : Array[String] = []
 
   // Explicit stack to replace recursive calls

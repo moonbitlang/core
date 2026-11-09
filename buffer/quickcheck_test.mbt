@@ -290,13 +290,13 @@ test "quickcheck: reset makes the buffer behave as fresh" {
 }
 
 ///|
-test "quickcheck: size_hint never affects observable contents" {
+test "quickcheck: capacity never affects observable contents" {
   @quickcheck.check(
     (chunks : Array[Bytes]) => {
       let hints = [0, 1, 7, 4096]
       let results : Array[Bytes] = []
       for hint in hints {
-        let buf = @buffer.Buffer(size_hint=hint)
+        let buf = @buffer.Buffer(capacity=hint)
         for chunk in chunks {
           buf.write_bytes(chunk)
           buf.write_byte(b'\xAB')

@@ -78,7 +78,7 @@ fn decode_scalar(
   text : StringView,
   ignore_whitespace : Bool,
 ) -> Bytes raise Malformed {
-  let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
+  let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
   for i, code_unit in text.code_units() {
@@ -169,7 +169,7 @@ pub fn decode_lossy(
   text : StringView,
   ignore_whitespace~ : Bool = false,
 ) -> Bytes {
-  let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
+  let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
   for code_unit in text.code_units() {

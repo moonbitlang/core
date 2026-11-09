@@ -138,7 +138,7 @@ fn LexbufStorage::get_stringview(
       end=end - first_start,
     )
   }
-  let builder = StringBuilder(size_hint=(end - start) * 2)
+  let builder = StringBuilder(capacity=(end - start) * 2)
   builder.write_view(
     first_chunk.unsafe_view(start=start - first_start, end=first_chunk.length()),
   )

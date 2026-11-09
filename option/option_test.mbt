@@ -185,7 +185,7 @@ test "compare" {
 ///|
 test "iter" {
   let x = Option::Some(42)
-  let exb = StringBuilder(size_hint=0)
+  let exb = StringBuilder(capacity=0)
   x.iter().each(x => exb <+ "\{x}\n")
   inspect(
     exb,

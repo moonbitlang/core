@@ -1162,7 +1162,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int32) -> String {
   let bit_len = value.bit_length()
   let digit_len = (bit_len + shift - 1) / shift
   let builder = StringBuilder(
-    size_hint=digit_len + (if is_negative { 1 } else { 0 }),
+    capacity=digit_len + (if is_negative { 1 } else { 0 }),
   )
   if is_negative {
     builder.write_char('-')

@@ -378,7 +378,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let buf = StringBuilder(size_hint=5)
+///   let buf = StringBuilder(capacity=5)
 ///   let keys = []
 ///   let it = b"abcde"[:].iter2()
 ///   while it.next() is Some((i, x)) {

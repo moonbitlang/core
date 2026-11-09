@@ -14,7 +14,7 @@
 
 ///|
 test "StringBuilder reset without keeping capacity preserves snapshots" {
-  let builder = StringBuilder(size_hint=3)
+  let builder = StringBuilder(capacity=3)
   builder.write_string("a😀")
   let full = builder.to_string()
   builder.reset(keep_capacity=false)

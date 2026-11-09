@@ -65,7 +65,7 @@ fn set_char(seed : Int32) -> Char {
 
 ///|
 fn chars_to_string(chars : Array[Char]) -> String {
-  let buf = StringBuilder(size_hint=chars.length())
+  let buf = StringBuilder(capacity=chars.length())
   for c in chars {
     buf.write_char(c)
   }

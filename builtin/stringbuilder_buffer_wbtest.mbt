@@ -15,8 +15,8 @@
 ///|
 test "StringBuilder capacity is measured in UTF-16 units" {
   inspect(StringBuilder().data.length(), content="8")
-  inspect(StringBuilder(size_hint=0).data.length(), content="0")
-  let builder = StringBuilder(size_hint=3)
+  inspect(StringBuilder(capacity=0).data.length(), content="0")
+  let builder = StringBuilder(capacity=3)
   builder.write_string("a😀")
   inspect(builder.data.length(), content="3")
   inspect(builder.len, content="3")
@@ -25,7 +25,7 @@ test "StringBuilder capacity is measured in UTF-16 units" {
 
 ///|
 test "StringBuilder empty buffer grows for a non-BMP character" {
-  let builder = StringBuilder(size_hint=0)
+  let builder = StringBuilder(capacity=0)
   builder.write_string("")
   inspect(builder.data.length(), content="0")
   builder.write_char('😀')

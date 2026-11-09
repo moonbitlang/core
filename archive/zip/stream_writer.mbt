@@ -164,7 +164,7 @@ fn stream_local_header(
   descriptor : Bool,
 ) -> Bytes {
   let out = @buffer.Buffer(
-    size_hint=30 + name.length() + (if zip64 { 20 } else { 0 }),
+    capacity=30 + name.length() + (if zip64 { 20 } else { 0 }),
   )
   out.write_uint_le(LOCAL_HEADER_SIG)
   out.write_uint16_le(if zip64 { (45).to_uint16() } else { (20).to_uint16() })
@@ -203,7 +203,7 @@ fn stream_central_record(
   let extra_payload = (if zip64 { 16 } else { 0 }) +
     (if large_offset { 8 } else { 0 })
   let extra_size = if extra_payload == 0 { 0 } else { 4 + extra_payload }
-  let out = @buffer.Buffer(size_hint=46 + name.length() + extra_size)
+  let out = @buffer.Buffer(capacity=46 + name.length() + extra_size)
   let version = if zip64 || large_offset {
     (45).to_uint16()
   } else {
@@ -393,7 +393,7 @@ pub fn Writer::end_entry(self : Writer) -> Unit raise {
   }
   entry.compressed_size += self.offset - start
   let crc = entry.crc.finish()
-  let descriptor = @buffer.Buffer(size_hint=if entry.zip64 { 24 } else { 16 })
+  let descriptor = @buffer.Buffer(capacity=if entry.zip64 { 24 } else { 16 })
   descriptor.write_uint_le(DATA_DESCRIPTOR_SIG)
   descriptor.write_uint_le(crc)
   if entry.zip64 {
@@ -437,7 +437,7 @@ pub fn Writer::finish(self : Writer, comment~ : BytesView = b"") -> Unit raise {
     count >= 0xffff ||
     central_size >= 0xffff_ffffUL ||
     central_offset >= 0xffff_ffffUL
-  let out = @buffer.Buffer(size_hint=98 + comment.length())
+  let out = @buffer.Buffer(capacity=98 + comment.length())
   if zip64 {
     out.write_uint_le(ZIP64_EOCD_SIG)
     out.write_uint64_le(44UL)

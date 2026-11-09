@@ -133,7 +133,7 @@ test "from_json rejects invalid input" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let v = @vector.from_array([1, 2, 3])
   v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[1][2][3]")

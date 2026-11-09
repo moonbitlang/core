@@ -15,7 +15,7 @@
 ///|
 #cfg(not(target="js"))
 test "StringBuilder uninitialized storage exposes only the written prefix" {
-  let builder = StringBuilder(size_hint=2)
+  let builder = StringBuilder(capacity=2)
   builder.write_string("ab")
   builder.write_string("cd")
   let full = builder.to_string()
@@ -35,7 +35,7 @@ test "StringBuilder uninitialized storage exposes only the written prefix" {
 ///|
 #cfg(not(target="js"))
 test "StringBuilder uninitialized storage preserves returned strings" {
-  let builder = StringBuilder(size_hint=3)
+  let builder = StringBuilder(capacity=3)
   builder.write_string("a😀")
   let first = builder.to_string()
   let again = builder.to_string()
@@ -57,7 +57,7 @@ test "StringBuilder uninitialized storage preserves returned strings" {
 ///|
 #cfg(not(target="js"))
 test "StringBuilder reset reuses storage after full and partial conversions" {
-  let builder = StringBuilder(size_hint=3)
+  let builder = StringBuilder(capacity=3)
   let backing = builder.data
   builder.write_string("a😀")
   let full = builder.to_string()
@@ -78,7 +78,7 @@ test "StringBuilder reset reuses storage after full and partial conversions" {
 ///|
 #cfg(not(target="js"))
 test "StringBuilder reset can discard capacity" {
-  let builder = StringBuilder(size_hint=2)
+  let builder = StringBuilder(capacity=2)
   builder.write_string("abcdef")
   let capacity = builder.data.length()
   builder.reset(keep_capacity=true)

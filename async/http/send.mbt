@@ -52,7 +52,7 @@ fn sanitize_header_value(s : StringView) -> StringView {
       // fast path: no CRLF detected, return immediately
       s
     }
-    let buf = StringBuilder(size_hint=s.length() - crlf_count)
+    let buf = StringBuilder(capacity=s.length() - crlf_count)
     for c in s {
       match c {
         '\r' | '\n' => ()

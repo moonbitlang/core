@@ -30,7 +30,7 @@ test "quickcheck: finish_string keeps exactly the first len code units" {
         r
       }
     }
-    let expected = StringBuilder(size_hint=take)
+    let expected = StringBuilder(capacity=take)
     for i in 0..<take {
       expected.write_char(
         units[i].to_uint().reinterpret_as_int().unsafe_to_char(),

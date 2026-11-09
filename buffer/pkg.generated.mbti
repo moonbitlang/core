@@ -15,7 +15,8 @@ pub fn new(size_hint? : Int32) -> Buffer
 
 // Types and methods
 type Buffer
-pub fn Buffer::Buffer(size_hint? : Int32) -> Self
+#label_migration(capacity, alias=size_hint, msg="Use capacity= instead")
+pub fn Buffer::Buffer(capacity? : Int32) -> Self
 pub fn Buffer::is_empty(Self) -> Bool
 pub fn Buffer::length(Self) -> Int32
 pub fn Buffer::reset(Self) -> Unit

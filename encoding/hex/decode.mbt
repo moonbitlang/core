@@ -67,7 +67,7 @@ fn decode_scalar(text : StringView) -> Bytes raise Malformed {
   if text.length() % 2 != 0 {
     raise Malformed(text)
   }
-  let buffer = @buffer.Buffer(size_hint=text.length() / 2)
+  let buffer = @buffer.Buffer(capacity=text.length() / 2)
   for i in 0..<(text.length() / 2) {
     let hi = hex_value(text.code_unit_at(i * 2).to_int())
     let lo = hex_value(text.code_unit_at(i * 2 + 1).to_int())

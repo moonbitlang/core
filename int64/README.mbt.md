@@ -30,10 +30,10 @@ test "basic operations" {
 ///|
 test "binary conversion" {
   let x = 258L // Int64 value of 258
-  let be_buf = Buffer(size_hint=8)
+  let be_buf = Buffer(capacity=8)
   be_buf.write_int64_be(x)
   let be_bytes = be_buf.to_bytes()
-  let le_buf = Buffer(size_hint=8)
+  let le_buf = Buffer(capacity=8)
   le_buf.write_int64_le(x)
   let le_bytes = le_buf.to_bytes()
 
@@ -70,7 +70,7 @@ test "method style" {
   inspect(x.abs(), content="42")
 
   // Binary conversion via `Buffer`
-  let buf = Buffer(size_hint=8)
+  let buf = Buffer(capacity=8)
   buf.write_int64_be(x)
   inspect(
     buf.to_bytes(),

@@ -336,7 +336,7 @@ test "grow" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder(size_hint=20)
+  let buf = StringBuilder(capacity=20)
   let map = { 1: "one", 2: "two", 3: "three" }
   map
   .iter()
@@ -361,7 +361,7 @@ test "iter order" {
   let m = { "one": 1 }
   m["three"] = 3
   m["two"] = 2
-  let buf = StringBuilder(size_hint=0)
+  let buf = StringBuilder(capacity=0)
   m.each((k, v) => buf <+ "[\{k}-\{v}]")
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")
 }
