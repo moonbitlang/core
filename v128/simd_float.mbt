@@ -786,7 +786,7 @@ pub fn f64x2_ge(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_convert_low_i32x4_s(value : V128) -> V128 {
-  pack_f64x2_by(i => Double::from_int(u32_lane(value, i).reinterpret_as_int()))
+  pack_f64x2_by(i => u32_lane(value, i).reinterpret_as_int().to_double())
 }
 
 ///|
@@ -795,7 +795,7 @@ pub fn f64x2_convert_low_i32x4_s(value : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn f64x2_convert_low_i32x4_u(value : V128) -> V128 {
-  pack_f64x2_by(i => Double::convert_uint(u32_lane(value, i)))
+  pack_f64x2_by(i => u32_lane(value, i).to_double())
 }
 
 ///|

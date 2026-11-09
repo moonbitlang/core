@@ -1281,31 +1281,6 @@ pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
 /// ```
 pub impl Default for Double with fn default() = "%f64_default"
 
-///|
-/// Converts an unsigned 32-bit integer to a double-precision floating-point
-/// number. Since the range of unsigned 32-bit integers is smaller than what can
-/// be precisely represented by a double-precision floating-point number, this
-/// conversion is guaranteed to be exact.
-///
-/// Parameters:
-///
-/// * `value` : The unsigned 32-bit integer to be converted.
-///
-/// Returns a double-precision floating-point number that exactly represents the
-/// input value.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = 42U
-///   inspect(Double::convert_uint(n), content="42")
-///   let max = 4294967295U // maximum value of UInt
-///   inspect(Double::convert_uint(max), content="4294967295")
-/// }
-/// ```
-pub fn Double::convert_uint(val : UInt32) -> Double = "%u32.to_f64"
-
 // Char primitive ops
 
 ///|
@@ -2570,9 +2545,7 @@ pub fn UInt32::popcnt(self : UInt32) -> Int32 = "%u32.popcnt"
 ///   inspect(max.to_uint64(), content="4294967295")
 /// }
 /// ```
-pub fn UInt32::to_uint64(self : UInt32) -> UInt64 {
-  UInt64::extend_uint(self)
-}
+pub fn UInt32::to_uint64(self : UInt32) -> UInt64 = "%u32.to_u64"
 
 ///|
 /// Converts an unsigned 32-bit integer to a byte by taking its least significant

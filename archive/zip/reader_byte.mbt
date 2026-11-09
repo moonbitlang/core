@@ -109,7 +109,7 @@ fn Cursor::read_u32_raw(self : Cursor) -> UInt32 raise ZipError {
 fn Cursor::read_u64_raw(self : Cursor) -> UInt64 raise ZipError {
   let lo = self.read_u32_raw()
   let hi = self.read_u32_raw()
-  (UInt64::extend_uint(hi) << 32) | UInt64::extend_uint(lo)
+  (hi.to_uint64() << 32) | lo.to_uint64()
 }
 
 ///|
@@ -159,7 +159,7 @@ fn read_u64_le_at(bytes : BytesView, offset : Int32) -> UInt64 raise ZipError {
   let mut result : UInt64 = 0
   for i in 0..<8 {
     let b = bytes[offset + i].to_uint()
-    result = result | (UInt64::extend_uint(b) << (i * 8))
+    result = result | (b.to_uint64() << (i * 8))
   }
   result
 }

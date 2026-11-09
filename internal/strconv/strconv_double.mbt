@@ -136,7 +136,7 @@ fn Number::try_fast_path(self : Number) -> Double? {
   guard self.is_fast_path() else { return None }
   let value = if self.exponent <= max_exponent_fast_path {
     // normal fast path
-    let value = Double::convert_uint64(self.mantissa)
+    let value = self.mantissa.to_double()
     if self.exponent < 0L {
       value / pow10_fast_path(-self.exponent.to_int())
     } else {
@@ -152,8 +152,7 @@ fn Number::try_fast_path(self : Number) -> Double? {
     if mantissa > max_mantissa_fast_path {
       return None
     }
-    Double::convert_uint64(mantissa) *
-    pow10_fast_path(max_exponent_fast_path.to_int())
+    mantissa.to_double() * pow10_fast_path(max_exponent_fast_path.to_int())
   }
   Some(if self.negative { -value } else { value })
 }

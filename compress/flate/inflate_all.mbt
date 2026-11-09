@@ -629,7 +629,7 @@ fn MemDecoder::decode_batch(
   let storage = out.storage
   let output_end = out.start + out.capacity.min(self.next_cancel - 1)
   guard output_end - out.start - out.length >= 258 else { return false }
-  let mut bits = UInt64::extend_uint(self.bitbuf)
+  let mut bits = self.bitbuf.to_uint64()
   let mut count = self.bit_count
   let mut pos = self.pos
   let mut written = out.start + out.length

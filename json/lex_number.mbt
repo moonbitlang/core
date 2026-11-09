@@ -171,7 +171,7 @@ fn ParseContext::scan_json_number(
             significant_digits += 1
             if significant_digits <= 19 {
               mantissa = mantissa * 10UL +
-                UInt64::extend_uint(digit.reinterpret_as_uint())
+                digit.reinterpret_as_uint().to_uint64()
             }
           }
         }

@@ -31,8 +31,8 @@ pub const MIN_VALUE = -9223372036854775808L
 pub let min_value = -9223372036854775808L
 
 ///|
-/// same as `Int64::from_int`
-#deprecated("Use Int64::from_int instead")
+/// same as `Int::to_int64`
+#deprecated("Use `x.to_int64()` (`Int::to_int64`) instead")
 #doc(hidden)
 pub fn from_int(i : Int32) -> Int64 {
   i.to_int64()
