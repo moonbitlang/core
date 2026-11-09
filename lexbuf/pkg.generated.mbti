@@ -26,6 +26,7 @@ pub(all) struct BytesScanner {
   mut cursor : Int32
 }
 pub fn BytesScanner::BytesScanner(BytesView, cursor? : Int32) -> Self
+pub impl BytesScannable for BytesScanner
 
 pub struct Lexbuf {
   // private fields
@@ -39,6 +40,7 @@ pub(all) struct StringScanner {
   mut cursor : Int32
 }
 pub fn StringScanner::StringScanner(StringView, cursor? : Int32) -> Self
+pub impl Scannable for StringScanner
 
 // Type aliases
 

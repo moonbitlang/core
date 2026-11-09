@@ -151,3 +151,44 @@ test "panic __check_bytes_scan_cursor rejects a negative cursor" {
 test "panic __check_bytes_scan_cursor rejects a cursor past the end" {
   @lexbuf.__check_bytes_scan_cursor(b"abc"[:1], 2) |> ignore
 }
+
+///|
+test "StringScanner is Scannable" {
+  let scanner = @lexbuf.StringScanner("xxab\u{1F600}c"[2:])
+  inspect(skip_text(scanner, 2), content="0")
+  inspect(scanner.cursor, content="2")
+  inspect(skip_text(scanner, 2), content="2")
+  inspect(scanner.cursor, content="4")
+  // lexscan on it still works and continues from the cursor set above.
+  let rest = lexscan scanner {
+    re"^c" => "c"
+    _ => "-"
+  }
+  inspect(rest, content="c")
+  inspect(scanner.cursor, content="5")
+}
+
+///|
+test "BytesScanner is BytesScannable" {
+  let scanner = @lexbuf.BytesScanner(b"xxabc"[2:])
+  inspect(skip_bytes(scanner, 2), content="0")
+  inspect(scanner.cursor, content="2")
+}
+
+///|
+test "panic StringScanner set_scan_cursor rejects a cursor past the end" {
+  let scanner = @lexbuf.StringScanner("abc"[:1])
+  @lexbuf.Scannable::set_scan_cursor(scanner, 2)
+}
+
+///|
+test "panic StringScanner set_scan_cursor rejects a cursor inside a pair" {
+  let scanner = @lexbuf.StringScanner("a\u{1F600}")
+  @lexbuf.Scannable::set_scan_cursor(scanner, 2)
+}
+
+///|
+test "panic BytesScanner set_scan_cursor rejects a negative cursor" {
+  let scanner = @lexbuf.BytesScanner(b"ab")
+  @lexbuf.BytesScannable::set_scan_cursor(scanner, -1)
+}
