@@ -392,3 +392,29 @@ test "Float::from_int64 and from_uint64 round once" {
     content="1602224128",
   )
 }
+
+///|
+test "Float to_int64, to_uint, to_uint64 saturate like the Double versions" {
+  let values : Array[Float] = [
+    0.0, -0.0, 1.5, -1.5, 16777216.0, 2147483648.0, 4294967296.0, 9223372036854775808.0,
+    18446744073709551616.0, -9223372036854775808.0, @float.max_value, @float.min_value,
+    @float.infinity, @float.neg_infinity, @float.not_a_number,
+  ]
+  for x in values {
+    let d = x.to_double()
+    assert_eq(x.to_int64(), d.to_int64())
+    assert_eq(x.to_uint(), d.to_uint())
+    assert_eq(x.to_uint64(), d.to_uint64())
+  }
+  inspect(
+    Float(9223372036854775808.0).to_int64(),
+    content="9223372036854775807",
+  )
+  inspect(
+    Float(-9223372036854775808.0).to_int64(),
+    content="-9223372036854775808",
+  )
+  inspect(Float(4294967296.0).to_uint(), content="4294967295")
+  inspect(Float(4294967040.0).to_uint(), content="4294967040")
+  inspect(Float(-0.5).to_uint64(), content="0")
+}
