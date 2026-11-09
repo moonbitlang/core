@@ -28,7 +28,6 @@ pub async fn file_size(StringView) -> Int64
 
 pub async fn kind(StringView, follow_symlink? : Bool) -> FileKind
 
-#label_migration(allow_existing, alias=allow_exist, msg="Use allow_existing= instead")
 pub async fn mkdir(StringView, permission? : Int32, recursive? : Bool, allow_existing? : Bool) -> Unit
 
 pub async fn mtime(StringView, follow_symlink? : Bool) -> Timestamp

@@ -27,7 +27,6 @@
 /// If `allow_existing=true` (`false` by default), it is not an error
 /// if `path` is already a directory (like `mkdir -p`).
 /// An existing non-directory at `path` is still an error.
-#label_migration(allow_existing, alias=allow_exist, msg="Use allow_existing= instead")
 pub async fn mkdir(
   path : StringView,
   permission~ : Int32 = 0o755,
