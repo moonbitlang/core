@@ -78,7 +78,7 @@ fn assemble(neg : Bool, significand : UInt64, unbiased : Int32) -> Double {
 /// implementation's choice to report overflow as an error rather than as an
 /// infinity. Underflow is a signed zero, not an error.
 fn oracle_double(neg : Bool, digits : String, exponent : Int32) -> Double? {
-  let mantissa = @bigint.BigInt::from_string(digits)
+  let mantissa = try! @string.parse_bigint(digits)
   if mantissa.is_zero() {
     return Some(assemble(neg, 0UL, 0))
   }

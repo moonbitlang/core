@@ -381,7 +381,7 @@ test "radix roundtrip for every base 2..36" {
       let m = mag_of_limbs(seed_u64(base * 100 + t) + 0xD00DUL, limbs)
       for a in ([m, -m] : Array[_]) {
         let s = a.to_string(radix=base)
-        assert_eq(@bigint.BigInt::from_string(s, radix=base), a)
+        assert_eq(@bigint.parse_bigint(s, base~), a)
       }
     }
   }
@@ -401,12 +401,12 @@ test "huge decimal roundtrip anchored to a hex literal" {
     sb.write_char(digits.get_char(d).unwrap())
   }
   let hex = sb.to_string()
-  let a = @bigint.BigInt::from_string(hex, radix=16)
+  let a = @bigint.parse_bigint(hex, base=16)
   assert_eq(a.to_string(radix=16), hex)
-  assert_eq(@bigint.BigInt::from_string(a.to_string()), a)
+  assert_eq(@bigint.parse_bigint(a.to_string()), a)
   let big = mag_of_limbs(0xC0FFEEUL, 500)
-  assert_eq(@bigint.BigInt::from_string(big.to_string()), big)
-  assert_eq(@bigint.BigInt::from_string((-big).to_string()), -big)
+  assert_eq(@bigint.parse_bigint(big.to_string()), big)
+  assert_eq(@bigint.parse_bigint((-big).to_string()), -big)
 }
 
 ///|
@@ -482,7 +482,7 @@ test "fixed-width conversion boundaries and truncation" {
   for x in int64s {
     let b = @bigint.BigInt::from_int64(x)
     assert_eq(b.to_int64(), x)
-    assert_eq(@bigint.BigInt::from_string(x.to_string()), b)
+    assert_eq(@bigint.parse_bigint(x.to_string()), b)
   }
   let uint64s : Array[UInt64] = [
     0UL, 1UL, 4294967295UL, 4294967296UL, 9223372036854775807UL, 9223372036854775808UL,

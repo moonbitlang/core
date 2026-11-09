@@ -18,7 +18,7 @@
 // 1. An Int64 oracle: for 64-bit values, every operation must agree with
 //    the machine integer result.
 // 2. Construction-path invariance: `from_hex` allocates limbs exactly
-//    while the decimal `from_string` path allocates slack, so a value has
+//    while the decimal `parse_bigint` path allocates slack, so a value has
 //    two internal representations. Every operation must return the same
 //    result through both — the generalization of the defect fixed in
 //    "make bitwise ops depend on value, not construction history".
@@ -39,7 +39,7 @@ fn hex_of(seeds : ArrayView[Int32]) -> String {
 ///|
 /// A value built through the exactly-allocating hex path.
 fn via_hex(seeds : ArrayView[Int32], negative : Bool) -> @bigint.BigInt {
-  let magnitude = @bigint.BigInt::from_string(hex_of(seeds), radix=16)
+  let magnitude = try! @bigint.parse_bigint(hex_of(seeds), base=16)
   if negative {
     -magnitude
   } else {
@@ -50,7 +50,7 @@ fn via_hex(seeds : ArrayView[Int32], negative : Bool) -> @bigint.BigInt {
 ///|
 /// The same value rebuilt through the decimal string path.
 fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt {
-  @bigint.BigInt::from_string(v.to_string())
+  try! @bigint.parse_bigint(v.to_string())
 }
 
 ///|
@@ -83,8 +83,8 @@ test "negation identities for every single-bit value" {
     for _i in 0..<(s / 4) {
       sb.write_char('0')
     }
-    let p = @bigint.BigInt::from_string(sb.to_string(), radix=16)
-    let q = @bigint.BigInt::from_string(p.to_string())
+    let p = @bigint.parse_bigint(sb.to_string(), base=16)
+    let q = @bigint.parse_bigint(p.to_string())
     assert_true(p == q)
     for v in ([p, q] : Array[_]) {
       assert_true((v & -v) == p)
@@ -263,10 +263,10 @@ test "quickcheck: algebraic and two's-complement laws" {
       guard (a >> n << n) + (a & mask) == a else { return false }
     }
     // round trips
-    guard @bigint.BigInt::from_string(a.to_string(radix=16), radix=16) == a else {
+    guard (try! @bigint.parse_bigint(a.to_string(radix=16), base=16)) == a else {
       return false
     }
-    guard @bigint.BigInt::from_string(a.to_string()) == a else { return false }
+    guard (try! @bigint.parse_bigint(a.to_string())) == a else { return false }
     guard @json.from_json(Json(a)) == a else { return false }
     true
   })

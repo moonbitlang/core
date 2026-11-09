@@ -33,10 +33,12 @@ test "parse_bigint StringView" {
 
 ///|
 test "parse_bigint empty" {
-  assert_true(
-    @test.expect_error(() => @bigint.parse_bigint(""))
-    is Failure::Failure("invalid syntax"),
-  )
+  for base in [10, 16] {
+    assert_true(
+      @test.expect_error(() => @bigint.parse_bigint("", base~))
+      is Failure::Failure("invalid syntax"),
+    )
+  }
 }
 
 ///|
@@ -49,10 +51,13 @@ test "parse_bigint sign only" {
 
 ///|
 test "parse_bigint invalid character" {
-  assert_true(
-    @test.expect_error(() => @bigint.parse_bigint("12a"))
-    is Failure::Failure("invalid syntax"),
-  )
+  for case in [("12a", 10), ("123a56789", 10), ("123g56789", 16)] {
+    let (input, base) = case
+    assert_true(
+      @test.expect_error(() => @bigint.parse_bigint(input, base~))
+      is Failure::Failure("invalid syntax"),
+    )
+  }
 }
 
 ///|
