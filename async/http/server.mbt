@@ -34,6 +34,7 @@ pub struct ServerConnection {
 /// and must not be specified in `headers`:
 /// 
 /// - Content-Length, Transfer-Encoding, Host
+#alias(new, deprecated="Use `ServerConnection(conn, headers=...)` instead")
 pub fn ServerConnection::ServerConnection(
   conn : @socket.Tcp,
   headers~ : Headers = Map([]),

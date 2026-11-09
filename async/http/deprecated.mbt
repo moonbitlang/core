@@ -152,13 +152,3 @@ pub extend InvalidMethod with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend InvalidMethod with @json.ToJson::{to_json}
-
-///|
-/// Create a new HTTP server connection from a TCP connection.
-#deprecated("Use `ServerConnection(conn, headers=...)` instead")
-pub fn ServerConnection::new(
-  conn : @socket.Tcp,
-  headers~ : Headers = Map([]),
-) -> ServerConnection {
-  ServerConnection(conn, headers~)
-}
