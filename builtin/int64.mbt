@@ -279,7 +279,8 @@ pub impl Mul for Int64 with fn mul(self, other) = "%i64_mul"
 ///
 /// Returns the quotient of the division.
 ///
-/// Throws a panic if `other` is zero.
+/// A zero divisor is a program error with no portable result, and so is
+/// `@int64.MIN_VALUE / -1`: see `Div` for `Int32`.
 ///
 /// Example:
 ///
@@ -307,7 +308,8 @@ pub impl Div for Int64 with fn div(self, other) = "%i64_div"
 ///
 /// Returns the remainder of the division.
 ///
-/// Throws a panic if `other` is zero.
+/// A zero divisor is a program error with no portable result, and so is
+/// `@int64.MIN_VALUE % -1`: see `Div` for `Int32`.
 ///
 /// Example:
 ///
@@ -1386,7 +1388,8 @@ pub impl Mul for UInt64 with fn mul(self, other) = "%u64.mul"
 ///
 /// Returns the quotient of dividing the dividend by the divisor.
 ///
-/// Throws a runtime error if `other` is zero.
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
 ///
 /// Example:
 ///
@@ -1409,7 +1412,8 @@ pub impl Div for UInt64 with fn div(self, other) = "%u64.div"
 ///
 /// Returns the remainder of the division operation.
 ///
-/// Throws a panic if the divisor is zero.
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
 ///
 /// Example:
 ///

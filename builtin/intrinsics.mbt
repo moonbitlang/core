@@ -311,7 +311,10 @@ pub impl Mul for Int32 with fn mul(self, other) = "%i32_mul"
 ///
 /// Returns the quotient of the division operation.
 ///
-/// Throws a panic if `divisor` is zero.
+/// Dividing by zero, or dividing `@int.MIN_VALUE` by `-1`, is a program error
+/// with no portable result: depending on the backend and build mode it may
+/// abort the program or return an arbitrary value. Check the divisor first if it
+/// can be either of these. See the `@int` package README.
 ///
 /// Example:
 ///
@@ -334,8 +337,10 @@ pub impl Div for Int32 with fn div(self, other) = "%i32_div"
 /// * `self` : The dividend (the number being divided).
 /// * `other` : The divisor (the number to divide by).
 ///
-/// Returns the remainder of the division. If `other` is 0, the behavior is
-/// undefined.
+/// Returns the remainder of the division.
+///
+/// A zero divisor is a program error with no portable result, and so is
+/// `@int.MIN_VALUE % -1`: see `Div` for `Int32`.
 ///
 /// Example:
 ///
@@ -2090,6 +2095,9 @@ pub impl Mul for UInt32 with fn mul(self, other) = "%u32.mul"
 ///
 /// Returns an unsigned 32-bit integer representing the quotient of the division.
 ///
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -2111,7 +2119,8 @@ pub impl Div for UInt32 with fn div(self, other) = "%u32.div"
 ///
 /// Returns the remainder of the division operation.
 ///
-/// Throws a panic if `other` is zero.
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
 ///
 /// Example:
 ///
