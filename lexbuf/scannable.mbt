@@ -23,10 +23,13 @@
 ///
 /// Offsets are UTF-16 code units. The cursor is relative to the input.
 ///
-/// Each `lexscan` over such a value reads `scan_input` and `scan_cursor` once,
-/// when it starts, and calls `set_scan_cursor` once, with the end of the
-/// selected match, when a case is selected. The input must not change while
-/// `lexscan` runs. `lexscan` aborts if the cursor it reads is outside
+/// Each `lexscan` over such a value calls each method exactly once:
+/// `scan_input` and `scan_cursor` when it starts, and `set_scan_cursor` before
+/// the body of the selected case runs. It passes the end of the match, which
+/// equals the starting cursor for an empty match, or the starting cursor
+/// itself when `_` is selected. A body that scans the same value again
+/// therefore sees the new cursor. The input must not change while `lexscan`
+/// runs. `lexscan` aborts if the cursor it reads is outside
 /// `0..=input.length()` or inside a surrogate pair, so a wrong implementation
 /// cannot make it read outside the input or split a character.
 ///
@@ -61,7 +64,8 @@ pub(open) trait Scannable {
   /// The offset of the next code unit to scan, relative to `scan_input`.
   fn scan_cursor(Self) -> Int32
   /// Moves the cursor to `cursor`, relative to `scan_input`. `lexscan` only
-  /// passes the end of a match, which is in range and at a character boundary.
+  /// passes the end of a match or the starting cursor, which are in range and
+  /// at a character boundary.
   fn set_scan_cursor(Self, Int32) -> Unit
 }
 
@@ -71,19 +75,20 @@ pub(open) trait Scannable {
 ///
 /// Offsets are bytes. The cursor is relative to the input.
 ///
-/// Each `lexscan` over such a value reads `scan_input` and `scan_cursor` once,
-/// when it starts, and calls `set_scan_cursor` once, with the end of the
-/// selected match, when a case is selected. The input must not change while
-/// `lexscan` runs. `lexscan` aborts if the cursor it reads is outside
-/// `0..=input.length()`, so a wrong implementation cannot make it read outside
-/// the input.
+/// Each `lexscan` over such a value calls each method exactly once, as for
+/// `Scannable`: `scan_input` and `scan_cursor` when it starts, and
+/// `set_scan_cursor` before the body of the selected case runs, with the end
+/// of the match or, when `_` is selected, the starting cursor. The input must
+/// not change while `lexscan` runs. `lexscan` aborts if the cursor it reads is
+/// outside `0..=input.length()`, so a wrong implementation cannot make it read
+/// outside the input.
 pub(open) trait BytesScannable {
   /// The input to scan. Its indexes are byte offsets.
   fn scan_input(Self) -> BytesView
   /// The offset of the next byte to scan, relative to `scan_input`.
   fn scan_cursor(Self) -> Int32
   /// Moves the cursor to `cursor`, relative to `scan_input`. `lexscan` only
-  /// passes the end of a match, which is in range.
+  /// passes the end of a match or the starting cursor, which are in range.
   fn set_scan_cursor(Self, Int32) -> Unit
 }
 

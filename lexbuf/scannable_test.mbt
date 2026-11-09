@@ -102,6 +102,8 @@ test "__check_scan_cursor accepts character boundaries" {
   inspect(@lexbuf.__check_scan_cursor(input, 3), content="3")
   inspect(@lexbuf.__check_scan_cursor(input, 4), content="4")
   inspect(@lexbuf.__check_scan_cursor("", 0), content="0")
+  // An empty slice whose backing string starts later.
+  inspect(@lexbuf.__check_scan_cursor("abc"[2:2], 0), content="0")
 }
 
 ///|
@@ -109,6 +111,8 @@ test "__check_bytes_scan_cursor accepts every offset in range" {
   let input = b"xabc"[1:]
   inspect(@lexbuf.__check_bytes_scan_cursor(input, 0), content="0")
   inspect(@lexbuf.__check_bytes_scan_cursor(input, 3), content="3")
+  inspect(@lexbuf.__check_bytes_scan_cursor(b"", 0), content="0")
+  inspect(@lexbuf.__check_bytes_scan_cursor(b"abc"[2:2], 0), content="0")
 }
 
 ///|
@@ -125,6 +129,17 @@ test "panic __check_scan_cursor rejects a cursor past the end" {
 ///|
 test "panic __check_scan_cursor rejects a cursor inside a surrogate pair" {
   @lexbuf.__check_scan_cursor("a\u{1F600}", 2) |> ignore
+}
+
+///|
+test "panic __check_scan_cursor rejects a cursor inside a pair of a slice" {
+  // "a😀": a at 0, the pair at 1 and 2.
+  @lexbuf.__check_scan_cursor("xa\u{1F600}"[1:], 2) |> ignore
+}
+
+///|
+test "panic __check_scan_cursor rejects a cursor past an empty slice" {
+  @lexbuf.__check_scan_cursor("abc"[2:2], 1) |> ignore
 }
 
 ///|
