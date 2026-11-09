@@ -12,14 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// --- promoted: explicit trait-method promotions (may inherit deprecations from the underlying impl) ---
-
-///|
-pub extend Buffer with Show::{to_string}
-
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#deprecated("`Show` reads a `Buffer` as UTF-16LE. Decode its bytes with `@utf8.decode` or `@utf16.decode`, or inspect it with `@debug.Debug`", skip_current_package=true)
 #doc(hidden)
-pub extend Buffer with Show::{output}
+pub extend Buffer with Show::{to_string, output}

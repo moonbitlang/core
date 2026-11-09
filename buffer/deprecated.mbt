@@ -11,3 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+#deprecated("`Show` reads a `Buffer` as UTF-16LE. Decode its bytes with `@utf8.decode` or `@utf16.decode`, or inspect it with `@debug.Debug`")
+pub impl Show for Buffer
