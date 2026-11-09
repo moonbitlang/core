@@ -272,7 +272,6 @@ pub extend File with @io.BinaryReader::{
 /// Up to `max_len` bytes of data will be read into `buf[offset:]`.
 /// The number of bytes actually read would be returned.
 /// The number of read bytes will be smaller than `max_len` only when EOF is reached.
-#label_migration(max_len, alias=len, msg="Use max_len= instead")
 pub async fn File::read_at(
   self : File,
   buf : FixedArray[Byte],
