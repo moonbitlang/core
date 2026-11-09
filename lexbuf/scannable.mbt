@@ -93,6 +93,82 @@ pub(open) trait BytesScannable {
 }
 
 ///|
+/// `StringScanner` is `Scannable`, so generic code over `Scannable` accepts
+/// it. `lexscan` on a `StringScanner` does not go through these methods.
+pub impl Scannable for StringScanner with fn scan_input(self) {
+  self.data
+}
+
+///|
+pub impl Scannable for StringScanner with fn scan_cursor(self) {
+  self.cursor
+}
+
+///|
+/// Moves the cursor to `cursor`, relative to `data`.
+///
+/// # Panics
+///
+/// - If `cursor` is outside `0..=data.length()`.
+/// - If `cursor` is inside a surrogate pair of `data`.
+pub impl Scannable for StringScanner with fn set_scan_cursor(self, cursor) {
+  guard cursor >= 0 && cursor <= self.data.length() else {
+    abort("StringScanner: cursor is out of range")
+  }
+  guard cursor == self.data.length() ||
+    !self.data.unsafe_get(cursor).is_trailing_surrogate() else {
+    abort("StringScanner: cursor is inside a surrogate pair")
+  }
+  self.cursor = cursor
+}
+
+///|
+/// `BytesScanner` is `BytesScannable`, so generic code over `BytesScannable`
+/// accepts it. `lexscan` on a `BytesScanner` does not go through these
+/// methods.
+pub impl BytesScannable for BytesScanner with fn scan_input(self) {
+  self.data
+}
+
+///|
+pub impl BytesScannable for BytesScanner with fn scan_cursor(self) {
+  self.cursor
+}
+
+///|
+/// Moves the cursor to `cursor`, relative to `data`.
+///
+/// # Panics
+///
+/// - If `cursor` is outside `0..=data.length()`.
+pub impl BytesScannable for BytesScanner with fn set_scan_cursor(self, cursor) {
+  guard cursor >= 0 && cursor <= self.data.length() else {
+    abort("BytesScanner: cursor is out of range")
+  }
+  self.cursor = cursor
+}
+
+///|
+/// The trait methods are not methods of the scanners: call them through the
+/// trait.
+#deprecated("Call through `@lexbuf.Scannable`", skip_current_package=true)
+#doc(hidden)
+pub extend StringScanner with Scannable::{
+  scan_input,
+  scan_cursor,
+  set_scan_cursor,
+}
+
+///|
+#deprecated("Call through `@lexbuf.BytesScannable`", skip_current_package=true)
+#doc(hidden)
+pub extend BytesScanner with BytesScannable::{
+  scan_input,
+  scan_cursor,
+  set_scan_cursor,
+}
+
+///|
 /// Compiler protocol: returns `cursor` after checking that it is a valid
 /// starting point in `input`. Generated `lexscan` code calls it on the cursor
 /// of a `Scannable` value before reading the input.
