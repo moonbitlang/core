@@ -2578,6 +2578,22 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
 /// Aborts if `rand(n)` returns a value outside `0..<n`.
+///
+/// # Example
+/// Import `moonbitlang/core/random` as `@random`. Passing `limit=n` makes
+/// `rng.int` return an integer in `0..<n`.
+///
+/// ```mbt check
+/// test {
+///   let rng = @random.Rand()
+///   let dq = @deque.Deque([1, 2, 3, 4, 5])
+///   dq.shuffle_in_place(rand=n => rng.int(limit=n))
+///   // The order is random, but all the original elements are preserved.
+///   let elements = dq.to_array()
+///   elements.sort()
+///   debug_inspect(elements, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 #locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
@@ -2611,6 +2627,23 @@ pub fn[A] Deque::shuffle_in_place(
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1.
 /// Aborts if it returns a value outside that range.
+///
+/// # Example
+/// Import `moonbitlang/core/random` as `@random`. Passing `limit=n` makes
+/// `rng.int` return an integer in `0..<n`.
+///
+/// ```mbt check
+/// test {
+///   let rng = @random.Rand()
+///   let dq = @deque.Deque([1, 2, 3, 4, 5])
+///   let shuffled = dq.shuffle(rand=n => rng.int(limit=n))
+///   // The original deque is unchanged.
+///   debug_inspect(dq, content="<Deque: [1, 2, 3, 4, 5]>")
+///   let elements = shuffled.to_array()
+///   elements.sort()
+///   debug_inspect(elements, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int32) -> Int32) -> Deque[A] {
   // Create a copy of the original deque
   let new_deque = self.copy()
