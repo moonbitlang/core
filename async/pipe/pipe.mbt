@@ -134,4 +134,9 @@ impl @io.BinaryWriterImpl for PipeWrite with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for PipeWrite with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend PipeWrite with @io.BinaryWriter::{write, write_reader}

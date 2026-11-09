@@ -67,7 +67,7 @@ fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
 /// Encoding type for a X509 certificate file
 pub(all) enum X509FileType {
   PEM = 1
-  ANS1 = 2
+  DER = 2
 }
 
 ///|
@@ -114,4 +114,4 @@ pub extend Tls with @io.BinaryReader::{
 pub impl @io.BinaryWriter for Tls
 
 ///|
-pub extend Tls with @io.BinaryWriter::{write, write_reader}
+pub extend Tls with @io.BinaryWriter::{write, write_reader, flush_partial_data}

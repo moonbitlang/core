@@ -216,6 +216,7 @@ pub fn Int32::sub(Int32, Int32) -> Int32
 pub fn Int32::to_byte(Int32) -> Byte
 pub fn Int32::to_char(Int32) -> Char?
 pub fn Int32::to_double(Int32) -> Double
+pub fn Int32::to_int(Int32) -> Int32
 pub fn Int32::to_int64(Int32) -> Int64
 pub fn Int32::to_string(Int32, radix? : Int32) -> String
 #deprecated
@@ -873,6 +874,7 @@ pub fn Bytes::length(Bytes) -> Int32
 pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int32
 pub fn Bytes::make(Int32, Byte) -> Bytes
 pub fn Bytes::makei(Int32, (Int32) -> Byte raise?) -> Bytes raise?
+#deprecated
 pub fn Bytes::new(Int32) -> Bytes
 #deprecated
 pub fn Bytes::of_string(String) -> Bytes
@@ -1206,6 +1208,7 @@ type Map[K, V]
 pub fn[K : Hash + Eq, V] Map::Map(ArrayView[(K, V)], capacity? : Int32) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(Self[K, V], K) -> V
+#deprecated
 pub fn[K, V] Map::capacity(Self[K, V]) -> Int32
 pub fn[K, V] Map::clear(Self[K, V]) -> Unit
 pub fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub using @env_util {platform}
+pub using @env_util {platform, type Platform}
 
 ///|
 struct EventLoop {

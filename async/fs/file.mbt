@@ -340,6 +340,11 @@ impl @io.BinaryWriterImpl for File with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for File with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend File with @io.BinaryWriter::{write, write_reader}
 
 ///|
@@ -371,7 +376,7 @@ pub async fn File::write_at(
 /// Flush all in-memory data of an opened file to disk.
 /// If `only_data` is `true` (`false` by default),
 /// some metadata such as timestamp may not be flushed.
-/// Buf file content and important metadata such as file size are always flushed.
+/// But file content and important metadata such as file size are always flushed.
 pub async fn File::sync(self : File, only_data~ : Bool = false) -> Unit {
   self.io.fsync(only_data~, context="@fs.File::sync()")
 }
@@ -402,11 +407,13 @@ pub async fn File::lock(self : File, lock : Lock) -> Unit {
 
 ///|
 #cfg(target="native")
+#borrow(fd)
 extern "C" fn try_lock_ffi(fd : @fd_util.Fd, exclusive~ : Bool) -> Int32 = "moonbit_rt_try_lock_file"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn try_lock_ffi(fd : @fd_util.Fd, exclusive~ : Bool) -> Int32 = "moonbitlang/async" "fs/try_lock_file"
 
 ///|
@@ -437,11 +444,13 @@ pub fn File::try_lock(self : File, lock : Lock) -> Bool raise {
 
 ///|
 #cfg(target="native")
+#borrow(fd)
 extern "C" fn unlock_ffi(fd : @fd_util.Fd) -> Int32 = "moonbit_rt_unlock_file"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn unlock_ffi(fd : @fd_util.Fd) -> Int32 = "moonbitlang/async" "fs/unlock_file"
 
 ///|
@@ -586,15 +595,19 @@ pub async fn read_text(
 ///|
 /// Write binary data to a file located at `path`.
 /// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_binary(
   path : StringView,
   content : BytesView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,
@@ -611,15 +624,19 @@ pub async fn write_binary(
 ///|
 /// Write UTF-8 encoded text data to a file located at `path`.
 /// The meaning of `sync`, `append`, `create_mode` and `permission`,
-/// is the same as `open`, except that `create_mode` is `TruncateExisting` by default.
-/// See `open` for more details.
+/// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,
+/// or `CreateOrTruncate` if `append=false` (the default).
 pub async fn write_text(
   path : StringView,
   content : StringView,
-  create_mode~ : CreateMode = CreateOrTruncate,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
   sync~ : SyncMode = Data,
-  append~ : Bool = false,
 ) -> Unit {
   let file = open(
     path,

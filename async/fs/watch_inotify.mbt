@@ -136,6 +136,7 @@ impl WatcherBackend for InotifyWatcher with fn add_file(
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
+#borrow(watcher, wd)
 extern "C" fn InotifyWatcher::remove_file_ffi(
   watcher : @fd_util.Fd,
   wd : @fd_util.Fd,
@@ -144,6 +145,7 @@ extern "C" fn InotifyWatcher::remove_file_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(watcher, wd)
 fn InotifyWatcher::remove_file_ffi(
   watcher : @fd_util.Fd,
   wd : @fd_util.Fd,
@@ -188,7 +190,7 @@ fn InotifyEventBuffer::size() -> Int32 = "moonbitlang/async" "fs/inotify/event_b
 /// - zero => no more event available currently
 /// - negative => error
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf)
+#borrow(watcher, buf)
 extern "C" fn InotifyWatcher::fetch_os_event(
   watcher : @fd_util.Fd,
   buf : InotifyEventBuffer,
@@ -198,7 +200,7 @@ extern "C" fn InotifyWatcher::fetch_os_event(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(watcher, buf)
 fn InotifyWatcher::fetch_os_event(
   watcher : @fd_util.Fd,
   buf : InotifyEventBuffer,

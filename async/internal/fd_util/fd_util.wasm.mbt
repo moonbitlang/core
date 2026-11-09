@@ -18,6 +18,7 @@ pub type Fd = @types.Fd
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn set_cloexec_ffi(fd : Fd) -> Int32 = "moonbitlang/async" "fd_util/set_cloexec"
 
 ///|
@@ -30,6 +31,7 @@ pub fn set_cloexec(fd : Fd, context~ : String) -> Unit raise {
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn close_ffi(fd : Fd) -> Int32 = "moonbitlang/async" "fd_util/close_fd"
 
 ///|

@@ -50,7 +50,10 @@ pub fn[W] BufferedWriter::capacity(self : BufferedWriter[W]) -> Int32 {
 }
 
 ///|
-/// Flush all buffered data and commit them to the underlying writer.
+/// Flush all remaining buffered data and commit them to the underlying writer.
+/// The underlying writer itself will not be flushed if it is also buffered.
+/// This operation should be used to ensure data integrity.
+/// If the purpose is timely delivery of partial data, use `flush_partial_data()` instead.
 pub async fn[W : BinaryWriter] BufferedWriter::flush(
   self : BufferedWriter[W],
 ) -> Unit {
@@ -87,4 +90,16 @@ impl[W : BinaryWriter] BinaryWriterImpl for BufferedWriter[W] with fn get_contro
 }
 
 ///|
-pub extend BufferedWriter with BinaryWriter::{write, write_reader}
+impl[W : BinaryWriter] BinaryWriterImpl for BufferedWriter[W] with fn flush_partial_data(
+  self,
+) {
+  self.flush()
+  BinaryWriter::flush_partial_data(self.writer)
+}
+
+///|
+pub extend BufferedWriter with BinaryWriter::{
+  write,
+  write_reader,
+  flush_partial_data,
+}

@@ -113,3 +113,44 @@ async test "request to an IPv6 address" {
     inspect(body, content="Host: [::1]:\{port}")
   }
 }
+
+///|
+test "RequestMethod promotes equal, compare and hash" {
+  let eq : (@http.RequestMethod, @http.RequestMethod) -> Bool = @http.RequestMethod::equal
+  let cmp : (@http.RequestMethod, @http.RequestMethod) -> Int32 = @http.RequestMethod::compare
+  let hash : (@http.RequestMethod) -> Int32 = @http.RequestMethod::hash
+  inspect(eq(Get, Get), content="true")
+  inspect(@http.RequestMethod::Get.equal(Post), content="false")
+  inspect(cmp(Get, Get), content="0")
+  inspect(@http.RequestMethod::Get.compare(Post) < 0, content="true")
+  inspect(
+    hash(Extension("X")) == @http.RequestMethod::Extension("X").hash(),
+    content="true",
+  )
+}
+
+///|
+test "Protocol promotes equal, compare and hash" {
+  let eq : (@http.Protocol, @http.Protocol) -> Bool = @http.Protocol::equal
+  let cmp : (@http.Protocol, @http.Protocol) -> Int32 = @http.Protocol::compare
+  let hash : (@http.Protocol) -> Int32 = @http.Protocol::hash
+  inspect(eq(Http, Http), content="true")
+  inspect(@http.Protocol::Http.equal(Https), content="false")
+  inspect(cmp(Http, Https) < 0, content="true")
+  inspect(hash(Https) == @http.Protocol::Https.hash(), content="true")
+}
+
+///|
+test "CaseInsensitiveString promotes equal, compare and hash" {
+  let a = @http.CaseInsensitiveString("Content-Type")
+  let b = @http.CaseInsensitiveString("content-type")
+  let c = @http.CaseInsensitiveString("Content-Length")
+  let eq : (@http.CaseInsensitiveString, @http.CaseInsensitiveString) -> Bool = @http.CaseInsensitiveString::equal
+  let cmp : (@http.CaseInsensitiveString, @http.CaseInsensitiveString) -> Int32 = @http.CaseInsensitiveString::compare
+  let hash : (@http.CaseInsensitiveString) -> Int32 = @http.CaseInsensitiveString::hash
+  inspect(eq(a, b), content="true")
+  inspect(a.equal(c), content="false")
+  inspect(cmp(a, b), content="0")
+  inspect(a.compare(c) != 0, content="true")
+  inspect(hash(a) == b.hash(), content="true")
+}

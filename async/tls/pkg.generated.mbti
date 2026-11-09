@@ -28,6 +28,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(R
 pub fn Tls::close(Self) -> Unit
 pub async fn Tls::drop_all(Self) -> Int64
 pub async fn Tls::drop_exactly(Self, Int32) -> Unit
+pub async fn Tls::flush_partial_data(Self) -> Unit
 pub fn Tls::get_peer_certificate(Self) -> Bytes? raise
 pub async fn Tls::peek(Self) -> BytesView?
 pub async fn Tls::peek_at_least(Self, Int32) -> BytesView
@@ -57,7 +58,7 @@ pub(all) enum TrustedRoot {
 
 pub(all) enum X509FileType {
   PEM
-  ANS1
+  DER
 }
 
 // Type aliases

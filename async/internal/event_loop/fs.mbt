@@ -588,6 +588,10 @@ pub async fn realpath(path : StringView, context~ : String) -> String {
 }
 
 ///|
+#cfg(all(target="native", not(platform="windows")))
+fn @fd_util.Fd::from_unix(raw : Int32) -> @fd_util.Fd = "%identity"
+
+///|
 /// Perform `inotify_add_watch` on Linux.
 /// Since this operation need to perform file system IO,
 /// it is dispatched to the thread pool.
@@ -601,12 +605,18 @@ pub async fn inotify_add_watch(
   let path_bytes = @os_string.from_string(path)
   let job = Job::inotify_add_watch(inotify, path_bytes, is_dir)
   defer job.free()
-  perform_job_in_worker(job, context~) catch {
+  try perform_job_in_worker(job, context~) catch {
     @os_error.OsError(_) as err =>
       raise err.wrap_context(context => "\{context}: \{path.escape()}")
     err => raise err
+  } noraise {
+    fd => @fd_util.Fd::from_unix(fd)
   }
 }
+
+///|
+#cfg(target="wasm")
+fn @fd_util.Fd::from_uint64(raw : UInt64) -> @fd_util.Fd = "%identity"
 
 ///|
 /// Perform `inotify_add_watch` on Linux.
@@ -627,11 +637,12 @@ pub async fn inotify_add_watch(
       raise err.wrap_context(context => "\{context}: \{path.escape()}")
     err => raise err
   }
-  wd.to_uint64()
+  @fd_util.Fd::from_uint64(wd.to_uint64())
 }
 
 ///|
 #cfg(platform="windows")
+#borrow(fd)
 extern "C" fn read_dir_changes_ffi(
   fd : @fd_util.Fd,
   result : IoResult,
@@ -640,6 +651,7 @@ extern "C" fn read_dir_changes_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(fd)
 fn IoResultHandle::read_dir_changes_ffi(
   fd : @fd_util.Fd,
   result : IoResultHandle,

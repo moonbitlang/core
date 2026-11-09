@@ -47,7 +47,7 @@ async fn IoHandle::wait_write(handle : IoHandle) -> Unit {
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf)
+#borrow(fd, buf)
 extern "C" fn read_unix_ffi(
   fd : @fd_util.Fd,
   buf : FixedArray[Byte],
@@ -58,7 +58,7 @@ extern "C" fn read_unix_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(fd, buf)
 fn read_unix_ffi(
   fd : @fd_util.Fd,
   buf : FixedArray[Byte],
@@ -108,7 +108,7 @@ async fn IoHandle::read_via_event_bus(
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf)
+#borrow(fd, buf)
 extern "C" fn write_unix_ffi(
   fd : @fd_util.Fd,
   buf : Bytes,
@@ -119,7 +119,7 @@ extern "C" fn write_unix_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(fd, buf)
 fn write_unix_ffi(
   fd : @fd_util.Fd,
   buf : Bytes,

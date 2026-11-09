@@ -333,6 +333,7 @@ async fn Directory::next_aux(
     Linux => dir.offset >= dir.job_ret
     MacOS => dir.count >= dir.job_ret
     Windows => entry_len is 0
+    @env_util.Platform::.. => panic()
   }
   if need_more_entry {
     dir.state = NeedMoreEntry

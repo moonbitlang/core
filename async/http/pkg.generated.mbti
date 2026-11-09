@@ -72,6 +72,9 @@ pub suberror UriParseError {
 // Types and methods
 #derive(@json.ToJson)
 pub(all) struct CaseInsensitiveString(String)
+pub fn CaseInsensitiveString::compare(Self, Self) -> Int32
+pub fn CaseInsensitiveString::equal(Self, Self) -> Bool
+pub fn CaseInsensitiveString::hash(Self) -> Int32
 pub fn CaseInsensitiveString::to_string(Self) -> String
 pub impl Compare for CaseInsensitiveString
 pub impl Eq for CaseInsensitiveString
@@ -101,7 +104,7 @@ pub async fn ClientConnection::drop_all(Self) -> Int64
 pub async fn ClientConnection::drop_exactly(Self, Int32) -> Unit
 pub async fn ClientConnection::end_request(Self, on_informational_response? : async (ResponseHeader) -> Unit) -> ResponseHeader
 pub async fn ClientConnection::enter_passthrough_mode(Self) -> Unit
-pub async fn ClientConnection::flush(Self) -> Unit
+pub async fn ClientConnection::flush_partial_data(Self) -> Unit
 pub async fn ClientConnection::peek(Self) -> BytesView?
 pub async fn ClientConnection::peek_at_least(Self, Int32) -> BytesView
 pub async fn ClientConnection::peek_exactly(Self, Int32) -> BytesView
@@ -140,7 +143,10 @@ pub(all) enum Protocol {
   Http
   Https
 }
+pub fn Protocol::compare(Self, Self) -> Int32
 pub fn Protocol::default_port(Self) -> Int32
+pub fn Protocol::equal(Self, Self) -> Bool
+pub fn Protocol::hash(Self) -> Int32
 
 #derive(@debug.Debug, @json.ToJson)
 pub(all) struct RequestHeader {
@@ -162,6 +168,9 @@ pub(all) enum RequestMethod {
   Patch
   Extension(String)
 }
+pub fn RequestMethod::compare(Self, Self) -> Int32
+pub fn RequestMethod::equal(Self, Self) -> Bool
+pub fn RequestMethod::hash(Self) -> Int32
 pub fn RequestMethod::to_string(Self) -> String
 pub impl Show for RequestMethod
 
@@ -193,7 +202,7 @@ pub async fn ServerConnection::drop_all(Self) -> Int64
 pub async fn ServerConnection::drop_exactly(Self, Int32) -> Unit
 pub async fn ServerConnection::end_response(Self) -> Unit
 pub async fn ServerConnection::enter_passthrough_mode(Self) -> Unit
-pub async fn ServerConnection::flush(Self) -> Unit
+pub async fn ServerConnection::flush_partial_data(Self) -> Unit
 pub fn ServerConnection::new(@socket.Tcp, headers? : Map[CaseInsensitiveString, String]) -> Self
 pub async fn ServerConnection::peek(Self) -> BytesView?
 pub async fn ServerConnection::peek_at_least(Self, Int32) -> BytesView

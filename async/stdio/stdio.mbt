@@ -116,6 +116,11 @@ impl @io.BinaryWriterImpl for Output with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for Output with fn flush_partial_data(self) {
+  ignore(self)
+}
+
+///|
 pub extend Output with @io.BinaryWriter::{write, write_reader}
 
 ///|

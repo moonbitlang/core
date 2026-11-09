@@ -104,15 +104,25 @@ pub fn[K : Compare, V] SortedMap::remove(
   key : K,
 ) -> SortedMap[K, V] {
   match self {
-    Empty => Empty
+    Empty => self
     Tree(k, value=v, l, r, ..) => {
       let c = key.compare(k)
       if c == 0 {
         glue(l, r)
       } else if c < 0 {
-        balance(k, v, l.remove(key), r)
+        let nl = l.remove(key)
+        if physical_equal(nl, l) {
+          self
+        } else {
+          balance(k, v, nl, r)
+        }
       } else {
-        balance(k, v, l, r.remove(key))
+        let nr = r.remove(key)
+        if physical_equal(nr, r) {
+          self
+        } else {
+          balance(k, v, l, nr)
+        }
       }
     }
   }

@@ -19,9 +19,6 @@ warnings = "-test_unqualified_package"
 
 options(
   targets: {
-    "array_nonjs_test.mbt": [ "not", "js" ],
-    "arraycore_js.mbt": [ "js" ],
-    "arraycore_nonjs.mbt": [ "not", "js" ],
     "assert_debug.mbt": [ "debug" ],
     "assert_debug_test.mbt": [ "debug" ],
     "assert_release.mbt": [ "not", "debug" ],

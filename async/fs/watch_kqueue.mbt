@@ -95,6 +95,7 @@ impl WatcherBackend for KqueueWatcher with fn close(self) {
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
+#borrow(kqueue, fd)
 extern "C" fn KqueueWatcher::add_file_ffi(
   kqueue : @fd_util.Fd,
   fd : @fd_util.Fd,
@@ -104,6 +105,7 @@ extern "C" fn KqueueWatcher::add_file_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(kqueue, fd)
 fn KqueueWatcher::add_file_ffi(
   kqueue : @fd_util.Fd,
   fd : @fd_util.Fd,
@@ -154,7 +156,7 @@ impl WatcherBackend for KqueueWatcher with fn remove_file(self, fd, context~) {
 /// - zero => no more event available currently
 /// - negative => error
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf)
+#borrow(watcher, buf)
 extern "C" fn KqueueWatcher::fetch_os_event(
   watcher : @fd_util.Fd,
   buf : KqueueEventBuffer,
@@ -164,7 +166,7 @@ extern "C" fn KqueueWatcher::fetch_os_event(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(buf)
+#borrow(watcher, buf)
 fn KqueueWatcher::fetch_os_event(
   watcher : @fd_util.Fd,
   buf : KqueueEventBuffer,

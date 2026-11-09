@@ -19,6 +19,7 @@
 /// - `SIGHUP`: `SIGHUP` on Unix, `CTRL_CLOSE_EVENT` on Windows
 /// - `SIGBREAK`: unavailable on Unix, `CTRL_BREAK_EVENT` on Windows
 #derive(@debug.Debug)
+#non_exhaustive
 pub(all) enum Signal {
   SIGINT = 0
   SIGTERM = 1

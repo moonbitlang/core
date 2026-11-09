@@ -11,6 +11,7 @@ pub fn set_global_cancellation_signals(ReadOnlyArray[Signal]) -> Unit
 // Errors
 
 // Types and methods
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) enum Signal {
   SIGINT

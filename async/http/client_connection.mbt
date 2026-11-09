@@ -223,6 +223,11 @@ impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for ClientConnection with fn flush_partial_data(self) {
+  @io.BinaryWriter::flush_partial_data(self.sender)
+}
+
+///|
 pub impl @io.BinaryWriter for ClientConnection with fn write_reader(
   self,
   reader,
@@ -232,12 +237,10 @@ pub impl @io.BinaryWriter for ClientConnection with fn write_reader(
 }
 
 ///|
-pub extend ClientConnection with @io.BinaryWriter::{write, write_reader}
-
-///|
-/// Flush buffered data in the request body being sent, if any.
-pub async fn ClientConnection::flush(self : ClientConnection) -> Unit {
-  self.sender.flush()
+pub extend ClientConnection with @io.BinaryWriter::{
+  write,
+  write_reader,
+  flush_partial_data,
 }
 
 ///|

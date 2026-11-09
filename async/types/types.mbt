@@ -15,14 +15,30 @@
 ///|
 /// The wasm host uses opaque `UInt64` handles for host-owned file resources.
 #cfg(target="wasm")
-pub type Fd = UInt64
+#warnings("-unused_constructor")
+struct Fd(UInt64)
 
 ///|
 /// The type for a system file descriptor.
 /// An integer on Unix-like systems, or an opaque pointer (`HANDLE`) on Windows
+/// The ABI of this type is guaranteed to be the same as the corresponding OS handle.
+#cfg(all(target="native", not(platform="windows")))
+#warnings("-unused_constructor")
+struct Fd(Int32)
+
+///|
+/// The type for a system file descriptor.
+/// An integer on Unix-like systems, or an opaque pointer (`HANDLE`) on Windows.
+/// The ABI of this type is guaranteed to be the same as the corresponding OS handle.
 #cfg(platform="windows")
 #external
-pub type Fd
+type Fd
+
+///|
+#cfg(any(target="wasm", all(target="native", not(platform="windows"))))
+pub impl Eq for Fd with fn equal(x, y) {
+  x.0 == y.0
+}
 
 ///|
 #cfg(platform="windows")
@@ -33,20 +49,21 @@ pub impl Eq for Fd with fn equal(x, y) = "%refeq"
 extern "C" fn Fd::to_uint64(fd : Fd) -> UInt64 = "moonbit_rt_fd_as_uint64"
 
 ///|
+#cfg(any(target="wasm", all(target="native", not(platform="windows"))))
+pub impl Hash for Fd with fn hash_combine(self, hasher) {
+  Hash::hash_combine(self.0, hasher)
+}
+
+///|
 #cfg(platform="windows")
 pub impl Hash for Fd with fn hash_combine(self, hasher) {
   hasher.combine_uint64(self.to_uint64())
 }
 
 ///|
-/// The type for a system file descriptor.
-/// An integer on Unix-like systems, or an opaque pointer (`HANDLE`) on Windows
-#cfg(not(any(platform="windows", target="wasm")))
-pub type Fd = Int32
-
-///|
 /// Current operating system running the program.
 /// For Wasm backend, the actual operating system can only be known at runtime.
+#non_exhaustive
 pub(all) enum Platform {
   Linux = 0
   MacOS = 1

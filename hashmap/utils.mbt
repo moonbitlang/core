@@ -186,29 +186,6 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
 }
 
 ///|
-/// Returns the current capacity of the hash map, that is, the length of its
-/// internal storage array. The map grows once it is half full, so it can hold
-/// at most `capacity / 2` key-value pairs before it reallocates.
-///
-/// Parameters:
-///
-/// * `map` : The hash map whose capacity is to be queried.
-///
-/// Returns the length of the hash map's internal storage array.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let map : @hashmap.HashMap[Int32, String] = HashMap([], capacity=16)
-///   inspect(map.capacity(), content="16")
-/// }
-/// ```
-pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int32 {
-  self.capacity
-}
-
-///|
 /// Returns whether the hash map contains no key-value pairs.
 ///
 /// Parameters:

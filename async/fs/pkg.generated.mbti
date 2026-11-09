@@ -3,6 +3,7 @@ package "moonbitlang/core/async/fs"
 
 import {
   "moonbitlang/core/async/io",
+  "moonbitlang/core/async/types",
   "moonbitlang/core/debug",
 }
 
@@ -55,9 +56,9 @@ pub async fn tmpdir(prefix~ : StringView) -> String
 
 pub async fn walk(StringView, async (String, Array[String]) -> Unit, exclude? : (String) -> Bool, max_concurrency? : Int32, allow_failure? : Bool) -> Unit
 
-pub async fn write_binary(StringView, BytesView, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode, append? : Bool) -> Unit
+pub async fn write_binary(StringView, BytesView, append? : Bool, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode) -> Unit
 
-pub async fn write_text(StringView, StringView, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode, append? : Bool) -> Unit
+pub async fn write_text(StringView, StringView, append? : Bool, create_mode? : CreateMode, permission? : Int32, sync? : SyncMode) -> Unit
 
 // Errors
 
@@ -91,7 +92,7 @@ pub fn File::close(Self) -> Unit
 pub async fn File::ctime(Self) -> Timestamp
 pub async fn File::drop_all(Self) -> Int64
 pub async fn File::drop_exactly(Self, Int32) -> Unit
-pub fn File::fd(Self) -> UInt64
+pub fn File::fd(Self) -> @types.Fd
 pub fn File::kind(Self) -> FileKind
 pub async fn File::lock(Self, Lock) -> Unit
 pub async fn File::mtime(Self) -> Timestamp
@@ -130,6 +131,7 @@ pub(all) enum FileKind {
   CharDevice
   Console
 }
+pub fn FileKind::equal(Self, Self) -> Bool
 
 #derive(Eq, @debug.Debug)
 pub(all) enum FsEvent {
@@ -138,6 +140,7 @@ pub(all) enum FsEvent {
   Remove(String)
   Rename(old~ : String, new~ : String)
 }
+pub fn FsEvent::equal(Self, Self) -> Bool
 
 pub(all) enum Lock {
   Shared
@@ -156,11 +159,15 @@ pub(all) enum SyncMode {
   Full
 }
 
-#derive(Compare, Eq, @debug.Debug)
+#derive(Compare, Eq, Hash, @debug.Debug)
 type Timestamp
+pub fn Timestamp::compare(Self, Self) -> Int32
+pub fn Timestamp::equal(Self, Self) -> Bool
+pub fn Timestamp::hash(Self) -> Int32
 pub fn Timestamp::msec(Self) -> Int64
 pub fn Timestamp::nsec(Self) -> Int32
 pub fn Timestamp::sec(Self) -> Int64
+pub fn Timestamp::sub(Self, Self) -> Self
 pub impl Sub for Timestamp
 
 type Watcher

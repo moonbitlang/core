@@ -71,6 +71,15 @@ async test "wrapper test" {
 }
 
 ///|
+async test "write_binary append does not truncate" {
+  let path = "_build/write_binary_append_test"
+  @fs.write_binary(path, b"ABCDE")
+  defer @fs.remove(path)
+  @fs.write_binary(path, b"xy", append=true)
+  inspect(@fs.read_text(path), content="ABCDExy")
+}
+
+///|
 async test "create_mode test" {
   let path = "_build/create_exclusive_test"
   for create_mode in [@fs.OpenExisting, TruncateExisting] {

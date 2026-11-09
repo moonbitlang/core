@@ -30,7 +30,12 @@ fn[K] new_hashset(capacity : Int32) -> HashSet[K] {
 }
 
 ///|
+/// Smallest bucket count that holds `length` entries without growing.
 fn capacity_for_length(length : Int32) -> Int32 {
+  // 2^30 is the largest positive power-of-two bucket count in Int32.
+  guard length <= calc_grow_threshold(0x40000000) else {
+    abort("HashSet capacity overflow")
+  }
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -40,8 +45,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 
 ///|
 /// Creates a hash set containing all elements from the given array.
-/// The optional `capacity` is treated as a minimum initial capacity and will be
-/// rounded up to the smallest power of 2 that can hold the requested capacity.
+/// The optional `capacity` reserves room for at least that many total elements
+/// without growing, including the elements in `arr`. A hint smaller than
+/// `arr.length()` is ignored. Without a hint, an empty set uses a small default
+/// size. Aborts if the requested element count exceeds the supported table size.
 #alias(from_array)
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
@@ -52,8 +59,8 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ) -> HashSet[K] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) | (None with capacity = default_init_capacity) =>
-      capacity.max(capacity_for_length(length))
+    Some(capacity) => capacity_for_length(capacity.max(length))
+    None => default_init_capacity.max(capacity_for_length(length))
   }
   let m = new_hashset(capacity)
   arr.each(e => m.add(e))
@@ -90,19 +97,29 @@ fn[K : Eq] HashSet::add_with_hash(
   key : K,
   hash : Int32,
 ) -> Unit {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
     // it, so it is in bounds for `entries`, whose length is `capacity`.
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow()
+          continue 0, hash & self.capacity_mask
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
+          if self.size >= self.grow_at {
+            self.grow()
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
           break (idx, psl)
         }
@@ -333,12 +350,6 @@ pub impl[K : Show] Show for HashSet[K] with fn output(self, logger) {
 #alias(size, deprecated)
 pub fn[K] HashSet::length(self : HashSet[K]) -> Int32 {
   self.size
-}
-
-///|
-/// Returns the current capacity of the internal storage.
-pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int32 {
-  self.capacity
 }
 
 ///|
@@ -686,7 +697,9 @@ pub fn[K] HashSet::filter(
 
 ///|
 fn calc_grow_threshold(capacity : Int32) -> Int32 {
-  capacity * 13 / 16
+  // Divide first to avoid overflow for large power-of-two bucket counts.
+  // The remainder preserves the rounding for tables smaller than 16 buckets.
+  capacity / 16 * 13 + capacity % 16 * 13 / 16
 }
 
 ///|
@@ -779,7 +792,7 @@ test "clear" {
   let m : HashSet[MyString] = new_hashset(default_init_capacity)
   m.clear()
   inspect(m.length(), content="0")
-  inspect(m.capacity(), content="8")
+  inspect(m.capacity, content="8")
   for entry in m.entries {
     @test.assert_same_object(entry, None)
   }

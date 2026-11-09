@@ -94,6 +94,7 @@ async fn Process::wait_pid_unix(self : Process, context~ : String) -> Int32 {
           // Work around this race condition by waiting again after a small timeout.
           sleep(10)
         Linux | Windows => break
+        Platform::.. => panic()
       }
       let ret = get_process_result(handle, self.pid, out)
       if ret >= 0 {

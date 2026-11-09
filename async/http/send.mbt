@@ -125,6 +125,12 @@ impl @io.BinaryWriterImpl for Sender with fn get_controller(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for Sender with fn flush_partial_data(self) {
+  self.flush()
+  @io.BinaryWriter::flush_partial_data(self.writer)
+}
+
+///|
 impl @io.BinaryWriterImpl for Sender with fn raw_write_impl(
   self,
   buf,
@@ -352,7 +358,10 @@ async fn Sender::send_request(
     Trace => self.write(b"TRACE ")
     Patch => self.write(b"PATCH ")
     Extension(ext) => {
-      guard ext =~ (re"^" + TOKEN + re"$") else { raise InvalidMethod(ext) }
+      guard ext.length() > 0 else { raise InvalidMethod(ext) }
+      for c in ext.code_units() {
+        guard is_token_char(c) else { raise InvalidMethod(ext) }
+      }
       self.write(@utf8.encode(ext))
       self.write(b" ")
     }

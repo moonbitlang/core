@@ -36,6 +36,7 @@ fn EventBus::destroy(self : EventBus) -> Unit = "moonbitlang/async" "event_bus/d
 
 ///|
 #unsafe_skip_stub_check
+#borrow(fd)
 fn EventBus::try_register_ffi(
   self : EventBus,
   fd : @fd_util.Fd,

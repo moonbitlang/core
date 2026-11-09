@@ -111,7 +111,12 @@ fn[K] new_set(capacity : Int32) -> Set[K] {
 }
 
 ///|
+/// Smallest bucket count that holds `length` entries without growing.
 fn capacity_for_length(length : Int32) -> Int32 {
+  // 2^30 is the largest positive power-of-two bucket count in Int32.
+  guard length <= calc_grow_threshold(0x40000000) else {
+    abort("Set capacity overflow")
+  }
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
@@ -121,8 +126,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 
 ///|
 /// Creates a hash set containing all elements from the given array, preserving insertion order.
-/// The optional `capacity` is treated as a minimum initial capacity and will be
-/// rounded up to the smallest power of 2 that can hold the requested capacity.
+/// The optional `capacity` reserves room for at least that many total elements
+/// without growing, including the elements in `arr`. A hint smaller than
+/// `arr.length()` is ignored. Without a hint, an empty set uses a small default
+/// size. Aborts if the requested element count exceeds the supported table size.
 #alias(from_array)
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
@@ -130,7 +137,7 @@ fn capacity_for_length(length : Int32) -> Int32 {
 pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int32) -> Set[K] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity.max(capacity_for_length(length))
+    Some(capacity) => capacity_for_length(capacity.max(length))
     None =>
       if length == 0 {
         default_init_capacity
@@ -176,18 +183,28 @@ pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
 
 ///|
 fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int32) -> Unit {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
+  // Grow only once the key is known to be absent, so re-adding a present key
+  // never reallocates. Growing happens before any slot is mutated, then the
+  // probe restarts against the new table.
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
-      None => break (idx, psl)
+      None => {
+        if self.size >= self.grow_at {
+          self.grow()
+          continue 0, hash & self.capacity_mask
+        }
+        break (idx, psl)
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
           return
         }
         if psl > curr_entry.psl {
+          if self.size >= self.grow_at {
+            self.grow()
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
           break (idx, psl)
         }
@@ -259,31 +276,9 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int32) -> Unit {
 /// }
 /// ```
 pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
-  let hash = Hash::hash(key)
-  // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries.unsafe_get(idx) {
-      None => break (idx, psl, true)
-      Some(curr_entry) => {
-        if curr_entry.hash == hash && curr_entry.key == key {
-          break (idx, psl, false)
-        }
-        if psl > curr_entry.psl {
-          self.push_away(idx, curr_entry)
-          break (idx, psl, true)
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
-      }
-    }
-  }
-  if added {
-    let entry = { prev: self.tail, next: None, psl, key, hash, }
-    self.add_entry_to_tail(idx, entry)
-  }
-  added
+  let size = self.size
+  self.add_with_hash(key, Hash::hash(key))
+  self.size > size
 }
 
 ///|
@@ -503,12 +498,6 @@ fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
 #alias(size, deprecated)
 pub fn[K] Set::length(self : Set[K]) -> Int32 {
   self.size
-}
-
-///|
-/// Get the capacity of the set.
-pub fn[K] Set::capacity(self : Set[K]) -> Int32 {
-  self.capacity
 }
 
 ///|

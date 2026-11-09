@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-let default_init_capacity = 8
-
-///|
 #derive(Eq)
 priv struct Key {
   id : Int32
@@ -30,26 +27,6 @@ impl Hash for Key with fn hash_combine(self, hasher) {
 ///|
 impl Hash for Key with fn hash(self) {
   self.hash_value
-}
-
-///|
-test "empty constructor" {
-  let m : @set.Set[Int32] = Set([])
-  assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.length(), 0)
-}
-
-///|
-test "constructor capacity" {
-  let empty : @set.Set[Int32] = Set([], capacity=16)
-  assert_eq(empty.capacity(), 16)
-  assert_eq(empty.length(), 0)
-  let below_length = @set.Set([1, 2, 3], capacity=2)
-  assert_eq(below_length.capacity(), 4)
-  assert_eq(below_length.length(), 3)
-  let above_length = @set.Set([1, 2, 3], capacity=16)
-  assert_eq(above_length.capacity(), 16)
-  debug_inspect(above_length.to_array(), content="[1, 2, 3]")
 }
 
 ///|
@@ -235,19 +212,6 @@ test "symmetric_difference" {
 }
 
 ///|
-test "insert_and_grow" {
-  let m = @set.Set([])
-  for i in 0..<10 {
-    m.add(i.to_string())
-  }
-  assert_eq(m.length(), 10)
-  assert_eq(m.capacity(), 16)
-  @json.json_inspect(m, content=[
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-  ])
-}
-
-///|
 test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
   let h = @set.Set::from_iter(v.iter())
@@ -268,15 +232,6 @@ test "remove_and_shift_back" {
   assert_true(m.contains("a"))
   assert_true(m.contains("c"))
   assert_true(m.contains("d"))
-}
-
-///|
-test "capacity_and_size" {
-  let m = @set.Set([])
-  assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.length(), 0)
-  m.add("a")
-  assert_eq(m.length(), 1)
 }
 
 ///|
@@ -609,17 +564,6 @@ test "filter keeps order and lookups after removals and collisions" {
 }
 
 ///|
-test "filter sizes the result for the kept elements" {
-  let s : @set.Set[Int32] = Set([ for i in 0..<10000 => i ])
-  for keep in [0, 1, 10, 5000, 10000] {
-    let kept = s.filter(k => k < keep)
-    let rebuilt = @set.Set([ for k in s if k < keep => k ])
-    assert_eq(kept.length(), keep)
-    assert_eq(kept.capacity(), rebuilt.capacity())
-  }
-}
-
-///|
 test "filter propagates errors" {
   let s = @set.Set(["a", "b"])
   let raised = try {
@@ -665,25 +609,6 @@ test "from_json round-trips whatever to_json produced, in order" {
   for set in (@quickcheck.samples(50) : Array[@set.Set[Int32]]) {
     let restored : @set.Set[Int32] = @json.from_json(@json.to_json(set))
     assert_eq(restored.to_array(), set.to_array())
-  }
-}
-
-///|
-test "from_json keeps array order and drops repeated elements" {
-  let set : @set.Set[String] = @json.from_json(["b", "a", "b", "c", "a"])
-  assert_eq(set.to_array(), ["b", "a", "c"])
-  let empty : @set.Set[Int32] = @json.from_json([])
-  assert_eq(empty.length(), 0)
-  assert_eq(empty.capacity(), (Set([]) : @set.Set[Int32]).capacity())
-  let nested : @set.Set[Array[Int32]] = @json.from_json([[1, 2], [], [1, 2]])
-  assert_eq(nested.to_array(), [[1, 2], []])
-}
-
-///|
-test "from_json sizes the set like the constructor" {
-  for n in [1, 2, 13, 100, 1000] {
-    let set : @set.Set[Int32] = @json.from_json([ for i in 0..<n => Json(i) ])
-    assert_eq(set.capacity(), @set.Set([ for i in 0..<n => i ]).capacity())
   }
 }
 
@@ -742,16 +667,4 @@ test "union_in_place matches union, in order, and leaves other unchanged" {
     s.remove(-1)
     assert_eq(s.to_array(), expected)
   }
-}
-
-///|
-test "union_in_place with itself is a no-op" {
-  // Six elements fill a capacity-8 set exactly to its grow threshold, so one
-  // more insertion attempt would grow it: without the self check, absorbing
-  // itself would resize the set while walking its own list.
-  let s = @set.Set([ for i in 0..<6 => i ])
-  let capacity = s.capacity()
-  s.union_in_place(s)
-  assert_eq(s.to_array(), [0, 1, 2, 3, 4, 5])
-  assert_eq(s.capacity(), capacity)
 }

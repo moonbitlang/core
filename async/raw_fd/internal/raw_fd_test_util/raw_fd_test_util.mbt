@@ -18,5 +18,5 @@ pub extern "C" fn make_udp_socket() -> @fd_util.Fd = "raw_fd_test_make_udp_socke
 
 ///|
 /// Connect a UDP socket to `addr`
-#borrow(addr)
+#borrow(sock, addr)
 pub extern "C" fn connect(sock : @fd_util.Fd, addr : @socket.Addr) -> Int32 = "raw_fd_test_connect"

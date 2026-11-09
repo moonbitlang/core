@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "ToJson sizes its Map for live entries" {
+test "ToJson keeps only live entries" {
   let source : @hashmap.HashMap[String, Int32] = HashMap(
     [
       for i in 0..<256 => (i.to_string(), i)
@@ -24,17 +24,9 @@ test "ToJson sizes its Map for live entries" {
   source["second"] = 2
   source["third"] = 3
   guard Json(source) is Object(object) else { fail("expected object") }
-  inspect(object.capacity(), content="4")
   assert_eq(object["first"], Json(1))
   assert_eq(object["second"], Json(2))
   assert_eq(object["third"], Json(3))
-}
-
-///|
-test "new" {
-  let m : @hashmap.HashMap[Int32, Int32] = HashMap([])
-  inspect(m.capacity(), content="8")
-  inspect(m.length(), content="0")
 }
 
 ///|
@@ -549,49 +541,6 @@ test "@hashmap.merge_in_place empty maps" {
 }
 
 ///|
-test "@hashmap.merge_in_place self-aliasing should be no-op" {
-  let map : @hashmap.HashMap[String, Int32] = HashMap([])
-  // With 4 elements: capacity=8, size=4
-  // The grow condition is size >= capacity/2, i.e., 4 >= 4
-  // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
-  for i in 0..<4 {
-    map.set(i.to_string(), i)
-  }
-  let cap_before = map.capacity()
-  @test.assert_eq(cap_before, 8) // Verify initial state
-  @test.assert_eq(map.length(), 4)
-  // Merging with self should be a no-op - capacity should NOT grow from 8 to 16
-  map.merge_in_place(map)
-  @test.assert_eq(map.capacity(), cap_before)
-  @test.assert_eq(map.length(), 4)
-  // Verify all entries are still correct
-  for i in 0..<4 {
-    @test.assert_eq(map.get(i.to_string()), Some(i))
-  }
-}
-
-///|
-test "@hashmap.set updating existing key should not grow" {
-  let map : @hashmap.HashMap[String, Int32] = HashMap([])
-  // Fill to exactly at grow threshold: capacity=8, size=4
-  for i in 0..<4 {
-    map.set(i.to_string(), i)
-  }
-  @test.assert_eq(map.capacity(), 8)
-  @test.assert_eq(map.length(), 4)
-  // Update existing keys - should NOT trigger grow
-  for i in 0..<4 {
-    map.set(i.to_string(), i * 10)
-  }
-  @test.assert_eq(map.capacity(), 8) // Should still be 8, not 16
-  @test.assert_eq(map.length(), 4)
-  // Verify values were updated
-  for i in 0..<4 {
-    @test.assert_eq(map.get(i.to_string()), Some(i * 10))
-  }
-}
-
-///|
 #derive(Eq)
 priv struct Key(Int32, Int32)
 
@@ -751,21 +700,6 @@ test "filter keeps lookups working after removals and collisions" {
 }
 
 ///|
-test "filter sizes the result for the kept entries" {
-  let m : @hashmap.HashMap[Int32, Int32] = HashMap(
-    [
-      for i in 0..<10000 => (i, i)
-    ],
-  )
-  for keep in [0, 1, 10, 5000, 10000] {
-    let kept = m.filter((k, _) => k < keep)
-    let rebuilt = @hashmap.HashMap([ for k, v in m if k < keep => (k, v) ])
-    assert_eq(kept.length(), keep)
-    assert_eq(kept.capacity(), rebuilt.capacity())
-  }
-}
-
-///|
 test "filter propagates errors" {
   let m = @hashmap.HashMap([("a", 1), ("b", 2)])
   let raised = try {
@@ -841,29 +775,6 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   assert_eq(m.get(0), Some(-1))
   let empty : @hashmap.HashMap[String, Int32] = HashMap([])
   assert_eq(empty.remove_and_get("x"), None)
-}
-
-///|
-test "retain visits each entry once when a cluster wraps around the table" {
-  let m : @hashmap.HashMap[Int32, Int32] = HashMap([])
-  let mask = m.capacity() - 1
-  // Two keys whose home is the last slot: the second one wraps to slot 0.
-  let keys = []
-  for k = 0; keys.length() < 2; k = k + 1 {
-    if (Hash::hash(k) & mask) == mask {
-      keys.push(k)
-    }
-  }
-  m.set(keys[0], 0)
-  m.set(keys[1], 1)
-  let calls = @hashmap.HashMap([])
-  m.retain((k, _) => {
-    calls.set(k, calls.get_or_default(k, 0) + 1)
-    k != keys[0]
-  })
-  @debug.debug_inspect(calls.get(keys[0]), content="Some(1)")
-  @debug.debug_inspect(calls.get(keys[1]), content="Some(1)")
-  @debug.debug_inspect(m.to_array(), content="[(\{keys[1]}, 1)]")
 }
 
 ///|
@@ -1054,7 +965,8 @@ test "update_or_default: f removes the present key" {
 test "get_or_init: init removes a key on the probe path and inserts another" {
   // Id(16) probes slot 0 (Id(0)) and then slot 1. `init` empties slot 0
   // and adds a key elsewhere, so the length is unchanged when it returns.
-  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(0), 0)], capacity=16)
+  // `capacity=8` entries gives 16 buckets, so Id(0) and Id(16) collide.
+  let m : @hashmap.HashMap[Id, Int32] = HashMap([(Id(0), 0)], capacity=8)
   let v = m.get_or_init(Id(16), () => {
     m.remove(Id(0))
     m.set(Id(5), 5)

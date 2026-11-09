@@ -69,3 +69,21 @@ test "bench StringView contains_code_unit absent n=256" (it : @bench.T) {
   let view = s[1:257]
   it.bench(() => it.keep(view.contains_code_unit(UInt16('z'))))
 }
+
+///|
+test "bench contains_code_unit absent n=24" (it : @bench.T) {
+  let s = String::make(24, 'a')
+  it.bench(() => it.keep(s.contains_code_unit(UInt16('z'))))
+}
+
+///|
+test "bench contains_code_unit absent n=40" (it : @bench.T) {
+  let s = String::make(40, 'a')
+  it.bench(() => it.keep(s.contains_code_unit(UInt16('z'))))
+}
+
+///|
+test "bench contains_code_unit absent n=4096" (it : @bench.T) {
+  let s = String::make(4096, 'a')
+  it.bench(() => it.keep(s.contains_code_unit(UInt16('z'))))
+}

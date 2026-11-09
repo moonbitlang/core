@@ -31,3 +31,8 @@ pub extend PipeClosed with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend PipeClosed with @json.ToJson::{to_json}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend PipeWrite with BinaryWriter::{flush_partial_data}

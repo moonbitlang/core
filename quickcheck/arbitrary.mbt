@@ -39,7 +39,7 @@ pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
   if size == 0 {
-    Bytes::new(0)
+    b""
   } else {
     let sz = rs.next_positive_int() % size
     Bytes::makei(sz, _ => Arbitrary::arbitrary(size, rs))

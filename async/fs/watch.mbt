@@ -194,6 +194,7 @@ fn Watcher::new_backend(
       KqueueWatcher(self, debounce_timeout~, max_debounce_delay~, context~)
       as &WatcherBackend
     Windows => panic()
+    @env_util.Platform::.. => panic()
   }
 }
 
@@ -231,6 +232,7 @@ fn Watcher::new_backend(
       )
       as &WatcherBackend
     }
+    @env_util.Platform::.. => panic()
   }
 }
 

@@ -327,6 +327,7 @@ pub async fn TaskGroup::return_immediately(self : TaskGroup) -> Unit noraise {
 /// See `retry` and `RetryMethod` for more details.
 ///
 /// The meaning of `no_wait` and `allow_failure` is the same as `spawn_bg`.
+#callsite(autofill(loc))
 pub fn TaskGroup::spawn_loop(
   self : TaskGroup,
   f : async () -> Unit,
@@ -335,8 +336,9 @@ pub fn TaskGroup::spawn_loop(
   retry? : RetryMethod,
   max_retry? : Int32,
   fatal_error? : (Error) -> Bool,
+  loc~ : SourceLoc,
 ) -> Unit {
-  self.spawn_bg(no_wait~, allow_failure~) <| () => {
+  self.spawn_bg(no_wait~, allow_failure~, loc~) <| () => {
     try {
       match retry {
         None =>

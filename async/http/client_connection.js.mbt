@@ -170,15 +170,15 @@ impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
 }
 
 ///|
-pub extend ClientConnection with @io.BinaryWriter::{write, write_reader}
+impl @io.BinaryWriterImpl for ClientConnection with fn flush_partial_data(self) {
+  ignore(self)
+}
 
 ///|
-/// Currently, HTTP client does not support streaming request body writing on JS backend.
-/// So request body is always buffered and `.flush()` has no effect at all.
-#warnings("-unused_async")
-pub async fn ClientConnection::flush(_ : ClientConnection) -> Unit {
-  // no need to flush in JS backend
-  ()
+pub extend ClientConnection with @io.BinaryWriter::{
+  write,
+  write_reader,
+  flush_partial_data,
 }
 
 ///|
@@ -328,7 +328,10 @@ pub async fn ClientConnection::request(
     Trace => "TRACE"
     Patch => "PATCH"
     Extension(ext) => {
-      guard ext =~ (re"^" + TOKEN + re"$") else { raise InvalidMethod(ext) }
+      guard ext.length() > 0 else { raise InvalidMethod(ext) }
+      for c in ext.code_units() {
+        guard is_token_char(c) else { raise InvalidMethod(ext) }
+      }
       ext
     }
   }

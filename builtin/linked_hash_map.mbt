@@ -114,18 +114,16 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// up to a power of two with room for the map's load factor. A hint smaller than
 /// `arr.length()` is ignored; non-positive hints on an empty array reserve zero
 /// entries. Without a hint, an empty map uses the default initial bucket count.
-///
-/// `Map::capacity()` reports the bucket count, which may exceed this entry hint.
 /// Aborts if the requested entry count exceeds the supported table size.
 ///
 /// ```mbt check
 /// test {
+///   // Room for 16 entries; the 16 inserts below do not rehash.
 ///   let map : Map[Int32, Int32] = Map([], capacity=16)
-///   let initial_capacity = map.capacity()
 ///   for i in 0..<16 {
 ///     map[i] = i
 ///   }
-///   inspect(map.capacity() == initial_capacity, content="true")
+///   inspect(map.length(), content="16")
 /// }
 /// ```
 #alias(from_array)
@@ -749,14 +747,6 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with fn output(self, logger) {
 #alias(size, deprecated)
 pub fn[K, V] Map::length(self : Map[K, V]) -> Int32 {
   self.size
-}
-
-///|
-/// Get the number of buckets allocated for the map. Some buckets are kept empty
-/// for probing, so this is larger than the number of entries that fit without
-/// growing. The constructor's `capacity` hint is an entry count instead.
-pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int32 {
-  self.capacity
 }
 
 ///|

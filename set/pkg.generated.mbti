@@ -20,6 +20,7 @@ pub fn[K : Hash + Eq] Set::Set(ArrayView[K], capacity? : Int32) -> Self[K]
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
+#deprecated
 pub fn[K] Set::capacity(Self[K]) -> Int32
 pub fn[K] Set::clear(Self[K]) -> Unit
 pub fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool

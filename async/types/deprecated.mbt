@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-#cfg(platform="windows")
+#cfg(any(target="wasm", target="native"))
 #deprecated
 #doc(hidden)
 pub extend Fd with Eq::{equal, not_equal}
 
 ///|
-#cfg(platform="windows")
+#cfg(any(target="wasm", target="native"))
 #deprecated
 #doc(hidden)
 pub extend Fd with Hash::{hash_combine, hash}

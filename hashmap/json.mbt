@@ -50,10 +50,7 @@ pub impl[V : @json.FromJson] @json.FromJson for HashMap[String, V] with fn from_
   }
   // The object's size is known, so size the table for it once instead of
   // rehashing as the entries go in.
-  let res : HashMap[String, V] = HashMap(
-    [],
-    capacity=capacity_for_length(obj.length()),
-  )
+  let res : HashMap[String, V] = HashMap([], capacity=obj.length())
   for k, v in obj {
     res[k] = V::from_json(v, path.add_key(k))
   }

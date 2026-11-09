@@ -46,6 +46,7 @@ options(
     "conn.mbt": [ "native", "wasm" ],
     "control_test.mbt": [ "native", "wasm" ],
     "deprecated.mbt": [ "native", "wasm" ],
+    "extends.mbt": [ "native", "wasm" ],
     "external_client_test.mbt": [ "native", "wasm" ],
     "handshake_wbtest.mbt": [ "native", "wasm" ],
     "pkg.generated.mbti": [ "native", "wasm" ],

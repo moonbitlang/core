@@ -33,6 +33,7 @@ pub(all) enum CloseCode {
   InternalError
   Other(UInt16)
 }
+pub fn CloseCode::equal(Self, Self) -> Bool
 
 pub struct Conn {
   text : @io.Utf8Writer
@@ -42,6 +43,7 @@ pub fn Conn::close(Self) -> Unit
 #as_free_fn
 pub async fn Conn::connect(String, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.ClientConnection) -> Self
 pub async fn Conn::end_message(Self) -> Unit
+pub async fn Conn::flush_partial_data(Self) -> Unit
 #as_free_fn
 pub async fn Conn::from_http_client(@http.ClientConnection, StringView, extra_headers? : Map[@http.CaseInsensitiveString, String]) -> Self
 #as_free_fn

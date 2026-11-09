@@ -14,7 +14,7 @@
 
 ///|
 #cfg(target="native")
-#borrow(buf)
+#borrow(fd, buf)
 extern "C" fn fstatx_sync(
   fd : @fd_util.Fd,
   request : UInt32,

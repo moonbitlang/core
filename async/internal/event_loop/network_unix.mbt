@@ -24,7 +24,7 @@ fn gai_error_to_string(code : Int32) -> String {
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf, addr)
+#borrow(fd, buf, addr)
 extern "C" fn recvfrom_unix_ffi(
   fd : @fd_util.Fd,
   buf : FixedArray[Byte],
@@ -35,7 +35,7 @@ extern "C" fn recvfrom_unix_ffi(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(buf, addr)
+#borrow(fd, buf, addr)
 #cfg(target="wasm")
 fn recvfrom_unix_ffi(
   fd : @fd_util.Fd,
@@ -89,12 +89,13 @@ pub async fn IoHandle::recvfrom(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   handle.recvfrom_unix(buf, offset~, len~, addr~, context~)
 }
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(buf, addr)
+#borrow(fd, buf, addr)
 extern "C" fn sendto_unix_ffi(
   fd : @fd_util.Fd,
   buf : Bytes,
@@ -105,7 +106,7 @@ extern "C" fn sendto_unix_ffi(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(buf, addr)
+#borrow(fd, buf, addr)
 #cfg(target="wasm")
 fn sendto_unix_ffi(
   fd : @fd_util.Fd,
@@ -155,18 +156,19 @@ pub async fn IoHandle::sendto(
   context~ : String,
 ) -> Int32 {
   @coroutine.check_cancellation()
+  check_io_buf_range(buf.length(), offset, len, context)
   handle.sendto_unix(buf, offset~, len~, addr~, context~)
 }
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(addr)
+#borrow(sock, addr)
 extern "C" fn connect_unix_ffi(sock : @fd_util.Fd, addr : Bytes) -> Int32 = "moonbit_rt_async_connect"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(addr)
+#borrow(sock, addr)
 fn connect_unix_ffi(
   sock : @fd_util.Fd,
   addr : Bytes,
@@ -175,11 +177,13 @@ fn connect_unix_ffi(
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
+#borrow(sock)
 extern "C" fn get_socket_err(sock : @fd_util.Fd) -> Int32 = "moonbit_rt_getsockerr"
 
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
+#borrow(sock)
 fn get_socket_err(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/getsockerr/unix"
 
 ///|
@@ -219,7 +223,7 @@ pub async fn IoHandle::connect(
 
 ///|
 #cfg(all(target="native", not(platform="windows")))
-#borrow(addr_buf)
+#borrow(sock, addr_buf)
 extern "C" fn accept_unix_ffi(
   sock : @fd_util.Fd,
   addr_buf : Bytes,
@@ -228,7 +232,7 @@ extern "C" fn accept_unix_ffi(
 ///|
 #cfg(target="wasm")
 #unsafe_skip_stub_check
-#borrow(addr_buf)
+#borrow(sock, addr_buf)
 fn accept_unix_ffi(
   sock : @fd_util.Fd,
   addr_buf : Bytes,

@@ -128,3 +128,33 @@ test "bench StringView find two anchors absent n=256" (it : @bench.T) {
   let view = str[1:257]
   it.bench(() => it.keep(view.find("az")))
 }
+
+///|
+test "bench rev_find one code unit absent n=16" (it : @bench.T) {
+  let str = String::make(16, 'a')
+  it.bench(() => it.keep(str.rev_find("z")))
+}
+
+///|
+test "bench rev_find one code unit absent n=64" (it : @bench.T) {
+  let str = String::make(64, 'a')
+  it.bench(() => it.keep(str.rev_find("z")))
+}
+
+///|
+test "bench rev_find one code unit absent n=4096" (it : @bench.T) {
+  let str = String::make(4096, 'a')
+  it.bench(() => it.keep(str.rev_find("z")))
+}
+
+///|
+test "bench find one code unit absent n=16" (it : @bench.T) {
+  let str = String::make(16, 'a')
+  it.bench(() => it.keep(str.find("z")))
+}
+
+///|
+test "bench find one code unit absent n=4096" (it : @bench.T) {
+  let str = String::make(4096, 'a')
+  it.bench(() => it.keep(str.find("z")))
+}

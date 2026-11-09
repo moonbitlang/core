@@ -574,11 +574,17 @@ impl @io.BinaryWriterImpl for Tls with fn get_controller(self) {
 }
 
 ///|
+#cfg(not(platform="windows"))
+impl @io.BinaryWriterImpl for Tls with fn flush_partial_data(self) {
+  @io.BinaryWriter::flush_partial_data(self.transport.writer)
+}
+
+///|
 /// Close a TLS connection and release related resource.
 /// THIS FUNCTION MUST BE CALLED BEFORE CLOSING UNDERLYING TRANSPORT!!!
 ///
 /// Note that `.close()` does not provide reliable termination indication for the remote peer.
-/// If protected termination is desirable, call `.terminate()` before `.close()`.
+/// If protected termination is desirable, call `.shutdown()` before `.close()`.
 #cfg(not(platform="windows"))
 pub fn Tls::close(self : Tls) -> Unit {
   guard !self.closed else {  }

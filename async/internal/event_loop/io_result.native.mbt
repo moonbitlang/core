@@ -113,6 +113,7 @@ extern "C" fn IoResult::event(self : IoResult) -> Int32 = "moonbit_rt_io_result_
 
 ///|
 #cfg(platform="windows")
+#borrow(handle)
 extern "C" fn IoResult::cancel_ffi(
   self : IoResult,
   handle : @fd_util.Fd,
@@ -120,6 +121,7 @@ extern "C" fn IoResult::cancel_ffi(
 
 ///|
 #cfg(platform="windows")
+#borrow(handle)
 extern "C" fn IoResult::status_ffi(
   result : IoResult,
   handle : @fd_util.Fd,

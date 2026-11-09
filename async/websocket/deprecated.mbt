@@ -23,9 +23,9 @@ pub extend MessageKind with @debug.Debug::{to_repr}
 pub extend CloseCode with @debug.Debug::{to_repr}
 
 ///|
-#deprecated
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend CloseCode with Eq::{not_equal, equal}
+pub extend CloseCode with Eq::{not_equal}
 
 ///|
 #deprecated

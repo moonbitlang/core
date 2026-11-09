@@ -25,6 +25,7 @@ extern "C" fn wakeup_main_loop() -> Unit = "wakeup_main_loop"
 extern "C" fn wait_main_loop(timeout~ : Int32) -> Int32 = "wait_main_loop"
 
 ///|
+#borrow(pipe_w)
 extern "C" fn trigger_event_ffi(
   pipe_w : @fd_util.Fd,
   data : Int32,
