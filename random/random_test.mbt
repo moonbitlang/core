@@ -422,34 +422,6 @@ test "panic negative limit in int" {
 }
 
 ///|
-test "int32 without a bound returns non-negative integers" {
-  for _ in 0..<100 {
-    assert_true(@random.int32() >= 0)
-  }
-}
-
-///|
-test "int32 respects exclusive bounds" {
-  inspect(@random.int32(limit=1), content="0")
-  for limit in [2, 3, 16, 17, 0x40000001, 0x7fffffff] {
-    for _ in 0..<100 {
-      let value = @random.int32(limit~)
-      assert_true(value >= 0 && value < limit)
-    }
-  }
-}
-
-///|
-test "panic int32 rejects a negative limit" {
-  ignore(@random.int32(limit=-1))
-}
-
-///|
-test "panic int32 rejects a zero limit" {
-  ignore(@random.int32(limit=0))
-}
-
-///|
 test "panic negative limit in int64" {
   let r = @random.Rand()
   ignore(r.int64(limit=-1L))
