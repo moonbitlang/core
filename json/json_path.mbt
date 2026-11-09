@@ -13,19 +13,16 @@
 // limitations under the License.
 
 ///|
-/// `key` and `index` are mutable so that a decoder can reuse one path node for
-/// every element of an array or object instead of allocating a node per
-/// element; on large arrays that is worth roughly 3.5x. A reused node must not
-/// outlive the decode call that created it.
+/// A JSON Pointer-style location, built from the root outwards.
 ///
-/// MoonBit only allows assigning to a constructor's mutable field through a
-/// binding that pattern matching has narrowed to that variant, so the decoders
-/// in `from_json.mbt` obtain one with a `guard!` whose test cannot fail.
+/// Path nodes are immutable and may be shared: decoders hand each element its
+/// own node, so a path kept by a `FromJson` impl (or inside a caught
+/// `JsonDecodeError`) stays valid after decoding finishes.
 #derive(Eq)
 enum JsonPath {
   Root
-  Key(JsonPath, mut key~ : String)
-  Index(JsonPath, mut index~ : Int32)
+  Key(JsonPath, key~ : String)
+  Index(JsonPath, index~ : Int32)
 }
 
 ///|

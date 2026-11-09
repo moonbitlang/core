@@ -193,13 +193,11 @@ fn[X : FromJson] decode_elements(
   a : Array[Json],
   path : JsonPath,
 ) -> Array[X] raise JsonDecodeError {
-  // The test cannot fail; it only narrows the binding so that `index` becomes
-  // assignable, letting every element share one path node. See `JsonPath`.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res : Array[X] = Array(capacity=a.length())
   for i, x in a {
-    new_path.index = i
-    res.push(FromJson::from_json(x, new_path))
+    // A fresh path node per element: `FromJson` is an open trait, so an impl
+    // may keep `path` (or a `JsonDecodeError` carrying it) beyond this call.
+    res.push(FromJson::from_json(x, path.add_index(i)))
   }
   res
 }
@@ -221,15 +219,12 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
   if len == 0 {
     return []
   }
-  // As above: the test cannot fail, it just makes `index` assignable.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
-    FromJson::from_json(a.unsafe_get(0), new_path),
+    FromJson::from_json(a.unsafe_get(0), path.add_index(0)),
   )
   for i in 1..<len {
-    new_path.index = i
-    res[i] = FromJson::from_json(a.unsafe_get(i), new_path)
+    res[i] = FromJson::from_json(a.unsafe_get(i), path.add_index(i))
   }
   res
 }
@@ -245,12 +240,8 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
     decode_error(path, "Map::from_json: expected object")
   }
   let res = Map([], capacity=obj.length())
-  // As above: the test cannot fail, it just makes `key` assignable.
-  guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
-  // Map::map_with_key
   for k, v in obj {
-    new_path.key = k
-    res[k] = FromJson::from_json(v, new_path)
+    res[k] = FromJson::from_json(v, path.add_key(k))
   }
   res
 }
