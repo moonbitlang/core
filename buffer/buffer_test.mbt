@@ -16,27 +16,52 @@
 test "create buffer from bytes" {
   let bytes = b"1\x002\x003\x00"
   let buf = @buffer.from_bytes(bytes)
-  inspect(buf, content="123")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"1\x002\x003\x00"
+    ),
+  )
 }
 
 ///|
 test "create buffer from array" {
   let arr : ReadOnlyArray[Byte] = [b'4', b'\x00', b'5', b'\x00', b'6', b'\x00']
   let buf = @buffer.from_array(arr)
-  inspect(buf, content="456")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"4\x005\x006\x00"
+    ),
+  )
 }
 
 ///|
 test "create buffer from iterator" {
   let iter = [|b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'|]
   let buf = @buffer.from_iter(iter)
-  inspect(buf, content="567")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"5\x006\x007\x00"
+    ),
+  )
   let iter = [||]
   let buf = @buffer.from_iter(iter)
-  inspect(buf, content="")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b""
+    ),
+  )
   let iter = b"0\x00".iter()
   let buf = @buffer.from_iter(iter)
-  inspect(buf, content="0")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"0\x00"
+    ),
+  )
 }
 
 ///|
@@ -59,7 +84,12 @@ test "is_empty method" {
 test "expect method with matching content" {
   let buf = @buffer.Buffer(size_hint=100)
   buf.write_string_utf16le("Test")
-  inspect(buf, content="Test")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"T\x00e\x00s\x00t\x00"
+    ),
+  )
 }
 
 ///|
@@ -75,7 +105,12 @@ test "buffer grows beyond its initial capacity" {
 test "write UTF-16LE string view" {
   let buf = @buffer.Buffer(size_hint=10)
   buf.write_string_utf16le("Hello, World!"[7:12])
-  inspect(buf, content="World")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"W\x00o\x00r\x00l\x00d\x00"
+    ),
+  )
 }
 
 ///|
@@ -83,7 +118,12 @@ test "write_byte method" {
   let buf = @buffer.Buffer(size_hint=10)
   buf.write_byte(b'A')
   buf.write_byte(b'\x00')
-  inspect(buf, content="A")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"A\x00"
+    ),
+  )
 }
 
 ///|
@@ -113,7 +153,12 @@ test "write_bytes" {
   let buf = @buffer.Buffer(size_hint=4)
   buf.write_bytes(b"1\x002\x003\x004\x00")
   buf.write_bytes(b"5\x006\x007\x008\x00")
-  inspect(buf, content="12345678")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"1\x002\x003\x004\x005\x006\x007\x008\x00"
+    ),
+  )
 }
 
 ///|
