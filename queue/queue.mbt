@@ -182,6 +182,9 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 ///|
 /// Iterates over the queue.
 ///
+/// If `f` pushes, pops or clears the queue, the result is memory-safe but
+/// otherwise unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -200,6 +203,9 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterates over the queue with index.
+///
+/// If `f` pushes, pops or clears the queue, the result is memory-safe but
+/// otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -222,6 +228,9 @@ pub fn[A] Queue::eachi(
 
 ///|
 /// Folds over the queue.
+///
+/// If `f` pushes, pops or clears the queue, the result is memory-safe but
+/// otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -284,6 +293,9 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 
 ///|
 /// Creates an iter from the queue.
+///
+/// Modifying the queue while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// # Example
 /// ```mbt check

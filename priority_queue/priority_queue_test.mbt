@@ -248,3 +248,17 @@ test "copy large monotonic queue" {
   @test.assert_eq(pq.peek(), Some(9998))
   @test.assert_eq(pq2.peek(), Some(9999))
 }
+
+///|
+test "iter: queue cleared mid-iteration" {
+  // What the iterator yields is unspecified, but the queue stays consistent.
+  let pq = @priority_queue.PriorityQueue([1, 2, 3, 4])
+  let mut n = 0
+  for _ in pq.iter() {
+    n += 1
+    pq.clear()
+  }
+  inspect(n >= 1, content="true")
+  inspect(pq.length(), content="0")
+  inspect(pq.iter().count(), content="0")
+}

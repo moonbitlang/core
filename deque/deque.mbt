@@ -989,6 +989,9 @@ pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
 ///|
 /// Iterates over the elements of the deque.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1007,6 +1010,9 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterates over the elements of the deque with index.
+///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -1030,6 +1036,9 @@ pub fn[A] Deque::eachi(
 ///|
 /// Iterates over the elements of the deque in reversed turn.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1051,6 +1060,9 @@ pub fn[A] Deque::rev_each(
 
 ///|
 /// Iterates over the elements of the deque in reversed turn with index.
+///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -1308,6 +1320,9 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
 /// Returns a new deque containing only the elements for which the predicate
 /// function returns `true`. The relative order of the elements is preserved.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1557,6 +1572,9 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 /// * `f` : A function that takes an element and returns `true` if the
 /// element should be kept, `false` if it should be removed.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1657,6 +1675,9 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// element)`, where `index` starts from 0 and increments by 1 for each element,
 /// and `element` is the corresponding element from the deque.
 ///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1697,6 +1718,9 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
 /// Returns an iterator that yields elements from the deque in reverse order,
 /// starting from the last element.
 ///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1734,6 +1758,9 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// Returns an iterator that yields tuples of `(index, value)` pairs, where the
 /// index starts from 0 and increments by 1, while values are taken from the
 /// deque in reverse order.
+///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// Example:
 ///

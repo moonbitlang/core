@@ -562,6 +562,9 @@ pub fn[V] SortedSet::length(self : SortedSet[V]) -> Int32 {
 
 ///|
 /// Iterates over all elements in the set in ascending order.
+///
+/// If `f` structurally modifies the set (adds or removes elements, or clears
+/// it), the result is unspecified, though memory-safe.
 pub fn[V] SortedSet::each(
   self : SortedSet[V],
   f : (V) -> Unit raise?,
@@ -579,6 +582,9 @@ pub fn[V] SortedSet::each(
 
 ///|
 /// Iterates over all elements in the set with their index, in ascending order.
+///
+/// If `f` structurally modifies the set (adds or removes elements, or clears
+/// it), the result is unspecified, though memory-safe.
 pub fn[V] SortedSet::eachi(
   self : SortedSet[V],
   f : (Int32, V) -> Unit raise?,
@@ -610,6 +616,10 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 
 ///|
 /// Returns an iterator over the elements in ascending order.
+///
+/// If the set is structurally modified (elements added or removed, or the set
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator, deprecated)
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   let mut curr_node = self.root
@@ -684,6 +694,10 @@ impl[T : Show] Show for Node[T] with fn output(self, logger) {
 
 ///|
 /// Returns an iterator over elements in the range `[low, high]` (inclusive).
+///
+/// If the set is structurally modified (elements added or removed, or the set
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 pub fn[V : Compare] SortedSet::range(
   self : SortedSet[V],
   low : V,
