@@ -21,21 +21,22 @@
 ///
 /// If `recursive=true` (`false` by default), non-existing parent directories
 /// of `path` will be recursively created, too.
-/// Parent directories are always created with `allow_exist=true`,
+/// Parent directories are always created with `allow_existing=true`,
 /// so concurrent tasks may create directories under a shared parent.
 ///
-/// If `allow_exist=true` (`false` by default), it is not an error
+/// If `allow_existing=true` (`false` by default), it is not an error
 /// if `path` is already a directory (like `mkdir -p`).
 /// An existing non-directory at `path` is still an error.
+#label_migration(allow_existing, alias=allow_exist, msg="Use allow_existing= instead")
 pub async fn mkdir(
   path : StringView,
   permission~ : Int32 = 0o755,
   recursive~ : Bool = false,
-  allow_exist~ : Bool = false,
+  allow_existing~ : Bool = false,
 ) -> Unit {
   let context = "@fs.mkdir()"
   @event_loop.mkdir(path, mode=permission, context~) catch {
-    @os_error.OsError(AlreadyExists, ..) as err if allow_exist => {
+    @os_error.OsError(AlreadyExists, ..) as err if allow_existing => {
       let kind = kind(path) catch { _ => raise err }
       guard kind is Directory else { raise err }
     }
@@ -52,8 +53,8 @@ pub async fn mkdir(
       } else {
         parent
       }
-      mkdir(parent, permission~, recursive=true, allow_exist=true)
-      mkdir(path, permission~, allow_exist~)
+      mkdir(parent, permission~, recursive=true, allow_existing=true)
+      mkdir(path, permission~, allow_existing~)
     }
     err => raise err
   }
