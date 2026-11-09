@@ -28,7 +28,7 @@ test "Parse IPv4 address" {
 
 ///|
 test "Addr::from_ipv4" {
-  let addr = @socket.Addr::from_ipv4(0x7F000001, port=8080)
+  let addr = @socket.Addr::from_ipv4(0x7F000001, 8080)
   inspect(addr, content="127.0.0.1:8080")
   inspect(addr.ip(), content="2130706433")
   inspect(addr.port(), content="8080")
