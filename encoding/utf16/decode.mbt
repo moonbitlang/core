@@ -170,7 +170,7 @@ fn decode_scalar(
     }
     bytes
     .data()
-    .to_unchecked_string(offset=bytes.start_offset(), length=bytes.length())
+    .to_unchecked_string(offset=bytes.start_offset(), len=bytes.length())
   } else {
     let string_bytes = FixedArray::make(bytes.length(), b'\x00')
     let mut i = 0
@@ -233,7 +233,7 @@ pub fn decode(
     if !utf16_needs_scalar_le_v128(bytes) {
       return bytes
         .data()
-        .to_unchecked_string(offset=bytes.start_offset(), length=bytes.length())
+        .to_unchecked_string(offset=bytes.start_offset(), len=bytes.length())
     }
   } else if !utf16_needs_scalar_be_v128(bytes) {
     return utf16_decode_be_no_surrogate_v128(bytes)
