@@ -1563,12 +1563,13 @@ test "is_blank" {
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.length() < total_width`. The threshold and the pad count are
-/// measured in UTF-16 code units: `total_width - self.length()` copies of
-/// `padding_char` are prefixed. Characters outside the BMP count as two
-/// code units, so with such characters in `self` the result has fewer than
-/// `total_width` characters, and with a non-BMP `padding_char` the result's
-/// UTF-16 length exceeds `total_width`.
+/// `self.length() < total_width`. As with JavaScript's `padStart`, the width
+/// is measured in UTF-16 code units: the fewest copies of `padding_char` are
+/// prefixed that bring the result's `length()` to at least `total_width`.
+/// A non-BMP `padding_char` takes two code units, so when the shortfall is
+/// odd the result is one code unit longer than `total_width` (a character is
+/// never split). Likewise, non-BMP characters in `self` count as two code
+/// units, so the result can have fewer than `total_width` characters.
 pub fn StringView::pad_start(
   self : StringView,
   total_width : Int32,
@@ -1576,18 +1577,27 @@ pub fn StringView::pad_start(
 ) -> String {
   let len = self.length()
   guard len < total_width else { return self.to_owned() }
-  let padding = String::make(total_width - len, padding_char)
+  let deficit = total_width - len
+  // A non-BMP `padding_char` takes two code units: round the count up so the
+  // result reaches `total_width` without splitting a character.
+  let count = if padding_char.is_bmp() {
+    deficit
+  } else {
+    deficit - deficit / 2
+  }
+  let padding = String::make(count, padding_char)
   [..padding, ..self]
 }
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.length() < total_width`. The threshold and the pad count are
-/// measured in UTF-16 code units: `total_width - self.length()` copies of
-/// `padding_char` are prefixed. Characters outside the BMP count as two
-/// code units, so with such characters in `self` the result has fewer than
-/// `total_width` characters, and with a non-BMP `padding_char` the result's
-/// UTF-16 length exceeds `total_width`.
+/// `self.length() < total_width`. As with JavaScript's `padStart`, the width
+/// is measured in UTF-16 code units: the fewest copies of `padding_char` are
+/// prefixed that bring the result's `length()` to at least `total_width`.
+/// A non-BMP `padding_char` takes two code units, so when the shortfall is
+/// odd the result is one code unit longer than `total_width` (a character is
+/// never split). Likewise, non-BMP characters in `self` count as two code
+/// units, so the result can have fewer than `total_width` characters.
 pub fn String::pad_start(
   self : String,
   total_width : Int32,
@@ -1595,7 +1605,15 @@ pub fn String::pad_start(
 ) -> String {
   let len = self.length()
   guard len < total_width else { return self }
-  let padding = String::make(total_width - len, padding_char)
+  let deficit = total_width - len
+  // A non-BMP `padding_char` takes two code units: round the count up so the
+  // result reaches `total_width` without splitting a character.
+  let count = if padding_char.is_bmp() {
+    deficit
+  } else {
+    deficit - deficit / 2
+  }
+  let padding = String::make(count, padding_char)
   [..padding, ..self]
 }
 
@@ -1619,6 +1637,15 @@ test "pad_start" {
   // Test with Unicode characters
   inspect("🌟".pad_start(3, '✨'), content="✨🌟")
 
+  // A non-BMP padding char is counted as two code units
+  inspect("".pad_start(2, '😀'), content="😀")
+  inspect("".pad_start(4, '😀').length(), content="4")
+  inspect("a".pad_start(3, '😀'), content="😀a")
+  inspect(view.pad_start(7, '😀'), content="😀😀llo")
+  // An odd shortfall overshoots by one code unit rather than split a char
+  inspect("".pad_start(3, '😀'), content="😀😀")
+  inspect("ab".pad_start(3, '😀').length(), content="4")
+
   // Edge cases
   inspect("abc".pad_start(0, 'x'), content="abc") // width less than string length
   inspect("abc".pad_start(3, 'x'), content="abc") // width equal to string length
@@ -1626,12 +1653,13 @@ test "pad_start" {
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The threshold and the pad count are
-/// measured in UTF-16 code units: `total_width - self.length()` copies of
-/// `padding_char` are appended. Characters outside the BMP count as two
-/// code units, so with such characters in `self` the result has fewer than
-/// `total_width` characters, and with a non-BMP `padding_char` the result's
-/// UTF-16 length exceeds `total_width`.
+/// `self.length() < total_width`. As with JavaScript's `padEnd`, the width
+/// is measured in UTF-16 code units: the fewest copies of `padding_char` are
+/// appended that bring the result's `length()` to at least `total_width`.
+/// A non-BMP `padding_char` takes two code units, so when the shortfall is
+/// odd the result is one code unit longer than `total_width` (a character is
+/// never split). Likewise, non-BMP characters in `self` count as two code
+/// units, so the result can have fewer than `total_width` characters.
 pub fn StringView::pad_end(
   self : StringView,
   total_width : Int32,
@@ -1639,18 +1667,27 @@ pub fn StringView::pad_end(
 ) -> String {
   let len = self.length()
   guard len < total_width else { return self.to_owned() }
-  let padding = String::make(total_width - len, padding_char)
+  let deficit = total_width - len
+  // A non-BMP `padding_char` takes two code units: round the count up so the
+  // result reaches `total_width` without splitting a character.
+  let count = if padding_char.is_bmp() {
+    deficit
+  } else {
+    deficit - deficit / 2
+  }
+  let padding = String::make(count, padding_char)
   [..self, ..padding]
 }
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The threshold and the pad count are
-/// measured in UTF-16 code units: `total_width - self.length()` copies of
-/// `padding_char` are appended. Characters outside the BMP count as two
-/// code units, so with such characters in `self` the result has fewer than
-/// `total_width` characters, and with a non-BMP `padding_char` the result's
-/// UTF-16 length exceeds `total_width`.
+/// `self.length() < total_width`. As with JavaScript's `padEnd`, the width
+/// is measured in UTF-16 code units: the fewest copies of `padding_char` are
+/// appended that bring the result's `length()` to at least `total_width`.
+/// A non-BMP `padding_char` takes two code units, so when the shortfall is
+/// odd the result is one code unit longer than `total_width` (a character is
+/// never split). Likewise, non-BMP characters in `self` count as two code
+/// units, so the result can have fewer than `total_width` characters.
 pub fn String::pad_end(
   self : String,
   total_width : Int32,
@@ -1658,7 +1695,15 @@ pub fn String::pad_end(
 ) -> String {
   let len = self.length()
   guard len < total_width else { return self }
-  let padding = String::make(total_width - len, padding_char)
+  let deficit = total_width - len
+  // A non-BMP `padding_char` takes two code units: round the count up so the
+  // result reaches `total_width` without splitting a character.
+  let count = if padding_char.is_bmp() {
+    deficit
+  } else {
+    deficit - deficit / 2
+  }
+  let padding = String::make(count, padding_char)
   [..self, ..padding]
 }
 
@@ -1681,6 +1726,15 @@ test "pad_end" {
 
   // Test with Unicode characters
   inspect("🌟".pad_end(3, '✨'), content="🌟✨")
+
+  // A non-BMP padding char is counted as two code units
+  inspect("".pad_end(2, '😀'), content="😀")
+  inspect("".pad_end(4, '😀').length(), content="4")
+  inspect("a".pad_end(3, '😀'), content="a😀")
+  inspect(view.pad_end(7, '😀'), content="llo😀😀")
+  // An odd shortfall overshoots by one code unit rather than split a char
+  inspect("".pad_end(3, '😀'), content="😀😀")
+  inspect("ab".pad_end(3, '😀').length(), content="4")
 
   // Edge cases
   inspect("abc".pad_end(0, 'x'), content="abc") // width less than string length
