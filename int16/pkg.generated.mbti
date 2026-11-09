@@ -52,6 +52,8 @@ pub fn Int16::to_double(Int16) -> Double
 pub fn Int16::to_int(Int16) -> Int32
 pub fn Int16::to_int64(Int16) -> Int64
 pub fn Int16::to_string(Int16, radix? : Int32) -> String
+pub fn Int16::to_uint(Int16) -> UInt32
+pub fn Int16::to_uint64(Int16) -> UInt64
 pub impl Add for Int16
 pub impl BitAnd for Int16
 pub impl BitOr for Int16

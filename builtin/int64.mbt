@@ -777,6 +777,24 @@ pub impl Default for Int64 with fn default() = "%i64_default"
 pub fn Int64::to_int(self : Int64) -> Int32 = "%i64_to_i32"
 
 ///|
+/// Converts a 64-bit signed integer to a 32-bit unsigned integer by keeping
+/// the lower 32 bits, like `Int64::to_int` and `Int64::to_uint16`. Negative
+/// values and values of 2^32 or more wrap around.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(42L.to_uint(), content="42")
+///   inspect((-1L).to_uint(), content="4294967295")
+///   inspect(4294967296L.to_uint(), content="0") // 2^32 wraps to 0
+/// }
+/// ```
+pub fn Int64::to_uint(self : Int64) -> UInt32 {
+  self.to_int().reinterpret_as_uint()
+}
+
+///|
 /// Converts a 64-bit signed integer to a double-precision floating-point number.
 ///
 /// Parameters:

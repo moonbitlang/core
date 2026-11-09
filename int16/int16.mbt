@@ -534,3 +534,39 @@ pub fn Int16::ctz(self : Int16) -> Int32 {
 pub fn Int16::popcnt(self : Int16) -> Int32 {
   self.reinterpret_as_uint16().popcnt()
 }
+
+///|
+/// Converts a 16-bit signed integer to a 32-bit unsigned integer by sign
+/// extension, like `Int::to_uint64`. Negative values wrap around to the top
+/// of the `UInt` range.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(42).to_uint(), content="42")
+///   inspect(Int16(-1).to_uint(), content="4294967295")
+///   inspect(@int16.MIN_VALUE.to_uint(), content="4294934528")
+/// }
+/// ```
+pub fn Int16::to_uint(self : Int16) -> UInt32 {
+  self.to_int().reinterpret_as_uint()
+}
+
+///|
+/// Converts a 16-bit signed integer to a 64-bit unsigned integer by sign
+/// extension, like `Int::to_uint64`. Negative values wrap around to the top
+/// of the `UInt64` range.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(42).to_uint64(), content="42")
+///   inspect(Int16(-1).to_uint64(), content="18446744073709551615")
+///   inspect(@int16.MIN_VALUE.to_uint64(), content="18446744073709518848")
+/// }
+/// ```
+pub fn Int16::to_uint64(self : Int16) -> UInt64 {
+  self.to_int().to_uint64()
+}

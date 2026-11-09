@@ -287,6 +287,7 @@ pub fn Int64::to_byte(Int64) -> Byte
 pub fn Int64::to_double(Int64) -> Double
 pub fn Int64::to_int(Int64) -> Int32
 pub fn Int64::to_string(Int64, radix? : Int32) -> String
+pub fn Int64::to_uint(Int64) -> UInt32
 pub fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
 pub fn Int64::to_uint64(Int64) -> UInt64

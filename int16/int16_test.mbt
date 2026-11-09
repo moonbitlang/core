@@ -608,3 +608,14 @@ test "Int16 from_double truncates toward zero and saturates" {
   inspect(Int16::from_double(-1.0 / 0.0), content="-32768")
   inspect(Int16::from_double(0.0 / 0.0), content="0")
 }
+
+///|
+test "Int16 to_uint and to_uint64 sign-extend, then wrap" {
+  for i in -32768..<32768 {
+    let x = Int16::from_int(i)
+    assert_eq(x.to_uint(), i.reinterpret_as_uint())
+    assert_eq(x.to_uint64(), i.to_uint64())
+    // Same bits as going through Int64.
+    assert_eq(x.to_uint64(), x.to_int64().reinterpret_as_uint64())
+  }
+}
