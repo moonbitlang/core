@@ -8,22 +8,40 @@ The `Rand` type wraps a `Source` trait object that produces 64-bit random values
 
 ## Create
 
-For everyday integer generation, use `int32` without creating a generator:
+For everyday use, call the top-level functions without creating a generator:
 
 ```mbt check
 ///|
 test {
   let die = @random.int32(limit=6) + 1
   inspect(die >= 1 && die <= 6, content="true")
+  let count = @random.int64(limit=100L)
+  inspect(count >= 0L && count < 100L, content="true")
+  inspect(@random.uint32(limit=100U) < 100U, content="true")
+  inspect(@random.uint64(limit=100UL) < 100UL, content="true")
 }
 ```
 
-`int32(limit=n)` returns an unbiased integer in `[0, n)` for positive `n`.
-Omitting `limit` returns a value in `[0, 2^31)`; explicitly passing a zero or
-negative limit aborts. Calls share a generator initialized on first use with the same
-seeding behavior as `Rand()`. Create a `Rand` when you need an independent
-stream or a reproducible seed. Calls to the shared generator from multiple
-threads require external synchronization.
+| Top-level function | Result |
+| --- | --- |
+| `int32(limit?)` | Non-negative `Int32`; unbounded range `[0, 2^31)` |
+| `int64(limit?)` | Non-negative `Int64`; unbounded range `[0, 2^63)` |
+| `uint32(limit?)` | `UInt32`; unbounded range `[0, 2^32)` |
+| `uint64(limit?)` | `UInt64`; unbounded range `[0, 2^64)` |
+| `float(min?, max?)` | `Float` in `[min, max)`, default `[0, 1)` |
+| `double(min?, max?)` | `Double` in `[min, max)`, default `[0, 1)` |
+| `boolean()` | Equally likely `true` or `false` |
+| `bigint(bits)` | Non-negative `BigInt` with at most `bits` bits |
+| `shuffle(n, swap)` | In-place Fisher-Yates shuffle through a swap callback |
+
+For the four integer functions, an explicit `limit=n` must be positive and
+returns an unbiased integer in `[0, n)`. Omitting `limit` requests the range
+listed above; explicitly passing zero or a negative limit aborts.
+
+All top-level functions share one generator initialized on first use with
+the same seeding behavior as `Rand()`. Create a `Rand` when you need an
+independent stream or a reproducible seed. Calls to the shared generator
+from multiple threads require external synchronization.
 
 Create a generator with the default ChaCha8 source:
 
@@ -50,7 +68,11 @@ test {
 
 ## Generating Integers
 
-`int()`, `uint()`, `int64()`, and `uint64()` each accept an optional `limit` parameter. When omitted (or zero), the full non-negative range is returned. When provided, the result is in `[0, limit)` with no modulo bias.
+The instance methods `Rand::int`, `Rand::uint`, `Rand::int64`, and
+`Rand::uint64` each accept an optional `limit` parameter. These methods
+retain their existing convention: omitting `limit` or passing zero requests
+the full non-negative range. A positive limit produces a result in
+`[0, limit)` with no modulo bias.
 
 ```mbt check
 ///|
@@ -71,7 +93,10 @@ test {
 
 ## Generating Floats
 
-`double()` returns a value in `[0.0, 1.0)` with 53-bit precision. `float()` returns a value in `[0.0, 1.0)` with 24-bit precision.
+`@random.double()` returns a value in `[0.0, 1.0)` with 53-bit precision.
+`@random.float()` returns a value in `[0.0, 1.0)` with 24-bit precision.
+Both accept optional `min` and `max` bounds and use the same sampling and
+validation as the corresponding `Rand` methods shown below.
 
 ```mbt check
 ///|
@@ -113,26 +138,27 @@ interval if scaling either bound by that step would underflow;
 
 ## Boolean
 
-`boolean()` returns `true` or `false` with equal probability.
+`@random.boolean()` returns `true` or `false` with equal probability.
+Use `r.boolean()` to draw from an explicit generator.
 
 ```mbt check
 ///|
 test {
-  let r = @random.Rand()
-  let _ : Bool = r.boolean()
+  let _ : Bool = @random.boolean()
 }
 ```
 
 ## Shuffling
 
-`shuffle(n, swap)` performs a Fisher-Yates shuffle over `n` elements using the provided swap callback.
+`@random.shuffle(n, swap)` performs a Fisher-Yates shuffle over `n` elements
+using the provided swap callback. Use `r.shuffle(n, swap)` to draw from an
+explicit generator. A negative `n` aborts; zero or one needs no swaps.
 
 ```mbt check
 ///|
 test {
-  let r = @random.Rand()
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), fn(i, j) {
+  @random.shuffle(a.length(), fn(i, j) {
     let t = a[i]
     a[i] = a[j]
     a[j] = t
@@ -144,14 +170,14 @@ test {
 
 ## BigInt
 
-Generate a random non-negative `BigInt` with at most the given number of bits
-(leading zero bits are allowed):
+`@random.bigint(bits)` generates a non-negative `BigInt` with at most the
+given number of bits (leading zero bits are allowed). Zero bits returns
+zero; negative bits abort. Use `r.bigint(bits)` with an explicit generator.
 
 ```mbt check
 ///|
 test {
-  let r = @random.Rand()
-  let big = r.bigint(128)
+  let big = @random.bigint(128)
   inspect(big >= 0N, content="true")
 }
 ```

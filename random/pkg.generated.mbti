@@ -7,13 +7,29 @@ import {
 }
 
 // Values
+pub fn bigint(Int32) -> @bigint.BigInt
+
+pub fn boolean() -> Bool
+
 #deprecated
 pub fn chacha8(seed? : Bytes) -> &Source
 
+pub fn double(min? : Double, max? : Double) -> Double
+
+pub fn float(min? : Float, max? : Float) -> Float
+
 pub fn int32(limit? : Int32) -> Int32
+
+pub fn int64(limit? : Int64) -> Int64
 
 #deprecated
 pub fn new(seed? : Bytes) -> Rand
+
+pub fn shuffle(Int32, (Int32, Int32) -> Unit) -> Unit
+
+pub fn uint32(limit? : UInt32) -> UInt32
+
+pub fn uint64(limit? : UInt64) -> UInt64
 
 // Errors
 
