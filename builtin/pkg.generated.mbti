@@ -908,7 +908,8 @@ pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int32) -> FixedArray[Byte]
 pub fn Bytes::to_string(Bytes) -> String
-pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, length? : Int32) -> String
+#label_migration(len, alias=length, msg="Use len= instead")
+pub fn Bytes::to_unchecked_string(Bytes, offset? : Int32, len? : Int32) -> String
 pub fn Bytes::unsafe_range_equal(Bytes, start~ : Int32, Bytes, other_start~ : Int32, len~ : Int32) -> Bool
 pub fn Bytes::unsafe_view(Bytes, start~ : Int32, end~ : Int32) -> BytesView
 pub impl Add for Bytes

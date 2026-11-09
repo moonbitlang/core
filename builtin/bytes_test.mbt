@@ -50,10 +50,7 @@ test "to_fixedarray with len" {
 
 ///|
 test "sub_string" {
-  @test.assert_eq(
-    HELLO_WORLD.to_unchecked_string(offset=0, length=5 * 2),
-    "Hello",
-  )
+  @test.assert_eq(HELLO_WORLD.to_unchecked_string(offset=0, len=5 * 2), "Hello")
 }
 
 ///|
@@ -132,7 +129,7 @@ test "set_utf16le_char" {
   let len = arr.set_utf16le_char(0, char)
   let bytes = Bytes::from_array(arr)
   @test.assert_eq(len, 2)
-  @test.assert_eq(bytes.to_unchecked_string(offset=0, length=2), "A")
+  @test.assert_eq(bytes.to_unchecked_string(offset=0, len=2), "A")
   inspect(
     bytes,
     content=(
@@ -148,7 +145,7 @@ test "set_utf16le_char (surrogate pair)" {
   let len = arr.set_utf16le_char(0, char)
   let bytes = Bytes::from_array(arr)
   @test.assert_eq(len, 4)
-  @test.assert_eq(bytes.to_unchecked_string(offset=0, length=4), "🉑")
+  @test.assert_eq(bytes.to_unchecked_string(offset=0, len=4), "🉑")
   inspect(
     bytes,
     content=(
@@ -546,7 +543,7 @@ test "panic blit_from_string rejects overflowing source range" {
 
 ///|
 test "panic unchecked string rejects overflowing byte range" {
-  ignore(b"".to_unchecked_string(offset=2147483647, length=1))
+  ignore(b"".to_unchecked_string(offset=2147483647, len=1))
 }
 
 ///|
@@ -572,5 +569,5 @@ test "byte copies accept empty ranges at the end" {
   let bytes = FixedArray::make(4, b'\x00')
   bytes.blit_from_bytes(4, b"ab", 2, 0)
   bytes.blit_from_string(4, "ab", 2, 0)
-  inspect(b"ab".to_unchecked_string(offset=2, length=0), content="")
+  inspect(b"ab".to_unchecked_string(offset=2, len=0), content="")
 }

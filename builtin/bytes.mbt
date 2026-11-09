@@ -72,20 +72,21 @@ fn unsafe_sub_string(
 
 ///|
 /// Return an unchecked string, containing the subsequence of `self` that starts at
-/// `offset` and has length `length`. Both `offset` and `length`
+/// `offset` and has length `len`. Both `offset` and `len`
 /// are indexed by byte.
 ///
 /// Note this function does not validate the encoding of the byte sequence,
 /// it simply copy the bytes into a new String.
+#label_migration(len, alias=length, msg="Use len= instead")
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
   offset~ : Int32 = 0,
-  length? : Int32,
+  len? : Int32,
 ) -> String {
-  let len = self.length()
-  let length = if length is Some(l) { l } else { len - offset }
-  guard! offset >= 0 && offset <= len && length >= 0 && length <= len - offset
-  unsafe_sub_string(self, offset, length)
+  let total = self.length()
+  let len = if len is Some(l) { l } else { total - offset }
+  guard! offset >= 0 && offset <= total && len >= 0 && len <= total - offset
+  unsafe_sub_string(self, offset, len)
 }
 
 ///|
