@@ -27,7 +27,7 @@ priv struct Number {
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
 fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int32) {
   s.fold_digits(x, (digit, acc : UInt64) => {
-    acc * 10UL + UInt64::extend_uint(digit.reinterpret_as_uint())
+    acc * 10UL + digit.reinterpret_as_uint().to_uint64()
   })
 }
 
@@ -42,8 +42,7 @@ fn try_parse_19digits(
     match s {
       ['0'..<='9' as ch, .. rest] if x < min_19digit_int => {
         len += 1
-        x = x * 10UL +
-          UInt64::extend_uint((ch.to_int() - '0').reinterpret_as_uint()) // no overflows here
+        x = x * 10UL + (ch.to_int() - '0').reinterpret_as_uint().to_uint64() // no overflows here
         continue rest
       }
       ['_', .. rest] => continue rest
