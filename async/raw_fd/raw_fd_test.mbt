@@ -145,7 +145,7 @@ async test "file as raw fd stream" {
 async test "socket as raw fd" {
   let log = []
   let server = @socket.UdpServer(@socket.Addr::parse("127.0.0.1:0"))
-  let port = server.addr.port()
+  let port = server.addr.port
   @async.with_task_group <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       defer server.close()

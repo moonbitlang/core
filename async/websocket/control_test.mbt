@@ -16,7 +16,7 @@
 async test "ping auto-reply" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -41,7 +41,7 @@ async test "ping auto-reply" {
 async test "pong ignored" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -66,7 +66,7 @@ async test "pong ignored" {
 async test "ping auto-reply race-with-write" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     // used for synchronization
     let queue1 = @async.Queue(kind=Unbounded)
     let queue2 = @async.Queue(kind=Unbounded)
@@ -109,7 +109,7 @@ async test "ping auto-reply race-with-write" {
 async test "close test" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     // used for synchronization
     let queue1 = @async.Queue(kind=Unbounded)
     let queue2 = @async.Queue(kind=Unbounded)
@@ -158,7 +158,7 @@ async test "close test" {
 async test "send ping" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -185,7 +185,7 @@ async test "send ping" {
 async test "ping inside message" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
       let (conn, _) = server.accept()
@@ -211,7 +211,7 @@ async test "ping inside message" {
 async test "multiple ping" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
@@ -245,7 +245,7 @@ async test "multiple ping" {
 async test "ping cancelled" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
@@ -279,7 +279,7 @@ async test "ping cancelled" {
 async test "duplicated ping" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()

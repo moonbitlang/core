@@ -45,7 +45,7 @@ async test "UTF8 validation" {
       }
     }
     async fn send_bad_message(msg : Bytes) {
-      let client = @websocket.connect("ws://127.0.0.1:\{addr.port()}")
+      let client = @websocket.connect("ws://127.0.0.1:\{addr.port}")
       defer client.close()
       client..start_message(Text)..write(msg).end_message()
       let err = @test.expect_error_async <| () => { client.recv().read_all() }
@@ -91,7 +91,7 @@ async test "UTF8 validation" {
 async test "UTF8 validation large message" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => {
         let ws = @websocket.from_http_server(req, conn)
