@@ -216,9 +216,9 @@ async test "callback-backed memory reader" {
 
 ## Buffered writing
 
-`BufferedWriter(writer, capacity?)` batches small writes in a fixed-size
+`BufferedWriter(writer, size?)` batches small writes in a fixed-size
 buffer. Call `flush()` before accessing the underlying destination through
-another path or before closing it. The capacity must be positive.
+another path or before closing it. The buffer size must be positive.
 
 ```moonbit check
 ///|
@@ -228,7 +228,7 @@ async test "buffered writer" {
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
-      let buffered = @io.BufferedWriter(writer, capacity=4)
+      let buffered = @io.BufferedWriter(writer, size=4)
       buffered.write(b"ab")
       buffered.write(b"cd")
       buffered.write(b"ef")

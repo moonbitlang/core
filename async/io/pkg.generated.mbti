@@ -34,12 +34,11 @@ type BinaryWriterController
 pub fn BinaryWriterController::BinaryWriterController() -> Self
 
 type BufferedWriter[W]
-pub fn[W] BufferedWriter::BufferedWriter(W, capacity? : Int32) -> Self[W]
+#alias(new, deprecated)
+pub fn[W] BufferedWriter::BufferedWriter(W, size? : Int32) -> Self[W]
 pub fn[W] BufferedWriter::capacity(Self[W]) -> Int32
 pub async fn[W : BinaryWriter] BufferedWriter::flush(Self[W]) -> Unit
 pub async fn[W : BinaryWriter] BufferedWriter::flush_partial_data(Self[W]) -> Unit
-#deprecated
-pub fn[W] BufferedWriter::new(W, size? : Int32) -> Self[W]
 pub async fn[W : BinaryWriter] BufferedWriter::write(Self[W], BytesView) -> Unit raise WriterError
 pub async fn[W : BinaryWriter] BufferedWriter::write_reader(Self[W], &BinaryReader) -> Unit
 pub impl[W : BinaryWriter] BinaryWriter for BufferedWriter[W]
