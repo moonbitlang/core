@@ -149,8 +149,9 @@ pub impl BytesScannable for BytesScanner with fn set_scan_cursor(self, cursor) {
 }
 
 ///|
-/// The trait methods are not methods of the scanners: call them through the
-/// trait.
+/// Without these, the trait methods would be promoted implicitly to methods of
+/// the scanners. They stay callable with method syntax, but hidden and
+/// deprecated: call them through the trait.
 #deprecated("Call through `@lexbuf.Scannable`", skip_current_package=true)
 #doc(hidden)
 pub extend StringScanner with Scannable::{
