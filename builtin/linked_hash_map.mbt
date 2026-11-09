@@ -757,6 +757,9 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion.
+///
+/// If `f` structurally modifies the map (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K, V] Map::each(
   self : Map[K, V],
@@ -775,6 +778,9 @@ pub fn[K, V] Map::each(
 
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
+///
+/// If `f` structurally modifies the map (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 #locals(f)
 pub fn[K, V] Map::eachi(
   self : Map[K, V],
@@ -802,6 +808,10 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator, deprecated)
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
   let mut curr_entry = self.head
@@ -822,6 +832,10 @@ pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
 
 ///|
 /// Return an iterator via `iter2`.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator2, deprecated)
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -829,6 +843,10 @@ pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
 
 ///|
 /// Return an iterator of keys.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
   let mut curr_entry = self.head
   let len = self.size
@@ -846,6 +864,10 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
 
 ///|
 /// Return an iterator of values.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
   let mut curr_entry = self.head
   let len = self.size
@@ -1102,7 +1124,8 @@ pub fn[K : Eq, V] Map::merge_in_place(
 ///
 /// `true` means *keep*, as with `Map::filter`, which returns a new map and
 /// leaves `self` unchanged; use `retain` when the original is no longer
-/// needed. `f` must not modify the map.
+/// needed. `f` must not modify the map: the result is then unspecified,
+/// though memory-safe.
 ///
 /// Parameters:
 ///
@@ -1161,6 +1184,9 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// than rebuilding from a comprehension such as
 /// `Map([for k, v in m if f(k, v) => (k, v)])` because each entry's stored
 /// hash is reused: keys are never hashed again and no tuples are allocated.
+///
+/// If `f` structurally modifies `self` (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 ///
 /// Example:
 ///
