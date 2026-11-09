@@ -340,7 +340,7 @@ async fn Sender::send_headers(self : Sender, headers : Headers) -> Int64? {
       continue
     }
     if k == "Content-Length" {
-      let len = @string.parse_int64(v.trim(), base=10)
+      let len = @string.parse_int64(v.trim(), radix=10)
       content_length = Some(len)
     } else if forbidden_headers.contains(k) {
       continue

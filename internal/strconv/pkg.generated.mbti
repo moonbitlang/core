@@ -6,13 +6,17 @@ pub fn parse_bool(StringView) -> Bool raise
 
 pub fn parse_double(StringView) -> Double raise
 
-pub fn parse_int(StringView, base? : Int32) -> Int32 raise
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_int(StringView, radix? : Int32) -> Int32 raise
 
-pub fn parse_int64(StringView, base? : Int32) -> Int64 raise
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_int64(StringView, radix? : Int32) -> Int64 raise
 
-pub fn parse_uint(StringView, base? : Int32) -> UInt32 raise
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_uint(StringView, radix? : Int32) -> UInt32 raise
 
-pub fn parse_uint64(StringView, base? : Int32) -> UInt64 raise
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_uint64(StringView, radix? : Int32) -> UInt64 raise
 
 // Errors
 

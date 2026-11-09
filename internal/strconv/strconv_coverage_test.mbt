@@ -21,7 +21,7 @@
 /// `Failure` (any other error propagates so it is not masked as a parse error).
 fn int64_raises(s : String, base : Int32) -> Bool raise {
   try {
-    @strconv.parse_int64(s, base~) |> ignore
+    @strconv.parse_int64(s, radix=base) |> ignore
     false
   } catch {
     Failure::Failure(_) => true
@@ -55,24 +55,24 @@ fn int_raises(s : String) -> Bool raise {
 
 ///|
 test "explicit base with matching prefix and uppercase hex digits" {
-  inspect(@strconv.parse_int64("0xFF", base=16), content="255")
-  inspect(@strconv.parse_int64("FF", base=16), content="255")
-  inspect(@strconv.parse_int64("0XAB", base=16), content="171")
-  inspect(@strconv.parse_int64("0o17", base=8), content="15")
-  inspect(@strconv.parse_int64("0B101", base=2), content="5")
+  inspect(@strconv.parse_int64("0xFF", radix=16), content="255")
+  inspect(@strconv.parse_int64("FF", radix=16), content="255")
+  inspect(@strconv.parse_int64("0XAB", radix=16), content="171")
+  inspect(@strconv.parse_int64("0o17", radix=8), content="15")
+  inspect(@strconv.parse_int64("0B101", radix=2), content="5")
 }
 
 ///|
 test "leading plus sign is accepted" {
   inspect(@strconv.parse_int64("+123"), content="123")
-  inspect(@strconv.parse_int64("+0xff", base=16), content="255")
+  inspect(@strconv.parse_int64("+0xff", radix=16), content="255")
 }
 
 ///|
 test "negative values with non-decimal bases" {
-  inspect(@strconv.parse_int64("-ff", base=16), content="-255")
-  inspect(@strconv.parse_int64("-17", base=8), content="-15")
-  inspect(@strconv.parse_int64("-101", base=2), content="-5")
+  inspect(@strconv.parse_int64("-ff", radix=16), content="-255")
+  inspect(@strconv.parse_int64("-17", radix=8), content="-15")
+  inspect(@strconv.parse_int64("-101", radix=2), content="-5")
 }
 
 ///|
