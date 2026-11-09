@@ -15,8 +15,7 @@
 ///|
 fn radix_bench_value() -> @bigint.BigInt {
   // ~4000 bits
-  (@bigint.BigInt::from_string("7") << 4000) +
-  @bigint.BigInt::from_string("12345678901234567890")
+  (7N << 4000) + 12345678901234567890N
 }
 
 ///|

@@ -200,8 +200,8 @@ let small_primes : ReadOnlyArray[@bigint.BigInt] = [
 /// ```mbt check
 /// test {
 ///   let rand = @random.Rand()
-///   let prime = BigInt::from_string("17")
-///   let composite = BigInt::from_string("15")
+///   let prime = 17N
+///   let composite = 15N
 ///   inspect(@math.is_probable_prime(prime, rand), content="true")
 ///   inspect(@math.is_probable_prime(composite, rand), content="false")
 /// }

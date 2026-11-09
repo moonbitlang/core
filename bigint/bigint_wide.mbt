@@ -909,18 +909,6 @@ pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
 }
 
 ///|
-/// Converts a string representation in the specified radix to a `BigInt`.
-///
-/// Panics if the input is malformed. Use `@string.parse_bigint` to handle
-/// errors.
-pub fn BigInt::from_string(input : String, radix~ : Int32 = 10) -> BigInt {
-  parse_bigint(input, base=radix) catch {
-    Failure(msg) => abort(msg)
-    _ => abort("invalid syntax")
-  }
-}
-
-///|
 /// Creates a magnitude from unsigned big-endian bytes.
 pub fn BigInt::from_octets(input : BytesView, signum~ : Int32 = 1) -> BigInt {
   if signum == 0 || input.length() == 0 {
