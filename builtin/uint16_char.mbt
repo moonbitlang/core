@@ -213,3 +213,136 @@ pub fn UInt16::to_uint(self : UInt16) -> UInt32 {
 pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
   self.to_int().to_uint64()
 }
+
+///|
+/// Converts an unsigned 16-bit integer to a double-precision floating-point
+/// number. Every `UInt16` value is exactly representable as a `Double`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(42).to_double(), content="42")
+///   inspect(UInt16(65535).to_double(), content="65535")
+/// }
+/// ```
+pub fn UInt16::to_double(self : UInt16) -> Double {
+  self.to_int().to_double()
+}
+
+///|
+/// Returns the smaller of two unsigned 16-bit integers.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(1).min(UInt16(2)), content="1")
+///   inspect(UInt16(65535).min(UInt16(0)), content="0")
+/// }
+/// ```
+pub fn UInt16::min(self : UInt16, other : UInt16) -> UInt16 {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the larger of two unsigned 16-bit integers.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(1).max(UInt16(2)), content="2")
+///   inspect(UInt16(65535).max(UInt16(0)), content="65535")
+/// }
+/// ```
+pub fn UInt16::max(self : UInt16, other : UInt16) -> UInt16 {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps an unsigned 16-bit integer into the inclusive range [`min`, `max`].
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(5).clamp(min=UInt16(0), max=UInt16(10)), content="5")
+///   inspect(UInt16(0).clamp(min=UInt16(2), max=UInt16(10)), content="2")
+///   inspect(UInt16(15).clamp(min=UInt16(0), max=UInt16(10)), content="10")
+/// }
+/// ```
+pub fn UInt16::clamp(self : UInt16, min~ : UInt16, max~ : UInt16) -> UInt16 {
+  guard! min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
+/// Counts the leading zero bits in the 16-bit representation of the value.
+///
+/// Returns 16 for zero.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(1).clz(), content="15")
+///   inspect(UInt16(0x8000).clz(), content="0")
+///   inspect(UInt16(0).clz(), content="16")
+/// }
+/// ```
+pub fn UInt16::clz(self : UInt16) -> Int32 {
+  self.to_uint().clz() - 16
+}
+
+///|
+/// Counts the trailing zero bits in the 16-bit representation of the value.
+///
+/// Returns 16 for zero.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(8).ctz(), content="3")
+///   inspect(UInt16(0x8000).ctz(), content="15")
+///   inspect(UInt16(0).ctz(), content="16")
+/// }
+/// ```
+pub fn UInt16::ctz(self : UInt16) -> Int32 {
+  (self.to_uint() | 0x10000U).ctz()
+}
+
+///|
+/// Counts the 1-bits (population count) in the 16-bit representation of the
+/// value.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(0x0F0F).popcnt(), content="8")
+///   inspect(UInt16(65535).popcnt(), content="16")
+///   inspect(UInt16(0).popcnt(), content="0")
+/// }
+/// ```
+pub fn UInt16::popcnt(self : UInt16) -> Int32 {
+  self.to_uint().popcnt()
+}

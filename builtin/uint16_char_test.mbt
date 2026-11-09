@@ -77,3 +77,64 @@ test "UInt16 hash combine" {
 test "UInt16 not_equal" {
   inspect(Eq::not_equal(UInt16(0x0001), UInt16(0x0002)), content="true")
 }
+
+///|
+/// Reference bit counts over the low `width` bits, one bit at a time.
+fn naive_bit_counts(x : Int32, width : Int32) -> (Int32, Int32, Int32) {
+  let mut clz = 0
+  for i = width - 1; i >= 0 && ((x >> i) & 1) == 0; i = i - 1 {
+    clz += 1
+  }
+  let mut ctz = 0
+  while ctz < width && ((x >> ctz) & 1) == 0 {
+    ctz += 1
+  }
+  let mut popcnt = 0
+  for i in 0..<width {
+    popcnt += (x >> i) & 1
+  }
+  (clz, ctz, popcnt)
+}
+
+///|
+test "UInt16 clz/ctz/popcnt match a bitwise reference for every value" {
+  for i in 0..<65536 {
+    let x = i.to_uint16()
+    assert_eq((x.clz(), x.ctz(), x.popcnt()), naive_bit_counts(i, 16))
+  }
+}
+
+///|
+test "Byte clz/ctz/popcnt match a bitwise reference for every value" {
+  for i in 0..<256 {
+    let x = i.to_byte()
+    assert_eq((x.clz(), x.ctz(), x.popcnt()), naive_bit_counts(i, 8))
+  }
+}
+
+///|
+test "UInt16 to_double, min, max, clamp" {
+  for i in [0, 1, 255, 32767, 32768, 65535] {
+    assert_eq(i.to_uint16().to_double(), i.to_double())
+  }
+  inspect(UInt16(65535).min(UInt16(32768)), content="32768")
+  inspect(UInt16(65535).max(UInt16(32768)), content="65535")
+  inspect(UInt16(7).clamp(min=UInt16(7), max=UInt16(7)), content="7")
+  inspect(
+    UInt16(65535).clamp(min=UInt16(0), max=UInt16(65534)),
+    content="65534",
+  )
+}
+
+///|
+test "Byte min, max, clamp compare unsigned" {
+  inspect(b'\x80'.min(b'\x7F').to_int(), content="127")
+  inspect(b'\x80'.max(b'\x7F').to_int(), content="128")
+  inspect(b'\xFF'.clamp(min=b'\x80', max=b'\xFE').to_int(), content="254")
+}
+
+///|
+test "Bool to_byte" {
+  inspect(true.to_byte(), content="b'\\x01'")
+  inspect(false.to_byte(), content="b'\\x00'")
+}

@@ -410,3 +410,82 @@ fn pow2_shift(radix : Int32) -> Int32? {
     None
   }
 }
+
+///|
+/// Returns the absolute value of a `BigInt`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((-42N).abs(), content="42")
+///   inspect(42N.abs(), content="42")
+///   inspect(0N.abs(), content="0")
+/// }
+/// ```
+pub fn BigInt::abs(self : BigInt) -> BigInt {
+  if is_neg(self) {
+    -self
+  } else {
+    self
+  }
+}
+
+///|
+/// Converts a `BigInt` to the nearest `Double`, rounding ties to even.
+///
+/// Values whose magnitude rounds to 2^1024 or more give positive or negative
+/// infinity.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(42N.to_double(), content="42")
+///   inspect((-42N).to_double(), content="-42")
+///   // 2^53 + 1 is not representable; it rounds to the even neighbour 2^53.
+///   inspect(9007199254740993N.to_double(), content="9007199254740992")
+///   inspect((1N << 1024).to_double(), content="Infinity")
+/// }
+/// ```
+pub fn BigInt::to_double(self : BigInt) -> Double {
+  if self.is_zero() {
+    return 0.0
+  }
+  let negative = is_neg(self)
+  let mag = if negative { -self } else { self }
+  let bits = mag.bit_length()
+  let magnitude = if bits <= 53 {
+    // Fits in the 53-bit significand, so the conversion is exact.
+    mag.to_uint64().to_double()
+  } else {
+    // Keep 54 bits: the 53-bit significand plus one rounding bit. Any 1-bit
+    // shifted out below those is the sticky bit.
+    let shift = bits - 54
+    let top = (mag >> shift).to_uint64()
+    let sticky = mag.ctz() < shift
+    let mut significand = top >> 1
+    let mut exponent = shift + 1
+    if (top & 1UL) != 0UL && (sticky || (significand & 1UL) != 0UL) {
+      significand += 1UL
+      if significand == 1UL << 53 {
+        significand = significand >> 1
+        exponent += 1
+      }
+    }
+    // The value is `significand * 2^exponent` with `significand` in
+    // [2^52, 2^53), i.e. `1.f * 2^(52 + exponent)`.
+    let unbiased = 52 + exponent
+    if unbiased > 1023 {
+      0x7FF0000000000000UL.reinterpret_as_double()
+    } else {
+      (((unbiased + 1023).to_uint64() << 52) |
+      (significand & 0x000FFFFFFFFFFFFFUL)).reinterpret_as_double()
+    }
+  }
+  if negative {
+    -magnitude
+  } else {
+    magnitude
+  }
+}

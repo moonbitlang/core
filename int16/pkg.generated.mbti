@@ -19,26 +19,36 @@ pub type Int16
 pub fn Int16::Int16(Int16) -> Int16
 pub fn Int16::abs(Int16) -> Int16
 pub fn Int16::add(Int16, Int16) -> Int16
+pub fn Int16::clamp(Int16, min~ : Int16, max~ : Int16) -> Int16
+pub fn Int16::clz(Int16) -> Int32
 pub fn Int16::compare(Int16, Int16) -> Int32
+pub fn Int16::ctz(Int16) -> Int32
 pub fn Int16::div(Int16, Int16) -> Int16
 pub fn Int16::equal(Int16, Int16) -> Bool
 pub fn Int16::from_byte(Byte) -> Int16
+pub fn Int16::from_double(Double) -> Int16
 pub fn Int16::from_int(Int32) -> Int16
 pub fn Int16::from_int64(Int64) -> Int16
+pub fn Int16::from_uint(UInt32) -> Int16
+pub fn Int16::from_uint64(UInt64) -> Int16
 pub fn Int16::hash(Int16) -> Int32
 pub fn Int16::land(Int16, Int16) -> Int16
 pub fn Int16::lnot(Int16) -> Int16
 pub fn Int16::lor(Int16, Int16) -> Int16
 pub fn Int16::lxor(Int16, Int16) -> Int16
+pub fn Int16::max(Int16, Int16) -> Int16
+pub fn Int16::min(Int16, Int16) -> Int16
 pub fn Int16::mod(Int16, Int16) -> Int16
 pub fn Int16::mul(Int16, Int16) -> Int16
 pub fn Int16::neg(Int16) -> Int16
+pub fn Int16::popcnt(Int16) -> Int32
 pub fn Int16::reinterpret_as_uint16(Int16) -> UInt16
 pub fn Int16::reinterpret_from_uint16(UInt16) -> Int16
 pub fn Int16::shl(Int16, Int32) -> Int16
 pub fn Int16::shr(Int16, Int32) -> Int16
 pub fn Int16::sub(Int16, Int16) -> Int16
 pub fn Int16::to_byte(Int16) -> Byte
+pub fn Int16::to_double(Int16) -> Double
 pub fn Int16::to_int(Int16) -> Int32
 pub fn Int16::to_int64(Int16) -> Int64
 pub fn Int16::to_string(Int16, radix? : Int32) -> String

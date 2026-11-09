@@ -553,3 +553,58 @@ test "Int16 constructor syntax" {
   let x : Int16 = 42
   inspect(Int16(x), content="42")
 }
+
+///|
+test "Int16 clz/ctz/popcnt agree with the UInt16 bit pattern" {
+  for i in -32768..<32768 {
+    let x = Int16::from_int(i)
+    let u = x.reinterpret_as_uint16()
+    assert_eq((x.clz(), x.ctz(), x.popcnt()), (u.clz(), u.ctz(), u.popcnt()))
+  }
+  inspect(@int16.MIN_VALUE.clz(), content="0")
+  inspect(@int16.MAX_VALUE.clz(), content="1")
+  inspect(@int16.MAX_VALUE.popcnt(), content="15")
+}
+
+///|
+test "Int16 min, max, clamp are signed" {
+  inspect(@int16.MIN_VALUE.min(@int16.MAX_VALUE), content="-32768")
+  inspect(@int16.MIN_VALUE.max(@int16.MAX_VALUE), content="32767")
+  inspect(Int16(-1).clamp(min=Int16(-1), max=Int16(-1)), content="-1")
+  inspect(
+    @int16.MIN_VALUE.clamp(min=Int16(-100), max=Int16(100)),
+    content="-100",
+  )
+}
+
+///|
+test "Int16 to_double" {
+  for i in [-32768, -1, 0, 1, 32767] {
+    assert_eq(Int16::from_int(i).to_double(), i.to_double())
+  }
+}
+
+///|
+test "Int16 from_uint and from_uint64 keep the low 16 bits" {
+  for x in [0U, 1U, 0x7FFFU, 0x8000U, 0xFFFFU, 0x10000U, 0xFFFF_FFFFU] {
+    assert_eq(Int16::from_uint(x), Int16::from_int(x.reinterpret_as_int()))
+    assert_eq(
+      Int16::from_uint64(x.to_uint64() | 0xABCD_0000_0000_0000UL),
+      Int16::from_uint(x),
+    )
+  }
+  inspect(Int16::from_uint(0x8000U), content="-32768")
+  inspect(Int16::from_uint64(0x7FFFUL), content="32767")
+}
+
+///|
+test "Int16 from_double truncates toward zero and saturates" {
+  inspect(Int16::from_double(32767.9), content="32767")
+  inspect(Int16::from_double(32768.0), content="32767")
+  inspect(Int16::from_double(-32768.9), content="-32768")
+  inspect(Int16::from_double(-32769.0), content="-32768")
+  inspect(Int16::from_double(-0.9), content="0")
+  inspect(Int16::from_double(1.0 / 0.0), content="32767")
+  inspect(Int16::from_double(-1.0 / 0.0), content="-32768")
+  inspect(Int16::from_double(0.0 / 0.0), content="0")
+}

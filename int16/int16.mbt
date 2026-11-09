@@ -340,3 +340,197 @@ pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
 pub fn Int16::to_string(self : Int16, radix~ : Int32 = 10) -> String {
   self.to_int().to_string(radix~)
 }
+
+///|
+/// Converts a 16-bit signed integer to a double-precision floating-point
+/// number. Every `Int16` value is exactly representable as a `Double`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(42).to_double(), content="42")
+///   inspect(@int16.MIN_VALUE.to_double(), content="-32768")
+/// }
+/// ```
+pub fn Int16::to_double(self : Int16) -> Double {
+  self.to_int().to_double()
+}
+
+///|
+/// Converts a `UInt` to a 16-bit signed integer (`Int16`), keeping the lower
+/// 16 bits and interpreting them as a signed integer. This matches
+/// `Int16::from_int`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16::from_uint(42U), content="42")
+///   inspect(Int16::from_uint(0xFFFFU), content="-1")
+///   inspect(Int16::from_uint(0x12345U), content="9029")
+/// }
+/// ```
+pub fn Int16::from_uint(self : UInt32) -> Int16 {
+  Int16::from_int(self.reinterpret_as_int())
+}
+
+///|
+/// Converts a `UInt64` to a 16-bit signed integer (`Int16`), keeping the lower
+/// 16 bits and interpreting them as a signed integer. This matches
+/// `Int16::from_int64`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16::from_uint64(42UL), content="42")
+///   inspect(Int16::from_uint64(0xFFFFFFFFFFFFFFFFUL), content="-1")
+///   inspect(Int16::from_uint64(0x1_0000_8000UL), content="-32768")
+/// }
+/// ```
+pub fn Int16::from_uint64(self : UInt64) -> Int16 {
+  Int16::from_int(self.to_int())
+}
+
+///|
+/// Converts a `Double` to a 16-bit signed integer (`Int16`), truncating
+/// toward zero and saturating like `Double::to_int`:
+///
+/// * NaN gives `0`,
+/// * values above `@int16.MAX_VALUE` (including infinity) give `32767`,
+/// * values below `@int16.MIN_VALUE` (including negative infinity) give
+///   `-32768`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16::from_double(-1.9), content="-1")
+///   inspect(Int16::from_double(1.0e10), content="32767")
+///   inspect(Int16::from_double(-1.0e10), content="-32768")
+///   inspect(Int16::from_double(0.0 / 0.0), content="0")
+/// }
+/// ```
+pub fn Int16::from_double(self : Double) -> Int16 {
+  Int16::from_int(self.to_int().clamp(min=-32768, max=32767))
+}
+
+///|
+/// Returns the smaller of two 16-bit signed integers.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(1).min(Int16(2)), content="1")
+///   inspect(Int16(-1).min(Int16(1)), content="-1")
+/// }
+/// ```
+pub fn Int16::min(self : Int16, other : Int16) -> Int16 {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the larger of two 16-bit signed integers.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(1).max(Int16(2)), content="2")
+///   inspect(Int16(-1).max(Int16(1)), content="1")
+/// }
+/// ```
+pub fn Int16::max(self : Int16, other : Int16) -> Int16 {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps a 16-bit signed integer into the inclusive range [`min`, `max`].
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(5).clamp(min=Int16(0), max=Int16(10)), content="5")
+///   inspect(Int16(-5).clamp(min=Int16(0), max=Int16(10)), content="0")
+///   inspect(Int16(15).clamp(min=Int16(0), max=Int16(10)), content="10")
+/// }
+/// ```
+pub fn Int16::clamp(self : Int16, min~ : Int16, max~ : Int16) -> Int16 {
+  guard! min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
+/// Counts the leading zero bits in the 16-bit two's complement
+/// representation of the value.
+///
+/// Returns 16 for zero and 0 for negative values.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(1).clz(), content="15")
+///   inspect(Int16(-1).clz(), content="0")
+///   inspect(Int16(0).clz(), content="16")
+/// }
+/// ```
+pub fn Int16::clz(self : Int16) -> Int32 {
+  self.reinterpret_as_uint16().clz()
+}
+
+///|
+/// Counts the trailing zero bits in the 16-bit two's complement
+/// representation of the value.
+///
+/// Returns 16 for zero.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(8).ctz(), content="3")
+///   inspect(@int16.MIN_VALUE.ctz(), content="15")
+///   inspect(Int16(0).ctz(), content="16")
+/// }
+/// ```
+pub fn Int16::ctz(self : Int16) -> Int32 {
+  self.reinterpret_as_uint16().ctz()
+}
+
+///|
+/// Counts the 1-bits (population count) in the 16-bit two's complement
+/// representation of the value.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(0x0F0F).popcnt(), content="8")
+///   inspect(Int16(-1).popcnt(), content="16")
+///   inspect(Int16(0).popcnt(), content="0")
+/// }
+/// ```
+pub fn Int16::popcnt(self : Int16) -> Int32 {
+  self.reinterpret_as_uint16().popcnt()
+}

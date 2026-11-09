@@ -1076,3 +1076,72 @@ test "Float::from_int64" {
   let f = Float::from_int64(n)
   inspect(f.to_double(), content="42")
 }
+
+///|
+/// Converts a `Float` to an `Int64`, truncating toward zero and saturating
+/// like `Double::to_int64`:
+///
+/// * NaN gives `0`,
+/// * values above `@int64.MAX_VALUE` (including infinity) give
+///   `@int64.MAX_VALUE`,
+/// * values below `@int64.MIN_VALUE` (including negative infinity) give
+///   `@int64.MIN_VALUE`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Float(-1.5).to_int64(), content="-1")
+///   inspect(Float(1.0e10).to_int64(), content="10000000000")
+///   inspect(@float.infinity.to_int64(), content="9223372036854775807")
+///   inspect(@float.not_a_number.to_int64(), content="0")
+/// }
+/// ```
+pub fn Float::to_int64(self : Float) -> Int64 {
+  // `Float` to `Double` is exact, so this saturates at the same bounds.
+  self.to_double().to_int64()
+}
+
+///|
+/// Converts a `Float` to a `UInt`, truncating toward zero and saturating
+/// like `Double::to_uint`:
+///
+/// * NaN and negative values give `0`,
+/// * values above `@uint.MAX_VALUE` (including infinity) give
+///   `@uint.MAX_VALUE`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Float(1.5).to_uint(), content="1")
+///   inspect(Float(-1.5).to_uint(), content="0")
+///   inspect(@float.infinity.to_uint(), content="4294967295")
+///   inspect(@float.not_a_number.to_uint(), content="0")
+/// }
+/// ```
+pub fn Float::to_uint(self : Float) -> UInt32 {
+  self.to_double().to_uint()
+}
+
+///|
+/// Converts a `Float` to a `UInt64`, truncating toward zero and saturating
+/// like `Double::to_uint64`:
+///
+/// * NaN and negative values give `0`,
+/// * values above `@uint64.MAX_VALUE` (including infinity) give
+///   `@uint64.MAX_VALUE`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Float(1.5).to_uint64(), content="1")
+///   inspect(Float(-1.5).to_uint64(), content="0")
+///   inspect(@float.infinity.to_uint64(), content="18446744073709551615")
+///   inspect(@float.not_a_number.to_uint64(), content="0")
+/// }
+/// ```
+pub fn Float::to_uint64(self : Float) -> UInt64 {
+  self.to_double().to_uint64()
+}

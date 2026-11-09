@@ -67,8 +67,11 @@ pub fn Float::sub(Float, Float) -> Float
 pub fn Float::to_be_bytes(Float) -> Bytes
 pub fn Float::to_double(Float) -> Double
 pub fn Float::to_int(Float) -> Int32
+pub fn Float::to_int64(Float) -> Int64
 pub fn Float::to_le_bytes(Float) -> Bytes
 pub fn Float::to_string(Float) -> String
+pub fn Float::to_uint(Float) -> UInt32
+pub fn Float::to_uint64(Float) -> UInt64
 pub fn Float::total_compare(Float, Float) -> Int32
 #as_free_fn
 pub fn Float::trunc(Float) -> Float
