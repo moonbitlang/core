@@ -95,6 +95,6 @@ test "popcnt covers every byte value" {
       expected += remaining % 2
       remaining /= 2
     }
-    assert_eq(value.to_byte().popcnt(), expected)
+    inspect(value.to_byte().popcnt(), content="\{expected}")
   }
 }
