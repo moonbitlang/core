@@ -19,27 +19,27 @@ test "unsafe_write_uint64_le basic functionality" {
   FixedArray::unsafe_write_uint64_le(buffer, 0, 0x0102030405060708UL)
 
   // Check each byte individually
-  inspect(buffer[0], content="b'\\x08'") // 0x08
-  inspect(buffer[1], content="b'\\x07'") // 0x07
-  inspect(buffer[2], content="b'\\x06'") // 0x06
-  inspect(buffer[3], content="b'\\x05'") // 0x05
-  inspect(buffer[4], content="b'\\x04'") // 0x04
-  inspect(buffer[5], content="b'\\x03'") // 0x03
-  inspect(buffer[6], content="b'\\x02'") // 0x02
-  inspect(buffer[7], content="b'\\x01'") // 0x01
+  inspect(buffer[0], content="8") // 0x08
+  inspect(buffer[1], content="7") // 0x07
+  inspect(buffer[2], content="6") // 0x06
+  inspect(buffer[3], content="5") // 0x05
+  inspect(buffer[4], content="4") // 0x04
+  inspect(buffer[5], content="3") // 0x03
+  inspect(buffer[6], content="2") // 0x02
+  inspect(buffer[7], content="1") // 0x01
 
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(8, 255) // Fill with 0xFF initially
   FixedArray::unsafe_write_uint64_le(zero_buffer, 0, 0UL)
   for i in 0..<=7 {
-    inspect(zero_buffer[i], content="b'\\x00'")
+    inspect(zero_buffer[i], content="0")
   }
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(8, 0)
   FixedArray::unsafe_write_uint64_le(max_buffer, 0, 0xFFFFFFFFFFFFFFFFUL)
   for i in 0..<=7 {
-    inspect(max_buffer[i], content="b'\\xFF'") // All bytes should be 0xFF
+    inspect(max_buffer[i], content="255") // All bytes should be 0xFF
   }
 }
 
@@ -50,26 +50,26 @@ test "unsafe_write_uint64_be basic functionality" {
   FixedArray::unsafe_write_uint64_be(buffer, 0, 0x0102030405060708UL)
 
   // Check each byte individually (big-endian order)
-  inspect(buffer[0], content="b'\\x01'") // 0x01
-  inspect(buffer[1], content="b'\\x02'") // 0x02
-  inspect(buffer[2], content="b'\\x03'") // 0x03
-  inspect(buffer[3], content="b'\\x04'") // 0x04
-  inspect(buffer[4], content="b'\\x05'") // 0x05
-  inspect(buffer[5], content="b'\\x06'") // 0x06
-  inspect(buffer[6], content="b'\\x07'") // 0x07
-  inspect(buffer[7], content="b'\\x08'") // 0x08
+  inspect(buffer[0], content="1") // 0x01
+  inspect(buffer[1], content="2") // 0x02
+  inspect(buffer[2], content="3") // 0x03
+  inspect(buffer[3], content="4") // 0x04
+  inspect(buffer[4], content="5") // 0x05
+  inspect(buffer[5], content="6") // 0x06
+  inspect(buffer[6], content="7") // 0x07
+  inspect(buffer[7], content="8") // 0x08
 
   // Test with alternating pattern
   let alt_buffer : FixedArray[Byte] = FixedArray::make(8, 0)
   FixedArray::unsafe_write_uint64_be(alt_buffer, 0, 0xFF00FF00FF00FF00UL)
-  inspect(alt_buffer[0], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[1], content="b'\\x00'") // 0x00
-  inspect(alt_buffer[2], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[3], content="b'\\x00'") // 0x00
-  inspect(alt_buffer[4], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[5], content="b'\\x00'") // 0x00
-  inspect(alt_buffer[6], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[7], content="b'\\x00'") // 0x00
+  inspect(alt_buffer[0], content="255") // 0xFF
+  inspect(alt_buffer[1], content="0") // 0x00
+  inspect(alt_buffer[2], content="255") // 0xFF
+  inspect(alt_buffer[3], content="0") // 0x00
+  inspect(alt_buffer[4], content="255") // 0xFF
+  inspect(alt_buffer[5], content="0") // 0x00
+  inspect(alt_buffer[6], content="255") // 0xFF
+  inspect(alt_buffer[7], content="0") // 0x00
 }
 
 ///|
@@ -79,23 +79,23 @@ test "unsafe_write_uint32_le basic functionality" {
   FixedArray::unsafe_write_uint32_le(buffer, 0, 0x01020304U)
 
   // Check each byte individually (little-endian order)
-  inspect(buffer[0], content="b'\\x04'") // 0x04
-  inspect(buffer[1], content="b'\\x03'") // 0x03
-  inspect(buffer[2], content="b'\\x02'") // 0x02
-  inspect(buffer[3], content="b'\\x01'") // 0x01
+  inspect(buffer[0], content="4") // 0x04
+  inspect(buffer[1], content="3") // 0x03
+  inspect(buffer[2], content="2") // 0x02
+  inspect(buffer[3], content="1") // 0x01
 
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(4, 255)
   FixedArray::unsafe_write_uint32_le(zero_buffer, 0, 0U)
   for i in 0..<=3 {
-    inspect(zero_buffer[i], content="b'\\x00'")
+    inspect(zero_buffer[i], content="0")
   }
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(4, 0)
   FixedArray::unsafe_write_uint32_le(max_buffer, 0, 0xFFFFFFFFU)
   for i in 0..<=3 {
-    inspect(max_buffer[i], content="b'\\xFF'")
+    inspect(max_buffer[i], content="255")
   }
 }
 
@@ -106,18 +106,18 @@ test "unsafe_write_uint32_be basic functionality" {
   FixedArray::unsafe_write_uint32_be(buffer, 0, 0x01020304U)
 
   // Check each byte individually (big-endian order)
-  inspect(buffer[0], content="b'\\x01'") // 0x01
-  inspect(buffer[1], content="b'\\x02'") // 0x02
-  inspect(buffer[2], content="b'\\x03'") // 0x03
-  inspect(buffer[3], content="b'\\x04'") // 0x04
+  inspect(buffer[0], content="1") // 0x01
+  inspect(buffer[1], content="2") // 0x02
+  inspect(buffer[2], content="3") // 0x03
+  inspect(buffer[3], content="4") // 0x04
 
   // Test with alternating pattern
   let alt_buffer : FixedArray[Byte] = FixedArray::make(4, 0)
   FixedArray::unsafe_write_uint32_be(alt_buffer, 0, 0xFF00FF00U)
-  inspect(alt_buffer[0], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[1], content="b'\\x00'") // 0x00
-  inspect(alt_buffer[2], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[3], content="b'\\x00'") // 0x00
+  inspect(alt_buffer[0], content="255") // 0xFF
+  inspect(alt_buffer[1], content="0") // 0x00
+  inspect(alt_buffer[2], content="255") // 0xFF
+  inspect(alt_buffer[3], content="0") // 0x00
 }
 
 ///|
@@ -127,20 +127,20 @@ test "unsafe_write_uint16_le basic functionality" {
   FixedArray::unsafe_write_uint16_le(buffer, 0, UInt16(0x0102))
 
   // Check each byte individually (little-endian order)
-  inspect(buffer[0], content="b'\\x02'") // 0x02
-  inspect(buffer[1], content="b'\\x01'") // 0x01
+  inspect(buffer[0], content="2") // 0x02
+  inspect(buffer[1], content="1") // 0x01
 
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(2, 255)
   FixedArray::unsafe_write_uint16_le(zero_buffer, 0, UInt16(0))
-  inspect(zero_buffer[0], content="b'\\x00'")
-  inspect(zero_buffer[1], content="b'\\x00'")
+  inspect(zero_buffer[0], content="0")
+  inspect(zero_buffer[1], content="0")
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(2, 0)
   FixedArray::unsafe_write_uint16_le(max_buffer, 0, UInt16(0xFFFF))
-  inspect(max_buffer[0], content="b'\\xFF'")
-  inspect(max_buffer[1], content="b'\\xFF'")
+  inspect(max_buffer[0], content="255")
+  inspect(max_buffer[1], content="255")
 }
 
 ///|
@@ -150,14 +150,14 @@ test "unsafe_write_uint16_be basic functionality" {
   FixedArray::unsafe_write_uint16_be(buffer, 0, UInt16(0x0102))
 
   // Check each byte individually (big-endian order)
-  inspect(buffer[0], content="b'\\x01'") // 0x01
-  inspect(buffer[1], content="b'\\x02'") // 0x02
+  inspect(buffer[0], content="1") // 0x01
+  inspect(buffer[1], content="2") // 0x02
 
   // Test with alternating pattern
   let alt_buffer : FixedArray[Byte] = FixedArray::make(2, 0)
   FixedArray::unsafe_write_uint16_be(alt_buffer, 0, UInt16(0xFF00))
-  inspect(alt_buffer[0], content="b'\\xFF'") // 0xFF
-  inspect(alt_buffer[1], content="b'\\x00'") // 0x00
+  inspect(alt_buffer[0], content="255") // 0xFF
+  inspect(alt_buffer[1], content="0") // 0x00
 }
 
 ///|
@@ -177,21 +177,21 @@ test "unsafe write functions with different offsets" {
   // Check the results
   // UInt64 at 0-7 (little-endian)
   for i in 0..<=7 {
-    inspect(buffer[i], content="b'\\x11'") // 0x11
+    inspect(buffer[i], content="17") // 0x11
   }
 
   // UInt32 at 8-11 (little-endian)  
   for i in 8..<=11 {
-    inspect(buffer[i], content="b'\\x22'") // 0x22
+    inspect(buffer[i], content="34") // 0x22
   }
 
   // UInt16 at 12-13 (little-endian)
-  inspect(buffer[12], content="b'\\x33'") // 0x33
-  inspect(buffer[13], content="b'\\x33'") // 0x33
+  inspect(buffer[12], content="51") // 0x33
+  inspect(buffer[13], content="51") // 0x33
 
   // Remaining bytes should still be zero
-  inspect(buffer[14], content="b'\\x00'")
-  inspect(buffer[15], content="b'\\x00'")
+  inspect(buffer[14], content="0")
+  inspect(buffer[15], content="0")
 }
 
 ///|
@@ -235,10 +235,10 @@ test "round-trip test: UInt16" {
   FixedArray::unsafe_write_uint16_be(buffer, 2, UInt16(0x1234))
 
   // Verify by checking individual bytes
-  inspect(buffer[0], content="b'\\x34'") // 0x34 (little-endian)
-  inspect(buffer[1], content="b'\\x12'") // 0x12
-  inspect(buffer[2], content="b'\\x12'") // 0x12 (big-endian) 
-  inspect(buffer[3], content="b'\\x34'") // 0x34
+  inspect(buffer[0], content="52") // 0x34 (little-endian)
+  inspect(buffer[1], content="18") // 0x12
+  inspect(buffer[2], content="18") // 0x12 (big-endian) 
+  inspect(buffer[3], content="52") // 0x34
 }
 
 ///|
@@ -248,9 +248,9 @@ test "edge cases with boundary values" {
 
   // Test with 1 (should only set the least significant bit)
   FixedArray::unsafe_write_uint64_le(buffer, 0, 1UL)
-  inspect(buffer[0], content="b'\\x01'")
+  inspect(buffer[0], content="1")
   for i in 1..<=7 {
-    inspect(buffer[i], content="b'\\x00'")
+    inspect(buffer[i], content="0")
   }
 
   // Reset buffer  
@@ -260,10 +260,10 @@ test "edge cases with boundary values" {
 
   // Test with 256 (should set the second byte in little-endian)
   FixedArray::unsafe_write_uint64_le(buffer, 0, 256UL)
-  inspect(buffer[0], content="b'\\x00'")
-  inspect(buffer[1], content="b'\\x01'")
+  inspect(buffer[0], content="0")
+  inspect(buffer[1], content="1")
   for i in 2..<=7 {
-    inspect(buffer[i], content="b'\\x00'")
+    inspect(buffer[i], content="0")
   }
 }
 
@@ -280,13 +280,13 @@ test "overlapping writes" {
 
   // Check results: first 4 bytes should still be 0xFF, next 4 should be 0x00
   for i in 0..<=3 {
-    inspect(buffer[i], content="b'\\xFF'") // 0xFF
+    inspect(buffer[i], content="255") // 0xFF
   }
   for i in 4..<=7 {
-    inspect(buffer[i], content="b'\\x00'") // 0x00
+    inspect(buffer[i], content="0") // 0x00
   }
   for i in 8..<=11 {
-    inspect(buffer[i], content="b'\\x00'") // Should remain 0 (untouched)
+    inspect(buffer[i], content="0") // Should remain 0 (untouched)
   }
 }
 

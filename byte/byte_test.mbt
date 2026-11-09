@@ -20,12 +20,12 @@ test "byte to uint" {
 
 ///|
 test "int to byte" {
-  inspect((-255).to_byte(), content="b'\\x01'")
-  inspect((-0).to_byte(), content="b'\\x00'")
-  inspect((-1).to_byte(), content="b'\\xFF'")
-  inspect((-256).to_byte(), content="b'\\x00'")
-  inspect((-257).to_byte(), content="b'\\xFF'")
-  inspect((-65535).to_byte(), content="b'\\x01'")
+  inspect((-255).to_byte(), content="1")
+  inspect((-0).to_byte(), content="0")
+  inspect((-1).to_byte(), content="255")
+  inspect((-256).to_byte(), content="0")
+  inspect((-257).to_byte(), content="255")
+  inspect((-65535).to_byte(), content="1")
 }
 
 ///|
@@ -79,11 +79,11 @@ test "popcnt random cases" {
 
 ///|
 test "Byte constructor syntax" {
-  inspect(Byte(3), content="b'\\x03'")
-  inspect(Byte(0), content="b'\\x00'")
-  inspect(Byte(255), content="b'\\xFF'")
+  inspect(Byte(3), content="3")
+  inspect(Byte(0), content="0")
+  inspect(Byte(255), content="255")
   let x = b'\x2A'
-  inspect(Byte(x), content="b'\\x2A'")
+  inspect(Byte(x), content="42")
 }
 
 ///|

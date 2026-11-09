@@ -245,9 +245,9 @@ pub fn FixedArray::blit_from_bytesview(
 ///   let buf = FixedArray::make(4, b'\x00')
 ///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
 ///   inspect(written, content="3") // UTF-8 encoding takes 3 bytes
-///   inspect(buf[0], content="b'\\xE2'")
-///   inspect(buf[1], content="b'\\x82'")
-///   inspect(buf[2], content="b'\\xAC'")
+///   inspect(buf[0], content="226")
+///   inspect(buf[1], content="130")
+///   inspect(buf[2], content="172")
 /// }
 /// ```
 pub fn FixedArray::set_utf8_char(
@@ -756,7 +756,7 @@ pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
 /// test {
 ///   let arr = b"ab"[:].to_array()
 ///   inspect(arr.length(), content="2")
-///   inspect(arr[0], content="b'\\x61'")
+///   inspect(arr[0], content="97")
 /// }
 /// ```
 pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
@@ -818,7 +818,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 ///     buf <+ "\{x}"
 ///     keys.push(i)
 ///   }
-///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(buf, content="979899100101")
 ///   debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 /// ```

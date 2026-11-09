@@ -38,12 +38,7 @@ test "Bytes::from_array preserves fixed array independence" {
   let bytes = Bytes::from_array(arr)
   arr[0] = b'z'
   inspect(bytes, content="b\"abc\"")
-  inspect(
-    arr[0],
-    content=(
-      #|b'\x7A'
-    ),
-  )
+  inspect(arr[0], content="122")
 }
 
 ///|
@@ -72,7 +67,7 @@ test "Bytes::from_array accounts for mutable buffer views" {
   let bytes = Bytes::from_array(arr)
   view[1] = b'z'
   inspect(bytes, content="b\"abc\"")
-  inspect(view[1], content="b'\\x7A'")
+  inspect(view[1], content="122")
 }
 
 ///|
@@ -88,12 +83,7 @@ test "Bytes::from_array preserves borrowed caller ownership" {
   let bytes = bytes_from_borrowed_array(arr)
   arr[0] = b'z'
   inspect(bytes, content="b\"abc\"")
-  inspect(
-    arr[0],
-    content=(
-      #|b'\x7A'
-    ),
-  )
+  inspect(arr[0], content="122")
 }
 
 ///|
@@ -130,5 +120,5 @@ test "Bytes::from_array preserves shared views and readonly arrays" {
   inspect(second, content="b\"abc\"")
   let read_only : ReadOnlyArray[Byte] = [b'a', b'b', b'c']
   inspect(Bytes::from_array(read_only), content="b\"abc\"")
-  inspect(read_only[0], content="b'\\x61'")
+  inspect(read_only[0], content="97")
 }

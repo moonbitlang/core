@@ -861,9 +861,9 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double = "%i64_to_f64_rei
 /// ```mbt check
 /// test {
 ///   let n = 258L // In binary: 100000010
-///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="2") // Only keeps 00000010
 ///   let neg = -1L // In binary: all 1's
-///   inspect(neg.to_byte(), content="b'\\xFF'") // Only keeps 11111111
+///   inspect(neg.to_byte(), content="255") // Only keeps 11111111
 /// }
 /// ```
 pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"

@@ -114,7 +114,7 @@ pub fn Byte::to_double(Byte) -> Double
 pub fn Byte::to_hex(Byte) -> String
 pub fn Byte::to_int(Byte) -> Int32
 pub fn Byte::to_int64(Byte) -> Int64
-pub fn Byte::to_string(Byte) -> String
+pub fn Byte::to_string(Byte, radix? : Int32) -> String
 pub fn Byte::to_uint(Byte) -> UInt32
 pub fn Byte::to_uint16(Byte) -> UInt16
 pub fn Byte::to_uint64(Byte) -> UInt64

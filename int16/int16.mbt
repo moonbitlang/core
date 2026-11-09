@@ -330,7 +330,7 @@ pub fn Int16::to_int(self : Int16) -> Int32 = "%i16_to_i32"
 /// ```mbt check
 /// test {
 ///   let x : Int16 = 258 // In binary: 0000_0001_0000_0010
-///   inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
+///   inspect(x.to_byte(), content="2") // Only keeps 0000_0010
 /// }
 /// ```
 pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"

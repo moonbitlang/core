@@ -441,10 +441,10 @@ test "loads and stores" {
 
   let out : FixedArray[Byte] = FixedArray::make(20, 0)
   @v128.v128_store(out, 2, @v128.v128_load(bytes, 0))
-  inspect(out.unsafe_get(2), content="b'\\x00'")
-  inspect(out.unsafe_get(9), content="b'\\x07'")
-  inspect(out.unsafe_get(10), content="b'\\x80'")
-  inspect(out.unsafe_get(17), content="b'\\xFF'")
+  inspect(out.unsafe_get(2), content="0")
+  inspect(out.unsafe_get(9), content="7")
+  inspect(out.unsafe_get(10), content="128")
+  inspect(out.unsafe_get(17), content="255")
 
   @v128.v128_store16_lane(
     out,
@@ -452,8 +452,8 @@ test "loads and stores" {
     @v128.i16x8_const(0x1234, 0xabcd, 0, 0, 0, 0, 0, 0),
     1,
   )
-  inspect(out.unsafe_get(0), content="b'\\xCD'")
-  inspect(out.unsafe_get(1), content="b'\\xAB'")
+  inspect(out.unsafe_get(0), content="205")
+  inspect(out.unsafe_get(1), content="171")
 
   let with_lane = @v128.v128_load32_lane(bytes, 16, @v128.i32x4_splat(0), 2)
   assert_eq(with_lane, @v128.i32x4_const(0, 0, 0x40302010, 0))

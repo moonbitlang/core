@@ -20,7 +20,7 @@
 ///
 /// ```mbt check
 /// test {
-///   inspect(Byte(3), content="b'\\x03'")
+///   inspect(Byte(3), content="3")
 /// }
 /// ```
 pub fn Byte::Byte(self : Byte) -> Byte = "%identity"
@@ -43,9 +43,9 @@ pub fn Byte::Byte(self : Byte) -> Byte = "%identity"
 /// test {
 ///   let a = b'\x02'
 ///   let b = b'\x03'
-///   inspect(a * b, content="b'\\x06'") // 2 * 3 = 6
+///   inspect(a * b, content="6") // 2 * 3 = 6
 ///   let c = b'\xFF'
-///   inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
+///   inspect(c * c, content="1") // 255 * 255 = 65025, truncated to 1
 /// }
 /// ```
 pub impl Mul for Byte with fn mul(self : Byte, that : Byte) -> Byte {
@@ -69,7 +69,7 @@ pub impl Mul for Byte with fn mul(self : Byte, that : Byte) -> Byte {
 /// test {
 ///   let a = b'\xFF' // 255
 ///   let b = b'\x03' // 3
-///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
+///   inspect(a / b, content="85") // 255 / 3 = 85 (0x55)
 /// }
 /// ```
 pub impl Div for Byte with fn div(self : Byte, that : Byte) -> Byte {
@@ -172,42 +172,29 @@ pub impl Compare for Byte with fn op_ge(x, y) {
 }
 
 ///|
-fn alphabet(x : Int32) -> String {
-  match x {
-    0 => "0"
-    1 => "1"
-    2 => "2"
-    3 => "3"
-    4 => "4"
-    5 => "5"
-    6 => "6"
-    7 => "7"
-    8 => "8"
-    9 => "9"
-    10 => "A"
-    11 => "B"
-    12 => "C"
-    13 => "D"
-    14 => "E"
-    15 => "F"
-    _ => abort("impossible")
-  }
-}
-
-///|
-/// Converts a `Byte` to its string representation in hexadecimal format.
+/// Converts a `Byte` to the string of its numeric value (0 to 255) in the
+/// given `radix`, like the other unsigned integer types.
 ///
 /// Parameters:
 ///
-/// - `byte` : The `Byte` value to be converted.
+/// * `self` : The `Byte` value to be converted.
+/// * `radix` : The base, from 2 to 36. Defaults to 10.
 ///
-/// Returns a `String` representing the `Byte` in the format `b'\xHH'`, where
-/// `HH` is the hexadecimal representation of the byte.
-pub fn Byte::to_string(self : Byte) -> String {
-  let i = self.to_int()
-  let hi = alphabet(i / 16)
-  let lo = alphabet(i % 16)
-  "b'\\x\{hi}\{lo}'"
+/// `Show for Byte` uses this, so `inspect` and string interpolation print
+/// the number too. Use `Byte::to_hex` for a fixed two-digit hexadecimal form.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\xFF'.to_string(), content="255")
+///   inspect(b'\x0A'.to_string(radix=16), content="a")
+///   inspect(b'\x05'.to_string(radix=2), content="101")
+///   inspect(b'A', content="65")
+/// }
+/// ```
+pub fn Byte::to_string(self : Byte, radix~ : Int32 = 10) -> String {
+  self.to_int().to_string(radix~)
 }
 
 ///|

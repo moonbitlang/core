@@ -146,7 +146,7 @@ test "View::unsafe_get additional test" {
   let bytes = b"\x01\x02\x03\x04\x05"
   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
   let result = view.unsafe_get(1) // gets byte at index 1 (the second byte) of the view
-  inspect(result, content="b'\\x03'")
+  inspect(result, content="3")
 }
 
 ///|

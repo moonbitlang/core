@@ -116,7 +116,7 @@ test "bytes view operations" {
   let view = num_bytes[:]
 
   // Get individual bytes
-  inspect(view[0], content="b'\\x12'")
+  inspect(view[0], content="18")
 
   // Interpret as integers (big-endian)
   guard view is [i32be(x), ..] else {
