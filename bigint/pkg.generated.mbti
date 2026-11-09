@@ -12,6 +12,7 @@ import {
 
 // Types and methods
 type BigInt
+pub fn BigInt::abs(Self) -> Self
 pub fn BigInt::add(Self, Self) -> Self
 pub fn BigInt::bit_length(Self) -> Int32
 pub fn BigInt::compare(Self, Self) -> Int32
@@ -45,6 +46,7 @@ pub fn BigInt::pow(Self, Self, modulus? : Self) -> Self
 pub fn BigInt::shl(Self, Int32) -> Self
 pub fn BigInt::shr(Self, Int32) -> Self
 pub fn BigInt::sub(Self, Self) -> Self
+pub fn BigInt::to_double(Self) -> Double
 pub fn BigInt::to_int(Self) -> Int32
 pub fn BigInt::to_int16(Self) -> Int16
 pub fn BigInt::to_int64(Self) -> Int64
