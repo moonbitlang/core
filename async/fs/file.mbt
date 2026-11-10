@@ -99,7 +99,8 @@ fn CreateMode::to_int(self : CreateMode) -> Int32 = "%identity"
 ///   Under append mode, sequential write (via the `@io.BinaryWriter` interface)
 ///   will always write to the end of the file, even if the file is modified externally.
 ///   The semantic of reading from the file is unaffected by `append`.
-///   Random access write (`write_at`) is forbidden for file opened in append mode.
+///   Positioned writes through `file.at(offset)` are forbidden for files opened
+///   in append mode.
 ///
 /// - `create_mode` specify how to handle file creation, truncation, etc.
 ///   See the type `CreateMode` for more details.
@@ -261,66 +262,6 @@ pub extend File with @io.BinaryReader::{
 }
 
 ///|
-/// Read from a file at the offset given by `position`.
-/// Only seekable files (e.g. regular files and block devices) support this operation,
-/// calling `read_at` on unsupported file, such as pipe or socket, result in error.
-///
-/// This function does not change the cursor for reading/writing the file
-/// as a stream (i.e. using `@io.BinaryReader` and `@io.BinaryWriter` APIs),
-/// so it is safe to perform multiple `read_at` on the same file simutaneously.
-///
-/// Up to `max_len` bytes of data will be read into `buf[offset:]`.
-/// The number of bytes actually read would be returned.
-/// The number of read bytes will be smaller than `max_len` only when EOF is reached.
-pub async fn File::read_at(
-  self : File,
-  buf : FixedArray[Byte],
-  position~ : Int64,
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
-) -> Int32 {
-  self.io.read_at(
-    buf,
-    offset~,
-    len=max_len,
-    position~,
-    context="@fs.File::read_at()",
-  )
-}
-
-///|
-/// Read exactly `len` bytes from a file, starting at offset `position`,
-/// and return requested content.
-/// If there is no enough data before EOF, an error will be raised.
-///
-/// Only seekable files (e.g. regular files and block devices) support this operation,
-/// calling `read_at_exactly` on unsupported file, such as pipe or socket, result in error.
-///
-/// This function does not change the cursor for reading/writing the file
-/// as a stream (i.e. using `@io.BinaryReader` and `@io.BinaryWriter` APIs),
-/// so it is safe to perform multiple `read_at` on the same file simutaneously.
-pub async fn File::read_exactly_at(
-  self : File,
-  len : Int32,
-  position~ : Int64,
-) -> Bytes raise @io.ReaderError {
-  let buf = FixedArray::make(len, b'\x00')
-  let n = self.io.read_at(
-    buf,
-    offset=0,
-    len~,
-    position~,
-    context="@fs.File::read_exactly_at()",
-  ) catch {
-    err => raise TransportError(err, context="@fs.File")
-  }
-  if n < len {
-    raise UnexpectedEof
-  }
-  buf.unsafe_reinterpret_as_bytes()
-}
-
-///|
 /// If the file is opened with `append=true`,
 /// writing to the file via the `@io.BinaryWriter` interface
 /// always append content at the end of the file.
@@ -364,31 +305,6 @@ impl @io.BinaryWriterImpl for File with fn flush_partial_data(self) {
 
 ///|
 pub extend File with @io.BinaryWriter::{write, write_reader}
-
-///|
-/// Write to a file at the offset given by `position`.
-/// Only seekable files (e.g. regular files and block devices) support this operation,
-/// calling `write_at` on unsupported file, such as pipe or socket, result in error.
-///
-/// This function does not change the cursor for reading/writing the file
-/// as a stream (i.e. using `@io.BinaryReader` and `@io.BinaryWriter` APIs),
-/// so it is safe to perform multiple `write_at` on the same file simutaneously,
-/// as long as the regions they write do not overlap.
-///
-/// `write_at` would only return after all data is written.
-pub async fn File::write_at(
-  self : File,
-  buf : BytesView,
-  position~ : Int64,
-) -> Unit {
-  self.io.write_at(
-    buf.data(),
-    offset=buf.start_offset(),
-    len=buf.length(),
-    position~,
-    context="@fs.File::write_at()",
-  )
-}
 
 ///|
 /// Flush all in-memory data of an opened file to disk.

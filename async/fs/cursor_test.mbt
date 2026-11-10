@@ -48,12 +48,15 @@ async test "append mode file does not support random access write" {
   let file = @fs.open(path, append=true, mode=ReadWrite)
   defer file.close()
   // random access read is not affected
-  json_inspect(file.read_exactly_at(2, position=2), content="cd")
+  json_inspect(file.at(2).read_exactly(2), content="cd")
   // random access write is forbidden for append-mode file
   debug_inspect(
-    @test.expect_error_async(() => file.write_at(b"CD", position=2)),
+    @test.expect_error_async(() => file.at(2).write(b"CD")),
     content=(
-      #|Failure("`write_at` is not supported on non-regular file or file opened in append mode")
+      #|TransportError(
+      #|  Failure("positioned writes are not supported on non-regular files or files opened in append mode"),
+      #|  context="@fs.FileView",
+      #|)
     ),
   )
 }

@@ -56,3 +56,8 @@ pub extend Timestamp with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend File with @io.BinaryWriter::{flush_partial_data}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend FileView with @io.BinaryWriter::{flush_partial_data}
