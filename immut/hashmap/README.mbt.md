@@ -86,19 +86,19 @@ test "iteration_full" {
 
 ## Set Operations
 
-`union` and `intersection` combine maps; `difference` removes keys. By default, `union` prefers the right map on key conflicts. Use `union_with` and `intersection_with` for custom merge logic.
+`merge` and `intersection` combine maps; `difference` removes keys. By default, `merge` prefers the right map on key conflicts. Use `merge_with` and `intersection_with` for custom merge logic.
 
 ```mbt check
 ///|
 test "set_operations" {
   let m1 = @hashmap.HashMap([("a", 1), ("b", 2)])
   let m2 = @hashmap.HashMap([("b", 20), ("c", 3)])
-  // Union prefers right map on conflicts
-  let u = m1.union(m2)
+  // merge prefers the right map on conflicts
+  let u = m1.merge(m2)
   debug_inspect(u.get("b"), content="Some(20)")
   debug_inspect(u.get("c"), content="Some(3)")
-  // union_with: custom merge function
-  let u2 = m1.union_with(m2, fn(_k, v1, v2) { v1 + v2 })
+  // merge_with: custom merge function
+  let u2 = m1.merge_with(m2, fn(_k, v1, v2) { v1 + v2 })
   debug_inspect(u2.get("b"), content="Some(22)") // 2 + 20
   // intersection_with: custom merge
   let i = m1.intersection_with(m2, fn(_k, v1, v2) { v1 * v2 })

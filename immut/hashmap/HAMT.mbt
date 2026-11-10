@@ -559,9 +559,22 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int32 {
 }
 
 ///|
-/// Union two hashmaps, right-hand side element is prioritized
-#alias(merge)
-pub fn[K : Eq, V] HashMap::union(
+/// Returns a map holding the entries of both maps. When a key is present in
+/// both, the value from `other` (the right-hand side) wins.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+///   let m2 = @hashmap.HashMap([("b", 3), ("c", 4)])
+///   let merged = m1.merge(m2).to_array()
+///   merged.sort()
+///   debug_inspect(merged, content="[(\"a\", 1), (\"b\", 3), (\"c\", 4)]")
+/// }
+/// ```
+#alias(union, deprecated="Use merge instead")
+pub fn[K : Eq, V] HashMap::merge(
   self : HashMap[K, V],
   other : HashMap[K, V],
 ) -> HashMap[K, V] {
@@ -600,8 +613,22 @@ pub fn[K : Eq, V] HashMap::union(
 }
 
 ///|
-/// Union two hashmaps with a function
-pub fn[K : Eq, V] HashMap::union_with(
+/// Returns a map holding the entries of both maps. When a key is present in
+/// both, its value is `f(key, value_in_self, value_in_other)`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+///   let m2 = @hashmap.HashMap([("b", 3), ("c", 4)])
+///   let merged = m1.merge_with(m2, (_, x, y) => x + y).to_array()
+///   merged.sort()
+///   debug_inspect(merged, content="[(\"a\", 1), (\"b\", 5), (\"c\", 4)]")
+/// }
+/// ```
+#alias(union_with, deprecated="Use merge_with instead")
+pub fn[K : Eq, V] HashMap::merge_with(
   self : HashMap[K, V],
   other : HashMap[K, V],
   f : (K, V, V) -> V raise?,

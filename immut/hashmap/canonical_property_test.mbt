@@ -138,14 +138,14 @@ fn[K : Eq + Hash] canonical_after_ops(
         match op_code {
           5 =>
             if key % 2 == 0 {
-              // union: the right-hand side's value wins
-              hm = hm.union(other)
+              // merge: the right-hand side's value wins
+              hm = hm.merge(other)
               for kv in other_model {
                 model_add(model, kv.0, kv.1)
               }
             } else {
-              // union_with: merge values of keys present on both sides
-              hm = hm.union_with(other, (_, x, y) => merge(x, y))
+              // merge_with: merge values of keys present on both sides
+              hm = hm.merge_with(other, (_, x, y) => merge(x, y))
               for kv in other_model {
                 match model_lookup(model, kv.0) {
                   Some(v0) => model_add(model, kv.0, merge(v0, kv.1))
@@ -294,12 +294,12 @@ fn[K : Eq + Hash] map_laws(
   let b = build_map(mk, ys)
   let c = build_map(mk, zs)
   let empty : @hashmap.HashMap[K, Int32] = @hashmap.new()
-  // union: associative, idempotent, empty is the identity
-  guard a.union(b).union(c) == a.union(b.union(c)) else { return false }
-  guard a.union(a) == a else { return false }
-  guard a.union(empty) == a && empty.union(a) == a else { return false }
-  // union is right-biased, per key
-  let u = a.union(b)
+  // merge: associative, idempotent, empty is the identity
+  guard a.merge(b).merge(c) == a.merge(b.merge(c)) else { return false }
+  guard a.merge(a) == a else { return false }
+  guard a.merge(empty) == a && empty.merge(a) == a else { return false }
+  // merge is right-biased, per key
+  let u = a.merge(b)
   for i in 0..<18 {
     let k = mk(i)
     let expected = match b.get(k) {
@@ -308,9 +308,9 @@ fn[K : Eq + Hash] map_laws(
     }
     guard u.get(k) == expected else { return false }
   }
-  // union_with is symmetric under a commutative merge function
-  let merged_lr = a.union_with(b, (_, x, y) => x + y)
-  let merged_rl = b.union_with(a, (_, x, y) => x + y)
+  // merge_with is symmetric under a commutative merge function
+  let merged_lr = a.merge_with(b, (_, x, y) => x + y)
+  let merged_rl = b.merge_with(a, (_, x, y) => x + y)
   guard merged_lr == merged_rl else { return false }
   // intersection: idempotent; keeps keys in both with right-side values
   guard a.intersection(a) == a else { return false }
@@ -325,7 +325,7 @@ fn[K : Eq + Hash] map_laws(
   guard left_biased == a.difference(a.difference(b)) else { return false }
   // difference: self-annihilating; subtracting a union is subtracting twice
   guard a.difference(a) == empty else { return false }
-  guard a.difference(b).difference(c) == a.difference(b.union(c)) else {
+  guard a.difference(b).difference(c) == a.difference(b.merge(c)) else {
     return false
   }
   true
