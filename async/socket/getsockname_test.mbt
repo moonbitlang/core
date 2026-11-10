@@ -50,9 +50,7 @@ async test "getsockname UDP" {
     }
     let client_addr_from_server = group.spawn(() => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
-      let (n, peer_addr) = server.recvfrom(buf)
-      let data = buf.unsafe_reinterpret_as_bytes()[:n]
+      let (data, peer_addr) = server.recv(max_len=1024)
       inspect(@utf8.decode(data), content="abcd")
       peer_addr
     })

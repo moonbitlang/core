@@ -203,10 +203,9 @@ async test "Only_V4 UDP server" {
     let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:\{port}"))
     root.spawn_bg(no_wait=true) <| () => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (len, addr) = server.recvfrom(buf)
-        let msg = @utf8.decode(buf.unsafe_reinterpret_as_bytes()[:len])
+        let (packet, addr) = server.recv(max_len=1024)
+        let msg = @utf8.decode(packet)
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
@@ -262,10 +261,9 @@ async test "Only_V6 UDP server" {
     )
     root.spawn_bg(no_wait=true) <| () => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (len, addr) = server.recvfrom(buf)
-        let msg = @utf8.decode(buf.unsafe_reinterpret_as_bytes()[:len])
+        let (packet, addr) = server.recv(max_len=1024)
+        let msg = @utf8.decode(packet)
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
@@ -314,10 +312,9 @@ async test "dual stack UDP server" {
     let port = server.addr.port
     root.spawn_bg(no_wait=true) <| () => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (len, addr) = server.recvfrom(buf)
-        let msg = @utf8.decode(buf.unsafe_reinterpret_as_bytes()[:len])
+        let (packet, addr) = server.recv(max_len=1024)
+        let msg = @utf8.decode(packet)
         let addr_str = addr.to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]

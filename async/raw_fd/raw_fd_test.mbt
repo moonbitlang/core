@@ -149,14 +149,11 @@ async test "socket as raw fd" {
   @async.with_task_group <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (n, addr) = server.recvfrom(buf)
-        let buf_bytes = buf.unsafe_reinterpret_as_bytes()
-        let data = buf_bytes[:n]
+        let (data, addr) = server.recv(max_len=1024)
         @async.sleep(50)
         log.push("server received \{@utf8.decode(data).escape()}")
-        server.sendto(buf_bytes, addr, len=n)
+        server.send(data, addr)
       }
     }
     let sock = @raw_fd_test_util.make_udp_socket()

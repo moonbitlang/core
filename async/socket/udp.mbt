@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+const MAX_UDP_PACKET_SIZE : Int32 = 65535
+
+///|
 /// A UDP client "connected" to a remote UDP server.
 ///
 /// UDP is a connectionless protocol, here "connected" means
@@ -27,6 +30,8 @@ pub struct UdpClient {
   addr : Addr
   priv io : @event_loop.IoHandle
   priv mut dst_addr : OsAddr?
+  // lazy-initialized builtin buffer for `.recv()`
+  priv mut recv_buf : FixedArray[Byte]
 }
 
 ///|
@@ -61,7 +66,7 @@ pub async fn UdpClient::UdpClient(addr : Addr) -> UdpClient {
     None
   }
   let local_addr = Addr::from_os_addr(getsockname(sock, family, context~))
-  { io, addr: local_addr, dst_addr, }
+  { io, addr: local_addr, dst_addr, recv_buf: [], }
 }
 
 ///|
@@ -174,6 +179,8 @@ pub struct UdpServer {
   addr : Addr
   priv io : @event_loop.IoHandle
   priv is_multicast_only : Bool
+  // lazy-initialized builtin buffer for `.recv()`
+  priv mut recv_buf : FixedArray[Byte]
 }
 
 ///|
@@ -228,7 +235,7 @@ pub async fn UdpServer::UdpServer(
   // the OS will assign a random port for us,
   // in this case, we need to retrieve the actual port via `getsockname`.
   let addr = Addr::from_os_addr(getsockname(sock, family, context~))
-  { io, addr, is_multicast_only: false, }
+  { io, addr, is_multicast_only: false, recv_buf: [], }
 }
 
 ///|
@@ -281,7 +288,7 @@ pub async fn UdpServer::multicast(
   // the OS will assign a random port for us,
   // in this case, we need to retrieve the actual port via `getsockname`.
   let addr = Addr::from_os_addr(getsockname(sock, family, context~))
-  { io, addr, is_multicast_only: true, }
+  { io, addr, is_multicast_only: true, recv_buf: [], }
 }
 
 ///|
@@ -432,32 +439,64 @@ pub fn UdpServer::join_multicast_group_v6(
 
 ///|
 /// Receive packet from a UDP client.
-/// For `udp.recv(buf, offset~, max_len~)`,
+/// For `udp.recv_into(buf, offset~, max_len~)`,
 /// at most `max_len` bytes of data will be written to `buf`, starting from `offset`.
 /// The number of received bytes will be returned.
 ///
 /// UDP is a datagram based protocol,
+/// and `recv_into` will always receive exactly one UDP packet.
+///
+/// At most one task can read from a UDP client at any time.
+/// To allow multiple reader,
+/// use a worker task for reading and use `@async.Queue` to distribute the data.
+pub async fn UdpClient::recv_into(
+  self : UdpClient,
+  buf : FixedArray[Byte],
+  offset~ : Int32 = 0,
+  max_len~ : Int32 = buf.length() - offset,
+) -> Int32 {
+  self.io.read(
+    buf,
+    offset~,
+    len=max_len,
+    context="@socket.UdpClient::recv_into()",
+  )
+}
+
+///|
+/// Receive packet from a UDP client.
+/// `max_len` can be used to specify max length of the UDP packet.
+/// If `max_len` is not specified, the maximum UDP packet size of `65535` bytes is used.
+///
+/// UDP is a datagram based protocol,
 /// and `recv` will always receive exactly one UDP packet.
-/// If the buffer is smaller than the received packet,
-/// the rest of the packet will be lost.
 ///
 /// At most one task can read from a UDP client at any time.
 /// To allow multiple reader,
 /// use a worker task for reading and use `@async.Queue` to distribute the data.
 pub async fn UdpClient::recv(
   self : UdpClient,
-  buf : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
-) -> Int32 {
-  self.io.read(buf, offset~, len=max_len, context="@socket.UdpClient::recv()")
+  max_len~ : Int32 = MAX_UDP_PACKET_SIZE,
+) -> Bytes {
+  if self.recv_buf.length() < max_len {
+    // align buffer size to multiple of 1024
+    let buf_len = (max_len + 1023) & (1023).lnot()
+    self.recv_buf = FixedArray::make(buf_len, 0)
+  }
+  let len = self.io.read(
+    self.recv_buf,
+    offset=0,
+    len=max_len,
+    context="@socket.UdpClient::recv()",
+  )
+  Bytes::from_array(self.recv_buf[:len])
 }
 
 ///|
-/// Similar to `recv`, but additionally return the address of the packet's sender.
+/// Similar to `recv_into`, but additionally return the address of the packet's sender.
 /// Unicast `UdpClient` can only receive traffic from the target server,
 /// so this is mainly useful for multicast clients.
-pub async fn UdpClient::recvfrom(
+pub async fn UdpClient::recv_into_with_addr(
   self : UdpClient,
   buf : FixedArray[Byte],
   offset~ : Int32 = 0,
@@ -470,26 +509,49 @@ pub async fn UdpClient::recvfrom(
     offset~,
     len=max_len,
     addr=addr_buf.0,
-    context="@socket.UdpClient::recvfrom()",
+    context="@socket.UdpClient::recv_into_with_addr()",
   )
   (n_read, Addr::from_os_addr(addr_buf))
 }
 
 ///|
+/// Similar to `recv`, but additionally return the address of the packet's sender.
+/// Unicast `UdpClient` can only receive traffic from the target server,
+/// so this is mainly useful for multicast clients.
+pub async fn UdpClient::recv_with_addr(
+  self : UdpClient,
+  max_len~ : Int32 = MAX_UDP_PACKET_SIZE,
+) -> (Bytes, Addr) {
+  if self.recv_buf.length() < max_len {
+    // align buffer size to multiple of 1024
+    let buf_len = (max_len + 1023) & (1023).lnot()
+    self.recv_buf = FixedArray::make(buf_len, 0)
+  }
+  // Create a big enough Addr to hold both IPv4 and IPv6 address
+  let addr_buf = OsAddr::empty(self.addr.family())
+  let len = self.io.recvfrom(
+    self.recv_buf,
+    offset=0,
+    len=max_len,
+    addr=addr_buf.0,
+    context="@socket.UdpClient::recv_with_addr()",
+  )
+  (Bytes::from_array(self.recv_buf[:len]), Addr::from_os_addr(addr_buf))
+}
+
+///|
 /// Receive packet from a UDP server, and obtain the source address of the packet.
-/// For `udp.recvfrom(buf, offset~, max_len~)`,
+/// For `udp.recv_into(buf, offset~, max_len~)`,
 /// at most `max_len` bytes of data will be written to `buf`, starting from `offset`.
 /// The number of received bytes and the source address of the packet will be returned.
 ///
 /// UDP is a datagram based protocol,
-/// and `recv` will always receive exactly one UDP packet.
-/// If the buffer is smaller than the received packet,
-/// the rest of the packet will be lost.
+/// and `recv_into` will always receive exactly one UDP packet.
 ///
 /// At most one task can read from a UDP server at any time.
 /// To allow multiple reader,
 /// use a worker task for reading and use `@async.Queue` to distribute the data.
-pub async fn UdpServer::recvfrom(
+pub async fn UdpServer::recv_into(
   self : UdpServer,
   buf : FixedArray[Byte],
   offset~ : Int32 = 0,
@@ -502,9 +564,43 @@ pub async fn UdpServer::recvfrom(
     offset~,
     len=max_len,
     addr=addr_buf.0,
-    context="@socket.UdpServer::recvfrom()",
+    context="@socket.UdpServer::recv_into()",
   )
   (n_read, Addr::from_os_addr(addr_buf))
+}
+
+///|
+/// Receive packet from a UDP server, and obtain the source address of the packet.
+/// `max_len` can be used to specify max length of the UDP packet.
+/// If `max_len` is not specified, the maximum UDP packet size of `65535` bytes is used.
+/// The received packet and the source address of the packet will be returned.
+///
+/// UDP is a datagram based protocol,
+/// and `recv` will always receive exactly one UDP packet.
+///
+/// At most one task can read from a UDP server at any time.
+/// To allow multiple reader,
+/// use a worker task for reading and use `@async.Queue` to distribute the data.
+pub async fn UdpServer::recv(
+  self : UdpServer,
+  max_len~ : Int32 = MAX_UDP_PACKET_SIZE,
+) -> (Bytes, Addr) {
+  if self.recv_buf.length() < max_len {
+    // align buffer size to multiple of 1024
+    let buf_len = (max_len + 1023) & (1023).lnot()
+    self.recv_buf = FixedArray::make(buf_len, 0)
+  }
+  // Create a big enough Addr to hold both IPv4 and IPv6 address
+  let addr_buf = OsAddr::empty(self.addr.family())
+  let len = self.io.recvfrom(
+    self.recv_buf,
+    offset=0,
+    len=max_len,
+    addr=addr_buf.0,
+    context="@socket.UdpServer::recv()",
+  )
+  let packet = Bytes::from_array(self.recv_buf[:len])
+  (packet, Addr::from_os_addr(addr_buf))
 }
 
 ///|
@@ -536,7 +632,7 @@ pub async fn UdpClient::send(
 /// At most one task can write to a UDP server at any time.
 /// To allow multiple writers,
 /// use a worker task for reading and use `@async.Queue` to gather the data.
-pub async fn UdpServer::sendto(
+pub async fn UdpServer::send(
   self : UdpServer,
   buf : Bytes,
   addr : Addr,
@@ -553,7 +649,7 @@ pub async fn UdpServer::sendto(
     offset~,
     len~,
     addr=addr.to_os_addr().0,
-    context="@socket.UdpServer::sendto()",
+    context="@socket.UdpServer::send()",
   )
   |> ignore
 }
