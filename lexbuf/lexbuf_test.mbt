@@ -14,7 +14,7 @@
 
 ///|
 test "StringScanner lexscan preserves Unicode captures in a nested view" {
-  let scanner = @lexbuf.StringScanner::{ data: "xxa😀byy"[2:6], cursor: 1, }
+  let scanner = @lexbuf.StringScanner("xxa😀byy"[2:6], cursor=1)
   let captured = lexscan scanner {
     re"^😀+" as token => token
     _ => ""
