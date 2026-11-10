@@ -153,7 +153,39 @@ async test "`connect` accidental close" {
 }
 
 ///|
-async test "`read` already closed" {
+async test "`read` already closed require_shutdown=false" {
+  @async.with_task_group() <| root => {
+    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+    // server
+    root.spawn_bg() <| () => {
+      defer {
+        server_read_from_client.close()
+        server_write_to_client.close()
+      }
+      let server = test_server(server_read_from_client, server_write_to_client)
+      server.close()
+    }
+    // client
+    root.spawn_bg() <| () => {
+      defer {
+        client_read_from_server.close()
+        client_write_to_server.close()
+      }
+      let client = Tls::client_from_pair(
+        client_read_from_server,
+        client_write_to_server,
+        require_shutdown=false,
+        trust=NoVerification,
+      )
+      defer client.close()
+      @debug.debug_inspect(client.read(), content="None")
+    }
+  }
+}
+
+///|
+async test "`read` already closed require_shutdown=true" {
   @async.with_task_group() <| root => {
     let (client_read_from_server, server_write_to_client) = @pipe.pipe()
     let (server_read_from_client, client_write_to_server) = @pipe.pipe()
@@ -178,7 +210,12 @@ async test "`read` already closed" {
         trust=NoVerification,
       )
       defer client.close()
-      @debug.debug_inspect(client.read(), content="None")
+      @debug.debug_inspect(
+        @test.expect_error_async(() => client.read()),
+        content=(
+          #|TransportError(UnexpectedEof, context="@tls.Tls")
+        ),
+      )
     }
   }
 }

@@ -68,13 +68,27 @@ async fn ClientConnection::connect(
     (Http, Plain(conn)) =>
       (None, Reader::new(conn), Sender::new(conn, headers~))
     (Https, Plain(conn)) => {
-      let tls = @tls.Tls::client(conn, host=hostname.to_owned(), trust~)
+      // HTTP has its own message delimiter so TLS shutdown is unnecessary.
+      // Many realworld HTTP server does not perform proper TLS shutdown.
+      let tls = @tls.Tls::client(
+        conn,
+        host=hostname.to_owned(),
+        trust~,
+        require_shutdown=false,
+      )
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
     (Http, Proxy(proxy)) =>
       (None, Reader::new(proxy), Sender::new(proxy, headers~))
     (Https, Proxy(proxy)) => {
-      let tls = @tls.Tls::client(proxy, host=hostname.to_owned(), trust~)
+      // HTTP has its own message delimiter so TLS shutdown is unnecessary.
+      // Many realworld HTTP server does not perform proper TLS shutdown.
+      let tls = @tls.Tls::client(
+        proxy,
+        host=hostname.to_owned(),
+        trust~,
+        require_shutdown=false,
+      )
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
   }

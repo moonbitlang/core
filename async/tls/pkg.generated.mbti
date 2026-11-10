@@ -20,8 +20,8 @@ pub impl Show for TlsError
 
 // Types and methods
 type Tls
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(Inner, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(R, W, host? : String, sni? : Bool, trust? : TrustedRoot) -> Self
+pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(Inner, host? : String, sni? : Bool, require_shutdown? : Bool, trust? : TrustedRoot) -> Self
+pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(R, W, host? : String, sni? : Bool, require_shutdown? : Bool, trust? : TrustedRoot) -> Self
 pub fn Tls::close(Self) -> Unit
 pub async fn Tls::drop_all(Self) -> Int64 raise @io.ReaderError
 pub async fn Tls::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError

@@ -304,6 +304,7 @@ struct Tls {
   transport : Transport
   reader_ctrl : @io.BinaryReaderController
   writer_ctrl : @io.BinaryWriterController
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -316,6 +317,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
   w : W,
   is_client~ : Bool,
   host~ : String?,
+  require_shutdown~ : Bool,
 ) -> Tls {
   let transport = Transport::new(r, w)
   let rbio = create_bio(transport)
@@ -329,6 +331,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     transport,
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -387,6 +390,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   w : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   load_openssl()
@@ -397,7 +401,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   guard !ctx.is_null() else {
     raise TlsError("failed to initialize SSL client context")
   }
-  let self = Tls::from_pair(ctx, r, w, is_client=true, host~)
+  let self = Tls::from_pair(ctx, r, w, is_client=true, host~, require_shutdown~)
   errdefer self.close()
   if trust is NoVerification {
     self.ssl.set_verify(false)
@@ -440,11 +444,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
       break 0
     }
     if self.transport.state is Closed && controller.buffered().length() is 0 {
-      // Not all TLS client/servers close the connection properly.
-      // Some peers just close the underlying TCP connection
-      // without performing a TLS closure.
-      // So we treat this case as normal here.
-      break 0
+      // The peer closed the connection without performing TLS shutdown
+      if self.require_shutdown {
+        raise @io.UnexpectedEof
+      } else {
+        break 0
+      }
     }
     self.handle_error(err)
   } nobreak {

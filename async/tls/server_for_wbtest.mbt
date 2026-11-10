@@ -21,10 +21,15 @@ enum X509FileType {
 }
 
 ///|
-async fn test_server(r : &@io.BinaryReader, w : &@io.BinaryWriter) -> Tls {
+async fn test_server(
+  r : &@io.BinaryReader,
+  w : &@io.BinaryWriter,
+  require_shutdown~ : Bool = false,
+) -> Tls {
   Tls::server_from_pair(
     r,
     w,
+    require_shutdown~,
     private_key_file="async/tls/test_keys/key.pem",
     private_key_type=PEM,
     certificate_file="async/tls/test_keys/cert.pem",
@@ -44,6 +49,7 @@ async fn custom_root_test_server(
   Tls::server_from_pair(
     r,
     w,
+    require_shutdown=false,
     private_key_file~,
     private_key_type=PEM,
     certificate_file~,
@@ -79,6 +85,7 @@ extern "C" fn SSL::accept(self : SSL) -> Int32 = "moonbit_rt_tls_ssl_accept"
 async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   r : R,
   w : W,
+  require_shutdown~ : Bool,
   private_key_file~ : String,
   private_key_type~ : X509FileType,
   certificate_file~ : String,
@@ -93,7 +100,14 @@ async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   guard !ctx.is_null() else {
     raise TlsError("failed to initialize SSL server context")
   }
-  let self = Tls::from_pair(ctx, r, w, is_client=false, host=None)
+  let self = Tls::from_pair(
+    ctx,
+    r,
+    w,
+    is_client=false,
+    host=None,
+    require_shutdown~,
+  )
   errdefer self.close()
   if self.ssl.use_certificate_file(certificate_file, certificate_type) != 1 {
     raise TlsError(@tls_util.get_tls_error())
@@ -121,6 +135,7 @@ extern "C" fn Schannel::init_server(
 async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   reader : R,
   writer : W,
+  require_shutdown~ : Bool,
   private_key_file~ : String,
   private_key_type~ : X509FileType,
   certificate_file~ : String,
@@ -148,6 +163,7 @@ async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
     transport,
     curr_msg_remaining: 0,
     curr_msg_trailer: 0,
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -185,6 +201,7 @@ fn TlsConnectionHandle::set_server_pfx(
 async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   r : R,
   w : W,
+  require_shutdown~ : Bool,
   private_key_file? : String,
   private_key_type? : X509FileType,
   certificate_file? : String,
@@ -192,7 +209,14 @@ async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   pfx_file? : String,
 ) -> Tls {
   let conn = TlsConnectionHandle::new()
-  let self = Tls::from_pair(conn, r, w, is_client=false, host=None)
+  let self = Tls::from_pair(
+    conn,
+    r,
+    w,
+    is_client=false,
+    host=None,
+    require_shutdown~,
+  )
   errdefer self.close()
   let status = if @async.platform is Windows {
     let pfx_file = match pfx_file {
