@@ -17,6 +17,9 @@
 /// On JavaScript/Node this is `process.argv`, including both the Node executable
 /// and the script path. JavaScript environments without `process.argv` return
 /// an empty array. Other targets use the host-provided argument list.
+/// On linear Wasm, uses WASIp1 and panics on host errors. JS WASI hosts
+/// (including moonrun) require completed instantiation: do not call from
+/// `fn init` or top-level initializers.
 pub fn args() -> Array[String] {
   get_cli_args_internal()
 }
@@ -47,12 +50,14 @@ pub fn current_dir() -> String? {
 
 ///|
 /// Get an environment variable by key. Returns `None` if the key does not exist.
+/// On linear Wasm, reads the full WASIp1 environment; see `args` for host requirements.
 pub fn get_env_var(key : String) -> String? {
   get_env_var_internal(key)
 }
 
 ///|
 /// Get all environment variables.
+/// On linear Wasm, uses WASIp1; see `args` for host requirements.
 pub fn get_env_vars() -> Map[String, String] {
   get_env_vars_internal()
 }
@@ -63,6 +68,7 @@ pub fn get_env_vars() -> Map[String, String] {
 /// On JavaScript, this writes to `process.env`. If `process.env` is unavailable
 /// (for example, in a browser), it does nothing, and `get_env_var` keeps
 /// returning `None`.
+/// On Wasm, requires Moonrun's custom imports.
 pub fn set_env_var(key : String, value : String) -> Unit {
   set_env_var_internal(key, value)
 }
@@ -72,6 +78,7 @@ pub fn set_env_var(key : String, value : String) -> Unit {
 ///
 /// On JavaScript, this deletes the key from `process.env`. If `process.env` is
 /// unavailable (for example, in a browser), it does nothing.
+/// On Wasm, requires Moonrun's custom imports.
 pub fn unset_env_var(key : String) -> Unit {
   unset_env_var_internal(key)
 }
@@ -92,15 +99,4 @@ pub fn rand(n : Int32) -> Bytes? {
   } else {
     None
   }
-}
-
-///|
-/// Currently `moon` does not support conditional import,
-/// so native-only import will result in unused import warning on other targets.
-/// Manually supress the unused warning here.
-#cfg(not(target="native"))
-#warnings("-unused_value")
-fn unused_function() -> Unit {
-  ignore(@ref.Ref(42))
-  let _ : (@os_string.OsString) -> Unit = ignore
 }
