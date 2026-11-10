@@ -38,7 +38,7 @@
 ///   _ => "?"
 /// }
 /// ```
-pub(all) struct StringScanner {
+pub struct StringScanner {
   /// The input view to scan. Its indexes use UTF-16 code units.
   data : StringView
   /// The relative offset of the next code unit to scan, in UTF-16 code units.
