@@ -802,7 +802,7 @@ pub async fn Conn::send_binary(self : Conn, data : BytesView) -> Unit {
 pub async fn Conn::ping(self : Conn, msg? : BytesView) -> Unit {
   let msg = match msg {
     Some(msg) => msg
-    None => @tls.rand_bytes(64)
+    None => @tls_util.rand_bytes(64)
   }
   let len = msg.length()
   guard! len <= 125

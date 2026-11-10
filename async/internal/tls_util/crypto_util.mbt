@@ -24,10 +24,10 @@ extern "C" fn rand_bytes_ffi(buf : FixedArray[Byte], num : Int32) -> Int32 = "mo
 #internal(internal, "for internal use only")
 pub fn rand_bytes(num : Int32) -> Bytes raise {
   // Reachable with no prior TLS connection (e.g. a plain `ws://` handshake).
-  load_openssl()
+  setup_tls_library()
   let result = FixedArray::make(num, b'\x00')
   if rand_bytes_ffi(result, num) != 1 {
-    raise Failure::Failure(err_get_error())
+    raise Failure::Failure(get_tls_error())
   }
   result.unsafe_reinterpret_as_bytes()
 }
@@ -58,7 +58,7 @@ extern "C" fn sha1_ffi(src : Bytes, len : Int32, dst : FixedArray[Byte]) = "moon
 #internal(internal, "for internal use only")
 pub fn sha1(src : Bytes) -> Bytes raise {
   // Reachable with no prior TLS connection (e.g. a plain `ws://` handshake).
-  load_openssl()
+  setup_tls_library()
   let result = FixedArray::make(20, b'\x00')
   sha1_ffi(src, src.length(), result)
   result.unsafe_reinterpret_as_bytes()

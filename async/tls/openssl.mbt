@@ -14,6 +14,22 @@
 
 ///|
 #cfg(not(platform="windows"))
+extern "C" fn init_bio_method(
+  read : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
+  write : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
+) = "moonbit_rt_init_bio_method"
+
+///|
+#cfg(not(platform="windows"))
+fn load_openssl() -> Unit raise {
+  @tls_util.setup_tls_library()
+  init_bio_method((bio, dst, len) => bio.read(dst, len)) <| ((bio, src, len) => {
+    bio.write(src, len)
+  })
+}
+
+///|
+#cfg(not(platform="windows"))
 #external
 priv type SSL_CTX
 
@@ -228,19 +244,6 @@ extern "C" fn err_peek_error_code() -> UInt64 = "moonbit_rt_tls_peek_error_code"
 
 ///|
 #cfg(not(platform="windows"))
-#borrow(buf)
-extern "C" fn err_get_error_ffi(buf : Bytes) -> Int32 = "moonbit_rt_tls_get_error"
-
-///|
-#cfg(not(platform="windows"))
-fn err_get_error() -> String {
-  let buf = Bytes::make(256, 0)
-  let len = err_get_error_ffi(buf)
-  @bytes_util.ascii_to_string(buf[:len])
-}
-
-///|
-#cfg(not(platform="windows"))
 #external
 priv type BIO
 
@@ -364,7 +367,7 @@ async fn SSL_CTX::client_with_custom_root(root_cert : String) -> SSL_CTX {
   let pem = @fs.read_text(root_cert)
   for cert in decode_pem_certificates(pem) {
     if ctx.add_root_certificate(cert) != 1 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     }
   }
   ctx
@@ -382,7 +385,8 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
       self.transport.flush_write()
       self.transport.write_buf.enlarge_to(1)
     }
-    SSL_ERROR_SSL | SSL_ERROR_SYSCALL => raise TlsError(err_get_error())
+    SSL_ERROR_SSL | SSL_ERROR_SYSCALL =>
+      raise TlsError(@tls_util.get_tls_error())
     SSL_ERROR_ZERO_RETURN => raise ConnectionClosed
     err => abort("unexpected error code \{err} from OpenSSL")
   }
@@ -422,9 +426,13 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   }
   if host is Some(host) {
     let host = @utf8.encode(host)
-    guard self.ssl.set_host(host) > 0 else { raise TlsError(err_get_error()) }
+    guard self.ssl.set_host(host) > 0 else {
+      raise TlsError(@tls_util.get_tls_error())
+    }
     if sni {
-      guard self.ssl.set_sni(host) > 0 else { raise TlsError(err_get_error()) }
+      guard self.ssl.set_sni(host) > 0 else {
+        raise TlsError(@tls_util.get_tls_error())
+      }
     }
   }
   while self.ssl.connect() is ret && ret <= 0 {
@@ -464,10 +472,10 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
   let self = Tls::from_pair(ctx, r, w, is_client=false, host=None)
   errdefer self.close()
   if self.ssl.use_certificate_file(certificate_file, certificate_type) != 1 {
-    raise TlsError(err_get_error())
+    raise TlsError(@tls_util.get_tls_error())
   }
   if self.ssl.use_private_key_file(private_key_file, private_key_type) != 1 {
-    raise TlsError(err_get_error())
+    raise TlsError(@tls_util.get_tls_error())
   }
   while self.ssl.accept() is ret && ret <= 0 {
     self.handle_error(self.ssl.get_error(ret))
@@ -659,7 +667,7 @@ pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
   let cert = self.ssl.get_certificate(is_client=true)
   if cert.0.is_null() {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       return None
     }
@@ -680,7 +688,7 @@ pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
   let len = self.ssl.unique_channel_binding_length(is_client=self.is_client)
   guard len > 0 else {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       raise TlsError("tls-unique channel binding unavailable")
     }
@@ -700,7 +708,7 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
   let cert = self.ssl.get_certificate(is_client=self.is_client)
   if cert.0.is_null() {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       raise TlsError("tls-server-endpoint channel binding unavailable")
     }
@@ -711,7 +719,7 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
   let len = @ref.Ref(0)
   let hash = cert.server_endpoint_hash(len~)
   if hash.is_null() {
-    raise TlsError(err_get_error())
+    raise TlsError(@tls_util.get_tls_error())
   }
   let result = FixedArray::make(len.val, b'\x00')
   hash.blit_to_bytes(dst=result, len=len.val)

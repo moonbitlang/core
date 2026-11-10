@@ -12,7 +12,6 @@ import {
   "moonbitlang/core/async/internal/c_buffer",
   "moonbitlang/core/async/internal/io_buffer",
   "moonbitlang/core/internal/os_string",
-  "moonbitlang/core/async/os_error",
   "moonbitlang/core/async/fs",
 }
 
@@ -22,7 +21,8 @@ import {
   "moonbitlang/core/lazy",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/cmp",
-  "moonbitlang/core/async/internal/bytes_util",
+  "moonbitlang/core/async/os_error",
+  "moonbitlang/core/async/internal/tls_util",
   "moonbitlang/core/async/internal/errno_util",
 }
 
@@ -50,11 +50,8 @@ options(
   targets: {
     "certificate_test.mbt": [ "native", "wasm" ],
     "channel_binding_test.mbt": [ "native", "wasm" ],
-    "crypto_util.mbt": [ "native" ],
-    "crypto_util.wasm.mbt": [ "wasm" ],
     "deprecated.mbt": [ "native", "wasm" ],
     "openssl.mbt": [ "native" ],
-    "openssl_loader.mbt": [ "native" ],
     "schannel.mbt": [ "native" ],
     "shutdown_test.mbt": [ "native", "wasm" ],
     "tls.mbt": [ "native", "wasm" ],

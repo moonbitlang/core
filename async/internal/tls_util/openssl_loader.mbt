@@ -13,7 +13,16 @@
 // limitations under the License.
 
 ///|
-#cfg(not(platform="windows"))
+/// Initialize TLS library, load necessary imports
+#cfg(any(target="wasm", platform="windows"))
+#warnings("-unused_error_type")
+pub fn setup_tls_library() -> Unit raise {
+  ignore(@ref.Ref(0))
+  ignore((_ : @lazy.Lazy[Result[Unit, String]]) => ())
+}
+
+///|
+#cfg(all(target="native", not(platform="windows")))
 #borrow(major, minor, fix)
 extern "C" fn load_openssl_ffi(
   major : @ref.Ref[Int32],
@@ -22,43 +31,38 @@ extern "C" fn load_openssl_ffi(
 ) -> Int32 = "moonbit_rt_load_openssl"
 
 ///|
-#cfg(not(platform="windows"))
-extern "C" fn init_bio_method(
-  read : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
-  write : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
-) = "moonbit_rt_init_bio_method"
-
-///|
 /// Lazily load OpenSSL on first use, so a program that never touches TLS pays
 /// nothing. Every raw-symbol FFI wrapper calls this first; all other FFI runs on
 /// handles those produce, so it is transitively covered. The outcome is cached →
 /// success makes repeat calls free, failure re-raises the same error immediately.
-#cfg(not(platform="windows"))
+#cfg(all(target="native", not(platform="windows")))
 let load_openssl_result : @lazy.Lazy[Result[Unit, Error]] = Lazy(() => {
   let major = @ref.Ref(0)
   let minor = @ref.Ref(0)
   let fix = @ref.Ref(0)
   match load_openssl_ffi(major, minor, fix) {
-    0 => ()
-    1 => return Err(TlsError("failed to load OpenSSL"))
-    2 => return Err(TlsError("failed to get OpenSSL version"))
+    0 => Ok(())
+    1 =>
+      try @os_error.check_errno("load OpenSSL") catch {
+        err => Err(err)
+      } noraise {
+        _ => Ok(())
+      }
+    2 => Err(Failure("failed to get OpenSSL version"))
     3 =>
-      return Err(
-        TlsError(
+      Err(
+        Failure(
           "unsupported OpenSSL version \{major.val}.\{minor.val}.\{fix.val}",
         ),
       )
-    4 => return Err(TlsError("failed to load some OpenSSL function"))
+    4 => Err(Failure("failed to load some OpenSSL function"))
     _ => panic()
   }
-  init_bio_method((bio, dst, len) => bio.read(dst, len)) <| ((bio, src, len) => {
-    bio.write(src, len)
-  })
-  Ok(())
 })
 
 ///|
-#cfg(not(platform="windows"))
-fn load_openssl() -> Unit raise {
+/// Initialize TLS library, load necessary imports
+#cfg(all(target="native", not(platform="windows")))
+pub fn setup_tls_library() -> Unit raise {
   load_openssl_result.force().unwrap_or_error()
 }
