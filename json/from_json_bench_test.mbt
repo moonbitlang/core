@@ -56,3 +56,23 @@ test "bench from_json Map[String, Int] n=1000" (it : @bench.T) {
     it.keep(v)
   })
 }
+
+///|
+test "bench parse + from_json Array[Double] n=10000" (it : @bench.T) {
+  let text = from_json_bench_doubles.stringify()
+  it.bench(fn() {
+    let v : Array[Double] = @json.from_json(@json.parse(text)) catch { _ => [] }
+    it.keep(v)
+  })
+}
+
+///|
+test "bench parse + from_json Map[String, Int] n=1000" (it : @bench.T) {
+  let text = from_json_bench_object.stringify()
+  it.bench(fn() {
+    let v : Map[String, Int32] = @json.from_json(@json.parse(text)) catch {
+      _ => {}
+    }
+    it.keep(v)
+  })
+}
