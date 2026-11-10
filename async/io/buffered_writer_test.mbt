@@ -16,7 +16,7 @@
 async test "BufferedWriter" {
   let log = StringBuilder()
   @async.with_task_group() <| fn(root) {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let w = @io.BufferedWriter::new(w, size=4)
@@ -54,8 +54,8 @@ async test "BufferedWriter" {
 async test "BufferedWriter::write_reader" {
   let log = StringBuilder()
   @async.with_task_group() <| fn(root) {
-    let (r1, w1) = @io.pipe()
-    let (r2, w2) = @io.pipe()
+    let (r1, w1) = @io.memory_pipe()
+    let (r2, w2) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer r2.close()
       defer w1.close()

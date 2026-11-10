@@ -15,7 +15,7 @@
 ///|
 async test "trailer chunked" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -76,7 +76,7 @@ async test "trailer chunked" {
 ///|
 async test "trailer fixed length" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -110,7 +110,7 @@ async test "trailer fixed length" {
 ///|
 async test "trailer close delimited" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w

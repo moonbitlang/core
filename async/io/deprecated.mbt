@@ -45,4 +45,4 @@ pub extend PipeClosed with @json.ToJson::{to_json}
 ///|
 #deprecated
 #doc(hidden)
-pub extend PipeWrite with BinaryWriter::{flush_partial_data}
+pub extend MemoryPipeWrite with BinaryWriter::{flush_partial_data}

@@ -7,7 +7,7 @@ import {
 }
 
 // Values
-pub fn pipe() -> (PipeRead, PipeWrite)
+pub fn memory_pipe() -> (MemoryPipeRead, MemoryPipeWrite)
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)
@@ -42,6 +42,28 @@ pub async fn[W : BinaryWriter] BufferedWriter::write(Self[W], BytesView) -> Unit
 pub async fn[W : BinaryWriter] BufferedWriter::write_reader(Self[W], &BinaryReader) -> Unit
 pub impl[W : BinaryWriter] BinaryWriter for BufferedWriter[W]
 
+type MemoryPipeRead
+pub fn MemoryPipeRead::close(Self) -> Unit
+pub async fn MemoryPipeRead::drop_all(Self) -> Int64 raise ReaderError
+pub async fn MemoryPipeRead::drop_exactly(Self, Int32) -> Unit raise ReaderError
+pub async fn MemoryPipeRead::peek(Self) -> BytesView? raise ReaderError
+pub async fn MemoryPipeRead::peek_at_least(Self, Int32) -> BytesView raise ReaderError
+pub async fn MemoryPipeRead::peek_exactly(Self, Int32) -> BytesView raise ReaderError
+pub async fn MemoryPipeRead::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise ReaderError
+pub async fn MemoryPipeRead::read(Self) -> Bytes? raise ReaderError
+pub async fn MemoryPipeRead::read_all(Self) -> Bytes raise ReaderError
+pub async fn MemoryPipeRead::read_at_least(Self, Int32) -> Bytes raise ReaderError
+pub async fn MemoryPipeRead::read_exactly(Self, Int32) -> Bytes raise ReaderError
+pub async fn MemoryPipeRead::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError
+pub async fn MemoryPipeRead::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError
+pub impl BinaryReader for MemoryPipeRead
+
+type MemoryPipeWrite
+pub fn MemoryPipeWrite::close(Self) -> Unit
+pub async fn MemoryPipeWrite::write(Self, BytesView) -> Unit raise WriterError
+pub async fn MemoryPipeWrite::write_reader(Self, &BinaryReader) -> Unit
+pub impl BinaryWriter for MemoryPipeWrite
+
 type MemoryReader
 #callsite(autofill(loc))
 pub fn MemoryReader::MemoryReader(async (&BinaryWriter) -> Unit, loc~ : SourceLoc) -> Self
@@ -59,28 +81,6 @@ pub async fn MemoryReader::read_exactly(Self, Int32) -> Bytes raise ReaderError
 pub async fn MemoryReader::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError
 pub async fn MemoryReader::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError
 pub impl BinaryReader for MemoryReader
-
-type PipeRead
-pub fn PipeRead::close(Self) -> Unit
-pub async fn PipeRead::drop_all(Self) -> Int64 raise ReaderError
-pub async fn PipeRead::drop_exactly(Self, Int32) -> Unit raise ReaderError
-pub async fn PipeRead::peek(Self) -> BytesView? raise ReaderError
-pub async fn PipeRead::peek_at_least(Self, Int32) -> BytesView raise ReaderError
-pub async fn PipeRead::peek_exactly(Self, Int32) -> BytesView raise ReaderError
-pub async fn PipeRead::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise ReaderError
-pub async fn PipeRead::read(Self) -> Bytes? raise ReaderError
-pub async fn PipeRead::read_all(Self) -> Bytes raise ReaderError
-pub async fn PipeRead::read_at_least(Self, Int32) -> Bytes raise ReaderError
-pub async fn PipeRead::read_exactly(Self, Int32) -> Bytes raise ReaderError
-pub async fn PipeRead::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError
-pub async fn PipeRead::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError
-pub impl BinaryReader for PipeRead
-
-type PipeWrite
-pub fn PipeWrite::close(Self) -> Unit
-pub async fn PipeWrite::write(Self, BytesView) -> Unit raise WriterError
-pub async fn PipeWrite::write_reader(Self, &BinaryReader) -> Unit
-pub impl BinaryWriter for PipeWrite
 
 type Utf8Reader
 pub fn[R : BinaryReader] Utf8Reader::Utf8Reader(R) -> Self

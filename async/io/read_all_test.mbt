@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-async fn writer(log : StringBuilder, w : @io.PipeWrite) -> Unit {
+async fn writer(log : StringBuilder, w : @io.MemoryPipeWrite) -> Unit {
   defer w.close()
   @async.sleep(20)
   log <+ "writing 4 bytes of data\n"
@@ -30,7 +30,7 @@ async fn writer(log : StringBuilder, w : @io.PipeWrite) -> Unit {
 async test "read_all basic" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg(() => writer(log, w))
     inspect(@utf8.decode(r.read_all()), content="abcdefghijkl")
@@ -40,7 +40,7 @@ async test "read_all basic" {
 ///|
 async test "read_all large data" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg() <| () => {
       defer w.close()

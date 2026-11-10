@@ -15,7 +15,7 @@
 ///|
 async test "BinaryWriter writes a non-zero-offset BytesView" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -29,7 +29,7 @@ async test "BinaryWriter writes a non-zero-offset BytesView" {
 ///|
 async test "BinaryReader read_until consumes an excluded delimiter" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -50,7 +50,7 @@ async test "BinaryReader read_until consumes an excluded delimiter" {
 ///|
 async test "BinaryReader read_until can include a delimiter" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -70,7 +70,7 @@ async test "BinaryReader read_until can include a delimiter" {
 ///|
 async test "BinaryReader finds a delimiter spanning raw reads" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -91,7 +91,7 @@ async test "BinaryReader finds a delimiter spanning raw reads" {
 ///|
 async test "BinaryReader peek_until does not consume data" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
