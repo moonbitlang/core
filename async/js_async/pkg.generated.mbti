@@ -26,7 +26,7 @@ pub fn AbortController::signal(Self) -> AbortSignal
 pub type AbortSignal
 
 type JsReadableStream
-pub fn JsReadableStream::new_pipe() -> (Self, @io.PipeWrite)
+pub fn JsReadableStream::new_pipe() -> (Self, @io.MemoryPipeWrite)
 
 #external
 pub type Promise[X]

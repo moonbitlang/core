@@ -47,7 +47,7 @@ async fn node_gzip(mode : String, input : Bytes) -> Bytes {
 ///|
 #cfg(any(target="native", target="wasm"))
 async fn encode_with_moonbit(input : Bytes) -> Bytes {
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   let mut result = b""
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
@@ -63,7 +63,7 @@ async fn encode_with_moonbit(input : Bytes) -> Bytes {
 ///|
 #cfg(any(target="native", target="wasm"))
 async fn decode_with_moonbit(input : Bytes) -> Bytes {
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   let mut result = b""
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
@@ -90,7 +90,7 @@ async fn assert_node_compatibility(input : Bytes) -> Unit {
 async test "encode decode roundtrip" {
   @async.with_task_group() <| root => {
     let source_chunks = [b"hello ", b"gzip ", b"world"]
-    let (compressed_r, compressed_w) = @io.pipe()
+    let (compressed_r, compressed_w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer compressed_w.close()
       let encoder = @gzip.Encoder(
@@ -115,7 +115,7 @@ async test "encode decode roundtrip" {
 async test "encoder uses valid blocks across large writes" {
   @async.with_task_group() <| root => {
     let payload = Bytes::makei(70000, i => (i % 251).to_byte())
-    let (compressed_r, compressed_w) = @io.pipe()
+    let (compressed_r, compressed_w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer compressed_w.close()
       let encoder = @gzip.Encoder(compressed_w)
@@ -133,7 +133,7 @@ async test "encoder uses valid blocks across large writes" {
 async test "encoder emits output when flushed" {
   let log : Array[String] = []
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       log.push("start init")
@@ -167,7 +167,7 @@ async test "encoder emits output when flushed" {
 async test "decoder yields plain chunks lazily across delayed chunks" {
   let log : Array[String] = []
   @async.with_task_group() <| root => {
-    let (compressed_r, compressed_w) = @io.pipe()
+    let (compressed_r, compressed_w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer compressed_w.close()
       compressed_w.write(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
@@ -202,7 +202,7 @@ async test "decoder yields plain chunks lazily across delayed chunks" {
 ///|
 async test "decoder supports reads smaller than writer chunks" {
   @async.with_task_group() <| root => {
-    let (compressed_r, compressed_w) = @io.pipe()
+    let (compressed_r, compressed_w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer compressed_w.close()
       compressed_w.write(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
