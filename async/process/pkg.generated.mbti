@@ -14,7 +14,7 @@ pub fn graceful_cancel(timeout~ : Int32, signal? : @signal.Signal) -> Cancellati
 
 pub fn hard_cancel() -> CancellationHandler
 
-pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise
+pub fn pipe_between_process() -> (SharedProcessInput, SharedProcessOutput) raise
 
 pub fn read_from_process() -> (ReadFromProcess, SharedProcessOutput) raise
 

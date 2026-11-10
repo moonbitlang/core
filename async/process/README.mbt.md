@@ -647,10 +647,11 @@ is useful when the same input stream must be passed to multiple children, or
 when using `run()` without a `Process.stdin` handle. Children share the stream:
 each byte is consumed by only one reader.
 
-`pipe()` returns a `(SharedProcessInput, SharedProcessOutput)` pair for direct
-child-to-child communication. Pass the output to the producer and the input to
-the consumer. Both handles remain caller-owned and must be closed after the
-last corresponding child has been spawned, or if spawning fails.
+`pipe_between_process()` returns a
+`(SharedProcessInput, SharedProcessOutput)` pair for direct child-to-child
+communication. Pass the output to the producer and the input to the consumer.
+Both handles remain caller-owned and must be closed after the last corresponding
+child has been spawned, or if spawning fails.
 
 For every shared pipe, also close the parent-facing `ReadFromProcess` or
 `WriteToProcess` when reading or writing is complete. Failing to close the last
@@ -685,7 +686,7 @@ view for UTF-8 text I/O, as in `child.stdout.text.read_all()` and
 | `Shared(endpoint)` | Use a caller-owned input or output endpoint | Close the endpoint after passing it to its last child |
 | `write_to_process()` | `SharedProcessInput` plus parent writer | Caller closes both ends |
 | `read_from_process()` | Parent reader plus `SharedProcessOutput` | Caller closes both ends |
-| `pipe()` | `SharedProcessInput` plus `SharedProcessOutput` | Caller closes both ends |
+| `pipe_between_process()` | `SharedProcessInput` plus `SharedProcessOutput` | Caller closes both ends |
 | `redirect_from_file(path)` | Shared file-backed input endpoint | Caller closes it after its last use |
 | `redirect_to_file(path, ...)` | Shared file-backed output endpoint | Caller closes it after its last use |
 

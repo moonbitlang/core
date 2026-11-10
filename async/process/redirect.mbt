@@ -190,8 +190,8 @@ pub(all) enum ProcessInput {
   FromFile(StringView)
   /// Read the child's standard input from a caller-owned shared channel.
   ///
-  /// Create the channel with `pipe()`, `write_to_process()`, or
-  /// `redirect_from_file()`. Close it after it has been passed to the last
+  /// Create the channel with `pipe_between_process()`, `write_to_process()`,
+  /// or `redirect_from_file()`. Close it after it has been passed to the last
   /// child, or if spawning is abandoned.
   Shared(SharedProcessInput)
 }
@@ -294,9 +294,9 @@ pub(all) enum ProcessOutput {
   DuplicateStdout
   /// Write the child's output to a caller-owned shared channel.
   ///
-  /// Create the channel with `pipe()`, `read_from_process()`, or
-  /// `redirect_to_file()`. Close it after it has been passed to the last child,
-  /// or if spawning is abandoned.
+  /// Create the channel with `pipe_between_process()`, `read_from_process()`,
+  /// or `redirect_to_file()`. Close it after it has been passed to the last
+  /// child, or if spawning is abandoned.
   Shared(SharedProcessOutput)
 }
 
@@ -497,8 +497,8 @@ pub fn write_to_process() -> (SharedProcessInput, WriteToProcess) raise {
 /// Both endpoints are caller-owned and can be shared by multiple children.
 /// Close each endpoint after passing it to its last child, or if spawning is
 /// abandoned.
-pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise {
-  let context = "@process.pipe()"
+pub fn pipe_between_process() -> (SharedProcessInput, SharedProcessOutput) raise {
+  let context = "@process.pipe_between_process()"
   let (r, w) = @fd_util.pipe(
     read_end_is_async=false,
     write_end_is_async=false,
