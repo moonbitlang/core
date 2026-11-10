@@ -12,11 +12,9 @@
 - Added `eprintln` for writing a line to standard error (#4222).
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
 - Added ordered navigation to `@sorted_map.SortedMap`: `first`, `last`, `pop_first`, `pop_last`, the nearest-key queries `first_ge`, `first_gt`, `last_le` and `last_lt`, and reverse iteration with `rev_iter`, `rev_iter2`, `rev_keys` and `rev_values`.
-- Added `BigInt::to_be_bytes(length?)` and `BigInt::from_be_bytes` for unsigned big-endian bytes (#4646). `length` is the exact output length: shorter values are zero-padded, and a value that does not fit panics. `from_be_bytes` always returns a non-negative value; negate it for a negative one.
 
 #### Changed
 
-- Deprecated `BigInt::to_octets` and `BigInt::from_octets` in favor of `BigInt::to_be_bytes` and `BigInt::from_be_bytes` (#4646). Their behavior is unchanged: `to_octets(length=n)` still treats `n` as a minimum, so switching to `to_be_bytes(length=n)` panics where the old call returned more than `n` bytes.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed

@@ -909,26 +909,13 @@ pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
 }
 
 ///|
-/// Interprets `input` as an unsigned big-endian integer.
-///
-/// The result is never negative; negate it for a negative value. Leading zero
-/// bytes are allowed, and an empty `input` yields zero, matching Python's
-/// `int.from_bytes` and Go's `big.Int.SetBytes`.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x01\x02\x03" // 0x010203
-///   inspect(@bigint.BigInt::from_be_bytes(bytes), content="66051")
-///   inspect(-@bigint.BigInt::from_be_bytes(bytes), content="-66051")
-///   inspect(@bigint.BigInt::from_be_bytes(b"\x00\x01"), content="1")
-///   inspect(@bigint.BigInt::from_be_bytes(b""), content="0")
-/// }
-/// ```
-pub fn BigInt::from_be_bytes(input : BytesView) -> BigInt {
-  if input.length() == 0 {
+/// Creates a magnitude from unsigned big-endian bytes.
+pub fn BigInt::from_octets(input : BytesView, signum~ : Int32 = 1) -> BigInt {
+  if signum == 0 || input.length() == 0 {
     return zero
+  }
+  if signum < 0 {
+    return -BigInt::from_octets(input)
   }
   let byte_len = input.length()
   let full_limbs = byte_len / 8
@@ -951,46 +938,20 @@ pub fn BigInt::from_be_bytes(input : BytesView) -> BigInt {
 }
 
 ///|
-/// Converts a non-negative `BigInt` to unsigned big-endian bytes.
-///
-/// Without `length`, returns the shortest encoding: no leading zero bytes,
-/// except that zero is a single `\x00` byte. With `length`, returns exactly
-/// `length` bytes, padded with leading zero bytes; zero fits in any length,
-/// including 0.
-///
-/// Panics if `self` is negative, if `length` is negative, or if `self` needs
-/// more than `length` bytes (`self.bit_length() > 8 * length`).
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = 66051N // 0x010203
-///   inspect(n.to_be_bytes(), content="b\"\\x01\\x02\\x03\"")
-///   inspect(n.to_be_bytes(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
-///   inspect(0N.to_be_bytes(), content="b\"\\x00\"")
-///   inspect(0N.to_be_bytes(length=0), content="b\"\"")
-/// }
-/// ```
-pub fn BigInt::to_be_bytes(self : BigInt, length? : Int32) -> Bytes {
-  if self.sign == Negative && !self.is_zero() {
+/// Converts a non-negative integer to unsigned big-endian bytes.
+pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
+  let minimum_length = match length {
+    None => 1
+    Some(value) => if value <= 0 { abort("negative length") } else { value }
+  }
+  if self.is_zero() {
+    return Bytes::make(maximum_int(1, minimum_length), b'\x00')
+  }
+  if self.sign == Negative {
     abort("negative BigInt")
   }
-  let value_length = if self.is_zero() {
-    0
-  } else {
-    (self.bit_length() + 7) / 8
-  }
-  let result_length = match length {
-    None => maximum_int(1, value_length)
-    Some(length) => {
-      guard length >= 0 else { abort("negative length") }
-      guard value_length <= length else {
-        abort("BigInt does not fit in `length` bytes")
-      }
-      length
-    }
-  }
+  let value_length = (self.bit_length() + 7) / 8
+  let result_length = maximum_int(minimum_length, value_length)
   let result = FixedArray::make(result_length, b'\x00')
   for i in 0..<value_length {
     let word = self.limbs.unsafe_get(i / 8)

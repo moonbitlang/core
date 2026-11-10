@@ -49,7 +49,7 @@ fn random_bigint(size : Int32, rs : @splitmix.RandomState) -> @bigint.BigInt {
   let bytes = Bytes::makei(chunk_count * 8, _ => {
     rs.next_uint(limit=256U).to_byte()
   })
-  with_random_sign(@bigint.BigInt::from_be_bytes(bytes), rs)
+  with_random_sign(@bigint.BigInt::from_octets(bytes), rs)
 }
 
 ///|

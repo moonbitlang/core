@@ -187,28 +187,31 @@ test "string conversions" {
 
 ## Byte Array Conversion
 
-Convert a non-negative BigInt to and from unsigned big-endian bytes:
+Convert BigInt to and from byte arrays:
 
 ```mbt check
 ///|
 test "byte conversions" {
   let big = 0x123456789abcdefN
 
-  // Shortest encoding, no leading zero bytes
-  let bytes = big.to_be_bytes()
-  inspect(bytes.length(), content="8")
-  inspect(@bigint.BigInt::from_be_bytes(bytes) == big, content="true")
+  // Convert to bytes
+  let bytes = big.to_octets()
+  inspect(bytes.length() > 0, content="true")
 
-  // Exactly `length` bytes, padded with leading zeros; panics if the value
-  // does not fit
-  let fixed_length = 255N.to_be_bytes(length=4)
-  inspect(fixed_length, content="b\"\\x00\\x00\\x00\\xff\"")
+  // Convert from bytes (positive number)
+  let from_bytes = @bigint.BigInt::from_octets(bytes)
+  inspect(from_bytes == big, content="true")
 
-  // The bytes hold a magnitude: encode a negative value by its absolute value
-  // and negate after decoding
-  let negative = -big
-  let magnitude = (-negative).to_be_bytes()
-  inspect(-@bigint.BigInt::from_be_bytes(magnitude) == negative, content="true")
+  // Convert with specific length
+  let fixed_length = @bigint.BigInt::from_int(255).to_octets(length=4)
+  inspect(fixed_length.length(), content="4")
+
+  // Negative numbers
+  // let negative = -big
+  // let neg_bytes = negative.to_octets()
+  // to_octets does not accept negative numbers
+  // let neg_from_bytes = @bigint.BigInt::from_octets(neg_bytes, signum=-1)
+  // inspect(neg_from_bytes == negative, content="true")
 }
 ```
 
