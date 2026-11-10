@@ -116,6 +116,7 @@ struct Tls {
   transport : Transport
   mut curr_msg_remaining : Int32
   mut curr_msg_trailer : Int32
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -192,6 +193,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   writer : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   ignore(sni)
@@ -206,6 +208,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
     curr_msg_remaining: 0,
     curr_msg_trailer: 0,
     transport,
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -322,7 +325,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
           self.curr_msg_trailer
       }
       WantRead if read_buf.length() == 0 && self.transport.state is Closed =>
-        return 0
+        // The peer closed the connection without performing TLS shutdown
+        if self.require_shutdown {
+          raise @io.UnexpectedEof
+        } else {
+          return 0
+        }
       WantRead => self.transport.read_more()
       Eof => {
         self.shutdown()

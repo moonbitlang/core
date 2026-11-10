@@ -211,6 +211,7 @@ struct Tls {
   transport : Transport
   reader_ctrl : @io.BinaryReaderController
   writer_ctrl : @io.BinaryWriterController
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -222,6 +223,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
   w : W,
   is_client~ : Bool,
   host~ : String?,
+  require_shutdown~ : Bool,
 ) -> Tls {
   {
     conn,
@@ -230,6 +232,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     transport: Transport::new(r, w),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -309,6 +312,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   w : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   let host_name = match host {
@@ -316,7 +320,14 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
     None => @os_string.empty
   }
   let conn = TlsConnectionHandle::new()
-  let self = Tls::from_pair(conn, r, w, is_client=true, host~)
+  let self = Tls::from_pair(
+    conn,
+    r,
+    w,
+    is_client=true,
+    host~,
+    require_shutdown~,
+  )
   errdefer self.close()
   if trust is CustomPemFile(path) {
     let pem = @fs.read_text(path)
@@ -383,7 +394,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
           continue
         } else if self.transport.state is Closed &&
           controller.buffered().length() == 0 {
-          return 0
+          // The peer closed the connection without performing TLS shutdown
+          if self.require_shutdown {
+            raise @io.UnexpectedEof
+          } else {
+            return 0
+          }
         } else if self.conn.wants_read() {
           self.transport.read_more()
         } else if self.conn.wants_write() {

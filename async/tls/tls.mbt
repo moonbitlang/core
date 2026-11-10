@@ -75,13 +75,25 @@ fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
 /// If `host` is present and `sni` is `true` (`true` by default),
 /// Server Name Indication (SNI) field of TLS will be set to `host`.
 /// `sni=false` is currently unsupported on Windows.
+///
+/// If `require_shutdown` is `true` (`true` by default),
+/// the TLS connection will raise an error if the peer closes the underlying transport
+/// without performing normal TLS shutdown.
+/// If the client is the side that initiates termination,
+/// `.shutdown()` should be called so that the remote peer can reliably detect termination.
+///
+/// TLS shutdown is necessary to safely detect termination of the TLS stream,
+/// however protocols with their own message delimiter, such as HTTP,
+/// does not rely on TLS to detect stream termination.
+/// In this case, TLS shutdown is not necessary.
 pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::client(
   inner : Inner,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust? : TrustedRoot,
 ) -> Tls {
-  Tls::client_from_pair(inner, inner, host?, sni~, trust?)
+  Tls::client_from_pair(inner, inner, host?, sni~, require_shutdown~, trust?)
 }
 
 ///|
