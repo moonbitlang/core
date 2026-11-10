@@ -42,7 +42,7 @@ test "bench HashMap::remove present x1000 n=100000" (it : @bench.T) {
 ///|
 test "bench HashMap::union with a derived version n=100000" (it : @bench.T) {
   let derived = update_bench_map.add(-1, -1)
-  it.bench(fn() { it.keep(update_bench_map.union(derived)) })
+  it.bench(fn() { it.keep(update_bench_map.merge(derived)) })
 }
 
 ///|

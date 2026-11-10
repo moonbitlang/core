@@ -373,19 +373,19 @@ test "remove all keys from collision bucket" {
 }
 
 ///|
-test "union 2 hashmaps, choose the right hand side" {
+test "merge 2 hashmaps, choose the right hand side" {
   let map1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let map2 = @hashmap.HashMap([(1, 10), (2, 20), (4, 40)])
-  let map3 = map1.union(map2)
+  let map3 = map1.merge(map2)
   let map4 = @hashmap.HashMap([(1, 10), (2, 20), (3, 3), (4, 40)])
   inspect(map3 == map4, content="true")
 }
 
 ///|
-test "union 2 hashmaps, without conflict" {
+test "merge 2 hashmaps, without conflict" {
   let map1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let map2 = @hashmap.HashMap([(4, 4), (5, 5), (6, 6)])
-  let map3 = map1.union(map2)
+  let map3 = map1.merge(map2)
   let map4 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
   inspect(map3 == map4, content="true")
 }
@@ -680,52 +680,52 @@ test "HAMT::remove from collision bucket non-primary key" {
 }
 
 ///|
-test "HAMT::union with empty" {
+test "HAMT::merge with empty" {
   let m1 = @hashmap.HashMap([(1, 1)])
   let m2 = @hashmap.new()
-  @debug.assert_eq(m1.union(m2), m1)
-  @debug.assert_eq(m2.union(m1), m1)
+  @debug.assert_eq(m1.merge(m2), m1)
+  @debug.assert_eq(m2.merge(m1), m1)
 }
 
 ///|
-test "HAMT::union with leaf" {
+test "HAMT::merge with leaf" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(3, 3)
   let m3 = @hashmap.singleton(2, 20)
-  @test.assert_eq(m1.union(m2).get(3), Some(3))
-  @test.assert_eq(m1.union(m3).get(2), Some(20))
-  @test.assert_eq(m3.union(m1).get(2), Some(2))
+  @test.assert_eq(m1.merge(m2).get(3), Some(3))
+  @test.assert_eq(m1.merge(m3).get(2), Some(20))
+  @test.assert_eq(m3.merge(m1).get(2), Some(2))
 }
 
 ///|
-test "HAMT::union with branch" {
+test "HAMT::merge with branch" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.HashMap([(4, 4), (5, 5), (6, 6)])
-  let u = m1.union(m2)
+  let u = m1.merge(m2)
   for i in 1..<=6 {
     inspect(u.contains(i), content="true")
   }
 }
 
 ///|
-test "HAMT::union with collision" {
+test "HAMT::merge with collision" {
   let m1 = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
   let m2 = @hashmap.HashMap([(MyString("b"), 20), (MyString("c"), 3)])
-  let u = m1.union(m2)
+  let u = m1.merge(m2)
   @test.assert_eq(u.get(MyString("a")), Some(1))
   @test.assert_eq(u.get(MyString("b")), Some(20))
   @test.assert_eq(u.get(MyString("c")), Some(3))
 }
 
 ///|
-test "HAMT::union collision all keys in second" {
+test "HAMT::merge collision all keys in second" {
   let m1 = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
   let m2 = @hashmap.HashMap([
     (MyString("a"), 10),
     (MyString("b"), 20),
     (MyString("c"), 3),
   ])
-  let u = m1.union(m2)
+  let u = m1.merge(m2)
   @test.assert_eq(u.get(MyString("a")), Some(10))
   @test.assert_eq(u.get(MyString("b")), Some(20))
   @test.assert_eq(u.get(MyString("c")), Some(3))
@@ -733,28 +733,28 @@ test "HAMT::union collision all keys in second" {
 }
 
 ///|
-test "HAMT::union all cases" {
+test "HAMT::merge all cases" {
   let empty = @hashmap.new()
   let leaf = @hashmap.singleton(1, 1)
   let branch = @hashmap.HashMap([(1, 1), (2, 2)])
   let collision = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
-  @test.assert_eq(empty.union(leaf).get(1), Some(1))
-  @test.assert_eq(leaf.union(branch).get(2), Some(2))
-  let u1 = branch.union(branch)
+  @test.assert_eq(empty.merge(leaf).get(1), Some(1))
+  @test.assert_eq(leaf.merge(branch).get(2), Some(2))
+  let u1 = branch.merge(branch)
   @test.assert_eq(u1.get(1), Some(1))
   @test.assert_eq(u1.get(2), Some(2))
   let collision2 = @hashmap.HashMap([(MyString("b"), 20), (MyString("c"), 3)])
-  let u2 = collision.union(collision2)
+  let u2 = collision.merge(collision2)
   @test.assert_eq(u2.get(MyString("a")), Some(1))
   @test.assert_eq(u2.get(MyString("b")), Some(20))
   @test.assert_eq(u2.get(MyString("c")), Some(3))
 }
 
 ///|
-test "HAMT::union leaf to non-overlapping map" {
+test "HAMT::merge leaf to non-overlapping map" {
   let leaf = @hashmap.singleton(42, 100)
   let other = @hashmap.HashMap([(1, 1), (2, 2)])
-  let u = leaf.union(other)
+  let u = leaf.merge(other)
   @test.assert_eq(u.get(42), Some(100))
   @test.assert_eq(u.get(1), Some(1))
   @test.assert_eq(u.get(2), Some(2))
@@ -1026,36 +1026,36 @@ test "equal imply hash equal when collision" {
 }
 
 ///|
-test "HAMT::union_with with empty" {
+test "HAMT::merge_with with empty" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2)])
   let m2 = @hashmap.new()
-  let u1 = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u1 = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u1.get(1), Some(1))
   @test.assert_eq(u1.get(2), Some(2))
-  let u2 = m2.union_with(m1, (_k, v1, v2) => v1 + v2)
+  let u2 = m2.merge_with(m1, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u2.get(1), Some(1))
   @test.assert_eq(u2.get(2), Some(2))
 }
 
 ///|
-test "HAMT::union_with with leaf" {
+test "HAMT::merge_with with leaf" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 20)
   let m3 = @hashmap.singleton(3, 30)
-  let u1 = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u1 = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u1.get(1), Some(1))
   @test.assert_eq(u1.get(2), Some(22))
-  let u2 = m1.union_with(m3, (_k, v1, v2) => v1 + v2)
+  let u2 = m1.merge_with(m3, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u2.get(1), Some(1))
   @test.assert_eq(u2.get(2), Some(2))
   @test.assert_eq(u2.get(3), Some(30))
 }
 
 ///|
-test "HAMT::union_with with branch" {
+test "HAMT::merge_with with branch" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.HashMap([(2, 20), (3, 30), (4, 40)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 * v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 * v2)
   @test.assert_eq(u.get(1), Some(1))
   @test.assert_eq(u.get(2), Some(40))
   @test.assert_eq(u.get(3), Some(90))
@@ -1063,20 +1063,20 @@ test "HAMT::union_with with branch" {
 }
 
 ///|
-test "HAMT::union_with with collision" {
+test "HAMT::merge_with with collision" {
   let m1 = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
   let m2 = @hashmap.HashMap([(MyString("b"), 20), (MyString("c"), 3)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(MyString("a")), Some(1))
   @test.assert_eq(u.get(MyString("b")), Some(22))
   @test.assert_eq(u.get(MyString("c")), Some(3))
 }
 
 ///|
-test "HAMT::union_with all non-overlapping" {
+test "HAMT::merge_with all non-overlapping" {
   let m1 = @hashmap.HashMap([(1, 10), (2, 20)])
   let m2 = @hashmap.HashMap([(3, 30), (4, 40)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(1), Some(10))
   @test.assert_eq(u.get(2), Some(20))
   @test.assert_eq(u.get(3), Some(30))
@@ -1084,50 +1084,50 @@ test "HAMT::union_with all non-overlapping" {
 }
 
 ///|
-test "HAMT::union_with all overlapping" {
+test "HAMT::merge_with all overlapping" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.HashMap([(1, 10), (2, 20), (3, 30)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(1), Some(11))
   @test.assert_eq(u.get(2), Some(22))
   @test.assert_eq(u.get(3), Some(33))
 }
 
 ///|
-test "HAMT::union_with with custom merge function" {
+test "HAMT::merge_with with custom merge function" {
   let m1 = @hashmap.HashMap([(1, "a"), (2, "b")])
   let m2 = @hashmap.HashMap([(2, "c"), (3, "d")])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(1), Some("a"))
   @test.assert_eq(u.get(2), Some("bc"))
   @test.assert_eq(u.get(3), Some("d"))
 }
 
 ///|
-test "HAMT::union_with singleton with branch" {
+test "HAMT::merge_with singleton with branch" {
   let m1 = @hashmap.singleton(1, 10)
   let m2 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(1), Some(11))
   @test.assert_eq(u.get(2), Some(2))
   @test.assert_eq(u.get(3), Some(3))
 }
 
 ///|
-test "HAMT::union_with branch with singleton" {
+test "HAMT::merge_with branch with singleton" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.singleton(1, 10)
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 * v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 * v2)
   @test.assert_eq(u.get(1), Some(10))
   @test.assert_eq(u.get(2), Some(2))
   @test.assert_eq(u.get(3), Some(3))
 }
 
 ///|
-test "HAMT::union_with singleton with non-overlapping branch" {
+test "HAMT::merge_with singleton with non-overlapping branch" {
   let m1 = @hashmap.singleton(10, 100)
   let m2 = @hashmap.HashMap([(1, 1), (2, 2), (3, 3)])
-  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  let u = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u.get(1), Some(1))
   @test.assert_eq(u.get(2), Some(2))
   @test.assert_eq(u.get(3), Some(3))
