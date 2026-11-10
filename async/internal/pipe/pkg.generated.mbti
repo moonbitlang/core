@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/async/pipe"
+package "moonbitlang/core/async/internal/pipe"
 
 import {
   "moonbitlang/core/async/io",

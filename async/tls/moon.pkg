@@ -34,7 +34,7 @@ import {
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/async",
-  "moonbitlang/core/async/pipe",
+  "moonbitlang/core/async/internal/pipe",
   "moonbitlang/core/async/socket",
   "moonbitlang/core/encoding/utf8",
 } for "wbtest"
