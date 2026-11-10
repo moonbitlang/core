@@ -13,8 +13,11 @@
 // limitations under the License.
 
 ///|
-fn inflate_error(input : BytesView, max_output? : Int32) -> @flate.InflateError {
-  try @flate.inflate_exact(input, max_output?) catch {
+fn inflate_error(
+  input : BytesView,
+  max_output_bytes? : Int32,
+) -> @flate.InflateError {
+  try @flate.inflate_exact(input, max_output_bytes?) catch {
     e => e
   } noraise {
     _ => abort("expected an InflateError")
@@ -36,7 +39,10 @@ test "InflateError Show prints kind and message" {
       #|Corrupt: corrupt: reserved block type
     ),
   )
-  let limited = inflate_error(@flate.deflate_all(b"hello, world"), max_output=4)
+  let limited = inflate_error(
+    @flate.deflate_all(b"hello, world"),
+    max_output_bytes=4,
+  )
   inspect(
     limited,
     content=(
@@ -54,7 +60,7 @@ test "InflateError Debug prints the constructor form" {
     ),
   )
   @debug.debug_inspect(
-    inflate_error(@flate.deflate_all(b"hello, world"), max_output=4),
+    inflate_error(@flate.deflate_all(b"hello, world"), max_output_bytes=4),
     content=(
       #|InflateError(
       #|  OutputLimitExceeded(limit=4, observed=5),

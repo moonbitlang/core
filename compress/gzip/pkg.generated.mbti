@@ -9,7 +9,8 @@ import {
 // Values
 pub fn compress(BytesView, strategy? : @flate.Strategy, fast_store? : Bool) -> Bytes
 
-pub fn decompress(BytesView, max_output? : Int32, cancelled? : () -> Bool) -> Bytes raise GzipError
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
+pub fn decompress(BytesView, max_output_bytes? : Int32, cancelled? : () -> Bool) -> Bytes raise GzipError
 
 // Errors
 #derive(@debug.Debug)

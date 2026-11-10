@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-fn gzip_error(input : BytesView, max_output? : Int32) -> @gzip.GzipError {
-  try @gzip.decompress(input, max_output?) catch {
+fn gzip_error(input : BytesView, max_output_bytes? : Int32) -> @gzip.GzipError {
+  try @gzip.decompress(input, max_output_bytes?) catch {
     e => e
   } noraise {
     _ => abort("expected a GzipError")
@@ -37,7 +37,7 @@ test "GzipError Show prints kind and message" {
     ),
   )
   inspect(
-    gzip_error(@gzip.compress(b"hello, world"), max_output=4),
+    gzip_error(@gzip.compress(b"hello, world"), max_output_bytes=4),
     content=(
       #|OutputLimitExceeded(limit=4, observed=5): decoded output exceeds its byte limit
     ),
@@ -53,7 +53,7 @@ test "GzipError Debug prints the constructor form" {
     ),
   )
   @debug.debug_inspect(
-    gzip_error(@gzip.compress(b"hello, world"), max_output=4),
+    gzip_error(@gzip.compress(b"hello, world"), max_output_bytes=4),
     content=(
       #|GzipError(
       #|  OutputLimitExceeded(limit=4, observed=5),
@@ -75,7 +75,7 @@ test "GzipError is matched by kind" {
   // The error doesn't implement `Eq`, because derived equality would compare the
   // message text too. Callers match on the kind, which does implement `Eq`.
   let a = gzip_error(b"this is definitely not gzip data")
-  let c = gzip_error(@gzip.compress(b"hello, world"), max_output=4)
+  let c = gzip_error(@gzip.compress(b"hello, world"), max_output_bytes=4)
   let d = gzip_error(b"\x1f\x8b\x07this is definitely not gzip data")
   guard a is GzipError(InvalidHeader, _) && d is GzipError(InvalidHeader, _) else {
     fail("expected InvalidHeader, got \{a} and \{d}")

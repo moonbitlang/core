@@ -32,17 +32,20 @@ test "bounded prefix inflate enforces its decoded-size boundary" {
   let source = b"bounded one-shot inflate"
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(
-    @flate.inflate_prefix(compressed, max_output=source.length()).data,
+    @flate.inflate_prefix(compressed, max_output_bytes=source.length()).data,
     source,
   )
   // Prefix decoding permits trailing input even with an output limit;
   // inflate_exact rejects trailing bytes.
   @test.assert_eq(
-    @flate.inflate_prefix(compressed + b"TRAILING", max_output=source.length()).data,
+    @flate.inflate_prefix(
+      compressed + b"TRAILING",
+      max_output_bytes=source.length(),
+    ).data,
     source,
   )
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate_prefix(compressed, max_output=source.length() - 1)
+    @flate.inflate_prefix(compressed, max_output_bytes=source.length() - 1)
   })
   @test.assert_eq(
     kind,
@@ -52,16 +55,16 @@ test "bounded prefix inflate enforces its decoded-size boundary" {
     ),
   )
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate_prefix(compressed, max_output=-1)
+    @flate.inflate_prefix(compressed, max_output_bytes=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
   let empty = @flate.deflate_all(b"")
-  @test.assert_eq(@flate.inflate_prefix(empty, max_output=0).data, b"")
+  @test.assert_eq(@flate.inflate_prefix(empty, max_output_bytes=0).data, b"")
   // Large output forces buffer growth without weakening the decoded-size limit.
   let large = Bytes::from_array(Array::make(20000, b'X'))
   let large_compressed = @flate.deflate_all(large)
   @test.assert_eq(
-    @flate.inflate_prefix(large_compressed, max_output=large.length()).data,
+    @flate.inflate_prefix(large_compressed, max_output_bytes=large.length()).data,
     large,
   )
 }
@@ -107,22 +110,29 @@ test "preallocated inflate rejects truncation after output suspension" {
 }
 
 ///|
-test "inflate enforces max_output on both paths" {
+test "inflate enforces max_output_bytes on both paths" {
   let source = Bytes::from_array(Array::make(20000, b'X'))
   let compressed = @flate.deflate_all(source)
-  @test.assert_eq(@flate.inflate_exact(compressed, max_output=20000), source)
   @test.assert_eq(
-    @flate.inflate_exact(compressed, max_output=20000, two_pass=true),
+    @flate.inflate_exact(compressed, max_output_bytes=20000),
+    source,
+  )
+  @test.assert_eq(
+    @flate.inflate_exact(compressed, max_output_bytes=20000, two_pass=true),
     source,
   )
   for preallocated in [false, true] {
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_exact(compressed, max_output=19999, two_pass=preallocated)
+      @flate.inflate_exact(
+        compressed,
+        max_output_bytes=19999,
+        two_pass=preallocated,
+      )
     })
     @test.assert_eq(kind, OutputLimitExceeded(limit=19999UL, observed=20000UL))
   }
   let InflateError(kind, _) = @test.expect_error(() => {
-    @flate.inflate_exact(compressed, max_output=-1)
+    @flate.inflate_exact(compressed, max_output_bytes=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
 }
@@ -171,7 +181,7 @@ test "prefix inflate honours entry and mid-stream cancellation with or without a
       for cancel_at in [1, 3] {
         let mut polls = 0
         let InflateError(kind, _) = @test.expect_error(() => {
-          @flate.inflate_prefix(compressed, max_output?=limit, cancelled=() => {
+          @flate.inflate_prefix(compressed, max_output_bytes?=limit, cancelled=() => {
             polls += 1
             polls == cancel_at
           })
