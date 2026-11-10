@@ -37,9 +37,7 @@ pub async fn Tls::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tls::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tls::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
 pub async fn Tls::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::server(Inner, private_key_file? : String, private_key_type? : X509FileType, certificate_file? : String, certificate_type? : X509FileType, pfx_file? : String) -> Self
 pub fn Tls::server_endpoint_channel_binding(Self) -> Bytes raise
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(R, W, private_key_file? : String, private_key_type? : X509FileType, certificate_file? : String, certificate_type? : X509FileType, pfx_file? : String) -> Self
 pub async fn Tls::shutdown(Self) -> Unit
 pub fn Tls::unique_channel_binding(Self) -> Bytes raise
 pub async fn Tls::write(Self, BytesView) -> Unit raise @io.WriterError
@@ -51,11 +49,6 @@ pub(all) enum TrustedRoot {
   NoVerification
   SystemRoot
   CustomPemFile(String)
-}
-
-pub(all) enum X509FileType {
-  PEM
-  DER
 }
 
 // Type aliases

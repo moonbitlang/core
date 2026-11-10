@@ -13,39 +13,6 @@
 // limitations under the License.
 
 ///|
-#cfg(all(not(target="wasm"), not(platform="windows")))
-async fn test_server(r : &@io.BinaryReader, w : &@io.BinaryWriter) -> @tls.Tls {
-  @tls.Tls::server_from_pair(
-    r,
-    w,
-    private_key_file="async/tls/test_keys/key.pem",
-    private_key_type=PEM,
-    certificate_file="async/tls/test_keys/cert.pem",
-    certificate_type=PEM,
-  )
-}
-
-///|
-#cfg(all(not(target="wasm"), platform="windows"))
-async fn test_server(r : &@io.BinaryReader, w : &@io.BinaryWriter) -> @tls.Tls {
-  @tls.Tls::server_from_pair(r, w, pfx_file="async/tls/test_keys/cert.pfx")
-}
-
-///|
-#cfg(target="wasm")
-async fn test_server(r : &@io.BinaryReader, w : &@io.BinaryWriter) -> @tls.Tls {
-  @tls.Tls::server_from_pair(
-    r,
-    w,
-    private_key_file="async/tls/test_keys/key.pem",
-    private_key_type=PEM,
-    certificate_file="async/tls/test_keys/cert.pem",
-    certificate_type=PEM,
-    pfx_file="async/tls/test_keys/cert.pfx",
-  )
-}
-
-///|
 async test "one way" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
@@ -72,7 +39,7 @@ async test "one way" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         trust=NoVerification,
@@ -125,7 +92,7 @@ async test "echo" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         trust=NoVerification,
@@ -133,7 +100,7 @@ async test "echo" {
       defer client.close()
       for data in [b"abcd", b"efgh", b"ijkl"] {
         client.write(data)
-        assert_eq(client.read_exactly(4), data)
+        @test.assert_eq(client.read_exactly(4), data)
         @async.sleep(50)
       }
       client.shutdown()
@@ -171,9 +138,9 @@ async test "`connect` accidental close" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      debug_inspect(
+      @debug.debug_inspect(
         @test.expect_error_async <| () => {
-          @tls.Tls::client_from_pair(
+          Tls::client_from_pair(
             client_read_from_server,
             client_write_to_server,
             trust=NoVerification,
@@ -205,66 +172,15 @@ async test "`read` already closed" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         trust=NoVerification,
       )
       defer client.close()
-      debug_inspect(client.read(), content="None")
+      @debug.debug_inspect(client.read(), content="None")
     }
   }
-}
-
-///|
-#cfg(all(not(target="wasm"), not(platform="windows")))
-async fn custom_root_test_server(
-  r : &@io.BinaryReader,
-  w : &@io.BinaryWriter,
-  private_key_file : String,
-  certificate_file : String,
-  _pfx_file : String,
-) -> @tls.Tls {
-  @tls.Tls::server_from_pair(
-    r,
-    w,
-    private_key_file~,
-    private_key_type=PEM,
-    certificate_file~,
-    certificate_type=PEM,
-  )
-}
-
-///|
-#cfg(all(not(target="wasm"), platform="windows"))
-async fn custom_root_test_server(
-  r : &@io.BinaryReader,
-  w : &@io.BinaryWriter,
-  _private_key_file : String,
-  _certificate_file : String,
-  pfx_file : String,
-) -> @tls.Tls {
-  @tls.Tls::server_from_pair(r, w, pfx_file~)
-}
-
-///|
-#cfg(target="wasm")
-async fn custom_root_test_server(
-  r : &@io.BinaryReader,
-  w : &@io.BinaryWriter,
-  private_key_file : String,
-  certificate_file : String,
-  pfx_file : String,
-) -> @tls.Tls {
-  @tls.Tls::server_from_pair(
-    r,
-    w,
-    private_key_file~,
-    private_key_type=PEM,
-    certificate_file~,
-    certificate_type=PEM,
-    pfx_file~,
-  )
 }
 
 ///|
@@ -282,7 +198,7 @@ async test "client custom root certificate" {
         "async/tls/test_keys/valid_root_cert.pem", "async/tls/test_keys/valid_root_cert.pfx",
       )
       defer server.close()
-      assert_eq(server.read_exactly(2), b"ok")
+      @test.assert_eq(server.read_exactly(2), b"ok")
       server.shutdown()
     }
     root.spawn_bg() <| () => {
@@ -290,7 +206,7 @@ async test "client custom root certificate" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         host="whatever",
@@ -327,7 +243,7 @@ async test "client custom root certificate rejects different root" {
         client_write_to_server.close()
       }
       @test.assert_raise_async <| () => {
-        @tls.Tls::client_from_pair(
+        Tls::client_from_pair(
           client_read_from_server,
           client_write_to_server,
           host="whatever",

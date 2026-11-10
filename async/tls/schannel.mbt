@@ -39,14 +39,6 @@ extern "C" fn Schannel::add_root_certificate(
 
 ///|
 #cfg(platform="windows")
-#borrow(pfx_content)
-extern "C" fn Schannel::init_server(
-  ch : Schannel,
-  pfx_content : Bytes,
-) -> Int32 = "moonbit_rt_schannel_init_server"
-
-///|
-#cfg(platform="windows")
 extern "C" fn Schannel::bytes_read(ch : Schannel) -> Int32 = "moonbit_rt_schannel_bytes_read"
 
 ///|
@@ -273,38 +265,6 @@ async fn Tls::accept(self : Tls) -> Unit {
       ReNegotiation => panic()
     }
   }
-}
-
-///|
-#internal(internal, "do not use, for internal testing only")
-#cfg(platform="windows")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
-  reader : R,
-  writer : W,
-  pfx_file~ : String,
-) -> Tls {
-  let context = Schannel::new()
-  let pfx_content = @fs.read_binary(pfx_file)
-  if context.init_server(pfx_content) is err && err != 0 {
-    context.free()
-    raise TlsError(@errno_util.errno_to_string(err))
-  }
-  let transport = Transport::new(reader, writer)
-  let tls = {
-    context,
-    is_client: false,
-    host: None,
-    reader_ctrl: BinaryReaderController(),
-    writer_ctrl: BinaryWriterController(),
-    transport,
-    curr_msg_remaining: 0,
-    curr_msg_trailer: 0,
-    shutdown: false,
-    closed: false,
-  }
-  errdefer tls.close()
-  tls.accept()
-  tls
 }
 
 ///|

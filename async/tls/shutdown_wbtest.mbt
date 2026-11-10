@@ -30,7 +30,7 @@ async test "peer close connection" {
     // client
     let conn = @socket.Tcp::connect(addr)
     defer conn.close()
-    let client = @tls.Tls::client(conn, trust=NoVerification)
+    let client = Tls::client(conn, trust=NoVerification)
     defer client.close()
     // It is necessary to perform a `read` first here.
     // OpenSSL and Windows schannel will send a TLS v1.3 session ticket
