@@ -21,20 +21,16 @@ async test "multicast basic" {
     group.spawn_bg(no_wait=true) <| () => {
       let server1 = @socket.UdpServer::multicast(addr, interface_addr~)
       defer server1.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (n, _) = server1.recvfrom(buf)
-        let data = buf.unsafe_reinterpret_as_bytes()[:n]
+        let (data, _) = server1.recv(max_len=1024)
         log.push("server 1 received: \{@utf8.decode(data)}")
       }
     }
     group.spawn_bg(no_wait=true) <| () => {
       let server2 = @socket.UdpServer::multicast(addr, interface_addr~)
       defer server2.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (n, _) = server2.recvfrom(buf)
-        let data = buf.unsafe_reinterpret_as_bytes()[:n]
+        let (data, _) = server2.recv(max_len=1024)
         @async.sleep(50) // make the result stable
         log.push("server 2 received: \{@utf8.decode(data)}")
       }
@@ -69,26 +65,22 @@ async test "multicast discovery then unicast" {
       log.push("client sending discovery packet")
       let _ = client.send(b"anybody here?")
       let buf = FixedArray::make(1024, b'\x00')
-      let (n, server_addr) = client.recvfrom(buf)
+      let (n, server_addr) = client.recv_into_with_addr(buf)
       let data = buf.unsafe_reinterpret_as_bytes()[:n]
       log.push("client found server via message: \{@utf8.decode(data)}")
       client.connect(server_addr)
       log.push("client sending directly to discovered server: hello")
       client.send(b"hello")
-      let n = client.recv(buf)
-      let data = buf.unsafe_reinterpret_as_bytes()[:n]
+      let data = client.recv(max_len=1024)
       log.push("client received \{@utf8.decode(data)} from server")
     }
-    let buf = FixedArray::make(1024, b'\x00')
-    let (n, peer_addr) = server.recvfrom(buf)
-    let data = buf.unsafe_reinterpret_as_bytes()[:n]
+    let (data, peer_addr) = server.recv(max_len=1024)
     log.push("server received: \{@utf8.decode(data)}. Sending reply...")
-    ignore <| server.sendto(b"I am here", peer_addr)
-    let (n, peer_addr2) = server.recvfrom(buf)
+    ignore <| server.send(b"I am here", peer_addr)
+    let (data, peer_addr2) = server.recv(max_len=1024)
     assert_eq(peer_addr, peer_addr2)
-    let data = buf.unsafe_reinterpret_as_bytes()[:n]
     log.push("server received: \{@utf8.decode(data)}. Sending reply...")
-    ignore <| server.sendto(b"Hello", peer_addr2)
+    ignore <| server.send(b"Hello", peer_addr2)
   }
   json_inspect(log, content=[
     "client sending discovery packet", "server received: anybody here?. Sending reply...",
@@ -110,10 +102,8 @@ async test "multicast no loopback" {
     )
     group.spawn_bg(no_wait=true) <| () => {
       defer server.close()
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (n, _) = server.recvfrom(buf)
-        let data = buf.unsafe_reinterpret_as_bytes()[:n]
+        let (data, _) = server.recv(max_len=1024)
         log.push("server received: \{@utf8.decode(data)}")
         if @event_loop.platform is Windows {
           server.set_multicast_loopback(false)
@@ -167,27 +157,21 @@ async test "multicast discovery then unicast v6" {
       @async.sleep(150)
       log.push("client sending discovery packet")
       let _ = client.send(b"anybody here?")
-      let buf = FixedArray::make(1024, b'\x00')
-      let (n, server_addr) = client.recvfrom(buf)
-      let data = buf.unsafe_reinterpret_as_bytes()[:n]
+      let (data, server_addr) = client.recv_with_addr(max_len=1024)
       log.push("client found server via message: \{@utf8.decode(data)}")
       client.connect(server_addr)
       log.push("client sending directly to discovered server: hello")
       client.send(b"hello")
-      let n = client.recv(buf)
-      let data = buf.unsafe_reinterpret_as_bytes()[:n]
+      let data = client.recv(max_len=1024)
       log.push("client received \{@utf8.decode(data)} from server")
     }
-    let buf = FixedArray::make(1024, b'\x00')
-    let (n, peer_addr) = server.recvfrom(buf)
-    let data = buf.unsafe_reinterpret_as_bytes()[:n]
+    let (data, peer_addr) = server.recv(max_len=1024)
     log.push("server received: \{@utf8.decode(data)}. Sending reply...")
-    ignore <| server.sendto(b"I am here", peer_addr)
-    let (n, peer_addr2) = server.recvfrom(buf)
+    ignore <| server.send(b"I am here", peer_addr)
+    let (data, peer_addr2) = server.recv(max_len=1024)
     assert_eq(peer_addr, peer_addr2)
-    let data = buf.unsafe_reinterpret_as_bytes()[:n]
     log.push("server received: \{@utf8.decode(data)}. Sending reply...")
-    ignore <| server.sendto(b"Hello", peer_addr2)
+    ignore <| server.send(b"Hello", peer_addr2)
   }
   json_inspect(log, content=[
     "client sending discovery packet", "server received: anybody here?. Sending reply...",
@@ -213,10 +197,8 @@ async test "multicast no loopback v6" {
         multicast_addr,
         interface=test_interface.wait(),
       )
-      let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let (n, _) = server.recvfrom(buf)
-        let data = buf.unsafe_reinterpret_as_bytes()[:n]
+        let (data, _) = server.recv(max_len=1024)
         log.push("server received: \{@utf8.decode(data)}")
         if @event_loop.platform is Windows {
           server.set_multicast_loopback(false)
