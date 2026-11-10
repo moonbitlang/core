@@ -58,6 +58,7 @@ pub fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 pub fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
+pub fn[K : Eq + Hash, V] HashMap::update(Self[K, V], K, (V?) -> V? raise?) -> Self[K, V] raise?
 #alias(elems, deprecated)
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]

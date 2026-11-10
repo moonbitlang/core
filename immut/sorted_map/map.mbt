@@ -129,6 +129,41 @@ pub fn[K : Compare, V] SortedMap::remove(
 }
 
 ///|
+/// Returns a new map with the entry for `key` replaced, inserted, or removed in
+/// one step: `f` sees the current value if there is one, and its result becomes
+/// the new value, or removes the key when it is `None`. O(log n).
+///
+/// If `f` raises, the error is propagated. `self` is never modified.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+///   let bumped = m.update(1, v => Some(v.unwrap_or("") + "!"))
+///   debug_inspect(bumped.get(1), content="Some(\"a!\")")
+///   let inserted = m.update(3, v => Some(v.unwrap_or("c")))
+///   debug_inspect(
+///     inserted.to_array(),
+///     content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
+///   )
+///   let cleared = m.update(2, _ => None)
+///   debug_inspect(cleared.to_array(), content="[(1, \"a\")]")
+///   debug_inspect(m.length(), content="2")
+/// }
+/// ```
+pub fn[K : Compare, V] SortedMap::update(
+  self : SortedMap[K, V],
+  key : K,
+  f : (V?) -> V? raise?,
+) -> SortedMap[K, V] raise? {
+  match f(self.get(key)) {
+    Some(value) => self.add(key, value)
+    None => self.remove(key)
+  }
+}
+
+///|
 /// Returns a map containing only the key-value pairs that satisfy the predicate.
 #alias(filter_with_key, deprecated)
 pub fn[K, V] SortedMap::filter(
