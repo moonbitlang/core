@@ -125,10 +125,10 @@ async test "merge stdout and stderr to file" {
 }
 
 ///|
-async test "pipe" {
+async test "pipe_between_process" {
   @async.with_task_group() <| group => {
     let cat = cat.wait()
-    let (r, w) = @process.pipe()
+    let (r, w) = @process.pipe_between_process()
     defer r.close()
     defer w.close()
     let child1 = @process.spawn(

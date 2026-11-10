@@ -486,7 +486,7 @@ async fn run_pipeline(pipeline : Pipeline, sink : Sink) -> Output {
   // instead of blocking. The process redirections keep the child's end
   // blocking, which is the whole point of using them here.
   //
-  // The parent owns both ends returned by `@process.pipe()`. Each end is closed
+  // The parent owns both ends returned by `@process.pipe_between_process()`. Each end is closed
   // immediately after the only child that needs it has spawned. The error
   // cleanup below covers junctions whose child has not spawned yet.
   let collect_stderr = sink is Buffer(_)
@@ -515,7 +515,7 @@ async fn run_pipeline(pipeline : Pipeline, sink : Sink) -> Output {
       }
     }
     for _ in 1..<count {
-      let (input, output) = @process.pipe()
+      let (input, output) = @process.pipe_between_process()
       junction_inputs.push(input)
       junction_outputs.push(output)
     }

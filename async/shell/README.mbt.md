@@ -190,10 +190,10 @@ test {
 
 Every stage is separately visible to the process host, and all stages run
 concurrently in one structured task group. Adjacent children share one blocking
-operating-system pipe created by `@process.pipe()`: payload bytes stay in the
-host pipe rather than crossing this process through a relay task. Each end is
-owned by the spawn that receives it, so the parent does not keep an extra copy
-that could delay EOF.
+operating-system pipe created by `@process.pipe_between_process()`: payload
+bytes stay in the host pipe rather than crossing this process through a relay
+task. Each end is owned by the spawn that receives it, so the parent does not
+keep an extra copy that could delay EOF.
 
 ```mbt check
 ///|

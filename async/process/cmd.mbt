@@ -603,7 +603,7 @@ async fn Cmd::spawn_aux(
       errdefer (if !stdin_consumed { stdin.close_if_shared() })
       errdefer (if !stdout_consumed { stdout.close_if_shared() })
       errdefer (if !stderr_consumed { stderr.close_if_shared() })
-      let (r, w) = pipe()
+      let (r, w) = pipe_between_process()
       {
         errdefer r.close()
         stderr.incref()
