@@ -58,9 +58,9 @@ fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt {
 /// fixed-width buffer shape crypto-style callers pass.
 fn via_octets(v : @bigint.BigInt, pad : Int32) -> @bigint.BigInt {
   let magnitude = if v < 0N { -v } else { v }
-  let octets = magnitude.to_octets()
-  let padded = magnitude.to_octets(length=octets.length() + pad)
-  let rebuilt = @bigint.BigInt::from_octets(padded)
+  let octets = magnitude.to_be_bytes()
+  let padded = magnitude.to_be_bytes(length=octets.length() + pad)
+  let rebuilt = @bigint.BigInt::from_be_bytes(padded)
   if v < 0N {
     -rebuilt
   } else {

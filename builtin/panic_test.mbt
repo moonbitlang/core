@@ -239,18 +239,18 @@ test "panic pow coverage for zero modulus" {
 }
 
 ///|
-test "panic to_octets coverage for negative length" {
-  123456789N.to_octets(length=-1) |> ignore
+test "panic to_be_bytes coverage for negative length" {
+  123456789N.to_be_bytes(length=-1) |> ignore
 }
 
 ///|
-test "panic to_octets coverage for zero length" {
-  123456789N.to_octets(length=0) |> ignore
+test "panic to_be_bytes coverage for zero length" {
+  123456789N.to_be_bytes(length=0) |> ignore
 }
 
 ///|
-test "panic to_octets coverage for negative number than required" {
-  (-123456789N).to_octets() |> ignore
+test "panic to_be_bytes coverage for negative number than required" {
+  (-123456789N).to_be_bytes() |> ignore
 }
 
 ///|

@@ -57,7 +57,7 @@ fn mag_of_limbs(seed : UInt64, limbs : Int32) -> @bigint.BigInt {
     let b = if i == 0 && b == 0 { 1 } else { b }
     b.to_byte()
   })
-  @bigint.BigInt::from_octets(bytes)
+  @bigint.BigInt::from_be_bytes(bytes)
 }
 
 ///|
@@ -467,9 +467,9 @@ test "octets roundtrip at every length" {
       let b = if i == 0 && b == 0 { 1 } else { b }
       b.to_byte()
     })
-    let x = @bigint.BigInt::from_octets(bytes)
-    assert_eq(x.to_octets(length=n), bytes)
-    assert_eq(x.to_octets(), bytes)
+    let x = @bigint.BigInt::from_be_bytes(bytes)
+    assert_eq(x.to_be_bytes(length=n), bytes)
+    assert_eq(x.to_be_bytes(), bytes)
   }
 }
 

@@ -51,6 +51,26 @@ test "panic pow negative exponent" {
 }
 
 ///|
-test "panic to_octets negative" {
-  (-1N).to_octets() |> ignore
+test "panic to_be_bytes negative" {
+  (-1N).to_be_bytes() |> ignore
+}
+
+///|
+test "panic to_be_bytes negative length" {
+  0N.to_be_bytes(length=-1) |> ignore
+}
+
+///|
+test "panic to_be_bytes value does not fit in length" {
+  256N.to_be_bytes(length=1) |> ignore
+}
+
+///|
+test "panic to_be_bytes multi-limb value does not fit in length" {
+  (1N << 64).to_be_bytes(length=8) |> ignore
+}
+
+///|
+test "panic to_be_bytes nonzero value with length zero" {
+  1N.to_be_bytes(length=0) |> ignore
 }

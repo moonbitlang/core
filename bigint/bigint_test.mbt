@@ -61,16 +61,50 @@ test "int64 comparison helpers" {
 }
 
 ///|
-test "to_octets pads larger length" {
+test "to_be_bytes pads larger length" {
   let n = @bigint.parse_bigint("010203", base=16)
-  inspect(n.to_octets(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
+  inspect(n.to_be_bytes(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
 }
 
 ///|
-test "from_octets treats empty input as zero" {
-  inspect(@bigint.BigInt::from_octets(b""), content="0")
-  inspect(@bigint.BigInt::from_octets(b"", signum=0), content="0")
-  inspect(@bigint.BigInt::from_octets(b"", signum=-1), content="0")
+test "to_be_bytes length is exact" {
+  // the value fills the requested length exactly
+  inspect(255N.to_be_bytes(length=1), content="b\"\\xff\"")
+  inspect(256N.to_be_bytes(length=2), content="b\"\\x01\\x00\"")
+  // zero needs no bytes, so it fits in any length, including 0
+  inspect(0N.to_be_bytes(length=0), content="b\"\"")
+  inspect(0N.to_be_bytes(length=3), content="b\"\\x00\\x00\\x00\"")
+  // limb boundaries: 32-bit limbs on the default backend, 64-bit on wide
+  inspect(
+    ((1N << 32) - 1N).to_be_bytes(length=4),
+    content="b\"\\xff\\xff\\xff\\xff\"",
+  )
+  inspect(
+    (1N << 32).to_be_bytes(length=5),
+    content="b\"\\x01\\x00\\x00\\x00\\x00\"",
+  )
+  inspect(
+    ((1N << 64) - 1N).to_be_bytes(length=8),
+    content="b\"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\"",
+  )
+  inspect(
+    (1N << 64).to_be_bytes(length=10),
+    content="b\"\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"",
+  )
+}
+
+///|
+test "from_be_bytes round-trips to_be_bytes" {
+  for x in [0N, 1N, 255N, 256N, 1N << 32, (1N << 64) - 1N, 1N << 100] {
+    assert_eq(@bigint.BigInt::from_be_bytes(x.to_be_bytes()), x)
+    assert_eq(@bigint.BigInt::from_be_bytes(x.to_be_bytes(length=16)), x)
+  }
+}
+
+///|
+test "from_be_bytes treats empty input as zero" {
+  inspect(@bigint.BigInt::from_be_bytes(b""), content="0")
+  inspect(-@bigint.BigInt::from_be_bytes(b""), content="0")
 }
 
 ///|

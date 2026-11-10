@@ -26,8 +26,10 @@ pub fn BigInt::equal_int(Self, Int32) -> Bool
 pub fn BigInt::equal_int64(Self, Int64) -> Bool
 pub fn BigInt::equal_uint(Self, UInt32) -> Bool
 pub fn BigInt::equal_uint64(Self, UInt64) -> Bool
+pub fn BigInt::from_be_bytes(BytesView) -> Self
 pub fn BigInt::from_int(Int32) -> Self
 pub fn BigInt::from_int64(Int64) -> Self
+#deprecated
 pub fn BigInt::from_octets(BytesView, signum? : Int32) -> Self
 #deprecated
 pub fn BigInt::from_string(String, radix? : Int32) -> Self
@@ -45,9 +47,11 @@ pub fn BigInt::pow(Self, Self, modulus? : Self) -> Self
 pub fn BigInt::shl(Self, Int32) -> Self
 pub fn BigInt::shr(Self, Int32) -> Self
 pub fn BigInt::sub(Self, Self) -> Self
+pub fn BigInt::to_be_bytes(Self, length? : Int32) -> Bytes
 pub fn BigInt::to_int(Self) -> Int32
 pub fn BigInt::to_int16(Self) -> Int16
 pub fn BigInt::to_int64(Self) -> Int64
+#deprecated
 pub fn BigInt::to_octets(Self, length? : Int32) -> Bytes
 pub fn BigInt::to_string(Self, radix? : Int32) -> String
 pub fn BigInt::to_uint(Self) -> UInt32

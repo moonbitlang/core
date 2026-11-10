@@ -164,33 +164,29 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
-/// Converts a big-endian byte sequence to a `BigInt` value with an optional
-/// sign.
+/// Interprets `input` as an unsigned big-endian integer.
 ///
-/// Parameters:
+/// The result is never negative; negate it for a negative value. Leading zero
+/// bytes are allowed, and an empty `input` yields zero, matching Python's
+/// `int.from_bytes` and Go's `big.Int.SetBytes`.
 ///
-/// * `octets` : A sequence of bytes representing the magnitude of the number in
-/// big-endian order. An empty sequence represents a zero magnitude.
-/// * `signum` : The sign of the resulting number. A negative value creates a
-/// negative number, zero returns zero, and a positive value creates a positive
-/// number. Defaults to 1.
+/// Example:
 ///
-/// Returns a `BigInt` value represented by the byte sequence and sign.
-///
-/// An empty byte sequence yields zero for any `signum`, matching the behavior
-/// of Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
-pub fn BigInt::from_octets(octets : BytesView, signum~ : Int32 = 1) -> BigInt {
-  if signum < 0 {
-    return -1N * BigInt::from_octets(octets, signum=1)
-  }
-  if signum == 0 {
-    return 0N
-  }
-  if octets.is_empty() {
+/// ```mbt check
+/// test {
+///   let bytes = b"\x01\x02\x03" // 0x010203
+///   inspect(@bigint.BigInt::from_be_bytes(bytes), content="66051")
+///   inspect(-@bigint.BigInt::from_be_bytes(bytes), content="-66051")
+///   inspect(@bigint.BigInt::from_be_bytes(b"\x00\x01"), content="1")
+///   inspect(@bigint.BigInt::from_be_bytes(b""), content="0")
+/// }
+/// ```
+pub fn BigInt::from_be_bytes(input : BytesView) -> BigInt {
+  if input.is_empty() {
     return 0N
   }
   let str = StringBuilder()
-  for octet in octets {
+  for octet in input {
     str.write_string(hex2(octet))
   }
   parse_bigint(str.to_string(), base=16) catch {
@@ -200,37 +196,32 @@ pub fn BigInt::from_octets(octets : BytesView, signum~ : Int32 = 1) -> BigInt {
 }
 
 ///|
-/// Converts a non-negative `BigInt` to a big-endian byte sequence.
+/// Converts a non-negative `BigInt` to unsigned big-endian bytes.
 ///
-/// Parameters:
+/// Without `length`, returns the shortest encoding: no leading zero bytes,
+/// except that zero is a single `\x00` byte. With `length`, returns exactly
+/// `length` bytes, padded with leading zero bytes; zero fits in any length,
+/// including 0.
 ///
-/// * `self` : The arbitrary-precision integer to convert. Must be
-/// non-negative.
-/// * `length` : Optional minimum length of the output byte sequence. When the
-/// requested length is larger than the natural representation, the result is
-/// padded with leading zeros.
+/// Panics if `self` is negative, if `length` is negative, or if `self` needs
+/// more than `length` bytes (`self.bit_length() > 8 * length`).
 ///
-/// Returns a byte sequence representing the number in big-endian order.
+/// Example:
 ///
-/// Throws a panic if the input number is negative, or if `length` is zero or
-/// negative.
-pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
+/// ```mbt check
+/// test {
+///   let n = 66051N // 0x010203
+///   inspect(n.to_be_bytes(), content="b\"\\x01\\x02\\x03\"")
+///   inspect(n.to_be_bytes(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
+///   inspect(0N.to_be_bytes(), content="b\"\\x00\"")
+///   inspect(0N.to_be_bytes(length=0), content="b\"\"")
+/// }
+/// ```
+pub fn BigInt::to_be_bytes(self : BigInt, length? : Int32) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
-  if self == 0 {
-    return match length {
-      Some(len) =>
-        // keep the documented contract (and the non-js behavior): a
-        // non-positive requested length panics even for zero
-        if len <= 0 {
-          abort("negative length")
-        } else {
-          Bytes::make(len, 0)
-        }
-      None => [0]
-    }
-  }
+  // Little-endian bytes of the value; empty for zero.
   let buf = []
   for v = self {
     if v > 0 {
@@ -241,26 +232,18 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
     }
   }
   let buf_len = buf.length()
-  match length {
-    Some(len) => {
-      if len <= 0 {
-        abort("negative length")
+  let len = match length {
+    None => if buf_len == 0 { 1 } else { buf_len }
+    Some(length) => {
+      guard length >= 0 else { abort("negative length") }
+      guard buf_len <= length else {
+        abort("BigInt does not fit in `length` bytes")
       }
-      if len > buf_len {
-        Bytes::makei(len, i => {
-          let padding = len - buf_len
-          if i < padding {
-            0
-          } else {
-            buf[buf_len - (i - padding) - 1]
-          }
-        })
-      } else {
-        Bytes::makei(buf_len, i => buf[buf_len - i - 1])
-      }
+      length
     }
-    None => Bytes::makei(buf_len, i => buf[buf_len - i - 1])
   }
+  let padding = len - buf_len
+  Bytes::makei(len, i => if i < padding { 0 } else { buf[len - 1 - i] })
 }
 
 ///|

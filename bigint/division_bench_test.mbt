@@ -21,7 +21,7 @@ fn division_bench_mix64(input : UInt64) -> UInt64 {
 
 ///|
 fn division_bench_dense(bytes : Int32, seed : UInt64) -> @bigint.BigInt {
-  @bigint.BigInt::from_octets(
+  @bigint.BigInt::from_be_bytes(
     Bytes::makei(bytes, i => {
       let byte = (division_bench_mix64(seed + i.to_uint64()) & 0xffUL).to_int()
       (if i == 0 { byte | 0x80 } else { byte }).to_byte()
