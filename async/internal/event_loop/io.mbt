@@ -524,6 +524,8 @@ pub async fn IoHandle::read_at(
 /// Perform a random access write on the IO handle.
 /// Since only regular files support random access IO,
 /// `write_at` is always dispatched to the thread pool.
+/// At most `len` bytes from `buf[offset:]` will be written, and the number of
+/// bytes actually written will be returned.
 pub async fn IoHandle::write_at(
   handle : IoHandle,
   buf : Bytes,
@@ -531,16 +533,16 @@ pub async fn IoHandle::write_at(
   len~ : Int32,
   position~ : Int64,
   context~ : String,
-) -> Unit {
+) -> Int32 {
   @coroutine.check_cancellation()
   check_io_buf_range(buf.length(), offset, len, context)
   guard! !handle.is_async
   guard handle.write_offset >= 0 else {
     raise Failure::Failure(
-      "`write_at` is not supported on non-regular file or file opened in append mode",
+      "positioned writes are not supported on non-regular files or files opened in append mode",
     )
   }
   let job = Job::write(handle.fd, buf, offset, len, position~)
   defer job.free()
-  ignore(perform_job_in_worker(job, context~, cancellable=platform is Windows))
+  perform_job_in_worker(job, context~, cancellable=platform is Windows)
 }

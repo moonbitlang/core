@@ -8,7 +8,7 @@ Asynchronous file system operations for MoonBit. This package provides comprehen
   - [Opening and Creating Files](#opening-and-creating-files)
   - [Reading Files](#reading-files)
   - [Writing Files](#writing-files)
-  - [File Seeking](#file-seeking)
+  - [Random access on files](#random-access-on-files)
 - [Directory Operations](#directory-operations)
   - [Creating Directories](#creating-directories)
   - [Reading Directories](#reading-directories)
@@ -73,7 +73,8 @@ async test "open with append mode" {
 When `append=true`, sequential writes through the `@io.BinaryWriter` interface
 always append to the current end of the file, even if another process extends
 the file after it is opened. Append mode does not change read behavior, and
-random-access writes with `write_at` are not supported on append-mode files.
+positioned writes through `file.at(offset)` are not supported on append-mode
+files.
 
 The `create` function is a convenience wrapper for creating new files:
 
@@ -216,38 +217,40 @@ append to the end of the file instead.
 
 ### Random access on files
 
-Read and write file from specified position:
+`file.at(offset)` returns an unbounded `FileView` whose stream starts at the
+specified file offset. A view implements `@io.BinaryReader` and
+`@io.BinaryWriter`, with independent read and write cursors.
 
 ```moonbit check
 ///|
 #cfg(target="native")
-async test "read at specific position" {
-  let test_file = "_build/read_at_test.txt"
+async test "read through a file view" {
+  let test_file = "_build/file_view_read_test.txt"
   @fs.write_binary(test_file, b"0123456789")
   defer @fs.remove(test_file)
   let file = @fs.open(test_file, mode=ReadOnly)
   defer file.close()
 
-  // read 3 bytes at position 5
-  json_inspect(file.read_exactly_at(3, position=5), content="567")
+  // Read three bytes starting at file offset 5.
+  json_inspect(file.at(5).read_exactly(3), content="567")
 
-  // use `read_at` to handle EOF robustly
+  // Use `read_into` on the view to handle EOF without requiring an exact size.
   let buf = FixedArray::make(10, b'\x00')
-  let n = file.read_at(buf, position=5)
+  let n = file.at(5).read_into(buf)
   inspect(n, content="5")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[:n], content="56789")
 }
 
 ///|
 #cfg(target="native")
-async test "write at specific position" {
-  let test_file = "_build/write_at_test.txt"
+async test "write through a file view" {
+  let test_file = "_build/file_view_write_test.txt"
   let file = @fs.open(test_file, mode=WriteOnly, create_mode=CreateOrTruncate)
   defer @fs.remove(test_file)
   {
     defer file.close()
     file.write(b"abcdef")
-    file.write_at(b"CD", position=2)
+    file.at(2).write(b"CD")
   }
 
   // read 3 bytes at position 5
@@ -267,12 +270,13 @@ async test "size - get file size" {
 }
 ```
 
-Some important notes when using `read_at` and `write_at`:
+Some important notes when using `FileView`:
 
-- only seekable files (i.e. regular files or block devices) support `read_at` and `write_at`. Calling `read_at` and `write_at` on unsupported file types result in error
-- `read_at` and `write_at` does not modify the cursor for reading/writing the file as a stream
-- `read_at` always read as much as possible. When its return value is smaller than requested length, it always indicates EOF
-- `write_at` is forbidden on files opened with `append=true`; use sequential writes to append data
+- only seekable files, such as regular files and block devices, support positioned IO through a view
+- each view has independent read and write cursors, initially at the view's starting offset
+- view operations do not modify the parent file's stream cursors or cursors belonging to other views
+- a view does not own the file; closing the parent file invalidates its views
+- writing through a view is forbidden when the file was opened with `append=true`; use sequential writes to append data
 
 ## Directory Operations
 
@@ -708,14 +712,6 @@ Data synchronization mode:
 - `Data` - Sync data and essential metadata (like file size)
 - `Full` - Sync all data and metadata
 
-### SeekMode
-
-How to interpret seek offsets:
-
-- `FromStart` - Absolute offset from start of file
-- `FromEnd` - Offset relative to end of file
-- `Relative` - Offset relative to current position
-
 ### File
 
 Main file handle type. Methods include:
@@ -727,12 +723,16 @@ Main file handle type. Methods include:
 - `read_exactly()` - Read exact number of bytes
 - `write()` - Write data
 - `text` - UTF-8 text reader/writer view over the same file streams
-- `read_at()` - Read file at specified position
-- `read_exact_at()` - Read exect number of bytes at specified position
-- `write_at()` - Write file at specified position
+- `at()` - Create an unbounded `FileView` starting at a byte offset
 - `size()` - Get file size
 - `kind()` - Get file kind
 - `atime()`, `mtime()`, `ctime()` - Get timestamps
+
+### FileView
+
+An unbounded view into a `File` starting at a fixed byte offset. It implements
+`@io.BinaryReader` and `@io.BinaryWriter`. Its read and write cursors advance
+independently without changing the parent file's stream cursors.
 
 ### Directory
 

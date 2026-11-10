@@ -152,7 +152,7 @@ pub async fn IoHandle::recvfrom(Self, FixedArray[Byte], offset~ : Int32, len~ : 
 pub async fn IoHandle::sendto(Self, Bytes, offset~ : Int32, len~ : Int32, addr~ : Bytes, context~ : String) -> Int32
 pub async fn IoHandle::wait_read(Self) -> Unit
 pub async fn IoHandle::write(Self, Bytes, offset~ : Int32, len~ : Int32, context~ : String) -> Int32
-pub async fn IoHandle::write_at(Self, Bytes, offset~ : Int32, len~ : Int32, position~ : Int64, context~ : String) -> Unit
+pub async fn IoHandle::write_at(Self, Bytes, offset~ : Int32, len~ : Int32, position~ : Int64, context~ : String) -> Int32
 
 pub struct Process {
   pid : Int32

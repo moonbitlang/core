@@ -29,7 +29,7 @@ async test "rename basic" {
   inspect(@fs.read_text(old_path), content="abcd")
   @fs.rename(old_path, new_path)
   inspect(@fs.read_text(new_path), content="abcd")
-  file.write_at(b"ABCD", position=0)
+  file.at(0).write(b"ABCD")
   inspect(@fs.read_text(new_path), content="ABCD")
   inspect(@fs.exists(old_path), content="false")
 }
@@ -59,7 +59,7 @@ async test "rename replace" {
   @fs.rename(old_path, new_path, replace=true)
   inspect(@fs.read_text(new_path), content="abcd")
   inspect(new_file.text.read_all(), content="xyzw")
-  old_file.write_at(b"ABCD", position=0)
+  old_file.at(0).write(b"ABCD")
   inspect(@fs.read_text(new_path), content="ABCD")
   inspect(@fs.exists(old_path), content="false")
 }

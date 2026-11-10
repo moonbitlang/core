@@ -29,3 +29,22 @@ pub extend Timestamp with Hash::{hash}
 
 ///|
 pub extend Timestamp with Sub::{sub}
+
+///|
+pub extend FileView with @io.BinaryReader::{
+  read_into,
+  read,
+  read_at_least,
+  peek,
+  peek_at_least,
+  read_exactly,
+  drop_exactly,
+  peek_exactly,
+  read_all,
+  drop_all,
+  read_until,
+  peek_until,
+}
+
+///|
+pub extend FileView with @io.BinaryWriter::{write, write_reader}
