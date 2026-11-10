@@ -36,7 +36,7 @@ async test "channel binding" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         trust=NoVerification,
@@ -51,9 +51,9 @@ async test "channel binding" {
     })
     let (unique_binding_for_server, endpoint_binding_for_server) = server_task.wait()
     let (unique_binding_for_client, endpoint_binding_for_client) = client_task.wait()
-    assert_eq(unique_binding_for_client, unique_binding_for_server)
+    @test.assert_eq(unique_binding_for_client, unique_binding_for_server)
     assert_true(unique_binding_for_client.length() > 0)
-    assert_eq(endpoint_binding_for_client, endpoint_binding_for_server)
+    @test.assert_eq(endpoint_binding_for_client, endpoint_binding_for_server)
     assert_true(endpoint_binding_for_client.length() > 0)
   }
 }

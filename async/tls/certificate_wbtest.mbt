@@ -25,7 +25,7 @@ async test "get_peer_certificate" {
       }
       let server = test_server(server_read_from_client, server_write_to_client)
       defer server.close()
-      debug_inspect(
+      @debug.debug_inspect(
         server.get_peer_certificate().map(cert => cert.length()),
         content="None",
       )
@@ -36,13 +36,13 @@ async test "get_peer_certificate" {
         client_read_from_server.close()
         client_write_to_server.close()
       }
-      let client = @tls.Tls::client_from_pair(
+      let client = Tls::client_from_pair(
         client_read_from_server,
         client_write_to_server,
         trust=NoVerification,
       )
       defer client.close()
-      debug_inspect(
+      @debug.debug_inspect(
         client.get_peer_certificate().map(cert => cert.length()),
         content=(
           #|Some(1447)

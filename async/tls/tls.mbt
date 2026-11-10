@@ -64,13 +64,6 @@ fn decode_pem_certificates(pem : String) -> Array[Bytes] raise TlsError {
 }
 
 ///|
-/// Encoding type for a X509 certificate file
-pub(all) enum X509FileType {
-  PEM = 1
-  DER = 2
-}
-
-///|
 /// Create a TLS client that read from write to `inner`.
 /// `client` will block until TLS handshake to remote server completed.
 ///

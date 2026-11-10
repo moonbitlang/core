@@ -113,10 +113,6 @@ extern "C" fn SSL::set_verify(self : SSL, verify : Bool) = "moonbit_rt_tls_ssl_s
 
 ///|
 #cfg(not(platform="windows"))
-extern "C" fn SSL::accept(self : SSL) -> Int32 = "moonbit_rt_tls_ssl_accept"
-
-///|
-#cfg(not(platform="windows"))
 priv struct PeerCertificate(@c_buffer.Buffer)
 
 ///|
@@ -167,24 +163,6 @@ extern "C" fn SSL::unique_channel_binding(
   len~ : Int32,
   is_client~ : Bool,
 ) -> Unit = "moonbit_rt_tls_ssl_unique_channel_binding"
-
-///|
-#cfg(not(platform="windows"))
-#borrow(file)
-extern "C" fn SSL::use_certificate_file(
-  self : SSL,
-  file : Bytes,
-  file_type : X509FileType,
-) -> Int32 = "moonbit_rt_tls_ssl_use_certificate_file"
-
-///|
-#cfg(not(platform="windows"))
-#borrow(file)
-extern "C" fn SSL::use_private_key_file(
-  self : SSL,
-  file : Bytes,
-  file_type : X509FileType,
-) -> Int32 = "moonbit_rt_tls_ssl_use_private_key_file"
 
 ///|
 #cfg(not(platform="windows"))
@@ -440,77 +418,6 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   }
   self.transport.flush_write()
   self
-}
-
-///|
-/// WARNING: this API is currently for testing only,
-/// it may block the whole thread while reading certificate,
-/// and may break any time in the future. DO NOT USE.
-///
-/// Create a TLS server connection that read from `r` and write to `w`.
-/// `server_from_pair` will block until TLS handshake with client completed.
-///
-/// `private_key_file`, `private_key_type` specifies the private key of the server.
-/// `certificate_file` and `certificate_type` specifies the certificate of the server.
-#cfg(not(platform="windows"))
-#internal(internal, "do not use, for internal testing only")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
-  r : R,
-  w : W,
-  private_key_file~ : String,
-  private_key_type~ : X509FileType,
-  certificate_file~ : String,
-  certificate_type~ : X509FileType,
-) -> Tls {
-  load_openssl()
-  let private_key_file = @utf8.encode(private_key_file)
-  let certificate_file = @utf8.encode(certificate_file)
-  let ctx = server_ctx.force()
-  guard !ctx.is_null() else {
-    raise TlsError("failed to initialize SSL server context")
-  }
-  let self = Tls::from_pair(ctx, r, w, is_client=false, host=None)
-  errdefer self.close()
-  if self.ssl.use_certificate_file(certificate_file, certificate_type) != 1 {
-    raise TlsError(@tls_util.get_tls_error())
-  }
-  if self.ssl.use_private_key_file(private_key_file, private_key_type) != 1 {
-    raise TlsError(@tls_util.get_tls_error())
-  }
-  while self.ssl.accept() is ret && ret <= 0 {
-    self.handle_error(self.ssl.get_error(ret))
-  }
-  self.transport.flush_write()
-  self
-}
-
-///|
-/// WARNING: this API is currently for testing only,
-/// it may block the whole thread while reading certificate,
-/// and may break any time in the future. DO NOT USE.
-///
-/// Create a TLS server connection that read from and write to `inner`.
-/// `server` will block until TLS handshake with client completed.
-///
-/// `private_key_file`, `private_key_type` specifies the private key of the server.
-/// `certificate_file` and `certificate_type` specifies the certificate of the server.
-#cfg(not(platform="windows"))
-#internal(internal, "do not use, for internal testing only")
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::server(
-  inner : Inner,
-  private_key_file~ : String,
-  private_key_type~ : X509FileType,
-  certificate_file~ : String,
-  certificate_type~ : X509FileType,
-) -> Tls {
-  Tls::server_from_pair(
-    inner,
-    inner,
-    private_key_file~,
-    private_key_type~,
-    certificate_file~,
-    certificate_type~,
-  )
 }
 
 ///|
