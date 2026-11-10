@@ -8,9 +8,6 @@ import {
 }
 
 // Values
-pub fn rand_bytes(Int32) -> Bytes raise
-
-pub fn sha1(Bytes) -> Bytes raise
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)

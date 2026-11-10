@@ -1,0 +1,21 @@
+import {
+  "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/ref",
+  "moonbitlang/core/lazy",
+  "moonbitlang/core/async/os_error",
+  "moonbitlang/core/async/internal/bytes_util",
+}
+
+options(
+  "allow-experimental-packages": true,
+  targets: {
+    "openssl_loader.mbt": [ "native", "wasm" ],
+    "tls_util.mbt": [ "native", "wasm" ],
+    "crypto_util.mbt": [ "native" ],
+    "crypto_util.wasm.mbt": [ "wasm" ],
+  },
+)

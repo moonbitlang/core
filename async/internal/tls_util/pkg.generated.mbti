@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/async/internal/tls_util"
+
+// Values
+pub fn get_tls_error() -> String
+
+pub fn rand_bytes(Int32) -> Bytes raise
+
+pub fn setup_tls_library() -> Unit raise
+
+pub fn sha1(Bytes) -> Bytes raise
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

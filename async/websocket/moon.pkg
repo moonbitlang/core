@@ -10,7 +10,7 @@ import {
   "moonbitlang/core/random",
   "moonbitlang/core/encoding/base64",
   "moonbitlang/core/async/io",
-  "moonbitlang/core/async/tls",
+  "moonbitlang/core/async/internal/tls_util",
   "moonbitlang/core/async/http",
   "moonbitlang/core/async/semaphore",
   "moonbitlang/core/async/internal/coroutine",
