@@ -561,32 +561,36 @@ test "to_string radix 16" {
 }
 
 ///|
-test "from_be_bytes" {
+test "from_octets" {
   // Check zero
-  let a = BigInt::from_be_bytes(b"\x00")
+  let a = BigInt::from_octets(b"\x00")
   check_invariant(a)
   @test.assert_eq(a, 0)
-  let a = -BigInt::from_be_bytes(b"\x00")
+  let a = BigInt::from_octets(b"\x00", signum=-1)
+  check_invariant(a)
+  @test.assert_eq(a, 0)
+  let a = BigInt::from_octets(b"\x00", signum=0)
   check_invariant(a)
   @test.assert_eq(a, 0)
 
   // Test multiple leading zero limbs
-  let a = BigInt::from_be_bytes(b"\x00\x00\x00\x00\x00\x00\x00\x00\x26")
+  let a = BigInt::from_octets(b"\x00\x00\x00\x00\x00\x00\x00\x00\x26")
   check_invariant(a)
   inspect(a.to_string(), content="38")
   @test.assert_eq(a, 38N)
   @test.assert_eq(a.compare(38N), 0)
 
   // Test zero spanning multiple limbs
-  let a = BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
   )
   check_invariant(a)
   inspect(a.to_string(), content="0")
   @test.assert_eq(a, 0N)
   @test.assert_eq(a.compare(0N), 0)
-  let a = -BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+    signum=-1,
   )
   check_invariant(a)
   inspect(a.to_string(), content="0")
@@ -594,26 +598,26 @@ test "from_be_bytes" {
   @test.assert_eq(a.compare(0N), 0)
 
   // Test positive number
-  let a = BigInt::from_be_bytes(b"\x01")
+  let a = BigInt::from_octets(b"\x01")
   check_invariant(a)
   @test.assert_eq(a, 0x01)
 
   // Test negative number
-  let a = -BigInt::from_be_bytes(b"\x0F")
+  let a = BigInt::from_octets(b"\x0F", signum=-1)
   check_invariant(a)
   @test.assert_eq(a, -0x0F)
-  let a = -BigInt::from_be_bytes(b"\x0a")
+  let a = BigInt::from_octets(b"\x0a", signum=-1)
   check_invariant(a)
   @test.assert_eq(a, -0x0A)
 
   // Test large positive number
-  let a = BigInt::from_be_bytes(b"\x11\x22\x10\xF4\x7D\xE9\x81\x15")
+  let a = BigInt::from_octets(b"\x11\x22\x10\xF4\x7D\xE9\x81\x15")
   check_invariant(a)
   @test.assert_eq(a, 0x112210F47DE98115)
   @test.assert_eq(a, 1234567890123456789)
 
   // Test very large positive number
-  let a = BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78",
   )
   check_invariant(a)
@@ -623,7 +627,7 @@ test "from_be_bytes" {
   @test.assert_eq(
     a, 35365207917649046390549507392234216535182073572857507984542859337680634154115797374584,
   )
-  let a = BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x11\xE3\x44\x4D\xC1\xF3\x5F\x05\x7A\xD2\xCB\xC2\x79\x17\x37\x46\x81\x40\xA4\x26\xFA\xC3\xCB\xA7\xAF\x8C\x92\xA8\xF3\x4E",
   )
   check_invariant(a)
@@ -633,7 +637,7 @@ test "from_be_bytes" {
   @test.assert_eq(
     a, 123456789012345678123456789012345678123456789012345678123456789012345678,
   )
-  let a = BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x08\x05\x14\x6F\x2F\x58\x58\x09\x62\xA0\xA2\xE6\x13\x4B\xC7\x5E\x25\xAD\x97\xAE\x3D\x09\xCD\x34\xBA\x4F\x62\x9A\xB8\x91\x1F\x3F\x5C\xB8\x57\x3A\x62\xED\xD1\x6B\x0D\x46\x77\x5A\x41\x5F\x54\x5A\x75\x51\x8D\xA3\x43\x99\x14\xD9\xCA\xA2\x64\x49\x06\x7D\x85\xE7\x04\xE8\xFC\xF9\xB2\x91\x82\x48\x5B\x41\xF9\x52\x61\x6B\xAC\xDF\xDD\xF5\x2B\x41\x3B\x52\x4D\x0E\xB7\x43\xE8\x26\x4A\x9C\x6A\xE3\x2D\x12\xC3\xD2\x0C\x5B\x81\x18\x90\x60\xF4\xAC\x5D\x21\x67\x13\xD5\x03\xA6\x96\x44\xEA\x8E\x4E\xA2\x20\xA7\x20\xC4\x1F\x6B\x3D\x18\xBE\xD6\x5B\x42\x38\x31\x8E\x6B\x0A\x41\xD8\x54\x0D\x75\x68\x65\xEC\x92\xDF\x40\xE8\xD3\x65\xA2\x30\xF1\x7D\xF1\xD0\xA4\x40\xBC\x6A\x55\x7C\xD4\x6D\x00\xB1\x0D\x74\xC0\xE7\x55\x00\xB2\xAD\xB3\xA0\x33\x62\x23\xF9\x28\x5B\x78\xCD\x04\xF4\x85\xE4\x17\xE1\xDB\x56\x2B\x9E\xFC\xF7\x94\x33\x20\x9E\x6D\x6E\x2F\x43\xA4\x84\xE4\x71\xDE\x4F\x1F\x5A\xE3\x8E\x08\xE7\xDA\xEB\x64\x4C\x2C\x0A\x22\x69\x7D\xD6\xD2\x9B\xE0\xB4\x0F\xF5\x0D\xB5\x75\xFE\xF0\x2F\xA5\x52\x59\x53\xC7\xC1\x98\xB4\xA3\x60\x0B\xA8\xCE\x1F\x91\x78\x52\xA4\xB9\x57\x15\x11\x89\xF0\x9D\xCD\xFC\xB7\x99\x63\xE7\xD8\x50\x12\x78\x58\xA9\x78\x55\xB9\x48\x70\xAC\xCB\xE8\x20\x3E\x73\xFE\x79\x79\x1E\xE6\xEA\x1B\x12\x82\xA0\xCE\xAC\x54\xD6\xF6\xB7\xCD\x6C\x7B\x8D\x80\x92\xE9\x49\xFF\x0A\x84",
   )
   check_invariant(a)
@@ -645,8 +649,9 @@ test "from_be_bytes" {
   )
 
   // Test very large negative number
-  let a = -BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78\x12\x34\x56\x78\x90\x12\x34\x56\x78",
+    signum=-1,
   )
   check_invariant(a)
   @test.assert_eq(
@@ -655,22 +660,22 @@ test "from_be_bytes" {
   @test.assert_eq(
     a, -35365207917649046390549507392234216535182073572857507984542859337680634154115797374584,
   )
-  let a = BigInt::from_be_bytes(
+  let a = BigInt::from_octets(
     b"\x00\xd2\x68\x67\xc5\x72\x75\x22\xf2\xca\xe8\x27\x3d\x05\x6f\xee\x02\x3a\xca\xb0\x9a\x23\x43\xcb\xc0\x1b\x29\xbf\x29\x95\xaa\x34\x02\x78\x7b\xd6\x71\x95\x47\x85\x44\xc2\x00\x73\x28\xec\x92\x41\xd1\x5e\x15\xce\x74\xdd\x0f\x23\x7c\x5e\xf2\x43\x0a\xf7\xe2\x89\xb0\x00\xe6\xe1\xf4\x8c\x84\x7b\x1f\x9e\x28\x0b\x3d\xc8\xdb\xcc\xe1\xa6\xdf\x92\x6e\xa0\xbd\x96\xec\x0d\x72\x19\xc0\x16\xd8\x0e\xf0\xb4\x3a\x14\x82\xab\x38\x6c\xe8\xc9\xef\xc6\xa3\x04\xef\x15\xcf\x8c\x89\xea\x6d\x3e\x05\xdc\x5f\x39\xd7\xdb\xcf\x78\xad\x00\x86\x51\x29\x76\x35\x96\x8f\xbc\x86\x9a\x18\x5c\xa9\x34\xef\xfc\x94\x08\x3a\xdd\xed\xe6\x59\xe9\xa0\x07\xcd\xa2\x1a\x17\x51\xf8\x3c\x70\xc8\xbc\x43\x65\x1e\x78\x28\x6d\x23\xc0\x43\x5f\xf4\x9f\x5b\xb1\x3f\x81\x7d\xf0\xfd\x8c\x37\x3f\xd5\x58\x55\xf9\x20\x5d\xdf\x74\x95\x89\xe1\x57\xbc\xc0\x35\x82\xea\x7b\xb1\x33\x9f\x47\x69\x93\xd0\x84\x48\x31\x88\xea\x47\x67\x9a\xfa\x25\x29\x37\xc4\x2c\xff\x96\x72\xcc\x6a\x68\x56\x0f\xa0\x18\x48\xff\x65\x68\xf3\xfd\x41\x74\x67\x1b\x2f\xef\x76\x54\xbf\xcb\xe5\x7f\x24\xb6\x38\xc7",
   )
   check_invariant(a)
-  let a = BigInt::from_be_bytes(b"\x00\x00\x00\x00")
+  let a = BigInt::from_octets(b"\x00\x00\x00\x00")
   check_invariant(a)
   @test.assert_eq(a, 0)
 }
 
 ///|
-test "to_be_bytes" {
+test "to_octets" {
   // Check zero
   let a = 0x00N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x00"
     ),
@@ -680,7 +685,7 @@ test "to_be_bytes" {
   let a = 0x0FN
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x0f"
     ),
@@ -690,7 +695,7 @@ test "to_be_bytes" {
   let a = 0x10N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x10"
     ),
@@ -700,7 +705,7 @@ test "to_be_bytes" {
   let a = 0x01234567890123456789N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x01#Eg\x89\x01#Eg\x89"
     ),
@@ -710,7 +715,7 @@ test "to_be_bytes" {
   let a = 0x100000N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x10\x00\x00"
     ),
@@ -720,7 +725,7 @@ test "to_be_bytes" {
   let a = 0x11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34EN
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x11\xe3DM\xc1\xf3_\x05z\xd2\xcb\xc2y\x177F\x81@\xa4&\xfa\xc3\xcb\xa7\xaf\x8c\x92\xa8\xf3N"
     ),
@@ -728,7 +733,7 @@ test "to_be_bytes" {
   let a = 0x123456789012345678123456789012345678123456789012345678123456789012345678N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x124Vx\x90\x124Vx\x124Vx\x90\x124Vx\x124Vx\x90\x124Vx\x124Vx\x90\x124Vx"
     ),
@@ -736,7 +741,7 @@ test "to_be_bytes" {
   let a = 0x805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x08\x05\x14o/XX\x09b\xa0\xa2\xe6\x13K\xc7^%\xad\x97\xae=\x09\xcd4\xbaOb\x9a\xb8\x91\x1f?\x5c\xb8W:b\xed\xd1k\x0dFwZA_TZuQ\x8d\xa3C\x99\x14\xd9\xca\xa2dI\x06}\x85\xe7\x04\xe8\xfc\xf9\xb2\x91\x82H[A\xf9Rak\xac\xdf\xdd\xf5+A;RM\x0e\xb7C\xe8&J\x9cj\xe3-\x12\xc3\xd2\x0c[\x81\x18\x90`\xf4\xac]!g\x13\xd5\x03\xa6\x96D\xea\x8eN\xa2 \xa7 \xc4\x1fk=\x18\xbe\xd6[B81\x8ek\x0aA\xd8T\x0duhe\xec\x92\xdf@\xe8\xd3e\xa20\xf1}\xf1\xd0\xa4@\xbcjU|\xd4m\x00\xb1\x0dt\xc0\xe7U\x00\xb2\xad\xb3\xa03b#\xf9([x\xcd\x04\xf4\x85\xe4\x17\xe1\xdbV+\x9e\xfc\xf7\x943 \x9emn/C\xa4\x84\xe4q\xdeO\x1fZ\xe3\x8e\x08\xe7\xda\xebdL,\x0a\x22i}\xd6\xd2\x9b\xe0\xb4\x0f\xf5\x0d\xb5u\xfe\xf0/\xa5RYS\xc7\xc1\x98\xb4\xa3`\x0b\xa8\xce\x1f\x91xR\xa4\xb9W\x15\x11\x89\xf0\x9d\xcd\xfc\xb7\x99c\xe7\xd8P\x12xX\xa9xU\xb9Hp\xac\xcb\xe8 >s\xfeyy\x1e\xe6\xea\x1b\x12\x82\xa0\xce\xacT\xd6\xf6\xb7\xcdl{\x8d\x80\x92\xe9I\xff\x0a\x84"
     ),
@@ -744,11 +749,11 @@ test "to_be_bytes" {
 }
 
 ///|
-test "to_be_bytes with padding" {
+test "to_octets with padding" {
   // corner case of zero
   let a = zero
   inspect(
-    a.to_be_bytes(length=4),
+    a.to_octets(length=4),
     content=(
       #|b"\x00\x00\x00\x00"
     ),
@@ -757,13 +762,13 @@ test "to_be_bytes with padding" {
   let a = 0x10000N
   check_invariant(a)
   inspect(
-    a.to_be_bytes(),
+    a.to_octets(),
     content=(
       #|b"\x01\x00\x00"
     ),
   )
   inspect(
-    a.to_be_bytes(length=4),
+    a.to_octets(length=4),
     content=(
       #|b"\x00\x01\x00\x00"
     ),

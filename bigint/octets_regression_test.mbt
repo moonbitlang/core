@@ -16,11 +16,8 @@
 // zero shortcut before validating the requested length, silently
 // returning b"" for `0N.to_octets(length=0)` while the documented
 // contract (and every other target) panics on a non-positive length.
-// `to_octets` is now a deprecated wrapper shared by every backend; these
-// tests keep its contract pinned until it is removed.
 
 ///|
-#warnings("-deprecated")
 test "panic to_octets of zero rejects non-positive length" {
   // documented contract: non-positive length panics on every target
   // (the js implementation used to return b"" here)
@@ -28,7 +25,6 @@ test "panic to_octets of zero rejects non-positive length" {
 }
 
 ///|
-#warnings("-deprecated")
 test "to_octets of zero still pads positive lengths" {
   inspect(0N.to_octets(), content="b\"\\x00\"")
   inspect(0N.to_octets(length=3), content="b\"\\x00\\x00\\x00\"")

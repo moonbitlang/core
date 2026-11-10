@@ -446,7 +446,7 @@ pub fn Rand::bigint(self : Rand, bits : Int32) -> @bigint.BigInt {
       self.uint(limit=256).to_byte()
     }
   })
-  @bigint.BigInt::from_be_bytes(bytes)
+  @bigint.BigInt::from_octets(bytes)
 }
 
 ///|
