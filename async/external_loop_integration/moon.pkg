@@ -18,5 +18,5 @@ import {
   "moonbitlang/core/async/socket",
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/external_loop_integration/internal/external_loop_test",
-  "moonbitlang/core/async/pipe",
+  "moonbitlang/core/async/internal/pipe",
 } for "test"

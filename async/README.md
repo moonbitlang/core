@@ -35,7 +35,6 @@ In order to use asynchronous programming API, users do need to import specific p
     Only supports native backend
 - `moonbitlang/core/async/gzip`: wrap async stream with gzip compression/decompression
 - `moonbitlang/core/async/tls`: TLS support via OpenSSL/Schannel
-- `moonbitlang/core/async/pipe`: operations on operating system pipes
 - `moonbitlang/core/async/js_async`: integration with JavaScript promise and readable stream.
     Only supports JavaScript backend.
 
