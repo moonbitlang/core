@@ -293,6 +293,44 @@ pub fn[K : Compare, V] SortedMap::update_or_default(
 }
 
 ///|
+/// Replaces, inserts, or removes the entry for `key` in one step: `f` sees the
+/// current value if there is one, and its result becomes the new value, or
+/// removes the key when it is `None`.
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is replaced.
+/// * If the key exists and `f` returns `None`, the entry is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new entry is
+///   inserted.
+/// * If the key doesn't exist and `f` returns `None`, nothing changes.
+///
+/// `f` is called before the map is modified, so it may read or write `self`.
+/// Its result is applied to the map as it stands once `f` returns.
+/// If `f` raises, the error is propagated without modifying the map. Side
+/// effects performed by `f` are not rolled back.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.SortedMap([("a", 1), ("b", 2)])
+///   map.update("a", v => Some(v.unwrap_or(0) + 10))
+///   map.update("c", v => Some(v.unwrap_or(3)))
+///   map.update("b", _ => None)
+///   debug_inspect(map.to_array(), content="[(\"a\", 11), (\"c\", 3)]")
+/// }
+/// ```
+pub fn[K : Compare, V] SortedMap::update(
+  self : SortedMap[K, V],
+  key : K,
+  f : (V?) -> V? raise?,
+) -> Unit raise? {
+  match f(self.get(key)) {
+    Some(value) => self.set(key, value)
+    None => self.remove(key)
+  }
+}
+
+///|
 /// Returns the value for the key if present, otherwise returns `default`.
 pub fn[K : Compare, V] SortedMap::get_or_default(
   self : SortedMap[K, V],

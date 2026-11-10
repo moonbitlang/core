@@ -475,6 +475,38 @@ pub fn[K : Eq + Hash, V] HashMap::remove(
 }
 
 ///|
+/// Returns a new map with the entry for `key` replaced, inserted, or removed in
+/// one step: `f` sees the current value if there is one, and its result becomes
+/// the new value, or removes the key when it is `None`.
+///
+/// If `f` raises, the error is propagated. `self` is never modified.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m = @hashmap.HashMap([("a", 1)])
+///   let bumped = m.update("a", v => Some(v.unwrap_or(0) + 1))
+///   debug_inspect(bumped.get("a"), content="Some(2)")
+///   let inserted = m.update("b", v => Some(v.unwrap_or(10)))
+///   debug_inspect(inserted.get("b"), content="Some(10)")
+///   let cleared = m.update("a", _ => None)
+///   inspect(cleared.is_empty(), content="true")
+///   debug_inspect(m.get("a"), content="Some(1)")
+/// }
+/// ```
+pub fn[K : Eq + Hash, V] HashMap::update(
+  self : HashMap[K, V],
+  key : K,
+  f : (V?) -> V? raise?,
+) -> HashMap[K, V] raise? {
+  match f(self.get(key)) {
+    Some(value) => self.add(key, value)
+    None => self.remove(key)
+  }
+}
+
+///|
 fn[K : Eq, V] Node::remove_with_path(
   self : Node[K, V],
   key : K,
