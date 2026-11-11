@@ -16,7 +16,16 @@ import {
 }
 
 import {
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/base64",
   "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/process",
+  "moonbitlang/core/async/socket",
+  "moonbitlang/core/async/internal/test_util",
 } for "test"
 
 supported_targets = "-all+native"

@@ -1,0 +1,21 @@
+import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/os_error",
+  "moonbitlang/core/async/process",
+  "moonbitlang/core/async/raw_fd",
+  "moonbitlang/core/async/stdio",
+  "moonbitlang/core/async/types",
+}
+
+supported_targets = "-all+native"
+
+pkgtype(kind: "executable")
+
+options(
+  "allow-experimental-packages": true,
+  "native-stub": [ "stub.c" ],
+)
