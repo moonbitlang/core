@@ -491,39 +491,18 @@ pub async fn File::ctime(self : File) -> Timestamp {
 
 ///|
 /// Read the content of the file located at `path` in binary.
-/// If `sync_timestamp` is `true` (`false` by default),
-/// `read_binary` will block until timestamp change is written to the file system.
-pub async fn read_binary(
-  path : StringView,
-  sync_timestamp~ : Bool = false,
-) -> Bytes {
+pub async fn read_binary(path : StringView) -> Bytes {
   let file = open(path, mode=ReadOnly)
   defer file.close()
-  let result = file.read_all()
-  if sync_timestamp {
-    file.io.fsync(
-      only_data=false,
-      context="@fs.read_binary(sync_timestamp=true)",
-    )
-  }
-  result
+  file.read_all()
 }
 
 ///|
 /// Read the text content of the UTF-8 encoded file located at `path`.
-/// If `sync_timestamp` is `true` (`false` by default),
-/// `read_text` will block until timestamp change is written to the file system.
-pub async fn read_text(
-  path : StringView,
-  sync_timestamp~ : Bool = false,
-) -> String {
+pub async fn read_text(path : StringView) -> String {
   let file = open(path, mode=ReadOnly)
   defer file.close()
-  let result = file.text.read_all()
-  if sync_timestamp {
-    file.io.fsync(only_data=false, context="@fs.read_text(sync_timestamp=true)")
-  }
-  result
+  file.text.read_all()
 }
 
 ///|

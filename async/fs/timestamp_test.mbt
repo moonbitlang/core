@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+async fn read_file_sync_timestamp(path : StringView) -> String {
+  // Currently `mode=ReadOnly` does not grant metadata modification access on Windows,
+  // so work around this with `mode=ReadWrite`.
+  let file = @fs.open(path, mode=ReadWrite)
+  defer file.close()
+  let content = file.text.read_all()
+  file.sync()
+  content
+}
+
+///|
 async test "timestamp for path" {
   // Windows may avoid updating access time eagerly, so keep the POSIX-style
   // atime/mtime/ctime assertions to non-Windows hosts. Wasm learns that host
@@ -33,7 +44,7 @@ async test "timestamp for path" {
   assert_true((mtime_2 - mtime_1).msec() > 500)
   assert_true((ctime_2 - ctime_1).msec() > 500)
   @async.sleep(600)
-  inspect(@fs.read_text(path, sync_timestamp=true), content="1234")
+  inspect(read_file_sync_timestamp(path), content="1234")
   let atime_3 = @fs.atime(path)
   let mtime_3 = @fs.mtime(path)
   let ctime_3 = @fs.ctime(path)
