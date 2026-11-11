@@ -67,7 +67,7 @@ pub fn Client::close(_ : Client) -> Unit {
 /// The request body can still be sent incrementally,
 /// but if the actual body being sent is shorter and longer than the provided length,
 /// an error will be raised.
-pub async fn Client::request(
+pub async fn Client::request_stream(
   self : Client,
   meth : RequestMethod,
   url : StringView,
@@ -81,6 +81,63 @@ pub async fn Client::request(
 }
 
 ///|
+/// Perform a generic HTTP request with binary request body.
+/// Server response header and collected response body will be returned.
+///
+/// See `@http.Client::request_stream` for more details on the optional parameters.
+pub async fn Client::request_binary(
+  self : Client,
+  meth : RequestMethod,
+  url : StringView,
+  body : BytesView,
+  extra_headers~ : Headers = {},
+) -> (ResponseHeader, MessageBody) {
+  let conn = self.request_stream(meth, url, extra_headers~)
+  defer conn.close()
+  conn.write(body)
+  let response = conn.end_request()
+  (response, conn.read_all())
+}
+
+///|
+/// Perform a generic HTTP request with UTF-8 encoded text request body.
+/// Server response header and collected response body will be returned.
+///
+/// See `@http.Client::request_stream` for more details on the optional parameters.
+pub async fn Client::request_text(
+  self : Client,
+  meth : RequestMethod,
+  url : StringView,
+  body : StringView,
+  extra_headers~ : Headers = {},
+) -> (ResponseHeader, MessageBody) {
+  let conn = self.request_stream(meth, url, extra_headers~)
+  defer conn.close()
+  conn.text.write(body)
+  let response = conn.end_request()
+  (response, conn.read_all())
+}
+
+///|
+/// Perform a generic HTTP request with UTF-8 encoded JSON request body.
+/// Server response header and collected response body will be returned.
+///
+/// See `@http.Client::request_stream` for more details on the optional parameters.
+pub async fn Client::request_json(
+  self : Client,
+  meth : RequestMethod,
+  url : StringView,
+  body : @json.Json,
+  extra_headers~ : Headers = {},
+) -> (ResponseHeader, MessageBody) {
+  let conn = self.request_stream(meth, url, extra_headers~)
+  defer conn.close()
+  conn.text.write(body.stringify())
+  let response = conn.end_request()
+  (response, conn.read_all())
+}
+
+///|
 /// Perform a `GET` request on `url` through a HTTP client.
 /// Return the response header and the client connection assigned for the request.
 /// Content of response body can be read through the
@@ -88,60 +145,30 @@ pub async fn Client::request(
 /// on the connection. The connection must be closed after the connection become unused.
 ///
 /// See `@http.Client::request` for more details on the optional parameters.
-pub async fn Client::get(
+pub async fn Client::get_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
 ) -> (ResponseHeader, ClientConnection) {
-  let conn = self.request(Get, url, extra_headers~)
+  let conn = self.request_stream(Get, url, extra_headers~)
   errdefer conn.close()
   let response = conn.end_request()
   (response, conn)
 }
 
 ///|
-/// Perform a HTTP `GET` request to `uri`,
-/// collect response body as plain binary automatically.
+/// Perform a HTTP `GET` request to `uri`.
+/// Return response header and collect whole response body.
 ///
 /// See `@http.Client::request` for more details.
-pub async fn Client::get_binary(
+pub async fn Client::get(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
-) -> (ResponseHeader, Bytes) {
-  let (response, conn) = self.get(uri, extra_headers~)
+) -> (ResponseHeader, MessageBody) {
+  let (response, conn) = self.get_stream(uri, extra_headers~)
   defer conn.close()
   (response, conn.read_all())
-}
-
-///|
-/// Perform a HTTP `GET` request to `uri`,
-/// collect response body as UTF-8 encoded text automatically.
-///
-/// See `@http.Client::request` for more details.
-pub async fn Client::get_text(
-  self : Client,
-  uri : StringView,
-  extra_headers~ : Headers = Map([]),
-) -> (ResponseHeader, String) {
-  let (response, conn) = self.get(uri, extra_headers~)
-  defer conn.close()
-  (response, conn.text.read_all())
-}
-
-///|
-/// Perform a HTTP `GET` request to `uri`,
-/// collect response body as UTF-8 encoded JSON automatically.
-///
-/// See `@http.Client::request` for more details.
-pub async fn Client::get_json(
-  self : Client,
-  uri : StringView,
-  extra_headers~ : Headers = Map([]),
-) -> (ResponseHeader, @json.Json) {
-  let (response, conn) = self.get(uri, extra_headers~)
-  defer conn.close()
-  (response, @json.parse(conn.text.read_all()))
 }
 
 ///|
@@ -157,12 +184,54 @@ pub async fn Client::get_json(
 /// The connection must be closed after the connection become unused.
 ///
 /// See `@http.Client::request` for more details on the optional parameters.
-pub async fn Client::put(
+pub async fn Client::put_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
 ) -> ClientConnection {
-  self.request(Put, url, extra_headers~)
+  self.request_stream(Put, url, extra_headers~)
+}
+
+///|
+/// Perform a `PUT` request on `url` with binary request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::put_binary(
+  self : Client,
+  uri : StringView,
+  content : BytesView,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_binary(Put, uri, content, extra_headers~)
+}
+
+///|
+/// Perform a `PUT` request on `url` with UTF-8 encoded text request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::put_text(
+  self : Client,
+  uri : StringView,
+  content : StringView,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_text(Put, uri, content, extra_headers~)
+}
+
+///|
+/// Perform a `PUT` request on `url` with UTF-8 encoded JSON request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::put_json(
+  self : Client,
+  uri : StringView,
+  content : @json.Json,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_json(Put, uri, content, extra_headers~)
 }
 
 ///|
@@ -178,10 +247,52 @@ pub async fn Client::put(
 /// The connection must be closed after the connection become unused.
 ///
 /// See `@http.Client::request` for more details on the optional parameters.
-pub async fn Client::post(
+pub async fn Client::post_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
 ) -> ClientConnection {
-  self.request(Post, url, extra_headers~)
+  self.request_stream(Post, url, extra_headers~)
+}
+
+///|
+/// Perform a `POST` request on `url` with binary request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::post_binary(
+  self : Client,
+  uri : StringView,
+  content : BytesView,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_binary(Post, uri, content, extra_headers~)
+}
+
+///|
+/// Perform a `POST` request on `url` with UTF-8 encoded text request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::post_text(
+  self : Client,
+  uri : StringView,
+  content : StringView,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_text(Post, uri, content, extra_headers~)
+}
+
+///|
+/// Perform a `POST` request on `url` with UTF-8 encoded JSON request body through a HTTP client.
+/// Return the response header and collected response body.
+///
+/// See `@http.Client::request` for more details on the optional parameters.
+pub async fn Client::post_json(
+  self : Client,
+  uri : StringView,
+  content : @json.Json,
+  extra_headers~ : Headers = Map([]),
+) -> (ResponseHeader, MessageBody) {
+  self.request_json(Post, uri, content, extra_headers~)
 }

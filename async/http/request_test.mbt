@@ -14,14 +14,14 @@
 
 ///|
 async test "https request" {
-  let (_, result) = @http.get_text("https://www.moonbitlang.com")
-  assert_true(result.has_prefix("<!doctype html>"))
+  let (_, result) = @http.get("https://www.moonbitlang.com")
+  assert_true(result.text().has_prefix("<!doctype html>"))
 }
 
 ///|
 async test "http request" {
-  let (_, result) = @http.get_text("http://www.example.org")
-  assert_true(result.has_prefix("<!doctype html>"))
+  let (_, result) = @http.get("http://www.example.org")
+  assert_true(result.text().has_prefix("<!doctype html>"))
 }
 
 ///|
@@ -29,7 +29,7 @@ async test "request cancel handshake" {
   @async.with_task_group() <| group => {
     let port = non_responding_tcp_server(group)
     let result = @async.with_timeout_opt(250) <| () => {
-      let (response, _) = @http.get_binary("http://127.0.0.1:\{port}/")
+      let (response, _) = @http.get("http://127.0.0.1:\{port}/")
       response.code
     }
     debug_inspect(result, content="None")
@@ -42,9 +42,7 @@ async test "request cancel wait response header" {
   @async.with_task_group() <| group => {
     let port = test_server(group, log)
     let result = @async.with_timeout_opt(250) <| () => {
-      let (response, _) = @http.get_binary(
-        "http://127.0.0.1:\{port}/no-response",
-      )
+      let (response, _) = @http.get("http://127.0.0.1:\{port}/no-response")
       response.code
     }
     debug_inspect(result, content="None")
@@ -57,9 +55,7 @@ async test "request cancel wait response body" {
   @async.with_task_group() <| group => {
     let port = test_server(group, log)
     let result = @async.with_timeout_opt(250) <| () => {
-      let (response, _) = @http.get_binary(
-        "http://127.0.0.1:\{port}/no-response-body",
-      )
+      let (response, _) = @http.get("http://127.0.0.1:\{port}/no-response-body")
       response.code
     }
     debug_inspect(result, content="None")
@@ -85,11 +81,11 @@ async test "manual Accept-Encoding" {
         conn.end_response()
       })
     }
-    let (_, result1) = @http.get_binary("http://\{test_server.addr}")
-    let (_, result2) = @http.get_binary("http://\{test_server.addr}", headers={
+    let (_, result1) = @http.get("http://\{test_server.addr}")
+    let (_, result2) = @http.get("http://\{test_server.addr}", headers={
       "Accept-Encoding": "gzip",
     })
-    assert_not_eq(result1.length(), result2.length())
+    assert_not_eq(result1.binary().length(), result2.binary().length())
     json_inspect(log, content=[
       "server received: Some(\"gzip,identity\")", "server received: Some(\"gzip\")",
     ])
@@ -108,9 +104,9 @@ async test "request to an IPv6 address" {
       })
     }
     let port = server.addr.port
-    let (response, body) = @http.get_text("http://[::1]:\{port}/")
+    let (response, body) = @http.get("http://[::1]:\{port}/")
     inspect(response.code, content="200")
-    inspect(body, content="Host: [::1]:\{port}")
+    inspect(body.text(), content="Host: [::1]:\{port}")
   }
 }
 

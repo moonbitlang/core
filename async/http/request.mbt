@@ -90,7 +90,7 @@ fn resolve_host(
 /// automatically collect request/response body.
 ///
 /// For common request methods, `@http.get`, `@http.post` etc. can be used instead.
-pub async fn request(
+pub async fn request_stream(
   meth : RequestMethod,
   uri : StringView,
   headers~ : Headers = {},
@@ -104,7 +104,7 @@ pub async fn request(
 }
 
 ///|
-/// Perform a single HTTP request to `uri` with binary payload/response.
+/// Perform a single HTTP request to `uri` with binary request body.
 /// Supported protocols are `http://` and `https://`.
 /// The HTTP response message and the whole response body will be returned.
 ///
@@ -119,15 +119,15 @@ pub async fn request_binary(
   body : BytesView,
   headers~ : Headers = {},
   proxy? : ClientConnection,
-) -> (ResponseHeader, Bytes) {
-  let conn = request(meth, uri, headers~, proxy?)
+) -> (ResponseHeader, MessageBody) {
+  let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
   let response = conn..write(body).end_request()
   (response, conn.read_all())
 }
 
 ///|
-/// Perform a single HTTP request to `uri` with UTF-8 encoded payload/response.
+/// Perform a single HTTP request to `uri` with UTF-8 encoded request body.
 /// Supported protocols are `http://` and `https://`.
 /// The HTTP response message and the whole response body will be returned.
 ///
@@ -142,16 +142,16 @@ pub async fn request_text(
   body : StringView,
   headers~ : Headers,
   proxy? : ClientConnection,
-) -> (ResponseHeader, String) {
-  let conn = request(meth, uri, headers~, proxy?)
+) -> (ResponseHeader, MessageBody) {
+  let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
   conn.text.write(body)
   let response = conn.end_request()
-  (response, conn.text.read_all())
+  (response, conn.read_all())
 }
 
 ///|
-/// Perform a single HTTP request to `uri` with UTF-8 encoded JSON payload/response.
+/// Perform a single HTTP request to `uri` with UTF-8 encoded JSON request body.
 /// Supported protocols are `http://` and `https://`.
 /// The HTTP response message and the whole response body will be returned.
 ///
@@ -163,21 +163,19 @@ pub async fn request_text(
 pub async fn request_json(
   meth : RequestMethod,
   uri : StringView,
-  body : @json.Json?,
+  body : @json.Json,
   headers~ : Headers,
   proxy? : ClientConnection,
-) -> (ResponseHeader, @json.Json) {
-  let conn = request(meth, uri, headers~, proxy?)
+) -> (ResponseHeader, MessageBody) {
+  let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
-  if body is Some(body) {
-    conn.text.write(body.stringify())
-  }
+  conn.text.write(body.stringify())
   let response = conn.end_request()
-  (response, @json.parse(conn.text.read_all()))
+  (response, conn.read_all())
 }
 
 ///|
-/// Perform a HTTP `GET` request to `uri` with binary response.
+/// Perform a HTTP `GET` request to `uri`.
 /// Supported protocols are `http://` and `https://`.
 /// The HTTP response message and the whole response body will be returned.
 ///
@@ -186,48 +184,12 @@ pub async fn request_json(
 /// `proxy` is not supported on JavaScript backend.
 ///
 /// See `ClientConnection::request` for more details.
-pub async fn get_binary(
+pub async fn get(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Bytes) {
+) -> (ResponseHeader, MessageBody) {
   request_binary(Get, uri, b"", headers~, proxy?)
-}
-
-///|
-/// Perform a HTTP `GET` request to `uri` with UTF-8 encoded response.
-/// Supported protocols are `http://` and `https://`.
-/// The HTTP response message and the whole response body will be returned.
-///
-/// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.ClientConnection::new` for more details.
-/// `proxy` is not supported on JavaScript backend.
-///
-/// See `ClientConnection::request` for more details.
-pub async fn get_text(
-  uri : StringView,
-  headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
-) -> (ResponseHeader, String) {
-  request_text(Get, uri, "", headers~, proxy?)
-}
-
-///|
-/// Perform a HTTP `GET` request to `uri` with UTF-8 encoded JSON response.
-/// Supported protocols are `http://` and `https://`.
-/// The HTTP response message and the whole response body will be returned.
-///
-/// `proxy`, if present, specifies the proxy to use for this request.
-/// See `@http.ClientConnection::new` for more details.
-/// `proxy` is not supported on JavaScript backend.
-///
-/// See `ClientConnection::request` for more details.
-pub async fn get_json(
-  uri : StringView,
-  headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
-) -> (ResponseHeader, @json.Json) {
-  request_json(Get, uri, None, headers~, proxy?)
 }
 
 ///|
@@ -237,7 +199,7 @@ pub async fn put_binary(
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Bytes) {
+) -> (ResponseHeader, MessageBody) {
   request_binary(Put, uri, content, headers~, proxy?)
 }
 
@@ -248,7 +210,7 @@ pub async fn put_text(
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, String) {
+) -> (ResponseHeader, MessageBody) {
   request_text(Put, uri, content, headers~, proxy?)
 }
 
@@ -259,8 +221,8 @@ pub async fn put_json(
   content : @json.Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, @json.Json) {
-  request_json(Put, uri, Some(content), headers~, proxy?)
+) -> (ResponseHeader, MessageBody) {
+  request_json(Put, uri, content, headers~, proxy?)
 }
 
 ///|
@@ -270,7 +232,7 @@ pub async fn post_binary(
   content : BytesView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, Bytes) {
+) -> (ResponseHeader, MessageBody) {
   request_binary(Post, uri, content, headers~, proxy?)
 }
 
@@ -281,7 +243,7 @@ pub async fn post_text(
   content : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, String) {
+) -> (ResponseHeader, MessageBody) {
   request_text(Post, uri, content, headers~, proxy?)
 }
 
@@ -292,8 +254,8 @@ pub async fn post_json(
   content : @json.Json,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
-) -> (ResponseHeader, @json.Json) {
-  request_json(Post, uri, Some(content), headers~, proxy?)
+) -> (ResponseHeader, MessageBody) {
+  request_json(Post, uri, content, headers~, proxy?)
 }
 
 ///|
@@ -306,12 +268,12 @@ pub async fn post_json(
 ///
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
-pub async fn get(
+pub async fn get_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> (ResponseHeader, ClientConnection) {
-  let conn = request(Get, uri, headers~, proxy?)
+  let conn = request_stream(Get, uri, headers~, proxy?)
   errdefer conn.close()
   (conn.end_request(), conn)
 }
@@ -333,12 +295,12 @@ pub async fn get(
 ///
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
-pub async fn put(
+pub async fn put_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> ClientConnection {
-  request(Put, uri, headers~, proxy?)
+  request_stream(Put, uri, headers~, proxy?)
 }
 
 ///|
@@ -358,10 +320,10 @@ pub async fn put(
 ///
 /// The returned connection must be manually closed via `.close()`
 /// after the caller no longer need to use it.
-pub async fn post(
+pub async fn post_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
   proxy? : ClientConnection,
 ) -> ClientConnection {
-  request(Post, uri, headers~, proxy?)
+  request_stream(Post, uri, headers~, proxy?)
 }
