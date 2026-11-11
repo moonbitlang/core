@@ -58,34 +58,47 @@ pub fn RawFd::close(self : RawFd) -> Unit {
 }
 
 ///|
-/// Perform a single `read`/`ReadFile` system call
-/// asynchronously on a raw file descriptor object.
-/// Data will be read into `buf[offset:offset+max_len]`.
+/// Read data from a raw fd into `buf[offset:offset+max_len]`.
 /// The number of bytes actually read will be returned,
 /// note that the number may be smaller than `max_len`.
 /// A zero return value indicates EOF.
-pub async fn RawFd::read(
+///
+/// `read_into_once` always correspond to exactly one `read` syscall.
+/// This is mainly useful for object where `read` boundary is meaningful,
+/// such as a UDP socket or a TUN virtual network device.
+/// For object with a stream based interface, `@raw_fd.RawFdStream`
+/// is more convenient to use and provides richer API.
+pub async fn RawFd::read_into_once(
   self : RawFd,
   buf : FixedArray[Byte],
   offset~ : Int32 = 0,
   max_len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
-  self.io.read(buf, offset~, len=max_len, context="@raw_fd.RawFd::read()")
+  self.io.read(
+    buf,
+    offset~,
+    len=max_len,
+    context="@raw_fd.RawFd::read_into_once()",
+  )
 }
 
 ///|
-/// Perform a single `write`/`WriteFile` system call
-/// asynchronously on a raw file descriptor object.
-/// Data to write come from `buf[offset:offset+len]`.
+/// Write data from `buf[offset:offset+len]` to a raw file descriptor.
 /// The number of bytes actually written will be returned,
 /// note that the number may be smaller than `len`.
-pub async fn RawFd::write(
+///
+/// `write_once` always correspond to exactly one `write`/`WriteFile` syscall.
+/// This is mainly useful for object where `write` boundary is meaningful,
+/// such as a UDP socket or a TUN virtual network device.
+/// For object with a stream based interface, `@raw_fd.RawFdStream`
+/// is more convenient to use and provides richer API.
+pub async fn RawFd::write_once(
   self : RawFd,
   buf : Bytes,
   offset~ : Int32 = 0,
   len~ : Int32 = buf.length() - offset,
 ) -> Int32 {
-  self.io.write(buf, offset~, len~, context="@raw_fd.RawFd::write()")
+  self.io.write(buf, offset~, len~, context="@raw_fd.RawFd::write_once()")
 }
 
 ///|
