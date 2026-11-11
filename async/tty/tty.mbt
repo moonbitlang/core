@@ -137,7 +137,7 @@ fn State::set_cc(self : State, index : Int32, value : Byte) -> Unit {
 
 ///|
 fn State::copy(self : State) -> State {
-  State(FixedArray::makei(self.0.length(), i => self.0[i]))
+  State(self.0.copy())
 }
 
 ///|
@@ -480,7 +480,7 @@ async fn Tty::read_once(
     buf,
     offset~,
     len~,
-    raw=self.get_state().is_raw(),
+    raw=@event_loop.platform is Windows && self.get_state().is_raw(),
     block_resize~,
     context~,
   )

@@ -8,16 +8,11 @@ import {
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/os_error",
-}
-
-#cfg(target="native")
-import {
   "moonbitlang/core/async/internal/c_buffer",
 }
 
 import {
   "moonbitlang/core/buffer",
-  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/string",
   "moonbitlang/core/encoding/base64",
