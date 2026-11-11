@@ -16,20 +16,11 @@
 /// Character-by-character lexer for a value. `lex_value` calls it only for
 /// input its DFA does not lex, which is always an error, so this function
 /// decides which error is reported and where.
-fn ParseContext::lex_value_slow(
-  ctx : ParseContext,
-  allow_rbracket~ : Bool,
-) -> Token raise ParseError {
+fn ParseContext::lex_value_slow(ctx : ParseContext) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('{') => return LBrace
     Some('[') => return LBracket
-    Some(']') =>
-      if allow_rbracket {
-        return RBracket
-      } else {
-        ctx.invalid_char(shift=-1)
-      }
     Some('n') => {
       ctx.expect_ascii_char(b'u')
       ctx.expect_ascii_char(b'l')
@@ -82,21 +73,36 @@ fn ParseContext::lex_value_slow(
 }
 
 ///|
-/// Lexes the token that starts a value, skipping leading whitespace. A single
-/// DFA skips the whitespace, recognizes the token and validates a whole
-/// number, so a number is converted by `lex_number_end` without being lexed
-/// again. Every input the DFA does not lex is malformed; it goes to
+/// `lex_value_slow` with the result in the form `lex_value` returns.
+fn ParseContext::lex_value_slow_json(
+  ctx : ParseContext,
+) -> Json? raise ParseError {
+  match ctx.lex_value_slow() {
+    Null => Some(null)
+    True => Some(Json::boolean(true))
+    False => Some(Json::boolean(false))
+    Number(n, repr) => Some(Json::number(n, repr?))
+    String(s) => Some(Json::string(s))
+    LBrace | LBracket => None
+    RBracket | RBrace | Comma => abort("unreachable")
+  }
+}
+
+///|
+/// Lexes what starts a value, skipping leading whitespace. A scalar is
+/// returned as the finished value, so no token is allocated for it. For `{`
+/// or `[` the result is `None` and the cursor is just past the bracket.
+///
+/// A single DFA skips the whitespace, recognizes the token and validates a
+/// whole number, so a number is converted by `lex_number_end` without being
+/// lexed again. Every input the DFA does not lex is malformed; it goes to
 /// `lex_value_slow` with the cursor before the token (before its leading
 /// whitespace, or at the start of an incomplete number), so the error is the
 /// one that lexer reports.
-fn ParseContext::lex_value(
-  ctx : ParseContext,
-  allow_rbracket~ : Bool,
-) -> Token raise ParseError {
+fn ParseContext::lex_value(ctx : ParseContext) -> Json? raise ParseError {
   lexscan ctx with longest {
-    re"^[ \t\r\n]*[{]" => LBrace
-    re"^[ \t\r\n]*\[" => LBracket
-    re"^[ \t\r\n]*\"" => String(ctx.lex_string())
+    re"^[ \t\r\n]*[{\[]" => None
+    re"^[ \t\r\n]*\"" => Some(Json::string(ctx.lex_string()))
     re"^[ \t\r\n]*" +
     (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+\-]?[0-9]+)?" as num) => {
       let num_end = ctx.offset
@@ -104,17 +110,12 @@ fn ParseContext::lex_value(
         num_end - num.length(),
         num_end,
       )
-      Number(n, repr.map(repr => repr.to_owned()))
+      let repr = repr.map(repr => repr.to_owned())
+      Some(Json::number(n, repr?))
     }
-    re"^[ \t\r\n]*null" => Null
-    re"^[ \t\r\n]*true" => True
-    re"^[ \t\r\n]*false" => False
-    re"^[ \t\r\n]*\]" =>
-      if allow_rbracket {
-        RBracket
-      } else {
-        ctx.invalid_char(shift=-1)
-      }
+    re"^[ \t\r\n]*null" => Some(null)
+    re"^[ \t\r\n]*true" => Some(Json::boolean(true))
+    re"^[ \t\r\n]*false" => Some(Json::boolean(false))
     // A prefix that starts like a number but does not finish as one, such
     // as `1.` or `1e+`, is longer than any valid number match, so this case
     // wins. `lexscan` has already moved the cursor past the prefix; move it
@@ -123,8 +124,8 @@ fn ParseContext::lex_value(
     re"^[ \t\r\n]*" +
     (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][+\-]?[0-9]*)?" as prefix) => {
       ctx.offset -= prefix.length()
-      ctx.lex_value_slow(allow_rbracket~)
+      ctx.lex_value_slow_json()
     }
-    _ => ctx.lex_value_slow(allow_rbracket~)
+    _ => ctx.lex_value_slow_json()
   }
 }

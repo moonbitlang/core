@@ -189,6 +189,17 @@ test "expect_char at the upper BMP boundary" {
 }
 
 ///|
+/// In the context of `[`, lexes the `]` of an empty array, skipping leading
+/// whitespace, and returns whether it was there. Otherwise the cursor stays
+/// before the first element.
+fn ParseContext::lex_empty_array_end(ctx : ParseContext) -> Bool {
+  lexscan ctx {
+    re"^[ \t\r\n]*\]" => true
+    _ => false
+  }
+}
+
+///|
 /// Lexes `,` or `]` after an array element, skipping leading whitespace.
 /// Anything else is an error, reported by `unexpected_token`.
 fn ParseContext::lex_after_array_value(
@@ -227,33 +238,40 @@ fn ParseContext::lex_after_object_value(
 }
 
 ///|
+/// A property name with the offset of its opening quote, or `}` (`name` is
+/// `None`) with its offset. `#valtype` keeps it out of the heap on native.
+#valtype
+priv struct PropertyName {
+  name : String?
+  offset : Int32
+}
+
+///|
 /// In the context of `{`, lexes `}` or a property name, skipping leading
-/// whitespace, and returns the token with the offset of its first character.
-/// Anything else is an error, reported by `unexpected_token`.
+/// whitespace. Anything else is an error, reported by `unexpected_token`.
 fn ParseContext::lex_property_name(
   ctx : ParseContext,
-) -> (Token, Int32) raise ParseError {
+) -> PropertyName raise ParseError {
   lexscan ctx {
     re"^[ \t\r\n]*\"" => {
       let offset = ctx.offset - 1
-      (String(ctx.lex_string()), offset)
+      { name: Some(ctx.lex_string()), offset, }
     }
-    re"^[ \t\r\n]*[}]" => (RBrace, ctx.offset - 1)
+    re"^[ \t\r\n]*[}]" => { name: None, offset: ctx.offset - 1, }
     _ => ctx.unexpected_token()
   }
 }
 
 ///|
 /// In the context of `{ ...,`, lexes a property name, skipping leading
-/// whitespace, and returns it with the offset of its opening quote. Anything
-/// else is an error, reported by `unexpected_token`.
+/// whitespace. Anything else is an error, reported by `unexpected_token`.
 fn ParseContext::lex_property_name2(
   ctx : ParseContext,
-) -> (Token, Int32) raise ParseError {
+) -> PropertyName raise ParseError {
   lexscan ctx {
     re"^[ \t\r\n]*\"" => {
       let offset = ctx.offset - 1
-      (String(ctx.lex_string()), offset)
+      { name: Some(ctx.lex_string()), offset, }
     }
     _ => ctx.unexpected_token()
   }
