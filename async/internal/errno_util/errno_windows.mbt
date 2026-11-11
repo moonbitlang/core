@@ -71,3 +71,7 @@ pub let windows_ERROR_HANDLE_EOF : Int32 = 38
 ///|
 /// `ERROR_BROKEN_PIPE`
 pub let windows_ERROR_BROKEN_PIPE : Int32 = 109
+
+///|
+/// `ERROR_INVALID_HANDLE`
+pub let windows_ERROR_INVALID_HANDLE : Int32 = 6

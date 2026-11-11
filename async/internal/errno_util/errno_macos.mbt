@@ -51,3 +51,7 @@ pub let macos_EINPROGRESS : Int32 = 36
 ///|
 /// `EWOULDBLOCK`
 pub let macos_EWOULDBLOCK : Int32 = macos_EAGAIN
+
+///|
+/// `EBADF`
+pub let macos_EBADF : Int32 = 9
