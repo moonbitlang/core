@@ -33,7 +33,8 @@ test "map JSON conversion keeps only live entries" {
 }
 
 ///|
-// Older compilers expand this derive through deprecated String::to_json.
+// Older compilers expand ToJson through deprecated String::to_json; current
+// compilers also name the deprecated JsonPath alias in FromJson signatures.
 #derive(@json.ToJson, @json.FromJson, Debug, Eq)
 #warnings("-deprecated")
 priv enum Expr {

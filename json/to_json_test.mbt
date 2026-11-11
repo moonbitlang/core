@@ -269,6 +269,8 @@ test "Json constructor converts maps" {
 }
 
 ///|
+// Current compilers still name JsonPath in generated FromJson signatures.
+#warnings("-deprecated")
 #derive(@json.ToJson, @json.FromJson, Eq)
 priv struct Opt {
   x : Int32?

@@ -46,7 +46,7 @@ pub impl[V : @json.FromJson] @json.FromJson for HashMap[String, V] with fn from_
   path,
 ) {
   guard json is Object(obj) else {
-    raise JsonDecodeError((path, "@hashmap.from_json: expected object"))
+    raise path.error("@hashmap.from_json: expected object")
   }
   // The object's size is known, so size the table for it once instead of
   // rehashing as the entries go in.

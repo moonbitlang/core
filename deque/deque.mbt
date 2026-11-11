@@ -1951,7 +1951,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
   path,
 ) {
   guard json is Array(arr) else {
-    raise JsonDecodeError((path, "Deque::from_json: expected array"))
+    raise path.error("Deque::from_json: expected array")
   }
   let len = arr.length()
   let buf = UninitializedArray::make(len)

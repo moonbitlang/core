@@ -1570,7 +1570,7 @@ pub impl[V : @json.FromJson + Compare] @json.FromJson for SortedSet[V] with fn f
   path,
 ) {
   guard json is Array(arr) else {
-    raise JsonDecodeError((path, "@sorted_set.from_json: expected array"))
+    raise path.error("@sorted_set.from_json: expected array")
   }
   let set = new_sorted_set()
   for i, x in arr {

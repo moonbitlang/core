@@ -920,7 +920,7 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for HashSet[X] with fn f
   path,
 ) {
   guard json is Array(arr) else {
-    raise JsonDecodeError((path, "@hashset.from_json: expected array"))
+    raise path.error("@hashset.from_json: expected array")
   }
   // Sized the way `@hashset.from_array` sizes itself for this many elements.
   let res : HashSet[X] = new_hashset(

@@ -14,33 +14,49 @@
 
 ///|
 /// Error type `JsonDecodeError`.
+///
+/// Use `context.error(message)` to capture a stable location. If constructing
+/// this error directly with a temporary decode context, copy the context first.
 // Older compilers expand this derive through deprecated String::to_json.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove the deprecated_syntax suppression.
 #derive(Eq, Show, ToJson)
 #warnings("-deprecated_syntax-deprecated")
 pub(all) suberror JsonDecodeError {
-  JsonDecodeError((JsonPath, String))
+  JsonDecodeError((DecodeContext, String))
 }
 
 ///|
-/// Trait for types that can be converted from `Json`
+/// Trait for types that can be converted from `Json`.
+///
+/// The supplied context is temporary and may be reused for later elements.
+/// To retain a location, call `context.copy()`. To raise an error with a stable
+/// location, use `raise context.error(message)`. When catching and retaining
+/// errors from another decoder, call `@json.from_json(json, path=context)`;
+/// it snapshots errors even when the decoder constructs them directly.
 pub(open) trait FromJson {
-  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(Json, DecodeContext) -> Self raise JsonDecodeError
 }
 
 ///|
-/// Create from `json`.
+/// Create from `json` at the supplied location.
+/// Errors are returned with an independent copy of their context, including
+/// errors constructed directly by custom or derived `FromJson` implementations.
 pub fn[T : FromJson] from_json(
   json : Json,
-  path~ : JsonPath = Root,
+  path~ : DecodeContext = Root,
 ) -> T raise JsonDecodeError {
-  FromJson::from_json(json, path)
+  FromJson::from_json(json, path) catch {
+    JsonDecodeError((context, message)) => raise context.error(message)
+  }
 }
 
 ///|
-fn[T] decode_error(path : JsonPath, msg : String) -> T raise JsonDecodeError {
-  raise JsonDecodeError((path, msg))
+fn[T] decode_error(
+  path : DecodeContext,
+  msg : String,
+) -> T raise JsonDecodeError {
+  raise path.error(msg)
 }
 
 ///|
@@ -191,11 +207,11 @@ pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
 /// element that fails to decode leaves no uninitialised memory behind.
 fn[X : FromJson] decode_elements(
   a : Array[Json],
-  path : JsonPath,
+  path : DecodeContext,
 ) -> Array[X] raise JsonDecodeError {
   // The test cannot fail; it only narrows the binding so that `index` becomes
-  // assignable, letting every element share one path node. See `JsonPath`.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  // assignable, letting every element share one path node. See `DecodeContext`.
+  guard! DecodeContext::Index(path, index=0) is (Index(_) as new_path)
   let res : Array[X] = Array(capacity=a.length())
   for i, x in a {
     new_path.index = i
@@ -222,7 +238,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
     return []
   }
   // As above: the test cannot fail, it just makes `index` assignable.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  guard! DecodeContext::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
     FromJson::from_json(a.unsafe_get(0), new_path),
@@ -246,7 +262,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
   }
   let res = Map([], capacity=obj.length())
   // As above: the test cannot fail, it just makes `key` assignable.
-  guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
+  guard! DecodeContext::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
   for k, v in obj {
     new_path.key = k
