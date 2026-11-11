@@ -17,6 +17,11 @@
 ///
 /// Use `context.error(message)` to capture a stable location. If constructing
 /// this error directly with a temporary decode context, copy the context first.
+///
+/// The path payload may become a JSON Pointer string in a future API revision.
+/// Prefer `context.error(message)` over constructing this error directly.
+// TODO: Consider adding DecodeError with a string path and deprecating the
+// legacy constructor after migrating compiler-generated decoders and matches.
 // Older compilers expand this derive through deprecated String::to_json.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove the deprecated_syntax suppression.
@@ -31,24 +36,19 @@ pub(all) suberror JsonDecodeError {
 ///
 /// The supplied context is temporary and may be reused for later elements.
 /// To retain a location, call `context.copy()`. To raise an error with a stable
-/// location, use `raise context.error(message)`. When catching and retaining
-/// errors from another decoder, call `@json.from_json(json, path=context)`;
-/// it snapshots errors even when the decoder constructs them directly.
+/// location, use `raise context.error(message)`. Errors constructed directly
+/// by custom or derived decoders are not automatically snapshotted.
 pub(open) trait FromJson {
   fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
-/// Create from `json` at the supplied location.
-/// Errors are returned with an independent copy of their context, including
-/// errors constructed directly by custom or derived `FromJson` implementations.
+/// Create from `json`.
 pub fn[T : FromJson] from_json(
   json : Json,
   path~ : JsonPath = Root,
 ) -> T raise JsonDecodeError {
-  FromJson::from_json(json, path) catch {
-    JsonDecodeError((context, message)) => raise context.error(message)
-  }
+  FromJson::from_json(json, path)
 }
 
 ///|
