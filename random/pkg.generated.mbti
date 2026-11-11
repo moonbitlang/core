@@ -14,9 +14,9 @@ pub fn boolean() -> Bool
 #deprecated
 pub fn chacha8(seed? : Bytes) -> &Source
 
-pub fn double() -> Double
+pub fn double(min? : Double, max? : Double) -> Double
 
-pub fn float() -> Float
+pub fn float(min? : Float, max? : Float) -> Float
 
 pub fn int32(limit? : Int32) -> Int32
 
@@ -25,7 +25,7 @@ pub fn int64(limit? : Int64) -> Int64
 #deprecated
 pub fn new(seed? : Bytes) -> Rand
 
-pub fn shuffle(Int32, (Int32, Int32) -> Unit) -> Unit
+pub fn shuffle(length~ : Int32, (Int32, Int32) -> Unit) -> Unit
 
 pub fn uint32(limit? : UInt32) -> UInt32
 

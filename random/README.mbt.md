@@ -27,11 +27,11 @@ test {
 | `int64(limit?)` | Non-negative `Int64`; unbounded range `[0, 2^63)` |
 | `uint32(limit?)` | `UInt32`; unbounded range `[0, 2^32)` |
 | `uint64(limit?)` | `UInt64`; unbounded range `[0, 2^64)` |
-| `float()` | `Float` in `[0, 1)` |
-| `double()` | `Double` in `[0, 1)` |
+| `float(min?, max?)` | `Float` in `[min, max)`, default `[0, 1)` |
+| `double(min?, max?)` | `Double` in `[min, max)`, default `[0, 1)` |
 | `boolean()` | Equally likely `true` or `false` |
 | `bigint(bits=...)` | Non-negative `BigInt` with at most `bits` bits |
-| `shuffle(n, swap)` | In-place Fisher-Yates shuffle through a swap callback |
+| `shuffle(length=n, swap)` | In-place Fisher-Yates shuffle through a swap callback |
 
 For the four integer functions, an explicit `limit=n` must be positive and
 returns an unbiased integer in `[0, n)`. Omitting `limit` requests the range
@@ -94,7 +94,8 @@ test {
 
 `@random.double()` returns a value in `[0.0, 1.0)` with 53-bit precision.
 `@random.float()` returns a value in `[0.0, 1.0)` with 24-bit precision.
-These top-level functions take no arguments.
+Both accept optional `min` and `max` bounds, with the same sampling and
+validation as the corresponding `Rand` methods.
 
 ```mbt check
 ///|
@@ -106,8 +107,8 @@ test {
 }
 ```
 
-For an arbitrary half-open interval, create a `Rand` and pass `min` and
-`max` to its `double()` or `float()` method. Non-unit intervals use Goualard's gamma-section algorithm: they select
+Pass `min` and `max` to the top-level functions or the corresponding
+`Rand` methods for an arbitrary half-open interval. Non-unit intervals use Goualard's gamma-section algorithm: they select
 uniformly from a fixed grid whose step is the larger endpoint spacing. Grid
 values are one step apart, except for a possible shorter gap at the included
 lower bound. In contrast, scaling a value from `[0.0, 1.0)` with
@@ -117,10 +118,9 @@ because of intermediate rounding.
 ```mbt check
 ///|
 test {
-  let r = @random.Rand()
-  let d = r.double(min=-10.0, max=10.0)
+  let d = @random.double(min=-10.0, max=10.0)
   inspect(d >= -10.0 && d < 10.0, content="true")
-  let f = r.float(min=-10.0F, max=10.0F)
+  let f = @random.float(min=-10.0F, max=10.0F)
   inspect(f >= -10.0F && f < 10.0F, content="true")
 }
 ```
@@ -147,7 +147,7 @@ test {
 
 ## Shuffling
 
-`@random.shuffle(n, swap)` performs a Fisher-Yates shuffle over `n` elements
+`@random.shuffle(length=n, swap)` performs a Fisher-Yates shuffle over `n` elements
 using the provided swap callback. Use `r.shuffle(n, swap)` to draw from an
 explicit generator. A negative `n` aborts; zero or one needs no swaps.
 
@@ -155,7 +155,7 @@ explicit generator. A negative `n` aborts; zero or one needs no swaps.
 ///|
 test {
   let a = [1, 2, 3, 4, 5]
-  @random.shuffle(a.length(), fn(i, j) {
+  @random.shuffle(length=a.length(), fn(i, j) {
     let t = a[i]
     a[i] = a[j]
     a[j] = t
