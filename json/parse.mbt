@@ -90,7 +90,10 @@ pub fn parse(
     reject_duplicate_keys~,
     preserve_number_repr~,
   )
-  let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
+  let val = match ctx.lex_value() {
+    Some(value) => value
+    None => ctx.parse_container(remaining_available_depth=max_nesting_depth)
+  }
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
@@ -100,29 +103,18 @@ pub fn parse(
 }
 
 ///|
-fn ParseContext::parse_value(
+/// Parses the rest of a container, after `lex_value` has returned `None`: the
+/// cursor is just past the opening bracket. The recursion happens here, after
+/// `lex_value` has returned, so the stack of nested containers does not hold
+/// the frame of its DFA.
+fn ParseContext::parse_container(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
-  let tok = ctx.lex_value(allow_rbracket=false)
-  ctx.parse_value2(tok, remaining_available_depth~)
-}
-
-///|
-fn ParseContext::parse_value2(
-  ctx : ParseContext,
-  tok : Token,
-  remaining_available_depth~ : Int32,
-) -> Json raise ParseError {
-  match tok {
-    Null => null
-    True => Json::boolean(true)
-    False => Json::boolean(false)
-    Number(n, repr) => Json::number(n, repr?)
-    String(s) => Json::string(s)
-    LBrace => ctx.parse_object(remaining_available_depth~)
-    LBracket => ctx.parse_array(remaining_available_depth~)
-    RBracket | RBrace | Comma => abort("unreachable")
+  if ctx.input.unsafe_get(ctx.offset - 1) == '{' {
+    ctx.parse_object(remaining_available_depth~)
+  } else {
+    ctx.parse_array(remaining_available_depth~)
   }
 }
 
@@ -137,22 +129,21 @@ fn ParseContext::parse_object(
   let child_remaining_available_depth = remaining_available_depth - 1
   let map = Map([])
   for x = ctx.lex_property_name() {
-    match x {
-      (RBrace, _) => break Json::object(map)
-      (String(name), offset) => {
-        if ctx.reject_duplicate_keys && map.contains(name) {
-          raise DuplicateKey(offset_to_position(ctx.input, offset), name)
-        }
-        ctx.lex_after_property_name()
-        map[name] = ctx.parse_value(
+    guard x.name is Some(name) else { break Json::object(map) }
+    if ctx.reject_duplicate_keys && map.contains(name) {
+      raise DuplicateKey(offset_to_position(ctx.input, x.offset), name)
+    }
+    ctx.lex_after_property_name()
+    map[name] = match ctx.lex_value() {
+      Some(value) => value
+      None =>
+        ctx.parse_container(
           remaining_available_depth=child_remaining_available_depth,
         )
-        match ctx.lex_after_object_value() {
-          Comma => continue ctx.lex_property_name2()
-          RBrace => break Json::object(map)
-          _ => abort("unreachable")
-        }
-      }
+    }
+    match ctx.lex_after_object_value() {
+      Comma => continue ctx.lex_property_name2()
+      RBrace => break Json::object(map)
       _ => abort("unreachable")
     }
   }
@@ -168,23 +159,23 @@ fn ParseContext::parse_array(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
-  for x = ctx.lex_value(allow_rbracket=true) {
-    match x {
-      RBracket => break Json::array(vec)
-      tok => {
-        vec.push(
-          ctx.parse_value2(
-            tok,
-            remaining_available_depth=child_remaining_available_depth,
-          ),
+  if ctx.lex_empty_array_end() {
+    return Json::array(vec)
+  }
+  while true {
+    let value = match ctx.lex_value() {
+      Some(value) => value
+      None =>
+        ctx.parse_container(
+          remaining_available_depth=child_remaining_available_depth,
         )
-        let tok2 = ctx.lex_after_array_value()
-        match tok2 {
-          Comma => continue ctx.lex_value(allow_rbracket=false)
-          RBracket => break Json::array(vec)
-          _ => abort("unreachable")
-        }
-      }
+    }
+    vec.push(value)
+    match ctx.lex_after_array_value() {
+      Comma => continue
+      RBracket => break
+      _ => abort("unreachable")
     }
   }
+  Json::array(vec)
 }

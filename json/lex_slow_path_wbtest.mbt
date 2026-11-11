@@ -35,29 +35,27 @@ fn slow_path_token(token : Token) -> String {
 ///|
 test "lex_value_slow lexes every valid value token" {
   let results = [
-    " {", "[", "]", "null", "true", "false", "\"s\"", "0", "-0", "-0.5", "0e1", "7",
-    "-7", "12.5", "12e3", "12.5E-3", "1e+2", "12,", "12.5]", "12e3}", "0 ", "12e34",
-    "01",
+    " {", "[", "null", "true", "false", "\"s\"", "0", "-0", "-0.5", "0e1", "7", "-7",
+    "12.5", "12e3", "12.5E-3", "1e+2", "12,", "12.5]", "12e3}", "0 ", "12e34", "01",
   ].map(input => {
     let ctx = ParseContext::make(input, preserve_number_repr=true)
-    let token = slow_path_token(ctx.lex_value_slow(allow_rbracket=true)) catch {
+    let token = slow_path_token(ctx.lex_value_slow()) catch {
       err => err.to_string()
     }
     (input, token, ctx.offset)
   })
-  // `]` only closes an array that has no elements yet.
+  // `]` does not start a value: `parse_array` lexes the `]` of an empty array.
   let ctx = ParseContext::make("]")
-  let closing = slow_path_token(ctx.lex_value_slow(allow_rbracket=false)) catch {
+  let closing = slow_path_token(ctx.lex_value_slow()) catch {
     err => err.to_string()
   }
-  results.push(("] (not allowed)", closing, ctx.offset))
+  results.push(("]", closing, ctx.offset))
   @debug.debug_inspect(
     results,
     content=(
       #|[
       #|  (" {", "{", 2),
       #|  ("[", "[", 1),
-      #|  ("]", "]", 1),
       #|  ("null", "null", 4),
       #|  ("true", "true", 4),
       #|  ("false", "false", 5),
@@ -78,7 +76,7 @@ test "lex_value_slow lexes every valid value token" {
       #|  ("0 ", "Number(0, repr=0)", 1),
       #|  ("12e34", "Number(1.2e+35, repr=12e34)", 5),
       #|  ("01", "Invalid character '1' at line 1, column 1", 1),
-      #|  ("] (not allowed)", "Invalid character ']' at line 1, column 0", 1),
+      #|  ("]", "Invalid character ']' at line 1, column 0", 1),
       #|]
     ),
   )
