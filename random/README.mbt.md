@@ -13,8 +13,7 @@ For everyday use, call the top-level functions without creating a generator:
 ```mbt check
 ///|
 test {
-  let die = @random.int32(limit=6) + 1
-  inspect(die >= 1 && die <= 6, content="true")
+  assert_true(@random.int32(limit=6) is (0..<6))
   let count = @random.int64(limit=100L)
   inspect(count >= 0L && count < 100L, content="true")
   inspect(@random.uint32(limit=100U) < 100U, content="true")
