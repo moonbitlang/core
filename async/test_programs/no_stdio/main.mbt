@@ -13,16 +13,17 @@
 // limitations under the License.
 
 ///|
-extern "C" fn standard_handles_are_null() -> Int32 = "standard_handles_are_null"
+extern "C" fn record_main_entry() -> Int32 = "record_main_entry"
 
 ///|
 async fn main {
-  assert_eq(standard_handles_are_null(), 1)
+  // Record entry synchronously, before any assertion or async I/O can fail.
+  assert_eq(record_main_entry(), 1)
   guard @env.get_env_var("ASYNC_TEST_COMPLETION_FILE") is Some(completion_file) else {
     fail("missing completion file")
   }
   // Using process retains the stdio globals, but explicit redirection does not
-  // require the GUI application's own standard handles to exist.
+  // require the application's own standard handles to exist.
   let child = @process.run(
     "cmd.exe",
     ["/c", "exit", "0"],

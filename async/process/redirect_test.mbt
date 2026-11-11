@@ -192,17 +192,40 @@ async test "stdout=Discard" {
 
 ///|
 #cfg(all(target="native", platform="windows"))
-async test "GUI process starts without standard handles" {
-  let program = @test_util.build_test_program("gui_no_stdio")
-  let dir = @fs.tmpdir(prefix="gui_no_stdio")
+async test "process starts without standard handles" {
+  let program = @test_util.build_test_program("no_stdio")
+  let dir = @fs.tmpdir(prefix="no_stdio")
   defer @fs.rmdir(dir, recursive=true)
   let completion_file = "\{dir}/completed.txt"
+  let diagnostics_file = "\{dir}/diagnostics.txt"
+  @fs.write_text(diagnostics_file, "")
   let result = @async.with_timeout(10000, () => {
     @process.run(program, [], stdin=Empty, stdout=Collect, stderr=Collect, extra_env={
       "ASYNC_TEST_COMPLETION_FILE": completion_file,
+      "ASYNC_TEST_DIAGNOSTICS_FILE": diagnostics_file,
     })
   })
-  assert_eq(result.exit_code, 0)
+  let diagnostics = @fs.read_text(diagnostics_file)
+  // The C helper reserves these exit codes for diagnostic file failures.
+  if result.exit_code >= 80 && result.exit_code <= 82 {
+    fail(
+      "could not record fixture diagnostics (exit \{result.exit_code}):\n\{diagnostics}",
+    )
+  }
+  guard diagnostics.contains("setup: all_null=1 ") else {
+    fail("fixture setup failed (exit \{result.exit_code}):\n\{diagnostics}")
+  }
+  guard diagnostics.contains("main:") else {
+    fail(
+      "process exited before async main with NULL standard handles (exit \{result.exit_code}):\n\{diagnostics}",
+    )
+  }
+  guard diagnostics.contains("main: all_null=1 ") else {
+    fail("standard handles changed before async main:\n\{diagnostics}")
+  }
+  guard result.exit_code == 0 else {
+    fail("async main failed (exit \{result.exit_code}):\n\{diagnostics}")
+  }
   // The fixture has no stdout/stderr; verify that its async main completed.
   inspect(@fs.read_text(completion_file), content="completed")
 }
