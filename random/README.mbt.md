@@ -30,7 +30,7 @@ test {
 | `float(min?, max?)` | `Float` in `[min, max)`, default `[0, 1)` |
 | `double(min?, max?)` | `Double` in `[min, max)`, default `[0, 1)` |
 | `boolean()` | Equally likely `true` or `false` |
-| `bigint(bits)` | Non-negative `BigInt` with at most `bits` bits |
+| `bigint(bits=...)` | Non-negative `BigInt` with at most `bits` bits |
 | `shuffle(n, swap)` | In-place Fisher-Yates shuffle through a swap callback |
 
 For the four integer functions, an explicit `limit=n` must be positive and
@@ -169,16 +169,16 @@ test {
 
 ## BigInt
 
-`@random.bigint(bits)` takes an `Int32` bit count and generates a
+`@random.bigint(bits=...)` takes an `Int32` bit count and generates a
 non-negative `BigInt` with at most that many bits (leading zero bits are
-allowed). For example, `@random.bigint(128)` returns a value in `[0, 2^128)`.
+allowed). For example, `@random.bigint(bits=128)` returns a value in `[0, 2^128)`.
 Zero bits returns zero; negative bits abort. Use `r.bigint(bits)` with an
 explicit generator.
 
 ```mbt check
 ///|
 test {
-  let big = @random.bigint(128)
+  let big = @random.bigint(bits=128)
   inspect(big >= 0N, content="true")
 }
 ```

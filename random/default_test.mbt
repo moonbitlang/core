@@ -137,10 +137,10 @@ test "panic float rejects an inverted range" {
 
 ///|
 test "bigint respects bit counts" {
-  inspect(@random.bigint(0), content="0")
+  inspect(@random.bigint(bits=0), content="0")
   for bits in [1, 7, 8, 9, 31, 32, 63, 64, 65, 128] {
     for _ in 0..<10 {
-      let value = @random.bigint(bits)
+      let value = @random.bigint(bits~)
       assert_true(value >= 0N && value.bit_length() <= bits)
     }
   }
@@ -148,7 +148,7 @@ test "bigint respects bit counts" {
 
 ///|
 test "panic bigint rejects negative bits" {
-  ignore(@random.bigint(-1))
+  ignore(@random.bigint(bits=-1))
 }
 
 ///|

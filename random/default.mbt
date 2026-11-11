@@ -170,17 +170,17 @@ pub fn boolean() -> Bool {
 ///|
 /// Returns a non-negative pseudo-random `BigInt` with at most `bits` bits,
 /// using the shared generator described in [int32]. Leading zero bits are
-/// allowed. The `bits` parameter is an `Int32` bit count, so `bigint(128)`
+/// allowed. The `bits` parameter is an `Int32` bit count, so `bigint(bits=128)`
 /// returns a value in `0..<2^128`. Zero bits returns zero; negative bits abort.
 ///
 /// # Example
 /// ```mbt check
 /// test {
-///   let value = @random.bigint(128)
+///   let value = @random.bigint(bits=128)
 ///   inspect(value >= 0N && value.bit_length() <= 128, content="true")
 /// }
 /// ```
-pub fn bigint(bits : Int32) -> @bigint.BigInt {
+pub fn bigint(bits~ : Int32) -> @bigint.BigInt {
   guard bits >= 0 else { abort("bigint: bits must be non-negative") }
   default_rand.bigint(bits)
 }
