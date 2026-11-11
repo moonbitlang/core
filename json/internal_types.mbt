@@ -14,11 +14,10 @@
 
 ///|
 priv struct ParseContext {
-  /// Scans `input`: `sc.data` is `input`, and `sc.cursor` is the offset of
-  /// the next code unit to read. The hot token lexers use `lexscan sc`, which
-  /// advances the cursor without slicing the input; the rest of the lexer
-  /// reads and writes `sc.cursor` directly.
-  sc : @lexbuf.StringScanner
+  /// The offset in `input` of the next code unit to read. The hot token
+  /// lexers use `lexscan ctx`, which advances it without slicing the input;
+  /// the rest of the lexer reads and writes it directly.
+  mut offset : Int32
   input : StringView
   end_offset : Int32
   reject_duplicate_keys : Bool
@@ -32,12 +31,29 @@ fn ParseContext::make(
   preserve_number_repr~ : Bool = false,
 ) -> ParseContext {
   {
-    sc: { data: input, cursor: 0, },
+    offset: 0,
     input,
     end_offset: input.length(),
     reject_duplicate_keys,
     preserve_number_repr,
   }
+}
+
+///|
+/// `ParseContext` is the target of `lexscan` in the token lexers: it scans
+/// `input` from `offset`, and writes the end of the match back to `offset`.
+impl @lexbuf.Scannable for ParseContext with fn scan_input(self) {
+  self.input
+}
+
+///|
+impl @lexbuf.Scannable for ParseContext with fn scan_cursor(self) {
+  self.offset
+}
+
+///|
+impl @lexbuf.Scannable for ParseContext with fn set_scan_cursor(self, cursor) {
+  self.offset = cursor
 }
 
 ///|

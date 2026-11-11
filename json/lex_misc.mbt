@@ -14,14 +14,14 @@
 
 ///|
 fn ParseContext::read_char(ctx : ParseContext) -> Char? {
-  if ctx.sc.cursor < ctx.end_offset {
-    let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
-    ctx.sc.cursor += 1
+  if ctx.offset < ctx.end_offset {
+    let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
+    ctx.offset += 1
     if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.sc.cursor < ctx.end_offset {
-        let c2 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
+      if ctx.offset < ctx.end_offset {
+        let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.sc.cursor += 1
+          ctx.offset += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
           return Some(c3.unsafe_to_char())
         }
@@ -49,9 +49,9 @@ fn ParseContext::expect_char(
   ctx : ParseContext,
   c : Char,
 ) -> Unit raise ParseError {
-  guard ctx.sc.cursor < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
-  ctx.sc.cursor += 1
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
+  ctx.offset += 1
   let c0 = c.to_int()
   if c0 <= 0xFFFF {
     // c0 is a valid character in the BMP.
@@ -62,15 +62,15 @@ fn ParseContext::expect_char(
     // c0 is not bmp code point
     // c1 has to be surrogate pair otherwise it is invalid
     guard c1 is (SURROGATE_LOW_CHAR..<=SURROGATE_HIGH_CHAR) &&
-      ctx.sc.cursor < ctx.end_offset else {
+      ctx.offset < ctx.end_offset else {
       ctx.invalid_char(shift=-1)
     }
-    let c2 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
+    let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
     let c3 = (c1 << 10) + c2 - 0x35fdc00
     if c3 != c0 {
       ctx.invalid_char(shift=-1)
     } else {
-      ctx.sc.cursor += 1 // consume and move forward
+      ctx.offset += 1 // consume and move forward
     }
   }
 }
@@ -82,9 +82,9 @@ fn ParseContext::expect_ascii_char(
   ctx : ParseContext,
   c : Byte,
 ) -> Unit raise ParseError {
-  guard ctx.sc.cursor < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.sc.cursor).to_int()
-  ctx.sc.cursor += 1
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
+  ctx.offset += 1
   if c.to_int() != c1 {
     ctx.invalid_char(shift=-1)
   }
@@ -126,10 +126,10 @@ test "expect_char with surrogate pair" {
 //
 // `offset` is held in a local for the duration of the scan so each
 // consumed whitespace character is one `local.set` instead of a
-// `struct.set` against the scanner.
+// `struct.set` against the context.
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   let end = ctx.end_offset
-  ctx.sc.cursor = for offset = ctx.sc.cursor {
+  ctx.offset = for offset = ctx.offset {
     if offset >= end {
       break offset
     }
@@ -145,25 +145,25 @@ test "lex_skip_whitespace" {
   // Empty input: nothing to skip.
   let ctx = ParseContext::make("")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.sc.cursor, content=0)
+  json_inspect(ctx.offset, content=0)
   // Only whitespace: offset advances to end.
   let ctx = ParseContext::make("   \t\r\n")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.sc.cursor, content=6)
+  json_inspect(ctx.offset, content=6)
   // Mixed whitespace before a token: stops at the first non-ws byte.
   let ctx = ParseContext::make(" \t\r\n{")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.sc.cursor, content=4)
+  json_inspect(ctx.offset, content=4)
   // No leading whitespace: offset unchanged.
   let ctx = ParseContext::make("{}")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.sc.cursor, content=0)
+  json_inspect(ctx.offset, content=0)
   // Non-ASCII / Unicode whitespace (e.g. U+00A0 NBSP) must NOT be
   // treated as JSON whitespace — RFC 8259 limits the set to the four
   // ASCII chars handled above.
   let ctx = ParseContext::make("\u{00A0}x")
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.sc.cursor, content=0)
+  json_inspect(ctx.offset, content=0)
 }
 
 ///|
@@ -185,7 +185,7 @@ test "expect_char at the upper BMP boundary" {
   let ctx = ParseContext::make("\u{FFFF}😀")
   ctx.expect_char('\u{FFFF}')
   ctx.expect_char('😀')
-  json_inspect(ctx.sc.cursor, content=3)
+  json_inspect(ctx.offset, content=3)
 }
 
 ///|
@@ -194,7 +194,7 @@ test "expect_char at the upper BMP boundary" {
 fn ParseContext::lex_after_array_value(
   ctx : ParseContext,
 ) -> Token raise ParseError {
-  lexscan ctx.sc {
+  lexscan ctx {
     re"^[ \t\r\n]*," => Comma
     re"^[ \t\r\n]*\]" => RBracket
     _ => ctx.unexpected_token()
@@ -207,7 +207,7 @@ fn ParseContext::lex_after_array_value(
 fn ParseContext::lex_after_property_name(
   ctx : ParseContext,
 ) -> Unit raise ParseError {
-  lexscan ctx.sc {
+  lexscan ctx {
     re"^[ \t\r\n]*:" => ()
     _ => ctx.unexpected_token()
   }
@@ -219,7 +219,7 @@ fn ParseContext::lex_after_property_name(
 fn ParseContext::lex_after_object_value(
   ctx : ParseContext,
 ) -> Token raise ParseError {
-  lexscan ctx.sc {
+  lexscan ctx {
     re"^[ \t\r\n]*," => Comma
     re"^[ \t\r\n]*[}]" => RBrace
     _ => ctx.unexpected_token()
@@ -233,12 +233,12 @@ fn ParseContext::lex_after_object_value(
 fn ParseContext::lex_property_name(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
-  lexscan ctx.sc {
+  lexscan ctx {
     re"^[ \t\r\n]*\"" => {
-      let offset = ctx.sc.cursor - 1
+      let offset = ctx.offset - 1
       (String(ctx.lex_string()), offset)
     }
-    re"^[ \t\r\n]*[}]" => (RBrace, ctx.sc.cursor - 1)
+    re"^[ \t\r\n]*[}]" => (RBrace, ctx.offset - 1)
     _ => ctx.unexpected_token()
   }
 }
@@ -250,9 +250,9 @@ fn ParseContext::lex_property_name(
 fn ParseContext::lex_property_name2(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
-  lexscan ctx.sc {
+  lexscan ctx {
     re"^[ \t\r\n]*\"" => {
-      let offset = ctx.sc.cursor - 1
+      let offset = ctx.offset - 1
       (String(ctx.lex_string()), offset)
     }
     _ => ctx.unexpected_token()

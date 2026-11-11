@@ -52,12 +52,12 @@ fn ParseContext::lex_value_slow(
     Some('-') =>
       match ctx.read_char() {
         Some('0') => {
-          let { value: n, repr, } = ctx.lex_zero(start=ctx.sc.cursor - 2)
+          let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some('1'..<='9') => {
           let { value: n, repr, } = ctx.lex_decimal_integer(
-            start=ctx.sc.cursor - 2,
+            start=ctx.offset - 2,
           )
           return Number(n, repr.map(repr => repr.to_owned()))
         }
@@ -65,11 +65,11 @@ fn ParseContext::lex_value_slow(
         None => raise InvalidEof
       }
     Some('0') => {
-      let { value: n, repr, } = ctx.lex_zero(start=ctx.sc.cursor - 1)
+      let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('1'..<='9') => {
-      let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.sc.cursor - 1)
+      let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('"') => {
@@ -93,13 +93,13 @@ fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool,
 ) -> Token raise ParseError {
-  lexscan ctx.sc with longest {
+  lexscan ctx with longest {
     re"^[ \t\r\n]*[{]" => LBrace
     re"^[ \t\r\n]*\[" => LBracket
     re"^[ \t\r\n]*\"" => String(ctx.lex_string())
     re"^[ \t\r\n]*" +
     (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+\-]?[0-9]+)?" as num) => {
-      let num_end = ctx.sc.cursor
+      let num_end = ctx.offset
       let { value: n, repr, } = ctx.lex_number_end(
         num_end - num.length(),
         num_end,
@@ -122,7 +122,7 @@ fn ParseContext::lex_value(
     // reports the error at the usual position.
     re"^[ \t\r\n]*" +
     (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][+\-]?[0-9]*)?" as prefix) => {
-      ctx.sc.cursor -= prefix.length()
+      ctx.offset -= prefix.length()
       ctx.lex_value_slow(allow_rbracket~)
     }
     _ => ctx.lex_value_slow(allow_rbracket~)
