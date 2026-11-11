@@ -13,14 +13,18 @@
 // limitations under the License.
 
 ///|
-/// `key` and `index` are mutable so that a decoder can reuse one path node for
-/// every element of an array or object instead of allocating a node per
-/// element; on large arrays that is worth roughly 3.5x. A reused node must not
-/// outlive the decode call that created it.
+/// The current location of a JSON decode, rendered as a JSON Pointer.
 ///
-/// MoonBit only allows assigning to a constructor's mutable field through a
-/// binding that pattern matching has narrowed to that variant, so the decoders
-/// in `from_json.mbt` obtain one with a `guard!` whose test cannot fail.
+/// A context passed to `FromJson::from_json` is temporary: collection decoders
+/// may reuse its nodes for later elements. Call `copy()` before retaining a
+/// context, including one returned by `add_key` or `add_index`. Copying also
+/// snapshots every ancestor, so nested locations remain stable.
+///
+/// Use `error(message)` to create an error with a stable location.
+//
+// `key` and `index` are mutable so decoders can reuse one node across siblings.
+// MoonBit only allows assigning to a constructor's mutable field through a
+// binding narrowed to that variant, so decoders use an always-true `guard!`.
 #derive(Eq)
 enum JsonPath {
   Root
@@ -29,13 +33,33 @@ enum JsonPath {
 }
 
 ///|
-/// Appends an array index to the JSON path.
+/// Copies this location and all its ancestors into an independent snapshot.
+/// The snapshot may be retained after decoding continues or finishes.
+pub fn JsonPath::copy(self : JsonPath) -> JsonPath {
+  match self {
+    Root => Root
+    Key(parent, key~) => Key(parent.copy(), key~)
+    Index(parent, index~) => Index(parent.copy(), index~)
+  }
+}
+
+///|
+/// Creates a decode error with an independent snapshot of the current location.
+/// Prefer this over constructing `JsonDecodeError` with a temporary context.
+pub fn JsonPath::error(self : JsonPath, message : String) -> JsonDecodeError {
+  JsonDecodeError((self.copy(), message))
+}
+
+///|
+/// Creates a child context for an array index, sharing this context as its parent.
+/// Call `copy()` to retain the resulting location independently of decoding.
 pub fn JsonPath::add_index(self : JsonPath, index : Int32) -> JsonPath {
   Index(self, index~)
 }
 
 ///|
-/// Appends an object key to the JSON path.
+/// Creates a child context for an object key, sharing this context as its parent.
+/// Call `copy()` to retain the resulting location independently of decoding.
 pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
   Key(self, key~)
 }

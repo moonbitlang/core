@@ -906,7 +906,7 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for Set[X] with fn from_
   path,
 ) {
   guard json is Array(arr) else {
-    raise JsonDecodeError((path, "@set.from_json: expected array"))
+    raise path.error("@set.from_json: expected array")
   }
   // Sized the way `Set([...])` sizes itself for this many elements.
   let res : Set[X] = new_set(

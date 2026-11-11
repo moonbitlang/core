@@ -426,7 +426,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Queue[A] with fn from_json(
   path,
 ) {
   guard json is Array(_) else {
-    raise JsonDecodeError((path, "@queue.from_json: expected array"))
+    raise path.error("@queue.from_json: expected array")
   }
   { inner: @json.FromJson::from_json(json, path), }
 }

@@ -84,7 +84,9 @@ pub impl ToJson for Json
 type JsonPath
 pub fn JsonPath::add_index(Self, Int32) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
+pub fn JsonPath::copy(Self) -> Self
 pub fn JsonPath::equal(Self, Self) -> Bool
+pub fn JsonPath::error(Self, String) -> JsonDecodeError
 pub fn JsonPath::to_string(Self) -> String
 pub impl Show for JsonPath
 pub impl ToJson for JsonPath

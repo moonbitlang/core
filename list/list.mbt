@@ -107,7 +107,7 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
   path,
 ) {
   guard json is Array(arr) else {
-    raise JsonDecodeError((path, "@list.from_json: expected array"))
+    raise path.error("@list.from_json: expected array")
   }
   for i in arr.length()>..0; list = Empty {
     continue list.prepend(A::from_json(arr[i], path.add_index(i)))
