@@ -117,11 +117,11 @@ async test "proxied https request" {
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
-    let (_, result) = @http.get_text(
+    let (_, result) = @http.get(
       "https://www.moonbitlang.com",
       proxy=ClientConnection("http://127.0.0.1:\{port}"),
     )
-    assert_true(result.has_prefix("<!doctype html>"))
+    assert_true(result.text().has_prefix("<!doctype html>"))
   }
   json_inspect(log, content=[
     "proxy server: connected to www.moonbitlang.com:443 successfully",
@@ -137,11 +137,11 @@ async test "proxied http request" {
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
-    let (_, result) = @http.get_text(
+    let (_, result) = @http.get(
       "http://www.example.org",
       proxy=ClientConnection("http://127.0.0.1:\{port}"),
     )
-    inspect(result[:15], content="<!doctype html>")
+    inspect(result.text()[:15], content="<!doctype html>")
   }
   json_inspect(log, content=[
     "proxy server: connected to www.example.org:80 successfully",
@@ -179,7 +179,7 @@ async test "proxied misc request" {
       @http.ClientConnection("http://127.0.0.1:\{proxy_server_addr.port}")
     }
 
-    let _ = @http.get_text("http://127.0.0.1:\{port}", proxy=proxy())
+    let _ = @http.get("http://127.0.0.1:\{port}", proxy=proxy())
     let _ = @http.put_text("http://127.0.0.1:\{port}", "abcd", proxy=proxy())
     let _ = @http.post_text("http://127.0.0.1:\{port}", "efgh", proxy=proxy())
   }
@@ -206,7 +206,7 @@ async test "proxy error" {
     }
     debug_inspect(
       @test.expect_error_async(() => {
-        @http.get_binary(
+        @http.get(
           "https://www.moonbitlang.com",
           proxy=ClientConnection("http://127.0.0.1:\{port}"),
         )

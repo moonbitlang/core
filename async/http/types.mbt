@@ -103,3 +103,25 @@ pub struct Cookie {
   http_only : Bool
   extensions : Array[String]
 }
+
+///|
+/// Type for collected HTTP message body
+struct MessageBody(Bytes)
+
+///|
+/// Return raw binary content of a HTTP message body
+pub fn MessageBody::binary(self : MessageBody) -> Bytes {
+  self.0
+}
+
+///|
+/// Decode a HTTP message body as UTF-8 encoded text
+pub fn MessageBody::text(self : MessageBody) -> String raise {
+  @utf8.decode(self.0)
+}
+
+///|
+/// Decode a HTTP message body as UTF-8 encoded JSON
+pub fn MessageBody::json(self : MessageBody) -> @json.Json raise {
+  @json.parse(@utf8.decode(self.0))
+}

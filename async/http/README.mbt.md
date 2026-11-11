@@ -8,14 +8,15 @@ Simple HTTP request can be made in just one line:
 ///|
 #cfg(any(target="native", target="js"))
 async test {
-  let (response, body) = @http.get_text("https://www.moonbitlang.com")
+  let (response, body) = @http.get("https://www.moonbitlang.com")
   inspect(response.code, content="200")
-  assert_true(body.has_prefix("<!doctype html>"))
+  assert_true(body.text().has_prefix("<!doctype html>"))
 }
 ```
 
-Use `@http.get_text()` to get a UTF-8-decoded `String`,
-`@http.get_binary()` to get raw `Bytes`, or `@http.get_json()` to get `Json`.
+Here `body` represent collected response body of the request.
+Use `.binary()` to get its raw binary content, `.text()` to decode it as UTF-8 encoded text,
+or `.json()` to decode it as UTF-8 encoded JSON.
 
 ## Streaming message body
 
@@ -26,7 +27,7 @@ The `@http` package also provide convenient API for manipulating message body st
 ///|
 #cfg(any(target="native", target="js"))
 async test {
-  let (response, conn) = @http.get("https://www.moonbitlang.com")
+  let (response, conn) = @http.get_stream("https://www.moonbitlang.com")
   defer conn.close()
   inspect(response.code, content="200")
   let body = conn.text.read_all()
@@ -34,21 +35,21 @@ async test {
 }
 ```
 
-Here, `@http.get(url)` performs a `GET` request to URL,
+Here, `@http.get_stream(url)` performs a `GET` request to URL,
 and returns the response header from the server,
 plus the HTTP connection assigned for this request.
 The content of response body can be read from the connection through the `@io.BinaryReader` interface,
 or through the `@io.TextReader` interface using the `.text` view on the connection.
 The connection must be closed via `.close()` after finishing the request.
 
-`@http.put` and `@http.post` work similarly, except that the response header will not be returned immediately.
-`@http.put` and `@http.post` only returns the HTTP connection for the request.
+`@http.put_stream` and `@http.post_stream` work similarly, except that the response header will not be returned immediately.
+`@http.put_stream` and `@http.post_stream` only returns the HTTP connection for the request.
 The caller should first write the content of request body
 through the `@io.BinaryWriter` interface on the connection
 (or through the `@io.TextWriter` interface via `.text`).
 After finishing the request body, `.end_request` should be invoked on the connection
 to finish the request and obtain response header from the server.
-After `.end_request`, body of response message can be read from the connection as in the `@http.get` case above.
+After `.end_request`, body of response message can be read from the connection as in the `@http.get_stream` case above.
 
 ## Generic HTTP client
 When performing multiple requests to the same host,

@@ -7,6 +7,7 @@ import {
 #cfg(any(target="native", target="wasm", target="js"))
 import {
   "moonbitlang/core/buffer",
+  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/async/io",
   "moonbitlang/core/async/tls",
 }
@@ -17,7 +18,6 @@ import {
   "moonbitlang/core/string",
   "moonbitlang/core/set",
   "moonbitlang/core/cmp",
-  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/async/socket",
   "moonbitlang/core/async/internal/gzip_internal" @gzip,
 }
