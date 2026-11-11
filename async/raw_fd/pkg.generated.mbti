@@ -1,8 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/async/raw_fd"
+package "moonbitlang/core/async/raw_fd"
 
 import {
-  "moonbitlang/async/io",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/types",
 }
 
 // Values
@@ -11,34 +12,34 @@ import {
 
 // Types and methods
 pub struct RawFd {
-  fd : Int32
+  fd : @types.Fd
   // private fields
 }
 #alias(new, deprecated)
-pub async fn RawFd::RawFd(Int32) -> Self
+pub async fn RawFd::RawFd(@types.Fd) -> Self
 pub fn RawFd::close(Self) -> Unit
-pub async fn RawFd::read(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn RawFd::write(Self, Bytes, offset? : Int32, len? : Int32) -> Int32
+pub async fn RawFd::read_into_once(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn RawFd::write_once(Self, Bytes, offset? : Int32, len? : Int32) -> Int32
 
 pub struct RawFdStream {
-  fd : Int32
+  fd : @types.Fd
   // private fields
 }
-pub async fn RawFdStream::RawFdStream(Int32) -> Self
+pub async fn RawFdStream::RawFdStream(@types.Fd) -> Self
 pub fn RawFdStream::close(Self) -> Unit
-pub async fn RawFdStream::drop_all(Self) -> Int64
-pub async fn RawFdStream::drop_exactly(Self, Int32) -> Unit
-pub async fn RawFdStream::peek(Self) -> BytesView?
-pub async fn RawFdStream::peek_at_least(Self, Int32) -> BytesView
-pub async fn RawFdStream::peek_exactly(Self, Int32) -> BytesView
-pub async fn RawFdStream::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn RawFdStream::read(Self) -> Bytes?
-pub async fn RawFdStream::read_all(Self) -> Bytes
-pub async fn RawFdStream::read_at_least(Self, Int32) -> Bytes
-pub async fn RawFdStream::read_exactly(Self, Int32) -> Bytes
-pub async fn RawFdStream::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn RawFdStream::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
-pub async fn RawFdStream::write(Self, BytesView) -> Unit
+pub async fn RawFdStream::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn RawFdStream::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
+pub async fn RawFdStream::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn RawFdStream::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn RawFdStream::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn RawFdStream::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn RawFdStream::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn RawFdStream::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn RawFdStream::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn RawFdStream::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn RawFdStream::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn RawFdStream::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
+pub async fn RawFdStream::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn RawFdStream::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryReader for RawFdStream
 pub impl @io.BinaryWriter for RawFdStream

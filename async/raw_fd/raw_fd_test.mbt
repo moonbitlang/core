@@ -28,7 +28,7 @@ async test "pipe as raw fd" {
       defer r.close()
       let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let n = r.read(buf)
+        let n = r.read_into_once(buf)
         guard n > 0 else { break }
         @async.sleep(50)
         let data = buf.unsafe_reinterpret_as_bytes()[:n]
@@ -41,7 +41,7 @@ async test "pipe as raw fd" {
       for data in [b"abcd", b"1234", b"ABCD"] {
         @async.sleep(200)
         for written = 0; written < data.length(); {
-          let n = w.write(data, offset=written)
+          let n = w.write_once(data, offset=written)
           continue written + n
         }
         log.push("write(\{@utf8.decode(data).escape()})")
@@ -108,7 +108,7 @@ async test "file as raw fd" {
   assert_true(@event_loop.kind_of_fd(fd, context="kind_of_fd") is Regular)
   let buf = FixedArray::make(truth.length() + 1, b'\x00')
   let len = for n = 0; n < buf.length(); {
-    let delta = file.read(buf, offset=n)
+    let delta = file.read_into_once(buf, offset=n)
     guard delta > 0 else { break n }
     continue n + delta
   } nobreak {
@@ -170,10 +170,10 @@ async test "socket as raw fd" {
     let buf = FixedArray::make(1024, b'\x00')
     for data in [b"abcd", b"1234", b"ABCD"] {
       @async.sleep(200)
-      guard client.write(data) == data.length() else {
+      guard client.write_once(data) == data.length() else {
         raise Failure::Failure("UDP packet not fully sent")
       }
-      let n = client.read(buf)
+      let n = client.read_into_once(buf)
       let data = buf.unsafe_reinterpret_as_bytes()[:n]
       @async.sleep(50)
       log.push("client received \{@utf8.decode(data).escape()}")
