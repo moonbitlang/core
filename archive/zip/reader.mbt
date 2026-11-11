@@ -255,15 +255,14 @@ fn zip64_central_bounds(
       "zip: classic and zip64 entry counts differ",
     )
   }
-  guard central_size_raw == MAX_U32 ||
-    UInt64::extend_uint(central_size_raw) == zip_size else {
+  guard central_size_raw == MAX_U32 || central_size_raw.to_uint64() == zip_size else {
     raise ZipError(
       UnsupportedFeature,
       "zip: classic and zip64 central sizes differ",
     )
   }
   guard central_offset_raw == MAX_U32 ||
-    UInt64::extend_uint(central_offset_raw) == zip_offset else {
+    central_offset_raw.to_uint64() == zip_offset else {
     raise ZipError(
       UnsupportedFeature,
       "zip: classic and zip64 central offsets differ",
@@ -277,12 +276,12 @@ fn zip64_central_bounds(
   let central_size = (if central_size_raw == MAX_U32 {
     zip_size
   } else {
-    UInt64::extend_uint(central_size_raw)
+    central_size_raw.to_uint64()
   }).to_int_checked()
   let central_offset = (if central_offset_raw == MAX_U32 {
     zip_offset
   } else {
-    UInt64::extend_uint(central_offset_raw)
+    central_offset_raw.to_uint64()
   }).to_int_checked()
   (entry_count, central_size, central_offset, zip64_offset)
 }
@@ -373,8 +372,7 @@ fn parse_end_of_central(
     total_entries == 0xFFFF ||
     central_size_raw == MAX_U32 ||
     central_offset_raw == MAX_U32 ||
-    UInt64::extend_uint(central_offset_raw) +
-    UInt64::extend_uint(central_size_raw) !=
+    central_offset_raw.to_uint64() + central_size_raw.to_uint64() !=
     eocd_offset.to_uint64()
   guard !needs_zip64 else {
     let (entry_count, central_size, central_offset, zip64_offset) = zip64_central_bounds(
@@ -421,7 +419,7 @@ fn resolve_zip64_field(
   zip64_value : UInt64?,
   classic_raw : UInt32,
 ) -> UInt64 {
-  guard need else { return UInt64::extend_uint(classic_raw) }
+  guard need else { return classic_raw.to_uint64() }
   zip64_value.unwrap()
 }
 

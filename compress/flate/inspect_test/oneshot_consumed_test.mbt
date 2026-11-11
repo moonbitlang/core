@@ -62,7 +62,7 @@ test "Decompressor returns both byte counts and preserves trailing input" {
       let result = decoder.decompress(
         input,
         mode=Prefix,
-        max_output=plain.length(),
+        max_output_bytes=plain.length(),
       )
       @test.assert_eq(result.data, plain)
       @test.assert_eq(result.consumed, raw.length())
@@ -111,7 +111,9 @@ test "Decompressor results survive reuse and failures" {
         if fixed {
           ignore(decoder.decompress_into(raw, output.mut_view(), cancelled~))
         } else {
-          ignore(decoder.decompress(raw, max_output=plain.length(), cancelled~))
+          ignore(
+            decoder.decompress(raw, max_output_bytes=plain.length(), cancelled~),
+          )
         }
       })
       @test.assert_eq(kind, Cancelled)
@@ -154,7 +156,7 @@ test "decompress and decompress_into take turns on one decompressor" {
           if fixed {
             ignore(decoder.decompress_into(raw, short.mut_view()))
           } else {
-            ignore(decoder.decompress(raw, max_output=short.length()))
+            ignore(decoder.decompress(raw, max_output_bytes=short.length()))
           }
         })
         @test.assert_eq(
@@ -175,7 +177,7 @@ test "decompress and decompress_into take turns on one decompressor" {
     @test.assert_eq(Bytes::from_array(output), plain)
   }
   let InflateError(kind, _) = @test.expect_error(() => {
-    decoder.decompress(b"", max_output=-1)
+    decoder.decompress(b"", max_output_bytes=-1)
   })
   @test.assert_eq(kind, InvalidArgument)
 }

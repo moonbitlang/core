@@ -79,8 +79,11 @@ async fn Reader::decode_chunk(
     let target = @cmp.minimum(min_len, limit)
 
     // Read from underlying transport until we have enough data to make progress
-    guard @io.BinaryReaderImpl::ensure_buffered(self.transport, target) else {
-      raise BadRequest
+    try self.transport.peek_at_least(target) catch {
+      UnexpectedEof => raise BadRequest
+      err => raise err
+    } noraise {
+      _ => ()
     }
 
     let data = controller.buffered()
@@ -144,7 +147,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
         limit~,
       )
       if consumed is 0 && produced is 0 {
-        raise @io.ReaderClosed
+        raise @io.UnexpectedEof
       }
       let remaining = remaining - consumed.to_uint64()
       self.body = if remaining == 0 {
@@ -165,7 +168,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
     }
     Chunked(0) => {
       guard self.transport.read_until(b"\r\n") is Some(len_bytes) else {
-        raise @io.ReaderClosed
+        raise @io.UnexpectedEof
       }
       let len_str = @utf8.decode(len_bytes)
       let len_str = if len_str.find(";") is Some(semi_index) {
@@ -174,7 +177,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       } else {
         len_str
       }
-      let next_chunk_len = @string.parse_uint64(len_str, base=16) catch {
+      let next_chunk_len = @string.parse_uint64(len_str, radix=16) catch {
         _ => raise BadRequest
       }
       guard next_chunk_len > 0 else {
@@ -217,7 +220,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
         limit~,
       )
       if consumed is 0 && produced is 0 {
-        raise @io.ReaderClosed
+        raise @io.UnexpectedEof
       }
       let remaining = curr_chunk_remaining - consumed.to_uint64()
       if remaining == 0 {
@@ -271,6 +274,11 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for Reader with fn name(_self) {
+  "@http.Reader"
+}
+
+///|
 impl @io.BinaryReaderImpl for Reader with fn get_controller(self) {
   if self.body is PassThrough {
     @io.BinaryReaderImpl::get_controller(self.transport)
@@ -288,7 +296,7 @@ async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
   let cookies = []
   for ;; {
     guard self.transport.read_until(b"\r\n") is Some(header_line) else {
-      raise @io.ReaderClosed
+      raise @io.UnexpectedEof
     }
     if header_line.length() is 0 {
       // empty line indicates end of header
@@ -328,7 +336,7 @@ fn Reader::setup_message_body(
 ) -> Unit raise {
   let content_length = match headers.get("Content-Length") {
     None => None
-    Some(value) => Some(@string.parse_uint64(value, base=10))
+    Some(value) => Some(@string.parse_uint64(value, radix=10))
   }
   let chunked = match headers.get("Transfer-Encoding") {
     None => false
@@ -378,7 +386,7 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
   guard! self.body is Empty
   self.trailer = None
   guard self.transport.read_until(b"\r\n") is Some(request_line) else {
-    raise @io.ReaderClosed
+    raise @io.UnexpectedEof
   }
   guard request_line.find(b" ") is Some(meth_len) else { raise BadRequest }
   let meth = match request_line[:meth_len] {
@@ -439,7 +447,7 @@ async fn Reader::read_response(
   guard! self.body is Empty
   self.trailer = None
   guard self.transport.read_until(b"\r\n") is Some(response_line) else {
-    raise @io.ReaderClosed
+    raise @io.UnexpectedEof
   }
   guard response_line.find(b" ") is Some(protocol_len) else { raise BadRequest }
   match response_line[:protocol_len] {
@@ -448,7 +456,7 @@ async fn Reader::read_response(
   }
   let response_line = response_line[protocol_len + 1:]
   guard response_line.find(b" ") is Some(code_len) else { raise BadRequest }
-  let code = @string.parse_int(@utf8.decode(response_line[:code_len]), base=10) catch {
+  let code = @string.parse_int(@utf8.decode(response_line[:code_len]), radix=10) catch {
     _ => raise BadRequest
   }
   let reason = @utf8.decode(response_line[code_len + 1:])

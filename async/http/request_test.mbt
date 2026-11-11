@@ -107,7 +107,7 @@ async test "request to an IPv6 address" {
         conn.text.write("Host: \{request.headers.get("Host").unwrap_or("")}")
       })
     }
-    let port = server.addr.port()
+    let port = server.addr.port
     let (response, body) = @http.get_text("http://[::1]:\{port}/")
     inspect(response.code, content="200")
     inspect(body, content="Host: [::1]:\{port}")

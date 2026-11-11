@@ -15,7 +15,7 @@
 ///|
 async test "write large data" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let data = Bytes::make(1024 * 16, 0)
@@ -32,8 +32,8 @@ async test "write large data" {
 async test "write reader" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r1, w1) = @io.pipe()
-    let (r2, w2) = @io.pipe()
+    let (r1, w1) = @io.memory_pipe()
+    let (r2, w2) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer r2.close()
       defer w1.close()
@@ -93,6 +93,11 @@ impl @io.BinaryWriterImpl for DummyWriter with fn flush_partial_data(self) {
 }
 
 ///|
+impl @io.BinaryWriterImpl for DummyWriter with fn name(_self) {
+  "DummyWriter"
+}
+
+///|
 impl @io.BinaryWriterImpl for DummyWriter with fn raw_write_impl(
   self,
   buf,
@@ -123,7 +128,7 @@ async test "write cancel" {
   inspect(
     log.to_string(),
     content=(
-      #|writing byte b'\x61'
+      #|writing byte 97
       #|
     ),
   )
@@ -132,7 +137,7 @@ async test "write cancel" {
 ///|
 async test "write_string" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg() <| () => {
       defer w.close()

@@ -441,10 +441,10 @@ test "loads and stores" {
 
   let out : FixedArray[Byte] = FixedArray::make(20, 0)
   @v128.v128_store(out, 2, @v128.v128_load(bytes, 0))
-  inspect(out.unsafe_get(2), content="b'\\x00'")
-  inspect(out.unsafe_get(9), content="b'\\x07'")
-  inspect(out.unsafe_get(10), content="b'\\x80'")
-  inspect(out.unsafe_get(17), content="b'\\xFF'")
+  inspect(out.unsafe_get(2), content="0")
+  inspect(out.unsafe_get(9), content="7")
+  inspect(out.unsafe_get(10), content="128")
+  inspect(out.unsafe_get(17), content="255")
 
   @v128.v128_store16_lane(
     out,
@@ -452,8 +452,8 @@ test "loads and stores" {
     @v128.i16x8_const(0x1234, 0xabcd, 0, 0, 0, 0, 0, 0),
     1,
   )
-  inspect(out.unsafe_get(0), content="b'\\xCD'")
-  inspect(out.unsafe_get(1), content="b'\\xAB'")
+  inspect(out.unsafe_get(0), content="205")
+  inspect(out.unsafe_get(1), content="171")
 
   let with_lane = @v128.v128_load32_lane(bytes, 16, @v128.i32x4_splat(0), 2)
   assert_eq(with_lane, @v128.i32x4_const(0, 0, 0x40302010, 0))
@@ -1905,6 +1905,28 @@ test "unaligned memory offsets" {
   }
   @v128.v128_store8_lane(out, 0, @v128.v128_load(bytes, 1), 2)
   assert_eq(out.unsafe_get(0), 0x43)
+}
+
+///|
+test "i8x16 bitmask exhausts all sign patterns and ignores payload bits" {
+  for mask in 0..<0x10000 {
+    let mut low = 0UL
+    let mut high = 0UL
+    for lane in 0..<8 {
+      low = low | (((mask >> lane) & 1).to_uint64() << (lane * 8 + 7))
+      high = high | (((mask >> (lane + 8)) & 1).to_uint64() << (lane * 8 + 7))
+    }
+    assert_eq(@v128.i8x16_bitmask(@v128.i64x2_const(low, high)), mask)
+    assert_eq(
+      @v128.i8x16_bitmask(
+        @v128.i64x2_const(
+          low | 0x7f7f7f7f7f7f7f7fUL,
+          high | 0x7f7f7f7f7f7f7f7fUL,
+        ),
+      ),
+      mask,
+    )
+  }
 }
 
 ///|

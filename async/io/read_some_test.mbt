@@ -16,7 +16,7 @@
 async test "read basic" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg(() => writer(log, w))
     while r.read() is Some(chunk) {
@@ -38,7 +38,7 @@ async test "read basic" {
 }
 
 ///|
-async fn read_test_writer(log : StringBuilder, w : @io.PipeWrite) -> Unit {
+async fn read_test_writer(log : StringBuilder, w : @io.MemoryPipeWrite) -> Unit {
   defer w.close()
   @async.sleep(20)
   log <+ "writing 4 bytes of data\n"
@@ -58,7 +58,7 @@ async fn read_test_writer(log : StringBuilder, w : @io.PipeWrite) -> Unit {
 async test "read_at_least fixed minimum" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg(() => read_test_writer(log, w))
     try {
@@ -67,7 +67,7 @@ async test "read_at_least fixed minimum" {
         log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
-      @io.ReaderClosed => ()
+      @io.UnexpectedEof => ()
       err => raise err
     }
   }
@@ -89,7 +89,7 @@ async test "read_at_least fixed minimum" {
 async test "read_at_least increasing minimum" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg(() => read_test_writer(log, w))
     try {
@@ -98,7 +98,7 @@ async test "read_at_least increasing minimum" {
         log <+ "received chunk: \{@utf8.decode(chunk)}\n"
       }
     } catch {
-      @io.ReaderClosed => ()
+      @io.UnexpectedEof => ()
       err => raise err
     }
   }
@@ -120,17 +120,17 @@ async test "read_at_least increasing minimum" {
 ///|
 async test "read_at_least preserves a short EOF tail" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg() <| () => {
       defer w.close()
       w.write(b"abc")
     }
     try r.read_at_least(4) |> ignore catch {
-      @io.ReaderClosed => ()
+      UnexpectedEof => ()
       err => raise err
     } noraise {
-      _ => fail("expected ReaderClosed")
+      _ => fail("expected UnexpectedEof")
     }
     assert_eq(r.read(), Some(b"abc"))
     assert_eq(r.read(), None)
@@ -140,17 +140,17 @@ async test "read_at_least preserves a short EOF tail" {
 ///|
 async test "peek_at_least preserves and does not consume a short EOF tail" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg() <| () => {
       defer w.close()
       w.write(b"abc")
     }
     try r.peek_at_least(4) |> ignore catch {
-      @io.ReaderClosed => ()
+      UnexpectedEof => ()
       err => raise err
     } noraise {
-      _ => fail("expected ReaderClosed")
+      _ => fail("expected UnexpectedEof")
     }
     guard r.peek() is Some(first) else { fail("missing buffered tail") }
     assert_eq(first, b"abc")
@@ -166,7 +166,7 @@ async test "read returned chunks remain stable" {
   @async.with_task_group() <| root => {
     let first_expected = Bytes::make(1024, b'a')
     let second_expected = Bytes::make(1024, b'b')
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     defer r.close()
     root.spawn_bg() <| () => {
       defer w.close()

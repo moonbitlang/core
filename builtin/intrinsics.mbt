@@ -311,7 +311,10 @@ pub impl Mul for Int32 with fn mul(self, other) = "%i32_mul"
 ///
 /// Returns the quotient of the division operation.
 ///
-/// Throws a panic if `divisor` is zero.
+/// Dividing by zero, or dividing `@int.MIN_VALUE` by `-1`, is a program error
+/// with no portable result: depending on the backend and build mode it may
+/// abort the program or return an arbitrary value. Check the divisor first if it
+/// can be either of these. See the `@int` package README.
 ///
 /// Example:
 ///
@@ -334,8 +337,10 @@ pub impl Div for Int32 with fn div(self, other) = "%i32_div"
 /// * `self` : The dividend (the number being divided).
 /// * `other` : The divisor (the number to divide by).
 ///
-/// Returns the remainder of the division. If `other` is 0, the behavior is
-/// undefined.
+/// Returns the remainder of the division.
+///
+/// A zero divisor is a program error with no portable result, and so is
+/// `@int.MIN_VALUE % -1`: see `Div` for `Int32`.
 ///
 /// Example:
 ///
@@ -1276,31 +1281,6 @@ pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
 /// ```
 pub impl Default for Double with fn default() = "%f64_default"
 
-///|
-/// Converts an unsigned 32-bit integer to a double-precision floating-point
-/// number. Since the range of unsigned 32-bit integers is smaller than what can
-/// be precisely represented by a double-precision floating-point number, this
-/// conversion is guaranteed to be exact.
-///
-/// Parameters:
-///
-/// * `value` : The unsigned 32-bit integer to be converted.
-///
-/// Returns a double-precision floating-point number that exactly represents the
-/// input value.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = 42U
-///   inspect(Double::convert_uint(n), content="42")
-///   let max = 4294967295U // maximum value of UInt
-///   inspect(Double::convert_uint(max), content="4294967295")
-/// }
-/// ```
-pub fn Double::convert_uint(val : UInt32) -> Double = "%u32.to_f64"
-
 // Char primitive ops
 
 ///|
@@ -1479,7 +1459,7 @@ pub impl Default for Char with fn default() = "%char_default"
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x02\x03"
-///   inspect(bytes[1], content="b'\\x02'")
+///   inspect(bytes[1], content="2")
 /// }
 /// ```
 #alias("_[_]")
@@ -1506,7 +1486,7 @@ pub fn Bytes::at(self : Bytes, idx : Int32) -> Byte = "%bytes_get"
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x02\x03"
-///   inspect(bytes.unsafe_get(1), content="b'\\x02'")
+///   inspect(bytes.unsafe_get(1), content="2")
 /// }
 /// ```
 ///
@@ -1588,9 +1568,9 @@ fn Bytes::unsafe_make(len : Int32, init : Byte) -> Bytes = "%bytes_make"
 /// ```mbt check
 /// test {
 ///   let n = 258 // In binary: 100000010
-///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="2") // Only keeps 00000010
 ///   let neg = -1 // In binary: all 1's
-///   inspect(neg.to_byte(), content="b'\\xFF'") // Only keeps 11111111
+///   inspect(neg.to_byte(), content="255") // Only keeps 11111111
 /// }
 /// ```
 pub fn Int32::to_byte(self : Int32) -> Byte = "%i32_to_byte"
@@ -1627,7 +1607,7 @@ pub fn Int32::to_char(self : Int32) -> Char? {
 /// ```mbt check
 /// test {
 ///   let n = 258UL // In binary: 100000010
-///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="2") // Only keeps 00000010
 /// }
 /// ```
 pub fn UInt64::to_byte(self : UInt64) -> Byte {
@@ -2090,6 +2070,9 @@ pub impl Mul for UInt32 with fn mul(self, other) = "%u32.mul"
 ///
 /// Returns an unsigned 32-bit integer representing the quotient of the division.
 ///
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -2111,7 +2094,8 @@ pub impl Div for UInt32 with fn div(self, other) = "%u32.div"
 ///
 /// Returns the remainder of the division operation.
 ///
-/// Throws a panic if `other` is zero.
+/// A zero divisor is a program error with no portable result: see `Div` for
+/// `Int32`.
 ///
 /// Example:
 ///
@@ -2561,9 +2545,7 @@ pub fn UInt32::popcnt(self : UInt32) -> Int32 = "%u32.popcnt"
 ///   inspect(max.to_uint64(), content="4294967295")
 /// }
 /// ```
-pub fn UInt32::to_uint64(self : UInt32) -> UInt64 {
-  UInt64::extend_uint(self)
-}
+pub fn UInt32::to_uint64(self : UInt32) -> UInt64 = "%u32.to_u64"
 
 ///|
 /// Converts an unsigned 32-bit integer to a byte by taking its least significant
@@ -2581,9 +2563,9 @@ pub fn UInt32::to_uint64(self : UInt32) -> UInt64 {
 /// ```mbt check
 /// test {
 ///   let n = 258U // In binary: 100000010
-///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="2") // Only keeps 00000010
 ///   let big = 4294967295U // Maximum value of UInt
-///   inspect(big.to_byte(), content="b'\\xFF'") // Only keeps 11111111
+///   inspect(big.to_byte(), content="255") // Only keeps 11111111
 /// }
 /// ```
 pub fn UInt32::to_byte(self : UInt32) -> Byte {
@@ -2659,7 +2641,7 @@ pub fn UInt16::to_int(self : UInt16) -> Int32 = "%u16_to_i32"
 /// ```mbt check
 /// test {
 ///   let x = Int32::to_uint16(258) // Binary: 0000_0001_0000_0010
-///   inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
+///   inspect(x.to_byte(), content="2") // Only keeps 0000_0010
 /// }
 /// ```
 pub fn UInt16::to_byte(self : UInt16) -> Byte = "%u16_to_byte"

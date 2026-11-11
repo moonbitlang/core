@@ -279,7 +279,7 @@ pub fn Process::cancel(self : Process) -> Unit {
 /// stream explicitly.
 ///
 /// Use `Shared(input)` or `Shared(output)` with caller-owned endpoints returned
-/// by `write_to_process()`, `read_from_process()`, `pipe()`,
+/// by `write_to_process()`, `read_from_process()`, `pipe_between_process()`,
 /// `redirect_from_file()`, or `redirect_to_file()` when an endpoint must be
 /// shared by multiple children or used independently of a `Process` handle.
 /// Caller-owned endpoints must be closed after they have been passed to their

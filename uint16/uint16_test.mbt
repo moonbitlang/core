@@ -21,9 +21,9 @@ test "UInt16::to_int" {
 
 ///|
 test "UInt16::to_byte" {
-  inspect(UInt16::to_byte(0), content="b'\\x00'")
-  inspect(UInt16::to_byte(123), content="b'\\x7B'")
-  inspect(UInt16::to_byte(65535), content="b'\\xFF'")
+  inspect(UInt16::to_byte(0), content="0")
+  inspect(UInt16::to_byte(123), content="123")
+  inspect(UInt16::to_byte(65535), content="255")
 }
 
 ///|

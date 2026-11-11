@@ -142,6 +142,23 @@ test "ToJson preserves byte escaping and view bounds" {
 }
 
 ///|
+test "ToJson for Bytes escapes every non-printable byte as lowercase hex" {
+  let bytes = Bytes::makei(256, i => i.to_byte())
+  guard Json(bytes) is String(encoded) else { fail("expected a JSON string") }
+  let expected = StringBuilder()
+  for byte in bytes {
+    if byte is (b' '..<=b'~') && byte != b'"' && byte != b'\\' {
+      expected.write_char(byte.to_char())
+    } else {
+      expected.write_string("\\x\{byte.to_hex()}")
+    }
+  }
+  assert_eq(encoded, expected.to_string())
+  let decoded : Bytes = @json.from_json(Json(bytes))
+  assert_eq(decoded, bytes)
+}
+
+///|
 test "ToJson for Failure and Error" {
   let failure = Failure("test error")
   let error : Error = failure
@@ -208,7 +225,7 @@ test "Char::to_json" {
 ///|
 test "BigInt::to_json" {
   debug_inspect(
-    Json(BigInt::from_string("123456789012345678901234567890")),
+    Json(123456789012345678901234567890N),
     content="String(\"123456789012345678901234567890\")",
   )
 }

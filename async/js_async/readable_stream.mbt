@@ -90,7 +90,7 @@ extern "js" fn JsReadableStream::get_reader(stream : Self) -> StreamReader =
 /// its ABI is NOT the same as `JsReadableStream`,
 /// and most JavaScript types won't understand it.
 struct ReadableStream {
-  read_end : @io.PipeRead
+  read_end : @io.MemoryPipeRead
   worker : @coroutine.Coroutine
   worker_error : @ref.Ref[Error?]
   stream : JsReadableStream
@@ -103,12 +103,12 @@ struct ReadableStream {
 /// The ownership of the JS stream will be transferred to the `ReadableStream`:
 /// other code cannot read the stream anymore.
 pub fn ReadableStream::from_js(stream : JsReadableStream) -> ReadableStream {
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   let reader = stream.get_reader()
   // Here, we use a coroutine to copy the data,
   // because the `.read()` method of `StreamReader` is NOT cancellable.
   // It can only be cancelled by cancelling the whole stream.
-  // So we use a `@io.pipe` in the middle to provide proper cancellation support.
+  // So we use a `@io.memory_pipe` in the middle to provide proper cancellation support.
   let worker_error : @ref.Ref[Error?] = Ref(None)
   let worker = @coroutine.spawn(() => {
     defer w.close()
@@ -134,6 +134,11 @@ pub fn ReadableStream::close(self : ReadableStream) -> Unit {
 
 ///|
 pub impl @io.BinaryReader for ReadableStream
+
+///|
+impl @io.BinaryReaderImpl for ReadableStream with fn name(_self) {
+  "@js.ReadableStream"
+}
 
 ///|
 impl @io.BinaryReaderImpl for ReadableStream with fn get_controller(self) {
@@ -179,16 +184,16 @@ pub extend ReadableStream with @io.BinaryReader::{
 /// Create an anonymous pipe and wrap the read end into a `JsReadableStream`.
 /// This allows writing data from MoonBit code to JavaScript.
 /// Usually users should pass the read end of the pipe (`JsReadableStream`)
-/// to JavaScript code, and write to the write end of the pipe (`@io.PipeWrite`)
+/// to JavaScript code, and write to the write end of the pipe (`@io.MemoryPipeWrite`)
 /// from MoonBit code.
 ///
 /// Closing the write end of the pipe will signal EOF on the read end.
 /// If the read end of the stream is cancelled from the JavaScript side,
 /// further write operations on the write end will fail with error.
-pub fn JsReadableStream::new_pipe() -> (JsReadableStream, @io.PipeWrite) {
+pub fn JsReadableStream::new_pipe() -> (JsReadableStream, @io.MemoryPipeWrite) {
   let abort_controller = AbortController::new()
   let abort_signal = abort_controller.signal()
-  let (pipe_r, pipe_w) = @io.pipe()
+  let (pipe_r, pipe_w) = @io.memory_pipe()
   fn pull(controller : ReadableStreamController) {
     Promise::from_async(abort_signal~) <| () => {
       guard pipe_r.read() is Some(chunk) else { controller.close() }

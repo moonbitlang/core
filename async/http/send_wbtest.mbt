@@ -13,9 +13,12 @@
 // limitations under the License.
 
 ///|
+extend Sender with @io.BinaryWriter::{write_reader}
+
+///|
 async test "send_request basic" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -43,7 +46,7 @@ async test "send_request basic" {
 ///|
 async test "send_request stream" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -53,7 +56,7 @@ async test "send_request stream" {
         "Host": "x.y.org",
         "User-Agent": "MoonBit",
       })
-      sender..write_reader(file).end_body()
+      sender..optimized_write_reader(file).end_body()
     }
     defer r.close()
     inspect(
@@ -301,7 +304,7 @@ async test "send_request stream" {
 ///|
 async test "send_request stream2" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -343,7 +346,7 @@ async test "send_request stream2" {
 ///|
 async test "send_request extension method" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -366,7 +369,7 @@ async test "send_request extension method" {
 ///|
 async test "send_request invalid extension method" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -387,7 +390,7 @@ async test "send_request invalid extension method" {
 ///|
 async test "send invalid header" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w, headers={ "Transfer-Encoding": "chunked" })
@@ -416,7 +419,7 @@ async test "send invalid header" {
 ///|
 async test "send fixed length" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -656,7 +659,7 @@ async test "send fixed length" {
 ///|
 async test "sender write incorrect length" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg(no_wait=true) <| () => {
       defer r.close()
       while r.read() is Some(_) {
@@ -673,7 +676,7 @@ async test "sender write incorrect length" {
     @debug.debug_inspect(
       @test.expect_error_async(() => sender.write(data)),
       content=(
-        #|IncorrectBodyLength
+        #|TransportError(IncorrectBodyLength, context="@http.Sender")
       ),
     )
   }
@@ -682,7 +685,7 @@ async test "sender write incorrect length" {
 ///|
 async test "sender write_reader incorrect length" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg(no_wait=true) <| () => {
       defer r.close()
       while r.read() is Some(_) {
@@ -699,7 +702,7 @@ async test "sender write_reader incorrect length" {
     @debug.debug_inspect(
       @test.expect_error_async(() => sender.write_reader(license_file)),
       content=(
-        #|IncorrectBodyLength
+        #|TransportError(IncorrectBodyLength, context="@http.Sender")
       ),
     )
   }
@@ -708,7 +711,7 @@ async test "sender write_reader incorrect length" {
 ///|
 async test "sender end_body incorrect length" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg(no_wait=true) <| () => {
       defer r.close()
       while r.read() is Some(_) {
@@ -750,7 +753,7 @@ async test "send_response cookies" {
     Cookie("Cookie4", "value four", extensions=["ExtNoArg", "ExtWithArg=xxx"]),
   ]
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -783,7 +786,7 @@ async test "send_response cookies" {
 ///|
 async test "send_request empty body" {
   @async.with_task_group <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -816,7 +819,7 @@ async test "send_request empty body" {
 ///|
 async test "send_response empty body" {
   @async.with_task_group <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w)
@@ -885,7 +888,7 @@ async test "send_response empty body" {
 ///|
 async test "sender persistent header" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w, headers={
@@ -913,7 +916,7 @@ async test "sender persistent header" {
 ///|
 async test "HEAD response with Content-Length" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w, headers={
@@ -943,7 +946,7 @@ async test "HEAD response with Content-Length" {
 ///|
 async test "HEAD response with non-empty body" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w, headers={
@@ -956,7 +959,7 @@ async test "HEAD response with non-empty body" {
       @debug.debug_inspect(
         @test.expect_error_async(() => sender..write(b"abcd").end_body()),
         content=(
-          #|IncorrectBodyLength
+          #|TransportError(IncorrectBodyLength, context="@http.Sender")
         ),
       )
     }
@@ -968,7 +971,7 @@ async test "HEAD response with non-empty body" {
 ///|
 async test "reject header injection" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::new(w, headers={

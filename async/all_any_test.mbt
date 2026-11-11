@@ -69,7 +69,7 @@ async test "all preserves order" {
 }
 
 ///|
-async test "all with max_concurrent" {
+async test "all with max_concurrency" {
   let log = []
   let conds = [ for _ in 0..<3 => @async.Cond() ]
   @async.with_task_group <| group => {
@@ -90,7 +90,7 @@ async test "all with max_concurrent" {
           }
         }
       ],
-      max_concurrent=2,
+      max_concurrency=2,
     )
     json_inspect(result, content=[0, 1, 2])
     json_inspect(log, content=[
@@ -296,6 +296,34 @@ async test "any with allow_failure" {
 }
 
 ///|
+async test "any with max_concurrency" {
+  let log = []
+  let result = @async.any(
+    [
+      for i in 0..<3 => {
+        () => {
+          log.push("task #\{i + 1} started")
+          @async.sleep(100)
+          if i == 0 {
+            log.push("task #\{i + 1} failing")
+            raise Failure::Failure("fail")
+          }
+          log.push("task #\{i + 1} completed")
+          i + 1
+        }
+      }
+    ],
+    max_concurrency=1,
+    allow_failure=true,
+  )
+  json_inspect(result, content=2)
+  json_inspect(log, content=[
+    "task #1 started", "task #1 failing", "task #2 started", "task #2 completed",
+    "task #3 started",
+  ])
+}
+
+///|
 async test "any with allow_failure all fail" {
   let log = []
   let cond = @async.Cond()
@@ -332,7 +360,7 @@ async test "any empty fails" {
   debug_inspect(
     @test.expect_error_async(() => (@async.any([]) : Unit)),
     content=(
-      #|Failure("async/all_any_test.mbt:333:37-333:51@moonbitlang/core FAILED: no tasks provided to any()")
+      #|Failure("async/all_any_test.mbt:361:37-361:51@moonbitlang/core FAILED: no tasks provided to any()")
     ),
   )
 }

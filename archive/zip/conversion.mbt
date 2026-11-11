@@ -52,5 +52,5 @@ fn Int32::to_uint64_checked(self : Int32) -> UInt64 raise ZipError {
   guard self >= 0 else {
     raise ZipError(UnsupportedFeature, "zip: negative u64 value")
   }
-  UInt64::extend_uint(self.reinterpret_as_uint())
+  self.reinterpret_as_uint().to_uint64()
 }

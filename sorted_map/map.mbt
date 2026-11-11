@@ -293,6 +293,44 @@ pub fn[K : Compare, V] SortedMap::update_or_default(
 }
 
 ///|
+/// Replaces, inserts, or removes the entry for `key` in one step: `f` sees the
+/// current value if there is one, and its result becomes the new value, or
+/// removes the key when it is `None`.
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is replaced.
+/// * If the key exists and `f` returns `None`, the entry is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new entry is
+///   inserted.
+/// * If the key doesn't exist and `f` returns `None`, nothing changes.
+///
+/// `f` is called before the map is modified, so it may read or write `self`.
+/// Its result is applied to the map as it stands once `f` returns.
+/// If `f` raises, the error is propagated without modifying the map. Side
+/// effects performed by `f` are not rolled back.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.SortedMap([("a", 1), ("b", 2)])
+///   map.update("a", v => Some(v.unwrap_or(0) + 10))
+///   map.update("c", v => Some(v.unwrap_or(3)))
+///   map.update("b", _ => None)
+///   debug_inspect(map.to_array(), content="[(\"a\", 11), (\"c\", 3)]")
+/// }
+/// ```
+pub fn[K : Compare, V] SortedMap::update(
+  self : SortedMap[K, V],
+  key : K,
+  f : (V?) -> V? raise?,
+) -> Unit raise? {
+  match f(self.get(key)) {
+    Some(value) => self.set(key, value)
+    None => self.remove(key)
+  }
+}
+
+///|
 /// Returns the value for the key if present, otherwise returns `default`.
 pub fn[K : Compare, V] SortedMap::get_or_default(
   self : SortedMap[K, V],
@@ -335,6 +373,9 @@ pub fn[K, V] SortedMap::clear(self : SortedMap[K, V]) -> Unit {
 
 ///|
 /// Calls `f` on each key-value pair in ascending key order.
+///
+/// If `f` structurally modifies the map (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
   f : (K, V) -> Unit raise?,
@@ -352,6 +393,9 @@ pub fn[K, V] SortedMap::each(
 
 ///|
 /// Calls `f` on each key-value pair with its index (0-based), in ascending key order.
+///
+/// If `f` structurally modifies the map (inserts or removes keys, or clears
+/// it), the result is unspecified, though memory-safe.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
   f : (Int32, K, V) -> Unit raise?,
@@ -365,6 +409,10 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Returns an iterator over the keys in ascending order.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(keys_as_iter, deprecated)
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
@@ -395,6 +443,10 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Returns an iterator over the values in ascending key order.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(values_as_iter, deprecated)
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
@@ -433,6 +485,10 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 
 ///|
 /// Return an iterator via `iter`.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
@@ -465,6 +521,10 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 
 ///|
 /// Return an iterator via `iter2`.
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -488,6 +548,10 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 ///|
 /// Returns an iterator over the key-value pairs whose keys are within the
 /// specified range [low, high] (both bounds inclusive).
+///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
   low : K,

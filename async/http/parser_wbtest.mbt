@@ -38,7 +38,7 @@ fn log_response(req : ResponseHeader, logger : &Logger) -> Unit {
 async test "read_request basic" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -67,7 +67,7 @@ async test "read_request basic" {
 async test "read_request fixed body" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -98,7 +98,7 @@ async test "read_request fixed body" {
 ///|
 async test "read_request fixed body early EOF" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -114,7 +114,7 @@ async test "read_request fixed body early EOF" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -124,7 +124,7 @@ async test "read_request fixed body early EOF" {
 async test "read_request chunked" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -160,7 +160,7 @@ async test "read_request chunked" {
 async test "read_request stream" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -210,7 +210,7 @@ async test "read_request stream" {
 async test "multiple request" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -272,7 +272,7 @@ async test "multiple request" {
 ///|
 async test "read_request extension method" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w.write(b"PROPFIND / HTTP/1.1\r\n\r\n")
@@ -287,7 +287,7 @@ async test "read_request extension method" {
 ///|
 async test "read_request invalid extension method" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w.write(b"方法 / HTTP/1.1\r\n\r\n")
@@ -306,7 +306,7 @@ async test "read_request invalid extension method" {
 ///|
 async test "empty header value" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -330,7 +330,7 @@ async test "empty header value" {
 async test "read_response basic" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -361,7 +361,7 @@ async test "read_response basic" {
 async test "read_response passthrough fallback (no length headers)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -398,7 +398,7 @@ async test "read_response passthrough fallback (no length headers)" {
 async test "read_response 204 No Content (no body)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -435,7 +435,7 @@ async test "read_response 204 No Content (no body)" {
 async test "read_response 304 Not Modified (no body)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -472,7 +472,7 @@ async test "read_response 304 Not Modified (no body)" {
 async test "read_response 100 Continue (no body)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -504,7 +504,7 @@ async test "read_response 100 Continue (no body)" {
 async test "read_response CONNECT 200 (no body, tunnel mode)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -538,7 +538,7 @@ async test "read_response CONNECT 200 (no body, tunnel mode)" {
 async test "read_response HEAD 200 (no body)" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -592,7 +592,7 @@ test "should_not_have_body" {
 async test "gzip split between chunks" {
   let mut compressed = b""
   @async.with_task_group <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       @gzip_stream.Encoder(w)..write(b"A simple message to compress").end()
@@ -600,7 +600,7 @@ async test "gzip split between chunks" {
     defer r.close()
     compressed = r.read_all()
   }
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
       defer w.close()
@@ -644,7 +644,7 @@ async test "fixed length gzip direct bytes one byte reads" {
     // ISIZE little-endian.
      0x00, 0x00, 0x00,
   ]
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
       defer w.close()
@@ -672,7 +672,7 @@ async test "fixed length gzip direct bytes one byte reads" {
 
 ///|
 async test "close-delimited gzip" {
-  let (r, w) = @io.pipe()
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group <| group => {
     group.spawn_bg() <| () => {
       defer w.close()
@@ -701,7 +701,7 @@ async test "close-delimited gzip" {
 ///|
 async test "read_response parse cookie" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w
@@ -779,7 +779,7 @@ async test "read_response parse cookie" {
 ///|
 async test "read_response ignores malformed Set-Cookie" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w
@@ -808,7 +808,7 @@ async test "read_response ignores malformed Set-Cookie" {
 ///|
 async test "chunk extension" {
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w
@@ -838,7 +838,7 @@ async test "chunk extension" {
 ///|
 async test "fixed length early EOF" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w
@@ -854,7 +854,7 @@ async test "fixed length early EOF" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -863,7 +863,7 @@ async test "fixed length early EOF" {
 ///|
 async test "chunked early EOF: within chunk" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w
@@ -879,7 +879,7 @@ async test "chunked early EOF: within chunk" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }
@@ -888,7 +888,7 @@ async test "chunked early EOF: within chunk" {
 ///|
 async test "chunked early EOF: chunk boundary" {
   @async.with_task_group() <| group => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
       w
@@ -904,7 +904,7 @@ async test "chunked early EOF: chunk boundary" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_all()),
       content=(
-        #|ReaderClosed
+        #|TransportError(UnexpectedEof, context="@http.Reader")
       ),
     )
   }

@@ -26,18 +26,21 @@
 ///   an IPv6 connection will only be returned if no IPv4 address is available
 /// - if `protocol` is `OnlyV6`,
 ///   `connect_to_host` will fail if no IPv4 address is available
+///
+/// Literal IP address would be used for connection directly without DNS resolution attempt.
+/// Literal IPv6 address may contain optional bracket.
 #warnings("-fragile_catch_all")
 pub async fn Tcp::connect_to_host(
   host : StringView,
-  port~ : Int32,
+  port~ : UInt16,
   protocol~ : IpProtocolPreference = NoPreference,
 ) -> Tcp {
   let context = "@socket.Tcp::connect_to_host()"
-  try Addr::parse_ip(host, port~, context~) catch {
+  try IpAddr::parse_aux(host, require_bracket=false, context~) catch {
     InvalidAddr => ()
     err => raise err
   } noraise {
-    addr => return Tcp::connect(addr)
+    ip => return Tcp::connect({ ip, port, })
   }
   let ai = match @event_loop.getaddrinfo(host, context~) {
     Ok(ai) => AddrInfo(ai)
@@ -56,7 +59,7 @@ pub async fn Tcp::connect_to_host(
           _ => ()
         }
         group.spawn_bg(allow_failure=true) <| () => {
-          let conn = Tcp::connect(addr) catch {
+          let conn = Tcp::connect_aux(addr, context~) catch {
             err => {
               if conn_err is None {
                 conn_err = Some(err)

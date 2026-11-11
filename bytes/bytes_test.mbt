@@ -157,10 +157,10 @@ test "from_iter empty iterator" {
 test "iter" {
   let buf = StringBuilder(size_hint=5)
   b"abcde".iter().each(x => buf <+ "\{x}")
-  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+  inspect(buf, content="979899100101")
   buf.reset()
   b"abcde".iter().take(2).each(x => buf <+ "\{x}")
-  inspect(buf, content="b'\\x61'b'\\x62'")
+  inspect(buf, content="9798")
 }
 
 ///|
@@ -173,7 +173,7 @@ test "iter2" {
     buf <+ "\{x}"
     keys.push(i)
   })
-  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+  inspect(buf, content="979899100101")
   debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 }
 
@@ -392,8 +392,8 @@ test "BytesView::to_array with edge cases" {
   let view1 = bytes[:]
   let arr1 = view1.to_array()
   inspect(arr1.length(), content="7")
-  inspect(arr1[0], content="b'\\x74'")
-  inspect(arr1[6], content="b'\\x67'")
+  inspect(arr1[0], content="116")
+  inspect(arr1[6], content="103")
 
   // Empty view
   let view2 = bytes[3:3]

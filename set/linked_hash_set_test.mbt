@@ -668,3 +668,50 @@ test "union_in_place matches union, in order, and leaves other unchanged" {
     assert_eq(s.to_array(), expected)
   }
 }
+
+///|
+test "each: callback adds and removes elements" {
+  // Which elements `each` visits is unspecified, but the set stays consistent.
+  let s = @set.Set([1, 2, 3, 4])
+  let mut done = false
+  s.each(k => {
+    if k == 2 && !done {
+      done = true
+      s.remove(2)
+      s.remove(3)
+      for i in 100..<164 {
+        s.add(i)
+      }
+    }
+  })
+  inspect(s.length(), content="66")
+  inspect(s.iter().count(), content="66")
+  inspect(s.contains(3), content="false")
+}
+
+///|
+test "iter: set cleared mid-iteration" {
+  let s = @set.Set([1, 2, 3])
+  let mut n = 0
+  for _ in s.iter() {
+    n += 1
+    s.clear()
+  }
+  inspect(n >= 1, content="true")
+  inspect(s.length(), content="0")
+  inspect(s.iter().count(), content="0")
+}
+
+///|
+test "retain: callback removes another element" {
+  let s = @set.Set([1, 2, 3, 4])
+  s.retain(k => {
+    if k == 1 {
+      s.remove(3)
+    }
+    k != 2
+  })
+  inspect(s.iter().count() == s.length(), content="true")
+  inspect(s.contains(2), content="false")
+  inspect(s.contains(3), content="false")
+}

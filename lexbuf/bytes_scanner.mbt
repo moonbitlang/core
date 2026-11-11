@@ -39,7 +39,7 @@
 ///   _ => b"?"
 /// }
 /// ```
-pub(all) struct BytesScanner {
+pub struct BytesScanner {
   /// The input view to scan. Its indexes are byte offsets.
   data : BytesView
   /// The relative offset of the next byte to scan.

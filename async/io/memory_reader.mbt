@@ -16,7 +16,7 @@
 /// A reader for transferring data in-memory.
 /// This is useful for passing in-memory to reader-receiving API.
 struct MemoryReader {
-  reader : PipeRead
+  reader : MemoryPipeRead
   writer : @coroutine.Coroutine
 }
 
@@ -38,7 +38,7 @@ pub fn MemoryReader::MemoryReader(
   f : async (&BinaryWriter) -> Unit,
   loc~ : SourceLoc,
 ) -> MemoryReader {
-  let (r, w) = pipe()
+  let (r, w) = memory_pipe()
   let writer = @coroutine.spawn(loc~) <| () => {
     defer w.close()
     f(w)
@@ -56,6 +56,11 @@ pub fn MemoryReader::close(self : MemoryReader) -> Unit {
 
 ///|
 pub impl BinaryReader for MemoryReader
+
+///|
+impl BinaryReaderImpl for MemoryReader with fn name(_self) {
+  "@io.MemoryReader"
+}
 
 ///|
 impl BinaryReaderImpl for MemoryReader with fn get_controller(self) {

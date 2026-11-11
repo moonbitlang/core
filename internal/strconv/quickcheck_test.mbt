@@ -193,28 +193,28 @@ fn oracle_uint64(text : String, base : Int32) -> UInt64? {
 
 ///|
 fn actual_int64(text : String, base : Int32) -> Int64? {
-  Some(@strconv.parse_int64(text, base~)) catch {
+  Some(@strconv.parse_int64(text, radix=base)) catch {
     _ => None
   }
 }
 
 ///|
 fn actual_int(text : String, base : Int32) -> Int32? {
-  Some(@strconv.parse_int(text, base~)) catch {
+  Some(@strconv.parse_int(text, radix=base)) catch {
     _ => None
   }
 }
 
 ///|
 fn actual_uint64(text : String, base : Int32) -> UInt64? {
-  Some(@strconv.parse_uint64(text, base~)) catch {
+  Some(@strconv.parse_uint64(text, radix=base)) catch {
     _ => None
   }
 }
 
 ///|
 fn actual_uint(text : String, base : Int32) -> UInt32? {
-  Some(@strconv.parse_uint(text, base~)) catch {
+  Some(@strconv.parse_uint(text, radix=base)) catch {
     _ => None
   }
 }

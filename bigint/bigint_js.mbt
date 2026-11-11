@@ -87,17 +87,6 @@ extern "js" fn BigInt::js_parse_string(
   #|}
 
 ///|
-/// Converts a string representation in the specified radix to a BigInt value.
-///
-/// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
-pub fn BigInt::from_string(str : String, radix~ : Int32 = 10) -> BigInt {
-  parse_bigint(str, base=radix) catch {
-    Failure(msg) => abort(msg)
-    _ => abort("invalid syntax")
-  }
-}
-
-///|
 fn BigInt::from_string_radix(str : StringView, radix : Int32) -> BigInt raise {
   let len = str.length()
   let sign = if str.unsafe_get(0) == '-' { -1 } else { 1 }
@@ -516,11 +505,11 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-12")
+///   let a = 42N
+///   let b = -12N
 ///   inspect(a | b, content="-2")
-///   let c = @bigint.BigInt::from_string("-8")
-///   let d = @bigint.BigInt::from_string("-4")
+///   let c = -8N
+///   let d = -4N
 ///   inspect(c | d, content="-4")
 /// }
 /// ```
@@ -554,13 +543,13 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42") // 0b101010
-///   let b = @bigint.BigInt::from_string("25") // 0b011001
+///   let a = 42N // 0b101010
+///   let b = 25N // 0b011001
 ///   inspect(a ^ b, content="51") // 0b110011
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-7")
+///   let a = 42N
+///   let b = -7N
 ///   inspect(a ^ b, content="-45")
-///   let a = @bigint.BigInt::from_string("42")
+///   let a = 42N
 ///   inspect(a ^ a, content="0") // XOR with self gives 0
 /// }
 /// ```

@@ -185,8 +185,7 @@ fn DirectoryReader::advance_active(
         entries == 0xffff ||
         central_size == MAX_U32 ||
         central_offset == MAX_U32 ||
-        UInt64::extend_uint(central_offset) + UInt64::extend_uint(central_size) !=
-        classic.offset
+        central_offset.to_uint64() + central_size.to_uint64() != classic.offset
       guard !zip64 else {
         guard classic.offset >= 20UL else {
           raise ZipError(Truncated, "zip: zip64 locator out of bounds")
@@ -201,8 +200,8 @@ fn DirectoryReader::advance_active(
         )
       }
       self.begin_records(
-        UInt64::extend_uint(central_offset),
-        UInt64::extend_uint(central_size),
+        central_offset.to_uint64(),
+        central_size.to_uint64(),
         entries.to_uint64(),
         classic.offset,
         classic.comment,
@@ -267,11 +266,11 @@ fn DirectoryReader::advance_active(
         (classic.entries == 0xffff || classic.entries.to_uint64() == entries) &&
         (
           classic.central_size == MAX_U32 ||
-          UInt64::extend_uint(classic.central_size) == central_size
+          classic.central_size.to_uint64() == central_size
         ) &&
         (
           classic.central_offset == MAX_U32 ||
-          UInt64::extend_uint(classic.central_offset) == central_offset
+          classic.central_offset.to_uint64() == central_offset
         ) else {
         raise ZipError(
           UnsupportedFeature,

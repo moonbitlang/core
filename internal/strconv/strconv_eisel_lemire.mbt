@@ -118,8 +118,7 @@ pub fn try_eisel_lemire64(
   if result_exp2 <= 0 || result_exp2 >= 0x7ff {
     return @double.not_a_number
   }
-  let exponent_bits = UInt64::extend_uint(result_exp2.reinterpret_as_uint()) <<
-    52
+  let exponent_bits = result_exp2.reinterpret_as_uint().to_uint64() << 52
   let mut result_bits = exponent_bits | (result_mantissa & 0x000fffffffffffffUL)
   if negative {
     result_bits = result_bits | 0x8000000000000000UL

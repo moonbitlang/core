@@ -97,7 +97,7 @@ pub async fn TcpServer::TcpServer(
   let sock = make_tcp_socket(family, context~)
   let io = @event_loop.IoHandle::from_fd(sock, kind=Socket, read_only=true)
   errdefer io.close()
-  if addr.is_ipv6() && addr.is_ipv6_wildcard() {
+  if addr.ip is Ipv6(ip, ..) && ip == empty_ipv6_bytes {
     if 0 != set_ipv6_only(sock, !dual_stack) {
       @os_error.check_errno(context)
     }
@@ -108,15 +108,15 @@ pub async fn TcpServer::TcpServer(
   if @event_loop.platform is Linux && reuse_port_lb {
     guard allow_reuse_port(sock) >= 0 else { @os_error.check_errno(context) }
   }
-  io.bind(addr.0, context~)
+  io.bind(addr.to_os_addr().0, context~)
   if 0 != listen_ffi(sock) {
     @os_error.check_errno(context)
   }
   // If `addr` specifies zero as the listen port,
   // the OS will assign a random port for us,
   // in this case, we need to retrieve the actual port via `getsockname`.
-  let addr = getsockname(sock, family, context~)
-  { io, addr, }
+  let actual_addr = getsockname(sock, family, context~)
+  { io, addr: Addr::from_os_addr(actual_addr), }
 }
 
 ///|
@@ -185,7 +185,7 @@ pub fn TcpServer::fd(self : TcpServer) -> @fd_util.Fd {
 #cfg(not(platform="windows"))
 async fn TcpServer::accept_unix(self : TcpServer) -> (Tcp, Addr) {
   // Create a big enough Addr to hold both IPv4 and IPv6 address
-  let addr = Addr::empty(self.addr.family())
+  let addr = OsAddr::empty(self.addr.family())
   let conn = self.io.accept_unix(addr.0, context="@socket.TcpServer::accept()")
   errdefer conn.close()
   if disable_nagle(conn.fd()) < 0 {
@@ -200,7 +200,7 @@ async fn TcpServer::accept_unix(self : TcpServer) -> (Tcp, Addr) {
       reader_ctrl: BinaryReaderController(),
       writer_ctrl: BinaryWriterController(),
     },
-    addr,
+    Addr::from_os_addr(addr),
   )
 }
 
@@ -214,7 +214,7 @@ async fn TcpServer::accept_windows(self : TcpServer) -> (Tcp, Addr) {
   let conn_sock = make_tcp_socket(family, context~)
   let conn = @event_loop.IoHandle::from_fd(conn_sock, kind=Socket)
   errdefer conn.close()
-  let addr = Addr::empty(family)
+  let addr = OsAddr::empty(family)
   self.io.accept_windows(conn, addr.0, context~)
   if disable_nagle(conn_sock) < 0 {
     @os_error.check_errno("@socket.TcpServer::accept(): set TCP_NODELAY")
@@ -227,7 +227,7 @@ async fn TcpServer::accept_windows(self : TcpServer) -> (Tcp, Addr) {
       reader_ctrl: BinaryReaderController(),
       writer_ctrl: BinaryWriterController(),
     },
-    addr,
+    Addr::from_os_addr(addr),
   )
 }
 
@@ -288,23 +288,29 @@ pub fn Tcp::enable_keepalive(
 
 ///|
 /// Make connection to a remote address using `connect(2)` system call.
-pub async fn Tcp::connect(addr : Addr) -> Tcp {
-  let context = "@socket.Tcp::connect()"
+async fn Tcp::connect_aux(addr : OsAddr, context~ : String) -> Tcp {
   let family = addr.family()
   let sock = make_tcp_socket(family, context~)
   let conn = @event_loop.IoHandle::from_fd(sock, kind=Socket)
   errdefer conn.close()
   if disable_nagle(sock) < 0 {
-    @os_error.check_errno("@socket.Tcp::connect(): set TCP_NODELAY")
+    @os_error.check_errno("\{context}: set TCP_NODELAY")
   }
   conn.connect(addr.0, context~)
-  let addr = getsockname(sock, family, context~)
+  let local_addr = getsockname(sock, family, context~)
   {
     io: conn,
-    addr,
+    addr: Addr::from_os_addr(local_addr),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
   }
+}
+
+///|
+/// Make connection to a remote address using `connect(2)` system call.
+pub async fn Tcp::connect(addr : Addr) -> Tcp {
+  let context = "@socket.Tcp::connect()"
+  Tcp::connect_aux(addr.to_os_addr(), context~)
 }
 
 ///|
@@ -329,6 +335,11 @@ impl @io.BinaryReaderImpl for Tcp with fn raw_read_impl(
     len=max_len,
     context="impl @io.BinaryReader for @socket.Tcp",
   )
+}
+
+///|
+impl @io.BinaryReaderImpl for Tcp with fn name(_self) {
+  "@socket.Tcp"
 }
 
 ///|
@@ -368,6 +379,11 @@ impl @io.BinaryWriterImpl for Tcp with fn raw_write_impl(
     len~,
     context="impl @io.BinaryWriter for @socket.Tcp",
   )
+}
+
+///|
+impl @io.BinaryWriterImpl for Tcp with fn name(_self) {
+  "@socket.Tcp"
 }
 
 ///|

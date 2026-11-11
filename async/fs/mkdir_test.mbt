@@ -70,24 +70,24 @@ async test "mkdir recursive windows" {
 }
 
 ///|
-async test "mkdir allow_exist" {
+async test "mkdir allow_existing" {
   @async.with_task_group() <| group => {
     let base_path = "_build/mkdir_allow_exist"
     let path = "\{base_path}/directory"
     @fs.mkdir(path, recursive=true)
     group.add_defer(() => @fs.rmdir(base_path, recursive=true))
-    @fs.mkdir(path, allow_exist=true)
-    @fs.mkdir("\{path}/", allow_exist=true)
-    @fs.mkdir(path, recursive=true, allow_exist=true)
-    // without `allow_exist`, an existing directory is an error
+    @fs.mkdir(path, allow_existing=true)
+    @fs.mkdir("\{path}/", allow_existing=true)
+    @fs.mkdir(path, recursive=true, allow_existing=true)
+    // without `allow_existing`, an existing directory is an error
     @test.assert_raise_async(() => @fs.mkdir(path))
     @test.assert_raise_async(() => @fs.mkdir(path, recursive=true))
-    // an existing non-directory is an error even with `allow_exist`
+    // an existing non-directory is an error even with `allow_existing`
     let file = "\{base_path}/file"
     @fs.write_text(file, "", create_mode=CreateOrTruncate)
-    @test.assert_raise_async(() => @fs.mkdir(file, allow_exist=true))
+    @test.assert_raise_async(() => @fs.mkdir(file, allow_existing=true))
     @test.assert_raise_async(() => {
-      @fs.mkdir(file, recursive=true, allow_exist=true)
+      @fs.mkdir(file, recursive=true, allow_existing=true)
     })
     json_inspect(@fs.readdir(base_path, sort=true), content=[
       "file", "directory",

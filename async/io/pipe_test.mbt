@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-async test "PipeRead blocked cancellation safety" {
-  let (r, w) = @io.pipe()
+async test "MemoryPipeRead blocked cancellation safety" {
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group <| group => {
     let reader = group.spawn() <| () => {
       defer r.close()
@@ -35,8 +35,8 @@ async test "PipeRead blocked cancellation safety" {
 }
 
 ///|
-async test "PipeWrite blocked cancellation safety" {
-  let (r, w) = @io.pipe()
+async test "MemoryPipeWrite blocked cancellation safety" {
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group <| group => {
     let writer = group.spawn() <| () => {
       defer w.close()
@@ -57,8 +57,8 @@ async test "PipeWrite blocked cancellation safety" {
 }
 
 ///|
-async test "PipeRead immediate cancellation safety" {
-  let (r, w) = @io.pipe()
+async test "MemoryPipeRead immediate cancellation safety" {
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group <| group => {
     let reader = group.spawn() <| () => {
       defer r.close()
@@ -78,8 +78,8 @@ async test "PipeRead immediate cancellation safety" {
 }
 
 ///|
-async test "PipeWrite immediate cancellation safety" {
-  let (r, w) = @io.pipe()
+async test "MemoryPipeWrite immediate cancellation safety" {
+  let (r, w) = @io.memory_pipe()
   @async.with_task_group <| group => {
     let writer = group.spawn() <| () => {
       defer w.close()

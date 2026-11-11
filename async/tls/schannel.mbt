@@ -39,14 +39,6 @@ extern "C" fn Schannel::add_root_certificate(
 
 ///|
 #cfg(platform="windows")
-#borrow(pfx_content)
-extern "C" fn Schannel::init_server(
-  ch : Schannel,
-  pfx_content : Bytes,
-) -> Int32 = "moonbit_rt_schannel_init_server"
-
-///|
-#cfg(platform="windows")
 extern "C" fn Schannel::bytes_read(ch : Schannel) -> Int32 = "moonbit_rt_schannel_bytes_read"
 
 ///|
@@ -124,6 +116,7 @@ struct Tls {
   transport : Transport
   mut curr_msg_remaining : Int32
   mut curr_msg_trailer : Int32
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -200,6 +193,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   writer : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   ignore(sni)
@@ -214,6 +208,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
     curr_msg_remaining: 0,
     curr_msg_trailer: 0,
     transport,
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -276,35 +271,9 @@ async fn Tls::accept(self : Tls) -> Unit {
 }
 
 ///|
-#internal(internal, "do not use, for internal testing only")
 #cfg(platform="windows")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
-  reader : R,
-  writer : W,
-  pfx_file~ : String,
-) -> Tls {
-  let context = Schannel::new()
-  let pfx_content = @fs.read_binary(pfx_file)
-  if context.init_server(pfx_content) is err && err != 0 {
-    context.free()
-    raise TlsError(@errno_util.errno_to_string(err))
-  }
-  let transport = Transport::new(reader, writer)
-  let tls = {
-    context,
-    is_client: false,
-    host: None,
-    reader_ctrl: BinaryReaderController(),
-    writer_ctrl: BinaryWriterController(),
-    transport,
-    curr_msg_remaining: 0,
-    curr_msg_trailer: 0,
-    shutdown: false,
-    closed: false,
-  }
-  errdefer tls.close()
-  tls.accept()
-  tls
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|
@@ -356,7 +325,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
           self.curr_msg_trailer
       }
       WantRead if read_buf.length() == 0 && self.transport.state is Closed =>
-        return 0
+        // The peer closed the connection without performing TLS shutdown
+        if self.require_shutdown {
+          raise @io.UnexpectedEof
+        } else {
+          return 0
+        }
       WantRead => self.transport.read_more()
       Eof => {
         self.shutdown()
@@ -429,6 +403,12 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
     let errno = @errno_util.get_errno()
     raise TlsError(@errno_util.errno_to_string(errno))
   }
+}
+
+///|
+#cfg(platform="windows")
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|
@@ -610,8 +590,8 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
 // mute unused warning
 #cfg(platform="windows")
 let _unused : Unit = {
-  ignore(@bytes_util.ascii_to_string)
   ignore(@utf8.encode(""))
   ignore((_ : @lazy.Lazy[Int32]) => ())
   ignore((_ : @ref.Ref[Int32]) => ())
+  ignore(() => @tls_util.get_tls_error())
 }

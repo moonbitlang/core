@@ -78,3 +78,66 @@ test "bench Deque::get x100000 len=1000" (it : @bench.T) {
     it.keep(acc)
   })
 }
+
+///|
+/// A deque of `n` Ints whose elements wrap around the end of its buffer, so
+/// the traversals below take both sides of `wrap_index`.
+fn wrapped_bench_deque(n : Int32) -> @deque.Deque[Int32] {
+  let dq = @deque.Deque(Array::makei(n, i => i))
+  for _ in 0..<(n / 2) {
+    guard dq.pop_front() is Some(x) else { break }
+    dq.push_back(x)
+  }
+  dq
+}
+
+///|
+test "bench Deque iter wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() {
+    let mut acc = 0
+    for x in dq {
+      acc += x
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench Deque rev_iter2 wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() {
+    let mut acc = 0
+    for i, x in dq.rev_iter2() {
+      acc += i ^ x
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench Deque::map wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() { it.keep(dq.map(x => x + 1)) })
+}
+
+///|
+test "bench Deque::search miss wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() { it.keep(dq.search(-1)) })
+}
+
+///|
+test "bench Deque::extract_if none wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() { it.keep(dq.extract_if(x => x < 0)) })
+}
+
+///|
+test "bench Deque::shuffle_in_place wrapped n=50000" (it : @bench.T) {
+  let dq = wrapped_bench_deque(deque_bench_n)
+  it.bench(fn() {
+    dq.shuffle_in_place(rand=n => n / 2)
+    it.keep(dq)
+  })
+}

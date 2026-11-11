@@ -229,26 +229,6 @@ test "panic shr coverage for negative shift" {
 }
 
 ///|
-test "panic from_string coverage for empty string" {
-  BigInt::from_string("") |> ignore
-}
-
-///|
-test "panic from_string coverage for invalid character" {
-  BigInt::from_string("123a56789") |> ignore
-}
-
-///|
-test "panic from_string radix 16 coverage for empty string" {
-  BigInt::from_string("", radix=16) |> ignore
-}
-
-///|
-test "panic from_string radix 16 coverage for invalid character" {
-  BigInt::from_string("123g56789", radix=16) |> ignore
-}
-
-///|
 test "panic pow coverage for negative exponent" {
   4N.pow(-13N, modulus=497N) |> ignore
 }

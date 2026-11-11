@@ -4,14 +4,14 @@ This package provides operations for working with 64-bit signed integers (`Int64
 
 ## Basic Operations
 
-`Int64` values can be created from regular 32-bit integers using `from_int`. The package also provides constants for the maximum and minimum values representable by `Int64`.
+`Int64` values can be created from regular 32-bit integers using `Int::to_int64`. The package also provides constants for the maximum and minimum values representable by `Int64`.
 
 ```mbt check
 ///|
 test "basic operations" {
   let i : Int64 = -12345L // Int64 literal
   // You can also convert from an `Int` like so:
-  inspect(Int64::from_int(-12345) == i, content="true")
+  inspect((-12345).to_int64() == i, content="true")
 
   // Max and min values
   inspect(@int64.MAX_VALUE, content="9223372036854775807")

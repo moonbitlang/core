@@ -546,6 +546,11 @@ pub async fn Conn::recv(self : Conn) -> Message {
 pub impl @io.BinaryReader for Message
 
 ///|
+impl @io.BinaryReaderImpl for Message with fn name(_self) {
+  "@websocket.Conn"
+}
+
+///|
 impl @io.BinaryReaderImpl for Message with fn get_controller(self) {
   self.conn.reader_ctrl
 }
@@ -744,6 +749,11 @@ impl @io.BinaryWriterImpl for Conn with fn raw_write_impl(
 }
 
 ///|
+impl @io.BinaryWriterImpl for Conn with fn name(_self) {
+  "@websocket.Conn"
+}
+
+///|
 impl @io.BinaryWriterImpl for Conn with fn get_controller(self) {
   self.writer_ctrl
 }
@@ -792,7 +802,7 @@ pub async fn Conn::send_binary(self : Conn, data : BytesView) -> Unit {
 pub async fn Conn::ping(self : Conn, msg? : BytesView) -> Unit {
   let msg = match msg {
     Some(msg) => msg
-    None => @tls.rand_bytes(64)
+    None => @tls_util.rand_bytes(64)
   }
   let len = msg.length()
   guard! len <= 125

@@ -191,9 +191,9 @@ accepts a mode argument. The reusable `Decompressor` methods still default to
 The whole-buffer signatures are:
 
 ```text
-inflate_exact(input, dictionary?, max_output?, cancelled?, two_pass?=false) -> Bytes
-inflate_prefix(input, dictionary?, max_output?, cancelled?, two_pass?=false) -> Decompressed
-Decompressor::decompress(self, input, mode?=Exact, max_output?, cancelled?) -> Decompressed
+inflate_exact(input, dictionary?, max_output_bytes?, cancelled?, two_pass?=false) -> Bytes
+inflate_prefix(input, dictionary?, max_output_bytes?, cancelled?, two_pass?=false) -> Decompressed
+Decompressor::decompress(self, input, mode?=Exact, max_output_bytes?, cancelled?) -> Decompressed
 Decompressor::decompress_into(self, input, output, mode?=Exact, cancelled?) -> DecompressResult
 ```
 
@@ -204,7 +204,7 @@ and reuse it independently for each stream. Dictionary history is not part of
 returned data, output limits, or produced counts. Raw DEFLATE has no dictionary
 checksum; a wrong dictionary is not guaranteed to be detected.
 `inflate_exact`, `inflate_prefix`, `Decompressor::decompress`, and gzip/zlib
-`decompress` accept `max_output` and `cancelled`. gzip counts output across all
+`decompress` accept `max_output_bytes` and `cancelled`. gzip counts output across all
 members; zlib accepts `dictionary` on both `compress` and `decompress`. The compressor uses
 the last 32 KiB as history and records the full dictionary checksum.
 
@@ -214,13 +214,13 @@ test "README exact and limited inflate" {
   let source = b"bounded convenience API"
   let compressed = @flate.deflate_all(source)
   @test.assert_eq(
-    @flate.inflate_exact(compressed, max_output=source.length()),
+    @flate.inflate_exact(compressed, max_output_bytes=source.length()),
     source,
   )
 }
 ```
 
-Omitting `max_output` permits output up to the capacity of `Bytes`; negative
+Omitting `max_output_bytes` permits output up to the capacity of `Bytes`; negative
 limits raise `InvalidArgument`. `OutputLimitExceeded(limit~, observed~)` carries
 `UInt64` counts. `observed` includes the rejected chunk or match, not necessarily
 the complete decoded size or bytes written. For `*_into`, the limit is the

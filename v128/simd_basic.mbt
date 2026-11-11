@@ -137,7 +137,8 @@ pub fn f64x2_const(a0 : Double, a1 : Double) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_splat(value : Byte) -> V128 {
-  pack_u8x16_by(_ => value)
+  let word = value.to_uint64() * 0x0101010101010101UL
+  make(word, word)
 }
 
 ///|
@@ -146,7 +147,8 @@ pub fn i8x16_splat(value : Byte) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i16x8_splat(value : UInt16) -> V128 {
-  pack_u16x8_by(_ => value)
+  let word = value.to_uint64() * 0x0001000100010001UL
+  make(word, word)
 }
 
 ///|

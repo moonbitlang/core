@@ -127,18 +127,18 @@ test "to_le_bytes with infinity" {
 }
 
 ///|
-test "Double::from_int with additional cases" {
-  inspect(Double::from_int(0), content="0")
-  inspect(Double::from_int(-42), content="-42")
-  inspect(Double::from_int(2147483647), content="2147483647")
-  inspect(Double::from_int(-2147483648), content="-2147483648")
+test "Int::to_double with additional cases" {
+  inspect((0).to_double(), content="0")
+  inspect((-42).to_double(), content="-42")
+  inspect((2147483647).to_double(), content="2147483647")
+  inspect((-2147483648).to_double(), content="-2147483648")
 }
 
 ///|
-test "Double::from_int" {
-  @test.assert_eq(Double::from_int(1), 1.0)
-  @test.assert_eq(Double::from_int(0), 0.0)
-  @test.assert_eq(Double::from_int(100000), 1.0e5)
+test "Int::to_double exact values" {
+  @test.assert_eq((1).to_double(), 1.0)
+  @test.assert_eq((0).to_double(), 0.0)
+  @test.assert_eq((100000).to_double(), 1.0e5)
 }
 
 ///|

@@ -63,13 +63,13 @@ fn[K : Eq + Hash] derived_map_versions_agree(
   let diff = (l : Array[(Int32, Int32)], r : Array[(Int32, Int32)]) => {
     l.filter(kv => model_lookup(r, kv.0) is None)
   }
-  a.union(b) == rebuild(right_union(model, b_model)) &&
-  b.union(a) == rebuild(right_union(b_model, model)) &&
+  a.merge(b) == rebuild(right_union(model, b_model)) &&
+  b.merge(a) == rebuild(right_union(b_model, model)) &&
   a.intersection(b) == rebuild(right_inter(model, b_model)) &&
   b.intersection(a) == rebuild(right_inter(b_model, model)) &&
   a.difference(b) == rebuild(diff(model, b_model)) &&
   b.difference(a) == rebuild(diff(b_model, model)) &&
-  a.union(a) == a &&
+  a.merge(a) == a &&
   a.intersection(a) == a &&
   a.difference(a) == @hashmap.new()
 }

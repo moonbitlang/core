@@ -114,7 +114,7 @@ pub fn Byte::to_double(Byte) -> Double
 pub fn Byte::to_hex(Byte) -> String
 pub fn Byte::to_int(Byte) -> Int32
 pub fn Byte::to_int64(Byte) -> Int64
-pub fn Byte::to_string(Byte) -> String
+pub fn Byte::to_string(Byte, radix? : Int32) -> String
 pub fn Byte::to_uint(Byte) -> UInt32
 pub fn Byte::to_uint16(Byte) -> UInt16
 pub fn Byte::to_uint64(Byte) -> UInt64
@@ -253,6 +253,7 @@ pub fn Int64::compare(Int64, Int64) -> Int32
 pub fn Int64::ctz(Int64) -> Int32
 pub fn Int64::div(Int64, Int64) -> Int64
 pub fn Int64::equal(Int64, Int64) -> Bool
+#deprecated
 pub fn Int64::from_int(Int32) -> Int64
 pub fn Int64::hash(Int64) -> Int32
 pub fn Int64::land(Int64, Int64) -> Int64
@@ -408,6 +409,7 @@ pub fn UInt64::compare(UInt64, UInt64) -> Int32
 pub fn UInt64::ctz(UInt64) -> Int32
 pub fn UInt64::div(UInt64, UInt64) -> UInt64
 pub fn UInt64::equal(UInt64, UInt64) -> Bool
+#deprecated
 pub fn UInt64::extend_uint(UInt32) -> UInt64
 pub fn UInt64::hash(UInt64) -> Int32
 pub fn UInt64::land(UInt64, UInt64) -> UInt64
@@ -465,11 +467,14 @@ pub fn Double::add(Double, Double) -> Double
 pub fn Double::ceil(Double) -> Double
 pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
 pub fn Double::compare(Double, Double) -> Int32
+#deprecated
 pub fn Double::convert_uint(UInt32) -> Double
+#deprecated
 pub fn Double::convert_uint64(UInt64) -> Double
 pub fn Double::div(Double, Double) -> Double
 pub fn Double::equal(Double, Double) -> Bool
 pub fn Double::floor(Double) -> Double
+#deprecated
 pub fn Double::from_int(Int32) -> Double
 pub fn Double::hash(Double) -> Int32
 pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool

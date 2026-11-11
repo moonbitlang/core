@@ -629,7 +629,7 @@ fn MemDecoder::decode_batch(
   let storage = out.storage
   let output_end = out.start + out.capacity.min(self.next_cancel - 1)
   guard output_end - out.start - out.length >= 258 else { return false }
-  let mut bits = UInt64::extend_uint(self.bitbuf)
+  let mut bits = self.bitbuf.to_uint64()
   let mut count = self.bit_count
   let mut pos = self.pos
   let mut written = out.start + out.length
@@ -1117,17 +1117,18 @@ pub fn Decompressor::decompress_into(
 const PREFIX_OUTPUT_CAPACITY : Int32 = 16384
 
 ///|
-/// Decode with reusable workspace; max_output limits output bytes, and Prefix permits trailing input.
+/// Decode with reusable workspace; max_output_bytes limits output bytes, and Prefix permits trailing input.
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
 pub fn Decompressor::decompress(
   self : Decompressor,
   input : BytesView,
   mode~ : InputMode = Exact,
-  max_output? : Int32,
+  max_output_bytes? : Int32,
   cancelled? : () -> Bool,
 ) -> Decompressed raise InflateError {
-  let limit = max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE)
+  let limit = max_output_bytes.unwrap_or(MAX_DECODE_OUTPUT_SIZE)
   guard limit >= 0 else {
-    raise InflateError(InvalidArgument, "max_output must be non-negative")
+    raise InflateError(InvalidArgument, "max_output_bytes must be non-negative")
   }
   let decoder = self.decoder
   decoder.reset_into(input, [].mut_view(), cancelled)
@@ -1142,26 +1143,42 @@ pub fn Decompressor::decompress(
 
 ///|
 /// Decode exactly one stream, rejecting trailing input; two_pass uses an exactly sized output allocation.
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
 pub fn inflate_exact(
   input : BytesView,
   dictionary? : BytesView,
-  max_output? : Int32,
+  max_output_bytes? : Int32,
   cancelled? : () -> Bool,
   two_pass~ : Bool = false,
 ) -> Bytes raise InflateError {
-  inflate_allocated(input, Exact, dictionary, max_output, cancelled, two_pass).data
+  inflate_allocated(
+    input,
+    Exact,
+    dictionary,
+    max_output_bytes,
+    cancelled,
+    two_pass,
+  ).data
 }
 
 ///|
 /// Decode a stream prefix and return its consumed boundary; two_pass uses an exactly sized output allocation.
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
 pub fn inflate_prefix(
   input : BytesView,
   dictionary? : BytesView,
-  max_output? : Int32,
+  max_output_bytes? : Int32,
   cancelled? : () -> Bool,
   two_pass~ : Bool = false,
 ) -> Decompressed raise InflateError {
-  inflate_allocated(input, Prefix, dictionary, max_output, cancelled, two_pass)
+  inflate_allocated(
+    input,
+    Prefix,
+    dictionary,
+    max_output_bytes,
+    cancelled,
+    two_pass,
+  )
 }
 
 ///|
@@ -1169,25 +1186,33 @@ fn inflate_allocated(
   input : BytesView,
   mode : InputMode,
   dictionary : BytesView?,
-  max_output : Int32?,
+  max_output_bytes : Int32?,
   cancelled : (() -> Bool)?,
   two_pass : Bool,
 ) -> Decompressed raise InflateError {
-  if max_output is Some(limit) {
+  if max_output_bytes is Some(limit) {
     guard limit >= 0 else {
-      raise InflateError(InvalidArgument, "max_output must be non-negative")
+      raise InflateError(
+        InvalidArgument,
+        "max_output_bytes must be non-negative",
+      )
     }
   }
   if two_pass {
     inflate_preallocated(
       input,
-      max_output,
+      max_output_bytes,
       cancelled.unwrap_or(no_cancellation),
       mode,
       dictionary,
     )
   } else {
-    Decompressor(dictionary?).decompress(input, mode~, max_output?, cancelled?)
+    Decompressor(dictionary?).decompress(
+      input,
+      mode~,
+      max_output_bytes?,
+      cancelled?,
+    )
   }
 }
 
@@ -1196,7 +1221,7 @@ fn inflate_allocated(
 fn inflate_drive(
   inflater : IncrementalDecoder,
   input : BytesView,
-  max_output : Int32?,
+  max_output_bytes : Int32?,
   mode : InputMode,
   cancelled : () -> Bool,
   emit : (FixedArray[Byte], Int32) -> Unit,
@@ -1219,7 +1244,7 @@ fn inflate_drive(
     total = checked_decode_output_length(
       total,
       produced,
-      limit=max_output.unwrap_or(MAX_DECODE_OUTPUT_SIZE),
+      limit=max_output_bytes.unwrap_or(MAX_DECODE_OUTPUT_SIZE),
     )
     emit(scratch, produced)
     guard status is Done else { continue }
@@ -1245,7 +1270,7 @@ fn validate_preallocation_size(
 /// Replay only the measured input prefix, with the same dictionary and a bounded output allocation.
 fn inflate_preallocated(
   input : BytesView,
-  max_output : Int32?,
+  max_output_bytes : Int32?,
   cancelled : () -> Bool,
   mode : InputMode,
   dictionary : BytesView?,
@@ -1254,10 +1279,14 @@ fn inflate_preallocated(
     raise InflateError(Cancelled, "cancelled by caller")
   }
   let inflater = IncrementalDecoder(dictionary?)
-  let counted = inflate_drive(inflater, input, max_output, mode, cancelled, (
-    _scratch,
-    _produced,
-  ) => ())
+  let counted = inflate_drive(
+    inflater,
+    input,
+    max_output_bytes,
+    mode,
+    cancelled,
+    (_scratch, _produced) => (),
+  )
   inflater.reset(dictionary?)
   let buf = FixedArray::make(counted.produced, b'\x00')
   let mut filled = 0

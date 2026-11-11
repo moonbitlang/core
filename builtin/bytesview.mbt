@@ -80,7 +80,7 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 /// test {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
-///   inspect(view[1], content="b'\\x03'")
+///   inspect(view[1], content="3")
 /// }
 /// ```
 #intrinsic("%bytesview.get")
@@ -148,7 +148,7 @@ pub fn BytesView::get(self : BytesView, index : Int32) -> Byte? {
 /// test {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[2:4] // view contains [0x03, 0x04]
-///   inspect(view.unsafe_get(0), content="b'\\x03'")
+///   inspect(view.unsafe_get(0), content="3")
 /// }
 /// ```
 ///
@@ -385,7 +385,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///     buf <+ "\{x}"
 ///     keys.push(i)
 ///   }
-///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(buf, content="979899100101")
 ///   debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 /// ```

@@ -38,7 +38,7 @@ import {
 
 #cfg(target="native")
 import {
-  "moonbitlang/core/async/pipe",
+  "moonbitlang/core/async/internal/pipe",
 } for "test"
 
 import {

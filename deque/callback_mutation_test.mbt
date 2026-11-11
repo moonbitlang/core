@@ -113,15 +113,6 @@ test "extract_if with a callback that pops from the front" {
 }
 
 ///|
-test "shuffle_in_place reduces an out-of-range index" {
-  let dq = two_in_eight()
-  // Like `Array::shuffle_in_place`, `rand(n)` is taken modulo `n`: 5 % 2 == 1,
-  // so nothing is swapped with the unwritten slot `head + 5`.
-  dq.shuffle_in_place(rand=_ => 5)
-  debug_inspect(dq, content="<Deque: [\"a\", \"b\"]>")
-}
-
-///|
 test "shuffle_in_place with a rand that clears and shrinks the deque" {
   let dq = @deque.Deque(["a", "b", "c"])
   dq.shuffle_in_place(rand=_ => {
@@ -130,4 +121,48 @@ test "shuffle_in_place with a rand that clears and shrinks the deque" {
     0
   })
   debug_inspect(dq, content="<Deque: []>")
+}
+
+///|
+test "each with a callback that pops and pushes" {
+  // Which elements `each` visits is unspecified, but the deque stays
+  // consistent.
+  let dq = @deque.Deque([1, 2, 3, 4])
+  let mut done = false
+  dq.each(x => {
+    if x == 2 && !done {
+      done = true
+      dq.pop_front() |> ignore
+      for i in 100..<140 {
+        dq.push_back(i)
+      }
+    }
+  })
+  inspect(dq.length(), content="43")
+  inspect(dq.iter().count(), content="43")
+}
+
+///|
+test "rev_each with a callback that clears and shrinks the deque" {
+  let dq = @deque.Deque([1, 2, 3, 4])
+  let mut n = 0
+  dq.rev_each(_ => {
+    n += 1
+    dq.clear()
+    dq.shrink_to_fit()
+  })
+  inspect(n >= 1, content="true")
+  debug_inspect(dq, content="<Deque: []>")
+}
+
+///|
+test "retain with a callback that pops from the front" {
+  let dq = @deque.Deque([1, 2, 3, 4])
+  dq.retain(x => {
+    if x == 1 {
+      dq.pop_front() |> ignore
+    }
+    true
+  })
+  inspect(dq.iter().count() == dq.length(), content="true")
 }

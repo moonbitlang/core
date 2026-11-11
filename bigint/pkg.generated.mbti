@@ -29,6 +29,7 @@ pub fn BigInt::equal_uint64(Self, UInt64) -> Bool
 pub fn BigInt::from_int(Int32) -> Self
 pub fn BigInt::from_int64(Int64) -> Self
 pub fn BigInt::from_octets(BytesView, signum? : Int32) -> Self
+#deprecated
 pub fn BigInt::from_string(String, radix? : Int32) -> Self
 pub fn BigInt::from_uint(UInt32) -> Self
 pub fn BigInt::from_uint64(UInt64) -> Self

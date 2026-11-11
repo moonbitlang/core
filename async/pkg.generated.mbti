@@ -11,10 +11,10 @@ import {
 }
 
 // Values
-pub async fn[X] all(ArrayView[async () -> X], max_concurrent? : Int32) -> Array[X]
+pub async fn[X] all(ArrayView[async () -> X], max_concurrency? : Int32) -> Array[X]
 
 #callsite(autofill(loc))
-pub async fn[X] any(ArrayView[async () -> X], max_concurrent? : Int32, allow_failure? : Bool, loc~ : SourceLoc) -> X
+pub async fn[X] any(ArrayView[async () -> X], max_concurrency? : Int32, allow_failure? : Bool, loc~ : SourceLoc) -> X
 
 pub async fn[X] handle_cancellation(async () -> X) -> X?
 

@@ -48,7 +48,7 @@ priv struct Pipe {
 /// The read end of a pipe.
 /// Data written to the write end can be read from here.
 #valtype
-struct PipeRead {
+struct MemoryPipeRead {
   pipe : Pipe
   ctrl : BinaryReaderController
 }
@@ -57,7 +57,7 @@ struct PipeRead {
 /// The write end of a pipe.
 /// Data written here can be read from the read end.
 #valtype
-struct PipeWrite {
+struct MemoryPipeWrite {
   pipe : Pipe
   ctrl : BinaryWriterController
 }
@@ -66,7 +66,7 @@ struct PipeWrite {
 /// Create a new in-memory pipe.
 /// Data written to the write end can be obtained from the read end.
 /// Useful for testing and converting writer-based function to reader.
-pub fn pipe() -> (PipeRead, PipeWrite) {
+pub fn memory_pipe() -> (MemoryPipeRead, MemoryPipeWrite) {
   let pipe : Pipe = { reader: NoReader, writer: NoWriter, }
   (
     { pipe, ctrl: BinaryReaderController(), },
@@ -77,7 +77,7 @@ pub fn pipe() -> (PipeRead, PipeWrite) {
 ///|
 /// Close the read end of a pipe.
 /// After closing the read end, writing to the write end result in error.
-pub fn PipeRead::close(self : PipeRead) -> Unit {
+pub fn MemoryPipeRead::close(self : MemoryPipeRead) -> Unit {
   if self.pipe.writer is (HasWriter(_) as writer) {
     writer.result = 0
     writer.coro.wake()
@@ -88,7 +88,7 @@ pub fn PipeRead::close(self : PipeRead) -> Unit {
 ///|
 /// Close the write end of a pipe.
 /// After closing the write end, reading from the read end result in EOF.
-pub fn PipeWrite::close(self : PipeWrite) -> Unit {
+pub fn MemoryPipeWrite::close(self : MemoryPipeWrite) -> Unit {
   if self.pipe.reader is (HasReader(_) as reader) {
     reader.result = 0
     reader.coro.wake()
@@ -99,10 +99,10 @@ pub fn PipeWrite::close(self : PipeWrite) -> Unit {
 ///|
 /// Read data from a pipe. The data come from the write end of the pipe.
 /// Data transfer only happen when reader and writer are present at the same time.
-pub impl BinaryReader for PipeRead
+pub impl BinaryReader for MemoryPipeRead
 
 ///|
-impl BinaryReaderImpl for PipeRead with fn raw_read_impl(
+impl BinaryReaderImpl for MemoryPipeRead with fn raw_read_impl(
   self,
   dst,
   offset~,
@@ -147,12 +147,17 @@ impl BinaryReaderImpl for PipeRead with fn raw_read_impl(
 }
 
 ///|
-impl BinaryReaderImpl for PipeRead with fn get_controller(self) {
+impl BinaryReaderImpl for MemoryPipeRead with fn name(_self) {
+  "@io.MemoryPipeRead"
+}
+
+///|
+impl BinaryReaderImpl for MemoryPipeRead with fn get_controller(self) {
   self.ctrl
 }
 
 ///|
-pub extend PipeRead with BinaryReader::{
+pub extend MemoryPipeRead with BinaryReader::{
   read_into,
   read,
   read_at_least,
@@ -176,10 +181,10 @@ pub suberror PipeClosed
 ///|
 /// Write data to a pipe. The data can be read from the read end of the pipe.
 /// Data transfer only happen when reader and writer are present at the same time.
-pub impl BinaryWriter for PipeWrite
+pub impl BinaryWriter for MemoryPipeWrite
 
 ///|
-impl BinaryWriterImpl for PipeWrite with fn raw_write_impl(
+impl BinaryWriterImpl for MemoryPipeWrite with fn raw_write_impl(
   self,
   buf,
   offset~,
@@ -235,14 +240,19 @@ impl BinaryWriterImpl for PipeWrite with fn raw_write_impl(
 }
 
 ///|
-impl BinaryWriterImpl for PipeWrite with fn get_controller(self) {
+impl BinaryWriterImpl for MemoryPipeWrite with fn name(_self) {
+  "@io.MemoryPipeWrite"
+}
+
+///|
+impl BinaryWriterImpl for MemoryPipeWrite with fn get_controller(self) {
   self.ctrl
 }
 
 ///|
-impl BinaryWriterImpl for PipeWrite with fn flush_partial_data(self) {
+impl BinaryWriterImpl for MemoryPipeWrite with fn flush_partial_data(self) {
   ignore(self)
 }
 
 ///|
-pub extend PipeWrite with BinaryWriter::{write, write_reader}
+pub extend MemoryPipeWrite with BinaryWriter::{write, write_reader}

@@ -1180,7 +1180,7 @@ pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
 ///   buf.write_byte(b'A')
 ///   let v = buf.view()
 ///   inspect(v.length(), content="1")
-///   inspect(v[0], content="b'\\x41'")
+///   inspect(v[0], content="65")
 /// }
 /// ```
 pub fn Buffer::view(self : Buffer) -> ArrayView[Byte] {

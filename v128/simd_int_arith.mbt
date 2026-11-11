@@ -18,7 +18,7 @@
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_add(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => u8_lane(value, i) + u8_lane(other, i))
+  zip_u8x16_by(value, other, (a, b) => a + b)
 }
 
 ///|
@@ -27,7 +27,7 @@ pub fn i8x16_add(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_sub(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => u8_lane(value, i) - u8_lane(other, i))
+  zip_u8x16_by(value, other, (a, b) => a - b)
 }
 
 ///|
@@ -36,7 +36,7 @@ pub fn i8x16_sub(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_add_sat_s(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_add_sat_s(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_add_sat_s(a, b))
 }
 
 ///|
@@ -45,7 +45,7 @@ pub fn i8x16_add_sat_s(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_add_sat_u(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_add_sat_u(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_add_sat_u(a, b))
 }
 
 ///|
@@ -54,7 +54,7 @@ pub fn i8x16_add_sat_u(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_sub_sat_s(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_sub_sat_s(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_sub_sat_s(a, b))
 }
 
 ///|
@@ -63,7 +63,7 @@ pub fn i8x16_sub_sat_s(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_sub_sat_u(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_sub_sat_u(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_sub_sat_u(a, b))
 }
 
 ///|
@@ -90,7 +90,7 @@ pub fn i8x16_abs(value : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_min_s(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_min_s(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_min_s(a, b))
 }
 
 ///|
@@ -99,13 +99,7 @@ pub fn i8x16_min_s(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_min_u(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => {
-    if u8_lane(value, i) < u8_lane(other, i) {
-      u8_lane(value, i)
-    } else {
-      u8_lane(other, i)
-    }
-  })
+  zip_u8x16_by(value, other, (a, b) => if a < b { a } else { b })
 }
 
 ///|
@@ -114,7 +108,7 @@ pub fn i8x16_min_u(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_max_s(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_max_s(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_max_s(a, b))
 }
 
 ///|
@@ -123,13 +117,7 @@ pub fn i8x16_max_s(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_max_u(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => {
-    if u8_lane(value, i) > u8_lane(other, i) {
-      u8_lane(value, i)
-    } else {
-      u8_lane(other, i)
-    }
-  })
+  zip_u8x16_by(value, other, (a, b) => if a > b { a } else { b })
 }
 
 ///|
@@ -138,7 +126,7 @@ pub fn i8x16_max_u(value : V128, other : V128) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_avgr_u(value : V128, other : V128) -> V128 {
-  pack_u8x16_by(i => i8_avgr_u(u8_lane(value, i), u8_lane(other, i)))
+  zip_u8x16_by(value, other, (a, b) => i8_avgr_u(a, b))
 }
 
 ///|

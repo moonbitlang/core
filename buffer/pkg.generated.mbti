@@ -21,7 +21,6 @@ pub fn Buffer::length(Self) -> Int32
 pub fn Buffer::reset(Self) -> Unit
 #alias(contents)
 pub fn Buffer::to_bytes(Self) -> Bytes
-pub fn Buffer::to_string(Self) -> String
 pub fn Buffer::view(Self) -> ArrayView[Byte]
 pub fn Buffer::write_byte(Self, Byte) -> Unit
 pub fn Buffer::write_bytes(Self, BytesView) -> Unit
@@ -55,6 +54,7 @@ pub fn Buffer::write_uint_be(Self, UInt32) -> Unit
 pub fn Buffer::write_uint_le(Self, UInt32) -> Unit
 #alias(write_bytes_interpolation)
 pub fn[T : Show] Buffer::write_utf8(Self, T) -> Unit
+#deprecated
 pub impl Show for Buffer
 
 // Type aliases

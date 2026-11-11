@@ -10,14 +10,14 @@ UTF-8 adapters, and buffered writing.
 
 ## Quick start
 
-`pipe()` returns connected binary endpoints. Writes apply backpressure until a
+`memory_pipe()` returns connected binary endpoints. Writes apply backpressure until a
 reader accepts the data, and closing the write end makes the reader reach EOF.
 
 ```moonbit check
 ///|
 async test "binary pipe quick start" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -54,7 +54,7 @@ and can still be obtained by a later operation with a smaller minimum.
 ///|
 async test "read into caller-owned storage" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -75,7 +75,7 @@ async test "read into caller-owned storage" {
 ///|
 async test "peek then consume an exact frame" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -113,7 +113,7 @@ the next call returns `None`.
 ///|
 async test "read delimiter-separated binary records" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -144,7 +144,7 @@ without first copying it into a new `Bytes` value.
 ///|
 async test "write a byte view" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -175,7 +175,7 @@ Text is opt-in. `Utf8Reader` adapts a `BinaryReader` to `TextReader`, and
 ///|
 async test "UTF-8 text adapters" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()
@@ -224,7 +224,7 @@ another path or before closing it. The buffer size must be positive.
 ///|
 async test "buffered writer" {
   @async.with_task_group() <| root => {
-    let (reader, writer) = @io.pipe()
+    let (reader, writer) = @io.memory_pipe()
     defer reader.close()
     root.spawn_bg() <| () => {
       defer writer.close()

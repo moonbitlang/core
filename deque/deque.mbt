@@ -55,6 +55,30 @@ fn wrap_index(i : Int32, cap : Int32) -> Int32 {
 }
 
 ///|
+/// Reads `self[index]` without a bounds check.
+///
+/// Only for an index the caller has proved to be in `0..<self.length()`. In
+/// this package that is `wrap_index(head + i, cap)` for `0 <= i < len`, taken
+/// from a `(buf, head, len)` captured together: the deque invariant gives
+/// `0 <= head < cap` and `len <= cap` whenever `len > 0`, so `head + i` is in
+/// `0..<2 * cap` and `wrap_index` brings it into `0..<cap`.
+#inline
+fn[T] UninitializedArray::unsafe_get(
+  self : UninitializedArray[T],
+  index : Int32,
+) -> T = "%fixedarray.unsafe_get"
+
+///|
+/// Writes `self[index]` without a bounds check. The caller must prove
+/// `index` in bounds, as for `UninitializedArray::unsafe_get`.
+#inline
+fn[T] UninitializedArray::unsafe_set(
+  self : UninitializedArray[T],
+  index : Int32,
+  value : T,
+) -> Unit = "%fixedarray.unsafe_set"
+
+///|
 /// Implements the `Show` trait for deque, enabling string representation of
 /// deque elements for display purposes.
 ///
@@ -965,6 +989,9 @@ pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
 ///|
 /// Iterates over the elements of the deque.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -983,6 +1010,9 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterates over the elements of the deque with index.
+///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -1006,6 +1036,9 @@ pub fn[A] Deque::eachi(
 ///|
 /// Iterates over the elements of the deque in reversed turn.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1027,6 +1060,9 @@ pub fn[A] Deque::rev_each(
 
 ///|
 /// Iterates over the elements of the deque in reversed turn with index.
+///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
 ///
 /// # Example
 /// ```mbt check
@@ -1102,7 +1138,8 @@ pub fn[A, U] Deque::map(
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(len)
     for i in 0..<len {
-      buf[i] = f(src[wrap_index(head + i, cap)])
+      // `i < len`, the length of `buf`; for `src`, see `unsafe_get`.
+      buf.unsafe_set(i, f(src.unsafe_get(wrap_index(head + i, cap))))
     }
     { buf, len, head: 0, }
   }
@@ -1135,7 +1172,8 @@ pub fn[A, U] Deque::mapi(
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(len)
     for i in 0..<len {
-      buf[i] = f(i, src[wrap_index(head + i, cap)])
+      // `i < len`, the length of `buf`; for `src`, see `unsafe_get`.
+      buf.unsafe_set(i, f(i, src.unsafe_get(wrap_index(head + i, cap))))
     }
     { buf, len, head: 0, }
   }
@@ -1183,7 +1221,7 @@ pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int32? {
   let { buf, head, len, } = self
   let cap = buf.length()
   for i in 0..<len {
-    if buf[wrap_index(head + i, cap)] == value {
+    if buf.unsafe_get(wrap_index(head + i, cap)) == value {
       return Some(i)
     }
   }
@@ -1251,13 +1289,14 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   let cap = buf.length()
   let removed = from_array([])
   let kept_len = for read in 0..<len; write = 0 {
-    let elem = buf[wrap_index(head + read, cap)]
+    let elem = buf.unsafe_get(wrap_index(head + read, cap))
     if f(elem) {
       removed.push_back(elem)
       continue write
     } else {
       if read != write {
-        buf[wrap_index(head + write, cap)] = elem
+        // `write < read < len`.
+        buf.unsafe_set(wrap_index(head + write, cap), elem)
       }
       continue write + 1
     }
@@ -1280,6 +1319,9 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
 ///
 /// Returns a new deque containing only the elements for which the predicate
 /// function returns `true`. The relative order of the elements is preserved.
+///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
 ///
 /// Example:
 ///
@@ -1530,6 +1572,9 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 /// * `f` : A function that takes an element and returns `true` if the
 /// element should be kept, `false` if it should be removed.
 ///
+/// If `f` structurally modifies the deque (adds or removes elements, or
+/// clears it), the result is memory-safe but otherwise unspecified.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1610,7 +1655,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
   Iter::new(
     fn() {
       guard index < len else { None }
-      let elem = buf[wrap_index(head + index, cap)]
+      let elem = buf.unsafe_get(wrap_index(head + index, cap))
       index += 1
       Some(elem)
     },
@@ -1629,6 +1674,9 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// Returns an iterator of type `Iter2[Int, A]` that produces tuples of `(index,
 /// element)`, where `index` starts from 0 and increments by 1 for each element,
 /// and `element` is the corresponding element from the deque.
+///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// Example:
 ///
@@ -1652,7 +1700,7 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
   Iter2::new(
     fn() {
       guard index < len else { None }
-      let result = (index, buf[wrap_index(head + index, cap)])
+      let result = (index, buf.unsafe_get(wrap_index(head + index, cap)))
       index += 1
       Some(result)
     },
@@ -1669,6 +1717,9 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int32, A] {
 ///
 /// Returns an iterator that yields elements from the deque in reverse order,
 /// starting from the last element.
+///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// Example:
 ///
@@ -1690,7 +1741,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
     fn() {
       guard index > 0 else { None }
       index -= 1
-      Some(buf[wrap_index(head + index, cap)])
+      Some(buf.unsafe_get(wrap_index(head + index, cap)))
     },
     size_hint=len,
   )
@@ -1707,6 +1758,9 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// Returns an iterator that yields tuples of `(index, value)` pairs, where the
 /// index starts from 0 and increments by 1, while values are taken from the
 /// deque in reverse order.
+///
+/// Modifying the deque while the iterator is in use is memory-safe, but which
+/// elements the iterator then yields is unspecified.
 ///
 /// Example:
 ///
@@ -1732,7 +1786,7 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int32, A] {
       guard rev_index > 0 else { None }
       let index = len - rev_index
       rev_index -= 1
-      Some((index, buf[wrap_index(head + rev_index, cap)]))
+      Some((index, buf.unsafe_get(wrap_index(head + rev_index, cap))))
     },
     size_hint=len,
   )
@@ -2550,8 +2604,23 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 ///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
-/// A result of `rand(n)` outside `0..<n` is reduced modulo `n`, as
-/// `Array::shuffle_in_place` does; if that leaves it negative, the call aborts.
+/// Aborts if `rand(n)` returns a value outside `0..<n`.
+///
+/// # Example
+/// Import `moonbitlang/core/random` as `@random`. Passing `limit=n` makes
+/// `rng.int` return an integer in `0..<n`.
+///
+/// ```mbt check
+/// test {
+///   let rng = @random.Rand()
+///   let dq = @deque.Deque([1, 2, 3, 4, 5])
+///   dq.shuffle_in_place(rand=n => rng.int(limit=n))
+///   // The order is random, but all the original elements are preserved.
+///   let elements = dq.to_array()
+///   elements.sort()
+///   debug_inspect(elements, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 #locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
@@ -2561,15 +2630,15 @@ pub fn[A] Deque::shuffle_in_place(
   let { buf, head, len, } = self
   let cap = buf.length()
   for i in len>..1 {
-    // As in `Array::shuffle_in_place`, reduce the index into `0..=i`, so it
-    // never reaches a slot outside the deque's elements.
-    let j = rand(i + 1) % (i + 1)
-    if j < 0 {
-      index_out_of_bounds(i + 1, j)
-    }
+    // `rand` is user code: check its result, so that a `j` outside `0..=i`
+    // cannot reach a slot outside the deque's elements.
+    let j = rand(i + 1)
+    guard j >= 0 && j <= i else { index_out_of_bounds(i + 1, j) }
     // Swap elements
     let i_pos = wrap_index(head + i, cap)
     let j_pos = wrap_index(head + j, cap)
+    // Checked access on purpose: `0 <= j <= i < len` would allow unchecked
+    // access, but it measured about 5% slower on JS (26% faster on native).
     let tmp = buf[i_pos]
     buf[i_pos] = buf[j_pos]
     buf[j_pos] = tmp
@@ -2583,7 +2652,25 @@ pub fn[A] Deque::shuffle_in_place(
 ///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
-/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
+/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1.
+/// Aborts if it returns a value outside that range.
+///
+/// # Example
+/// Import `moonbitlang/core/random` as `@random`. Passing `limit=n` makes
+/// `rng.int` return an integer in `0..<n`.
+///
+/// ```mbt check
+/// test {
+///   let rng = @random.Rand()
+///   let dq = @deque.Deque([1, 2, 3, 4, 5])
+///   let shuffled = dq.shuffle(rand=n => rng.int(limit=n))
+///   // The original deque is unchanged.
+///   debug_inspect(dq, content="<Deque: [1, 2, 3, 4, 5]>")
+///   let elements = shuffled.to_array()
+///   elements.sort()
+///   debug_inspect(elements, content="[1, 2, 3, 4, 5]")
+/// }
+/// ```
 pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int32) -> Int32) -> Deque[A] {
   // Create a copy of the original deque
   let new_deque = self.copy()

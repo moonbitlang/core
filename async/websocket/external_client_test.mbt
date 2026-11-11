@@ -17,7 +17,7 @@ async test "external client" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((request, conn) => {
         log.push("new client to \{request.path}")

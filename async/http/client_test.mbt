@@ -186,7 +186,7 @@ async test "user agent" {
   let log = StringBuilder()
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port()
+    let port = server.addr.port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((request, conn) => {
         let meth = @debug.to_string(request.meth).to_upper()

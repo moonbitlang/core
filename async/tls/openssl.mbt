@@ -14,6 +14,22 @@
 
 ///|
 #cfg(not(platform="windows"))
+extern "C" fn init_bio_method(
+  read : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
+  write : FuncRef[(BIO, @c_buffer.Buffer, Int32) -> Int32],
+) = "moonbit_rt_init_bio_method"
+
+///|
+#cfg(not(platform="windows"))
+fn load_openssl() -> Unit raise {
+  @tls_util.setup_tls_library()
+  init_bio_method((bio, dst, len) => bio.read(dst, len)) <| ((bio, src, len) => {
+    bio.write(src, len)
+  })
+}
+
+///|
+#cfg(not(platform="windows"))
 #external
 priv type SSL_CTX
 
@@ -97,10 +113,6 @@ extern "C" fn SSL::set_verify(self : SSL, verify : Bool) = "moonbit_rt_tls_ssl_s
 
 ///|
 #cfg(not(platform="windows"))
-extern "C" fn SSL::accept(self : SSL) -> Int32 = "moonbit_rt_tls_ssl_accept"
-
-///|
-#cfg(not(platform="windows"))
 priv struct PeerCertificate(@c_buffer.Buffer)
 
 ///|
@@ -151,24 +163,6 @@ extern "C" fn SSL::unique_channel_binding(
   len~ : Int32,
   is_client~ : Bool,
 ) -> Unit = "moonbit_rt_tls_ssl_unique_channel_binding"
-
-///|
-#cfg(not(platform="windows"))
-#borrow(file)
-extern "C" fn SSL::use_certificate_file(
-  self : SSL,
-  file : Bytes,
-  file_type : X509FileType,
-) -> Int32 = "moonbit_rt_tls_ssl_use_certificate_file"
-
-///|
-#cfg(not(platform="windows"))
-#borrow(file)
-extern "C" fn SSL::use_private_key_file(
-  self : SSL,
-  file : Bytes,
-  file_type : X509FileType,
-) -> Int32 = "moonbit_rt_tls_ssl_use_private_key_file"
 
 ///|
 #cfg(not(platform="windows"))
@@ -225,19 +219,6 @@ const SSL_ERROR_ZERO_RETURN = 6
 ///|
 #cfg(not(platform="windows"))
 extern "C" fn err_peek_error_code() -> UInt64 = "moonbit_rt_tls_peek_error_code"
-
-///|
-#cfg(not(platform="windows"))
-#borrow(buf)
-extern "C" fn err_get_error_ffi(buf : Bytes) -> Int32 = "moonbit_rt_tls_get_error"
-
-///|
-#cfg(not(platform="windows"))
-fn err_get_error() -> String {
-  let buf = Bytes::make(256, 0)
-  let len = err_get_error_ffi(buf)
-  @bytes_util.ascii_to_string(buf[:len])
-}
 
 ///|
 #cfg(not(platform="windows"))
@@ -323,6 +304,7 @@ struct Tls {
   transport : Transport
   reader_ctrl : @io.BinaryReaderController
   writer_ctrl : @io.BinaryWriterController
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -335,6 +317,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
   w : W,
   is_client~ : Bool,
   host~ : String?,
+  require_shutdown~ : Bool,
 ) -> Tls {
   let transport = Transport::new(r, w)
   let rbio = create_bio(transport)
@@ -348,6 +331,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     transport,
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -364,7 +348,7 @@ async fn SSL_CTX::client_with_custom_root(root_cert : String) -> SSL_CTX {
   let pem = @fs.read_text(root_cert)
   for cert in decode_pem_certificates(pem) {
     if ctx.add_root_certificate(cert) != 1 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     }
   }
   ctx
@@ -382,7 +366,8 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
       self.transport.flush_write()
       self.transport.write_buf.enlarge_to(1)
     }
-    SSL_ERROR_SSL | SSL_ERROR_SYSCALL => raise TlsError(err_get_error())
+    SSL_ERROR_SSL | SSL_ERROR_SYSCALL =>
+      raise TlsError(@tls_util.get_tls_error())
     SSL_ERROR_ZERO_RETURN => raise ConnectionClosed
     err => abort("unexpected error code \{err} from OpenSSL")
   }
@@ -405,6 +390,7 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   w : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   load_openssl()
@@ -415,16 +401,20 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   guard !ctx.is_null() else {
     raise TlsError("failed to initialize SSL client context")
   }
-  let self = Tls::from_pair(ctx, r, w, is_client=true, host~)
+  let self = Tls::from_pair(ctx, r, w, is_client=true, host~, require_shutdown~)
   errdefer self.close()
   if trust is NoVerification {
     self.ssl.set_verify(false)
   }
   if host is Some(host) {
     let host = @utf8.encode(host)
-    guard self.ssl.set_host(host) > 0 else { raise TlsError(err_get_error()) }
+    guard self.ssl.set_host(host) > 0 else {
+      raise TlsError(@tls_util.get_tls_error())
+    }
     if sni {
-      guard self.ssl.set_sni(host) > 0 else { raise TlsError(err_get_error()) }
+      guard self.ssl.set_sni(host) > 0 else {
+        raise TlsError(@tls_util.get_tls_error())
+      }
     }
   }
   while self.ssl.connect() is ret && ret <= 0 {
@@ -432,77 +422,6 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   }
   self.transport.flush_write()
   self
-}
-
-///|
-/// WARNING: this API is currently for testing only,
-/// it may block the whole thread while reading certificate,
-/// and may break any time in the future. DO NOT USE.
-///
-/// Create a TLS server connection that read from `r` and write to `w`.
-/// `server_from_pair` will block until TLS handshake with client completed.
-///
-/// `private_key_file`, `private_key_type` specifies the private key of the server.
-/// `certificate_file` and `certificate_type` specifies the certificate of the server.
-#cfg(not(platform="windows"))
-#internal(internal, "do not use, for internal testing only")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
-  r : R,
-  w : W,
-  private_key_file~ : String,
-  private_key_type~ : X509FileType,
-  certificate_file~ : String,
-  certificate_type~ : X509FileType,
-) -> Tls {
-  load_openssl()
-  let private_key_file = @utf8.encode(private_key_file)
-  let certificate_file = @utf8.encode(certificate_file)
-  let ctx = server_ctx.force()
-  guard !ctx.is_null() else {
-    raise TlsError("failed to initialize SSL server context")
-  }
-  let self = Tls::from_pair(ctx, r, w, is_client=false, host=None)
-  errdefer self.close()
-  if self.ssl.use_certificate_file(certificate_file, certificate_type) != 1 {
-    raise TlsError(err_get_error())
-  }
-  if self.ssl.use_private_key_file(private_key_file, private_key_type) != 1 {
-    raise TlsError(err_get_error())
-  }
-  while self.ssl.accept() is ret && ret <= 0 {
-    self.handle_error(self.ssl.get_error(ret))
-  }
-  self.transport.flush_write()
-  self
-}
-
-///|
-/// WARNING: this API is currently for testing only,
-/// it may block the whole thread while reading certificate,
-/// and may break any time in the future. DO NOT USE.
-///
-/// Create a TLS server connection that read from and write to `inner`.
-/// `server` will block until TLS handshake with client completed.
-///
-/// `private_key_file`, `private_key_type` specifies the private key of the server.
-/// `certificate_file` and `certificate_type` specifies the certificate of the server.
-#cfg(not(platform="windows"))
-#internal(internal, "do not use, for internal testing only")
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::server(
-  inner : Inner,
-  private_key_file~ : String,
-  private_key_type~ : X509FileType,
-  certificate_file~ : String,
-  certificate_type~ : X509FileType,
-) -> Tls {
-  Tls::server_from_pair(
-    inner,
-    inner,
-    private_key_file~,
-    private_key_type~,
-    certificate_file~,
-    certificate_type~,
-  )
 }
 
 ///|
@@ -525,11 +444,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
       break 0
     }
     if self.transport.state is Closed && controller.buffered().length() is 0 {
-      // Not all TLS client/servers close the connection properly.
-      // Some peers just close the underlying TCP connection
-      // without performing a TLS closure.
-      // So we treat this case as normal here.
-      break 0
+      // The peer closed the connection without performing TLS shutdown
+      if self.require_shutdown {
+        raise @io.UnexpectedEof
+      } else {
+        break 0
+      }
     }
     self.handle_error(err)
   } nobreak {
@@ -538,6 +458,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
   // imposible
   self.transport.flush_write()
   n
+}
+
+///|
+#cfg(not(platform="windows"))
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|
@@ -565,6 +491,12 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   // imposible
   self.transport.flush_write()
   n
+}
+
+///|
+#cfg(not(platform="windows"))
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|
@@ -647,7 +579,7 @@ pub fn Tls::get_peer_certificate(self : Tls) -> Bytes? raise {
   let cert = self.ssl.get_certificate(is_client=true)
   if cert.0.is_null() {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       return None
     }
@@ -668,7 +600,7 @@ pub fn Tls::unique_channel_binding(self : Tls) -> Bytes raise {
   let len = self.ssl.unique_channel_binding_length(is_client=self.is_client)
   guard len > 0 else {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       raise TlsError("tls-unique channel binding unavailable")
     }
@@ -688,7 +620,7 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
   let cert = self.ssl.get_certificate(is_client=self.is_client)
   if cert.0.is_null() {
     if err_peek_error_code() != 0 {
-      raise TlsError(err_get_error())
+      raise TlsError(@tls_util.get_tls_error())
     } else {
       raise TlsError("tls-server-endpoint channel binding unavailable")
     }
@@ -699,7 +631,7 @@ pub fn Tls::server_endpoint_channel_binding(self : Tls) -> Bytes raise {
   let len = @ref.Ref(0)
   let hash = cert.server_endpoint_hash(len~)
   if hash.is_null() {
-    raise TlsError(err_get_error())
+    raise TlsError(@tls_util.get_tls_error())
   }
   let result = FixedArray::make(len.val, b'\x00')
   hash.blit_to_bytes(dst=result, len=len.val)

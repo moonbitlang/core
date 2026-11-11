@@ -213,8 +213,7 @@ pub fn Rand::double(
   max~ : Double = 1.0,
 ) -> Double {
   if min == 0.0 && max == 1.0 {
-    Double::convert_uint64(self.next() << 11 >> 11) /
-    Double::convert_uint64(1UL << 53)
+    (self.next() << 11 >> 11).to_double() / (1UL << 53).to_double()
   } else {
     self.double_in_range(min~, max~)
   }
@@ -302,7 +301,7 @@ fn ceil_sections(
 /// `value < 2^55`. Splitting `value = 4 * high + low` therefore gives
 /// `high < 2^53` and `low < 4`, making both UInt64-to-Double conversions exact.
 fn split_uint64_for_double(value : UInt64) -> (Double, Double) {
-  (Double::convert_uint64(value >> 2), Double::convert_uint64(value & 0x3))
+  ((value >> 2).to_double(), (value & 0x3).to_double())
 }
 
 ///|

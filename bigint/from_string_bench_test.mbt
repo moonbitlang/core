@@ -26,31 +26,31 @@ fn decimal_digits(digits : Int32) -> String {
 }
 
 ///|
-test "bench BigInt::from_string n=19 digits" (it : @bench.T) {
+test "bench parse_bigint n=19 digits" (it : @bench.T) {
   let s = decimal_digits(19)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_string(s)) })
+  it.bench(fn() { it.keep(try! @bigint.parse_bigint(s)) })
 }
 
 ///|
-test "bench BigInt::from_string n=40 digits" (it : @bench.T) {
+test "bench parse_bigint n=40 digits" (it : @bench.T) {
   let s = decimal_digits(40)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_string(s)) })
+  it.bench(fn() { it.keep(try! @bigint.parse_bigint(s)) })
 }
 
 ///|
-test "bench BigInt::from_string n=400 digits" (it : @bench.T) {
+test "bench parse_bigint n=400 digits" (it : @bench.T) {
   let s = decimal_digits(400)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_string(s)) })
+  it.bench(fn() { it.keep(try! @bigint.parse_bigint(s)) })
 }
 
 ///|
-test "bench BigInt::from_string n=4000 digits" (it : @bench.T) {
+test "bench parse_bigint n=4000 digits" (it : @bench.T) {
   let s = decimal_digits(4000)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_string(s)) })
+  it.bench(fn() { it.keep(try! @bigint.parse_bigint(s)) })
 }
 
 ///|
-test "bench BigInt::from_string n=20000 digits" (it : @bench.T) {
+test "bench parse_bigint n=20000 digits" (it : @bench.T) {
   let s = decimal_digits(20000)
-  it.bench(fn() { it.keep(@bigint.BigInt::from_string(s)) })
+  it.bench(fn() { it.keep(try! @bigint.parse_bigint(s)) })
 }

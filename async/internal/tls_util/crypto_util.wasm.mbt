@@ -18,7 +18,7 @@
 extern "wasm" fn rand_bytes_ffi(buf : FixedArray[Byte], num : Int32) -> Int32 = "moonbitlang/async" "random/fill"
 
 ///|
-#internal(internal, "for internal use only")
+/// Return `num` safe random bytes
 pub fn rand_bytes(num : Int32) -> Bytes raise {
   let result = FixedArray::make(num, b'\x00')
   if rand_bytes_ffi(result, num) < 0 {
@@ -36,7 +36,6 @@ fn sha1_rotate_left(x : Int32, n : Int32) -> Int32 {
 /// Adapted from moonbitlang/x/crypto/sha1.mbt at commit
 /// 96e498849ad8a9e6a7bfa35f7e9f4f6f2ab15e02.
 #warnings("-unused_error_type")
-#internal(internal, "for internal use only")
 pub fn sha1(input : Bytes) -> Bytes raise {
   let old_length = input.length()
   let bits = old_length.to_uint64() * 8

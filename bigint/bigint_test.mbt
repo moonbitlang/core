@@ -17,7 +17,7 @@ test "neg" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = -a
   inspect(b.to_string(), content="-123456789012345678")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = -a
@@ -25,7 +25,7 @@ test "neg" {
     b.to_string(),
     content="-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = -a
@@ -62,7 +62,7 @@ test "int64 comparison helpers" {
 
 ///|
 test "to_octets pads larger length" {
-  let n = @bigint.BigInt::from_string("010203", radix=16)
+  let n = @bigint.parse_bigint("010203", base=16)
   inspect(n.to_octets(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
 }
 
@@ -79,25 +79,23 @@ test "add" {
   let b = @bigint.BigInt::from_int64(987654321098765432L)
   let c = a + b
   inspect(c.to_string(), content="1111111110111111110")
-  let a = @bigint.BigInt::from_string("123456789012345678123456789012345678")
-  let b = @bigint.BigInt::from_string(
-    "9876543210987654329876543210987654321241243",
-  )
+  let a = @bigint.parse_bigint("123456789012345678123456789012345678")
+  let b = @bigint.parse_bigint("9876543210987654329876543210987654321241243")
   let c = a + b
   inspect(c.to_string(), content="9876543334444443342222221334444443333586921")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-345678987654356798765467898765456789098764567890987655678",
   )
-  let b = @bigint.BigInt::from_string("76678908909876567890987656789098789")
+  let b = @bigint.parse_bigint("76678908909876567890987656789098789")
   let c = a + b
   inspect(
     c.to_string(),
     content="-345678987654356798765391219856546912530873580234198556889",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a + b
@@ -105,10 +103,10 @@ test "add" {
     c.to_string(),
     content="-123456794480236665780245887778024588000245887779444446014444446903333367",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a + b
@@ -116,10 +114,8 @@ test "add" {
     c.to_string(),
     content="123456783544454690466667690246666768246667690245246910232469131121357989",
   )
-  let a = @bigint.BigInt::from_string(
-    "123456789012345678123456789012345678123456789",
-  )
-  let b = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint("123456789012345678123456789012345678123456789")
+  let b = @bigint.parse_bigint(
     "98765432109876543298765432109876543298765432112341241213125125",
   )
   let c = a + b
@@ -132,8 +128,8 @@ test "add" {
     d.to_string(),
     content="98765432109876543422222221122222221422222221124686919336581914",
   )
-  let a = @bigint.BigInt::from_string("1")
-  let b = @bigint.BigInt::from_string("1")
+  let a = @bigint.parse_bigint("1")
+  let b = @bigint.parse_bigint("1")
   let c = a + b
   inspect(c.to_string(), content="2")
 
@@ -141,10 +137,10 @@ test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678)
   let b = @bigint.BigInt::from_int64(876543210987654321)
   inspect(a + b, content="999999999999999999")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
   inspect(
@@ -165,30 +161,28 @@ test "sub" {
   inspect(c.to_string(), content="864197532086419754")
   let c = b - a
   inspect(c.to_string(), content="-864197532086419754")
-  let a = @bigint.BigInt::from_string("987654321098765432987654321098765432")
-  let b = @bigint.BigInt::from_string("123456789012345678123456789012345678")
+  let a = @bigint.parse_bigint("987654321098765432987654321098765432")
+  let b = @bigint.parse_bigint("123456789012345678123456789012345678")
   let c = a - b
   inspect(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   inspect(c.to_string(), content="-864197532086419754864197532086419754")
-  let a = @bigint.BigInt::from_string("-123456789012345678123456789012345678")
-  let b = @bigint.BigInt::from_string("-987654321098765432987654321098765432")
+  let a = @bigint.parse_bigint("-123456789012345678123456789012345678")
+  let b = @bigint.parse_bigint("-987654321098765432987654321098765432")
   let c = a - b
   inspect(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
   inspect(c.to_string(), content="-864197532086419754864197532086419754")
-  let a = @bigint.BigInt::from_string("123456789012345678123456789012345678233")
-  let b = @bigint.BigInt::from_string("-987654321098765432987654321098765432")
+  let a = @bigint.parse_bigint("123456789012345678123456789012345678233")
+  let b = @bigint.parse_bigint("-987654321098765432987654321098765432")
   let c = a - b
   inspect(c.to_string(), content="124444443333444443556444443333444443665")
-  let a = @bigint.BigInt::from_string(
-    "-123456789012345678123456789012345678233",
-  )
-  let b = @bigint.BigInt::from_string("987654321098765432987654321098765432")
+  let a = @bigint.parse_bigint("-123456789012345678123456789012345678233")
+  let b = @bigint.parse_bigint("987654321098765432987654321098765432")
   let c = a - b
   inspect(c.to_string(), content="-124444443333444443556444443333444443665")
-  let a = @bigint.BigInt::from_string("123456789012345678123456789012345678233")
-  let b = @bigint.BigInt::from_string("987")
+  let a = @bigint.parse_bigint("123456789012345678123456789012345678233")
+  let b = @bigint.parse_bigint("987")
   let c = a - b
   inspect(c.to_string(), content="123456789012345678123456789012345677246")
 
@@ -196,10 +190,10 @@ test "sub" {
   let a = @bigint.BigInt::from_int64(123456789012345678)
   let b = @bigint.BigInt::from_int64(876543210987654321)
   inspect(a - b, content="-753086421975308643")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
   inspect(
@@ -217,17 +211,17 @@ test "mul" {
   let b = @bigint.BigInt::from_int(0)
   let c = a * b
   inspect(c.to_string(), content="0")
-  let a = @bigint.BigInt::from_string("987654321098765432987654321098765432")
-  let b = @bigint.BigInt::from_string("123456789012345678123456789012345678")
+  let a = @bigint.parse_bigint("987654321098765432987654321098765432")
+  let b = @bigint.parse_bigint("123456789012345678123456789012345678")
   let c = a * b
   inspect(
     c.to_string(),
     content="121932631137021794566377074495046484766956255579027586322511812221002896",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a * b
@@ -235,10 +229,10 @@ test "mul" {
     c.to_string(),
     content="-675048264005650638331575538351330675368295268968297112032725993817064025468035871811413387811508597465733350774788866848766914110358142",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let c = a * b
@@ -246,10 +240,10 @@ test "mul" {
     c.to_string(),
     content="15241578753238836558451457271757357101661335790275877644871214308794398188081092827312918731290971345831439274500849864349959817710728382868480360920606901387000904130485419905521447340363938424041990550242456942562533760120975461083076969999493979603620179878012498124163389756531016644691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328676116477543057492132906599024538971589696720506020451046486841987501930503276963468983409960067084950464889416857206431946368873647327913427848330437449394909327787227570876390807244017692357872286700807813839353766157597935320835245614388056802316725071178178283798204527968299765279684",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "1234567890123456781234567890123456781234567890123456712345678901234567812345678901234567812345678901234567123456789012345678123456789012345678123456789012345671234567890123456781234567890123456781234567890123456778123456789012345678123456789012345677812345678901234567812345678901234567",
   )
   let c = a * b
@@ -262,10 +256,10 @@ test "mul" {
   let a = @bigint.BigInt::from_int64(123456789012345678)
   let b = @bigint.BigInt::from_int64(876543210987654321)
   inspect(a * b, content="108215210259106841348574911222374638")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
   inspect(
@@ -298,16 +292,16 @@ test "div" {
   inspect(c.to_string(), content="8")
   let c = a % b
   inspect(c.to_string(), content="9000000008")
-  let a = @bigint.BigInt::from_string("987654321098765432987654321098765432")
-  let b = @bigint.BigInt::from_string("123456789012345678123456789012345678")
+  let a = @bigint.parse_bigint("987654321098765432987654321098765432")
+  let b = @bigint.parse_bigint("123456789012345678123456789012345678")
   let c = a / b
   inspect(c.to_string(), content="8")
   let c = a % b
   inspect(c.to_string(), content="9000000008000000009000000008")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
@@ -317,10 +311,10 @@ test "div" {
     c.to_string(),
     content="-1411754890143397710214334775703365651947321477507789807694283800",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "12421645375698213532453474567345623538756734578959876125298763582362",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
@@ -330,10 +324,10 @@ test "div" {
     c.to_string(),
     content="4064942729645489156617763015435495456653277079443154228330540643",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "559480073748030317374803031737502937374948313029373748143063751326169",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
@@ -342,10 +336,10 @@ test "div" {
   inspect(c.to_string(), content="0")
   let c = b / a
   inspect(c.to_string(), content="0")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "98765432109876543298765432109876543298765432112341241213125125",
   )
   let c = a / b
@@ -355,7 +349,7 @@ test "div" {
     c.to_string(),
     content="-60185184318518518460185184318518518457104311955145277319847178",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let c = a / b
@@ -370,10 +364,10 @@ test "div" {
   )
   let c = a % b
   inspect(c.to_string(), content="-18")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "192840512535448761530339373212972361809285001825938158026158292411480026580386667968523131569543343891463401449181505398836",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "53114991887765067119604462397623222751521283658033792",
   )
   let c = a / b
@@ -381,8 +375,8 @@ test "div" {
     c.to_string(),
     content="3630623025283172274355511610456320508397929760764978568884844414130904",
   )
-  let a = @bigint.BigInt::from_string("65535232222222222222222222222")
-  let b = @bigint.BigInt::from_string("1")
+  let a = @bigint.parse_bigint("65535232222222222222222222222")
+  let b = @bigint.parse_bigint("1")
   let c = a / b
   inspect(c.to_string(), content="65535232222222222222222222222")
   let c = a % b
@@ -393,10 +387,10 @@ test "div" {
   let b = @bigint.BigInt::from_int64(876543210987654321)
   inspect(a / b, content="0")
   inspect(a % b, content="123456789012345678")
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let b = @bigint.BigInt::from_string(
+  let b = @bigint.parse_bigint(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
   inspect(a / b, content="0")
@@ -458,18 +452,18 @@ test "shr_negative_floor_division" {
 
 ///|
 test "decimal_string" {
-  let a = @bigint.BigInt::from_string("0")
+  let a = @bigint.parse_bigint("0")
   inspect(a.to_string(), content="0")
-  let a = @bigint.BigInt::from_string("123")
+  let a = @bigint.parse_bigint("123")
   inspect(a.to_string(), content="123")
   assert_eq(a, @bigint.BigInt::from_int64(123L))
-  let a = @bigint.BigInt::from_string("1234567890123456789")
+  let a = @bigint.parse_bigint("1234567890123456789")
   inspect(a.to_string(), content="1234567890123456789")
-  let b = @bigint.BigInt::from_string("-1234567890")
+  let b = @bigint.parse_bigint("-1234567890")
   inspect(b.to_string(), content="-1234567890")
   assert_eq(a, @bigint.BigInt::from_int64(1234567890123456789L))
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
-  let a = @bigint.BigInt::from_string(str)
+  let a = @bigint.parse_bigint(str)
   inspect(a.to_string(), content=str)
   let a = @bigint.BigInt::from_int64(1234567890123456789L)
   inspect(a.to_string(), content="1234567890123456789")
@@ -520,45 +514,45 @@ test "compare operands with different limb counts" {
 }
 
 ///|
-test "from_string radix 16" {
+test "parse_bigint radix 16" {
   // Check zero
-  let a = @bigint.BigInt::from_string("0", radix=16)
+  let a = @bigint.parse_bigint("0", base=16)
   inspect(a.to_string(), content="0")
 
   // Test positive number
-  let a = @bigint.BigInt::from_string("1", radix=16)
+  let a = @bigint.parse_bigint("1", base=16)
   inspect(a.to_string(), content="1")
 
   // Test negative number
-  let a = @bigint.BigInt::from_string("-F", radix=16)
+  let a = @bigint.parse_bigint("-F", base=16)
   inspect(a.to_string(), content="-15")
-  let a = @bigint.BigInt::from_string("-a", radix=16)
+  let a = @bigint.parse_bigint("-a", base=16)
   inspect(a.to_string(), content="-10")
 
   // Test large positive number
-  let a = @bigint.BigInt::from_string("112210F47DE98115", radix=16)
+  let a = @bigint.parse_bigint("112210F47DE98115", base=16)
   inspect(a.to_string(), content="1234567890123456789")
 
   // Test very large positive number
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
-    radix=16,
+    base=16,
   )
   inspect(
     a.to_string(),
     content="35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
-    radix=16,
+    base=16,
   )
   inspect(
     a.to_string(),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
-    radix=16,
+    base=16,
   )
   inspect(
     a.to_string(),
@@ -566,9 +560,9 @@ test "from_string radix 16" {
   )
 
   // Test very large negative number
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
-    radix=16,
+    base=16,
   )
   inspect(
     a.to_string(),
@@ -582,54 +576,42 @@ test "from_string radix 16" {
 // significant digit). Exercises the power-of-2 radix path across the
 // boundary cases of that scan: all-zeros, leading zeros before a value,
 // leading zeros that span more than one limb, and the negative sign.
-test "from_string pow2 radix leading zeros" {
+test "parse_bigint pow2 radix leading zeros" {
   // All zeros (any length / radix) must normalize to 0.
-  inspect(@bigint.BigInt::from_string("0", radix=2).to_string(), content="0")
-  inspect(@bigint.BigInt::from_string("0000", radix=2).to_string(), content="0")
-  inspect(
-    @bigint.BigInt::from_string("00000000", radix=16).to_string(),
-    content="0",
-  )
-  inspect(
-    @bigint.BigInt::from_string("-0000", radix=16).to_string(),
-    content="0",
-  )
+  inspect(@bigint.parse_bigint("0", base=2).to_string(), content="0")
+  inspect(@bigint.parse_bigint("0000", base=2).to_string(), content="0")
+  inspect(@bigint.parse_bigint("00000000", base=16).to_string(), content="0")
+  inspect(@bigint.parse_bigint("-0000", base=16).to_string(), content="0")
   // Leading zeros before a value: the scan must land on the first
   // significant digit and produce the same result as without them.
-  inspect(@bigint.BigInt::from_string("0010", radix=2).to_string(), content="2")
-  inspect(
-    @bigint.BigInt::from_string("00ff", radix=16).to_string(),
-    content="255",
-  )
-  inspect(
-    @bigint.BigInt::from_string("-00ff", radix=16).to_string(),
-    content="-255",
-  )
-  inspect(@bigint.BigInt::from_string("0007", radix=8).to_string(), content="7")
+  inspect(@bigint.parse_bigint("0010", base=2).to_string(), content="2")
+  inspect(@bigint.parse_bigint("00ff", base=16).to_string(), content="255")
+  inspect(@bigint.parse_bigint("-00ff", base=16).to_string(), content="-255")
+  inspect(@bigint.parse_bigint("0007", base=8).to_string(), content="7")
   // Many leading zeros (more than one limb's worth) followed by a large
   // multi-limb value: result must match the zero-free spelling.
   inspect(
-    @bigint.BigInt::from_string("0000000000000000112210F47DE98115", radix=16).to_string(),
+    @bigint.parse_bigint("0000000000000000112210F47DE98115", base=16).to_string(),
     content="1234567890123456789",
   )
   // A single significant digit after a long run of zeros.
   inspect(
-    @bigint.BigInt::from_string("00000000000000000000000000000001", radix=16).to_string(),
+    @bigint.parse_bigint("00000000000000000000000000000001", base=16).to_string(),
     content="1",
   )
 }
 
 ///|
-test "from_string negative zero" {
-  let z = @bigint.BigInt::from_string("-0")
+test "parse_bigint negative zero" {
+  let z = @bigint.parse_bigint("-0")
   inspect(z.to_string(), content="0")
   assert_true(z == 0N)
   assert_eq(z.compare(0N), 0)
 }
 
 ///|
-test "from_string radix 16 negative zero" {
-  let z = @bigint.BigInt::from_string("-0", radix=16)
+test "parse_bigint radix 16 negative zero" {
+  let z = @bigint.parse_bigint("-0", base=16)
   inspect(z.to_string(), content="0")
   assert_true(z == 0N)
   assert_eq(z.compare(0N), 0)
@@ -643,48 +625,48 @@ test "radix string conversions" {
   inspect(n.to_string(radix=36), content="73")
   let neg = -10N
   inspect(neg.to_string(radix=2), content="-1010")
-  inspect(@bigint.BigInt::from_string("11111111", radix=2), content="255")
-  inspect(@bigint.BigInt::from_string("ff", radix=16), content="255")
-  inspect(@bigint.BigInt::from_string("-1010", radix=2), content="-10")
-  inspect(@bigint.BigInt::from_string("z", radix=36), content="35")
+  inspect(@bigint.parse_bigint("11111111", base=2), content="255")
+  inspect(@bigint.parse_bigint("ff", base=16), content="255")
+  inspect(@bigint.parse_bigint("-1010", base=2), content="-10")
+  inspect(@bigint.parse_bigint("z", base=36), content="35")
 }
 
 ///|
 test "to_string radix 16" {
   // Check zero
-  let a = @bigint.BigInt::from_string("00", radix=16)
+  let a = @bigint.parse_bigint("00", base=16)
   inspect(a.to_string(radix=16), content="0")
 
   // Test negative number
-  let a = @bigint.BigInt::from_string("-F", radix=16)
+  let a = @bigint.parse_bigint("-F", base=16)
   inspect(a.to_string(radix=16), content="-f")
 
   // Test positive number
-  let a = @bigint.BigInt::from_string("F", radix=16)
+  let a = @bigint.parse_bigint("F", base=16)
   inspect(a.to_string(radix=16), content="f")
 
   // Test positive number with leading zero
-  let a = @bigint.BigInt::from_string("10", radix=16)
+  let a = @bigint.parse_bigint("10", base=16)
   inspect(a.to_string(radix=16), content="10")
 
   // Test large positive number
-  let a = @bigint.BigInt::from_string("01234567890123456789", radix=16)
+  let a = @bigint.parse_bigint("01234567890123456789", base=16)
   inspect(a.to_string(radix=16), content="1234567890123456789")
 
   // Check padding
-  let a = @bigint.BigInt::from_string("100000", radix=16)
+  let a = @bigint.parse_bigint("100000", base=16)
   inspect(a.to_string(), content="1048576")
   inspect(a.to_string(radix=16), content="100000")
 
   // Test very large positive number
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   inspect(
     a.to_string(radix=16),
     content="11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
   inspect(
@@ -692,14 +674,14 @@ test "to_string radix 16" {
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
-  let a = @bigint.BigInt::from_string(str)
+  let a = @bigint.parse_bigint(str)
   inspect(
     a.to_string(radix=16),
     content="805146f2f58580962a0a2e6134bc75e25ad97ae3d09cd34ba4f629ab8911f3f5cb8573a62edd16b0d46775a415f545a75518da3439914d9caa26449067d85e704e8fcf9b29182485b41f952616bacdfddf52b413b524d0eb743e8264a9c6ae32d12c3d20c5b81189060f4ac5d216713d503a69644ea8e4ea220a720c41f6b3d18bed65b4238318e6b0a41d8540d756865ec92df40e8d365a230f17df1d0a440bc6a557cd46d00b10d74c0e75500b2adb3a0336223f9285b78cd04f485e417e1db562b9efcf79433209e6d6e2f43a484e471de4f1f5ae38e08e7daeb644c2c0a22697dd6d29be0b40ff50db575fef02fa5525953c7c198b4a3600ba8ce1f917852a4b957151189f09dcdfcb79963e7d850127858a97855b94870accbe8203e73fe79791ee6ea1b1282a0ceac54d6f6b7cd6c7b8d8092e949ff0a84",
   )
 
   // Test very large negative number
-  let a = @bigint.BigInt::from_string(
+  let a = @bigint.parse_bigint(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   inspect(
@@ -717,36 +699,36 @@ test "pow" {
 
 ///|
 test "land_1" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("11")
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("11")
   inspect(a & b, content="2")
 }
 
 ///|
 test "land_2" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("fffffffffffffff", base=16) // 15 'f' chars
   inspect(a & b, content="1152921504606846966")
 }
 
 ///|
 test "land_3" {
-  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("ffffffffffffffff", base=16) // 16 'f' chars
+  let b = @bigint.parse_bigint("-10")
   inspect(a & b, content="18446744073709551606")
 }
 
 ///|
 test "land_4" {
-  let a = @bigint.BigInt::from_string("0")
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("0")
+  let b = @bigint.parse_bigint("-10")
   inspect(a & b, content="0")
 }
 
 ///|
 test "land_5" {
-  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
-  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
+  let a = @bigint.parse_bigint("ffffffffffffffff", base=16)
+  let b = @bigint.parse_bigint("ffffffffffffffff", base=16)
   inspect(a & b, content="18446744073709551615")
 }
 
@@ -755,141 +737,139 @@ test "land_bug_24400320830243753476_and_1" {
   // Issue: 24400320830243753476N & 1N caused runtime crash
   // The number 24400320830243753476 is even (low bit is 0)
   // AND with 1 should give 0, testing proper len normalization
-  let a = @bigint.BigInt::from_string("24400320830243753476")
-  let b = @bigint.BigInt::from_string("1")
+  let a = @bigint.parse_bigint("24400320830243753476")
+  let b = @bigint.parse_bigint("1")
   inspect(a & b, content="0")
 }
 
 ///|
 test "land_result_zero_normalization" {
   // Test various cases where AND results in 0 to ensure len normalization
-  let a = @bigint.BigInt::from_string("2") // 0b10
-  let b = @bigint.BigInt::from_string("1") // 0b01
+  let a = @bigint.parse_bigint("2") // 0b10
+  let b = @bigint.parse_bigint("1") // 0b01
   inspect(a & b, content="0")
 
   // Larger even number AND with 1
-  let c = @bigint.BigInt::from_string("18446744073709551616") // 2^64
-  let d = @bigint.BigInt::from_string("1")
+  let c = @bigint.parse_bigint("18446744073709551616") // 2^64
+  let d = @bigint.parse_bigint("1")
   inspect(c & d, content="0")
 
   // Complementary bitmasks
-  let e = @bigint.BigInt::from_string("aaaaaaaaaaaaaaaa", radix=16)
-  let f = @bigint.BigInt::from_string("5555555555555555", radix=16)
+  let e = @bigint.parse_bigint("aaaaaaaaaaaaaaaa", base=16)
+  let f = @bigint.parse_bigint("5555555555555555", base=16)
   inspect(e & f, content="0")
 }
 
 ///|
 test "land_different_sizes" {
   // Test AND with operands of different sizes to ensure proper len calculation
-  let small = @bigint.BigInt::from_string("255")
-  let large = @bigint.BigInt::from_string(
-    "340282366920938463463374607431768211455",
-  )
+  let small = @bigint.parse_bigint("255")
+  let large = @bigint.parse_bigint("340282366920938463463374607431768211455")
   inspect(small & large, content="255")
 }
 
 ///|
 test "lor_1" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("11")
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("11")
   inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_2" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("fffffffffffffff", base=16) // 15 'f' chars
   inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_3" {
-  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("ffffffffffffffff", base=16) // 16 'f' chars
+  let b = @bigint.parse_bigint("-10")
   inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_4" {
-  let a = @bigint.BigInt::from_string("0")
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("0")
+  let b = @bigint.parse_bigint("-10")
   inspect(a | b, content="-10")
 }
 
 ///|
 test "lor_5" {
-  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
-  let b = @bigint.BigInt::from_string("0")
+  let a = @bigint.parse_bigint("ffffffffffffffff", base=16)
+  let b = @bigint.parse_bigint("0")
   inspect(a | b, content="18446744073709551615")
 }
 
 ///|
 test "lor_result_normalization" {
   // Test OR operations that may have trailing zeros in limbs
-  let a = @bigint.BigInt::from_string("15") // 0b1111
-  let b = @bigint.BigInt::from_string("240") // 0b11110000
+  let a = @bigint.parse_bigint("15") // 0b1111
+  let b = @bigint.parse_bigint("240") // 0b11110000
   inspect(a | b, content="255")
 
   // OR with zero should return the non-zero operand
-  let c = @bigint.BigInt::from_string("24400320830243753476")
-  let d = @bigint.BigInt::from_string("0")
+  let c = @bigint.parse_bigint("24400320830243753476")
+  let d = @bigint.parse_bigint("0")
   inspect(c | d, content="24400320830243753476")
 }
 
 ///|
 test "lxor_1" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("11")
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("11")
   inspect(a ^ b, content="-3")
 }
 
 ///|
 test "lxor_2" {
-  let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
+  let a = @bigint.parse_bigint("-10")
+  let b = @bigint.parse_bigint("fffffffffffffff", base=16) // 15 'f' chars
   inspect(a ^ b, content="-1152921504606846967")
 }
 
 ///|
 test "lxor_3" {
-  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("ffffffffffffffff", base=16) // 16 'f' chars
+  let b = @bigint.parse_bigint("-10")
   inspect(a ^ b, content="-18446744073709551607")
 }
 
 ///|
 test "lxor_4" {
-  let a = @bigint.BigInt::from_string("0")
-  let b = @bigint.BigInt::from_string("-10")
+  let a = @bigint.parse_bigint("0")
+  let b = @bigint.parse_bigint("-10")
   inspect(a ^ b, content="-10")
 }
 
 ///|
 test "lxor_5" {
-  let a = @bigint.BigInt::from_string("0")
-  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
+  let a = @bigint.parse_bigint("0")
+  let b = @bigint.parse_bigint("ffffffffffffffff", base=16)
   inspect(a ^ b, content="18446744073709551615")
 }
 
 ///|
 test "lxor_result_zero_normalization" {
   // XOR with self should give 0, testing len normalization
-  let a = @bigint.BigInt::from_string("24400320830243753476")
+  let a = @bigint.parse_bigint("24400320830243753476")
   inspect(a ^ a, content="0")
 
   // XOR of same values
-  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
+  let b = @bigint.parse_bigint("ffffffffffffffff", base=16)
   inspect(b ^ b, content="0")
 
   // XOR resulting in zero
-  let c = @bigint.BigInt::from_string("255")
-  let d = @bigint.BigInt::from_string("255")
+  let c = @bigint.parse_bigint("255")
+  let d = @bigint.parse_bigint("255")
   inspect(c ^ d, content="0")
 }
 
 ///|
 test "bitwise ops depend on value, not construction history" {
-  let from_hex = @bigint.BigInt::from_string("80000000", radix=16)
+  let from_hex = @bigint.parse_bigint("80000000", base=16)
   let literal = 2147483648N
 
   assert_eq(from_hex, literal)
@@ -1110,13 +1090,11 @@ test "compare_int" {
   assert_eq(@bigint.BigInt::compare_int(neg_large, 0), -1)
 
   // Test with very large BigInt values
-  let very_large = @bigint.BigInt::from_string("123456789012345678901234567890")
+  let very_large = @bigint.parse_bigint("123456789012345678901234567890")
   assert_eq(@bigint.BigInt::compare_int(very_large, 2147483647), 1)
   assert_eq(@bigint.BigInt::compare_int(very_large, -2147483648), 1)
   assert_eq(@bigint.BigInt::compare_int(very_large, 0), 1)
-  let very_neg_large = @bigint.BigInt::from_string(
-    "-123456789012345678901234567890",
-  )
+  let very_neg_large = @bigint.parse_bigint("-123456789012345678901234567890")
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, 2147483647), -1)
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, -2147483648), -1)
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, 0), -1)
@@ -1182,23 +1160,21 @@ test "compare_int64" {
   )
 
   // Test with BigInt that doesn't fit in Int64
-  let large = @bigint.BigInt::from_string("9223372036854775808") // Int64.max_value + 1
+  let large = @bigint.parse_bigint("9223372036854775808") // Int64.max_value + 1
   assert_eq(@bigint.BigInt::compare_int64(large, 9223372036854775807L), 1)
   assert_eq(@bigint.BigInt::compare_int64(large, -9223372036854775808L), 1)
   assert_eq(@bigint.BigInt::compare_int64(large, 0L), 1)
-  let neg_large = @bigint.BigInt::from_string("-9223372036854775809") // Int64.min_value - 1
+  let neg_large = @bigint.parse_bigint("-9223372036854775809") // Int64.min_value - 1
   assert_eq(@bigint.BigInt::compare_int64(neg_large, -9223372036854775808L), -1)
   assert_eq(@bigint.BigInt::compare_int64(neg_large, 9223372036854775807L), -1)
   assert_eq(@bigint.BigInt::compare_int64(neg_large, 0L), -1)
 
   // Test with very large BigInt values
-  let very_large = @bigint.BigInt::from_string("123456789012345678901234567890")
+  let very_large = @bigint.parse_bigint("123456789012345678901234567890")
   assert_eq(@bigint.BigInt::compare_int64(very_large, 9223372036854775807L), 1)
   assert_eq(@bigint.BigInt::compare_int64(very_large, -9223372036854775808L), 1)
   assert_eq(@bigint.BigInt::compare_int64(very_large, 0L), 1)
-  let very_neg_large = @bigint.BigInt::from_string(
-    "-123456789012345678901234567890",
-  )
+  let very_neg_large = @bigint.parse_bigint("-123456789012345678901234567890")
   assert_eq(
     @bigint.BigInt::compare_int64(very_neg_large, 9223372036854775807L),
     -1,
@@ -1316,7 +1292,7 @@ test "@bigint.BigInt::hash" {
 
   // Test that equal BigInts have equal hashes
   let a = 987654321098765432N
-  let b = @bigint.BigInt::from_string("00987654321098765432")
+  let b = @bigint.parse_bigint("00987654321098765432")
   let hash8 = Hasher(seed=0)
     |> x => {
       x.combine(a)
@@ -1367,7 +1343,7 @@ test "default" {
 ///|
 test "BigInt bit ops" {
   let small = @bigint.BigInt::from_int(1)
-  let big = @bigint.BigInt::from_string("123456789012345678901234567891")
+  let big = @bigint.parse_bigint("123456789012345678901234567891")
   inspect(small.land(big).to_string(), content="1")
   inspect(small.lor(big).to_string(), content="123456789012345678901234567891")
   inspect(small.lxor(big).to_string(), content="123456789012345678901234567890")
@@ -1375,7 +1351,7 @@ test "BigInt bit ops" {
 
 ///|
 test "BigInt bit_length negative multi-limb" {
-  let neg = @bigint.BigInt::from_string("-4294967297")
+  let neg = @bigint.parse_bigint("-4294967297")
   inspect(neg.bit_length() > 0, content="true")
 }
 
@@ -1387,10 +1363,10 @@ test "BigInt bit_length zero" {
 ///|
 test "BigInt bit_length negative multi-limb power of two" {
   // -2^32 has limbs [0, 1], bit_length should be 32 not 33
-  let neg_2_32 = @bigint.BigInt::from_string("-4294967296")
+  let neg_2_32 = @bigint.parse_bigint("-4294967296")
   inspect(neg_2_32.bit_length(), content="32")
   // -2^64 has limbs [0, 0, 1], bit_length should be 64
-  let neg_2_64 = @bigint.BigInt::from_string("-18446744073709551616")
+  let neg_2_64 = @bigint.parse_bigint("-18446744073709551616")
   inspect(neg_2_64.bit_length(), content="64")
 }
 
@@ -1421,21 +1397,19 @@ test "to_string non-power-of-two radixes round-trip and match known values" {
   inspect(36N.to_string(radix=36), content="10")
   inspect(6N.to_string(radix=6), content="10")
   // round-trip large values through every non-power-of-two radix
-  let big = (@bigint.BigInt::from_string("123456789123456789") << 700) +
-    @bigint.BigInt::from_string("987654321987654321")
+  let big = (@bigint.parse_bigint("123456789123456789") << 700) +
+    @bigint.parse_bigint("987654321987654321")
   for radix in [3, 5, 6, 7, 11, 12, 15, 20, 33, 36] {
     let s = big.to_string(radix~)
-    assert_eq(@bigint.BigInt::from_string(s, radix~), big)
+    assert_eq(@bigint.parse_bigint(s, base=radix), big)
     let s_neg = (-big).to_string(radix~)
-    assert_eq(@bigint.BigInt::from_string(s_neg, radix~), -big)
+    assert_eq(@bigint.parse_bigint(s_neg, base=radix), -big)
   }
   // boundary around a chunk: radix 3 uses 19-digit chunks; exercise values
   // spanning one and several slots
   for e in [1, 18, 19, 20, 37, 38, 39] {
-    let p = @bigint.BigInt::from_string("3").pow(
-      @bigint.BigInt::from_string(e.to_string()),
-    )
-    assert_eq(@bigint.BigInt::from_string(p.to_string(radix=3), radix=3), p)
+    let p = @bigint.parse_bigint("3").pow(@bigint.parse_bigint(e.to_string()))
+    assert_eq(@bigint.parse_bigint(p.to_string(radix=3), base=3), p)
     inspect(p.to_string(radix=3).length(), content=(e + 1).to_string())
   }
 }

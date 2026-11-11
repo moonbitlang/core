@@ -285,3 +285,30 @@ pub fn Bytes::new(len : Int32) -> Bytes {
 pub fn[K, V] Map::capacity(self : Map[K, V]) -> Int32 {
   self.capacity
 }
+
+///|
+/// Converts an `Int` to a `Double`. Wasm-named duplicate of `Int::to_double`.
+#deprecated("Use `x.to_double()` (`Int::to_double`) instead")
+pub fn Double::from_int(i : Int32) -> Double = "%i32_to_f64"
+
+///|
+/// Converts an `Int` to an `Int64`. Duplicate of `Int::to_int64`.
+#deprecated("Use `x.to_int64()` (`Int::to_int64`) instead")
+pub fn Int64::from_int(i : Int32) -> Int64 = "%i32_to_i64"
+
+///|
+/// Converts a `UInt` to a `Double`. Wasm-named duplicate of `UInt::to_double`.
+#deprecated("Use `x.to_double()` (`UInt::to_double`) instead")
+pub fn Double::convert_uint(val : UInt32) -> Double = "%u32.to_f64"
+
+///|
+/// Converts a `UInt64` to a `Double`. Wasm-named duplicate of
+/// `UInt64::to_double`.
+#deprecated("Use `x.to_double()` (`UInt64::to_double`) instead")
+pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
+
+///|
+/// Zero-extends a `UInt` to a `UInt64`. Wasm-named duplicate of
+/// `UInt::to_uint64`.
+#deprecated("Use `x.to_uint64()` (`UInt::to_uint64`) instead")
+pub fn UInt64::extend_uint(val : UInt32) -> UInt64 = "%u32.to_u64"

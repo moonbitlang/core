@@ -57,8 +57,8 @@ fn make_udp_socket(
 #borrow(sock, multi_addr, local_addr)
 fn join_multicast_group_ffi(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
-  local_addr : Addr,
+  multi_addr : OsAddr,
+  local_addr : OsAddr,
   multi_addr_len~ : Int32 = multi_addr.0.length(),
   local_addr_len~ : Int32 = local_addr.0.length(),
 ) -> Int32 = "moonbitlang/async" "socket/join_multicast_group"
@@ -66,8 +66,8 @@ fn join_multicast_group_ffi(
 ///|
 fn join_multicast_group(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
-  local_addr : Addr,
+  multi_addr : OsAddr,
+  local_addr : OsAddr,
   context~ : String,
 ) -> Unit raise {
   if join_multicast_group_ffi(sock, multi_addr, local_addr) < 0 {
@@ -80,7 +80,7 @@ fn join_multicast_group(
 #borrow(sock, multi_addr)
 fn join_multicast_group_v6_ffi(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
+  multi_addr : OsAddr,
   interface_index : UInt32,
   multi_addr_len~ : Int32 = multi_addr.0.length(),
 ) -> Int32 = "moonbitlang/async" "socket/join_multicast_group_v6"
@@ -88,7 +88,7 @@ fn join_multicast_group_v6_ffi(
 ///|
 fn join_multicast_group_v6(
   sock : @fd_util.Fd,
-  multi_addr : Addr,
+  multi_addr : OsAddr,
   interface_index : UInt32,
   context~ : String,
 ) -> Unit raise {
@@ -102,14 +102,14 @@ fn join_multicast_group_v6(
 #borrow(sock, local_addr)
 fn set_multicast_interface_ffi(
   sock : @fd_util.Fd,
-  local_addr : Addr,
+  local_addr : OsAddr,
   local_addr_len~ : Int32 = local_addr.0.length(),
 ) -> Int32 = "moonbitlang/async" "socket/set_multicast_interface"
 
 ///|
 fn set_multicast_interface(
   sock : @fd_util.Fd,
-  local_addr : Addr,
+  local_addr : OsAddr,
   context~ : String,
 ) -> Unit raise {
   if set_multicast_interface_ffi(sock, local_addr) < 0 {
@@ -193,7 +193,7 @@ fn listen_ffi(sock : @fd_util.Fd) -> Int32 = "moonbitlang/async" "socket/listen"
 #borrow(sock, addr)
 fn connect_ffi(
   sock : @fd_util.Fd,
-  addr : Addr,
+  addr : OsAddr,
   addr_len~ : Int32 = addr.0.length(),
 ) -> Int32 = "moonbitlang/async" "socket/udp_client_connect"
 
@@ -227,7 +227,7 @@ fn enable_keepalive_ffi(
 #borrow(sock, addr_out)
 fn getsockname_ffi(
   sock : @fd_util.Fd,
-  addr_out : Addr,
+  addr_out : OsAddr,
   addr_len~ : Int32 = addr_out.0.length(),
 ) -> Int32 = "moonbitlang/async" "socket/getsockname"
 
@@ -236,8 +236,8 @@ fn getsockname(
   sock : @fd_util.Fd,
   family : AddrFamily,
   context~ : String,
-) -> Addr raise {
-  let addr = Addr::empty(family)
+) -> OsAddr raise {
+  let addr = OsAddr::empty(family)
   if getsockname_ffi(sock, addr) < 0 {
     @os_error.check_errno(context)
   }

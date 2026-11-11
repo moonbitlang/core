@@ -168,6 +168,10 @@ pub fn[K : Compare, V] SortedMap::last_lt(
 ///|
 /// Returns an iterator over all entries in descending key order.
 ///
+/// If the map is structurally modified (keys inserted or removed, or the map
+/// cleared) while the iterator is in use, what it yields is unspecified,
+/// though memory-safe.
+///
 /// ```mbt check
 /// test {
 ///   let map = @sorted_map.from_array([(1, "a"), (3, "c"), (2, "b")])

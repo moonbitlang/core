@@ -73,8 +73,8 @@ fn TlsConnectionHandle::new() -> TlsConnectionHandle = "moonbitlang/async" "tls/
 #borrow(host)
 fn TlsConnectionHandle::set_client(
   self : TlsConnectionHandle,
-  host : String,
-  host_len~ : Int32 = host.length(),
+  host : @os_string.OsString,
+  host_len~ : Int32 = host.to_string().length(),
   sni~ : Bool,
   trust : TlsTrustMode,
 ) -> Int32 = "moonbitlang/async" "tls/connection/set_client"
@@ -87,28 +87,6 @@ fn TlsConnectionHandle::add_root_certificate(
   root : Bytes,
   root_len~ : Int32 = root.length(),
 ) -> Int32 = "moonbitlang/async" "tls/connection/add_root_certificate"
-
-///|
-#unsafe_skip_stub_check
-#borrow(private_key_file, certificate_file)
-fn TlsConnectionHandle::set_server_files(
-  self : TlsConnectionHandle,
-  private_key_file : @os_string.OsString,
-  private_key_file_len~ : Int32 = private_key_file.to_string().length(),
-  private_key_type : X509FileType,
-  certificate_file : @os_string.OsString,
-  certificate_file_len~ : Int32 = certificate_file.to_string().length(),
-  certificate_type : X509FileType,
-) -> Int32 = "moonbitlang/async" "tls/connection/set_server_files"
-
-///|
-#unsafe_skip_stub_check
-#borrow(pfx_content)
-fn TlsConnectionHandle::set_server_pfx(
-  self : TlsConnectionHandle,
-  pfx_content : Bytes,
-  pfx_content_len~ : Int32 = pfx_content.length(),
-) -> Int32 = "moonbitlang/async" "tls/connection/set_server_pfx"
 
 ///|
 #unsafe_skip_stub_check
@@ -233,6 +211,7 @@ struct Tls {
   transport : Transport
   reader_ctrl : @io.BinaryReaderController
   writer_ctrl : @io.BinaryWriterController
+  require_shutdown : Bool
   mut shutdown : Bool
   mut closed : Bool
 }
@@ -244,6 +223,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
   w : W,
   is_client~ : Bool,
   host~ : String?,
+  require_shutdown~ : Bool,
 ) -> Tls {
   {
     conn,
@@ -252,6 +232,7 @@ fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::from_pair(
     transport: Transport::new(r, w),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
+    require_shutdown,
     shutdown: false,
     closed: false,
   }
@@ -331,14 +312,22 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   w : W,
   host? : String,
   sni~ : Bool = true,
+  require_shutdown~ : Bool = true,
   trust~ : TrustedRoot = SystemRoot,
 ) -> Tls {
   let host_name = match host {
-    Some(host) => host
-    None => ""
+    Some(host) => @os_string.from_string(host)
+    None => @os_string.empty
   }
   let conn = TlsConnectionHandle::new()
-  let self = Tls::from_pair(conn, r, w, is_client=true, host~)
+  let self = Tls::from_pair(
+    conn,
+    r,
+    w,
+    is_client=true,
+    host~,
+    require_shutdown~,
+  )
   errdefer self.close()
   if trust is CustomPemFile(path) {
     let pem = @fs.read_text(path)
@@ -355,92 +344,6 @@ pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::client_from_pair(
   }
   self.connect()
   self
-}
-
-///|
-#internal(internal, "do not use, for internal testing only")
-pub async fn[R : @io.BinaryReader, W : @io.BinaryWriter] Tls::server_from_pair(
-  r : R,
-  w : W,
-  private_key_file? : String,
-  private_key_type? : X509FileType,
-  certificate_file? : String,
-  certificate_type? : X509FileType,
-  pfx_file? : String,
-) -> Tls {
-  let conn = TlsConnectionHandle::new()
-  let self = Tls::from_pair(conn, r, w, is_client=false, host=None)
-  errdefer self.close()
-  let status = if @event_loop.platform is Windows {
-    let pfx_file = match pfx_file {
-      Some(pfx_file) => pfx_file
-      None =>
-        raise TlsError("pfx_file is required for TLS servers on Windows hosts")
-    }
-    let pfx_content = @fs.read_binary(pfx_file)
-    conn.set_server_pfx(pfx_content)
-  } else {
-    let private_key_file = match private_key_file {
-      Some(private_key_file) => private_key_file
-      None =>
-        raise TlsError(
-          "private_key_file is required for TLS servers on non-Windows hosts",
-        )
-    }
-    let certificate_file = match certificate_file {
-      Some(certificate_file) => certificate_file
-      None =>
-        raise TlsError(
-          "certificate_file is required for TLS servers on non-Windows hosts",
-        )
-    }
-    let private_key_type = match private_key_type {
-      Some(private_key_type) => private_key_type
-      None =>
-        raise TlsError(
-          "private_key_type is required for TLS servers on non-Windows hosts",
-        )
-    }
-    let certificate_type = match certificate_type {
-      Some(certificate_type) => certificate_type
-      None =>
-        raise TlsError(
-          "certificate_type is required for TLS servers on non-Windows hosts",
-        )
-    }
-    conn.set_server_files(
-      @os_string.from_string(private_key_file),
-      private_key_type,
-      @os_string.from_string(certificate_file),
-      certificate_type,
-    )
-  }
-  if status != 0 {
-    raise TlsError(conn.take_error_message())
-  }
-  self.accept()
-  self
-}
-
-///|
-#internal(internal, "do not use, for internal testing only")
-pub async fn[Inner : @io.BinaryReader + @io.BinaryWriter] Tls::server(
-  inner : Inner,
-  private_key_file? : String,
-  private_key_type? : X509FileType,
-  certificate_file? : String,
-  certificate_type? : X509FileType,
-  pfx_file? : String,
-) -> Tls {
-  Tls::server_from_pair(
-    inner,
-    inner,
-    private_key_file?,
-    private_key_type?,
-    certificate_file?,
-    certificate_type?,
-    pfx_file?,
-  )
 }
 
 ///|
@@ -491,7 +394,12 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
           continue
         } else if self.transport.state is Closed &&
           controller.buffered().length() == 0 {
-          return 0
+          // The peer closed the connection without performing TLS shutdown
+          if self.require_shutdown {
+            raise @io.UnexpectedEof
+          } else {
+            return 0
+          }
         } else if self.conn.wants_read() {
           self.transport.read_more()
         } else if self.conn.wants_write() {
@@ -505,6 +413,11 @@ impl @io.BinaryReaderImpl for Tls with fn raw_read_impl(
   } nobreak {
     0
   }
+}
+
+///|
+impl @io.BinaryReaderImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|
@@ -569,6 +482,11 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
   } nobreak {
     0
   }
+}
+
+///|
+impl @io.BinaryWriterImpl for Tls with fn name(_self) {
+  "@tls.Tls"
 }
 
 ///|

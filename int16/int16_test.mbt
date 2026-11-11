@@ -37,13 +37,13 @@ test "Int16::from_int" {
 
 ///|
 test "Int16::to_byte" {
-  inspect(Int16::to_byte(0), content="b'\\x00'")
-  inspect(Int16::to_byte(123), content="b'\\x7B'")
-  inspect(Int16::to_byte(-123), content="b'\\x85'")
-  inspect(Int16::to_byte(255), content="b'\\xFF'")
-  inspect(Int16::to_byte(-256), content="b'\\x00'")
-  inspect(Int16::to_byte(256), content="b'\\x00'")
-  inspect(Int16::to_byte(-257), content="b'\\xFF'")
+  inspect(Int16::to_byte(0), content="0")
+  inspect(Int16::to_byte(123), content="123")
+  inspect(Int16::to_byte(-123), content="133")
+  inspect(Int16::to_byte(255), content="255")
+  inspect(Int16::to_byte(-256), content="0")
+  inspect(Int16::to_byte(256), content="0")
+  inspect(Int16::to_byte(-257), content="255")
 }
 
 ///|

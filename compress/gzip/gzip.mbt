@@ -152,10 +152,10 @@ fn inflate_member(
   input : BytesView,
   q : Int32,
   decoder : @flate.Decompressor,
-  max_output : Int32,
+  max_output_bytes : Int32,
   cancelled : (() -> Bool)?,
 ) -> @flate.Decompressed raise GzipError {
-  decoder.decompress(input[q:], mode=Prefix, max_output~, cancelled?) catch {
+  decoder.decompress(input[q:], mode=Prefix, max_output_bytes~, cancelled?) catch {
     // All remaining input was handed over, yet the stream did not end.
     InflateError(Truncated, _) => raise GzipError(Truncated, "gzip: truncated")
     err => raise wrap_inflate_error(err)
@@ -233,7 +233,7 @@ fn gunzip_decode_member(
   p : Int32,
   n : Int32,
   decoder : @flate.Decompressor,
-  max_output : Int32,
+  max_output_bytes : Int32,
   cancelled : (() -> Bool)?,
 ) -> (Bytes, Int32) raise GzipError {
   guard n - p >= 18 else { raise GzipError(Truncated, "gzip: truncated") }
@@ -246,7 +246,7 @@ fn gunzip_decode_member(
   }
   let q = gunzip_optional_fields_end(input, p + 10, flg, cancelled)
   guard q <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
-  let result = inflate_member(input, q, decoder, max_output, cancelled)
+  let result = inflate_member(input, q, decoder, max_output_bytes, cancelled)
   let payload = result.data
   let trailer = q + result.consumed
   guard trailer <= n - 8 else { raise GzipError(Truncated, "gzip: truncated") }
@@ -261,19 +261,20 @@ fn gunzip_decode_member(
 
 ///|
 /// Decode and join gzip members, verifying each CRC-32 and length trailer.
-/// Trailing bytes that do not begin another member are ignored. `max_output`
+/// Trailing bytes that do not begin another member are ignored. `max_output_bytes`
 /// caps cumulative output (default: `Bytes` capacity); exceeding it raises
 /// `OutputLimitExceeded(limit~, observed~)`, a negative value `InvalidArgument`.
 /// `cancelled` is polled at entry, between members and in 4 KiB intervals during
 /// name/comment scanning, decoding, checksumming and joining; true raises `Cancelled`.
+#label_migration(max_output_bytes, alias=max_output, msg="Use max_output_bytes= instead")
 pub fn decompress(
   input : BytesView,
-  max_output? : Int32,
+  max_output_bytes? : Int32,
   cancelled? : () -> Bool,
 ) -> Bytes raise GzipError {
-  let limit = max_output.unwrap_or(0x7fff_ffff)
+  let limit = max_output_bytes.unwrap_or(0x7fff_ffff)
   guard limit >= 0 else {
-    raise GzipError(InvalidArgument, "max_output must be non-negative")
+    raise GzipError(InvalidArgument, "max_output_bytes must be non-negative")
   }
   check_cancelled(cancelled)
   let n = input.length()

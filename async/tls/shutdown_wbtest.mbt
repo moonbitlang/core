@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-async test "peer close connection" {
+async test "peer close connection require_shutdown=false" {
   @async.with_task_group() <| root => {
     // server
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
@@ -30,7 +30,46 @@ async test "peer close connection" {
     // client
     let conn = @socket.Tcp::connect(addr)
     defer conn.close()
-    let client = @tls.Tls::client(conn, trust=NoVerification)
+    let client = Tls::client(conn, trust=NoVerification)
+    defer client.close()
+    // It is necessary to perform a `read` first here.
+    // OpenSSL and Windows schannel will send a TLS v1.3 session ticket
+    // immediately after handshake.
+    //
+    // If we close the connection without reading any data (i.e. a one-way connection),
+    // the underlying TCP connection will be reset,
+    // due to pending data in the recv buffer.
+    // Read something before closing the connection solves the problem.
+    inspect(@utf8.decode(client.read_exactly(4)), content="1234")
+    client.write(b"abcd")
+    // close the underlying connection directly
+  }
+}
+
+///|
+async test "peer close connection require_shutdown=true" {
+  @async.with_task_group() <| root => {
+    // server
+    let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
+    let addr = server.addr
+    root.spawn_bg() <| () => {
+      defer server.close()
+      let (conn, _) = server.accept()
+      defer conn.close()
+      let server = test_server(conn, conn, require_shutdown=true)
+      defer server.close()
+      server.write(b"1234")
+      @debug.debug_inspect(
+        @test.expect_error_async(() => server.read_all()),
+        content=(
+          #|TransportError(UnexpectedEof, context="@tls.Tls")
+        ),
+      )
+    }
+    // client
+    let conn = @socket.Tcp::connect(addr)
+    defer conn.close()
+    let client = Tls::client(conn, trust=NoVerification)
     defer client.close()
     // It is necessary to perform a `read` first here.
     // OpenSSL and Windows schannel will send a TLS v1.3 session ticket

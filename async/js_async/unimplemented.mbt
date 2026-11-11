@@ -205,6 +205,12 @@ pub impl @io.BinaryReader for ReadableStream
 
 ///|
 #coverage.skip
+impl @io.BinaryReaderImpl for ReadableStream with fn name(_self) {
+  "@js.ReadableStream"
+}
+
+///|
+#coverage.skip
 impl @io.BinaryReaderImpl for ReadableStream with fn get_controller(_) {
   abort("unimplemented in native backend")
 }
@@ -242,7 +248,7 @@ pub extend ReadableStream with @io.BinaryReader::{
 /// Create an anonymous pipe and wrap the read end into a `JsReadableStream`.
 /// This allows writing data from MoonBit code to JavaScript.
 /// Usually users should pass the read end of the pipe (`JsReadableStream`)
-/// to JavaScript code, and write to the write end of the pipe (`@io.PipeWrite`)
+/// to JavaScript code, and write to the write end of the pipe (`@io.MemoryPipeWrite`)
 /// from MoonBit code.
 ///
 /// Closing the write end of the pipe will signal EOF on the read end.
@@ -250,6 +256,6 @@ pub extend ReadableStream with @io.BinaryReader::{
 /// further write operations on the write end will fail with error.
 #internal(unimplemented, "unimplemented in native backend")
 #coverage.skip
-pub fn JsReadableStream::new_pipe() -> (JsReadableStream, @io.PipeWrite) {
+pub fn JsReadableStream::new_pipe() -> (JsReadableStream, @io.MemoryPipeWrite) {
   abort("unimplemented in native backend")
 }

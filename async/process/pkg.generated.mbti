@@ -14,7 +14,7 @@ pub fn graceful_cancel(timeout~ : Int32, signal? : @signal.Signal) -> Cancellati
 
 pub fn hard_cancel() -> CancellationHandler
 
-pub fn pipe() -> (SharedProcessInput, SharedProcessOutput) raise
+pub fn pipe_between_process() -> (SharedProcessInput, SharedProcessOutput) raise
 
 pub fn read_from_process() -> (ReadFromProcess, SharedProcessOutput) raise
 
@@ -42,6 +42,15 @@ pub impl Show for CommandFailed
 
 // Types and methods
 pub(all) struct CancellationHandler(async (Int32) -> Unit)
+
+type Cmd
+pub fn Cmd::Cmd(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, accepted_exit_code? : (Int32) -> Bool) -> Self
+pub fn Cmd::pipe(Self, Self) -> Self
+pub async fn Cmd::run(Self, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, cancel_handler? : CancellationHandler) -> ProcessResult
+pub fn Cmd::sequence(ArrayView[Self]) -> Self
+pub async fn Cmd::spawn(Self, @async.TaskGroup, no_wait? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, cancel_handler? : CancellationHandler) -> Process
+pub fn Cmd::with_context(Self, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView) -> Self
+pub impl BitOr for Cmd
 
 pub struct OrphanProcess {
   pid : Int32
@@ -101,18 +110,18 @@ pub struct ReadFromProcess {
   // private fields
 }
 pub fn ReadFromProcess::close(Self) -> Unit
-pub async fn ReadFromProcess::drop_all(Self) -> Int64
-pub async fn ReadFromProcess::drop_exactly(Self, Int32) -> Unit
-pub async fn ReadFromProcess::peek(Self) -> BytesView?
-pub async fn ReadFromProcess::peek_at_least(Self, Int32) -> BytesView
-pub async fn ReadFromProcess::peek_exactly(Self, Int32) -> BytesView
-pub async fn ReadFromProcess::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView?
-pub async fn ReadFromProcess::read(Self) -> Bytes?
-pub async fn ReadFromProcess::read_all(Self) -> Bytes
-pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes
-pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes
-pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
-pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes?
+pub async fn ReadFromProcess::drop_all(Self) -> Int64 raise @io.ReaderError
+pub async fn ReadFromProcess::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
+pub async fn ReadFromProcess::peek(Self) -> BytesView? raise @io.ReaderError
+pub async fn ReadFromProcess::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ReadFromProcess::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
+pub async fn ReadFromProcess::peek_until(Self, BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn ReadFromProcess::read(Self) -> Bytes? raise @io.ReaderError
+pub async fn ReadFromProcess::read_all(Self) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
+pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub impl @io.BinaryReader for ReadFromProcess
 
 type SharedProcessInput
@@ -126,7 +135,7 @@ pub struct WriteToProcess {
   // private fields
 }
 pub fn WriteToProcess::close(Self) -> Unit
-pub async fn WriteToProcess::write(Self, BytesView) -> Unit
+pub async fn WriteToProcess::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn WriteToProcess::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryWriter for WriteToProcess
 

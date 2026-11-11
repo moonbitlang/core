@@ -32,23 +32,24 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// ```mbt check
 /// test {
 ///   inspect(@strconv.parse_uint64("123"), content="123")
-///   inspect(@strconv.parse_uint64("0xff", base=0), content="255")
+///   inspect(@strconv.parse_uint64("0xff", radix=0), content="255")
 ///   inspect(@strconv.parse_uint64("0o10"), content="8")
 ///   inspect(@strconv.parse_uint64("0b1010"), content="10")
 ///   inspect(@strconv.parse_uint64("1_234"), content="1234")
-///   inspect(@strconv.parse_uint64("ff", base=16), content="255")
-///   inspect(@strconv.parse_uint64("zz", base=36), content="1295")
+///   inspect(@strconv.parse_uint64("ff", radix=16), content="255")
+///   inspect(@strconv.parse_uint64("zz", radix=36), content="1295")
 /// }
 /// ```
 ///
-pub fn parse_uint64(str : StringView, base~ : Int32 = 0) -> UInt64 raise {
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_uint64(str : StringView, radix~ : Int32 = 0) -> UInt64 raise {
   guard str != "" else { syntax_err() }
   if str is ['+' | '-', ..] {
     syntax_err()
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base(str, base)
+  let (num_base, rest, allow_underscore) = check_and_consume_base(str, radix)
 
   // calculate overflow threshold
   let overflow_threshold = match num_base {
@@ -88,9 +89,10 @@ pub fn parse_uint64(str : StringView, base~ : Int32 = 0) -> UInt64 raise {
 
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
-/// If the `base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_uint(str : StringView, base~ : Int32 = 0) -> UInt32 raise {
-  let n = parse_uint64(str, base~)
+/// If the `radix` argument is 0, the base will be inferred by the prefix.
+#label_migration(radix, alias=base, msg="Use radix= instead")
+pub fn parse_uint(str : StringView, radix~ : Int32 = 0) -> UInt32 raise {
+  let n = parse_uint64(str, radix~)
   if n > UINT_MAX.to_uint64() {
     range_err()
   }

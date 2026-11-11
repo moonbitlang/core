@@ -182,7 +182,7 @@ test "zlib preset dictionary round-trip" {
   }
   let z = out.to_bytes()
   @test.assert_eq(
-    @zlib.decompress(z, dictionary=dict, max_output=msg.length()),
+    @zlib.decompress(z, dictionary=dict, max_output_bytes=msg.length()),
     msg,
   )
   let ZlibError(missing, _) = @test.expect_error(() => @zlib.decompress(z))
@@ -192,7 +192,7 @@ test "zlib preset dictionary round-trip" {
   })
   @test.assert_eq(wrong, DictionaryMismatch)
   let ZlibError(limited, _) = @test.expect_error(() => {
-    @zlib.decompress(z, dictionary=dict, max_output=msg.length() - 1)
+    @zlib.decompress(z, dictionary=dict, max_output_bytes=msg.length() - 1)
   })
   @test.assert_eq(
     limited,
@@ -284,9 +284,11 @@ test "decompress rejects bytes before the Adler trailer" {
     malformed.push(valid[i])
   }
   let ZlibError(kind, _) = @test.expect_error(() => {
-    @zlib.decompress(Bytes::from_array(malformed), max_output=source.length(), cancelled=() => {
-      false
-    })
+    @zlib.decompress(
+      Bytes::from_array(malformed),
+      max_output_bytes=source.length(),
+      cancelled=() => false,
+    )
   })
   @test.assert_eq(kind, TrailingData)
 }

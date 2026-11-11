@@ -84,7 +84,7 @@ test "whole-buffer dictionary decoding supports both input modes and output form
               input,
               dictionary=dict,
               two_pass~,
-              max_output=plain.length(),
+              max_output_bytes=plain.length(),
             )
             assert_eq(result, plain)
           }
@@ -93,14 +93,18 @@ test "whole-buffer dictionary decoding supports both input modes and output form
               input,
               dictionary=dict,
               two_pass~,
-              max_output=plain.length(),
+              max_output_bytes=plain.length(),
             )
             assert_eq(result.data, plain)
             assert_eq(result.consumed, raw.length())
           }
         }
       }
-      let result = decoder.decompress(input, mode~, max_output=plain.length())
+      let result = decoder.decompress(
+        input,
+        mode~,
+        max_output_bytes=plain.length(),
+      )
       assert_eq(result.data, plain)
       assert_eq(result.consumed, raw.length())
       let output = FixedArray::make(plain.length() + 11, b'\xA5')
@@ -150,7 +154,7 @@ test "dictionary decoders preserve history across errors but not prior output" {
       if fixed {
         ignore(decoder.decompress_into(raw, output.mut_view(end=1)))
       } else {
-        ignore(decoder.decompress(raw, max_output=1))
+        ignore(decoder.decompress(raw, max_output_bytes=1))
       }
     })
     assert_true(kind is OutputLimitExceeded(_))
@@ -175,17 +179,17 @@ test "dictionary decoders preserve history across errors but not prior output" {
     let result = @flate.inflate_prefix(
       empty + b"tail",
       dictionary~,
-      max_output=0,
+      max_output_bytes=0,
       two_pass~,
     )
     assert_eq(result.data, b"")
     assert_eq(result.consumed, empty.length())
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_exact(raw, dictionary~, max_output=-1, two_pass~)
+      @flate.inflate_exact(raw, dictionary~, max_output_bytes=-1, two_pass~)
     })
     assert_eq(kind, InvalidArgument)
     let InflateError(kind, _) = @test.expect_error(() => {
-      @flate.inflate_exact(raw, dictionary~, max_output=1, two_pass~)
+      @flate.inflate_exact(raw, dictionary~, max_output_bytes=1, two_pass~)
     })
     assert_true(kind is OutputLimitExceeded(_))
     for cancel_at in [1, 2, 5] {

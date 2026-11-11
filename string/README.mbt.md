@@ -304,9 +304,9 @@ accept an optional base:
 ```mbt check
 ///|
 test "parse integers with base" {
-  inspect(@string.parse_int("ff", base=16), content="255")
-  inspect(@string.parse_int("101", base=2), content="5")
-  inspect(@string.parse_uint64("ff_ff", base=16), content="65535")
+  inspect(@string.parse_int("ff", radix=16), content="255")
+  inspect(@string.parse_int("101", radix=2), content="5")
+  inspect(@string.parse_uint64("ff_ff", radix=16), content="65535")
 }
 ```
 

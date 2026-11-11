@@ -197,7 +197,7 @@ test "UInt64 hexadecimal literals" {
 
   // Extract specific byte using shifts and masks
   let ad = (value >> 16) & 0xFFUL
-  inspect(ad.to_byte(), content="b'\\xAD'")
+  inspect(ad.to_byte(), content="173")
 
   // Convert to byte representation
   let bytes = value.to_be_bytes()

@@ -68,13 +68,27 @@ async fn ClientConnection::connect(
     (Http, Plain(conn)) =>
       (None, Reader::new(conn), Sender::new(conn, headers~))
     (Https, Plain(conn)) => {
-      let tls = @tls.Tls::client(conn, host=hostname.to_owned(), trust~)
+      // HTTP has its own message delimiter so TLS shutdown is unnecessary.
+      // Many realworld HTTP server does not perform proper TLS shutdown.
+      let tls = @tls.Tls::client(
+        conn,
+        host=hostname.to_owned(),
+        trust~,
+        require_shutdown=false,
+      )
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
     (Http, Proxy(proxy)) =>
       (None, Reader::new(proxy), Sender::new(proxy, headers~))
     (Https, Proxy(proxy)) => {
-      let tls = @tls.Tls::client(proxy, host=hostname.to_owned(), trust~)
+      // HTTP has its own message delimiter so TLS shutdown is unnecessary.
+      // Many realworld HTTP server does not perform proper TLS shutdown.
+      let tls = @tls.Tls::client(
+        proxy,
+        host=hostname.to_owned(),
+        trust~,
+        require_shutdown=false,
+      )
       (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
     }
   }
@@ -166,6 +180,11 @@ impl @io.BinaryReaderImpl for ClientConnection with fn raw_read_impl(
 }
 
 ///|
+impl @io.BinaryReaderImpl for ClientConnection with fn name(_self) {
+  "@http.ClientConnection"
+}
+
+///|
 impl @io.BinaryReaderImpl for ClientConnection with fn get_controller(self) {
   @io.BinaryReaderImpl::get_controller(self.reader)
 }
@@ -218,6 +237,11 @@ impl @io.BinaryWriterImpl for ClientConnection with fn raw_write_impl(
 }
 
 ///|
+impl @io.BinaryWriterImpl for ClientConnection with fn name(_self) {
+  "@http.ClientConnection"
+}
+
+///|
 impl @io.BinaryWriterImpl for ClientConnection with fn get_controller(self) {
   @io.BinaryWriterImpl::get_controller(self.sender)
 }
@@ -233,7 +257,14 @@ pub impl @io.BinaryWriter for ClientConnection with fn write_reader(
   reader,
 ) {
   guard! !(self.sender.mode is SendingHeader)
-  self.sender.write_reader(reader)
+  self.sender.optimized_write_reader(reader) catch {
+    @io.ReaderError::_ as err => raise err
+    err =>
+      raise @io.WriterError::TransportError(
+        err,
+        context="@http.ClientConnection",
+      )
+  }
 }
 
 ///|

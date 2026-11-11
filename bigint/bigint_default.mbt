@@ -534,8 +534,8 @@ fn BigInt::split(self : BigInt, half : Int32) -> (BigInt, BigInt) {
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("100")
-///   let b = @bigint.BigInt::from_string("20")
+///   let a = 100N
+///   let b = 20N
 ///   inspect(a / b, content="5")
 ///   inspect(-a / b, content="-5")
 ///   inspect(a / -b, content="-5")
@@ -822,9 +822,9 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int32) -> BigInt {
 ///
 /// ```mbt check
 /// test {
-///   let n = @bigint.BigInt::from_string("1024")
+///   let n = 1024N
 ///   inspect(n >> 3, content="128")
-///   let neg = @bigint.BigInt::from_string("-1024")
+///   let neg = -1024N
 ///   inspect(neg >> 3, content="-128")
 /// }
 /// ```
@@ -927,9 +927,9 @@ pub fn BigInt::is_zero(self : BigInt) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("24")
-///   let c = @bigint.BigInt::from_string("-42")
+///   let a = 42N
+///   let b = 24N
+///   let c = -42N
 ///   inspect(a.compare(b), content="1") // 42 > 24
 ///   inspect(b.compare(a), content="-1") // 24 < 42
 ///   inspect(c.compare(a), content="-1") // -42 < 42
@@ -1294,17 +1294,6 @@ pub fn parse_bigint(str : StringView, base~ : Int32 = 10) -> BigInt raise {
 }
 
 ///|
-/// Converts a string representation in the specified radix to a BigInt value.
-///
-/// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
-pub fn BigInt::from_string(input : String, radix~ : Int32 = 10) -> BigInt {
-  parse_bigint(input, base=radix) catch {
-    Failure(msg) => abort(msg)
-    _ => abort("invalid syntax")
-  }
-}
-
-///|
 /// The number of decimal digits `from_string_dec` consumes per step:
 /// 10^9 is the largest power of ten below `RADIX`.
 const DECIMAL_LIMB_CHUNK_DIGITS = 9
@@ -1440,10 +1429,10 @@ fn[T : Compare] max(a : T, b : T) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let base = @bigint.BigInt::from_string("3")
-///   let exp = @bigint.BigInt::from_string("4")
+///   let base = 3N
+///   let exp = 4N
 ///   inspect(base.pow(exp), content="81")
-///   inspect(base.pow(exp, modulus=@bigint.BigInt::from_string("10")), content="1")
+///   inspect(base.pow(exp, modulus=10N), content="1")
 /// }
 /// ```
 pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
@@ -1567,9 +1556,9 @@ pub fn BigInt::from_octets(input : BytesView, signum~ : Int32 = 1) -> BigInt {
 ///
 /// ```mbt check
 /// test {
-///   let n = @bigint.BigInt::from_string("abcdef", radix=16)
+///   let n = 0xabcdefN
 ///   inspect(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
-///   let m = @bigint.BigInt::from_string("0")
+///   let m = 0N
 ///   inspect(m.to_octets(), content="b\"\\x00\"")
 /// }
 /// ```
@@ -1619,11 +1608,11 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int32) -> Bytes {
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42") // 0b101010
-///   let b = @bigint.BigInt::from_string("-12") // ~0b1011 + 1
+///   let a = 42N // 0b101010
+///   let b = -12N // ~0b1011 + 1
 ///   inspect(a & b, content="32") // 0b100000
-///   let a = @bigint.BigInt::from_string("-8") // ~0b111 + 1
-///   let b = @bigint.BigInt::from_string("-4") // ~0b11 + 1
+///   let a = -8N // ~0b111 + 1
+///   let b = -4N // ~0b11 + 1
 ///   inspect(a & b, content="-8") // ~0b1011 + 1
 /// }
 /// ```
@@ -1709,11 +1698,11 @@ pub impl BitAnd for BigInt with fn land(self : BigInt, other : BigInt) -> BigInt
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-12")
+///   let a = 42N
+///   let b = -12N
 ///   inspect(a | b, content="-2")
-///   let c = @bigint.BigInt::from_string("-8")
-///   let d = @bigint.BigInt::from_string("-4")
+///   let c = -8N
+///   let d = -4N
 ///   inspect(c | d, content="-4")
 /// }
 /// ```
@@ -1800,10 +1789,10 @@ pub impl BitOr for BigInt with fn lor(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// ```mbt check
 /// test {
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-7")
+///   let a = 42N
+///   let b = -7N
 ///   inspect(a ^ b, content="-45")
-///   let a = @bigint.BigInt::from_string("42")
+///   let a = 42N
 ///   inspect(a ^ a, content="0") // XOR with self gives 0
 /// }
 /// ```
