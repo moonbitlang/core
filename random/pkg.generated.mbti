@@ -14,9 +14,9 @@ pub fn boolean() -> Bool
 #deprecated
 pub fn chacha8(seed? : Bytes) -> &Source
 
-pub fn double(min? : Double, max? : Double) -> Double
+pub fn double() -> Double
 
-pub fn float(min? : Float, max? : Float) -> Float
+pub fn float() -> Float
 
 pub fn int32(limit? : Int32) -> Int32
 

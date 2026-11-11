@@ -27,8 +27,8 @@ test {
 | `int64(limit?)` | Non-negative `Int64`; unbounded range `[0, 2^63)` |
 | `uint32(limit?)` | `UInt32`; unbounded range `[0, 2^32)` |
 | `uint64(limit?)` | `UInt64`; unbounded range `[0, 2^64)` |
-| `float(min?, max?)` | `Float` in `[min, max)`, default `[0, 1)` |
-| `double(min?, max?)` | `Double` in `[min, max)`, default `[0, 1)` |
+| `float()` | `Float` in `[0, 1)` |
+| `double()` | `Double` in `[0, 1)` |
 | `boolean()` | Equally likely `true` or `false` |
 | `bigint(bits=...)` | Non-negative `BigInt` with at most `bits` bits |
 | `shuffle(n, swap)` | In-place Fisher-Yates shuffle through a swap callback |
@@ -94,22 +94,20 @@ test {
 
 `@random.double()` returns a value in `[0.0, 1.0)` with 53-bit precision.
 `@random.float()` returns a value in `[0.0, 1.0)` with 24-bit precision.
-Both accept optional `min` and `max` bounds and use the same sampling and
-validation as the corresponding `Rand` methods shown below.
+These top-level functions take no arguments.
 
 ```mbt check
 ///|
 test {
-  let r = @random.Rand()
-  let d = r.double()
-  inspect(d >= 0.0 && d < 1.0, content="true")
-  let f = r.float()
-  inspect(f >= Float(0.0) && f < Float(1.0), content="true")
+  let value = @random.double()
+  assert_true(value >= 0.0 && value < 1.0)
+  let value = @random.float()
+  assert_true(value >= 0.0F && value < 1.0F)
 }
 ```
 
-Pass `min` and `max` to `double()` or `float()` for an arbitrary half-open
-interval. Non-unit intervals use Goualard's gamma-section algorithm: they select
+For an arbitrary half-open interval, create a `Rand` and pass `min` and
+`max` to its `double()` or `float()` method. Non-unit intervals use Goualard's gamma-section algorithm: they select
 uniformly from a fixed grid whose step is the larger endpoint spacing. Grid
 values are one step apart, except for a possible shorter gap at the included
 lower bound. In contrast, scaling a value from `[0.0, 1.0)` with

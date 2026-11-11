@@ -104,35 +104,13 @@ test "unbounded integer functions" {
 }
 
 ///|
-test "floating point default and optional bounds" {
+test "floating point functions return values in the unit interval" {
   for _ in 0..<100 {
-    let d = @random.double()
-    assert_true(d >= 0.0 && d < 1.0)
-    let d = @random.double(min=-2.0)
-    assert_true(d >= -2.0 && d < 1.0)
-    let d = @random.double(max=3.0)
-    assert_true(d >= 0.0 && d < 3.0)
-    let d = @random.double(min=2.0, max=3.0)
-    assert_true(d >= 2.0 && d < 3.0)
-    let f = @random.float()
-    assert_true(f >= 0.0F && f < 1.0F)
-    let f = @random.float(min=-2.0F)
-    assert_true(f >= -2.0F && f < 1.0F)
-    let f = @random.float(max=3.0F)
-    assert_true(f >= 0.0F && f < 3.0F)
-    let f = @random.float(min=2.0F, max=3.0F)
-    assert_true(f >= 2.0F && f < 3.0F)
+    let value = @random.double()
+    assert_true(value >= 0.0 && value < 1.0)
+    let value = @random.float()
+    assert_true(value >= 0.0F && value < 1.0F)
   }
-}
-
-///|
-test "panic double rejects an empty range" {
-  ignore(@random.double(min=1.0, max=1.0))
-}
-
-///|
-test "panic float rejects an inverted range" {
-  ignore(@random.float(min=2.0F, max=1.0F))
 }
 
 ///|
