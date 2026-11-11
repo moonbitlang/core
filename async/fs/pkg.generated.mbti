@@ -36,9 +36,9 @@ pub async fn open(StringView, mode~ : Mode, sync? : SyncMode, append? : Bool, cr
 
 pub async fn opendir(StringView) -> Directory
 
-pub async fn read_binary(StringView, sync_timestamp? : Bool) -> Bytes
+pub async fn read_binary(StringView) -> Bytes
 
-pub async fn read_text(StringView, sync_timestamp? : Bool) -> String
+pub async fn read_text(StringView) -> String
 
 pub async fn readdir(StringView, include_hidden? : Bool, include_special? : Bool, sort? : Bool) -> Array[String]
 
