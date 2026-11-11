@@ -26,13 +26,14 @@ async fn main {
     args => (false, args)
   }
   guard args is [cmd, .. args] else { fail("invalid argument") }
-  if is_orphan {
+  let exit_code = if is_orphan {
     let proc = @process.spawn_orphan(cmd, args)
     defer proc.close()
-    ignore(proc.wait())
+    proc.wait()
   } else {
-    ignore(@process.run(cmd, args))
+    @process.run(cmd, args).exit_code
   }
+  println(exit_code)
 }
 
 ///|
