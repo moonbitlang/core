@@ -31,8 +31,7 @@ let default_rand : Rand = Rand()
 /// # Example
 /// ```mbt check
 /// test {
-///   let die = @random.int32(limit=6) + 1
-///   inspect(die >= 1 && die <= 6, content="true")
+///   assert_true(@random.int32(limit=6) is (0..<6))
 /// }
 /// ```
 pub fn int32(limit? : Int32) -> Int32 {
