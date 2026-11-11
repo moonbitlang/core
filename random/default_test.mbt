@@ -104,13 +104,35 @@ test "unbounded integer functions" {
 }
 
 ///|
-test "floating point functions return values in the unit interval" {
+test "floating point default and optional bounds" {
   for _ in 0..<100 {
-    let value = @random.double()
-    assert_true(value >= 0.0 && value < 1.0)
-    let value = @random.float()
-    assert_true(value >= 0.0F && value < 1.0F)
+    let d = @random.double()
+    assert_true(d >= 0.0 && d < 1.0)
+    let d = @random.double(min=-2.0)
+    assert_true(d >= -2.0 && d < 1.0)
+    let d = @random.double(max=3.0)
+    assert_true(d >= 0.0 && d < 3.0)
+    let d = @random.double(min=2.0, max=3.0)
+    assert_true(d >= 2.0 && d < 3.0)
+    let f = @random.float()
+    assert_true(f >= 0.0F && f < 1.0F)
+    let f = @random.float(min=-2.0F)
+    assert_true(f >= -2.0F && f < 1.0F)
+    let f = @random.float(max=3.0F)
+    assert_true(f >= 0.0F && f < 3.0F)
+    let f = @random.float(min=2.0F, max=3.0F)
+    assert_true(f >= 2.0F && f < 3.0F)
   }
+}
+
+///|
+test "panic double rejects an empty range" {
+  ignore(@random.double(min=1.0, max=1.0))
+}
+
+///|
+test "panic float rejects an inverted range" {
+  ignore(@random.float(min=2.0F, max=1.0F))
 }
 
 ///|
@@ -131,15 +153,15 @@ test "panic bigint rejects negative bits" {
 
 ///|
 test "shuffle skips callbacks for zero and one elements" {
-  @random.shuffle(0, (_, _) => abort("unexpected swap"))
-  @random.shuffle(1, (_, _) => abort("unexpected swap"))
+  @random.shuffle(length=0, (_, _) => abort("unexpected swap"))
+  @random.shuffle(length=1, (_, _) => abort("unexpected swap"))
 }
 
 ///|
 test "shuffle preserves elements and supports random calls in callbacks" {
   let values = [1, 2, 3, 4, 5]
   let mut swaps = 0
-  @random.shuffle(values.length(), (i, j) => {
+  @random.shuffle(length=values.length(), (i, j) => {
     guard i >= 0 && i < values.length() else { abort("invalid first index") }
     guard j >= 0 && j < values.length() else { abort("invalid second index") }
     let tmp = values[i]
@@ -156,5 +178,5 @@ test "shuffle preserves elements and supports random calls in callbacks" {
 
 ///|
 test "panic shuffle rejects negative length" {
-  @random.shuffle(-1, (_, _) => ())
+  @random.shuffle(length=-1, (_, _) => ())
 }

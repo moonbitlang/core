@@ -114,35 +114,42 @@ pub fn uint64(limit? : UInt64) -> UInt64 {
 }
 
 ///|
-/// Returns a pseudo-random `Double` in `[0.0, 1.0)` with 53-bit precision,
-/// using the shared generator described in [int32].
-/// Use [Rand::double] for sampling with explicit `min` and `max` bounds.
+/// Returns a pseudo-random `Double` in `[min, max)` using the shared generator
+/// described in [int32]. The bounds default to `0.0` and `1.0`.
+/// Uses the same sampling and bound validation as [Rand::double]: bounds
+/// must be finite, `min < max`, and non-zero bounds must have magnitude at
+/// least `4 * @double.min_positive`. Aborts if scaling a bound underflows.
 ///
 /// # Example
 /// ```mbt check
 /// test {
-///   let value = @random.double()
-///   assert_true(value >= 0.0 && value < 1.0)
+///   let value = @random.double(min=-2.0, max=3.0)
+///   inspect(value >= -2.0 && value < 3.0, content="true")
 /// }
 /// ```
-pub fn double() -> Double {
-  default_rand.double()
+pub fn double(min~ : Double = 0.0, max~ : Double = 1.0) -> Double {
+  default_rand.double(min~, max~)
 }
 
 ///|
-/// Returns a pseudo-random `Float` in `[0.0F, 1.0F)` with 24-bit precision,
-/// using the shared generator described in [int32].
-/// Use [Rand::float] for sampling with explicit `min` and `max` bounds.
+/// Returns a pseudo-random `Float` in `[min, max)` using the shared generator
+/// described in [int32]. The bounds default to `0.0F` and `1.0F`.
+/// Uses the same sampling and bound validation as [Rand::float]: bounds
+/// must be finite, `min < max`, and non-zero bounds must have magnitude at
+/// least `4 * @float.min_positive`.
 ///
 /// # Example
 /// ```mbt check
 /// test {
-///   let value = @random.float()
-///   assert_true(value >= 0.0F && value < 1.0F)
+///   let value = @random.float(min=-2.0F, max=3.0F)
+///   inspect(value >= -2.0F && value < 3.0F, content="true")
 /// }
 /// ```
-pub fn float() -> @float.Float {
-  default_rand.float()
+pub fn float(
+  min~ : @float.Float = 0.0F,
+  max~ : @float.Float = 1.0F,
+) -> @float.Float {
+  default_rand.float(min~, max~)
 }
 
 ///|
@@ -179,16 +186,16 @@ pub fn bigint(bits~ : Int32) -> @bigint.BigInt {
 }
 
 ///|
-/// Shuffles `limit` elements using Fisher-Yates and the shared generator
+/// Shuffles `length` elements using Fisher-Yates and the shared generator
 /// described in [int32]. The callback swaps the elements at its two indices,
-/// both in `0..<limit`. Zero or one elements require no swaps.
-/// Aborts if `limit` is negative.
+/// both in `0..<length`. Zero or one elements require no swaps.
+/// Aborts if `length` is negative.
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let values = [1, 2, 3, 4, 5]
-///   @random.shuffle(values.length(), (i, j) => {
+///   @random.shuffle(length=values.length(), (i, j) => {
 ///     let tmp = values[i]
 ///     values[i] = values[j]
 ///     values[j] = tmp
@@ -197,6 +204,6 @@ pub fn bigint(bits~ : Int32) -> @bigint.BigInt {
 ///   debug_inspect(values, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
-pub fn shuffle(limit : Int32, swap : (Int32, Int32) -> Unit) -> Unit {
-  default_rand.shuffle(limit, swap)
+pub fn shuffle(length~ : Int32, swap : (Int32, Int32) -> Unit) -> Unit {
+  default_rand.shuffle(length, swap)
 }
