@@ -23,7 +23,7 @@
 #derive(Eq, Show, ToJson)
 #warnings("-deprecated_syntax-deprecated")
 pub(all) suberror JsonDecodeError {
-  JsonDecodeError((DecodeContext, String))
+  JsonDecodeError((JsonPath, String))
 }
 
 ///|
@@ -35,7 +35,7 @@ pub(all) suberror JsonDecodeError {
 /// errors from another decoder, call `@json.from_json(json, path=context)`;
 /// it snapshots errors even when the decoder constructs them directly.
 pub(open) trait FromJson {
-  fn from_json(Json, DecodeContext) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
@@ -44,7 +44,7 @@ pub(open) trait FromJson {
 /// errors constructed directly by custom or derived `FromJson` implementations.
 pub fn[T : FromJson] from_json(
   json : Json,
-  path~ : DecodeContext = Root,
+  path~ : JsonPath = Root,
 ) -> T raise JsonDecodeError {
   FromJson::from_json(json, path) catch {
     JsonDecodeError((context, message)) => raise context.error(message)
@@ -52,10 +52,7 @@ pub fn[T : FromJson] from_json(
 }
 
 ///|
-fn[T] decode_error(
-  path : DecodeContext,
-  msg : String,
-) -> T raise JsonDecodeError {
+fn[T] decode_error(path : JsonPath, msg : String) -> T raise JsonDecodeError {
   raise path.error(msg)
 }
 
@@ -207,11 +204,11 @@ pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
 /// element that fails to decode leaves no uninitialised memory behind.
 fn[X : FromJson] decode_elements(
   a : Array[Json],
-  path : DecodeContext,
+  path : JsonPath,
 ) -> Array[X] raise JsonDecodeError {
   // The test cannot fail; it only narrows the binding so that `index` becomes
-  // assignable, letting every element share one path node. See `DecodeContext`.
-  guard! DecodeContext::Index(path, index=0) is (Index(_) as new_path)
+  // assignable, letting every element share one path node. See `JsonPath`.
+  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res : Array[X] = Array(capacity=a.length())
   for i, x in a {
     new_path.index = i
@@ -238,7 +235,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
     return []
   }
   // As above: the test cannot fail, it just makes `index` assignable.
-  guard! DecodeContext::Index(path, index=0) is (Index(_) as new_path)
+  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
     FromJson::from_json(a.unsafe_get(0), new_path),
@@ -262,7 +259,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
   }
   let res = Map([], capacity=obj.length())
   // As above: the test cannot fail, it just makes `key` assignable.
-  guard! DecodeContext::Key(path, key="") is (Key(_) as new_path)
+  guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
   for k, v in obj {
     new_path.key = k

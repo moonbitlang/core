@@ -13,8 +13,6 @@
 // limitations under the License.
 
 ///|
-// Current compilers still name JsonPath in generated FromJson signatures.
-#warnings("-deprecated")
 #derive(@json.ToJson, @json.FromJson, Debug, Eq)
 priv struct Hello[A, B] {
   fieldA : A

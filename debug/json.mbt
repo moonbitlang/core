@@ -55,10 +55,9 @@ pub impl Debug for @json.ParseError with fn to_repr(self) {
 }
 
 ///|
-pub impl Debug for @json.DecodeContext with fn to_repr(self) {
-  // DecodeContext's mutable nodes are private to the decoder. Its public JSON
+pub impl Debug for @json.JsonPath with fn to_repr(self) {
+  // JsonPath's mutable nodes are private to the decoder. Its public JSON
   // Pointer representation gives debugging a stable view of the path.
-  // Preserve the existing debug representation through the type rename.
   Repr::opaque_("JsonPath", Repr(self.to_string()))
 }
 

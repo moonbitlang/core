@@ -77,9 +77,9 @@ pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder
 pub impl[T] Debug for UninitializedArray[T]
-pub impl Debug for @json.DecodeContext
 pub impl Debug for @json.Json
 pub impl Debug for @json.JsonDecodeError
+pub impl Debug for @json.JsonPath
 pub impl Debug for @json.ParseError
 pub impl Debug for @json.Position
 pub impl Debug for @json.Replacer

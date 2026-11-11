@@ -24,10 +24,10 @@ pub extend JsonDecodeError with Eq::{equal}
 pub extend JsonDecodeError with Show::{to_string}
 
 ///|
-pub extend DecodeContext with Eq::{equal}
+pub extend JsonPath with Eq::{equal}
 
 ///|
-pub extend DecodeContext with Show::{to_string}
+pub extend JsonPath with Show::{to_string}
 
 ///|
 pub extend ParseError with Eq::{equal}
@@ -83,17 +83,17 @@ pub extend JsonDecodeError with ToJson::{to_json}
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend DecodeContext with Eq::{not_equal}
+pub extend JsonPath with Eq::{not_equal}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
-pub extend DecodeContext with Show::{output}
+pub extend JsonPath with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
-pub extend DecodeContext with ToJson::{to_json}
+pub extend JsonPath with ToJson::{to_json}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)

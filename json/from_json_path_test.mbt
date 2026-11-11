@@ -14,7 +14,7 @@
 
 ///|
 /// Keeps an independent snapshot of the context it was decoded at.
-priv struct At(@json.DecodeContext)
+priv struct At(@json.JsonPath)
 
 ///|
 impl @json.FromJson for At with fn from_json(_json, path) {
@@ -152,8 +152,6 @@ fn[T] Captured::path(self : Captured[T]) -> String {
 }
 
 ///|
-// Current compilers still name JsonPath in generated FromJson signatures.
-#warnings("-deprecated")
 #derive(@json.FromJson)
 priv struct RequiredField {
   value : Int32
@@ -163,8 +161,6 @@ priv struct RequiredField {
 priv struct ManualFailure(Int32)
 
 ///|
-// Both the old type name and its method namespace must keep working.
-#warnings("-deprecated")
 impl @json.FromJson for ManualFailure with fn from_json(
   json,
   context : @json.JsonPath,
@@ -217,13 +213,12 @@ test "public from_json snapshots directly constructed and derived errors" {
 }
 
 ///|
-priv struct SavedChild(@json.DecodeContext, @json.JsonDecodeError)
+priv struct SavedChild(@json.JsonPath, @json.JsonDecodeError)
 
 ///|
-#warnings("-deprecated")
 impl @json.FromJson for SavedChild with fn from_json(_json, context) {
   let child = context.add_key("extra~/").add_index(7)
-  SavedChild(@json.JsonPath::copy(child), child.error("custom error"))
+  SavedChild(child.copy(), child.error("custom error"))
 }
 
 ///|

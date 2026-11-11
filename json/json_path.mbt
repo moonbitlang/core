@@ -20,20 +20,22 @@
 /// context, including one returned by `add_key` or `add_index`. Copying also
 /// snapshots every ancestor, so nested locations remain stable.
 ///
-/// Use `error(message)` to create an error with a stable location. `JsonPath`
-/// remains an alias for compatibility with existing decoders.
-#alias(JsonPath, deprecated)
+/// Use `error(message)` to create an error with a stable location.
+//
+// `key` and `index` are mutable so decoders can reuse one node across siblings.
+// MoonBit only allows assigning to a constructor's mutable field through a
+// binding narrowed to that variant, so decoders use an always-true `guard!`.
 #derive(Eq)
-enum DecodeContext {
+enum JsonPath {
   Root
-  Key(DecodeContext, mut key~ : String)
-  Index(DecodeContext, mut index~ : Int32)
+  Key(JsonPath, mut key~ : String)
+  Index(JsonPath, mut index~ : Int32)
 }
 
 ///|
 /// Copies this location and all its ancestors into an independent snapshot.
 /// The snapshot may be retained after decoding continues or finishes.
-pub fn DecodeContext::copy(self : DecodeContext) -> DecodeContext {
+pub fn JsonPath::copy(self : JsonPath) -> JsonPath {
   match self {
     Root => Root
     Key(parent, key~) => Key(parent.copy(), key~)
@@ -44,35 +46,26 @@ pub fn DecodeContext::copy(self : DecodeContext) -> DecodeContext {
 ///|
 /// Creates a decode error with an independent snapshot of the current location.
 /// Prefer this over constructing `JsonDecodeError` with a temporary context.
-pub fn DecodeContext::error(
-  self : DecodeContext,
-  message : String,
-) -> JsonDecodeError {
+pub fn JsonPath::error(self : JsonPath, message : String) -> JsonDecodeError {
   JsonDecodeError((self.copy(), message))
 }
 
 ///|
 /// Creates a child context for an array index, sharing this context as its parent.
 /// Call `copy()` to retain the resulting location independently of decoding.
-pub fn DecodeContext::add_index(
-  self : DecodeContext,
-  index : Int32,
-) -> DecodeContext {
+pub fn JsonPath::add_index(self : JsonPath, index : Int32) -> JsonPath {
   Index(self, index~)
 }
 
 ///|
 /// Creates a child context for an object key, sharing this context as its parent.
 /// Call `copy()` to retain the resulting location independently of decoding.
-pub fn DecodeContext::add_key(
-  self : DecodeContext,
-  key : String,
-) -> DecodeContext {
+pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
   Key(self, key~)
 }
 
 ///|
-pub impl Show for DecodeContext with fn output(self, logger) {
+pub impl Show for JsonPath with fn output(self, logger) {
   // Helper to write a JSON Pointer token without intermediate allocations
   fn write_token(logger : &Logger, token : String) -> Unit {
     if !token.contains_any(chars="~/") {
@@ -89,7 +82,7 @@ pub impl Show for DecodeContext with fn output(self, logger) {
   }
 
   // Recursively build the JSON Pointer string
-  fn build_path(path : DecodeContext, logger : &Logger) -> Unit {
+  fn build_path(path : JsonPath, logger : &Logger) -> Unit {
     match path {
       Root => ()
       Key(parent, key~) =>
@@ -105,7 +98,7 @@ pub impl Show for DecodeContext with fn output(self, logger) {
 }
 
 ///|
-pub impl ToJson for DecodeContext with fn to_json(self) {
+pub impl ToJson for JsonPath with fn to_json(self) {
   String(self.to_string())
 }
 
@@ -121,7 +114,7 @@ test "show JsonPath - JSON Pointer format" {
   @builtin.inspect(Root.add_index(0), content="/0")
 
   // Test mixed path
-  let path : DecodeContext = Key(Index(Root, index=0), key="foo")
+  let path : JsonPath = Key(Index(Root, index=0), key="foo")
   @builtin.inspect(path, content="/0/foo")
   @builtin.inspect(path.add_index(1), content="/0/foo/1")
   @builtin.inspect(path.add_key("bar"), content="/0/foo/bar")

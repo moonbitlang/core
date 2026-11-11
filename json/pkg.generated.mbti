@@ -2,7 +2,7 @@
 package "moonbitlang/core/json"
 
 // Values
-pub fn[T : FromJson] from_json(Json, path? : DecodeContext) -> T raise JsonDecodeError
+pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
 #callsite(autofill(args_loc, loc))
 pub fn json_inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
@@ -18,7 +18,7 @@ pub fn valid(StringView) -> Bool
 // Errors
 #derive(Eq, Show, ToJson)
 pub(all) suberror JsonDecodeError {
-  JsonDecodeError((DecodeContext, String))
+  JsonDecodeError((JsonPath, String))
 }
 pub fn JsonDecodeError::equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
@@ -37,18 +37,6 @@ pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
 
 // Types and methods
-#alias(JsonPath, deprecated)
-#derive(Eq)
-type DecodeContext
-pub fn DecodeContext::add_index(Self, Int32) -> Self
-pub fn DecodeContext::add_key(Self, String) -> Self
-pub fn DecodeContext::copy(Self) -> Self
-pub fn DecodeContext::equal(Self, Self) -> Bool
-pub fn DecodeContext::error(Self, String) -> JsonDecodeError
-pub fn DecodeContext::to_string(Self) -> String
-pub impl Show for DecodeContext
-pub impl ToJson for DecodeContext
-
 pub enum Json {
   Null
   True
@@ -92,6 +80,17 @@ pub impl Show for Json
 pub impl FromJson for Json
 pub impl ToJson for Json
 
+#derive(Eq)
+type JsonPath
+pub fn JsonPath::add_index(Self, Int32) -> Self
+pub fn JsonPath::add_key(Self, String) -> Self
+pub fn JsonPath::copy(Self) -> Self
+pub fn JsonPath::equal(Self, Self) -> Bool
+pub fn JsonPath::error(Self, String) -> JsonDecodeError
+pub fn JsonPath::to_string(Self) -> String
+pub impl Show for JsonPath
+pub impl ToJson for JsonPath
+
 #derive(Eq, ToJson)
 pub(all) struct Position {
   line : Int32
@@ -111,7 +110,7 @@ pub fn Replacer::keep(ArrayView[StringView]) -> Self
 
 // Traits
 pub(open) trait FromJson {
-  fn from_json(Json, DecodeContext) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 pub impl FromJson for Unit
 pub impl FromJson for Bool
