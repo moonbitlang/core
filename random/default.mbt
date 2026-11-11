@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let default_rand : @lazy.Lazy[Rand] = Lazy(() => Rand())
+let default_rand : Rand = Rand()
 
 ///|
 /// Returns a non-negative pseudo-random `Int32` using a shared generator.
@@ -21,9 +21,9 @@ let default_rand : @lazy.Lazy[Rand] = Lazy(() => Rand())
 /// If `limit` is omitted, the result is in `0..<2^31`.
 /// Aborts if an explicitly supplied `limit` is zero or negative.
 ///
-/// The generator is initialized on first use, using platform entropy when
-/// available and a fixed default seed otherwise. Subsequent calls advance
-/// the same generator. Use `Rand::chacha8(seed~)` for an independent,
+/// The generator uses platform entropy when available and a fixed default
+/// seed otherwise. Calls advance the same generator.
+/// Use `Rand::chacha8(seed~)` for an independent,
 /// reproducible sequence.
 /// The shared generator is not thread-safe; calls from multiple threads
 /// require external synchronization.
@@ -37,10 +37,10 @@ let default_rand : @lazy.Lazy[Rand] = Lazy(() => Rand())
 /// ```
 pub fn int32(limit? : Int32) -> Int32 {
   match limit {
-    None => default_rand.force().int()
+    None => default_rand.int()
     Some(limit) => {
       guard limit > 0 else { abort("int32: limit must be positive") }
-      default_rand.force().int(limit~)
+      default_rand.int(limit~)
     }
   }
 }
@@ -60,10 +60,10 @@ pub fn int32(limit? : Int32) -> Int32 {
 /// ```
 pub fn int64(limit? : Int64) -> Int64 {
   match limit {
-    None => default_rand.force().int64()
+    None => default_rand.int64()
     Some(limit) => {
       guard limit > 0L else { abort("int64: limit must be positive") }
-      default_rand.force().int64(limit~)
+      default_rand.int64(limit~)
     }
   }
 }
@@ -83,10 +83,10 @@ pub fn int64(limit? : Int64) -> Int64 {
 /// ```
 pub fn uint32(limit? : UInt32) -> UInt32 {
   match limit {
-    None => default_rand.force().uint()
+    None => default_rand.uint()
     Some(limit) => {
       guard limit > 0U else { abort("uint32: limit must be positive") }
-      default_rand.force().uint(limit~)
+      default_rand.uint(limit~)
     }
   }
 }
@@ -106,10 +106,10 @@ pub fn uint32(limit? : UInt32) -> UInt32 {
 /// ```
 pub fn uint64(limit? : UInt64) -> UInt64 {
   match limit {
-    None => default_rand.force().uint64()
+    None => default_rand.uint64()
     Some(limit) => {
       guard limit > 0UL else { abort("uint64: limit must be positive") }
-      default_rand.force().uint64(limit~)
+      default_rand.uint64(limit~)
     }
   }
 }
@@ -129,7 +129,7 @@ pub fn uint64(limit? : UInt64) -> UInt64 {
 /// }
 /// ```
 pub fn double(min~ : Double = 0.0, max~ : Double = 1.0) -> Double {
-  default_rand.force().double(min~, max~)
+  default_rand.double(min~, max~)
 }
 
 ///|
@@ -150,7 +150,7 @@ pub fn float(
   min~ : @float.Float = 0.0F,
   max~ : @float.Float = 1.0F,
 ) -> @float.Float {
-  default_rand.force().float(min~, max~)
+  default_rand.float(min~, max~)
 }
 
 ///|
@@ -165,13 +165,14 @@ pub fn float(
 /// }
 /// ```
 pub fn boolean() -> Bool {
-  default_rand.force().boolean()
+  default_rand.boolean()
 }
 
 ///|
 /// Returns a non-negative pseudo-random `BigInt` with at most `bits` bits,
 /// using the shared generator described in [int32]. Leading zero bits are
-/// allowed. Zero bits returns zero; negative bits abort.
+/// allowed. The `bits` parameter is an `Int32` bit count, so `bigint(128)`
+/// returns a value in `0..<2^128`. Zero bits returns zero; negative bits abort.
 ///
 /// # Example
 /// ```mbt check
@@ -182,7 +183,7 @@ pub fn boolean() -> Bool {
 /// ```
 pub fn bigint(bits : Int32) -> @bigint.BigInt {
   guard bits >= 0 else { abort("bigint: bits must be non-negative") }
-  default_rand.force().bigint(bits)
+  default_rand.bigint(bits)
 }
 
 ///|
@@ -205,5 +206,5 @@ pub fn bigint(bits : Int32) -> @bigint.BigInt {
 /// }
 /// ```
 pub fn shuffle(limit : Int32, swap : (Int32, Int32) -> Unit) -> Unit {
-  default_rand.force().shuffle(limit, swap)
+  default_rand.shuffle(limit, swap)
 }
