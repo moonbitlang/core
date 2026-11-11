@@ -8,11 +8,15 @@ pub fn errno_to_string(Int32) -> String
 
 pub fn get_errno() -> Int32
 
+pub let invalid_handle : Int32
+
 pub fn is_nonblocking_io_error() -> Bool
 
 pub let linux_EACCES : Int32
 
 pub let linux_EAGAIN : Int32
+
+pub let linux_EBADF : Int32
 
 pub let linux_ECONNREFUSED : Int32
 
@@ -35,6 +39,8 @@ pub let lock_violation : Int32
 pub let macos_EACCES : Int32
 
 pub let macos_EAGAIN : Int32
+
+pub let macos_EBADF : Int32
 
 pub let macos_ECONNREFUSED : Int32
 
@@ -73,6 +79,8 @@ pub let windows_ERROR_FILE_EXISTS : Int32
 pub let windows_ERROR_FILE_NOT_FOUND : Int32
 
 pub let windows_ERROR_HANDLE_EOF : Int32
+
+pub let windows_ERROR_INVALID_HANDLE : Int32
 
 pub let windows_ERROR_IO_INCOMPLETE : Int32
 

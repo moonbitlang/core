@@ -104,6 +104,12 @@ async test "spawn without standard handles on Windows" {
   inspect(result.exit_code, content="0")
   inspect(result.stdout_text().trim(), content="0")
   inspect(result.stderr_text().trim(), content="")
+  let result = @process.run(spawn, stdout=Collect, stderr=Collect, [
+    "-no-stdio", "-orphan", sleep, "0", "-print-after-sleep", "message",
+  ])
+  inspect(result.exit_code, content="0")
+  inspect(result.stdout_text().trim(), content="1")
+  inspect(result.stderr_text().trim(), content="")
 }
 
 ///|

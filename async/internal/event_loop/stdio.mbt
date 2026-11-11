@@ -72,7 +72,7 @@ let stdio_handles : Map[@fd_util.Fd, IoHandle] = Map([])
 fn setup_stdio(id : Int32, context~ : String) -> IoHandle raise {
   let fd = get_stdio_handle(id)
   if !@fd_util.fd_is_valid(fd) {
-    @os_error.check_errno(context)
+    raise @os_error.from_errno(@errno_util.invalid_handle, context~)
   }
   if stdio_handles.get(fd) is Some(handle) {
     // On Windows, when `stdout` and `stderr` are redirected to the same file/pipe,
