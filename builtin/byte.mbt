@@ -339,6 +339,106 @@ pub fn Byte::popcnt(self : Byte) -> Int32 {
 }
 
 ///|
+/// Counts the leading zero bits in the 8-bit representation of the byte.
+///
+/// Returns 8 for `b'\x00'`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\x01'.clz(), content="7")
+///   inspect(b'\x80'.clz(), content="0")
+///   inspect(b'\x00'.clz(), content="8")
+/// }
+/// ```
+pub fn Byte::clz(self : Byte) -> Int32 {
+  self.to_uint().clz() - 24
+}
+
+///|
+/// Counts the trailing zero bits in the 8-bit representation of the byte.
+///
+/// Returns 8 for `b'\x00'`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\x08'.ctz(), content="3")
+///   inspect(b'\x80'.ctz(), content="7")
+///   inspect(b'\x00'.ctz(), content="8")
+/// }
+/// ```
+pub fn Byte::ctz(self : Byte) -> Int32 {
+  (self.to_uint() | 0x100U).ctz()
+}
+
+///|
+/// Returns the smaller of two bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\x01'.min(b'\x02').to_int(), content="1")
+///   inspect(b'\xFF'.min(b'\x00').to_int(), content="0")
+/// }
+/// ```
+pub fn Byte::min(self : Byte, other : Byte) -> Byte {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the larger of two bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\x01'.max(b'\x02').to_int(), content="2")
+///   inspect(b'\xFF'.max(b'\x00').to_int(), content="255")
+/// }
+/// ```
+pub fn Byte::max(self : Byte, other : Byte) -> Byte {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps a byte into the inclusive range [`min`, `max`].
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b'\x05'.clamp(min=b'\x00', max=b'\x0A').to_int(), content="5")
+///   inspect(b'\x00'.clamp(min=b'\x02', max=b'\x0A').to_int(), content="2")
+///   inspect(b'\xFF'.clamp(min=b'\x00', max=b'\x0A').to_int(), content="10")
+/// }
+/// ```
+pub fn Byte::clamp(self : Byte, min~ : Byte, max~ : Byte) -> Byte {
+  guard! min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
 /// Shifts the bits of the `Byte` value to the left by the specified number of
 /// positions.
 ///

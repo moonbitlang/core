@@ -75,6 +75,7 @@ pub fn Bool::equal(Bool, Bool) -> Bool
 pub fn Bool::hash(Bool) -> Int32
 #deprecated
 pub fn Bool::op_compare(Bool, Bool) -> Int32
+pub fn Bool::to_byte(Bool) -> Byte
 pub fn Bool::to_int(Bool) -> Int32
 pub fn Bool::to_int64(Bool) -> Int64
 pub fn Bool::to_string(Bool) -> String
@@ -90,7 +91,10 @@ pub impl Show for Bool
 pub type Byte
 pub fn Byte::Byte(Byte) -> Byte
 pub fn Byte::add(Byte, Byte) -> Byte
+pub fn Byte::clamp(Byte, min~ : Byte, max~ : Byte) -> Byte
+pub fn Byte::clz(Byte) -> Int32
 pub fn Byte::compare(Byte, Byte) -> Int32
+pub fn Byte::ctz(Byte) -> Int32
 pub fn Byte::default() -> Byte
 pub fn Byte::div(Byte, Byte) -> Byte
 pub fn Byte::equal(Byte, Byte) -> Bool
@@ -103,6 +107,8 @@ pub fn Byte::lsl(Byte, Int32) -> Byte
 #deprecated
 pub fn Byte::lsr(Byte, Int32) -> Byte
 pub fn Byte::lxor(Byte, Byte) -> Byte
+pub fn Byte::max(Byte, Byte) -> Byte
+pub fn Byte::min(Byte, Byte) -> Byte
 pub fn Byte::mod(Byte, Byte) -> Byte
 pub fn Byte::mul(Byte, Byte) -> Byte
 pub fn Byte::popcnt(Byte) -> Int32
@@ -281,6 +287,7 @@ pub fn Int64::to_byte(Int64) -> Byte
 pub fn Int64::to_double(Int64) -> Double
 pub fn Int64::to_int(Int64) -> Int32
 pub fn Int64::to_string(Int64, radix? : Int32) -> String
+pub fn Int64::to_uint(Int64) -> UInt32
 pub fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
 pub fn Int64::to_uint64(Int64) -> UInt64
@@ -361,7 +368,10 @@ pub impl Sub for UInt32
 pub type UInt16
 pub fn UInt16::UInt16(UInt16) -> UInt16
 pub fn UInt16::add(UInt16, UInt16) -> UInt16
+pub fn UInt16::clamp(UInt16, min~ : UInt16, max~ : UInt16) -> UInt16
+pub fn UInt16::clz(UInt16) -> Int32
 pub fn UInt16::compare(UInt16, UInt16) -> Int32
+pub fn UInt16::ctz(UInt16) -> Int32
 pub fn UInt16::div(UInt16, UInt16) -> UInt16
 pub fn UInt16::equal(UInt16, UInt16) -> Bool
 pub fn UInt16::hash(UInt16) -> Int32
@@ -372,13 +382,17 @@ pub fn UInt16::land(UInt16, UInt16) -> UInt16
 pub fn UInt16::lnot(UInt16) -> UInt16
 pub fn UInt16::lor(UInt16, UInt16) -> UInt16
 pub fn UInt16::lxor(UInt16, UInt16) -> UInt16
+pub fn UInt16::max(UInt16, UInt16) -> UInt16
+pub fn UInt16::min(UInt16, UInt16) -> UInt16
 pub fn UInt16::mod(UInt16, UInt16) -> UInt16
 pub fn UInt16::mul(UInt16, UInt16) -> UInt16
+pub fn UInt16::popcnt(UInt16) -> Int32
 pub fn UInt16::shl(UInt16, Int32) -> UInt16
 pub fn UInt16::shr(UInt16, Int32) -> UInt16
 pub fn UInt16::sub(UInt16, UInt16) -> UInt16
 pub fn UInt16::to_byte(UInt16) -> Byte
 pub fn UInt16::to_char(UInt16) -> Char?
+pub fn UInt16::to_double(UInt16) -> Double
 pub fn UInt16::to_int(UInt16) -> Int32
 pub fn UInt16::to_int64(UInt16) -> Int64
 pub fn UInt16::to_string(UInt16, radix? : Int32) -> String

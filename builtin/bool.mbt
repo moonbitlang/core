@@ -154,3 +154,23 @@ pub fn Bool::to_uint16(self : Bool) -> UInt16 {
     0
   }
 }
+
+///|
+/// Converts a boolean value to a byte: `true` becomes `b'\x01'` and `false`
+/// becomes `b'\x00'`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(true.to_byte().to_int(), content="1")
+///   inspect(false.to_byte().to_int(), content="0")
+/// }
+/// ```
+pub fn Bool::to_byte(self : Bool) -> Byte {
+  if self {
+    b'\x01'
+  } else {
+    b'\x00'
+  }
+}
