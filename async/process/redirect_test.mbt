@@ -189,3 +189,20 @@ async test "stdout=Discard" {
     }
   }
 }
+
+///|
+#cfg(all(target="native", platform="windows"))
+async test "GUI process starts without standard handles" {
+  let program = @test_util.build_test_program("gui_no_stdio")
+  let dir = @fs.tmpdir(prefix="gui_no_stdio")
+  defer @fs.rmdir(dir, recursive=true)
+  let completion_file = "\{dir}/completed.txt"
+  let result = @async.with_timeout(10000, () => {
+    @process.run(program, [], stdin=Empty, stdout=Collect, stderr=Collect, extra_env={
+      "ASYNC_TEST_COMPLETION_FILE": completion_file,
+    })
+  })
+  assert_eq(result.exit_code, 0)
+  // The fixture has no stdout/stderr; verify that its async main completed.
+  inspect(@fs.read_text(completion_file), content="completed")
+}
