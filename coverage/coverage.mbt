@@ -16,6 +16,7 @@
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
+#valtype
 struct CoverageCounter {
   counts : FixedArray[UInt32]
 }
