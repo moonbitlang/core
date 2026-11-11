@@ -14,7 +14,7 @@
 
 ///|
 /// Keeps an independent snapshot of the context it was decoded at.
-priv struct At(@json.JsonPath)
+priv struct At(@json.DecodeContext)
 
 ///|
 impl @json.FromJson for At with fn from_json(_json, path) {
@@ -125,12 +125,13 @@ test "kept paths stay valid under a nested decode" {
 }
 
 ///|
+// Exercise the compatibility alias in both type and method positions.
 priv struct SavedChild(@json.JsonPath, @json.JsonDecodeError)
 
 ///|
 impl @json.FromJson for SavedChild with fn from_json(_json, context) {
   let child = context.add_key("extra~/").add_index(7)
-  SavedChild(child.copy(), child.error("custom error"))
+  SavedChild(@json.JsonPath::copy(child), child.error("custom error"))
 }
 
 ///|
