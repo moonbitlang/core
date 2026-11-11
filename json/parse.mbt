@@ -92,7 +92,7 @@ pub fn parse(
   )
   let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
   ctx.lex_skip_whitespace()
-  if ctx.sc.cursor >= ctx.end_offset {
+  if ctx.offset >= ctx.end_offset {
     val
   } else {
     ctx.invalid_char()

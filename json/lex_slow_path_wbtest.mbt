@@ -43,14 +43,14 @@ test "lex_value_slow lexes every valid value token" {
     let token = slow_path_token(ctx.lex_value_slow(allow_rbracket=true)) catch {
       err => err.to_string()
     }
-    (input, token, ctx.sc.cursor)
+    (input, token, ctx.offset)
   })
   // `]` only closes an array that has no elements yet.
   let ctx = ParseContext::make("]")
   let closing = slow_path_token(ctx.lex_value_slow(allow_rbracket=false)) catch {
     err => err.to_string()
   }
-  results.push(("] (not allowed)", closing, ctx.sc.cursor))
+  results.push(("] (not allowed)", closing, ctx.offset))
   @debug.debug_inspect(
     results,
     content=(

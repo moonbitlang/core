@@ -30,7 +30,7 @@ fn[T] ParseContext::invalid_char(
   ctx : ParseContext,
   shift~ : Int32 = 0,
 ) -> T raise ParseError {
-  let offset = ctx.sc.cursor + shift
+  let offset = ctx.offset + shift
   let replacement_char : Char = '\u{fffd}'
   raise InvalidChar(
     offset_to_position(ctx.input, offset),
