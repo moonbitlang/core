@@ -209,7 +209,8 @@ async fn ProcessInput::init_stdin(
   context~ : String,
 ) -> (@event_loop.IoHandle?, WriteToProcess) {
   match input {
-    Inherit | Stdin => (@event_loop.stdin.to_option(), no_input)
+    Inherit => (None, no_input)
+    Stdin => (@event_loop.stdin.to_option(), no_input)
     FeedFromParent => {
       let (r, w) = @fd_util.pipe(
         read_end_is_async=false,
@@ -306,7 +307,8 @@ async fn ProcessOutput::init_stdout(
   context~ : String,
 ) -> (ReadFromProcess, @event_loop.IoHandle?) {
   match output {
-    Inherit | Stdout => (no_output, @event_loop.stdout.to_option())
+    Inherit => (no_output, None)
+    Stdout => (no_output, @event_loop.stdout.to_option())
     Stderr => (no_output, @event_loop.stderr.to_option())
     Collect => {
       let (r, w) = @fd_util.pipe(
@@ -366,9 +368,9 @@ async fn ProcessOutput::init_stderr(
   context~ : String,
 ) -> (ReadFromProcess, @event_loop.IoHandle?) {
   match output {
-    Inherit => ProcessOutput::init_stdout(Stderr, context~)
     DuplicateStdout => (no_output, stdout)
-    Stdout
+    Inherit
+    | Stdout
     | Stderr
     | Collect
     | Discard
