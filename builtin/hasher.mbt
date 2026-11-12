@@ -103,14 +103,17 @@ let seed : Int32 = 0
 let seed : Int32 = random_seed()
 
 ///|
+// Cloudflare Workers refuses `crypto.getRandomValues` while a module loads,
+// which is when this seed is drawn, so fall back to `Math.random` there too.
 #cfg(target="js")
 extern "js" fn random_seed() -> Int32 =
   #|() => {
-  #|  if (globalThis.crypto?.getRandomValues) {
+  #|  try {
   #|    const array = new Uint32Array(1);
   #|    globalThis.crypto.getRandomValues(array);
   #|    return array[0] | 0; // Convert to signed 32
-  #|  } else {
+  #|  } catch (_) {
+  #|    // No Web Crypto, or a host that refuses it here
   #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
   #|  }
   #|}
