@@ -115,50 +115,92 @@ async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
 }
 
 ///|
-/// `@tty.Tty::read_event` in `ttyd`.
+/// `@tty.Tty::read` in `ttyd`, or `@tty.Tty::read_into` a `max_len`-byte
+/// buffer with `max_len`. Raise `Resized` for `@tty.Resized`.
 ///
 /// With `timeout`, the read is cancelled inside `ttyd` after `timeout`
 /// milliseconds and `Timeout` is raised. The timeout must not be applied
 /// here with `@async.with_timeout`: cancelling the call would leave the
 /// late response on the connection, to be taken by the next call.
-async fn Ttyd::read_event(self : Ttyd, timeout? : Int32) -> @tty.Event? {
-  let params : Json = if timeout is Some(timeout) {
-    { "timeout": timeout }
-  } else {
-    {}
+async fn Ttyd::read(
+  self : Ttyd,
+  max_len? : Int32,
+  raise_on_resize~ : Bool = false,
+  timeout? : Int32,
+) -> Bytes? {
+  let params : Map[String, Json] = { "raise_on_resize": Json(raise_on_resize) }
+  if max_len is Some(max_len) {
+    params["max_len"] = Json(max_len)
   }
-  let result = self.call("read_event", params~)
+  if timeout is Some(timeout) {
+    params["timeout"] = Json(timeout)
+  }
+  read_result("read", self.call("read", params=Json(params)))
+}
+
+///|
+/// `@tty.Tty::read_exactly` in `ttyd`. Raise `Resized` for `@tty.Resized`.
+async fn Ttyd::read_exactly(
+  self : Ttyd,
+  len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> Bytes {
+  let result = self.call("read_exactly", params={
+    "len": len,
+    "raise_on_resize": raise_on_resize,
+  })
+  guard read_result("read_exactly", result) is Some(bytes) else {
+    fail("unexpected EOF from `read_exactly`")
+  }
+  bytes
+}
+
+///|
+fn read_result(name : String, result : Json) -> Bytes? raise {
   match result {
     { "type": "input", "bytes": String(bytes), .. } =>
-      Some(Input(@base64.decode(bytes)))
-    { "type": "resize", .. } => Some(Resize)
+      Some(@base64.decode(bytes))
+    { "type": "resize", .. } => raise Resized
     { "type": "eof", .. } => None
     { "type": "timeout", .. } => raise Timeout
-    _ => fail("unexpected `read_event` result: \{result.stringify()}")
+    _ => fail("unexpected `\{name}` result: \{result.stringify()}")
   }
 }
 
 ///|
-/// Raised by `Ttyd::read_event` when its `timeout` expires.
+/// Raised by `Ttyd::read` when its `timeout` expires.
 #derive(Debug)
 priv suberror Timeout
 
 ///|
-/// `@io.Reader::read` on the `@tty.Tty` in `ttyd`, into a `max_len`-byte buffer.
-async fn Ttyd::read(self : Ttyd, max_len : Int32) -> Bytes {
-  guard self.call("read", params={ "max_len": max_len }) is String(bytes) else {
-    fail("unexpected `read` result")
+/// Raised by the reads of `Ttyd` for `@tty.Resized`.
+#derive(Debug)
+priv suberror Resized
+
+///|
+/// Run the read `f`, which should raise `Resized`.
+async fn expect_resize(f : async () -> Unit) -> Unit {
+  try f() catch {
+    Resized => ()
+    error => raise error
+  } noraise {
+    _ => fail("expect the read to raise Resized")
   }
-  @base64.decode(bytes)
 }
 
 ///|
-/// `@io.Reader::read_exactly` on the `@tty.Tty` in `ttyd`.
-async fn Ttyd::read_exactly(self : Ttyd, len : Int32) -> Bytes {
-  guard self.call("read_exactly", params={ "len": len }) is String(bytes) else {
-    fail("unexpected `read_exactly` result")
+/// Read with `timeout`, which should expire.
+async fn expect_read_to_timeout(
+  ttyd : Ttyd,
+  raise_on_resize~ : Bool = false,
+  timeout~ : Int32,
+) -> Unit {
+  try ttyd.read(raise_on_resize~, timeout~) catch {
+    Timeout => ()
+    error => raise error
+  } noraise {
+    bytes => fail("expect read to timeout, got: \{@debug.Repr(bytes)}")
   }
-  @base64.decode(bytes)
 }
 
 ///|
@@ -260,25 +302,13 @@ async test "resize can interrupt a pending read" {
     ttyd.make_raw()
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
-        guard ttyd.read_event() is Some(Resize) else {
-          fail("expect exactly one Resize event")
-        }
+        expect_resize(() => ttyd.read(raise_on_resize=true) |> ignore)
       }
       group.spawn_bg() <| () => {
         @async.sleep(100)
         ttyd.resize(25, 81)
       }
     }
-  }
-}
-
-///|
-async fn expect_read_event_to_timeout(ttyd : Ttyd, timeout~ : Int32) -> Unit {
-  try ttyd.read_event(timeout~) catch {
-    Timeout => ()
-    error => raise error
-  } noraise {
-    event => fail("expect read_event to timeout, got: \{@debug.Repr(event)}")
   }
 }
 
@@ -295,10 +325,8 @@ async test "multiple resize events collapse into one" {
     while ttyd.size() != (27, 83) {
       @async.sleep(1)
     }
-    guard ttyd.read_event() is Some(Resize) else {
-      fail("expect exactly one Resize event, got None or Some(Input)")
-    }
-    expect_read_event_to_timeout(ttyd, timeout=200)
+    expect_resize(() => ttyd.read(raise_on_resize=true) |> ignore)
+    expect_read_to_timeout(ttyd, raise_on_resize=true, timeout=200)
   }
 }
 
@@ -307,7 +335,7 @@ async test "cooked mode respects line discipline" {
   with_ttyd() <| ttyd => {
     @async.with_task_group(group => {
       ttyd.send_input(b"hello")
-      let reading = group.spawn(() => ttyd.read_event())
+      let reading = group.spawn(() => ttyd.read())
       @async.sleep(200)
       assert_true(reading.try_wait() is None)
       let (enter, line) = if @async.platform is Windows {
@@ -316,7 +344,7 @@ async test "cooked mode respects line discipline" {
         (b", world!\n", b"hello, world!\n")
       }
       ttyd.send_input(enter)
-      assert_eq(reading.wait(), Some(Input(line)))
+      assert_eq(reading.wait(), Some(line))
     })
   }
 }
@@ -332,19 +360,36 @@ async test "raw mode delivers input without line buffering" {
 }
 
 ///|
-async test "read_event delivers bytes left by @io.Reader first" {
+async test "read delivers bytes left by read_exactly first" {
   with_ttyd() <| ttyd => {
     ttyd.make_raw()
     ttyd.send_input(b"abcdef")
     assert_eq(ttyd.read_exactly(3), b"abc")
-    guard ttyd.read_event() is Some(Input(b"def")) else {
-      fail("expect read_event to return the bytes left by read_exactly")
-    }
+    assert_eq(ttyd.read(raise_on_resize=true), Some(b"def"))
   }
 }
 
 ///|
-async test "@io.Reader should not consume resize event" {
+async test "read_exactly keeps partial input on resize" {
+  with_ttyd() <| ttyd => {
+    ttyd.make_raw()
+    ttyd.send_input(b"abc")
+    @async.with_task_group() <| group => {
+      group.spawn_bg() <| () => {
+        expect_resize(() => ttyd.read_exactly(6, raise_on_resize=true) |> ignore)
+      }
+      group.spawn_bg() <| () => {
+        @async.sleep(100)
+        ttyd.resize(25, 81)
+      }
+    }
+    ttyd.send_input(b"def")
+    assert_eq(ttyd.read_exactly(6), b"abcdef")
+  }
+}
+
+///|
+async test "a read without raise_on_resize leaves the resize pending" {
   with_ttyd() <| ttyd => {
     ttyd.make_raw()
     @async.with_task_group() <| group => {
@@ -352,10 +397,8 @@ async test "@io.Reader should not consume resize event" {
         guard ttyd.read_exactly(6) is b"hello\n" else {
           fail("expect read_exactly to return the input")
         }
-        guard ttyd.read_event() is Some(Resize) else {
-          fail("expect the resize to be left to read_event")
-        }
-        expect_read_event_to_timeout(ttyd, timeout=200)
+        expect_resize(() => ttyd.read(raise_on_resize=true) |> ignore)
+        expect_read_to_timeout(ttyd, raise_on_resize=true, timeout=200)
       }
       group.spawn_bg() <| () => {
         @async.sleep(100)
@@ -371,8 +414,8 @@ async test "@io.Reader should not consume resize event" {
 async test "cooked mode handles EOF" {
   with_ttyd() <| ttyd => {
     ttyd.send_input(b"\x04")
-    guard ttyd.read_event() is None else {
-      fail("expect read_event to return None for \\x04 in cooked mode")
+    guard ttyd.read() is None else {
+      fail("expect read to return None for \\x04 in cooked mode")
     }
   }
 }
@@ -481,7 +524,7 @@ async test "raw mode delivers a character across small reads" {
     let text = b"\xf0\x9f\x98\x80"
     ttyd.send_input(text)
     for byte in text {
-      assert_eq(ttyd.read(1), Bytes::from_array([byte]))
+      assert_eq(ttyd.read(max_len=1), Some(Bytes::from_array([byte])))
     }
   }
 }
@@ -491,9 +534,9 @@ async test "cancelling a parked read keeps the terminal usable" {
   with_ttyd() <| ttyd => {
     ttyd.make_raw()
     for input in [b"a", b"b", b"c"] {
-      expect_read_event_to_timeout(ttyd, timeout=100)
+      expect_read_to_timeout(ttyd, raise_on_resize=true, timeout=100)
       ttyd.send_input(input)
-      assert_eq(ttyd.read_event(), Some(Input(input)))
+      assert_eq(ttyd.read(raise_on_resize=true), Some(input))
     }
   }
 }
@@ -506,7 +549,7 @@ async test "cancelling a parked read keeps the terminal usable" {
 async test "a cooked read can be cancelled" {
   with_ttyd() <| ttyd => {
     ttyd.send_input(b"partial")
-    expect_read_event_to_timeout(ttyd, timeout=100)
+    expect_read_to_timeout(ttyd, timeout=100)
   }
 }
 
@@ -527,6 +570,6 @@ async test "cooked console preserves Ctrl-Z as input" {
   with_ttyd() <| ttyd => {
     // ReadConsoleW does not apply the CRT's Ctrl-Z-to-EOF translation.
     ttyd.send_input(b"\x1a\r")
-    assert_eq(ttyd.read_event(), Some(Input(b"\x1a\r\n")))
+    assert_eq(ttyd.read(), Some(b"\x1a\r\n"))
   }
 }
