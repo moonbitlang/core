@@ -70,23 +70,29 @@ fn string_from_extern(e : XExternString) -> String {
 }
 
 ///|
+#cfg(target="wasm-gc")
 #external
 priv type XStringArrayReadHandle
 
 ///|
+#cfg(target="wasm-gc")
 #external
 priv type XExternStringArray
 
 ///|
+#cfg(target="wasm-gc")
 fn begin_read_string_array(sa : XExternStringArray) -> XStringArrayReadHandle = "__moonbit_fs_unstable" "begin_read_string_array"
 
 ///|
+#cfg(target="wasm-gc")
 fn string_array_read_string(handle : XStringArrayReadHandle) -> XExternString = "__moonbit_fs_unstable" "string_array_read_string"
 
 ///|
+#cfg(target="wasm-gc")
 fn finish_read_string_array(handle : XStringArrayReadHandle) = "__moonbit_fs_unstable" "finish_read_string_array"
 
 ///|
+#cfg(target="wasm-gc")
 fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
   let buf = []
   let handle = begin_read_string_array(e)
@@ -105,12 +111,14 @@ fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
 }
 
 ///|
+#cfg(target="wasm-gc")
 fn get_cli_args_internal() -> Array[String] {
   let args = get_cli_args_ffi()
   string_array_from_extern(args)
 }
 
 ///|
+#cfg(target="wasm-gc")
 fn get_cli_args_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "args_get"
 
 ///|
@@ -139,6 +147,7 @@ fn current_dir_internal() -> String? {
 fn current_dir_ffi() -> XExternString = "__moonbit_fs_unstable" "current_dir"
 
 ///|
+#cfg(target="wasm-gc")
 fn get_env_var_internal(key : String) -> String? {
   let key = string_to_extern(key)
   if get_env_var_exists_ffi(key) {
@@ -149,12 +158,15 @@ fn get_env_var_internal(key : String) -> String? {
 }
 
 ///|
+#cfg(target="wasm-gc")
 fn get_env_var_ffi(key : XExternString) -> XExternString = "__moonbit_fs_unstable" "get_env_var"
 
 ///|
+#cfg(target="wasm-gc")
 fn get_env_var_exists_ffi(key : XExternString) -> Bool = "__moonbit_fs_unstable" "get_env_var_exists"
 
 ///|
+#cfg(target="wasm-gc")
 fn get_env_vars_internal() -> Map[String, String] {
   let tmp = string_array_from_extern(get_env_vars_ffi())
   let res = Map([])
@@ -165,6 +177,7 @@ fn get_env_vars_internal() -> Map[String, String] {
 }
 
 ///|
+#cfg(target="wasm-gc")
 fn get_env_vars_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "get_env_vars"
 
 ///|

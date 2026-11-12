@@ -119,3 +119,16 @@ test "unicode env var round trip" {
   @test.assert_eq(@env.get_env_var(key), None)
   @test.assert_eq(@env.get_env_vars().get(key), None)
 }
+
+///|
+#cfg(target="wasm")
+test "WASIp1 env values preserve delimiters and the old sentinel" {
+  let key = "__MOONBIT_CORE_ENV_WASI_TEST_" + @env.now().to_string()
+  for value in ["a=b=c", "line1\nline2", "ffi_end_of_/string_array"] {
+    @env.set_env_var(key, value)
+    @test.assert_eq(@env.get_env_var(key), Some(value))
+    @test.assert_eq(@env.get_env_vars().get(key), Some(value))
+  }
+  @env.unset_env_var(key)
+  inspect(@env.get_env_var(key) is None, content="true")
+}
