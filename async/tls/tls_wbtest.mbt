@@ -329,15 +329,15 @@ impl @io.BinaryReaderImpl for FailingRead with fn get_controller(self) {
 
 ///|
 async test "`write` after the transport failed in a concurrent `read`" {
+  let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+  let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+  defer {
+    client_read_from_server.close()
+    client_write_to_server.close()
+    server_read_from_client.close()
+    server_write_to_client.close()
+  }
   @async.with_task_group() <| root => {
-    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
-    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
-    defer {
-      client_read_from_server.close()
-      client_write_to_server.close()
-      server_read_from_client.close()
-      server_write_to_client.close()
-    }
     root.spawn_bg() <| () => {
       test_server(server_read_from_client, server_write_to_client).close()
     }
@@ -355,7 +355,7 @@ async test "`write` after the transport failed in a concurrent `read`" {
     reader.fail = true
     // Runs once the write below waits for the full pipe:
     // fail a read, then let the write continue.
-    root.spawn_bg(no_wait=true) <| () => {
+    root.spawn_bg() <| () => {
       ignore(client.read()) catch {
         _ => ()
       }
@@ -370,5 +370,7 @@ async test "`write` after the transport failed in a concurrent `read`" {
         #|)
       ),
     )
+    // Ends the drain above
+    client_write_to_server.close()
   }
 }
