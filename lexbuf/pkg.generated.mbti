@@ -6,21 +6,22 @@ package "moonbitlang/core/lexbuf"
 // Errors
 
 // Types and methods
-pub struct AsyncBytesLexbuf {
-  // private fields
-}
-pub fn AsyncBytesLexbuf::from_fn(async () -> Bytes?) -> Self
+type AsyncBytesLexbuf
+#alias(from_fn)
+pub fn AsyncBytesLexbuf::AsyncBytesLexbuf(async () -> Bytes?) -> Self
 
 pub struct AsyncLexbuf {
   // private fields
 }
-pub fn AsyncLexbuf::from_fn(async () -> String?) -> Self
+#alias(from_fn)
+pub fn AsyncLexbuf::AsyncLexbuf(async () -> String?) -> Self
 pub async fn AsyncLexbuf::read_line(Self) -> StringView?
 
 pub struct BytesLexbuf {
   // private fields
 }
-pub fn BytesLexbuf::from_fn(() -> Bytes?) -> Self
+#alias(from_fn)
+pub fn BytesLexbuf::BytesLexbuf(() -> Bytes?) -> Self
 
 pub struct BytesScanner {
   data : BytesView
@@ -32,7 +33,8 @@ pub impl BytesScannable for BytesScanner
 pub struct Lexbuf {
   // private fields
 }
-pub fn Lexbuf::from_fn(() -> String?) -> Self
+#alias(from_fn)
+pub fn Lexbuf::Lexbuf(() -> String?) -> Self
 #deprecated
 pub fn Lexbuf::from_string(String) -> Self
 pub fn Lexbuf::read_line(Self) -> StringView?

@@ -17,6 +17,8 @@ Core types available in every MoonBit program:
 - `Ref` — mutable reference cell
 - `Regex` — regular expressions
 - `BytesRegex` — regular expressions over bytes
+- `Lexbuf`, `AsyncLexbuf` — streaming text input for `lexscan`
+- `BytesLexbuf`, `AsyncBytesLexbuf` — streaming byte buffers
 - `Repr` — debug representation
 - `Failure`, `InspectError`, `SnapshotError` — error types
 - `SourceLoc`, `ArgsLoc` — source location info
@@ -29,6 +31,36 @@ test "Set constructor from prelude" {
   inspect(set.contains(3), content="true")
 }
 ```
+
+## Streaming input for `lexscan`
+
+Construct a lexbuf with a callback that returns the next chunk, or `None` at
+EOF. Empty chunks are ignored, and tokens may span chunk boundaries.
+The existing `from_fn` spelling remains available as an alias.
+
+```mbt check
+///|
+test "Lexbuf constructor from prelude" {
+  let chunks = ["hel", "lo world"].iter()
+  let input = Lexbuf(() => chunks.next())
+  let words = []
+  for ;; {
+    lexscan input {
+      re"^[a-z]+" as word => words.push(word.to_owned())
+      re"^ +" => ()
+      re"^$" => break
+      _ => fail("unexpected character")
+    }
+  }
+  debug_inspect(words, content="[\"hello\", \"world\"]")
+}
+```
+
+For an asynchronous text reader, use `AsyncLexbuf(() => reader.read())`.
+For a binary reader, use `AsyncBytesLexbuf(() => reader.read())`.
+The buffer takes over the remaining stream, so do not read directly from the
+reader after scanning begins. Source errors propagate; do not reuse an async
+lexbuf after a scan fails or is cancelled during a refill.
 
 ## Re-exported Traits
 

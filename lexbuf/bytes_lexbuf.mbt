@@ -28,7 +28,8 @@ pub struct BytesLexbuf {
 ///|
 /// Creates an initially empty lexbuf. `source` returns the next chunk, or
 /// `None` at EOF. Empty chunks are ignored.
-pub fn BytesLexbuf::from_fn(source : () -> Bytes?) -> BytesLexbuf {
+#alias(from_fn)
+pub fn BytesLexbuf::BytesLexbuf(source : () -> Bytes?) -> BytesLexbuf {
   {
     source,
     storage: BytesLexbufStorage(),
