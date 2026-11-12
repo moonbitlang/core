@@ -225,6 +225,7 @@ async fn ProcessInput::init_stdin(
       let (file, _) = @event_loop.open(
         null_device,
         0, // read only
+        parent=@fd_util.invalid_fd,
         create=@fs.OpenExisting.to_int(),
         append=false,
         sync=0,
@@ -237,6 +238,7 @@ async fn ProcessInput::init_stdin(
       let (file, _) = @event_loop.open(
         filename,
         0, // read only
+        parent=@fd_util.invalid_fd,
         create=@fs.OpenExisting.to_int(),
         append=false,
         sync=0,
@@ -324,6 +326,7 @@ async fn ProcessOutput::init_stdout(
       let (file, _) = @event_loop.open(
         null_device,
         1, // write only
+        parent=@fd_util.invalid_fd,
         create=@fs.OpenExisting.to_int(),
         append=false,
         sync=0,
@@ -336,6 +339,7 @@ async fn ProcessOutput::init_stdout(
       let (file, _) = @event_loop.open(
         filename,
         1, // write only
+        parent=@fd_util.invalid_fd,
         create=@fs.CreateOrTruncate.to_int(),
         append=false,
         sync=0,
@@ -348,6 +352,7 @@ async fn ProcessOutput::init_stdout(
       let (file, _) = @event_loop.open(
         filename,
         1, // write only
+        parent=@fd_util.invalid_fd,
         create=@fs.OpenOrCreate.to_int(),
         append=true,
         sync=0,
@@ -531,6 +536,7 @@ pub async fn redirect_to_file(
   let (file, _) = @event_loop.open(
     path,
     1, // write only
+    parent=@fd_util.invalid_fd,
     create=create_mode.to_int(),
     append~,
     sync=0,
@@ -552,6 +558,7 @@ pub async fn redirect_from_file(path : String) -> SharedProcessInput {
   let (file, _) = @event_loop.open(
     path,
     0, // read only
+    parent=@fd_util.invalid_fd,
     create=@fs.OpenExisting.to_int(),
     append=false,
     sync=0,

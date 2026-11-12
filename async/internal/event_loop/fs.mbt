@@ -33,6 +33,7 @@ pub async fn open(
   path : StringView,
   // 0 => read only, 1 => write only, 2 => read write, 3 => directory listing
   access : Int32,
+  parent~ : @fd_util.Fd,
   // See `@fs.CreateMode` for more details
   create~ : Int32,
   append~ : Bool,
@@ -44,7 +45,8 @@ pub async fn open(
 ) -> (IoHandle, FileIdentity) {
   let path_bytes = @os_string.from_string(path)
   let stat_buf = FixedArray::make(32, b'\x00')
-  let job = Job::open(
+  let job = Job::openat(
+    parent,
     path_bytes,
     access,
     create~,
@@ -448,9 +450,13 @@ pub async fn IoHandle::lock(
 
 ///|
 /// Remove a regular file at `path`.
-pub async fn remove(path : StringView, context~ : String) -> Unit nocancel {
+pub async fn remove(
+  path : StringView,
+  parent~ : @fd_util.Fd,
+  context~ : String,
+) -> Unit nocancel {
   let path_bytes = @os_string.from_string(path)
-  let job = Job::remove(path_bytes)
+  let job = Job::removeat(parent, path_bytes)
   defer job.free()
   @coroutine.protect_from_cancel <| () => {
     try perform_job_in_worker(job, context~) catch {

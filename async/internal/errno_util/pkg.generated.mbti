@@ -30,6 +30,8 @@ pub let linux_ENOENT : Int32
 
 pub let linux_ENOTDIR : Int32
 
+pub let linux_ENOTEMPTY : Int32
+
 pub let linux_ENOTSUP : Int32
 
 pub let linux_EWOULDBLOCK : Int32
@@ -54,6 +56,8 @@ pub let macos_ENOENT : Int32
 
 pub let macos_ENOTDIR : Int32
 
+pub let macos_ENOTEMPTY : Int32
+
 pub let macos_ENOTSUP : Int32
 
 pub let macos_EWOULDBLOCK : Int32
@@ -74,6 +78,8 @@ pub let windows_ERROR_CONNECTION_REFUSED : Int32
 
 pub let windows_ERROR_DIRECTORY : Int32
 
+pub let windows_ERROR_DIR_NOT_EMPTY : Int32
+
 pub let windows_ERROR_FILE_EXISTS : Int32
 
 pub let windows_ERROR_FILE_NOT_FOUND : Int32
@@ -89,6 +95,8 @@ pub let windows_ERROR_IO_PENDING : Int32
 pub let windows_ERROR_LOCK_VIOLATION : Int32
 
 pub let windows_ERROR_NOTIFY_ENUM_DIR : Int32
+
+pub let windows_ERROR_NOT_EMPTY : Int32
 
 pub let windows_ERROR_NOT_SUPPORTED : Int32
 

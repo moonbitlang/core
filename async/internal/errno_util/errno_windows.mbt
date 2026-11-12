@@ -75,3 +75,11 @@ pub let windows_ERROR_BROKEN_PIPE : Int32 = 109
 ///|
 /// `ERROR_INVALID_HANDLE`
 pub let windows_ERROR_INVALID_HANDLE : Int32 = 6
+
+///|
+/// `ERROR_DIR_NOT_EMPTY`
+pub let windows_ERROR_DIR_NOT_EMPTY : Int32 = 145
+
+///|
+/// `ERROR_NOT_EMPTY`
+pub let windows_ERROR_NOT_EMPTY : Int32 = 4307

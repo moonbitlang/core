@@ -267,8 +267,9 @@ fn Job::write_console(
 
 ///|
 #unsafe_skip_stub_check
-#borrow(filename)
-fn JobHandle::open(
+#borrow(parent, filename)
+fn JobHandle::openat(
+  parent : @fd_util.Fd,
   filename : @os_string.OsString,
   filename_len~ : Int32 = filename.to_string().length(),
   // 0 => read only, 1 => write only, 2 => read write
@@ -282,13 +283,14 @@ fn JobHandle::open(
   mode~ : Int32,
   stat_request~ : UInt32,
   stat_buf_len~ : Int32,
-) -> JobHandle = "moonbitlang/async" "thread_pool/make_open_stat_job"
+) -> JobHandle = "moonbitlang/async" "thread_pool/make_openat_job"
 
 ///|
-priv struct OpenJob(Job)
+priv struct OpenAtJob(Job)
 
 ///|
-fn Job::open(
+fn Job::openat(
+  parent : @fd_util.Fd,
   filename : @os_string.OsString,
   // 0 => read only, 1 => write only, 2 => read write
   access : Int32,
@@ -302,9 +304,10 @@ fn Job::open(
   stat_request~ : UInt32,
   stat_buf~ : FixedArray[Byte],
   stat_buf_len~ : Int32,
-) -> OpenJob {
+) -> OpenAtJob {
   Job(
-    JobHandle::open(
+    JobHandle::openat(
+      parent,
       filename,
       access,
       create~,
@@ -320,11 +323,11 @@ fn Job::open(
 
 ///|
 #unsafe_skip_stub_check
-fn OpenJob::fd_ffi(job : JobHandle) -> @fd_util.Fd = "moonbitlang/async" "thread_pool/open_job_get_fd"
+fn OpenAtJob::fd_ffi(job : JobHandle) -> @fd_util.Fd = "moonbitlang/async" "thread_pool/open_job_get_fd"
 
 ///|
-fn OpenJob::fd(job : OpenJob) -> @fd_util.Fd {
-  OpenJob::fd_ffi(job.0.handle)
+fn OpenAtJob::fd(job : OpenAtJob) -> @fd_util.Fd {
+  OpenAtJob::fd_ffi(job.0.handle)
 }
 
 ///|
@@ -474,15 +477,16 @@ fn Job::flock(fd : @fd_util.Fd, exclusive : Bool) -> Job {
 
 ///|
 #unsafe_skip_stub_check
-#borrow(path)
-fn JobHandle::remove(
+#borrow(parent, path)
+fn JobHandle::removeat(
+  parent : @fd_util.Fd,
   path : @os_string.OsString,
   path_len~ : Int32 = path.to_string().length(),
-) -> JobHandle = "moonbitlang/async" "thread_pool/make_remove_job"
+) -> JobHandle = "moonbitlang/async" "thread_pool/make_removeat_job"
 
 ///|
-fn Job::remove(path : @os_string.OsString) -> Job {
-  Job(JobHandle::remove(path))
+fn Job::removeat(parent : @fd_util.Fd, path : @os_string.OsString) -> Job {
+  Job(JobHandle::removeat(parent, path))
 }
 
 ///|
