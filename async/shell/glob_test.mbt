@@ -70,7 +70,7 @@ async test "expansion finds what is on disk and nothing else" {
   // the comparison.
   let spelled_root = root.replace_all(old="\\", new="/")
   assert_eq(@shell.glob("\{spelled_root}/*.txt"), ["\{spelled_root}/c.txt"])
-  @fs.rmdir(root, recursive=true)
+  @fs.remove(root, recursive=true)
 }
 
 ///|
@@ -82,7 +82,7 @@ async test "matches come back in code-unit order, not by length" {
   // `Array::sort` on strings orders by length first, which would have put
   // "b.txt" first. A shell does not, and neither does this.
   assert_eq(@shell.glob("*.txt", cwd=root), ["aaa.txt", "ab.txt", "b.txt"])
-  @fs.rmdir(root, recursive=true)
+  @fs.remove(root, recursive=true)
 }
 
 ///|
@@ -91,7 +91,7 @@ async test "a name with spaces expands as one literal path" {
   make_tree(root, ["od d.txt", "plain.txt"])
   assert_eq(@shell.glob("*.txt", cwd=root), ["od d.txt", "plain.txt"])
   assert_eq(@shell.glob("od *", cwd=root), ["od d.txt"])
-  @fs.rmdir(root, recursive=true)
+  @fs.remove(root, recursive=true)
 }
 
 ///|
@@ -107,7 +107,7 @@ async test "adjacent globstars do not explode on a deep tree" {
   ])
   // The same pattern for a name that is not there has to finish too.
   assert_eq(@shell.glob("**/**/**/**/missing.mbt", cwd=root), [])
-  @fs.rmdir(root, recursive=true)
+  @fs.remove(root, recursive=true)
 }
 
 ///|
@@ -120,7 +120,7 @@ async test "a symlink loop does not trap the walker" {
     // A link pointing back at an ancestor: following it would never terminate.
     @fs.symlink(target=root, "\{root}/deep/loop")
     assert_eq(@shell.glob("**/*.mbt", cwd=root), ["deep/inner/target.mbt"])
-    @fs.rmdir(root, recursive=true)
+    @fs.remove(root, recursive=true)
   }
 }
 
@@ -136,7 +136,7 @@ async test "a dangling or self-referential link still matches" {
     assert_eq(@shell.glob("*.txt", cwd=root), [
       "dangling.txt", "real.txt", "self.txt",
     ])
-    @fs.rmdir(root, recursive=true)
+    @fs.remove(root, recursive=true)
   }
 }
 
@@ -150,7 +150,7 @@ async test "windows expansion is case-insensitive and accepts backslashes" {
     // A backslash separates; the result is spelled with `/`, from the
     // pattern's own spelling of each matched segment.
     assert_eq(@shell.glob("src\\*.mbt", cwd=root), ["src/d.mbt"])
-    @fs.rmdir(root, recursive=true)
+    @fs.remove(root, recursive=true)
   }
 }
 
@@ -210,6 +210,6 @@ async test "an escaped leading separator is still absolute" {
     make_tree(root, ["tmp/decoy.txt"])
     // `\/tmp` denotes `/tmp`, so this must not search `<root>/tmp`.
     assert_false(@shell.glob("\\/tmp/*", cwd=root).contains("tmp/decoy.txt"))
-    @fs.rmdir(root, recursive=true)
+    @fs.remove(root, recursive=true)
   }
 }

@@ -173,7 +173,7 @@ async test "a failing redirect closes every prepared pipe end" {
   } noraise {
     _ => fail("expected the redirect to fail")
   }
-  @fs.rmdir(directory, recursive=true)
+  @fs.remove(directory, recursive=true)
 }
 
 ///|
