@@ -53,6 +53,7 @@ async fn open_device(path : String, context~ : String) -> @event_loop.IoHandle {
   let (io, _) = @event_loop.open(
     path,
     2,
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,
