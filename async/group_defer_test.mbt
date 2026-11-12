@@ -98,38 +98,44 @@ async test "group defer error" {
 ///|
 async test "group defer cancelled" {
   let log = StringBuilder()
+  let started = @async.Semaphore(1, initial_value=0)
+  let cleanup_started = @async.Semaphore(1, initial_value=0)
+  let finish_cleanup = @async.Semaphore(1, initial_value=0)
   @async.with_task_group() <| root => {
-    root.spawn_bg() <| () => {
-      for _ in 0..<4 {
-        @async.sleep(200)
-        log <+ "tick\n"
-      }
-    }
-    @async.with_timeout_opt(500, () => {
-      @async.with_task_group(group => {
-        group.add_defer(() => {
-          @async.protect_from_cancel() <| () => {
-            @async.sleep(200)
-            log <+ "protected async defer completed\n"
-          }
+    let task = root.spawn(() => {
+      @async.handle_cancellation(() => {
+        @async.with_task_group(group => {
+          group.add_defer(() => {
+            @async.protect_from_cancel() <| () => {
+              cleanup_started.release()
+              finish_cleanup.acquire()
+              log <+ "protected async defer completed\n"
+            }
+          })
+          defer log <+ "start group termination\n"
+          started.release()
+          // Keep the body blocked until cancellation, without a timer race.
+          @async.Semaphore(1, initial_value=0).acquire()
         })
-        defer log <+ "start group termination\n"
-        @async.sleep(2000)
       })
     })
-    |> ignore
+    started.acquire()
+    task.cancel()
+    cleanup_started.acquire()
+    // The group must wait for protected cleanup while other tasks can run.
+    debug_inspect(task.try_wait(), content="None")
+    log <+ "other task runs during cleanup\n"
+    finish_cleanup.release()
+    debug_inspect(task.wait(), content="None")
     log <+ "group terminated\n"
   }
   inspect(
     log.to_string(),
     content=(
-      #|tick
-      #|tick
       #|start group termination
-      #|tick
+      #|other task runs during cleanup
       #|protected async defer completed
       #|group terminated
-      #|tick
       #|
     ),
   )
