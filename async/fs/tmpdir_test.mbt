@@ -15,9 +15,9 @@
 ///|
 async test "tmpdir" {
   let t1 = @fs.tmpdir(prefix="tmp")
-  defer @fs.rmdir(t1, recursive=true)
+  defer @fs.remove(t1, recursive=true)
   let t2 = @fs.tmpdir(prefix="tmp")
-  defer @fs.rmdir(t2, recursive=true)
+  defer @fs.remove(t2, recursive=true)
   assert_not_eq(t1, t2)
   assert_true(@fs.exists(t1))
   assert_true(@fs.exists(t2))

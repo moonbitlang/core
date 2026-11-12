@@ -60,23 +60,42 @@ pub async fn mkdir(
 }
 
 ///|
-/// Remove a directory at `path`,
-/// If `recursive` is `true` (`false` by default),
+/// Remove a regular file or directory at `path`,
+///
+/// If `recursive` is `true` (`false` by default), and the target is a non-empty directory,
 /// files and directories in `path` will be removed recursively.
 /// If `recursive` is `false`,
-/// `path` must be an empty directory, otherwise `rmdir` will fail.
+/// `path` must not be a non-empty directory, otherwise `remove` will fail.
 ///
 /// Unless `allow_missing=true` (`false` by default),
 /// an error will be raised if the target file does not exist.
 ///
-/// This function is not cancellable.
-pub async fn rmdir(
+/// This function is not cancellable, so it can be safely invoked in `defer`/`errdefer`
+#alias(rmdir, deprecated)
+pub async fn remove(
   path : StringView,
   recursive~ : Bool = false,
   allow_missing~ : Bool = false,
 ) -> Unit nocancel {
-  let context = "@fs.rmdir()"
-  try @event_loop.rmdir(path, context~) catch {
+  let context = "@fs.remove()"
+  remove_aux(
+    path,
+    parent=@fd_util.invalid_fd,
+    recursive~,
+    allow_missing~,
+    context~,
+  )
+}
+
+///|
+async fn remove_aux(
+  path : StringView,
+  parent~ : @fd_util.Fd,
+  recursive~ : Bool,
+  allow_missing~ : Bool,
+  context~ : String,
+) -> Unit nocancel {
+  try @event_loop.remove(path, parent~, context~) catch {
     @os_error.OsError(NotFound, ..) if allow_missing => return
     @os_error.OsError(NotEmpty, ..) if recursive => ()
     err => raise err
@@ -84,29 +103,22 @@ pub async fn rmdir(
     _ => return
   }
   @async.protect_from_cancel <| () => {
-    let dir = opendir_aux(path, context~)
+    let dir = opendir_aux(path, parent~, context~)
     defer dir.close()
-    dir.remove_children(context~)
+    while dir.next_aux(include_special=false, include_hidden=true, context~)
+          is Some(ent) {
+      remove_aux(
+        ent.name,
+        parent=dir.io.fd(),
+        recursive=true,
+        allow_missing=true,
+        context~,
+      )
+    }
   }
-  @event_loop.rmdir(path, context~) catch {
+  @event_loop.remove(path, parent~, context~) catch {
     @os_error.OsError(NotFound, ..) => ()
     err => raise err
-  }
-}
-
-///|
-async fn Directory::remove_children(dir : Directory, context~ : String) -> Unit {
-  while dir.next_aux(include_special=false, include_hidden=true, context~)
-        is Some(ent) {
-    if ent.is_dir {
-      let child = dir.open(ent.name, mode=ReadOnly).as_dir()
-      defer child.close()
-      child.remove_children(context~)
-    }
-    @event_loop.remove(ent.name, parent=dir.io.fd(), context~) catch {
-      @os_error.OsError(NotFound, ..) => ()
-      err => raise err
-    }
   }
 }
 
@@ -162,11 +174,15 @@ pub async fn opendir(path : StringView) -> Directory {
 }
 
 ///|
-async fn opendir_aux(path : StringView, context~ : String) -> Directory {
+async fn opendir_aux(
+  path : StringView,
+  parent~ : @fd_util.Fd = @fd_util.invalid_fd,
+  context~ : String,
+) -> Directory {
   let (io, _) = @event_loop.open(
     path,
     0,
-    parent=@fd_util.invalid_fd,
+    parent~,
     create=0,
     append=false,
     sync=0,
@@ -335,32 +351,27 @@ async fn Directory::open_aux(
 /// removing its child by path may accidentally remove unrelated file under a different directory.
 /// `dir.remove(..)` always remove files under exactly the directory referred to by `dir`.
 ///
+/// If `recursive` is `true` (`false` by default), and the target is a non-empty directory,
+/// files and directories in `path` will be removed recursively.
+/// If `recursive` is `false`,
+/// `path` must not be a non-empty directory, otherwise `remove` will fail.
+///
 /// Unless `allow_missing=true` (`false` by default),
 /// an error will be raised if the target file does not exist.
 pub async fn Directory::remove(
   dir : Directory,
   path : StringView,
+  recursive~ : Bool = false,
   allow_missing~ : Bool = false,
 ) -> Unit {
   let context = "@fs.Directory::remove()"
-  dir.remove_aux(
+  remove_aux(
     validate_relative_open_filename(path, context~),
+    parent=dir.io.fd(),
+    recursive~,
     allow_missing~,
     context~,
   )
-}
-
-///|
-async fn Directory::remove_aux(
-  dir : Directory,
-  path : StringView,
-  allow_missing~ : Bool,
-  context~ : String,
-) -> Unit {
-  @event_loop.remove(path, parent=dir.io.fd(), context~) catch {
-    @os_error.OsError(NotFound, ..) if allow_missing => ()
-    err => raise err
-  }
 }
 
 ///|

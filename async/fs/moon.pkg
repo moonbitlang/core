@@ -71,6 +71,7 @@ options(
     "realpath_test.mbt": [ "native", "wasm" ],
     "relative_open_test.mbt": [ "native", "wasm" ],
     "relative_open_wbtest.mbt": [ "native", "wasm" ],
+    "remove_test.mbt": [ "native", "wasm" ],
     "rename_test.mbt": [ "native", "wasm" ],
     "stat_test.mbt": [ "native" ],
     "text_file_test.mbt": [ "native", "wasm" ],

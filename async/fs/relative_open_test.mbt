@@ -17,8 +17,8 @@ async test "relative open" {
   let old_path = "_build/relative_open_test"
   let new_path = "_build/relative_open_test_renamed"
   @fs.mkdir(old_path)
-  defer @fs.rmdir(old_path, allow_missing=true, recursive=true)
-  defer @fs.rmdir(new_path, allow_missing=true, recursive=true)
+  defer @fs.remove(old_path, allow_missing=true, recursive=true)
+  defer @fs.remove(new_path, allow_missing=true, recursive=true)
   @fs.write_text("\{old_path}/file", "abcd")
   let dir = @fs.opendir(old_path)
   defer dir.close()
@@ -40,8 +40,8 @@ async test "relative remove" {
   let old_path = "_build/relative_remove_test"
   let new_path = "_build/relative_remove_test_renamed"
   @fs.mkdir(old_path)
-  defer @fs.rmdir(old_path, allow_missing=true, recursive=true)
-  defer @fs.rmdir(new_path, allow_missing=true, recursive=true)
+  defer @fs.remove(old_path, allow_missing=true, recursive=true)
+  defer @fs.remove(new_path, allow_missing=true, recursive=true)
   @fs.write_text("\{old_path}/file", "abcd")
   let dir = @fs.opendir(old_path)
   defer dir.close()

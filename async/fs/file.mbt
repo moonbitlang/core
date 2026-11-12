@@ -399,22 +399,6 @@ pub fn File::unlock(self : File) -> Unit {
 }
 
 ///|
-/// Remove the file located at `path`.
-/// Unless `allow_missing=true` (`false` by default),
-/// an error will be raised if the target file does not exist.
-///
-/// This function is not cancellable.
-pub async fn remove(
-  path : StringView,
-  allow_missing~ : Bool = false,
-) -> Unit nocancel {
-  @event_loop.remove(path, parent=@fd_util.invalid_fd, context="@fs.remove()") catch {
-    @os_error.OsError(NotFound, ..) if allow_missing => ()
-    err => raise err
-  }
-}
-
-///|
 /// Rename (move) the file located at `old_path` to `new_path`.
 ///
 /// If `replace` is `true` (`true` by default),

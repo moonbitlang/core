@@ -149,7 +149,7 @@ async test "stdout can be sent to a file, appended, and read back as stdin" {
   // `FromFile` is the structured `< path`.
   let back = @shell.Cmd(cat, [], stdin=FromFile(path)).output()
   inspect(back.stdout(), content="three\n")
-  @fs.rmdir(directory, recursive=true)
+  @fs.remove(directory, recursive=true)
 }
 
 ///|
@@ -165,7 +165,7 @@ async test "a redirected stream is absent from the captured output" {
   inspect(output.stdout(), content="")
   inspect(output.stderr(), content="")
   inspect(@fs.read_text(path), content="err\n")
-  @fs.rmdir(directory, recursive=true)
+  @fs.remove(directory, recursive=true)
 }
 
 ///|
