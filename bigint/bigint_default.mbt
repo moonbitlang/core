@@ -116,10 +116,10 @@ const KARATSUBA_THRESHOLD = 50
 // Useful bigints
 
 ///|
-let zero : BigInt = 0N
+let zero : BigInt = { limbs: FixedArray::make(1, 0U), sign: Positive, len: 1, }
 
 ///|
-let one : BigInt = 1N
+let one : BigInt = { limbs: FixedArray::make(1, 1U), sign: Positive, len: 1, }
 
 // Conversion Functions
 
