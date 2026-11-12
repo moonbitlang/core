@@ -62,19 +62,19 @@ priv enum ArgInfo {
     short~ : Char?,
     long~ : String?,
     action~ : FlagAction,
-    negatable~ : Bool
+    negatable~ : Bool,
   )
   OptionInfo(
     short~ : Char?,
     long~ : String?,
     action~ : OptionAction,
     default_values~ : Array[String]?,
-    allow_hyphen_values~ : Bool
+    allow_hyphen_values~ : Bool,
   )
   PositionalInfo(
     num_args~ : ValueRange?,
     default_values~ : Array[String]?,
-    allow_hyphen_values~ : Bool
+    allow_hyphen_values~ : Bool,
   )
 }
 
