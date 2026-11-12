@@ -51,3 +51,11 @@ pub let linux_EINPROGRESS : Int32 = 115
 ///|
 /// `EWOULDBLOCK`
 pub let linux_EWOULDBLOCK : Int32 = linux_EAGAIN
+
+///|
+/// `EBADF`
+pub let linux_EBADF : Int32 = 9
+
+///|
+/// `ENOTEMPTY`
+pub let linux_ENOTEMPTY : Int32 = 39

@@ -42,3 +42,14 @@ test "Debug for Bench and Timestamp" {
   let ts = @bench.monotonic_clock_start()
   @debug.debug_inspect(ts, content="<Timestamp: ...>")
 }
+
+///|
+test "monotonic_clock_end reads one timestamp many times" {
+  let origin = @bench.monotonic_clock_start()
+  let mut last = 0.0
+  for _ in 0..<1000 {
+    let now = @bench.monotonic_clock_end(origin)
+    assert_true(now >= last)
+    last = now
+  }
+}

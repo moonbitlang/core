@@ -67,7 +67,7 @@ pub async fn mtime_by_path(StringView, follow_symlink~ : Bool, context~ : String
 
 pub fn now() -> Int64
 
-pub async fn open(StringView, Int32, create~ : Int32, append~ : Bool, sync~ : Int32, mode~ : Int32, context~ : String) -> (IoHandle, FileIdentity)
+pub async fn open(StringView, Int32, parent~ : @types.Fd, create~ : Int32, append~ : Bool, sync~ : Int32, mode~ : Int32, context~ : String) -> (IoHandle, FileIdentity)
 
 pub let platform : @types.Platform
 
@@ -75,7 +75,7 @@ pub async fn realpath(StringView, context~ : String) -> String
 
 pub fn register_hook(init? : () -> Unit raise, exit? : () -> Unit raise) -> Unit
 
-pub async fn remove(StringView, context~ : String) -> Unit nocancel
+pub async fn remove(StringView, parent~ : @types.Fd, context~ : String) -> Unit nocancel
 
 pub async fn rename(StringView, StringView, replace~ : Bool, context~ : String) -> Unit
 

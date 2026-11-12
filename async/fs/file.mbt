@@ -138,6 +138,7 @@ pub async fn open(
   let (io, _) = @event_loop.open(
     filename,
     access,
+    parent=@fd_util.invalid_fd,
     create=create_mode.to_int(),
     append~,
     sync~,
@@ -394,22 +395,6 @@ pub fn File::unlock(self : File) -> Unit {
     // swallow the error so that we can use `unlock` in `defer`.
     // TODO: remove the `try!` after we support raising error in `defer`.
     try! @os_error.check_errno("@fs.File::unlock()")
-  }
-}
-
-///|
-/// Remove the file located at `path`.
-/// Unless `allow_missing=true` (`false` by default),
-/// an error will be raised if the target file does not exist.
-///
-/// This function is not cancellable.
-pub async fn remove(
-  path : StringView,
-  allow_missing~ : Bool = false,
-) -> Unit nocancel {
-  @event_loop.remove(path, context="@fs.remove()") catch {
-    @os_error.OsError(NotFound, ..) if allow_missing => ()
-    err => raise err
   }
 }
 

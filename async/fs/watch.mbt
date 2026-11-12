@@ -293,6 +293,7 @@ pub async fn Watcher::Watcher(
     } else {
       0
     },
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,
@@ -681,6 +682,8 @@ async fn Watcher::scan_dir(
   let (dir_fd, dir_id) = @event_loop.open(
     "\{self.base_path}/\{path}",
     0,
+    // TODO: utilize relative open to improve robustness
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,

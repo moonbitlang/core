@@ -42,7 +42,7 @@ async fn watch_basic_test(
     "inner_dir": Dir({ "inner_file": File("efgh") }),
   })
   test_dir.instantiate(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
 
   let watcher = @fs.Watcher(path, report_child_event~)
   defer watcher.close()
@@ -103,7 +103,7 @@ async fn watch_basic_test(
 
   // 9. remove inner directory recursively
   log.push("removing inner directory")
-  @fs.rmdir("\{path}/inner_dir", recursive=true)
+  @fs.remove("\{path}/inner_dir", recursive=true)
   wait()
 
   // 10. create new inner directory
@@ -211,7 +211,7 @@ async fn watch_rename_within_test(
     "inner_dir": Dir({ "inner_file": File("efgh") }),
   })
   test_dir.instantiate(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
 
   let watcher = @fs.Watcher(path, report_child_event~)
   defer watcher.close()
@@ -332,7 +332,7 @@ async fn watch_rename_inout_test(
     }),
   })
   test_dir.instantiate(base_path)
-  defer @fs.rmdir(base_path, recursive=true)
+  defer @fs.remove(base_path, recursive=true)
   let watched_path = "\{base_path}/watched"
 
   let watcher = @fs.Watcher(watched_path, report_child_event~)
@@ -408,7 +408,7 @@ async fn watch_rename_inout_test(
 
   // 10. remove moved out file
   log.push("removing moved out directory")
-  @fs.rmdir("\{base_path}/moved_out_dir", recursive=true)
+  @fs.remove("\{base_path}/moved_out_dir", recursive=true)
   assert_true(@test.expect_error_async(() => wait()) is @async.TimeoutError)
 
   // 11. moved in file overwrites existing file
@@ -490,7 +490,7 @@ async test "watch horizontal swap" {
     let test_dir = Dir({ "file1": File("abcd"), "file2": File("efgh") })
     test_dir.instantiate(path)
     group.add_defer(() => {
-      @async.protect_from_cancel(() => @fs.rmdir(path, recursive=true))
+      @async.protect_from_cancel(() => @fs.remove(path, recursive=true))
     })
     let watcher = @fs.Watcher(path)
     defer watcher.close()
@@ -531,7 +531,7 @@ async fn watch_vertical_swap_test(
     })
     test_dir.instantiate(path)
     group.add_defer(() => {
-      @async.protect_from_cancel(() => @fs.rmdir(path, recursive=true))
+      @async.protect_from_cancel(() => @fs.remove(path, recursive=true))
     })
     let watcher = @fs.Watcher(path, report_child_event~)
     defer watcher.close()
@@ -607,7 +607,7 @@ async test "watch ignored path" {
     "normal": Dir({ "file": File("efgh") }),
   })
   test_dir.instantiate(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
 
   let watcher = @fs.Watcher(path, ignored_paths=path => path is "ignored")
   defer watcher.close()
@@ -665,12 +665,12 @@ async test "watch ignored path" {
 
   // 9. remove ignored directory
   log.push("removing ignored directory")
-  @fs.rmdir("\{path}/ignored", recursive=true)
+  @fs.remove("\{path}/ignored", recursive=true)
   assert_true(@test.expect_error_async(() => wait()) is @async.TimeoutError)
 
   // 10. remove normal directory
   log.push("removing normal directory")
-  @fs.rmdir("\{path}/normal", recursive=true)
+  @fs.remove("\{path}/normal", recursive=true)
   wait()
 
   // 11. re-create directory at ignored path
@@ -747,7 +747,7 @@ async test "watch init event" {
   })
   let path = "_build/watch_init_event_test"
   test_dir.instantiate(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
 
   let watcher = @fs.Watcher(
     path,
@@ -775,7 +775,7 @@ async test "watch debounce" {
   let path = "_build/watch_debounce_test"
   let watched_path = "\{path}/watched"
   test_dir.instantiate(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
 
   let event_queue = @async.Queue(kind=Unbounded)
   @async.with_task_group <| group => {

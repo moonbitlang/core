@@ -49,6 +49,15 @@ pub let lock_violation : Int32 = match @env_util.platform {
 }
 
 ///|
+/// error code for invalid handle/fd
+pub let invalid_handle : Int32 = match @env_util.platform {
+  Linux => linux_EBADF
+  MacOS => macos_EBADF
+  Windows => windows_ERROR_INVALID_HANDLE
+  @env_util.Platform::.. => panic()
+}
+
+///|
 /// Get current error number
 #cfg(target="native")
 pub extern "C" fn get_errno() -> Int32 = "moonbit_rt_get_errno"

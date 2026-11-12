@@ -258,7 +258,7 @@ async test {
   ).run()
   let back = @shell.Cmd("moonx", ["bobzhang/cat@0.1.0"], stdin=FromFile(path)).output()
   assert_eq(back.stdout(), "one\ntwo\n")
-  @fs.rmdir(directory, recursive=true)
+  @fs.remove(directory, recursive=true)
 }
 ```
 

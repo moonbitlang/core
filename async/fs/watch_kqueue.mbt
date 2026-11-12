@@ -124,6 +124,8 @@ impl WatcherBackend for KqueueWatcher with fn add_file(
   let (file, _) = @event_loop.open(
     path,
     0,
+    // TODO: utilize relative open to improve robustness
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,

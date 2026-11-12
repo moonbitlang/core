@@ -127,6 +127,14 @@ pub using @string {type Regex}
 pub using @bytes {type BytesRegex}
 
 ///|
+pub using @lexbuf {
+  type Lexbuf,
+  type AsyncLexbuf,
+  type BytesLexbuf,
+  type AsyncBytesLexbuf,
+}
+
+///|
 /// Applies a function to a value and returns the original value.
 ///
 /// # Parameters

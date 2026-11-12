@@ -24,6 +24,7 @@ pub(all) enum Kind {
   NotDirectory
   ConnectionRefused
   OperationNotSupported
+  NotEmpty
   // TODO: add private constructor support & make `Unknown` private
   Unknown
 }
@@ -38,6 +39,7 @@ let errno_table : Map[Int32, Kind] = match @env_util.platform {
       (@errno.linux_ENOTDIR, NotDirectory),
       (@errno.linux_ECONNREFUSED, ConnectionRefused),
       (@errno.linux_ENOTSUP, OperationNotSupported),
+      (@errno.linux_ENOTEMPTY, NotEmpty),
     ])
   MacOS =>
     Map([
@@ -47,6 +49,7 @@ let errno_table : Map[Int32, Kind] = match @env_util.platform {
       (@errno.macos_ENOTDIR, NotDirectory),
       (@errno.macos_ECONNREFUSED, ConnectionRefused),
       (@errno.macos_ENOTSUP, OperationNotSupported),
+      (@errno.macos_ENOTEMPTY, NotEmpty),
     ])
   Windows =>
     Map([
@@ -58,6 +61,8 @@ let errno_table : Map[Int32, Kind] = match @env_util.platform {
       (@errno.windows_ERROR_DIRECTORY, NotDirectory),
       (@errno.windows_ERROR_CONNECTION_REFUSED, ConnectionRefused),
       (@errno.windows_ERROR_NOT_SUPPORTED, OperationNotSupported),
+      (@errno.windows_ERROR_DIR_NOT_EMPTY, NotEmpty),
+      (@errno.windows_ERROR_NOT_EMPTY, NotEmpty),
     ])
   @env_util.Platform::.. => panic()
 }

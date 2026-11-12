@@ -101,7 +101,7 @@ pub fn pipe(
 ) -> (Fd, Fd) raise {
   pipe_id.val += 1
   let name = @os_string.from_string(
-    "\\\\.\\pipe\\moonbitlang_async.\{@env_util.current_process}.\{pipe_id.val}",
+    "\\\\.\\pipe\\moonbit_async.\{@env_util.current_process}.\{pipe_id.val}",
   )
   let w = create_named_pipe_server(name, is_async=write_end_is_async)
   if !fd_is_valid(w) {

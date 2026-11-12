@@ -95,6 +95,7 @@ async test "file as raw fd" {
   let (io, _) = @event_loop.open(
     "LICENSE",
     0,
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,
@@ -125,6 +126,7 @@ async test "file as raw fd stream" {
   let (io, _) = @event_loop.open(
     "LICENSE",
     0,
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,

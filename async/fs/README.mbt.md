@@ -12,8 +12,9 @@ Asynchronous file system operations for MoonBit. This package provides comprehen
 - [Directory Operations](#directory-operations)
   - [Creating Directories](#creating-directories)
   - [Reading Directories](#reading-directories)
+  - [Working Relative to an Open Directory](#working-relative-to-an-open-directory)
   - [Walking Directory Trees](#walking-directory-trees)
-  - [Removing Directories](#removing-directories)
+  - [Removing Files and Directories](#removing-files-and-directories)
 - [File Watching](#file-watching)
 - [File Metadata](#file-metadata)
   - [File Kind](#file-kind)
@@ -288,7 +289,7 @@ Some important notes when using `FileView`:
 async test "mkdir - create directory" {
   let dir_path = "_build/test_mkdir"
   @fs.mkdir(dir_path, permission=0o755)
-  defer @fs.rmdir(dir_path)
+  defer @fs.remove(dir_path)
   let exists = @fs.exists(dir_path)
   inspect(exists, content="true")
 }
@@ -298,7 +299,7 @@ async test "mkdir - create directory" {
 async test "mkdir - create with custom permissions" {
   let dir_path = "_build/test_mkdir_perm"
   @fs.mkdir(dir_path, permission=0o700)
-  defer @fs.rmdir(dir_path)
+  defer @fs.remove(dir_path)
   let kind = @fs.kind(dir_path)
   debug_inspect(kind, content="Directory")
 }
@@ -312,7 +313,7 @@ async test "mkdir - create with custom permissions" {
 async test "readdir - read directory entries" {
   let dir_path = "_build/test_readdir"
   @fs.mkdir(dir_path, permission=0o755)
-  defer @fs.rmdir(dir_path, recursive=true)
+  defer @fs.remove(dir_path, recursive=true)
   @fs.write_binary("\{dir_path}/test1.txt", b"")
   @fs.write_binary("\{dir_path}/test2.txt", b"")
   let entries = @fs.readdir(
@@ -330,7 +331,7 @@ async test "readdir - read directory entries" {
 async test "readdir with sorting" {
   let dir_path = "_build/test_readdir_sort"
   @fs.mkdir(dir_path, permission=0o755)
-  defer @fs.rmdir(dir_path, recursive=true)
+  defer @fs.remove(dir_path, recursive=true)
   @fs.write_binary("\{dir_path}/c.txt", b"")
   @fs.write_binary("\{dir_path}/a.txt", b"")
   @fs.write_binary("\{dir_path}/b.txt", b"")
@@ -343,7 +344,7 @@ async test "readdir with sorting" {
 async test "opendir and Directory::read_all" {
   let dir_path = "_build/test_opendir"
   @fs.mkdir(dir_path, permission=0o755)
-  defer @fs.rmdir(dir_path, recursive=true)
+  defer @fs.remove(dir_path, recursive=true)
   @fs.write_binary("\{dir_path}/file1.txt", b"test")
   @fs.write_binary("\{dir_path}/file2.txt", b"test")
   let dir = @fs.opendir(dir_path)
@@ -355,6 +356,45 @@ async test "opendir and Directory::read_all" {
 }
 ```
 
+### Working Relative to an Open Directory
+
+On native targets, `Directory::open` and `Directory::remove` operate relative
+to an already-open directory handle. Unlike constructing a child path as a
+string, these methods continue to refer to the same directory if its path is
+renamed while the handle is open. Their paths must be relative and must not
+contain a `..` component.
+
+```moonbit check
+///|
+#cfg(target="native")
+async test "operate relative to an open directory" {
+  let old_path = "_build/test_relative_dir"
+  let new_path = "_build/test_relative_dir_renamed"
+  @fs.mkdir(old_path)
+  defer @fs.remove(old_path, recursive=true, allow_missing=true)
+  defer @fs.remove(new_path, recursive=true, allow_missing=true)
+  @fs.write_text("\{old_path}/file.txt", "relative content")
+
+  let dir = @fs.opendir(old_path)
+  defer dir.close()
+  @fs.rename(old_path, new_path)
+
+  let content = {
+    let file = dir.open("file.txt", mode=ReadOnly)
+    defer file.close()
+    file.text.read_all()
+  }
+  inspect(content, content="relative content")
+  dir.remove("file.txt")
+  inspect(@fs.exists("\{new_path}/file.txt"), content="false")
+}
+```
+
+`Directory::open` accepts the same mode, synchronization, append, creation,
+and permission options as `open`. `Directory::remove` accepts the same
+`recursive` and `allow_missing` options as `remove`. These two methods are not
+currently supported on Wasm.
+
 ### Walking Directory Trees
 
 Recursively traverse directory hierarchies:
@@ -365,7 +405,7 @@ Recursively traverse directory hierarchies:
 async test "walk directory tree" {
   let base = "_build/test_walk"
   @fs.mkdir(base)
-  defer @fs.rmdir(base, recursive=true)
+  defer @fs.remove(base, recursive=true)
   @fs.mkdir("\{base}/sub1")
   @fs.mkdir("\{base}/sub2")
   @fs.write_binary("\{base}/file.txt", b"")
@@ -380,7 +420,7 @@ async test "walk directory tree" {
 async test "walk with max_concurrency" {
   let base = "_build/test_walk_concurrency"
   @fs.mkdir(base, permission=0o755)
-  defer @fs.rmdir(base, recursive=true)
+  defer @fs.remove(base, recursive=true)
   @fs.mkdir("\{base}/dir1", permission=0o755)
   @fs.mkdir("\{base}/dir2", permission=0o755)
   let count : Ref[Int32] = Ref(0)
@@ -393,28 +433,41 @@ async test "walk with max_concurrency" {
 }
 ```
 
-### Removing Directories
+### Removing Files and Directories
+
+`remove` deletes regular files and empty directories. Set `recursive=true` to
+delete a non-empty directory tree. Use `allow_missing=true` when an already
+absent path should be treated as success.
 
 ```moonbit check
 ///|
 #cfg(target="native")
-async test "rmdir - remove empty directory" {
-  let dir_path = "_build/test_rmdir"
+async test "remove a regular file" {
+  let file_path = "_build/test_remove_file.txt"
+  @fs.write_binary(file_path, b"test")
+  @fs.remove(file_path)
+  inspect(@fs.exists(file_path), content="false")
+}
+
+///|
+#cfg(target="native")
+async test "remove an empty directory" {
+  let dir_path = "_build/test_remove_dir"
   @fs.mkdir(dir_path)
-  @fs.rmdir(dir_path)
+  @fs.remove(dir_path)
   let exists = @fs.exists(dir_path)
   inspect(exists, content="false")
 }
 
 ///|
 #cfg(target="native")
-async test "rmdir recursive - remove directory tree" {
-  let base = "_build/test_rmdir_recursive"
+async test "remove a directory tree recursively" {
+  let base = "_build/test_remove_recursive"
   @fs.mkdir(base)
   @fs.mkdir("\{base}/subdir")
   @fs.write_binary("\{base}/file.txt", b"test")
   @fs.write_binary("\{base}/subdir/nested.txt", b"test")
-  @fs.rmdir(base, recursive=true)
+  @fs.remove(base, recursive=true)
   let exists = @fs.exists(base)
   inspect(exists, content="false")
 }
@@ -442,7 +495,7 @@ async test "kind - regular file" {
 async test "kind - directory" {
   let dir_path = "_build/test_kind_dir"
   @fs.mkdir(dir_path, permission=0o755)
-  defer @fs.rmdir(dir_path)
+  defer @fs.remove(dir_path)
   let kind = @fs.kind(dir_path)
   debug_inspect(kind, content="Directory")
 }
@@ -588,7 +641,7 @@ async test "get file size by path" {
 async test "realpath - resolve absolute path" {
   let test_dir = "_build/test_realpath"
   @fs.mkdir(test_dir)
-  defer @fs.rmdir(test_dir)
+  defer @fs.remove(test_dir)
   let real_path = @fs.realpath(test_dir)
   guard! @env.current_dir() is Some(cwd)
   assert_true(real_path.has_prefix(cwd))
@@ -597,20 +650,6 @@ async test "realpath - resolve absolute path" {
     real_path[cwd.length():].replace_all(old="\\", new="/"),
     content="/_build/test_realpath",
   )
-}
-```
-
-## File Removal
-
-```moonbit check
-///|
-#cfg(target="native")
-async test "remove - delete file" {
-  let test_file = "_build/test_remove.txt"
-  @fs.write_binary(test_file, b"test")
-  @fs.remove(test_file)
-  let exists = @fs.exists(test_file)
-  inspect(exists, content="false")
 }
 ```
 
@@ -736,9 +775,13 @@ independently without changing the parent file's stream cursors.
 
 ### Directory
 
-Directory handle for reading directory entries:
+An open directory handle. Always close it after use:
+
 - `close()` - Close directory
+- `next()` - Read the next entry
 - `read_all()` - Read all entries
+- `open()` - Open a file relative to this directory (native only)
+- `remove()` - Remove a file or directory relative to this directory (native only)
 
 ### FsEvent
 
@@ -752,12 +795,13 @@ All paths are relative to the watched directory and use `/` as the path separato
 
 ## Best Practices
 
-1. **Always close files**: Use `defer file.close()` after opening files
+1. **Always close handles**: Use `defer file.close()` or `defer dir.close()` after opening a file or directory
 2. **Use appropriate sync modes**: `NoSync` for performance, `Data` or `Full` for durability
 3. **Handle permissions**: Specify appropriate UNIX permissions (e.g., `0o644` for files, `0o755` for directories)
-4. **Check existence**: Use `exists()` before performing operations on files
+4. **Handle missing paths atomically**: Use `allow_missing=true` or handle `NotFound` instead of checking `exists()` before an operation
 5. **Use convenience functions**: `read_binary()`/`write_binary()` and `read_text()`/`write_text()` are simpler for common cases
 6. **Walk with limits**: Use `max_concurrency` parameter when walking large directory trees
+7. **Prefer directory-relative operations when paths can change**: `Directory::open` and `Directory::remove` remain tied to the opened directory across renames
 
 ## Error Handling
 

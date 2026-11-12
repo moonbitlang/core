@@ -98,6 +98,11 @@ pub fn close(fd : Fd, kind~ : FileKind, context~ : String) -> Unit raise {
 extern "C" fn get_invalid_handle() -> Fd = "moonbit_rt_get_invalid_handle"
 
 ///|
+#cfg(platform="windows")
+#borrow(fd)
+extern "C" fn Fd::to_uint64(fd : Fd) -> UInt64 = "moonbit_rt_fd_as_uint64"
+
+///|
 /// `-1` on Unix systems or `INVALID_HANDLE_VALUE` on Windows
 #cfg(platform="windows")
 pub let invalid_fd : Fd = get_invalid_handle()
@@ -106,7 +111,7 @@ pub let invalid_fd : Fd = get_invalid_handle()
 /// Check if a file descriptor is valid
 #cfg(platform="windows")
 pub fn fd_is_valid(fd : Fd) -> Bool {
-  fd != invalid_fd
+  fd != invalid_fd && fd.to_uint64() != 0
 }
 
 ///|

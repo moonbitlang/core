@@ -98,8 +98,18 @@ async test "spawn without standard handles on Windows" {
   guard @event_loop.platform is Windows else {  }
   let spawn = spawn_prog.wait()
   let sleep = sleep_prog.wait()
-  let result = @process.run(spawn, ["-no-stdio", "-orphan", sleep, "0"])
+  let result = @process.run(spawn, stdout=Collect, stderr=Collect, [
+    "-no-stdio", "-orphan", sleep, "0",
+  ])
   inspect(result.exit_code, content="0")
+  inspect(result.stdout_text().trim(), content="0")
+  inspect(result.stderr_text().trim(), content="")
+  let result = @process.run(spawn, stdout=Collect, stderr=Collect, [
+    "-no-stdio", "-orphan", sleep, "0", "-print-after-sleep", "message",
+  ])
+  inspect(result.exit_code, content="0")
+  inspect(result.stdout_text().trim(), content="1")
+  inspect(result.stderr_text().trim(), content="")
 }
 
 ///|

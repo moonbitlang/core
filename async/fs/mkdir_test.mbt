@@ -16,30 +16,10 @@
 async test "mkdir" {
   let path = "_build/mkdir_test"
   @fs.mkdir(path)
-  defer @fs.rmdir(path, recursive=true)
+  defer @fs.remove(path, recursive=true)
   @fs.write_text("\{path}/file", "")
   let result = @fs.readdir(path, sort=true)
   debug_inspect(result, content="[\"file\"]")
-}
-
-///|
-async test "rmdir recursive" {
-  guard! @env.current_dir() is Some(cwd)
-  let path = "_build/rmdir_test"
-  @fs.mkdir(path, permission=0o755)
-  @fs.write_text("\{path}/file", "")
-  @fs.mkdir("\{path}/inner")
-  @fs.write_text("\{path}/inner/file", "")
-  @fs.symlink("\{path}/symlink", target="\{cwd}/_build")
-  @test.assert_raise_async(() => @fs.rmdir(path))
-  @fs.rmdir(path, recursive=true)
-}
-
-///|
-async test "rmdir allow_missing" {
-  let path = "_build/rmdir_allow_missing_test"
-  @test.assert_raise_async(() => @fs.rmdir(path))
-  @fs.rmdir(path, allow_missing=true)
 }
 
 ///|
@@ -47,7 +27,7 @@ async test "mkdir recursive" {
   let base_path = "_build/recursive_mkdir"
   let path = "\{base_path}/test//directory"
   @fs.mkdir(path, recursive=true)
-  defer @fs.rmdir(base_path, recursive=true)
+  defer @fs.remove(base_path, recursive=true)
   json_inspect(@fs.readdir(base_path), content=["test"])
   json_inspect(@fs.readdir("\{base_path}/test"), content=["directory"])
   json_inspect(@fs.readdir("\{base_path}/test/directory"), content=[])
@@ -63,7 +43,7 @@ async test "mkdir recursive windows" {
   let base_path = "_build\\recursive_mkdir_windows"
   let path = "\{base_path}\\test\\\\directory"
   @fs.mkdir(path, recursive=true)
-  defer @fs.rmdir(base_path, recursive=true)
+  defer @fs.remove(base_path, recursive=true)
   json_inspect(@fs.readdir(base_path), content=["test"])
   json_inspect(@fs.readdir("\{base_path}\\test"), content=["directory"])
   json_inspect(@fs.readdir("\{base_path}\\test/directory"), content=[])
@@ -75,7 +55,7 @@ async test "mkdir allow_existing" {
     let base_path = "_build/mkdir_allow_exist"
     let path = "\{base_path}/directory"
     @fs.mkdir(path, recursive=true)
-    group.add_defer(() => @fs.rmdir(base_path, recursive=true))
+    group.add_defer(() => @fs.remove(base_path, recursive=true))
     @fs.mkdir(path, allow_existing=true)
     @fs.mkdir("\{path}/", allow_existing=true)
     @fs.mkdir(path, recursive=true, allow_existing=true)
@@ -99,7 +79,7 @@ async test "mkdir allow_existing" {
 async test "mkdir recursive concurrent with shared parents" {
   @async.with_task_group() <| group => {
     let base_path = "_build/recursive_mkdir_concurrent"
-    group.add_defer(() => @fs.rmdir(base_path, recursive=true))
+    group.add_defer(() => @fs.remove(base_path, recursive=true))
     @async.with_task_group() <| workers => {
       for i in 0..<8 {
         workers.spawn_bg(() => {

@@ -31,6 +31,7 @@ pub(all) enum Kind {
   NotDirectory
   ConnectionRefused
   OperationNotSupported
+  NotEmpty
   Unknown
 }
 pub fn Kind::equal(Self, Self) -> Bool
