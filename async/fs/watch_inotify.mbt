@@ -304,8 +304,23 @@ async fn InotifyWatcher::process_events(self : InotifyWatcher) -> Unit {
         continue
       }
 
-      if buf.has_relevant_event(offset) {
-        let id = self.watched[wd]
+      // Since `inotify_add_watch` is a path based operation,
+      // it need to perform file IO and is hence dispatched to the thread pool.
+      // However, this lead to a small race window after the actual
+      // `inotify_add_watch` call succeed and before the watcher learn about
+      // completion of `inotify_add_watch` and actually register the wd.
+      // If events for the new file arrive inside this window,
+      // the associated `wd` may be absent from `self.watched`.
+      //
+      // We simply drop the event in this case, because:
+      // 1. the watcher interface is net changed based.
+      //    So for a new file, no event should be reported until the end user receives `Create(_)`
+      // 2. when the watcher scan for actual changes, it block and wait for `inotify_add_watch`.
+      //    So when we hit the above race window, the watcher must be during a scan,
+      //    and that scan must be the one that reports `Create(_)`,
+      //    so the new event here can indeed be safely discarded
+      //    (removal events may cancel create events, but removal is reported on parent directory)
+      if buf.has_relevant_event(offset) && self.watched.get(wd) is Some(id) {
         self.watcher.mark_as_modified(id)
       }
     }
