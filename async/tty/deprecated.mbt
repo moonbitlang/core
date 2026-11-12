@@ -15,14 +15,14 @@
 ///|
 #deprecated
 #doc(hidden)
-pub extend Event with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend Event with Eq::{equal, not_equal}
-
-///|
-#deprecated
-#doc(hidden)
 pub extend Tty with @io.BinaryWriter::{flush_partial_data}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TtyError with @debug.Debug::{to_repr}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Tty with @io.BinaryReader::{read_all, drop_all}

@@ -22,12 +22,14 @@
 ///
 /// - `make_raw`: `set_state(get_state().make_raw())`, result `null`
 /// - `size`: result `[rows, cols]`
-/// - `read_event`, params `{"timeout"?: ms}`: result `{"type":"input","bytes":"<base64>"}`,
-///   `{"type":"resize"}`, `{"type":"eof"}`, or `{"type":"timeout"}`
-/// - `read`, params `{"max_len": n}`: `@io.Reader::read` into an `n`-byte
-///   buffer, result the bytes in base64
-/// - `read_exactly`, params `{"len": n}`: `@io.Reader::read_exactly`,
-///   result the bytes in base64
+/// - `read`, params `{"max_len"?: n, "raise_on_resize"?: bool, "timeout"?: ms}`:
+///   `Tty::read`, or `Tty::read_into` an `n`-byte buffer with `max_len`
+/// - `read_exactly`, params `{"len": n, "raise_on_resize"?: bool}`:
+///   `Tty::read_exactly`
+///
+///   Both result in `{"type":"input","bytes":"<base64>"}`, `{"type":"resize"}`
+///   for `Resized`, `{"type":"eof"}`, or `{"type":"timeout"}` when the read is
+///   cancelled after `timeout`.
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -96,38 +98,35 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       let (rows, cols) = tty.size()
       [rows, cols]
     }
-    "read_event" => {
-      let event = match params {
-        { "timeout": Number(timeout, ..), .. } =>
-          match
-            @async.with_timeout_opt(timeout.to_int(), () => tty.read_event()) {
-            None => return { "type": "timeout" }
-            Some(event) => event
-          }
-        { "timeout": _, .. } =>
-          raise invalid_params("`timeout` must be a number")
-        _ => tty.read_event()
-      }
-      match event {
-        Some(Input(bytes)) =>
-          { "type": "input", "bytes": @base64.encode(bytes) }
-        Some(Resize) => { "type": "resize" }
-        None => { "type": "eof" }
-      }
-    }
     "read" => {
-      guard params is { "max_len": Number(max_len, ..), .. } else {
-        raise invalid_params("`max_len` must be a number")
+      let max_len = match params {
+        { "max_len": Number(max_len, ..), .. } => Some(max_len.to_int())
+        { "max_len": _, .. } =>
+          raise invalid_params("`max_len` must be a number")
+        _ => None
       }
-      let buf = FixedArray::make(max_len.to_int(), b'\x00')
-      let n = tty.read_into(buf)
-      Json(@base64.encode(Bytes::from_array(buf[:n])))
+      read_result(params, raise_on_resize => {
+        match max_len {
+          None => tty.read(raise_on_resize~)
+          Some(max_len) => {
+            let buf = FixedArray::make(max_len, b'\x00')
+            let n = tty.read_into(buf, raise_on_resize~)
+            if n == 0 {
+              None
+            } else {
+              Some(Bytes::from_array(buf[:n]))
+            }
+          }
+        }
+      })
     }
     "read_exactly" => {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      Json(@base64.encode(tty.read_exactly(len.to_int())))
+      read_result(params, raise_on_resize => {
+        Some(tty.read_exactly(len.to_int(), raise_on_resize~))
+      })
     }
     "write" => {
       guard params is { "bytes": String(bytes), .. } else {
@@ -137,6 +136,41 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       null
     }
     _ => raise RpcError(code=-32601, message="Method not found: \{name}")
+  }
+}
+
+///|
+/// Run the read `f` with the `raise_on_resize` and `timeout` in `params`,
+/// and describe its result.
+async fn read_result(
+  params : Json,
+  f : async (Bool) -> Bytes? raise @tty.TtyError,
+) -> Json {
+  let raise_on_resize = match params {
+    { "raise_on_resize": True, .. } => true
+    { "raise_on_resize": False, .. } | { "raise_on_resize"? : None, .. } =>
+      false
+    _ => raise invalid_params("`raise_on_resize` must be a boolean")
+  }
+  let result = try {
+    match params {
+      { "timeout": Number(timeout, ..), .. } =>
+        match
+          @async.with_timeout_opt(timeout.to_int(), () => f(raise_on_resize)) {
+          None => return { "type": "timeout" }
+          Some(result) => result
+        }
+      { "timeout": _, .. } => raise invalid_params("`timeout` must be a number")
+      _ => f(raise_on_resize)
+    }
+  } catch {
+    @tty.Resized => return { "type": "resize" }
+    @tty.UnexpectedEof => None
+    err => raise err
+  }
+  match result {
+    Some(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
+    None => { "type": "eof" }
   }
 }
 

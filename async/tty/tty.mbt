@@ -23,16 +23,6 @@ struct Tty {
 }
 
 ///|
-/// An event from the terminal, see `Tty::read_event`.
-#derive(@debug.Debug, Eq)
-pub(all) enum Event {
-  /// Raw bytes from the terminal, never empty
-  Input(Bytes)
-  /// The window was resized, consecutive resizes may be coalesced
-  Resize
-}
-
-///|
 /// The terminal of the running event loop, closed when the loop exits.
 let instance : @ref.Ref[Tty?] = {
   let instance : @ref.Ref[Tty?] = Ref(None)
@@ -462,84 +452,248 @@ pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
 }
 
 ///|
-/// Return `-1` for a resize, see `@event_loop.Tty::read`.
-async fn Tty::read_once(
-  self : Tty,
-  buf : FixedArray[Byte],
-  offset~ : Int32,
-  len~ : Int32,
-  block_resize~ : Bool,
-  context~ : String,
-) -> Int32 {
-  guard! !self.reading
-  self.reading = true
-  defer {
-    self.reading = false
-  }
-  self.tty.read(
-    buf,
-    offset~,
-    len~,
-    raw=@event_loop.platform is Windows && self.get_state().is_raw(),
-    block_resize~,
-    context~,
-  )
+/// An error raised by the read methods of `Tty`.
+#derive(@debug.Debug)
+pub(all) suberror TtyError {
+  /// The window was resized, raised only by reads with `raise_on_resize=true`.
+  /// Consecutive resizes may be reported once; call `Tty::size` for the size.
+  Resized
+  /// EOF was reached before enough input was read
+  UnexpectedEof
+  /// Reading the terminal failed
+  TransportError(Error, context~ : String)
 }
 
 ///|
-/// Wait for the next input or resize. Return `None` on EOF.
-///
-/// Only one read (including the `@io.BinaryReader` methods) may be in progress.
-pub async fn Tty::read_event(self : Tty) -> Event? {
-  try @io.BinaryReader::read(EventReader(self)) catch {
-    TransportError(Resized, ..) => Some(Resize)
-    err => raise err
-  } noraise {
-    Some(data) => Some(Input(data))
-    None => None
-  }
+/// `Tty` as the reader of one read of `Tty`, which raises `Resized` on resize
+/// with `raise_on_resize`. It shares the buffer of `Tty`, so bytes read ahead
+/// by either are not lost.
+priv struct Reader {
+  tty : Tty
+  raise_on_resize : Bool
 }
 
 ///|
-priv suberror Resized
+impl @io.BinaryReader for Reader
 
 ///|
-/// `Tty` as a reader that raises `Resized` on resize.
-/// It shares the buffer of `Tty`, so bytes read ahead by either are not lost.
-priv struct EventReader(Tty)
-
-///|
-impl @io.BinaryReader for EventReader
-
-///|
-impl @io.BinaryReaderImpl for EventReader with fn name(_self) {
-  "@tty.Tty::read_event()"
+impl @io.BinaryReaderImpl for Reader with fn name(_self) {
+  "@tty.Tty"
 }
 
 ///|
-impl @io.BinaryReaderImpl for EventReader with fn get_controller(self) {
-  self.0.read_ctrl
+impl @io.BinaryReaderImpl for Reader with fn get_controller(self) {
+  self.tty.read_ctrl
 }
 
 ///|
-impl @io.BinaryReaderImpl for EventReader with fn raw_read_impl(
+impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
   self,
   buf,
   offset~,
   max_len~,
 ) {
-  let n = self.0.read_once(
+  let tty = self.tty
+  guard! !tty.reading
+  tty.reading = true
+  defer {
+    tty.reading = false
+  }
+  // `-1` for a resize, see `@event_loop.Tty::read`
+  let n = tty.tty.read(
     buf,
     offset~,
     len=max_len,
-    block_resize=false,
-    context="@tty.Tty::read_event()",
+    raw=@event_loop.platform is Windows && tty.get_state().is_raw(),
+    block_resize=!self.raise_on_resize,
+    context="@tty.Tty",
   )
   guard n >= 0 else { raise Resized }
   n
 }
 
 ///|
+/// Translate an error of `Reader` into `TtyError`.
+fn TtyError::from_reader(err : @io.ReaderError) -> TtyError {
+  match err {
+    UnexpectedEof => UnexpectedEof
+    TransportError(TtyError::Resized, ..) => Resized
+    TransportError(err, context~) => TransportError(err, context~)
+    LengthLimitExceeded | MalformedText =>
+      abort("unreachable: binary reads raise neither")
+  }
+}
+
+///|
+/// Read at most `max_len` bytes into `dst[offset:]`, like
+/// `@io.BinaryReader::read_into`. Return `0` on EOF.
+///
+/// Every read method of `Tty`:
+/// - with `raise_on_resize=true`, raises `Resized` if the window is resized
+///   before it returns. A resize that comes while no such read is in
+///   progress stays pending, and is raised by the next one. A resize is never
+///   lost, but several resizes in a row may be reported once, and a resize
+///   may be reported after input typed later.
+/// - is cancellation safe: when it raises `Resized` or is cancelled,
+///   no input is lost, it is left for later reads. Cancelling a cooked read
+///   is not supported on Windows yet.
+///
+/// Only one read, through these methods or `@io.BinaryReader`, may be in
+/// progress at a time; starting another one aborts the program.
+pub async fn Tty::read_into(
+  self : Tty,
+  dst : FixedArray[Byte],
+  offset~ : Int32 = 0,
+  max_len~ : Int32 = dst.length() - offset,
+  raise_on_resize~ : Bool = false,
+) -> Int32 raise TtyError {
+  @io.BinaryReader::read_into(
+    Reader::{ tty: self, raise_on_resize, },
+    dst,
+    offset~,
+    max_len~,
+  ) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Read a chunk of available input, like `@io.BinaryReader::read`.
+/// Return `None` on EOF. See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::read(
+  self : Tty,
+  raise_on_resize~ : Bool = false,
+) -> Bytes? raise TtyError {
+  @io.BinaryReader::read(Reader::{ tty: self, raise_on_resize, }) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Read at least `min_len` bytes, like `@io.BinaryReader::read_at_least`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::read_at_least(
+  self : Tty,
+  min_len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> Bytes raise TtyError {
+  @io.BinaryReader::read_at_least(
+    Reader::{ tty: self, raise_on_resize, },
+    min_len,
+  ) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Read exactly `len` bytes, like `@io.BinaryReader::read_exactly`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::read_exactly(
+  self : Tty,
+  len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> Bytes raise TtyError {
+  // `@io.BinaryReader::read_exactly` loses the bytes read so far when
+  // interrupted, so peek them first, and consume them only on success.
+  let data = self.peek_exactly(len, raise_on_resize~).to_owned()
+  self.read_ctrl.drop(len)
+  data
+}
+
+///|
+/// Drop exactly `len` bytes, like `@io.BinaryReader::drop_exactly`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::drop_exactly(
+  self : Tty,
+  len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> Unit raise TtyError {
+  // `@io.BinaryReader::drop_exactly` drops bytes as they arrive, so the
+  // number dropped would be unknown when interrupted.
+  ignore(self.peek_exactly(len, raise_on_resize~))
+  self.read_ctrl.drop(len)
+}
+
+///|
+/// Read until `pattern`, like `@io.BinaryReader::read_until`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::read_until(
+  self : Tty,
+  pattern : BytesView,
+  include_delimiter~ : Bool = false,
+  raise_on_resize~ : Bool = false,
+) -> Bytes? raise TtyError {
+  @io.BinaryReader::read_until(
+    Reader::{ tty: self, raise_on_resize, },
+    pattern,
+    include_delimiter~,
+  ) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Peek a chunk of available input, like `@io.BinaryReader::peek`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::peek(
+  self : Tty,
+  raise_on_resize~ : Bool = false,
+) -> BytesView? raise TtyError {
+  @io.BinaryReader::peek(Reader::{ tty: self, raise_on_resize, }) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Peek at least `min_len` bytes, like `@io.BinaryReader::peek_at_least`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::peek_at_least(
+  self : Tty,
+  min_len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> BytesView raise TtyError {
+  @io.BinaryReader::peek_at_least(
+    Reader::{ tty: self, raise_on_resize, },
+    min_len,
+  ) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Peek exactly `len` bytes, like `@io.BinaryReader::peek_exactly`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::peek_exactly(
+  self : Tty,
+  len : Int32,
+  raise_on_resize~ : Bool = false,
+) -> BytesView raise TtyError {
+  @io.BinaryReader::peek_exactly(Reader::{ tty: self, raise_on_resize, }, len) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// Peek until `pattern`, like `@io.BinaryReader::peek_until`.
+/// See `Tty::read_into` for `raise_on_resize`.
+pub async fn Tty::peek_until(
+  self : Tty,
+  pattern : BytesView,
+  include_delimiter~ : Bool = false,
+  raise_on_resize~ : Bool = false,
+) -> BytesView? raise TtyError {
+  @io.BinaryReader::peek_until(
+    Reader::{ tty: self, raise_on_resize, },
+    pattern,
+    include_delimiter~,
+  ) catch {
+    err => raise TtyError::from_reader(err)
+  }
+}
+
+///|
+/// As an `@io.BinaryReader`, `Tty` never reports resizes: they stay pending
+/// for a read with `raise_on_resize=true`.
 pub impl @io.BinaryReader for Tty
 
 ///|
@@ -549,13 +703,11 @@ impl @io.BinaryReaderImpl for Tty with fn raw_read_impl(
   offset~,
   max_len~,
 ) {
-  // leave resizes to `read_event`
-  self.read_once(
+  @io.BinaryReaderImpl::raw_read_impl(
+    Reader::{ tty: self, raise_on_resize: false, },
     buf,
     offset~,
-    len=max_len,
-    block_resize=true,
-    context="impl @io.BinaryReader for @tty.Tty",
+    max_len~,
   )
 }
 
@@ -567,22 +719,6 @@ impl @io.BinaryReaderImpl for Tty with fn name(_self) {
 ///|
 impl @io.BinaryReaderImpl for Tty with fn get_controller(self) {
   self.read_ctrl
-}
-
-///|
-pub extend Tty with @io.BinaryReader::{
-  read_into,
-  read,
-  read_at_least,
-  peek,
-  peek_at_least,
-  read_exactly,
-  drop_exactly,
-  peek_exactly,
-  read_all,
-  drop_all,
-  read_until,
-  peek_until,
 }
 
 ///|
