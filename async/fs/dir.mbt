@@ -76,29 +76,37 @@ pub async fn rmdir(
   allow_missing~ : Bool = false,
 ) -> Unit nocancel {
   let context = "@fs.rmdir()"
-  if recursive {
-    let base = if @event_loop.platform is Windows {
-      path.trim_end(chars="/\\")
-    } else {
-      path.trim_end(chars="/")
-    }
-    @async.protect_from_cancel <| () => {
-      let dir = opendir_aux(path, context~)
-      defer dir.close()
-      while dir.next_aux(include_special=false, include_hidden=true, context~)
-            is Some(ent) {
-        let child_path = "\{base}/\{ent.name}"
-        if ent.is_dir {
-          rmdir(child_path, recursive=true)
-        } else {
-          @event_loop.remove(child_path, context~)
-        }
-      }
-    }
+  try @event_loop.rmdir(path, context~) catch {
+    @os_error.OsError(NotFound, ..) if allow_missing => return
+    @os_error.OsError(NotEmpty, ..) if recursive => ()
+    err => raise err
+  } noraise {
+    _ => return
+  }
+  @async.protect_from_cancel <| () => {
+    let dir = opendir_aux(path, context~)
+    defer dir.close()
+    dir.remove_children(context~)
   }
   @event_loop.rmdir(path, context~) catch {
-    @os_error.OsError(NotFound, ..) if allow_missing => ()
+    @os_error.OsError(NotFound, ..) => ()
     err => raise err
+  }
+}
+
+///|
+async fn Directory::remove_children(dir : Directory, context~ : String) -> Unit {
+  while dir.next_aux(include_special=false, include_hidden=true, context~)
+        is Some(ent) {
+    if ent.is_dir {
+      let child = dir.open(ent.name, mode=ReadOnly).as_dir()
+      defer child.close()
+      child.remove_children(context~)
+    }
+    @event_loop.remove(ent.name, parent=dir.io.fd(), context~) catch {
+      @os_error.OsError(NotFound, ..) => ()
+      err => raise err
+    }
   }
 }
 
@@ -158,6 +166,7 @@ async fn opendir_aux(path : StringView, context~ : String) -> Directory {
   let (io, _) = @event_loop.open(
     path,
     0,
+    parent=@fd_util.invalid_fd,
     create=0,
     append=false,
     sync=0,
@@ -185,6 +194,172 @@ fn Directory::from_io_handle(io : @event_loop.IoHandle) -> Directory {
     count: 0,
     job_ret: 0,
     state: NeedMoreEntry,
+  }
+}
+
+///|
+fn validate_relative_open_filename(
+  path : StringView,
+  context~ : String,
+) -> String raise {
+  match @event_loop.platform {
+    Linux | MacOS =>
+      if path is ['/', ..] {
+        raise Failure(
+          "\{context}: relative open does not support absolute path",
+        )
+      }
+    Windows =>
+      if path is ([_, ':', ..] | ['\\' | '/', ..]) {
+        raise Failure(
+          "\{context}: relative open does not support absolute path",
+        )
+      }
+    @event_loop.Platform::.. => panic()
+  }
+  let result = StringBuilder()
+  let sep = match @event_loop.platform {
+    Linux | MacOS => '/'
+    Windows => '\\'
+    @event_loop.Platform::.. => panic()
+  }
+  fn check_component(component : StringView) -> Unit raise {
+    match component {
+      ".." => raise Failure("\{context}: relative open does not support `..`")
+      "." | "" => ()
+      _ => {
+        if !result.is_empty() {
+          result.write_char(sep)
+        }
+        result.write_stringview(component)
+      }
+    }
+  }
+  for i, c in path.code_units(); component_start = 0 {
+    match c {
+      '/' => ()
+      '\\' if @event_loop.platform is Windows => ()
+      _ => continue
+    }
+    check_component(path[component_start:i])
+    continue i + 1
+  } nobreak {
+    if component_start < path.length() {
+      check_component(path[component_start:])
+    }
+  }
+  result.to_string()
+}
+
+///|
+/// `dir.open(filename, ..)` open a file under an already-opened directory.
+/// `filename` must be a relative path and will be interpreted relative to `dir`.
+/// `filename` MUST NOT contain any `..` component.
+///
+/// Relative open protects against race condition over base directory renaming.
+/// If the base directory `dir` has been renamed after it was opened,
+/// accessing its child by path may accidentally open unrelated file under a different directory.
+/// `dir.open(..)` always open files under exactly the directory referred to by `dir`.
+///
+/// All other parameters of `dir.open(filename, ..)` has the same semantic as `@fs.open`,
+/// see `@fs.open` for more details.
+pub async fn Directory::open(
+  dir : Directory,
+  filename : StringView,
+  mode~ : Mode,
+  sync~ : SyncMode = NoSync,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = OpenExisting,
+  permission~ : Int32 = 0o644,
+) -> File {
+  let context = "@fs.Directory::open()"
+  dir.open_aux(
+    validate_relative_open_filename(filename, context~),
+    mode~,
+    sync~,
+    append~,
+    create_mode~,
+    permission~,
+    context~,
+  )
+}
+
+///|
+async fn Directory::open_aux(
+  dir : Directory,
+  filename : StringView,
+  mode~ : Mode,
+  sync~ : SyncMode = NoSync,
+  append~ : Bool = false,
+  create_mode~ : CreateMode = OpenExisting,
+  permission~ : Int32 = 0o644,
+  context~ : String,
+) -> File {
+  let access = match mode {
+    ReadOnly => 0
+    WriteOnly => 1
+    ReadWrite => 2
+  }
+  let sync = match sync {
+    NoSync => 0
+    Data => 1
+    Full => 2
+  }
+  let (io, _) = @event_loop.open(
+    parent=dir.io.fd(),
+    filename,
+    access,
+    create=create_mode.to_int(),
+    append~,
+    sync~,
+    mode=permission,
+    context~,
+  )
+  let file = {
+    text: @io.Utf8TextView::new_uninitialized(),
+    io,
+    reader_ctrl: BinaryReaderController(),
+    writer_ctrl: BinaryWriterController(),
+  }
+  file.text.set_inner(file)
+  file
+}
+
+///|
+/// `dir.remove(filename)` remove a file under an already-opened directory.
+/// `filename` must be a relative path and will be interpreted relative to `dir`.
+/// `filename` MUST NOT contain any `..` component.
+///
+/// Relative removal protects against race condition over base directory renaming.
+/// If the base directory `dir` has been renamed after it was opened,
+/// removing its child by path may accidentally remove unrelated file under a different directory.
+/// `dir.remove(..)` always remove files under exactly the directory referred to by `dir`.
+///
+/// Unless `allow_missing=true` (`false` by default),
+/// an error will be raised if the target file does not exist.
+pub async fn Directory::remove(
+  dir : Directory,
+  path : StringView,
+  allow_missing~ : Bool = false,
+) -> Unit {
+  let context = "@fs.Directory::remove()"
+  dir.remove_aux(
+    validate_relative_open_filename(path, context~),
+    allow_missing~,
+    context~,
+  )
+}
+
+///|
+async fn Directory::remove_aux(
+  dir : Directory,
+  path : StringView,
+  allow_missing~ : Bool,
+  context~ : String,
+) -> Unit {
+  @event_loop.remove(path, parent=dir.io.fd(), context~) catch {
+    @os_error.OsError(NotFound, ..) if allow_missing => ()
+    err => raise err
   }
 }
 

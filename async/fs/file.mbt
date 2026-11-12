@@ -138,6 +138,7 @@ pub async fn open(
   let (io, _) = @event_loop.open(
     filename,
     access,
+    parent=@fd_util.invalid_fd,
     create=create_mode.to_int(),
     append~,
     sync~,
@@ -407,7 +408,7 @@ pub async fn remove(
   path : StringView,
   allow_missing~ : Bool = false,
 ) -> Unit nocancel {
-  @event_loop.remove(path, context="@fs.remove()") catch {
+  @event_loop.remove(path, parent=@fd_util.invalid_fd, context="@fs.remove()") catch {
     @os_error.OsError(NotFound, ..) if allow_missing => ()
     err => raise err
   }

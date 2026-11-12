@@ -74,7 +74,9 @@ pub(all) enum CreateMode {
 type Directory
 pub fn Directory::close(Self) -> Unit
 pub async fn Directory::next(Self, include_hidden? : Bool, include_special? : Bool) -> DirectoryEntry?
+pub async fn Directory::open(Self, StringView, mode~ : Mode, sync? : SyncMode, append? : Bool, create_mode? : CreateMode, permission? : Int32) -> File
 pub async fn Directory::read_all(Self, include_hidden? : Bool, include_special? : Bool) -> Array[String]
+pub async fn Directory::remove(Self, StringView, allow_missing? : Bool) -> Unit
 
 pub struct DirectoryEntry {
   name : String

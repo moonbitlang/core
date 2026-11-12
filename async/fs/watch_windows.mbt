@@ -331,6 +331,7 @@ async fn WindowsWatcher::event_handler(self : WindowsWatcher) -> Unit {
         let (file, file_id) = @event_loop.open(
           "\{self.watcher.base_path}\\\{path}",
           0,
+          parent=@fd_util.invalid_fd,
           create=0,
           append=false,
           sync=0,

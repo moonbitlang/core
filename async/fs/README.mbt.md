@@ -12,6 +12,7 @@ Asynchronous file system operations for MoonBit. This package provides comprehen
 - [Directory Operations](#directory-operations)
   - [Creating Directories](#creating-directories)
   - [Reading Directories](#reading-directories)
+  - [Working Relative to an Open Directory](#working-relative-to-an-open-directory)
   - [Walking Directory Trees](#walking-directory-trees)
   - [Removing Directories](#removing-directories)
 - [File Watching](#file-watching)
@@ -354,6 +355,45 @@ async test "opendir and Directory::read_all" {
   json_inspect(entries, content=["file1.txt", "file2.txt"])
 }
 ```
+
+### Working Relative to an Open Directory
+
+On native targets, `Directory::open` and `Directory::remove` operate relative
+to an already-open directory handle. Unlike constructing a child path as a
+string, these methods continue to refer to the same directory if its path is
+renamed while the handle is open. Their paths must be relative and must not
+contain a `..` component.
+
+```moonbit check
+///|
+#cfg(target="native")
+async test "operate relative to an open directory" {
+  let old_path = "_build/test_relative_dir"
+  let new_path = "_build/test_relative_dir_renamed"
+  @fs.mkdir(old_path)
+  defer @fs.remove(old_path, recursive=true, allow_missing=true)
+  defer @fs.remove(new_path, recursive=true, allow_missing=true)
+  @fs.write_text("\{old_path}/file.txt", "relative content")
+
+  let dir = @fs.opendir(old_path)
+  defer dir.close()
+  @fs.rename(old_path, new_path)
+
+  let content = {
+    let file = dir.open("file.txt", mode=ReadOnly)
+    defer file.close()
+    file.text.read_all()
+  }
+  inspect(content, content="relative content")
+  dir.remove("file.txt")
+  inspect(@fs.exists("\{new_path}/file.txt"), content="false")
+}
+```
+
+`Directory::open` accepts the same mode, synchronization, append, creation,
+and permission options as `open`. `Directory::remove` accepts the same
+`recursive` and `allow_missing` options as `remove`. These two methods are not
+currently supported on Wasm.
 
 ### Walking Directory Trees
 

@@ -128,8 +128,10 @@ extern "C" fn Job::write_console(
 ) -> Job = "moonbit_rt_make_write_console_job"
 
 ///|
+#borrow(parent)
 #owned(filename, stat_buf)
-extern "C" fn Job::open(
+extern "C" fn Job::openat(
+  parent : @fd_util.Fd,
   filename : @os_string.OsString,
   // 0 => read only, 1 => write only, 2 => read write
   access : Int32,
@@ -143,13 +145,13 @@ extern "C" fn Job::open(
   stat_request~ : UInt32,
   stat_buf~ : FixedArray[Byte],
   stat_buf_len~ : Int32,
-) -> OpenJob = "moonbit_rt_make_open_job"
+) -> OpenAtJob = "moonbit_rt_make_openat_job"
 
 ///|
-priv struct OpenJob(Job)
+priv struct OpenAtJob(Job)
 
 ///|
-extern "C" fn OpenJob::fd(job : OpenJob) -> @fd_util.Fd = "moonbit_rt_open_job_get_fd"
+extern "C" fn OpenAtJob::fd(job : OpenAtJob) -> @fd_util.Fd = "moonbit_rt_openat_job_get_fd"
 
 ///|
 /// Constant used as input of `statx` for retrieving the kind of a file
@@ -232,7 +234,11 @@ extern "C" fn Job::flock(fd : @fd_util.Fd, exclusive : Bool) -> Job = "moonbit_r
 
 ///|
 #owned(path)
-extern "C" fn Job::remove(path : @os_string.OsString) -> Job = "moonbit_rt_make_remove_job"
+#borrow(parent)
+extern "C" fn Job::removeat(
+  parent : @fd_util.Fd,
+  path : @os_string.OsString,
+) -> Job = "moonbit_rt_make_removeat_job"
 
 ///|
 #owned(old_path, new_path)
