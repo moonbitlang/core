@@ -16,9 +16,8 @@
 /// Builds an iterator whose underlying chain is only constructed once the first
 /// element is demanded.
 ///
-/// The collection shrink instances append a per-element candidate chain that
-/// costs `O(n)` to build. Structural candidates come first and usually settle
-/// the shrink, so building that chain up front is wasted work.
+/// The collection shrink instances use this to keep the per-element phase
+/// dormant until the structural candidates have been exhausted.
 fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
   let cell = @lazy.Lazy(f)
   Iter::new(fn() { cell.force().next() })

@@ -62,3 +62,37 @@ test "shrinking a large list yields a candidate" {
     abort("expected \{DEEP - 1} elements, got \{candidate.length()}")
   }
 }
+
+///|
+/// Exercise the element phase directly so reaching it does not require
+/// allocating all O(n) structural candidates of length O(n) first.
+/// Only the last element can shrink, so yielding the candidate must also
+/// traverse a long run of empty element shrinkers without using the stack.
+test "shrinking elements of a large array reaches the last element" {
+  let xs = Array::make(DEEP, false)
+  xs[DEEP - 1] = true
+  let candidates = shrink_array_elements(xs)
+  guard candidates.next() is Some(candidate) else {
+    abort("expected an element candidate")
+  }
+  guard candidate.length() == DEEP && candidate.iter().all(x => !x) else {
+    abort("expected a full-length candidate with only false elements")
+  }
+  guard xs[DEEP - 1] && candidates.next() is None else {
+    abort("expected one candidate without changing the source")
+  }
+}
+
+///|
+test "shrinking elements of a large list reaches the last element" {
+  let xs = Array::make(DEEP, false)
+  xs[DEEP - 1] = true
+  let candidates = shrink_list_elements(List(xs))
+  guard candidates.next() is Some(candidate) else {
+    abort("expected an element candidate")
+  }
+  guard candidate.length() == DEEP && candidate.iter().all(x => !x) else {
+    abort("expected a full-length candidate with only false elements")
+  }
+  guard candidates.next() is None else { abort("expected only one candidate") }
+}
