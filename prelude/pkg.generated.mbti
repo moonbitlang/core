@@ -9,6 +9,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/lazy",
+  "moonbitlang/core/lexbuf",
   "moonbitlang/core/ref",
   "moonbitlang/core/set",
   "moonbitlang/core/string",
@@ -90,6 +91,10 @@ pub using @builtin {type Array}
 
 pub using @builtin {type ArrayView}
 
+pub using @lexbuf {type AsyncBytesLexbuf}
+
+pub using @lexbuf {type AsyncLexbuf}
+
 pub using @bigint {type BigInt}
 
 pub using @builtin {type Bool}
@@ -99,6 +104,8 @@ pub using @buffer {type Buffer}
 pub using @builtin {type Byte}
 
 pub using @builtin {type Bytes}
+
+pub using @lexbuf {type BytesLexbuf}
 
 pub using @bytes {type BytesRegex}
 
@@ -143,6 +150,8 @@ pub using @builtin {type Iter2 as Iterator2}
 pub using @json {type Json}
 
 pub using @lazy {type Lazy}
+
+pub using @lexbuf {type Lexbuf}
 
 pub using @builtin {type Map}
 

@@ -17,18 +17,23 @@
 /// by `Bytes` chunks. It is the bytes counterpart of `AsyncLexbuf`: offsets
 /// are absolute byte offsets in the stream. Chunks may be released after
 /// `lexscan` has finished consuming them.
-pub struct AsyncBytesLexbuf {
-  priv source : async () -> Bytes?
-  priv storage : BytesLexbufStorage
-  priv mut cursor : Int32
-  priv mut retained_from : Int32
-  priv mut eof : Bool
+///
+/// As with `AsyncLexbuf`, do not use the lexbuf again after a scan raised an
+/// error from the source or was cancelled: it may have stopped partway
+/// through a token.
+struct AsyncBytesLexbuf {
+  source : async () -> Bytes?
+  storage : BytesLexbufStorage
+  mut cursor : Int32
+  mut retained_from : Int32
+  mut eof : Bool
 }
 
 ///|
 /// Creates an initially empty lexbuf. `source` asynchronously returns the next
 /// chunk, or `None` at EOF. Empty chunks are ignored.
-pub fn AsyncBytesLexbuf::from_fn(
+#alias(from_fn)
+pub fn AsyncBytesLexbuf::AsyncBytesLexbuf(
   source : async () -> Bytes?,
 ) -> AsyncBytesLexbuf {
   {

@@ -15,6 +15,10 @@
 ///|
 /// An asynchronous UTF-16 input buffer for `lexscan`, fed by string chunks.
 /// Chunks may be released after `lexscan` has finished consuming them.
+///
+/// Errors raised by the source propagate out of the scan. A scan that raises
+/// or is cancelled while it waits for a chunk may stop partway through a
+/// token, so do not use the lexbuf again after such an error.
 pub struct AsyncLexbuf {
   priv source : async () -> String?
   priv storage : LexbufStorage
@@ -26,7 +30,8 @@ pub struct AsyncLexbuf {
 ///|
 /// Creates an initially empty lexbuf. `source` asynchronously returns the next
 /// chunk, or `None` at EOF. Empty chunks are ignored.
-pub fn AsyncLexbuf::from_fn(source : async () -> String?) -> AsyncLexbuf {
+#alias(from_fn)
+pub fn AsyncLexbuf::AsyncLexbuf(source : async () -> String?) -> AsyncLexbuf {
   {
     source,
     storage: LexbufStorage(),
