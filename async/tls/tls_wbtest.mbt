@@ -290,3 +290,85 @@ async test "client custom root certificate rejects different root" {
     }
   }
 }
+
+///|
+#derive(@debug.Debug)
+priv suberror ReadFailed
+
+///|
+/// A pipe reader that fails every read once `fail` is set
+priv struct FailingRead {
+  inner : @pipe.PipeRead
+  ctrl : @io.BinaryReaderController
+  mut fail : Bool
+}
+
+///|
+impl @io.BinaryReader for FailingRead
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn raw_read_impl(
+  self,
+  buf,
+  offset~,
+  max_len~,
+) {
+  guard !self.fail else { raise ReadFailed }
+  self.inner.read_into(buf, offset~, max_len~)
+}
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn name(_self) {
+  "FailingRead"
+}
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn get_controller(self) {
+  self.ctrl
+}
+
+///|
+async test "`write` after the transport failed in a concurrent `read`" {
+  @async.with_task_group() <| root => {
+    let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+    let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+    defer {
+      client_read_from_server.close()
+      client_write_to_server.close()
+      server_read_from_client.close()
+      server_write_to_client.close()
+    }
+    root.spawn_bg() <| () => {
+      test_server(server_read_from_client, server_write_to_client).close()
+    }
+    let reader = FailingRead::{
+      inner: client_read_from_server,
+      ctrl: BinaryReaderController(),
+      fail: false,
+    }
+    let client = Tls::client_from_pair(
+      reader,
+      client_write_to_server,
+      trust=NoVerification,
+    )
+    defer client.close()
+    reader.fail = true
+    // Runs once the write below waits for the full pipe:
+    // fail a read, then let the write continue.
+    root.spawn_bg(no_wait=true) <| () => {
+      ignore(client.read()) catch {
+        _ => ()
+      }
+      ignore(server_read_from_client.read_all())
+    }
+    @debug.debug_inspect(
+      @test.expect_error_async(() => client.write(Bytes::make(1 << 20, b'x'))),
+      content=(
+        #|TransportError(
+        #|  TransportError(ReadFailed, context="FailingRead"),
+        #|  context="@tls.Tls",
+        #|)
+      ),
+    )
+  }
+}
