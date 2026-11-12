@@ -325,6 +325,9 @@ pub async fn ClientConnection::end_request(
 /// After performing a request,
 /// the next request MUST NOT be made before the request is completed via `end_request`.
 ///
+/// For a `CONNECT` request or an absolute-form `path` (`http://...`, `https://...`),
+/// `Host` is taken from `path` instead of the host this client connected to.
+///
 /// In addition to headers in `ClientConnection::connect`,
 /// extra HTTP headers can be passed via `extra_headers`.
 /// The following headers is automatically set by `request`,

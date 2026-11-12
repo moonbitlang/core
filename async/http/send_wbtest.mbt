@@ -16,6 +16,51 @@
 extend Sender with @io.BinaryWriter::{write_reader}
 
 ///|
+async test "send_request Host for proxy requests" {
+  @async.with_task_group() <| root => {
+    let (r, w) = @io.memory_pipe()
+    root.spawn_bg() <| () => {
+      defer w.close()
+      let sender = Sender::new(w, headers={
+        "Host": "proxy.example:8080",
+        "Proxy-Authorization": "Basic dGVzdA==",
+      })
+      for
+        (meth, target) in [
+          (Connect, "origin.example:443"),
+          (Get, "http://origin.example/path"),
+          (Get, "/path"),
+        ] {
+        let _ = sender.send_request(meth, target, extra_headers=Map([]))
+        sender.end_body()
+      }
+    }
+    defer r.close()
+    inspect(
+      r.read_all() |> @bytes_util.ascii_to_string,
+      content=(
+        #|CONNECT origin.example:443 HTTP/1.1\r
+        #|Host: origin.example:443\r
+        #|Proxy-Authorization: Basic dGVzdA==\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|GET http://origin.example/path HTTP/1.1\r
+        #|Host: origin.example\r
+        #|Proxy-Authorization: Basic dGVzdA==\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|GET /path HTTP/1.1\r
+        #|Host: proxy.example:8080\r
+        #|Proxy-Authorization: Basic dGVzdA==\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|
+      ),
+    )
+  }
+}
+
+///|
 async test "send_request basic" {
   @async.with_task_group() <| root => {
     let (r, w) = @io.memory_pipe()

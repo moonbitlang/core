@@ -31,7 +31,41 @@ priv struct Sender {
   mut send_len : Int32
   ctrl : @io.BinaryWriterController
   headers : Bytes
+  /// The `Host` line in `headers`, replaced for proxy requests
+  host_header_start : Int32
+  host_header_end : Int32
   has_accept_encoding : Bool
+}
+
+///|
+/// The authority that `Host` must carry when it differs from the connection:
+/// the destination of a `CONNECT`, or the authority of an absolute-form target.
+fn request_target_host(
+  meth : RequestMethod,
+  target : StringView,
+) -> StringView? {
+  if meth is Connect {
+    return Some(target)
+  }
+  let rest = if target.length() >= 7 &&
+    target[:7].equal_ignore_ascii_case("http://") {
+    target[7:]
+  } else if target.length() >= 8 &&
+    target[:8].equal_ignore_ascii_case("https://") {
+    target[8:]
+  } else {
+    return None
+  }
+  for i in 0..<rest.length() {
+    if rest[i] is ('/' | '?' | '#') {
+      return if i > 0 { Some(rest[:i]) } else { None }
+    }
+  }
+  if rest.is_empty() {
+    None
+  } else {
+    Some(rest)
+  }
 }
 
 ///|
@@ -68,6 +102,8 @@ fn[W : @io.BinaryWriter] Sender::new(
 ) -> Sender {
   let header_text = @buffer.Buffer()
   let mut has_accept_encoding = false
+  let mut host_header_start = 0
+  let mut host_header_end = 0
   for k, v in headers {
     if !is_valid_http_header_field_name(k.0) {
       continue
@@ -76,11 +112,16 @@ fn[W : @io.BinaryWriter] Sender::new(
       if k == "Accept-Encoding" {
         has_accept_encoding = true
       }
+      let start = header_text.length()
       header_text
       ..write_string_utf8(k.0)
       ..write_bytes(b": ")
       ..write_string_utf8(sanitize_header_value(v))
       .write_bytes(b"\r\n")
+      if k == "Host" {
+        host_header_start = start
+        host_header_end = header_text.length()
+      }
     }
   }
   {
@@ -90,6 +131,8 @@ fn[W : @io.BinaryWriter] Sender::new(
     send_len: 0,
     ctrl: BinaryWriterController(),
     headers: header_text.contents(),
+    host_header_start,
+    host_header_end,
     has_accept_encoding,
   }
 }
@@ -382,11 +425,19 @@ async fn Sender::send_request(
       self.write(b" ")
     }
   }
-  let content_length = self
-    ..write(@utf8.encode(path))
-    ..write(b" HTTP/1.1\r\n")
-    ..write(self.headers)
-    .send_headers(extra_headers)
+  self..write(@utf8.encode(path)).write(b" HTTP/1.1\r\n")
+  if request_target_host(meth, path) is Some(host) {
+    // Replace the cached Host line, keeping the other persistent headers
+    self
+    ..write(self.headers[:self.host_header_start])
+    ..write(b"Host: ")
+    ..write(@utf8.encode(host))
+    ..write(b"\r\n")
+    .write(self.headers[self.host_header_end:])
+  } else {
+    self.write(self.headers)
+  }
+  let content_length = self.send_headers(extra_headers)
   let auto_decompress = !self.has_accept_encoding &&
     !extra_headers.contains("Accept-Encoding")
   if auto_decompress {
