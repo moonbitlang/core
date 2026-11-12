@@ -15,6 +15,7 @@ pub struct AsyncLexbuf {
   // private fields
 }
 pub fn AsyncLexbuf::from_fn(async () -> String?) -> Self
+pub async fn AsyncLexbuf::read_line(Self) -> StringView?
 
 pub struct BytesLexbuf {
   // private fields
@@ -34,6 +35,7 @@ pub struct Lexbuf {
 pub fn Lexbuf::from_fn(() -> String?) -> Self
 #deprecated
 pub fn Lexbuf::from_string(String) -> Self
+pub fn Lexbuf::read_line(Self) -> StringView?
 
 pub struct StringScanner {
   data : StringView
