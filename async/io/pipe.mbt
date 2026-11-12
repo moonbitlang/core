@@ -21,7 +21,7 @@ priv enum PipeReader {
     buf~ : FixedArray[Byte],
     offset~ : Int32,
     max_len~ : Int32,
-    mut result~ : Int32
+    mut result~ : Int32,
   )
 }
 
@@ -34,7 +34,7 @@ priv enum PipeWriter {
     buf~ : Bytes,
     offset~ : Int32,
     len~ : Int32,
-    mut result~ : Int32
+    mut result~ : Int32,
   )
 }
 

@@ -58,7 +58,7 @@ enum QuickCheckReport[A] {
   GaveUp(
     tests~ : UInt32,
     discarded~ : UInt32,
-    observations~ : ObservationSummary
+    observations~ : ObservationSummary,
   )
   Falsified(
     counterexample~ : A,
@@ -67,7 +67,7 @@ enum QuickCheckReport[A] {
     size~ : Int32,
     shrinks~ : UInt32,
     shrink_attempts~ : UInt32,
-    observations~ : ObservationSummary
+    observations~ : ObservationSummary,
   )
   Raised(
     counterexample~ : A,
@@ -77,7 +77,7 @@ enum QuickCheckReport[A] {
     size~ : Int32,
     shrinks~ : UInt32,
     shrink_attempts~ : UInt32,
-    observations~ : ObservationSummary
+    observations~ : ObservationSummary,
   )
 }
 
@@ -114,7 +114,7 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
       size~,
       shrinks~,
       shrink_attempts~,
-      observations~
+      observations~,
     ) =>
       @debug.Repr::ctor(
         "Falsified",
@@ -140,7 +140,7 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
       size~,
       shrinks~,
       shrink_attempts~,
-      observations~
+      observations~,
     ) =>
       @debug.Repr::ctor(
         "Raised",
@@ -246,7 +246,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
       size~,
       shrinks~,
       shrink_attempts~,
-      observations~
+      observations~,
     ) =>
       (
         $|QuickCheck falsified after \{tests} test(s)
@@ -262,7 +262,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
       size~,
       shrinks~,
       shrink_attempts~,
-      observations~
+      observations~,
     ) =>
       (
         $|QuickCheck property raised after \{tests} test(s)

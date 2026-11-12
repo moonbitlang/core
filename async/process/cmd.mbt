@@ -26,14 +26,14 @@ enum Cmd {
     stderr~ : ProcessOutput,
     cwd~ : StringView?,
     no_console_window~ : Bool,
-    accepted_exit_code~ : (Int32) -> Bool
+    accepted_exit_code~ : (Int32) -> Bool,
   )
   WithContext(
     Cmd,
     stdin~ : ProcessInput,
     stdout~ : ProcessOutput,
     stderr~ : ProcessOutput,
-    cwd~ : StringView?
+    cwd~ : StringView?,
   )
   Pipe(Cmd, Cmd)
   Sequence(Array[Cmd])
@@ -274,11 +274,11 @@ priv enum RunningSubCommand {
     @event_loop.Process,
     program~ : String,
     args~ : ReadOnlyArray[String],
-    accepted_exit_code~ : (Int32) -> Bool
+    accepted_exit_code~ : (Int32) -> Bool,
   )
   Nested(
     @coroutine.Coroutine,
-    exit_status~ : @ref.Ref[Result[Int32, CommandFailed]]
+    exit_status~ : @ref.Ref[Result[Int32, CommandFailed]],
   )
 }
 
@@ -392,7 +392,7 @@ async fn Cmd::spawn_single(
       stderr=self_stderr,
       cwd=self_cwd,
       no_console_window~,
-      accepted_exit_code=_
+      accepted_exit_code=_,
     )
   let cwd = if self_cwd is None { cwd } else { self_cwd }
   let (proc, _, _, _) = {
@@ -433,7 +433,7 @@ async fn Cmd::update_context(
       stdin=local_stdin,
       stdout=local_stdout,
       stderr=local_stderr,
-      cwd=local_cwd
+      cwd=local_cwd,
     )
   let mut stdin = stdin
   let mut stdout = stdout
