@@ -29,25 +29,31 @@ pub impl[T : Shrink, E : Shrink] Shrink for Result[T, E] with fn shrink(x) {
 }
 
 ///|
+fn[X : Shrink] shrink_array_elements(xs : ArrayView[X]) -> Iter[Array[X]] {
+  xs
+  .iter2()
+  .iter()
+  .flat_map(entry => {
+    let (i, x) = entry
+    X::shrink(x).map(x_ => {
+      let candidate = xs.to_owned()
+      candidate[i] = x_
+      candidate
+    })
+  })
+}
+
+///|
 pub impl[X : Shrink] Shrink for Array[X] with fn shrink(xs) {
   let view = xs[:]
   let n = view.length()
-  fn shr_sub_terms(arr : ArrayView[X]) {
-    match arr {
-      [] => [||]
-      [x, .. xs] =>
-        X::shrink(x)
-        .map(x_ => [x_, ..xs])
-        .concat(shr_sub_terms(xs).map(xs_ => [x, ..xs_]))
-    }
-  }
 
   [
     for k = n; k > 0; k = k / 2 => k
   ]
   .iter()
   .flat_map(k => removes_array(k, n, xs))
-  .concat(deferred(() => shr_sub_terms(view)))
+  .concat(deferred(() => shrink_array_elements(view)))
 }
 
 ///|

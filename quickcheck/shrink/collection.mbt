@@ -13,24 +13,35 @@
 // limitations under the License.
 
 ///|
+fn[T : Shrink] shrink_list_elements(xs : @list.List[T]) -> Iter[@list.List[T]] {
+  let mut prefix : @list.List[T] = List([])
+  let mut remaining = xs
+  Iter::new(fn() {
+    match remaining {
+      Empty => None
+      More(x, tail~) => {
+        let entry = (prefix, x, tail)
+        prefix = prefix.prepend(x)
+        remaining = tail
+        Some(entry)
+      }
+    }
+  }).flat_map(entry => {
+    let (prefix, x, tail) = entry
+    Shrink::shrink(x).map(x_ => prefix.rev_concat(tail.prepend(x_)))
+  })
+}
+
+///|
 pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   let n = xs.length()
-  fn shr_sub_terms(lst : @list.List[T]) {
-    match lst {
-      Empty => [||]
-      More(x, tail=xs) =>
-        Shrink::shrink(x)
-        .map(x_ => xs.prepend(x_))
-        .concat(shr_sub_terms(xs).map(xs_ => xs_.prepend(x)))
-    }
-  }
 
   [
     for k = n / 2; k > 0; k = k / 2 => k
   ]
   .rev_iter()
   .flat_map(k => removes_list(k, n, xs))
-  .concat(deferred(() => shr_sub_terms(xs)))
+  .concat(deferred(() => shrink_list_elements(xs)))
 }
 
 ///|
