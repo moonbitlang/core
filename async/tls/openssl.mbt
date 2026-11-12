@@ -364,6 +364,14 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
     }
     SSL_ERROR_WANT_WRITE => {
       self.transport.flush_write()
+      // `BIO::write` rejects all data once the transport is closed or failed.
+      // But the retry flags it set when the buffer was full are never cleared,
+      // so OpenSSL keeps reporting `SSL_ERROR_WANT_WRITE` instead of failing.
+      match self.transport.state {
+        Normal => ()
+        Closed => raise ConnectionClosed
+        Error(err) => raise err
+      }
       self.transport.write_buf.enlarge_to(1)
     }
     SSL_ERROR_SSL | SSL_ERROR_SYSCALL =>
