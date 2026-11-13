@@ -31,16 +31,17 @@ priv struct Sender {
   mut send_len : Int32
   ctrl : @io.BinaryWriterController
   headers : Bytes
+  host : Bytes?
   has_accept_encoding : Bool
 }
 
 ///|
 let forbidden_headers : @set.Set[CaseInsensitiveString] = Set([
-  "Content-Length", "Transfer-Encoding",
+  "Host", "Content-Length", "Transfer-Encoding",
 ])
 
 ///|
-fn sanitize_header_value(s : String) -> String {
+fn sanitize_header_value(s : StringView) -> StringView {
   for c in s.code_units(); crlf_count = 0 {
     if c is ('\r' | '\n') {
       continue crlf_count + 1
@@ -62,8 +63,9 @@ fn sanitize_header_value(s : String) -> String {
 }
 
 ///|
-fn[W : @io.BinaryWriter] Sender::new(
+fn[W : @io.BinaryWriter] Sender::client(
   w : W,
+  host~ : StringView,
   headers~ : Headers = Map([]),
 ) -> Sender {
   let header_text = @buffer.Buffer()
@@ -90,7 +92,38 @@ fn[W : @io.BinaryWriter] Sender::new(
     send_len: 0,
     ctrl: BinaryWriterController(),
     headers: header_text.contents(),
+    host: Some(host |> sanitize_header_value |> @utf8.encode),
     has_accept_encoding,
+  }
+}
+
+///|
+fn[W : @io.BinaryWriter] Sender::server(
+  w : W,
+  headers~ : Headers = Map([]),
+) -> Sender {
+  let header_text = @buffer.Buffer()
+  for k, v in headers {
+    if !is_valid_http_header_field_name(k.0) {
+      continue
+    }
+    if !forbidden_headers.contains(k) {
+      header_text
+      ..write_string_utf8(k.0)
+      ..write_bytes(b": ")
+      ..write_string_utf8(sanitize_header_value(v))
+      .write_bytes(b"\r\n")
+    }
+  }
+  {
+    writer: w,
+    mode: SendingHeader,
+    send_buf: FixedArray::make(1024, 0),
+    send_len: 0,
+    ctrl: BinaryWriterController(),
+    headers: header_text.contents(),
+    host: None,
+    has_accept_encoding: false,
   }
 }
 
@@ -387,6 +420,9 @@ async fn Sender::send_request(
     ..write(b" HTTP/1.1\r\n")
     ..write(self.headers)
     .send_headers(extra_headers)
+  if self.host is Some(host) {
+    self..write(b"Host: ")..write(host).write(b"\r\n")
+  }
   let auto_decompress = !self.has_accept_encoding &&
     !extra_headers.contains("Accept-Encoding")
   if auto_decompress {

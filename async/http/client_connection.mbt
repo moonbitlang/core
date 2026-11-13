@@ -59,14 +59,12 @@ async fn ClientConnection::connect(
     Plain(@socket.Tcp::connect_to_host(hostname, port~))
   }
   errdefer transport.close()
-  headers["Host"] = host.to_owned()
-  // TODO: case insensitive check
   if !headers.contains("User-Agent") {
     headers["User-Agent"] = "moonbit-http-client/1.1"
   }
   let (tls, reader, sender) = match (protocol, transport) {
     (Http, Plain(conn)) =>
-      (None, Reader::new(conn), Sender::new(conn, headers~))
+      (None, Reader::new(conn), Sender::client(conn, host~, headers~))
     (Https, Plain(conn)) => {
       // HTTP has its own message delimiter so TLS shutdown is unnecessary.
       // Many realworld HTTP server does not perform proper TLS shutdown.
@@ -76,10 +74,10 @@ async fn ClientConnection::connect(
         trust~,
         require_shutdown=false,
       )
-      (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
+      (Some(tls), Reader::new(tls), Sender::client(tls, host~, headers~))
     }
     (Http, Proxy(proxy)) =>
-      (None, Reader::new(proxy), Sender::new(proxy, headers~))
+      (None, Reader::new(proxy), Sender::client(proxy, host~, headers~))
     (Https, Proxy(proxy)) => {
       // HTTP has its own message delimiter so TLS shutdown is unnecessary.
       // Many realworld HTTP server does not perform proper TLS shutdown.
@@ -89,7 +87,7 @@ async fn ClientConnection::connect(
         trust~,
         require_shutdown=false,
       )
-      (Some(tls), Reader::new(tls), Sender::new(tls, headers~))
+      (Some(tls), Reader::new(tls), Sender::client(tls, host~, headers~))
     }
   }
   let client = {

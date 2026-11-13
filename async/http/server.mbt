@@ -33,7 +33,7 @@ pub struct ServerConnection {
 /// The following headers is automatically set,
 /// and must not be specified in `headers`:
 /// 
-/// - Content-Length, Transfer-Encoding
+/// - Content-Length, Transfer-Encoding, Host
 pub fn ServerConnection::new(
   conn : @socket.Tcp,
   headers~ : Headers = Map([]),
@@ -42,7 +42,7 @@ pub fn ServerConnection::new(
     text: @io.Utf8TextView::new_uninitialized(),
     reader: Reader::new(conn),
     conn,
-    sender: Sender::new(conn, headers~),
+    sender: Sender::server(conn, headers~),
     closed: false,
     request_method: Get,
   }
