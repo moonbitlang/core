@@ -23,7 +23,7 @@ priv enum DecodeMode {
     hdist~ : Int32,
     hclen~ : Int32,
     index~ : Int32,
-    code_lengths~ : FixedArray[Int32]
+    code_lengths~ : FixedArray[Int32],
   )
   DynamicLengths(
     is_final~ : Bool,
@@ -32,14 +32,14 @@ priv enum DecodeMode {
     code_tree~ : HuffmanTree,
     index~ : Int32,
     previous~ : Int32,
-    lengths~ : FixedArray[Int32]
+    lengths~ : FixedArray[Int32],
   )
   StoredLengths(is_final~ : Bool)
   StoredBlock(is_final~ : Bool, remaining~ : Int32)
   HuffmanBlock(
     is_final~ : Bool,
     literal_tree~ : HuffmanTree,
-    distance_tree~ : HuffmanTree
+    distance_tree~ : HuffmanTree,
   )
   Trailer
   Finished
@@ -809,7 +809,7 @@ fn Decoder::write_direct(
         hdist~,
         hclen~,
         index=length_index,
-        code_lengths~
+        code_lengths~,
       ) => {
         if input_state.end - input_state.index < self.raw_minimum_input_size() {
           break
@@ -835,7 +835,7 @@ fn Decoder::write_direct(
         code_tree~,
         index=length_index,
         previous~,
-        lengths~
+        lengths~,
       ) => {
         let index = input_state.index
         self.decode_dynamic_length_step(
