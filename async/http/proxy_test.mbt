@@ -83,6 +83,10 @@ async fn handle_connect(
     conn..send_response(400, "BadRequest").end_response()
     return
   }
+  guard request.headers.get("Host") is Some(host) && host == request.path else {
+    conn..send_response(400, "BadRequest").end_response()
+    return
+  }
   guard request.path.rev_find(":") is Some(index) else {
     conn..send_response(400, "BadRequest").end_response()
     return
