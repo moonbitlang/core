@@ -10,33 +10,33 @@ import {
 }
 
 // Values
-pub async fn get(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn get(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn get_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, ClientConnection)
+pub async fn get_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, ClientConnection)
 
-pub async fn post_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn post_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn post_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn post_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn post_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
+pub async fn post_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
 
-pub async fn post_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn post_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn put_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn put_binary(StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn put_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn put_json(StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn put_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
+pub async fn put_stream(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
 
-pub async fn put_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn put_text(StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn request_binary(RequestMethod, StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn request_binary(RequestMethod, StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn request_json(RequestMethod, StringView, @json.Json, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn request_json(RequestMethod, StringView, @json.Json, headers~ : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn request_stream(RequestMethod, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> ClientConnection
+pub async fn request_stream(RequestMethod, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
 
-pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : ClientConnection) -> (ResponseHeader, MessageBody)
+pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)
@@ -81,27 +81,27 @@ pub impl @debug.Debug for CaseInsensitiveString
 type Client
 pub fn Client::Client(headers? : Map[CaseInsensitiveString, String]) -> Self
 pub fn Client::close(Self) -> Unit
-pub async fn Client::get(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::get_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, ClientConnection)
-pub async fn Client::post_binary(Self, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::post_json(Self, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::post_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
-pub async fn Client::post_text(Self, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::put_binary(Self, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::put_json(Self, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::put_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
-pub async fn Client::put_text(Self, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::request_binary(Self, RequestMethod, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::request_json(Self, RequestMethod, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
-pub async fn Client::request_stream(Self, RequestMethod, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> ClientConnection
-pub async fn Client::request_text(Self, RequestMethod, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> (ResponseHeader, MessageBody)
+pub async fn Client::get(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::get_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, ClientConnection)
+pub async fn Client::post_binary(Self, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::post_json(Self, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::post_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
+pub async fn Client::post_text(Self, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::put_binary(Self, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::put_json(Self, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::put_stream(Self, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
+pub async fn Client::put_text(Self, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::request_binary(Self, RequestMethod, StringView, BytesView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::request_json(Self, RequestMethod, StringView, @json.Json, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn Client::request_stream(Self, RequestMethod, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
+pub async fn Client::request_text(Self, RequestMethod, StringView, StringView, extra_headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
 pub struct ClientConnection {
   text : @io.Utf8TextView
   // private fields
 }
 #alias(new, deprecated)
-pub async fn ClientConnection::ClientConnection(String, headers? : Map[CaseInsensitiveString, String], proxy? : Self, trust? : @tls.TrustedRoot) -> Self
+pub async fn ClientConnection::ClientConnection(StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy, trust? : @tls.TrustedRoot) -> Self
 pub fn ClientConnection::close(Self) -> Unit
 pub async fn ClientConnection::drop_all(Self) -> Int64 raise @io.ReaderError
 pub async fn ClientConnection::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
@@ -155,6 +155,10 @@ pub fn Protocol::compare(Self, Self) -> Int32
 pub fn Protocol::default_port(Self) -> UInt16
 pub fn Protocol::equal(Self, Self) -> Bool
 pub fn Protocol::hash(Self) -> Int32
+
+type Proxy
+pub fn Proxy::Proxy(StringView, username? : StringView, password? : StringView) -> Self
+pub fn Proxy::custom_tunnel(async (StringView, UInt16) -> ClientConnection) -> Self
 
 #derive(@debug.Debug, @json.ToJson)
 pub(all) struct RequestHeader {

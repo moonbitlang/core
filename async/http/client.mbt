@@ -59,6 +59,7 @@ pub fn Client::close(_ : Client) -> Unit {
 ///
 /// In addition to common headers specified on client creation,
 /// extra HTTP headers can be passed via `extra_headers`.
+/// `proxy`, if present, specifies the proxy to use for this request.
 ///
 /// If `Content-Length` is present in `extra_headers`,
 /// it should be the total length of the request body.
@@ -70,9 +71,15 @@ pub async fn Client::request_stream(
   meth : RequestMethod,
   url : StringView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> ClientConnection {
   let (protocol, host, path) = resolve_url(url)
-  let conn = ClientConnection::connect(host, protocol~, headers=self.headers)
+  let conn = ClientConnection::connect(
+    host,
+    protocol~,
+    headers=self.headers,
+    proxy?,
+  )
   errdefer conn.close()
   conn.request(meth, path, extra_headers~)
   conn
@@ -89,8 +96,9 @@ pub async fn Client::request_binary(
   url : StringView,
   body : BytesView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  let conn = self.request_stream(meth, url, extra_headers~)
+  let conn = self.request_stream(meth, url, extra_headers~, proxy?)
   defer conn.close()
   conn.write(body)
   let response = conn.end_request()
@@ -108,8 +116,9 @@ pub async fn Client::request_text(
   url : StringView,
   body : StringView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  let conn = self.request_stream(meth, url, extra_headers~)
+  let conn = self.request_stream(meth, url, extra_headers~, proxy?)
   defer conn.close()
   conn.text.write(body)
   let response = conn.end_request()
@@ -127,8 +136,9 @@ pub async fn Client::request_json(
   url : StringView,
   body : @json.Json,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  let conn = self.request_stream(meth, url, extra_headers~)
+  let conn = self.request_stream(meth, url, extra_headers~, proxy?)
   defer conn.close()
   conn.text.write(body.stringify())
   let response = conn.end_request()
@@ -147,8 +157,9 @@ pub async fn Client::get_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> (ResponseHeader, ClientConnection) {
-  let conn = self.request_stream(Get, url, extra_headers~)
+  let conn = self.request_stream(Get, url, extra_headers~, proxy?)
   errdefer conn.close()
   let response = conn.end_request()
   (response, conn)
@@ -163,8 +174,9 @@ pub async fn Client::get(
   self : Client,
   uri : StringView,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  let (response, conn) = self.get_stream(uri, extra_headers~)
+  let (response, conn) = self.get_stream(uri, extra_headers~, proxy?)
   defer conn.close()
   (response, conn.read_all())
 }
@@ -186,8 +198,9 @@ pub async fn Client::put_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> ClientConnection {
-  self.request_stream(Put, url, extra_headers~)
+  self.request_stream(Put, url, extra_headers~, proxy?)
 }
 
 ///|
@@ -200,8 +213,9 @@ pub async fn Client::put_binary(
   uri : StringView,
   content : BytesView,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_binary(Put, uri, content, extra_headers~)
+  self.request_binary(Put, uri, content, extra_headers~, proxy?)
 }
 
 ///|
@@ -214,8 +228,9 @@ pub async fn Client::put_text(
   uri : StringView,
   content : StringView,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_text(Put, uri, content, extra_headers~)
+  self.request_text(Put, uri, content, extra_headers~, proxy?)
 }
 
 ///|
@@ -228,8 +243,9 @@ pub async fn Client::put_json(
   uri : StringView,
   content : @json.Json,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_json(Put, uri, content, extra_headers~)
+  self.request_json(Put, uri, content, extra_headers~, proxy?)
 }
 
 ///|
@@ -249,8 +265,9 @@ pub async fn Client::post_stream(
   self : Client,
   url : StringView,
   extra_headers~ : Headers = {},
+  proxy? : Proxy,
 ) -> ClientConnection {
-  self.request_stream(Post, url, extra_headers~)
+  self.request_stream(Post, url, extra_headers~, proxy?)
 }
 
 ///|
@@ -263,8 +280,9 @@ pub async fn Client::post_binary(
   uri : StringView,
   content : BytesView,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_binary(Post, uri, content, extra_headers~)
+  self.request_binary(Post, uri, content, extra_headers~, proxy?)
 }
 
 ///|
@@ -277,8 +295,9 @@ pub async fn Client::post_text(
   uri : StringView,
   content : StringView,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_text(Post, uri, content, extra_headers~)
+  self.request_text(Post, uri, content, extra_headers~, proxy?)
 }
 
 ///|
@@ -291,6 +310,7 @@ pub async fn Client::post_json(
   uri : StringView,
   content : @json.Json,
   extra_headers~ : Headers = Map([]),
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
-  self.request_json(Post, uri, content, extra_headers~)
+  self.request_json(Post, uri, content, extra_headers~, proxy?)
 }

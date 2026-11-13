@@ -94,7 +94,7 @@ pub async fn request_stream(
   meth : RequestMethod,
   uri : StringView,
   headers~ : Headers = {},
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
   let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
@@ -118,7 +118,7 @@ pub async fn request_binary(
   uri : StringView,
   body : BytesView,
   headers~ : Headers = {},
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
@@ -141,7 +141,7 @@ pub async fn request_text(
   uri : StringView,
   body : StringView,
   headers~ : Headers,
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
@@ -165,7 +165,7 @@ pub async fn request_json(
   uri : StringView,
   body : @json.Json,
   headers~ : Headers,
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   let conn = request_stream(meth, uri, headers~, proxy?)
   defer conn.close()
@@ -187,7 +187,7 @@ pub async fn request_json(
 pub async fn get(
   uri : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_binary(Get, uri, b"", headers~, proxy?)
 }
@@ -198,7 +198,7 @@ pub async fn put_binary(
   uri : StringView,
   content : BytesView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_binary(Put, uri, content, headers~, proxy?)
 }
@@ -209,7 +209,7 @@ pub async fn put_text(
   uri : StringView,
   content : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_text(Put, uri, content, headers~, proxy?)
 }
@@ -220,7 +220,7 @@ pub async fn put_json(
   uri : StringView,
   content : @json.Json,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_json(Put, uri, content, headers~, proxy?)
 }
@@ -231,7 +231,7 @@ pub async fn post_binary(
   uri : StringView,
   content : BytesView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_binary(Post, uri, content, headers~, proxy?)
 }
@@ -242,7 +242,7 @@ pub async fn post_text(
   uri : StringView,
   content : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_text(Post, uri, content, headers~, proxy?)
 }
@@ -253,7 +253,7 @@ pub async fn post_json(
   uri : StringView,
   content : @json.Json,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   request_json(Post, uri, content, headers~, proxy?)
 }
@@ -271,7 +271,7 @@ pub async fn post_json(
 pub async fn get_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> (ResponseHeader, ClientConnection) {
   let conn = request_stream(Get, uri, headers~, proxy?)
   errdefer conn.close()
@@ -298,7 +298,7 @@ pub async fn get_stream(
 pub async fn put_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> ClientConnection {
   request_stream(Put, uri, headers~, proxy?)
 }
@@ -323,7 +323,7 @@ pub async fn put_stream(
 pub async fn post_stream(
   uri : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
 ) -> ClientConnection {
   request_stream(Post, uri, headers~, proxy?)
 }

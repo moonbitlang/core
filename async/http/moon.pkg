@@ -14,6 +14,7 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/encoding/base64",
   "moonbitlang/core/int",
   "moonbitlang/core/string",
   "moonbitlang/core/set",
@@ -71,6 +72,7 @@ options(
     "parser.mbt": [ "native", "wasm" ],
     "parser_wbtest.mbt": [ "native", "wasm" ],
     "parser_trailer_wbtest.mbt": [ "native", "wasm" ],
+    "proxy.mbt": [ "native", "js", "wasm" ],
     "proxy_test.mbt": [ "native", "wasm" ],
     "request.mbt": [ "native", "js", "wasm" ],
     "request_test.mbt": [ "native", "js", "wasm" ],
