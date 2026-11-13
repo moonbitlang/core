@@ -15,6 +15,7 @@ import {
 
 import {
   "moonbitlang/core/test",
+  "moonbitlang/core/bench",
 } for "wbtest"
 
 // v128 is experimental; its import is used only by native/linear-wasm paths.

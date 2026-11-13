@@ -89,12 +89,22 @@ pub fn Compressor::Compressor(
 ///|
 /// An output capacity sufficient for the selected strategy, with or without
 /// `fast_store`. Panics for negative input sizes or an unrepresentable bound.
+/// Standard and Split return the exact stored size at level 0.
 pub fn deflate_bound(
   input_size : Int32,
   strategy~ : Strategy = Standard(level=6),
 ) -> Int32 {
   guard input_size >= 0 else { abort("negative DEFLATE input size") }
   let size = input_size.to_int64()
+  if strategy is Standard(level=0) || strategy is Split(level=0) {
+    // A stored block has a five-byte header and holds at most 65535 bytes.
+    // Even an empty input emits one block. No tokenization or splitting is used.
+    let bound = size + 5L * ((size + 65534L) / 65535L).max(1L)
+    guard bound <= 0x7fff_ffffL else {
+      abort("DEFLATE output capacity overflow")
+    }
+    return bound.to_int()
+  }
   // Every planned block costs at most its stored encoding, plus one byte
   // for alignment. Stored segments may themselves split at 65535 bytes.
   // Split has at most seven parts per chunk (including match overhang);
