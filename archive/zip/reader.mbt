@@ -368,9 +368,10 @@ fn parse_end_of_central(
     )
   }
   let comment = copy_cancellable(reader.read_bytes(comment_len), cancelled)
-  let needs_zip64 = disk_entries == 0xFFFF ||
-    total_entries == 0xFFFF ||
-    central_size_raw == MAX_U32 ||
+  // ZIP64 records lie between the directory and this record. A directory that
+  // ends right here has none, so 0xFFFF in its counts is an ordinary count: a
+  // classic archive may hold exactly 65535 entries.
+  let needs_zip64 = central_size_raw == MAX_U32 ||
     central_offset_raw == MAX_U32 ||
     central_offset_raw.to_uint64() + central_size_raw.to_uint64() !=
     eocd_offset.to_uint64()
