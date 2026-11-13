@@ -47,12 +47,8 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
-  "moonbitlang/core/json",
-} for "wbtest"
-
-#cfg(any(target="native", target="wasm", target="js"))
-import {
   "moonbitlang/core/async",
+  "moonbitlang/core/json",
 } for "wbtest"
 
 options(
@@ -88,7 +84,7 @@ options(
     "timer.mbt": [ "native", "wasm" ],
     "io.wasm.mbt": [ "wasm" ],
     "unimplemented.mbt": [ "wasm-gc" ],
-    "worker_wbtest.mbt": [ "native", "wasm", "js" ],
+    "worker_wbtest.mbt": [ "native", "wasm" ],
     "thread_pool.wasm.mbt": [ "wasm" ],
     "io_bounds_wbtest.mbt": [ "wasm" ],
   },
