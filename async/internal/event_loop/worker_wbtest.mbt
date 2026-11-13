@@ -36,12 +36,6 @@ async fn perform_sleep_job(t : Int32) -> Unit {
 }
 
 ///|
-#cfg(target="js")
-async fn perform_sleep_job(t : Int32) -> Unit {
-  @async.protect_from_cancel(() => @async.sleep(t))
-}
-
-///|
 async test "worker basic" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
@@ -144,7 +138,6 @@ async test "worker cancel2" {
 }
 
 ///|
-#cfg(any(target="native", target="wasm"))
 test "max worker limit" {
   let time_of_jobs = [0, 0, 0, 0]
   with_event_loop(max_worker_count=2, () => {
@@ -163,7 +156,6 @@ test "max worker limit" {
 }
 
 ///|
-#cfg(any(target="native", target="wasm"))
 test "cancel queued job" {
   let log = []
   with_event_loop(max_worker_count=1, () => {
