@@ -751,6 +751,42 @@ test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
     @test.assert_eq(directory.entries().length(), 65535)
     @test.assert_eq(directory.entries()[65534].name(), "last")
   }
+  // Writers such as Python's zipfile add ZIP64 records only above 65535
+  // entries, leaving 0xFFFF in the classic counts. Rewrite the trailer that
+  // way: drop the ZIP64 end record and locator, and keep the real directory
+  // size and offset from the ZIP64 end record. The last name puts a ZIP64
+  // locator signature where a locator would be, at the end of the directory.
+  let last = "PK\u{06}\u{07}AAAAAAAAAAAAAAAA"
+  @test.assert_eq(parsed.remove("last"), true)
+  parsed.add(last, b"", compression=Store)
+  let bytes = @zip.write(parsed)
+  let zip64_end = bytes.length() - 22 - 20 - 56
+  let output = @buffer.Buffer()
+  output
+  ..write_bytesview(bytes[:zip64_end])
+  ..write_bytesview(b"PK\x05\x06\x00\x00\x00\x00\xff\xff\xff\xff")
+  ..write_bytesview(bytes[zip64_end + 40:zip64_end + 44])
+  ..write_bytesview(bytes[zip64_end + 48:zip64_end + 52])
+  .write_bytesview(b"\x00\x00")
+  let without_zip64 = output.to_bytes()
+  let edited = @zip.read_all(without_zip64)
+  @test.assert_eq(edited.entries().length(), 65535)
+  @test.assert_eq(edited.entries()[65534].name(), last)
+  let directory = drive_directory_ranges(
+    DirectoryReader(without_zip64.length().to_uint64()),
+    archive_range_source(without_zip64),
+  )
+  @test.assert_eq(directory.entries().length(), 65535)
+  @test.assert_eq(directory.entries()[65534].name(), last)
+  // A preserving rewrite after an edit patches those counts.
+  @test.assert_eq(edited.remove(last), true)
+  let rewritten = @zip.write(edited, preserve=true)
+  @test.assert_eq(@zip.read_all(rewritten).entries().length(), 65534)
+  let directory = drive_directory_ranges(
+    DirectoryReader(rewritten.length().to_uint64()),
+    archive_range_source(rewritten),
+  )
+  @test.assert_eq(directory.entries().length(), 65534)
 }
 
 ///|

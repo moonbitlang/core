@@ -474,8 +474,13 @@ fn Output::write_preserved_trailer(
     raise ZipError(UnsupportedFeature, "zip: preserved end record is malformed")
   }
   guard trailer.zip64_end_record is Some(end_record) else {
+    // Without ZIP64 records, the counts are ordinary values, even 0xFFFF.
     output.write_preserved_classic_end_record(
-      classic, total_entries, central_size, central_offset,
+      classic,
+      total_entries,
+      central_size,
+      central_offset,
+      keep_zip64_sentinels=false,
     )
     return
   }
@@ -514,20 +519,25 @@ fn Output::write_preserved_trailer(
   // Optional ZIP64 trailers can retain ordinary classic fields. Patch those
   // fields too, leaving any ZIP64 sentinels untouched.
   output.write_preserved_classic_end_record(
-    classic, total_entries, central_size, central_offset,
+    classic,
+    total_entries,
+    central_size,
+    central_offset,
+    keep_zip64_sentinels=true,
   )
 }
 
 ///|
 /// Streams a classic end record while patching both entry-count fields
-/// (offsets 8, 10) and the central size/offset (offsets 12, 16). Fields
-/// carrying ZIP64 sentinels are left untouched.
+/// (offsets 8, 10) and the central size/offset (offsets 12, 16). With
+/// `keep_zip64_sentinels`, fields carrying ZIP64 sentinels are left untouched.
 fn Output::write_preserved_classic_end_record(
   output : Output,
   classic : BytesView,
   total_entries : Int32,
   central_size : Int32,
   central_offset : Int32,
+  keep_zip64_sentinels~ : Bool,
 ) -> Unit raise ZipError {
   if classic.length() < 22 ||
     read_u32_le_at_raw(classic, 0) != END_OF_CENTRAL_SIG {
@@ -536,25 +546,25 @@ fn Output::write_preserved_classic_end_record(
   let count = total_entries.min(0xffff)
   let mut cursor = 0
   let entries_on_disk = read_u16_le_at(classic, 8)
-  if entries_on_disk != 0xffff {
+  if !keep_zip64_sentinels || entries_on_disk != 0xffff {
     output.write_bytes(classic[cursor:8])
     output.write_u16(count)
     cursor = 10
   }
   let total_on_disk = read_u16_le_at(classic, 10)
-  if total_on_disk != 0xffff {
+  if !keep_zip64_sentinels || total_on_disk != 0xffff {
     output.write_bytes(classic[cursor:10])
     output.write_u16(count)
     cursor = 12
   }
   let size_field = read_u32_le_at_raw(classic, 12)
-  if size_field != MAX_U32 {
+  if !keep_zip64_sentinels || size_field != MAX_U32 {
     output.write_bytes(classic[cursor:12])
     output.write_u32(central_size.to_uint_checked())
     cursor = 16
   }
   let offset_field = read_u32_le_at_raw(classic, 16)
-  if offset_field != MAX_U32 {
+  if !keep_zip64_sentinels || offset_field != MAX_U32 {
     output.write_bytes(classic[cursor:16])
     output.write_u32(central_offset.to_uint_checked())
     cursor = 20

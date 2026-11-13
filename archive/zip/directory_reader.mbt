@@ -181,9 +181,10 @@ fn DirectoryReader::advance_active(
         comment: reader.read_bytes(comment_size).to_owned(),
       }
       // ZIP64 records may also be present when every classic field fits.
-      let zip64 = disk_entries == 0xffff ||
-        entries == 0xffff ||
-        central_size == MAX_U32 ||
+      // They lie between the directory and this record, so a directory that
+      // ends right here has none, and 0xFFFF in its counts is an ordinary
+      // count: a classic archive may hold exactly 65535 entries.
+      let zip64 = central_size == MAX_U32 ||
         central_offset == MAX_U32 ||
         central_offset.to_uint64() + central_size.to_uint64() != classic.offset
       guard !zip64 else {
