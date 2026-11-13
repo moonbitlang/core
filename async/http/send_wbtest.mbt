@@ -29,6 +29,7 @@ async test "send_request Host for proxy requests" {
         (meth, target) in [
           (Connect, "origin.example:443"),
           (Get, "http://origin.example/path"),
+          (Get, "http://user@origin.example/path"),
           (Get, "/path"),
         ] {
         let _ = sender.send_request(meth, target, extra_headers=Map([]))
@@ -45,6 +46,11 @@ async test "send_request Host for proxy requests" {
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|GET http://origin.example/path HTTP/1.1\r
+        #|Host: origin.example\r
+        #|Proxy-Authorization: Basic dGVzdA==\r
+        #|Accept-Encoding: gzip,identity\r
+        #|\r
+        #|GET http://user@origin.example/path HTTP/1.1\r
         #|Host: origin.example\r
         #|Proxy-Authorization: Basic dGVzdA==\r
         #|Accept-Encoding: gzip,identity\r
