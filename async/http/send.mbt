@@ -56,22 +56,15 @@ fn request_target_host(
   } else {
     return None
   }
-  let authority = for i in 0..<rest.length() {
+  for i in 0..<rest.length() {
     if rest[i] is ('/' | '?' | '#') {
-      break rest[:i]
+      return if i > 0 { Some(rest[:i]) } else { None }
     }
-  } nobreak {
-    rest
   }
-  // `Host` leaves out the userinfo (RFC 9112, section 3.2.2)
-  let host = match authority.rev_find("@") {
-    Some(i) => authority[i + 1:]
-    None => authority
-  }
-  if host.is_empty() {
+  if rest.is_empty() {
     None
   } else {
-    Some(host)
+    Some(rest)
   }
 }
 
