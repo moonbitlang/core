@@ -20,7 +20,7 @@
 /// requests on that connection, one JSON value per line, one request at a time,
 /// until the connection is closed. Each method performs one `@tty` operation:
 ///
-/// - `make_raw`: `set_state(get_state().make_raw())`, result `null`
+/// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
 ///   `Tty::read`, or `Tty::read_into` an `n`-byte buffer with `max_len`
@@ -41,10 +41,14 @@ async fn main {
     fail("TTYD_PORT is not set")
   }
   let tty = @tty.open()
+  install_state_check()
   let rpc = @socket.Tcp::connect(@socket.Addr::parse("127.0.0.1:\{port}"))
   defer rpc.close()
   while rpc.read_until(b"\n") is Some(line) {
     let request = @json.parse(@utf8.decode_lossy(line))
+    if request is { "method": "fail", .. } {
+      fail("requested test failure")
+    }
     rpc.write(@utf8.encode("\{respond(tty, request).stringify()}\n"))
   }
 }
@@ -93,8 +97,16 @@ async fn respond(tty : @tty.Tty, request : Json) -> Json {
 ///|
 async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
   match name {
-    "make_raw" => {
-      tty.set_state(tty.get_state().make_raw())
+    "enter_raw_mode" => {
+      tty.enter_raw_mode()
+      null
+    }
+    "leave_raw_mode" => {
+      tty.leave_raw_mode()
+      null
+    }
+    "reopen" => {
+      ignore(@tty.open())
       null
     }
     "size" => {

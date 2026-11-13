@@ -16,4 +16,5 @@ pkgtype(kind: "executable")
 
 options(
   "allow-experimental-packages": true,
+  "native-stub": [ "state_check.c" ],
 )

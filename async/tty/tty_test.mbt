@@ -37,7 +37,9 @@ async fn Pty::expect_ok(self : Pty) -> Unit {
 /// Wait for the program to exit and return its exit code.
 async fn Pty::wait(self : Pty) -> Int32 {
   let process = self.0
-  guard process.wait() is 0 else { fail("pty failed") }
+  guard process.wait() is 0 else {
+    fail("pty failed: \{@utf8.decode_lossy(process.stderr.read_all())}")
+  }
   let output = @utf8.decode_lossy(process.stderr.read_all())
   guard output.strip_suffix("\n") is Some(line) &&
     line.strip_prefix("exit ") is Some(code) else {
@@ -101,8 +103,8 @@ async fn Ttyd::call(self : Ttyd, name : String, params~ : Json) -> Json {
 }
 
 ///|
-async fn Ttyd::make_raw(self : Ttyd) -> Unit {
-  self.call("make_raw", params={}) |> ignore()
+async fn Ttyd::enter_raw_mode(self : Ttyd) -> Unit {
+  self.call("enter_raw_mode", params={}) |> ignore()
 }
 
 ///|
@@ -283,7 +285,7 @@ async test "tty can be resized" {
 ///|
 async test "resize can interrupt a pending read" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => { expect_resize(() => ttyd.read() |> ignore) }
       group.spawn_bg() <| () => {
@@ -298,7 +300,7 @@ async test "resize can interrupt a pending read" {
 async test "multiple resize events collapse into one" {
   let sizes = [(25, 81), (26, 82), (27, 83)]
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     for (rows, cols) in sizes {
       ttyd.resize(rows, cols)
     }
@@ -334,7 +336,7 @@ async test "cooked mode respects line discipline" {
 ///|
 async test "raw mode delivers input without line buffering" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     let text = b"\x1b[A"
     ttyd.send_input(text)
     assert_eq(ttyd.read_exactly(text.length()), text)
@@ -344,7 +346,7 @@ async test "raw mode delivers input without line buffering" {
 ///|
 async test "read delivers bytes left by read_exactly first" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"abcdef")
     assert_eq(ttyd.read_exactly(3), b"abc")
     assert_eq(ttyd.read(), Some(b"def"))
@@ -354,7 +356,7 @@ async test "read delivers bytes left by read_exactly first" {
 ///|
 async test "read_exactly keeps partial input on resize" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
@@ -373,7 +375,7 @@ async test "read_exactly keeps partial input on resize" {
 ///|
 async test "resize stays pending until the next read" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.resize(25, 81)
     expect_resize(() => ttyd.read() |> ignore)
     expect_read_to_timeout(ttyd, timeout=200)
@@ -383,7 +385,7 @@ async test "resize stays pending until the next read" {
 ///|
 async test "drop_exactly keeps partial input on resize and can be retried" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
@@ -434,7 +436,7 @@ async test "^C interrupt cooked mode program" {
 ///|
 async test "^C does not interrupt raw mode program" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"\x03")
     guard ttyd.read_exactly(1) is b"\x03" else {
       fail("expected to read ^C as \\x03")
@@ -463,7 +465,7 @@ async test "cooked mode echoes back" {
 ///|
 async test "raw mode does not echo back" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     if @async.platform is Windows {
       ttyd.drain_output()
     }
@@ -481,7 +483,7 @@ async test "raw mode does not echo back" {
 #cfg(not(platform="windows"))
 async test "@io.Writer writes bytes as is under raw mode" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     let text = b"hello,\nworld!"
     ttyd.write(text)
     guard ttyd.pty.read_exactly(text.length()) == text else {
@@ -493,7 +495,7 @@ async test "@io.Writer writes bytes as is under raw mode" {
 ///|
 async test "raw mode delivers UTF-8 input" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     let text = b"\xc3\xa9\xe4\xb8\xad\xf0\x9f\x98\x80"
     ttyd.send_input(text)
     assert_eq(ttyd.read_exactly(text.length()), text)
@@ -503,7 +505,7 @@ async test "raw mode delivers UTF-8 input" {
 ///|
 async test "raw mode delivers NUL input from Ctrl+Space" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     let text = b"\x00a\x00"
     ttyd.send_input(text)
     assert_eq(ttyd.read_exactly(text.length()), text)
@@ -515,7 +517,7 @@ async test "raw mode delivers NUL input from Ctrl+Space" {
 /// are kept for the next read.
 async test "raw mode delivers a character across small reads" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     let text = b"\xf0\x9f\x98\x80"
     ttyd.send_input(text)
     for byte in text {
@@ -527,7 +529,7 @@ async test "raw mode delivers a character across small reads" {
 ///|
 async test "cancelling a parked read keeps the terminal usable" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     for input in [b"a", b"b", b"c"] {
       expect_read_to_timeout(ttyd, timeout=100)
       ttyd.send_input(input)
@@ -552,7 +554,7 @@ async test "a cooked read can be cancelled" {
 #cfg(platform="windows")
 async test "writer displays UTF-8 text through ConPTY" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.drain_output()
     ttyd.write(@utf8.encode("héllo 😀"))
     ttyd.expect_output_text("héllo 😀")
@@ -572,7 +574,7 @@ async test "cooked console preserves Ctrl-Z as input" {
 ///|
 async test "peek then drop consumes only the peeked prefix" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"abcdef")
     json_inspect(ttyd.call("peek_exactly", params={ "len": 3 }), content={
       "type": "input",
@@ -588,7 +590,7 @@ async test "peek then drop consumes only the peeked prefix" {
 ///|
 async test "read_into reports resize without opting in" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.resize(25, 81)
     expect_resize(() => ttyd.read(max_len=8) |> ignore)
     ttyd.send_input(b"abc")
@@ -599,7 +601,7 @@ async test "read_into reports resize without opting in" {
 ///|
 async test "read_until preserves partial input on resize" {
   with_ttyd() <| ttyd => {
-    ttyd.make_raw()
+    ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
@@ -628,5 +630,41 @@ async test "exact reads raise io UnexpectedEof" {
     json_inspect(ttyd.call("expect_unexpected_eof", params={}), content={
       "type": "unexpected_eof",
     })
+  }
+}
+
+///|
+async test "raw mode entry and exit are idempotent across reopen" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    ignore(ttyd.call("reopen", params={}))
+    ttyd.enter_raw_mode()
+    ignore(ttyd.call("leave_raw_mode", params={}))
+    ignore(ttyd.call("leave_raw_mode", params={}))
+    @async.with_task_group() <| group => {
+      ttyd.send_input(b"hello")
+      let reading = group.spawn(() => ttyd.read())
+      @async.sleep(100)
+      assert_true(reading.try_wait() is None)
+      let (enter, line) = if @async.platform is Windows {
+        (b"\r", b"hello\r\n")
+      } else {
+        (b"\n", b"hello\n")
+      }
+      ttyd.send_input(enter)
+      assert_eq(reading.wait(), Some(line))
+    }
+    ttyd.enter_raw_mode()
+    ttyd.send_input(b"x")
+    assert_eq(ttyd.read_exactly(1), b"x")
+  }
+}
+
+///|
+async test "raw mode is restored when the main task fails" {
+  with_ttyd(exit_with=1) <| ttyd => {
+    ttyd.enter_raw_mode()
+    ttyd.rpc.write(b"{\"jsonrpc\":\"2.0\",\"method\":\"fail\",\"id\":1000}\n")
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to exit") }
   }
 }
