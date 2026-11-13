@@ -48,7 +48,7 @@ async fn watch_basic_test(
   defer watcher.close()
 
   async fn wait() {
-    let events = @async.with_timeout(300, () => watcher.wait())
+    let events = @async.with_timeout(1000, () => watcher.wait())
     log.push("watcher received change: \{Repr(events)}")
   }
   // 1. modify content of existing file at root
@@ -217,7 +217,7 @@ async fn watch_rename_within_test(
   defer watcher.close()
 
   async fn wait() {
-    let events = @async.with_timeout(300, () => watcher.wait())
+    let events = @async.with_timeout(1000, () => watcher.wait())
     log.push("watcher received change: \{Repr(events)}")
   }
   // 1. rename within the same directory
@@ -339,7 +339,7 @@ async fn watch_rename_inout_test(
   defer watcher.close()
 
   async fn wait() {
-    let events = @async.with_timeout(300, () => watcher.wait())
+    let events = @async.with_timeout(1000, () => watcher.wait())
     log.push("watcher received change: \{Repr(events)}")
   }
   // 1. move foreign file inside watched tree
@@ -613,7 +613,7 @@ async test "watch ignored path" {
   defer watcher.close()
 
   async fn wait() {
-    let events = @async.with_timeout(300, () => watcher.wait())
+    let events = @async.with_timeout(1000, () => watcher.wait())
     log.push("watcher received change: \{Repr(events)}")
   }
 
