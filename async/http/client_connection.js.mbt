@@ -98,10 +98,12 @@ fn ClientConnection::connect(
   host : String,
   headers~ : Headers = Map([]),
   protocol~ : Protocol = Https,
-  proxy? : ClientConnection,
+  proxy? : Proxy,
   trust~ : @tls.TrustedRoot = SystemRoot,
 ) -> ClientConnection {
-  ignore(proxy)
+  if proxy is Some(proxy) {
+    ignore(proxy.setup)
+  }
   ignore(trust)
   let client = {
     text: @io.Utf8TextView::new_uninitialized(),
@@ -139,10 +141,9 @@ fn ClientConnection::connect(
 pub async fn ClientConnection::ClientConnection(
   uri : String,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
   trust~ : @tls.TrustedRoot = SystemRoot,
 ) -> ClientConnection {
-  ignore(proxy)
   let (protocol, host, path) = resolve_url(uri)
   guard path is "/" else { raise InvalidFormat }
   ClientConnection::connect(host, protocol~, headers~, proxy?, trust~)

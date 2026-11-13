@@ -113,6 +113,84 @@ async fn handle_connect(
 }
 
 ///|
+async test "custom tunnel" {
+  let log = []
+  let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+  let proxy_port = proxy_server.addr.port
+  let target_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+  let target_port = target_server.addr.port
+  @async.with_task_group() <| group => {
+    group.spawn_bg(no_wait=true) <| () => {
+      proxy_server.run_forever() <| ((request, conn) => {
+        handle_connect(log, request, conn)
+      })
+    }
+    group.spawn_bg(no_wait=true) <| () => {
+      target_server.run_forever() <| ((request, conn) => {
+        log.push("target server: received \{request.path}")
+        conn..send_response(200, "OK").end_response()
+      })
+    }
+    async fn setup_tunnel(hostname : StringView, port : UInt16) {
+      log.push("custom tunnel: connecting to \{hostname}:\{port}")
+      let conn = @http.ClientConnection("http://127.0.0.1:\{proxy_port}")
+      errdefer conn.close()
+      let response = conn..request(Connect, "\{hostname}:\{port}").end_request()
+      inspect(response.code, content="200")
+      conn..skip_response_body().enter_passthrough_mode()
+      conn
+    }
+    let proxy = @http.Proxy::custom_tunnel(setup_tunnel)
+    let client = @http.Client()
+    defer client.close()
+    let (response, _) = client.get(
+      "http://127.0.0.1:\{target_port}/custom-tunnel",
+      proxy~,
+    )
+    inspect(response.code, content="200")
+  }
+  for i in 0..<log.length() {
+    log[i] = log[i].replace_all(old=":\{target_port}", new=":XXXXX")
+  }
+  json_inspect(log, content=[
+    "custom tunnel: connecting to 127.0.0.1:XXXXX", "proxy server: connected to 127.0.0.1:XXXXX successfully",
+    "target server: received /custom-tunnel",
+  ])
+}
+
+///|
+async test "basic proxy authentication" {
+  let proxy_authorizations = []
+  @async.with_task_group() <| group => {
+    let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    let proxy_port = proxy_server.addr.port
+    group.spawn_bg(no_wait=true) <| () => {
+      proxy_server.run_forever() <| ((request, conn) => {
+        proxy_authorizations.push(
+          request.headers.get("Proxy-Authorization").unwrap_or("missing"),
+        )
+        handle_connect([], request, conn)
+      })
+    }
+    let target_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    let target_port = target_server.addr.port
+    group.spawn_bg(no_wait=true) <| () => {
+      target_server.run_forever() <| ((_request, conn) => {
+        conn..send_response(200, "OK").end_response()
+      })
+    }
+    let proxy = @http.Proxy(
+      "http://127.0.0.1:\{proxy_port}",
+      username="moon",
+      password="bit",
+    )
+    let (response, _) = @http.get("http://127.0.0.1:\{target_port}", proxy~)
+    inspect(response.code, content="200")
+  }
+  json_inspect(proxy_authorizations, content=["Basic bW9vbjpiaXQ="])
+}
+
+///|
 async test "proxied https request" {
   let log = []
   @async.with_task_group() <| group => {
@@ -123,7 +201,7 @@ async test "proxied https request" {
     }
     let (_, result) = @http.get(
       "https://www.moonbitlang.com",
-      proxy=ClientConnection("http://127.0.0.1:\{port}"),
+      proxy=Proxy("http://127.0.0.1:\{port}"),
     )
     assert_true(result.text().has_prefix("<!doctype html>"))
   }
@@ -143,7 +221,7 @@ async test "proxied http request" {
     }
     let (_, result) = @http.get(
       "http://www.example.org",
-      proxy=ClientConnection("http://127.0.0.1:\{port}"),
+      proxy=Proxy("http://127.0.0.1:\{port}"),
     )
     inspect(result.text()[:15], content="<!doctype html>")
   }
@@ -179,13 +257,10 @@ async test "proxied misc request" {
         }
       })
     }
-    async fn proxy() {
-      @http.ClientConnection("http://127.0.0.1:\{proxy_server_addr.port}")
-    }
-
-    let _ = @http.get("http://127.0.0.1:\{port}", proxy=proxy())
-    let _ = @http.put_text("http://127.0.0.1:\{port}", "abcd", proxy=proxy())
-    let _ = @http.post_text("http://127.0.0.1:\{port}", "efgh", proxy=proxy())
+    let proxy = @http.Proxy("http://127.0.0.1:\{proxy_server_addr.port}")
+    let _ = @http.get("http://127.0.0.1:\{port}", proxy~)
+    let _ = @http.put_text("http://127.0.0.1:\{port}", "abcd", proxy~)
+    let _ = @http.post_text("http://127.0.0.1:\{port}", "efgh", proxy~)
   }
   for i in 0..<log.length() {
     log[i] = log[i].replace_all(old=":\{port}", new=":XXXXX")
@@ -212,7 +287,7 @@ async test "proxy error" {
       @test.expect_error_async(() => {
         @http.get(
           "https://www.moonbitlang.com",
-          proxy=ClientConnection("http://127.0.0.1:\{port}"),
+          proxy=Proxy("http://127.0.0.1:\{port}"),
         )
       }),
       content=(
@@ -248,7 +323,7 @@ async test "proxy at an IPv6 address" {
       ignore(
         @http.get(
           "http://[::1]:8080/",
-          proxy=ClientConnection("http://[::1]:\{proxy_port}"),
+          proxy=Proxy("http://[::1]:\{proxy_port}"),
         ),
       )
       "connected"

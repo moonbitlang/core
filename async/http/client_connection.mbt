@@ -15,7 +15,7 @@
 ///|
 priv enum ClientTransport {
   Plain(@socket.Tcp)
-  Proxy(ClientConnection)
+  Proxied(ClientConnection)
 }
 
 ///|
@@ -45,16 +45,17 @@ async fn ClientConnection::connect(
   host : StringView,
   headers~ : Headers = Map([]),
   protocol~ : Protocol = Https,
-  proxy? : ClientConnection,
+  proxy? : Proxy,
   trust~ : @tls.TrustedRoot = SystemRoot,
 ) -> ClientConnection {
   let (hostname, port) = resolve_host(host, protocol~)
   let transport = if proxy is Some(proxy) {
-    errdefer proxy.close()
-    let response = proxy..request(Connect, "\{hostname}:\{port}").end_request()
-    guard response.code is (200..<300) else { raise ProxyError(response) }
-    proxy..skip_response_body().enter_passthrough_mode()
-    Proxy(proxy)
+    let conn = (proxy.setup)(hostname, port)
+    guard conn.sender.mode is PassThrough && conn.reader.body is PassThrough else {
+      conn.close()
+      raise Failure("proxy connection not properly set to passthrough mode")
+    }
+    Proxied(conn)
   } else {
     Plain(@socket.Tcp::connect_to_host(hostname, port~))
   }
@@ -62,7 +63,7 @@ async fn ClientConnection::connect(
   let user_agent = headers.get("User-Agent")
   let (transport_read, transport_write) = match transport {
     Plain(conn) => (conn as &@io.BinaryReader, conn as &@io.BinaryWriter)
-    Proxy(proxy) => (proxy as &@io.BinaryReader, proxy as &@io.BinaryWriter)
+    Proxied(proxy) => (proxy as &@io.BinaryReader, proxy as &@io.BinaryWriter)
   }
   let (tls, transport_read, transport_write) = match protocol {
     Http => (None, transport_read, transport_write)
@@ -116,19 +117,13 @@ async fn ClientConnection::connect(
 ///
 /// `User-Agent` may be specified to override the library default.
 ///
-/// If `proxy` is present, it should be another HTTP client in a clean state.
-/// The new client will send a `CONNECT` request via the proxy client
-/// and try to establish a tunnel via the proxy client.
-/// All subsequent requests made by the new client will go through the proxy tunnel.
-/// The ownership of the proxy client is transferred to the new client,
-/// so it must not be used nor closed anymore by the caller.
-/// Using another HTTP client as proxy allows advanced features such as
-/// proxy authentication and https `CONNECT` proxy.
+/// If `proxy` is present, the connection is established through that proxy.
+/// See `@http.Proxy` for details.
 #alias(new, deprecated)
 pub async fn ClientConnection::ClientConnection(
-  uri : String,
+  uri : StringView,
   headers~ : Headers = Map([]),
-  proxy? : ClientConnection,
+  proxy? : Proxy,
   trust? : @tls.TrustedRoot,
 ) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
@@ -140,7 +135,7 @@ pub async fn ClientConnection::ClientConnection(
 fn ClientTransport::close(self : ClientTransport) -> Unit {
   match self {
     Plain(conn) => conn.close()
-    Proxy(proxy) => proxy.close()
+    Proxied(proxy) => proxy.close()
   }
 }
 

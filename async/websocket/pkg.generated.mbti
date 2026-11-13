@@ -41,7 +41,7 @@ pub struct Conn {
 }
 pub fn Conn::close(Self) -> Unit
 #as_free_fn
-pub async fn Conn::connect(String, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.ClientConnection) -> Self
+pub async fn Conn::connect(String, headers? : Map[@http.CaseInsensitiveString, String], proxy? : @http.Proxy) -> Self
 pub async fn Conn::end_message(Self) -> Unit
 pub async fn Conn::flush_partial_data(Self) -> Unit
 #as_free_fn

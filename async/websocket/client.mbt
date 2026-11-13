@@ -105,7 +105,7 @@ pub async fn Conn::from_http_client(
 pub async fn Conn::connect(
   url : String,
   headers~ : @http.Headers = Map([]),
-  proxy? : @http.ClientConnection,
+  proxy? : @http.Proxy,
 ) -> Conn {
   guard url.find("://") is Some(protocol_len) else {
     abort("`@websocket.Conn::connect()`: invalid URL: missing protocol")
