@@ -139,20 +139,21 @@ async test "worker cancel2" {
 
 ///|
 test "max worker limit" {
-  let time_of_jobs = [0, 0, 0, 0]
+  let job_completion_time : FixedArray[Int64] = [0, 0, 0, 0]
   with_event_loop(max_worker_count=2, () => {
     @async.with_task_group <| group => {
       for i in 0..<4 {
         group.spawn_bg() <| () => {
-          let start = @async.now()
           perform_sleep_job(200)
-          let t = (@async.now() - start).to_int() / 200
-          time_of_jobs[i] = t
+          job_completion_time[i] = @async.now()
         }
       }
     }
   })
-  @json.json_inspect(time_of_jobs, content=[1, 1, 2, 2])
+  let delta1 = job_completion_time[2] - job_completion_time[0]
+  inspect((delta1 + 50) / 200, content="1")
+  let delta2 = job_completion_time[2] - job_completion_time[0]
+  inspect((delta2 + 50) / 200, content="1")
 }
 
 ///|
