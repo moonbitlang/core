@@ -415,12 +415,15 @@ async fn Sender::send_request(
       self.write(b" ")
     }
   }
+  let path_bytes = @utf8.encode(path)
   let content_length = self
-    ..write(@utf8.encode(path))
+    ..write(path_bytes)
     ..write(b" HTTP/1.1\r\n")
     ..write(self.headers)
     .send_headers(extra_headers)
-  if self.host is Some(host) {
+  if meth is Connect {
+    self..write(b"Host: ")..write(path_bytes).write(b"\r\n")
+  } else if self.host is Some(host) {
     self..write(b"Host: ")..write(host).write(b"\r\n")
   }
   let auto_decompress = !self.has_accept_encoding &&
