@@ -32,12 +32,13 @@ priv struct Sender {
   ctrl : @io.BinaryWriterController
   headers : Bytes
   host : Bytes?
+  user_agent : Bytes?
   has_accept_encoding : Bool
 }
 
 ///|
 let forbidden_headers : @set.Set[CaseInsensitiveString] = Set([
-  "Host", "Content-Length", "Transfer-Encoding",
+  "Host", "User-Agent", "Content-Length", "Transfer-Encoding",
 ])
 
 ///|
@@ -66,6 +67,7 @@ fn sanitize_header_value(s : StringView) -> StringView {
 fn[W : @io.BinaryWriter] Sender::client(
   w : W,
   host~ : StringView,
+  user_agent~ : String = "moonbit-http-client/1.1",
   headers~ : Headers = Map([]),
 ) -> Sender {
   let header_text = @buffer.Buffer()
@@ -93,6 +95,7 @@ fn[W : @io.BinaryWriter] Sender::client(
     ctrl: BinaryWriterController(),
     headers: header_text.contents(),
     host: Some(host |> sanitize_header_value |> @utf8.encode),
+    user_agent: Some(user_agent |> sanitize_header_value |> @utf8.encode),
     has_accept_encoding,
   }
 }
@@ -123,6 +126,7 @@ fn[W : @io.BinaryWriter] Sender::server(
     ctrl: BinaryWriterController(),
     headers: header_text.contents(),
     host: None,
+    user_agent: None,
     has_accept_encoding: false,
   }
 }
@@ -425,6 +429,12 @@ async fn Sender::send_request(
     self..write(b"Host: ")..write(path_bytes).write(b"\r\n")
   } else if self.host is Some(host) {
     self..write(b"Host: ")..write(host).write(b"\r\n")
+  }
+  if extra_headers.get("User-Agent") is Some(user_agent) {
+    let user_agent = user_agent |> sanitize_header_value |> @utf8.encode
+    self..write(b"User-Agent: ")..write(user_agent).write(b"\r\n")
+  } else if self.user_agent is Some(user_agent) {
+    self..write(b"User-Agent: ")..write(user_agent).write(b"\r\n")
   }
   let auto_decompress = !self.has_accept_encoding &&
     !extra_headers.contains("Accept-Encoding")

@@ -59,8 +59,6 @@ pub fn Client::close(_ : Client) -> Unit {
 ///
 /// In addition to common headers specified on client creation,
 /// extra HTTP headers can be passed via `extra_headers`.
-/// In addition to the forbidden headers in `@http.Client(..)`,
-/// `User-Agent` must not be specified in `extra_headers`: it can only be specified on client creation.
 ///
 /// If `Content-Length` is present in `extra_headers`,
 /// it should be the total length of the request body.

@@ -59,37 +59,28 @@ async fn ClientConnection::connect(
     Plain(@socket.Tcp::connect_to_host(hostname, port~))
   }
   errdefer transport.close()
-  if !headers.contains("User-Agent") {
-    headers["User-Agent"] = "moonbit-http-client/1.1"
+  let user_agent = headers.get("User-Agent")
+  let (transport_read, transport_write) = match transport {
+    Plain(conn) => (conn as &@io.BinaryReader, conn as &@io.BinaryWriter)
+    Proxy(proxy) => (proxy as &@io.BinaryReader, proxy as &@io.BinaryWriter)
   }
-  let (tls, reader, sender) = match (protocol, transport) {
-    (Http, Plain(conn)) =>
-      (None, Reader::new(conn), Sender::client(conn, host~, headers~))
-    (Https, Plain(conn)) => {
+  let (tls, transport_read, transport_write) = match protocol {
+    Http => (None, transport_read, transport_write)
+    Https => {
       // HTTP has its own message delimiter so TLS shutdown is unnecessary.
       // Many realworld HTTP server does not perform proper TLS shutdown.
-      let tls = @tls.Tls::client(
-        conn,
+      let tls = @tls.Tls::client_from_pair(
+        transport_read,
+        transport_write,
         host=hostname.to_owned(),
         trust~,
         require_shutdown=false,
       )
-      (Some(tls), Reader::new(tls), Sender::client(tls, host~, headers~))
-    }
-    (Http, Proxy(proxy)) =>
-      (None, Reader::new(proxy), Sender::client(proxy, host~, headers~))
-    (Https, Proxy(proxy)) => {
-      // HTTP has its own message delimiter so TLS shutdown is unnecessary.
-      // Many realworld HTTP server does not perform proper TLS shutdown.
-      let tls = @tls.Tls::client(
-        proxy,
-        host=hostname.to_owned(),
-        trust~,
-        require_shutdown=false,
-      )
-      (Some(tls), Reader::new(tls), Sender::client(tls, host~, headers~))
+      (Some(tls), tls, tls)
     }
   }
+  let reader = Reader::new(transport_read)
+  let sender = Sender::client(transport_write, host~, user_agent?, headers~)
   let client = {
     text: @io.Utf8TextView::new_uninitialized(),
     transport,
@@ -122,6 +113,8 @@ async fn ClientConnection::connect(
 ///
 /// - Host
 /// - Content-Length, Transfer-Encoding
+///
+/// `User-Agent` may be specified to override the library default.
 ///
 /// If `proxy` is present, it should be another HTTP client in a clean state.
 /// The new client will send a `CONNECT` request via the proxy client
@@ -330,11 +323,6 @@ pub async fn ClientConnection::end_request(
 ///
 /// - Host
 /// - Transfer-Encoding
-///
-/// The following headers can only be set globally for each client on initialization,
-/// and must not be set on a per-request basis:
-///
-/// - User-Agent
 ///
 /// If `Content-Length` is present in `extra_headers`,
 /// it should be the total length of the request body.

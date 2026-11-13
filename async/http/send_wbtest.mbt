@@ -21,9 +21,9 @@ async test "send_request basic" {
     let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let sender = Sender::client(w, host="x.y.org")
+      let sender = Sender::client(w, host="x.y.org", user_agent="MoonBit")
       let _ = sender.send_request(Get, "/", extra_headers={
-        "User-Agent": "MoonBit",
+        "User-Agent": "MoonBit2",
       })
       sender.end_body()
     }
@@ -32,8 +32,8 @@ async test "send_request basic" {
       r.read_all() |> @bytes_util.ascii_to_string,
       content=(
         #|GET / HTTP/1.1\r
-        #|User-Agent: MoonBit\r
         #|Host: x.y.org\r
+        #|User-Agent: MoonBit2\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|
@@ -48,12 +48,10 @@ async test "send_request stream" {
     let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let sender = Sender::client(w, host="x.y.org")
+      let sender = Sender::client(w, host="x.y.org", user_agent="MoonBit")
       let file = @fs.open("LICENSE", mode=ReadOnly)
       defer file.close()
-      let _ = sender.send_request(Get, "/", extra_headers={
-        "User-Agent": "MoonBit",
-      })
+      let _ = sender.send_request(Get, "/", extra_headers={})
       sender..optimized_write_reader(file).end_body()
     }
     defer r.close()
@@ -61,8 +59,8 @@ async test "send_request stream" {
       r.read_all() |> @bytes_util.ascii_to_string,
       content=(
         #|GET / HTTP/1.1\r
-        #|User-Agent: MoonBit\r
         #|Host: x.y.org\r
+        #|User-Agent: MoonBit\r
         #|Accept-Encoding: gzip,identity\r
         #|Transfer-Encoding: chunked\r
         #|\r
@@ -305,10 +303,8 @@ async test "send_request stream2" {
     let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let sender = Sender::client(w, host="x.y.org")
-      let _ = sender.send_request(Get, "/", extra_headers={
-        "User-Agent": "MoonBit",
-      })
+      let sender = Sender::client(w, host="x.y.org", user_agent="MoonBit")
+      let _ = sender.send_request(Get, "/", extra_headers={})
       sender.write(b"abcd")
       @async.sleep(50)
       sender.write(b"efgh")
@@ -321,8 +317,8 @@ async test "send_request stream2" {
       r.read_all() |> @bytes_util.ascii_to_string,
       content=(
         #|GET / HTTP/1.1\r
-        #|User-Agent: MoonBit\r
         #|Host: x.y.org\r
+        #|User-Agent: MoonBit\r
         #|Accept-Encoding: gzip,identity\r
         #|Transfer-Encoding: chunked\r
         #|\r
@@ -356,6 +352,7 @@ async test "send_request extension method" {
       content=(
         #|PROPFIND / HTTP/1.1\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|
@@ -392,10 +389,11 @@ async test "send invalid header" {
     root.spawn_bg() <| () => {
       defer w.close()
       let sender = Sender::client(w, host="x.y.org", headers={
+        "Host": "custom_host",
         "Transfer-Encoding": "chunked",
       })
       let _ = sender.send_request(Get, "/", extra_headers={
-        "User-Agent": "MoonBit",
+        "Host": "custom_host",
         "Transfer-Encoding": "chunked",
       })
       sender.end_body()
@@ -405,8 +403,8 @@ async test "send invalid header" {
       r.read_all() |> @bytes_util.ascii_to_string,
       content=(
         #|GET / HTTP/1.1\r
-        #|User-Agent: MoonBit\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|
@@ -445,6 +443,7 @@ async test "send fixed length" {
         #|GET / HTTP/1.1\r
         #|Content-Length: 11406\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|===== header =====
@@ -803,14 +802,17 @@ async test "send_request empty body" {
       content=(
         #|GET / HTTP/1.1\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|HEAD / HTTP/1.1\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|POST / HTTP/1.1\r
         #|Host: x.y.org\r
+        #|User-Agent: moonbit-http-client/1.1\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|
@@ -894,9 +896,7 @@ async test "sender persistent header" {
     let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
-      let sender = Sender::client(w, host="x.y.org", headers={
-        "User-Agent": "MoonBit",
-      })
+      let sender = Sender::client(w, host="x.y.org", user_agent="MoonBit")
       let _ = sender.send_request(Get, "/", extra_headers=Map([]))
       sender.end_body()
     }
@@ -905,8 +905,8 @@ async test "sender persistent header" {
       r.read_all() |> @bytes_util.ascii_to_string,
       content=(
         #|GET / HTTP/1.1\r
-        #|User-Agent: MoonBit\r
         #|Host: x.y.org\r
+        #|User-Agent: MoonBit\r
         #|Accept-Encoding: gzip,identity\r
         #|\r
         #|
