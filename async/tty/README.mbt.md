@@ -18,15 +18,14 @@ pub async fn run() -> Unit {
   let (rows, cols) = tty.size()
   tty.write(@utf8.encode("\{rows}x\{cols}\r\n"))
   for ;; {
-    try tty.read(raise_on_resize=true) catch {
+    match tty.read() {
       Resized => {
         let (rows, cols) = tty.size()
         tty.write(@utf8.encode("resized to \{rows}x\{cols}\r\n"))
       }
-      err => raise err
-    } noraise {
-      None | Some(b"q") => break
-      Some(bytes) => tty.write(@utf8.encode("got \{bytes.length()} bytes\r\n"))
+      Value(None) | Value(Some(b"q")) => break
+      Value(Some(bytes)) =>
+        tty.write(@utf8.encode("got \{bytes.length()} bytes\r\n"))
     }
   }
 }
@@ -44,17 +43,21 @@ Notes:
 - `get_state`, `set_state` and `State::make_raw` work like `tcgetattr`,
   `tcsetattr` and `cfmakeraw`. A `State` is an opaque value; other modes, such
   as reading a password, are built on raw mode.
-- The read methods of `Tty` take `raise_on_resize`: with `true`, a resize
-  raises `Resized`, which carries no size, call `size()`. A resize that comes
-  while no such read is in progress stays pending for the next one. A resize
-  is never lost, but several resizes in a row may be reported once, and a
-  resize may be reported after input typed later.
-- The read methods are cancellation safe: when one raises `Resized` or is
-  cancelled, the input read so far is kept for later reads.
-- `Tty` implements `@io.BinaryReader` and `@io.BinaryWriter`. As a reader it
-  never reports resizes, they stay pending. Only one read, through `Tty`'s own
-  methods or `@io.BinaryReader`, may be in progress at a time; starting
-  another one aborts the program, as with any other reader.
+- Read methods return `MaybeResized[T]`: `Value(value)` contains the original
+  read result, while `Resized` reports a window change. Call `size()` for the
+  current size. Real read failures raise `@io.ReaderError`.
+- Pending resizes are retained, but consecutive resizes may be reported once.
+  Buffered input may be returned before a pending resize; notification order
+  need not match the order of input and window changes.
+- Reads preserve input when returning `Resized` or being cancelled. In
+  particular, `read_exactly` and `drop_exactly` consume input only after the
+  requested length is available, so they can be retried with the same length.
+- EOF remains `Value(None)` for `read`/`peek`/`read_until`/`peek_until`, and
+  `Value(0)` for `read_into`. Exact/minimum-length operations raise
+  `@io.UnexpectedEof` when insufficient input remains.
+- `Tty` implements `@io.BinaryWriter`, but not `@io.BinaryReader`: callers
+  handle resize notifications explicitly. Only one read may be in progress
+  at a time; starting another one aborts the program.
 - Native only. On Windows `open()` opens the console
   (`CONIN$`/`CONOUT$`). Console input is converted to the same VT byte stream
   as on Unix, and resizes are only reported in raw mode, where input is read

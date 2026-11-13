@@ -18,11 +18,6 @@
 pub extend Tty with @io.BinaryWriter::{flush_partial_data}
 
 ///|
-#deprecated
+#deprecated(skip_current_package=true)
 #doc(hidden)
-pub extend TtyError with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend Tty with @io.BinaryReader::{read_all, drop_all}
+pub extend MaybeResized with @debug.Debug::{to_repr}
