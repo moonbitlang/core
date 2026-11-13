@@ -22,14 +22,17 @@
 ///
 /// - `make_raw`: `set_state(get_state().make_raw())`, result `null`
 /// - `size`: result `[rows, cols]`
-/// - `read`, params `{"max_len"?: n, "raise_on_resize"?: bool, "timeout"?: ms}`:
+/// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
 ///   `Tty::read`, or `Tty::read_into` an `n`-byte buffer with `max_len`
-/// - `read_exactly`, params `{"len": n, "raise_on_resize"?: bool}`:
+/// - `read_exactly`, params `{"len": n}`:
 ///   `Tty::read_exactly`
 ///
 ///   Both result in `{"type":"input","bytes":"<base64>"}`, `{"type":"resize"}`
 ///   for `Resized`, `{"type":"eof"}`, or `{"type":"timeout"}` when the read is
 ///   cancelled after `timeout`.
+/// - `peek_exactly`, `drop_exactly`: params `{"len": n}`
+/// - `read_until`: read through a newline
+/// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -105,16 +108,19 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
           raise invalid_params("`max_len` must be a number")
         _ => None
       }
-      read_result(params, raise_on_resize => {
+      read_result(params, () => {
         match max_len {
-          None => tty.read(raise_on_resize~)
+          None => input_result(tty.read())
           Some(max_len) => {
             let buf = FixedArray::make(max_len, b'\x00')
-            let n = tty.read_into(buf, raise_on_resize~)
-            if n == 0 {
-              None
-            } else {
-              Some(Bytes::from_array(buf[:n]))
+            match tty.read_into(buf) {
+              Resized => { "type": "resize" }
+              Value(0) => { "type": "eof" }
+              Value(n) =>
+                {
+                  "type": "input",
+                  "bytes": @base64.encode(Bytes::from_array(buf[:n])),
+                }
             }
           }
         }
@@ -124,9 +130,39 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      read_result(params, raise_on_resize => {
-        Some(tty.read_exactly(len.to_int(), raise_on_resize~))
+      read_result(params, () => {
+        match tty.read_exactly(len.to_int()) {
+          Resized => { "type": "resize" }
+          Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
+        }
       })
+    }
+    "peek_exactly" => {
+      guard params is { "len": Number(len, ..), .. } else {
+        raise invalid_params("`len` must be a number")
+      }
+      match tty.peek_exactly(len.to_int()) {
+        Resized => { "type": "resize" }
+        Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
+      }
+    }
+    "read_until" =>
+      read_result(params, () => input_result(tty.read_until(b"\n")))
+    "expect_unexpected_eof" =>
+      try tty.read_exactly(2) catch {
+        @io.UnexpectedEof => { "type": "unexpected_eof" }
+        err => raise err
+      } noraise {
+        _ => fail("expected ReaderError::UnexpectedEof")
+      }
+    "drop_exactly" => {
+      guard params is { "len": Number(len, ..), .. } else {
+        raise invalid_params("`len` must be a number")
+      }
+      match tty.drop_exactly(len.to_int()) {
+        Resized => { "type": "resize" }
+        Value(_) => { "type": "dropped" }
+      }
     }
     "write" => {
       guard params is { "bytes": String(bytes), .. } else {
@@ -140,37 +176,31 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
 }
 
 ///|
-/// Run the read `f` with the `raise_on_resize` and `timeout` in `params`,
+/// Run the read `f` with the `timeout` in `params`,
 /// and describe its result.
-async fn read_result(
-  params : Json,
-  f : async (Bool) -> Bytes? raise @tty.TtyError,
-) -> Json {
-  let raise_on_resize = match params {
-    { "raise_on_resize": True, .. } => true
-    { "raise_on_resize": False, .. } | { "raise_on_resize"? : None, .. } =>
-      false
-    _ => raise invalid_params("`raise_on_resize` must be a boolean")
-  }
-  let result = try {
+async fn read_result(params : Json, f : async () -> Json) -> Json {
+  try {
     match params {
       { "timeout": Number(timeout, ..), .. } =>
-        match
-          @async.with_timeout_opt(timeout.to_int(), () => f(raise_on_resize)) {
+        match @async.with_timeout_opt(timeout.to_int(), () => f()) {
           None => return { "type": "timeout" }
           Some(result) => result
         }
       { "timeout": _, .. } => raise invalid_params("`timeout` must be a number")
-      _ => f(raise_on_resize)
+      _ => f()
     }
   } catch {
-    @tty.Resized => return { "type": "resize" }
-    @tty.UnexpectedEof => None
+    @io.UnexpectedEof => { "type": "eof" }
     err => raise err
   }
+}
+
+///|
+fn input_result(result : @tty.MaybeResized[Bytes?]) -> Json {
   match result {
-    Some(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
-    None => { "type": "eof" }
+    Value(Some(bytes)) => { "type": "input", "bytes": @base64.encode(bytes) }
+    Value(None) => { "type": "eof" }
+    Resized => { "type": "resize" }
   }
 }
 
