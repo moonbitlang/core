@@ -12,9 +12,8 @@ those belong to libraries built on top of it.
 /// Print the terminal size, then report input and resizes until `q` is pressed
 pub async fn run() -> Unit {
   let tty = @tty.open()
-  let saved = tty.get_state()
-  tty.set_state(saved.make_raw())
-  defer tty.set_state(saved)
+  tty.enter_raw_mode()
+  defer tty.leave_raw_mode()
   let (rows, cols) = tty.size()
   tty.write(@utf8.encode("\{rows}x\{cols}\r\n"))
   for ;; {
@@ -37,12 +36,18 @@ Notes:
   the terminal, later calls in the same loop return the same `Tty`. When the
   loop exits, the `Tty` is closed, like a closed file: later calls fail with
   `EBADF`. There is no `close`.
-- The state is not restored when the loop exits. Restore it with `defer`, as
-  in the example above, which also runs on errors and cancellation.
+- The first `open()` saves the terminal state. Event loop cleanup attempts to
+  restore it before closing the terminal, including when async work fails or
+  is cancelled. Restoration errors propagate to event loop cleanup; terminal
+  handles are still closed. Forced process termination can bypass cleanup.
+- `enter_raw_mode()` applies raw mode derived from that saved state;
+  `leave_raw_mode()` restores the saved state, which may itself already be raw.
+  Both are idempotent and may raise OS errors. Calls do not nest: one leave
+  restores the state regardless of how many times enter was called. The
+  application should coordinate mode changes across users of the shared Tty.
+- Use `defer tty.leave_raw_mode()` to restore when a scope exits before the
+  event loop finishes. Reopening the Tty does not replace the saved state.
 - In raw mode Ctrl-C no longer interrupts the program. It arrives as `b"\x03"`.
-- `get_state`, `set_state` and `State::make_raw` work like `tcgetattr`,
-  `tcsetattr` and `cfmakeraw`. A `State` is an opaque value; other modes, such
-  as reading a password, are built on raw mode.
 - Read methods return `MaybeResized[T]`: `Value(value)` contains the original
   read result, while `Resized` reports a window change. Call `size()` for the
   current size. Real read failures raise `@io.ReaderError`.

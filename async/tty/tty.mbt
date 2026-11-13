@@ -19,6 +19,7 @@ struct Tty {
   output : @event_loop.IoHandle
   read_ctrl : @io.BinaryReaderController
   write_ctrl : @io.BinaryWriterController
+  original_state : State
   mut reading : Bool
 }
 
@@ -29,7 +30,8 @@ let instance : @ref.Ref[Tty?] = {
   @event_loop.register_hook(exit=() => {
     guard instance.val is Some(tty) else { return }
     instance.val = None
-    tty.close()
+    defer tty.close()
+    tty.leave_raw_mode()
   })
   instance
 }
@@ -41,20 +43,22 @@ let instance : @ref.Ref[Tty?] = {
 ///
 /// Every call in the same event loop returns the _same_ `Tty`,
 /// because all handles of a terminal share its mode, input and resize signal.
-/// The terminal is closed when the event loop exits, but its state is not
-/// restored: undo `set_state` with `defer`, see `Tty::set_state`.
+/// The first open saves the terminal state. When the event loop exits, that
+/// state is restored before the terminal is closed. Restoration failures
+/// propagate to event loop cleanup; the terminal handles are still closed.
 pub async fn open() -> Tty {
   @coroutine.check_cancellation()
   if instance.val is Some(tty) {
     return tty
   }
   let (input, output) = open_handles(context="@tty.open()")
-  let tty = Tty::new(input~, output~)
   // another `open()` may have finished while this one was opening
   if instance.val is Some(other) {
-    tty.close()
+    output.close()
+    input.close()
     return other
   }
+  let tty = Tty::new(input~, output~)
   instance.val = Some(tty)
   tty
 }
@@ -63,12 +67,18 @@ pub async fn open() -> Tty {
 fn Tty::new(
   input~ : @event_loop.IoHandle,
   output~ : @event_loop.IoHandle,
-) -> Tty {
+) -> Tty raise {
+  errdefer {
+    output.close()
+    input.close()
+  }
+  let original_state = State::read(input.fd(), output.fd())
   {
     tty: @event_loop.Tty::new(input~),
     output,
     read_ctrl: BinaryReaderController(),
     write_ctrl: BinaryWriterController(),
+    original_state,
     reading: false,
   }
 }
@@ -80,13 +90,12 @@ fn Tty::close(self : Tty) -> Unit {
 }
 
 ///|
-/// A terminal state, as returned by `Tty::get_state` and applied by
-/// `Tty::set_state`, like `struct termios` in C.
+/// A private snapshot of terminal configuration, like `struct termios` in C.
 ///
 /// The bytes follow the host: the kernel `struct termios2` on Linux,
 /// `struct termios` on macOS,
 /// and the input and output console modes as little-endian `u32` on Windows.
-struct State(FixedArray[Byte])
+priv struct State(FixedArray[Byte])
 
 ///|
 fn state_size() -> Int32 {
@@ -328,7 +337,7 @@ const DISABLE_NEWLINE_AUTO_RETURN : UInt64 = 0x8
 /// no signals from keys and no output post-processing, as `cfmakeraw` in C.
 /// Reads return as soon as one byte is available.
 /// On Windows it also turns on VT input and output.
-pub fn State::make_raw(self : State) -> State {
+fn State::make_raw(self : State) -> State {
   let raw = self.copy()
   match @event_loop.platform {
     Linux => {
@@ -418,27 +427,39 @@ fn State::is_raw(self : State) -> Bool {
 }
 
 ///|
-/// The current state of the terminal.
-pub fn Tty::get_state(self : Tty) -> State raise {
+/// Snapshot the current terminal state.
+fn State::read(input : @fd_util.Fd, output : @fd_util.Fd) -> State raise {
   let state = State(FixedArray::make(state_size(), b'\x00'))
-  if tty_get_state(self.tty.input_fd(), self.output.fd(), state.0) < 0 {
-    @os_error.check_errno("@tty.Tty::get_state()")
+  if tty_get_state(input, output, state.0) < 0 {
+    @os_error.check_errno("@tty: read terminal state")
   }
   state
 }
 
 ///|
-/// Apply `state`, e.g. one returned by `State::make_raw`:
-///
-/// ```moonbit nocheck
-/// let saved = tty.get_state()
-/// tty.set_state(saved.make_raw())
-/// defer tty.set_state(saved)
-/// ```
-pub fn Tty::set_state(self : Tty, state : State) -> Unit raise {
+fn Tty::set_state(self : Tty, state : State) -> Unit raise {
   if tty_set_state(self.tty.input_fd(), self.output.fd(), state.0) < 0 {
-    @os_error.check_errno("@tty.Tty::set_state()")
+    @os_error.check_errno("@tty: set terminal state")
   }
+}
+
+///|
+/// Enter raw mode derived from the state saved by the first `open()`.
+/// Repeated calls apply the same mode; they do not nest or replace the saved
+/// state. Terminal mode is shared: the application should coordinate its use.
+/// Restore early with `leave_raw_mode`, or let event loop cleanup restore it.
+pub fn Tty::enter_raw_mode(self : Tty) -> Unit raise {
+  self.set_state(self.original_state.make_raw())
+}
+
+///|
+/// Restore the state saved by the first `open()`, including after repeated
+/// calls to `enter_raw_mode`. This is idempotent, not reference counted.
+/// The saved state may itself be raw; this does not force cooked mode.
+/// Errors are propagated so restoration can be retried. Event loop cleanup
+/// also attempts restoration, even if an earlier mode change failed.
+pub fn Tty::leave_raw_mode(self : Tty) -> Unit raise {
+  self.set_state(self.original_state)
 }
 
 ///|
@@ -495,7 +516,8 @@ impl @io.BinaryReaderImpl for Tty with fn raw_read_impl(
     buf,
     offset~,
     len=max_len,
-    raw=@event_loop.platform is Windows && self.get_state().is_raw(),
+    raw=@event_loop.platform is Windows &&
+      State::read(self.tty.input_fd(), self.output.fd()).is_raw(),
     block_resize=false,
     context="@tty.Tty",
   )
