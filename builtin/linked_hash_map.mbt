@@ -112,9 +112,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// The optional `capacity` reserves room for at least that many total entries
 /// without growing, including the entries in `arr`. The bucket count is rounded
 /// up to a power of two with room for the map's load factor. A hint smaller than
-/// `arr.length()` is ignored; non-positive hints on an empty array reserve zero
+/// `arr.length()` is ignored; a zero hint on an empty array reserves zero
 /// entries. Without a hint, an empty map uses the default initial bucket count.
-/// Aborts if the requested entry count exceeds the supported table size.
+/// Aborts if `capacity` is negative or if the requested entry count exceeds the
+/// supported table size.
 ///
 /// ```mbt check
 /// test {
@@ -133,7 +134,10 @@ pub fn[K : Hash + Eq, V] Map::Map(
 ) -> Map[K, V] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity_for_length(capacity.max(length))
+    Some(capacity) => {
+      guard capacity >= 0 else { abort("capacity must be non-negative") }
+      capacity_for_length(capacity.max(length))
+    }
     None =>
       if length == 0 {
         default_init_capacity

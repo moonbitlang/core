@@ -1121,3 +1121,8 @@ test "update_or_default: f replaces the present key" {
     ),
   )
 }
+
+///|
+test "panic HashMap constructor negative capacity" {
+  let _ : @hashmap.HashMap[Int32, Int32] = HashMap([], capacity=-1)
+}

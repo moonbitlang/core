@@ -55,7 +55,8 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// The optional `capacity` reserves room for at least that many total entries
 /// without growing, including the entries in `arr`. A hint smaller than
 /// `arr.length()` is ignored. Without a hint, an empty map uses a small default
-/// size. Aborts if the requested entry count exceeds the supported table size.
+/// size. Aborts if `capacity` is negative or if the requested entry count
+/// exceeds the supported table size.
 ///
 /// Parameters:
 ///
@@ -89,7 +90,10 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ) -> HashMap[K, V] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity_for_length(capacity.max(length))
+    Some(capacity) => {
+      guard capacity >= 0 else { abort("capacity must be non-negative") }
+      capacity_for_length(capacity.max(length))
+    }
     None =>
       if length == 0 {
         default_init_capacity

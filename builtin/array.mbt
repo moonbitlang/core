@@ -101,10 +101,12 @@ fn[T] Array::unsafe_resize_with_default(
 /// Parameters:
 ///
 /// * `capacity` : The initial capacity of the array. If 0 (default), creates an
-/// array with minimum capacity. Must be non-negative.
+/// array with minimum capacity.
 ///
 /// Returns a new empty array of type `Array[T]` with the specified initial
 /// capacity.
+///
+/// Aborts if `capacity` is negative.
 ///
 /// Example:
 ///
@@ -118,6 +120,7 @@ fn[T] Array::unsafe_resize_with_default(
 /// }
 /// ```
 pub fn[T] Array::Array(capacity~ : Int32 = 0) -> Array[T] {
+  guard capacity >= 0 else { abort("capacity must be non-negative") }
   if capacity == 0 {
     []
   } else {

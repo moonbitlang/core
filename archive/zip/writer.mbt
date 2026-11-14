@@ -27,8 +27,8 @@ fn Output::counting(limit : Int32?) -> Output {
 }
 
 ///|
-fn Output::writing(limit : Int32?, size_hint~ : Int32 = 0) -> Output {
-  { limit, buf: Some(FixedArray::make(size_hint, b'\x00')), size: 0, }
+fn Output::writing(limit : Int32?, capacity~ : Int32 = 0) -> Output {
+  { limit, buf: Some(FixedArray::make(capacity, b'\x00')), size: 0, }
 }
 
 ///|
@@ -775,7 +775,7 @@ fn write_impl(
   if preserve && archive.original is Some(bytes) {
     let counting = Output::counting(max_output)
     counting.count(bytes.length())
-    let out = Output::writing(None, size_hint=bytes.length())
+    let out = Output::writing(None, capacity=bytes.length())
     out.write_bytes(bytes)
     return out.finish()
   }
@@ -801,7 +801,7 @@ fn write_impl(
     preserve,
     false,
   )
-  let out = Output::writing(None, size_hint=counting.size)
+  let out = Output::writing(None, capacity=counting.size)
   for position in 0..<order.length() {
     let entry = archive.entries[order[position]]
     let plan = plans[position]

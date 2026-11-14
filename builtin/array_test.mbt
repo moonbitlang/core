@@ -1637,3 +1637,8 @@ test "chunks accepts large positive sizes" {
   inspect(arr.chunks(2147483647).length(), content="1")
   inspect(arr[:].chunks(2147483647).length(), content="1")
 }
+
+///|
+test "panic Array constructor negative capacity" {
+  let _ : Array[Int32] = Array(capacity=-1)
+}

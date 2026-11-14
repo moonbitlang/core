@@ -48,7 +48,8 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// The optional `capacity` reserves room for at least that many total elements
 /// without growing, including the elements in `arr`. A hint smaller than
 /// `arr.length()` is ignored. Without a hint, an empty set uses a small default
-/// size. Aborts if the requested element count exceeds the supported table size.
+/// size. Aborts if `capacity` is negative or if the requested element count
+/// exceeds the supported table size.
 #alias(from_array)
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
@@ -59,7 +60,10 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ) -> HashSet[K] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity_for_length(capacity.max(length))
+    Some(capacity) => {
+      guard capacity >= 0 else { abort("capacity must be non-negative") }
+      capacity_for_length(capacity.max(length))
+    }
     None => default_init_capacity.max(capacity_for_length(length))
   }
   let m = new_hashset(capacity)

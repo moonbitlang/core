@@ -528,3 +528,16 @@ test "write_int16_be method" {
     ),
   )
 }
+
+///|
+test "Buffer capacity zero grows" {
+  let buf = @buffer.Buffer(capacity=0)
+  inspect(buf.is_empty(), content="true")
+  buf.write_string_utf16le("hi")
+  inspect(buf.length(), content="4")
+}
+
+///|
+test "panic Buffer constructor negative capacity" {
+  ignore(@buffer.Buffer(capacity=-1))
+}

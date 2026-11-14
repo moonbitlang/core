@@ -21,7 +21,8 @@ fn[A] new_queue() -> Queue[A] {
 /// Creates a new queue holding the elements of `arr`, front first.
 ///
 /// `capacity` preallocates room for at least that many elements (never less
-/// than `arr.length()`), as in `@deque.Deque(arr, capacity=...)`.
+/// than `arr.length()`), as in `@deque.Deque(arr, capacity=...)`. Aborts if
+/// `capacity` is negative.
 ///
 /// # Example
 /// ```mbt check
