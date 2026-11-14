@@ -269,6 +269,19 @@ fn DecodeOutput::to_bytes(self : DecodeOutput) -> Bytes {
 }
 
 ///|
+/// The result of a growing output the decoder owns. Storage that is exactly
+/// full becomes the result without a copy, which is the common case when
+/// `max_output_bytes` is the expected size: growth stops at the limit. The
+/// caller must drop its own reference right after (`clear_call_references`).
+fn DecodeOutput::into_owned_bytes(self : DecodeOutput) -> Bytes {
+  if self.start == 0 && self.length == self.storage.length() {
+    owned_decode_buffer_to_bytes(self.storage)
+  } else {
+    self.to_bytes()
+  }
+}
+
+///|
 /// In-memory DEFLATE decoder. Reads from a `Bytes` and appends to `out`.
 priv struct MemDecoder {
   mut input : BytesView
@@ -1141,7 +1154,7 @@ pub fn Decompressor::decompress(
   decoder.run()
   let consumed = decoder.consumed()
   check_input_mode(mode, consumed, input.length())
-  { data: decoder.out.to_bytes(), consumed, }
+  { data: decoder.out.into_owned_bytes(), consumed, }
 }
 
 ///|
@@ -1309,6 +1322,7 @@ fn inflate_preallocated(
 }
 
 ///|
-/// Transfers the completely initialized replay output. The array is local to
-/// `inflate_preallocated`; neither its mutable view nor an alias escapes.
+/// Transfers a completely initialized output array whose only other
+/// reference is dropped right after: the replay output local to
+/// `inflate_preallocated`, or a full growing output in `decompress`.
 fn owned_decode_buffer_to_bytes(buffer : FixedArray[Byte]) -> Bytes = "%identity"
