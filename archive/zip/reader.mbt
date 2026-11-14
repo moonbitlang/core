@@ -167,28 +167,11 @@ fn check_sizes(
 }
 
 ///|
-/// DEFLATE's densest code spends two bits on a 258-byte match, so a payload
-/// never decodes to more than 1032 bytes per input byte.
-const MAX_DEFLATE_EXPANSION : Int32 = 1032
-
-///|
-/// Whether a declared size is worth preallocating: within the output limit,
-/// and roughly (to within 1031 bytes) no more than the payload can decode
-/// to, so a tiny payload cannot force a large allocation.
-fn single_pass_reachable(
-  declared : Int32,
-  max_output : Int32,
-  compressed_length : Int32,
-) -> Bool {
-  declared <= max_output &&
-  declared / MAX_DEFLATE_EXPANSION <= compressed_length
-}
-
-///|
 /// Decode a DEFLATE entry whose central directory declares `declared` bytes.
-/// An honest entry is decoded once, directly into an allocation of exactly the
-/// declared size. Every other outcome (a different size, a decoder failure, or
-/// a declaration the limit or the payload length cannot reach) is decided by
+/// An honest entry is decoded once. The decoder's output grows with what the
+/// payload really produces and stops at `declared`, so an untrusted
+/// declaration never sizes an allocation. Every other outcome (a different
+/// size, a decoder failure, or a declaration above the limit) is decided by
 /// `inflate_entry`, which counts before allocating, so the result and the
 /// error are the same as when `inflate_entry` handles every entry. Only
 /// cancellation is reported directly, at whichever poll requests it.
@@ -200,16 +183,15 @@ fn inflate_declared_entry(
   reported_limit : Int32,
   cancelled : () -> Bool,
 ) -> Bytes raise ZipError {
-  guard single_pass_reachable(declared, max_output, compressed.length()) else {
+  guard declared <= max_output else {
     return inflate_entry(
       compressed, max_output, limit_kind, reported_limit, cancelled,
     )
   }
   check_cancelled(cancelled)
-  let output = FixedArray::make(declared, b'\x00')
-  let result = @flate.Decompressor().decompress_into(
+  let result = @flate.Decompressor().decompress(
     compressed,
-    output.mut_view(),
+    max_output_bytes=declared,
     cancelled~,
   ) catch {
     InflateError(Cancelled, message) => raise ZipError(Cancelled, message)
@@ -218,12 +200,12 @@ fn inflate_declared_entry(
         compressed, max_output, limit_kind, reported_limit, cancelled,
       )
   }
-  guard result.produced == declared else {
+  guard result.data.length() == declared else {
     return inflate_entry(
       compressed, max_output, limit_kind, reported_limit, cancelled,
     )
   }
-  owned_zip_buffer_to_bytes(output)
+  result.data
 }
 
 ///|
