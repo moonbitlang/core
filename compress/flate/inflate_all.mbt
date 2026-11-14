@@ -76,14 +76,17 @@ fn checked_decode_output_length(
 }
 
 ///|
-/// Retain geometric growth when doubling fits; otherwise allocate only the
-/// required size. Keeping this arithmetic separate permits allocation-free
-/// tests at the integer limit.
+/// Double while that fits; beyond half the size limit grow by half the current
+/// capacity, saturating at the limit, so output past 1 GiB still reaches the
+/// limit in two reallocations instead of one per token. Neither arm exceeds
+/// `MAX_DECODE_OUTPUT_SIZE` or overflows. Keeping this arithmetic separate
+/// permits allocation-free tests at the integer limit.
 fn grown_decode_output_capacity(current : Int32, required : Int32) -> Int32 {
   if current <= MAX_DECODE_OUTPUT_SIZE / 2 {
     (current * 2).max(required)
   } else {
-    required
+    let step = (current / 2).min(MAX_DECODE_OUTPUT_SIZE - current)
+    (current + step).max(required)
   }
 }
 
@@ -230,8 +233,8 @@ fn copy_match_bytes_scalar(
 /// Whether a growing output of `capacity` bytes that holds `length` makes room
 /// for one whole token, 258 bytes, before the native batch looks at it: it has
 /// less than that left, and it can still double. Beyond half the size limit
-/// growth is by the byte, so there the checked decoder ends the output as it
-/// always has, growing only for what is decoded.
+/// the checked decoder ends the output as it always has, growing it through
+/// `ensure_capacity` only for what is decoded.
 #cfg(target="native")
 #inline
 fn reserves_token(capacity : Int32, length : Int32) -> Bool {

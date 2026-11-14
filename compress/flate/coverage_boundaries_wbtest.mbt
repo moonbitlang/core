@@ -75,7 +75,17 @@ test "decoded output growth stays representable at the doubling boundary" {
     grown_decode_output_capacity(half, MAX_DECODE_OUTPUT_SIZE),
     MAX_DECODE_OUTPUT_SIZE,
   )
-  @test.assert_eq(grown_decode_output_capacity(half + 1, half + 2), half + 2)
+  // Past the doubling boundary, growth is by half the current capacity.
+  @test.assert_eq(grown_decode_output_capacity(half + 1, half + 2), 0x6000_0000)
+  @test.assert_eq(
+    grown_decode_output_capacity(half + 1, 0x7000_0000),
+    0x7000_0000,
+  )
+  // Near the limit the step saturates instead of overflowing.
+  @test.assert_eq(
+    grown_decode_output_capacity(0x6000_0000, 0x6000_0001),
+    MAX_DECODE_OUTPUT_SIZE,
+  )
   @test.assert_eq(
     grown_decode_output_capacity(
       MAX_DECODE_OUTPUT_SIZE - 1,
@@ -83,6 +93,69 @@ test "decoded output growth stays representable at the doubling boundary" {
     ),
     MAX_DECODE_OUTPUT_SIZE,
   )
+  @test.assert_eq(
+    grown_decode_output_capacity(MAX_DECODE_OUTPUT_SIZE, MAX_DECODE_OUTPUT_SIZE),
+    MAX_DECODE_OUTPUT_SIZE,
+  )
+}
+
+///|
+/// Replay the growth `DecodeOutput::ensure_capacity` performs for a stream of
+/// 258-byte matches, without allocating, and report how many reallocations it
+/// takes and how many bytes they copy.
+fn decode_output_growth_cost(
+  start : Int32,
+  capacity : Int32,
+  limit : Int32,
+) -> (Int32, Int64) {
+  let mut length = start
+  let mut capacity = capacity
+  let mut steps = 0
+  let mut copied = 0L
+  while length < limit {
+    let required = length + (limit - length).min(258)
+    if required > capacity {
+      capacity = grown_decode_output_capacity(capacity, required).min(limit)
+      steps += 1
+      copied += length.to_int64()
+    }
+    length = required
+  }
+  (steps, copied)
+}
+
+///|
+test "decoded output growth past 1 GiB takes a constant number of steps" {
+  let half = MAX_DECODE_OUTPUT_SIZE / 2
+  // A full output just over 1 GiB, filled one token at a time up to the limit.
+  let (steps, copied) = decode_output_growth_cost(
+    half + 1,
+    half + 1,
+    MAX_DECODE_OUTPUT_SIZE,
+  )
+  inspect(steps, content="2")
+  assert_true(copied < 2L * MAX_DECODE_OUTPUT_SIZE.to_int64())
+  // At the doubling boundary: doubling reaches the limit minus one, then one
+  // more step reaches the limit.
+  let (steps, copied) = decode_output_growth_cost(
+    half,
+    half,
+    MAX_DECODE_OUTPUT_SIZE,
+  )
+  inspect(steps, content="2")
+  assert_true(copied < 2L * MAX_DECODE_OUTPUT_SIZE.to_int64())
+  // The whole range from an empty one-byte output: the first token sets the
+  // capacity to 258, 22 doublings pass 1 GiB, then two linear steps.
+  let (steps, copied) = decode_output_growth_cost(0, 1, MAX_DECODE_OUTPUT_SIZE)
+  inspect(steps, content="25")
+  assert_true(copied < 2L * MAX_DECODE_OUTPUT_SIZE.to_int64())
+  // A lower caller limit just over 1 GiB.
+  let (steps, _) = decode_output_growth_cost(
+    half + 1,
+    half + 1,
+    half + 0x10_0000,
+  )
+  inspect(steps, content="1")
 }
 
 ///|
