@@ -75,6 +75,10 @@ pub impl FromJson for Int32 with fn from_json(json, path) {
     n != @double.neg_infinity else {
     decode_error(path, "Int::from_json: expected number")
   }
+  // `NaN` fails this too, since it is not equal to anything.
+  guard n == n.floor() else {
+    decode_error(path, "Int::from_json: expected integer")
+  }
   // Range check before conversion to avoid silent wrap/truncation
   let max_ok = 2147483647.0
   let min_ok = -2147483648.0
@@ -90,7 +94,7 @@ pub impl FromJson for Int32 with fn from_json(json, path) {
 pub impl FromJson for Int64 with fn from_json(json, path) {
   guard json is String(str) else {
     decode_error(
-      path, "Int64::from_json: expected number in string representation",
+      path, "Int64::from_json: expected a string such as \"5\" (Int64 is encoded as a string to avoid precision loss)",
     )
   }
   @internal/strconv.parse_int64(str) catch {
@@ -107,6 +111,10 @@ pub impl FromJson for UInt32 with fn from_json(json, path) {
     n != @double.neg_infinity else {
     decode_error(path, "UInt::from_json: expected number")
   }
+  // `NaN` fails this too, since it is not equal to anything.
+  guard n == n.floor() else {
+    decode_error(path, "UInt::from_json: expected integer")
+  }
   // Range check before conversion to avoid silent wrap/truncation
   let max_ok = 4294967295.0
   if n < 0.0 || n > max_ok {
@@ -121,7 +129,7 @@ pub impl FromJson for UInt32 with fn from_json(json, path) {
 pub impl FromJson for UInt64 with fn from_json(json, path) {
   guard json is String(str) else {
     decode_error(
-      path, "UInt64::from_json: expected number in string representation",
+      path, "UInt64::from_json: expected a string such as \"5\" (UInt64 is encoded as a string to avoid precision loss)",
     )
   }
   @internal/strconv.parse_uint64(str) catch {
