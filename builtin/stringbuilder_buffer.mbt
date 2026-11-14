@@ -26,7 +26,8 @@ struct StringBuilder {
 ///
 /// * `capacity` : The initial capacity of the internal buffer,
 /// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
-/// buffer. `capacity` may be ignored on some platforms, JS for example.
+/// buffer; its first write still reserves at least 8 code units. `capacity`
+/// may be ignored on some platforms, JS for example.
 ///
 /// Returns a new `StringBuilder` instance.
 ///
@@ -58,8 +59,9 @@ fn stringbuilder_growth_capacity(
   if required < len {
     abort("StringBuilder capacity overflow")
   }
-  // Start doubling from at least 1 so a zero-length initial buffer can grow.
-  for space = current.max(1); space < required; {
+  // Never grow to fewer than 8 code units: an empty or tiny builder skips the
+  // 1, 2, 4 steps, where copying costs more than the space it saves.
+  for space = current.max(8); space < required; {
     let next = space * 2
     if next <= space {
       break required
