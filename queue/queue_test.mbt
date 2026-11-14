@@ -394,3 +394,103 @@ test "JSON round-trip" {
     _ => fail("expected JsonDecodeError")
   }
 }
+
+///|
+test "Queue::shrink_to_fit keeps the elements and their order" {
+  let queue : @queue.Queue[String] = Queue([], capacity=16)
+  for s in ["a", "b", "c", "d", "e"] {
+    queue.push(s)
+  }
+  let _ = queue.pop()
+  let _ = queue.pop()
+  queue.shrink_to_fit()
+  @debug.debug_inspect(
+    queue,
+    content=(
+      #|<Queue: ["c", "d", "e"]>
+    ),
+  )
+  // the shrunken queue still works as a FIFO
+  queue.push("f")
+  @debug.debug_inspect(queue.pop(), content="Some(\"c\")")
+  @debug.debug_inspect(
+    queue,
+    content=(
+      #|<Queue: ["d", "e", "f"]>
+    ),
+  )
+  // an emptied, shrunken queue can grow again
+  queue.clear()
+  queue.shrink_to_fit()
+  inspect(queue.length(), content="0")
+  queue.push("g")
+  @debug.debug_inspect(queue.pop(), content="Some(\"g\")")
+  inspect(queue.is_empty(), content="true")
+}
+
+///|
+test "Queue::compare orders by length, then front to back" {
+  let q123 : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
+  let q124 : @queue.Queue[Int32] = @queue.from_array([1, 2, 4])
+  let q12 : @queue.Queue[Int32] = @queue.from_array([1, 2])
+  let q9 : @queue.Queue[Int32] = @queue.from_array([9])
+  inspect(q123.compare(q124), content="-1")
+  inspect(q124.compare(q123), content="1")
+  inspect(q123.compare(q12), content="1")
+  inspect(q9.compare(q12), content="-1")
+  inspect(q123.compare(@queue.from_array([1, 2, 3])), content="0")
+  assert_true(q123 < q124)
+  assert_true(q12 <= q123)
+  assert_true(q124 > q9)
+}
+
+///|
+test "Queue::compare agrees with the backing deque and with ==" {
+  let arrays : Array[Array[Int32]] = [
+    [],
+    [0],
+    [1],
+    [0, 1],
+    [1, 0],
+    [1, 2, 3],
+    [1, 2, 4],
+    [3, 2, 1],
+  ]
+  for a in arrays {
+    for b in arrays {
+      let qa : @queue.Queue[Int32] = @queue.from_array(a)
+      let qb : @queue.Queue[Int32] = @queue.from_array(b)
+      @test.assert_eq(
+        qa.compare(qb),
+        @deque.from_array(a).compare(@deque.from_array(b)),
+      )
+      @test.assert_eq(qa.compare(qb) == 0, qa == qb)
+    }
+  }
+}
+
+///|
+test "Queue::hash is consistent with ==" {
+  // equal queues reached through different histories hash equally
+  let pushed : @queue.Queue[Int32] = Queue([], capacity=8)
+  for i in 0..<6 {
+    pushed.push(i)
+  }
+  for _ in 0..<3 {
+    let _ = pushed.pop()
+  }
+  pushed.push(6)
+  let built : @queue.Queue[Int32] = @queue.from_array([3, 4, 5, 6])
+  assert_true(pushed == built)
+  @test.assert_eq(pushed.hash(), built.hash())
+  // they hash as the backing deque does
+  @test.assert_eq(built.hash(), @deque.from_array([3, 4, 5, 6]).hash())
+  // order and length matter
+  let reversed : @queue.Queue[Int32] = @queue.from_array([6, 5, 4, 3])
+  @test.assert_not_eq(built.hash(), reversed.hash())
+  @test.assert_not_eq(built.hash(), @queue.from_array([3, 4, 5]).hash())
+  // queues work as hash-map keys
+  let seen : Map[@queue.Queue[Int32], Int32] = Map([])
+  seen[pushed] = 1
+  @test.assert_eq(seen.get(built), Some(1))
+}

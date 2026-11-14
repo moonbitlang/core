@@ -21,3 +21,18 @@ test "Queue capacity is forwarded to the backing deque" {
   inspect(Queue([1, 2, 3], capacity=1).inner.capacity(), content="3")
   inspect(Queue([1, 2, 3]).inner.capacity(), content="3")
 }
+
+///|
+test "Queue::shrink_to_fit drops the spare capacity of the backing deque" {
+  let queue : Queue[String] = Queue([], capacity=16)
+  for s in ["a", "b", "c", "d", "e"] {
+    queue.push(s)
+  }
+  let _ = queue.pop()
+  let _ = queue.pop()
+  queue.shrink_to_fit()
+  inspect(queue.inner.capacity(), content="3")
+  queue.clear()
+  queue.shrink_to_fit()
+  inspect(queue.inner.capacity(), content="0")
+}

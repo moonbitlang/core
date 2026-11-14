@@ -55,17 +55,96 @@ pub impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
 }
 
 ///|
+/// Compares two queues in shortlex order, as `@deque.Deque::compare` does: by
+/// length first (a shorter queue is less than a longer one), then
+/// lexicographically from the front, by their first differing element.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let q1 : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
+///   let q2 : @queue.Queue[Int32] = @queue.from_array([1, 2, 4])
+///   let q3 : @queue.Queue[Int32] = @queue.from_array([1, 2])
+///   inspect(q1.compare(q2), content="-1") // q1 < q2
+///   inspect(q2.compare(q1), content="1") // q2 > q1
+///   inspect(q1.compare(q3), content="1") // q1 > q3 (longer)
+///   inspect(q1.compare(q1), content="0") // q1 = q1
+/// }
+/// ```
+pub impl[A : Compare] Compare for Queue[A] with fn compare(self, other) {
+  self.inner.compare(other.inner)
+}
+
+///|
+/// Hashes the elements of the queue in order, front first, as
+/// `@deque.Deque` does, so queues that are equal hash equally.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let q1 : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
+///   let q2 : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
+///   @test.assert_eq(q1.hash(), q2.hash())
+/// }
+/// ```
+pub impl[A : Hash] Hash for Queue[A] with fn hash_combine(self, hasher) {
+  Hash::hash_combine(self.inner, hasher)
+}
+
+///|
 /// Clears the queue.
+///
+/// This keeps the memory the queue has allocated, only setting the length to 0.
+///
+/// Emptying a queue is a removal like any other: the queue may keep referring
+/// to the elements that were in it until later pushes overwrite them or the
+/// queue is dropped. Call `Queue::shrink_to_fit` to release them at once.
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
 ///   queue.clear()
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
   self.inner.clear()
+}
+
+///|
+/// Releases the memory the queue holds beyond its current elements.
+///
+/// Removing elements (`Queue::pop`, `Queue::clear`, or `Queue::transfer` on its
+/// source) does not let go of them right away: the queue may keep referring to
+/// them, so they stay reachable until later pushes overwrite them or the queue
+/// is dropped. After this call the queue refers only to the elements it
+/// currently holds, and its spare capacity is returned as well. The elements
+/// and their order are unchanged.
+///
+/// This matters only for element types holding references; it costs an
+/// allocation plus a copy of the current elements, and does nothing when the
+/// queue has no spare capacity.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let queue : @queue.Queue[String] = @queue.from_array(["a", "b", "c"])
+///   let _ = queue.pop()
+///   queue.shrink_to_fit()
+///   @debug.debug_inspect(
+///     queue,
+///     content=(
+///       #|<Queue: ["b", "c"]>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[A] Queue::shrink_to_fit(self : Queue[A]) -> Unit {
+  self.inner.shrink_to_fit()
 }
 
 ///|
@@ -167,6 +246,10 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 
 ///|
 /// Pops the first value from the queue, which returns None if the queue is empty.
+///
+/// The queue may keep referring to the removed element until a later push
+/// overwrites it or the queue is dropped. Call `Queue::shrink_to_fit` to
+/// release it at once.
 ///
 /// # Example
 /// ```mbt check
@@ -274,6 +357,9 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 ///
 /// Adds all of the elements of source to the end of destination, then clears source.
 /// If source and destination are the same queue, this is a no-op.
+///
+/// Like `Queue::clear`, emptying the source may leave it referring to the
+/// transferred elements; call `Queue::shrink_to_fit` on it to release them.
 ///
 /// # Example
 /// ```mbt check
