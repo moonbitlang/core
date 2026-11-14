@@ -79,6 +79,36 @@ test "js rand chunks large requests" {
 }
 
 ///|
+/// Calls `f` while `globalThis.crypto` is `null`, then restores it.
+#cfg(target="js")
+extern "js" fn with_null_crypto(f : () -> Unit) -> Unit =
+  #|(f) => {
+  #|  const saved = Object.getOwnPropertyDescriptor(globalThis, "crypto");
+  #|  Object.defineProperty(globalThis, "crypto", {
+  #|    value: null,
+  #|    configurable: true,
+  #|    writable: true,
+  #|  });
+  #|  try {
+  #|    f();
+  #|  } finally {
+  #|    if (saved === undefined) {
+  #|      delete globalThis.crypto;
+  #|    } else {
+  #|      Object.defineProperty(globalThis, "crypto", saved);
+  #|    }
+  #|  }
+  #|}
+
+///|
+#cfg(target="js")
+test "js rand reports unsupported when crypto is null" {
+  let mut results = []
+  with_null_crypto(() => results = [@env.rand(0), @env.rand(32)])
+  @test.assert_eq(results, [None, None])
+}
+
+///|
 test "env var round trip" {
   let key = "__MOONBIT_CORE_ENV_TEST_" + @env.now().to_string()
 
