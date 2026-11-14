@@ -1034,10 +1034,10 @@ test "zip64 extra disk field must be zero" {
 }
 
 ///|
-test "single-pass ZIP entry decoding polls cancellation while decoding" {
+test "single-pass ZIP entry decoding decodes once" {
   let data = Bytes::makei(1 << 20, i => (i / 7 % 251).to_byte())
   let compressed = @flate.deflate_all(data)
-  let mut polls = 0
+  let mut single = 0
   let decoded = inflate_declared_entry(
     compressed,
     data.length(),
@@ -1045,21 +1045,56 @@ test "single-pass ZIP entry decoding polls cancellation while decoding" {
     EntryUncompressedBytes,
     data.length(),
     () => {
-      polls += 1
+      single += 1
       false
     },
   )
   @test.assert_eq(decoded, data)
-  // At least one poll per 4 KiB of output.
-  assert_true(polls >= data.length() / 4096)
+  let mut two_pass = 0
+  ignore(
+    inflate_entry(
+      compressed,
+      data.length(),
+      EntryUncompressedBytes,
+      data.length(),
+      () => {
+        two_pass += 1
+        false
+      },
+    ),
+  )
+  // At least one poll per 4 KiB of output, and fewer than the two passes
+  // of the counting fallback make.
+  assert_true(single >= data.length() / 4096)
+  assert_true(single < two_pass)
 }
 
 ///|
-test "single-pass ZIP entry decoding preallocates only reachable sizes" {
-  assert_true(single_pass_reachable(0, 0, 0))
-  assert_true(single_pass_reachable(10, 10, 1))
-  assert_true(single_pass_reachable(1031, 2000, 0))
-  assert_true(!single_pass_reachable(11, 10, 1))
-  assert_true(!single_pass_reachable(1032, 2000, 0))
-  assert_true(!single_pass_reachable(0x7FFF_0000, 0x7FFF_FFFF, 12))
+test "single-pass ZIP entry decoding sizes output by the payload, not the declaration" {
+  // A reserved block type padded with zeros: the payload is long enough
+  // that a declaration of 1000x its length looks reachable, but it decodes
+  // to nothing. The error comes from the counting fallback.
+  let compressed = Bytes::makei(4096, i => {
+    if i == 0 {
+      b'\x07'
+    } else {
+      b'\x00'
+    }
+  })
+  let declared = compressed.length() * 1000
+  expect_zip_kind(
+    () => {
+      ignore(
+        inflate_declared_entry(
+          compressed,
+          declared,
+          declared,
+          EntryUncompressedBytes,
+          declared,
+          () => false,
+        ),
+      )
+    },
+    InvalidDeflate,
+  )
 }
