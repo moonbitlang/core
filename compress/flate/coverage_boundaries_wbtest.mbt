@@ -363,3 +363,49 @@ test "decompress returns exact-limit output intact across reuse" {
   @test.assert_eq(a, first)
   @test.assert_eq(b, second)
 }
+
+///|
+test "an exact-limit result survives later calls that write, fail or cancel" {
+  let decompressor = Decompressor()
+  let first = Bytes::makei(100_000, i => (i % 251).to_byte())
+  let kept = decompressor.decompress(
+      deflate_all(first),
+      max_output_bytes=first.length(),
+    ).data
+  let other = Bytes::makei(90_000, i => (i % 7).to_byte())
+  let other_stream = deflate_all(other)
+  // A caller-provided output.
+  let target = FixedArray::make(other.length(), b'\x00')
+  ignore(decompressor.decompress_into(other_stream, target.mut_view()))
+  // A stream that fails mid-decode.
+  let truncated = other_stream[:other_stream.length() / 2]
+  let failed = try {
+    ignore(decompressor.decompress(truncated, max_output_bytes=other.length()))
+    false
+  } catch {
+    _ => true
+  }
+  inspect(failed, content="true")
+  // A cancelled decode.
+  let cancelled = try {
+    ignore(
+      decompressor.decompress(other_stream, max_output_bytes=other.length(), cancelled=() => {
+        true
+      }),
+    )
+    false
+  } catch {
+    InflateError(Cancelled, _) => true
+    _ => false
+  }
+  inspect(cancelled, content="true")
+  // A Prefix-mode decode that fills its limit exactly.
+  ignore(
+    decompressor.decompress(
+      other_stream + b"trailing",
+      mode=Prefix,
+      max_output_bytes=other.length(),
+    ),
+  )
+  @test.assert_eq(kept, first)
+}
