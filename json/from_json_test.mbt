@@ -769,7 +769,7 @@ test "Int64 from_json error handling" {
       #|JsonDecodeError(
       #|  (
       #|    <JsonPath: "">,
-      #|    "Int64::from_json: expected number in string representation",
+      #|    "Int64::from_json: expected a string such as \"5\" (Int64 is encoded as a string to avoid precision loss)",
       #|  ),
       #|)
     ),
@@ -815,7 +815,7 @@ test "UInt64 from_json error handling" {
       #|JsonDecodeError(
       #|  (
       #|    <JsonPath: "">,
-      #|    "UInt64::from_json: expected number in string representation",
+      #|    "UInt64::from_json: expected a string such as \"5\" (UInt64 is encoded as a string to avoid precision loss)",
       #|  ),
       #|)
     ),
