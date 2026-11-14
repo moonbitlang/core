@@ -1,0 +1,31 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/async/internal/event_loop",
+  "moonbitlang/core/async/internal/coroutine",
+  "moonbitlang/core/async/internal/env_util",
+  "moonbitlang/core/async/internal/fd_util",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/os_error",
+  "moonbitlang/core/async/internal/c_buffer",
+}
+
+import {
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/process",
+  "moonbitlang/core/async/socket",
+  "moonbitlang/core/async/internal/test_util",
+} for "test"
+
+supported_targets = "-all+native"
+
+options(
+  "allow-experimental-packages": true,
+  experimental: true,
+)
