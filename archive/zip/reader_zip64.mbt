@@ -24,9 +24,7 @@ fn extra_field_at(
   extra : BytesView,
   pos : Int32,
 ) -> (Int32, Int32, Int32) raise ZipError {
-  guard pos >= 0 &&
-    pos <= extra.length() &&
-    extra[pos:] is [u16le(header_id), u16le(data_size), .. data] else {
+  guard pos >= 0 && extra[pos:] is [u16le(header_id), u16le(data_size), .. data] else {
     raise ZipError(UnsupportedFeature, "zip: truncated extra field header")
   }
   let data_size = data_size.reinterpret_as_int()
@@ -111,7 +109,6 @@ fn read_zip64_eocd(
 ) -> (UInt64, UInt64, UInt64, Int32) raise ZipError {
   let locator_offset = eocd_offset - 20
   guard locator_offset >= 0 &&
-    locator_offset <= bytes.length() &&
     bytes[locator_offset:] is [u32le(ZIP64_LOCATOR_SIG), .. locator] else {
     raise ZipError(UnsupportedFeature, "zip: zip64 locator missing")
   }
