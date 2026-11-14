@@ -1000,3 +1000,35 @@ test "end record scan skips a signature inside the archive comment" {
   inspect(record.comment.length(), content="26")
   inspect(read_all(bytes).entries().length(), content="1")
 }
+
+///|
+test "directory signature record framing" {
+  validate_directory_signature(b"PK\x05\x05\x00\x00", 6)
+  validate_directory_signature(b"PK\x05", 7)
+  for
+    case in [
+      (b"PK\x05\x05\x00\x00", 3UL, UnsupportedFeature),
+      (b"PK\x01\x02\x00\x00", 6, InvalidSignature),
+      (b"PK\x05\x05\x05\x00", 6, UnsupportedFeature),
+    ] {
+    let (bytes, remaining, kind) = case
+    expect_zip_kind(() => validate_directory_signature(bytes, remaining), kind)
+  }
+}
+
+///|
+test "zip64 extra disk field must be zero" {
+  let zero_disk = b"\x01\x00\x04\x00\x00\x00\x00\x00"
+  inspect(
+    read_zip64_extra(zero_disk, false, false, false, need_disk=true)
+    is (None, None, None, None),
+    content="true",
+  )
+  let other_disk = b"\x01\x00\x04\x00\x01\x00\x00\x00"
+  expect_zip_kind(
+    () => {
+      ignore(read_zip64_extra(other_disk, false, false, false, need_disk=true))
+    },
+    UnsupportedFeature,
+  )
+}
