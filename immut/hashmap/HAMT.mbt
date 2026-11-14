@@ -327,7 +327,9 @@ fn[K : Eq + Hash, V] hash_map_from_array(
 }
 
 ///|
-/// Filter entries that satisfy the predicate
+/// Filter entries that satisfy the predicate.
+///
+/// If the predicate keeps every entry, the original map is returned.
 #alias(filter_with_key, deprecated)
 pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
@@ -338,6 +340,9 @@ pub fn[K, V] HashMap::filter(
       Leaf(key1, value1, bucket) => {
         let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
         if pred(key1, value1) {
+          if new_bucket.length() == bucket.length() {
+            return Some(node)
+          }
           match new_bucket {
             Empty => Some(Flat(key1, value1, @path.exhausted))
             _ => Some(Leaf(key1, value1, new_bucket))
@@ -359,16 +364,22 @@ pub fn[K, V] HashMap::filter(
       Branch(children) =>
         match children.filter(go) {
           None => None
+          // `SparseArray::filter` returns `children` itself when `go`
+          // returned every child unchanged.
+          Some(new_children) if physical_equal(new_children, children) =>
+            Some(node)
           Some(new_children) => Some(collapse_branch(new_children))
         }
     }
   }
 
-  {
-    data: match self.data {
-      None => None
-      Some(node) => go(node)
-    },
+  match self.data {
+    None => self
+    Some(node) =>
+      match go(node) {
+        Some(new_node) if physical_equal(new_node, node) => self
+        new_data => { data: new_data, }
+      }
   }
 }
 

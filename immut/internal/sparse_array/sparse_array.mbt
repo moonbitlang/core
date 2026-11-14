@@ -252,31 +252,61 @@ pub fn[X, Y] SparseArray::map(
 }
 
 ///|
-/// Function `filter`.
+/// Keep the elements for which `pred` returns `Some`, each replaced by the
+/// value `pred` returns; `None` if no element is kept.
+///
+/// If `pred` returns every element unchanged (`physical_equal` to its
+/// input), `self` itself is returned and nothing is allocated.
 pub fn[X] SparseArray::filter(
   self : SparseArray[X],
   pred : (X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
-  let self_elem_info = self.elem_info
-  let data = FixedArray::make(self_elem_info.length(), self.data[0])
-  for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
-     empty_bitset; {
+  let old_data = self.data
+  let len = old_data.length()
+  // Scan without allocating until `pred` first drops or replaces an element.
+  for rest = self.elem_info, i = 0; rest != empty_bitset; {
     let idx = rest.first_idx()
-    match pred(self.unsafe_get(idx)) {
-      None => continue rest.remove(idx), index, elem_info.remove(idx)
+    let old = old_data.unsafe_get(i)
+    let first = pred(old)
+    if first is Some(v) && physical_equal(v, old) {
+      continue rest.remove(idx), i + 1
+    }
+    // First change, at position `i`: copy the unchanged prefix, then
+    // filter the remaining elements into the new array.
+    let data = FixedArray::make_and_blit(
+      old_data,
+      allocate_len=len,
+      init=old,
+      len=i,
+    )
+    let (elem_info, index) = match first {
+      None => (self.elem_info.remove(idx), i)
       Some(v) => {
-        data[index] = v
-        continue rest.remove(idx), index + 1, elem_info
+        data[i] = v
+        (self.elem_info, i + 1)
+      }
+    }
+    for rest = rest.remove(idx), j = i + 1, elem_info = elem_info, index = index; rest !=
+       empty_bitset; {
+      let idx = rest.first_idx()
+      match pred(old_data.unsafe_get(j)) {
+        None => continue rest.remove(idx), j + 1, elem_info.remove(idx), index
+        Some(v) => {
+          data[index] = v
+          continue rest.remove(idx), j + 1, elem_info, index + 1
+        }
+      }
+    } nobreak {
+      return if elem_info == empty_bitset {
+        None
+      } else if index == len {
+        Some({ elem_info, data, })
+      } else {
+        Some({ elem_info, data: data.copy_prefix(len=index), })
       }
     }
   } nobreak {
-    if elem_info == empty_bitset {
-      None
-    } else if elem_info == self_elem_info {
-      Some({ elem_info, data, })
-    } else {
-      Some({ elem_info, data: data.copy_prefix(len=index), })
-    }
+    Some(self)
   }
 }
 
