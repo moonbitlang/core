@@ -108,14 +108,17 @@ let seed : Int32 = random_seed()
 #cfg(target="js")
 extern "js" fn random_seed() -> Int32 =
   #|() => {
-  #|  try {
-  #|    const array = new Uint32Array(1);
-  #|    globalThis.crypto.getRandomValues(array);
-  #|    return array[0] | 0; // Convert to signed 32
-  #|  } catch (_) {
-  #|    // No Web Crypto, or a host that refuses it here
-  #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
+  #|  const cryptoObj = globalThis.crypto;
+  #|  if (cryptoObj !== undefined && typeof cryptoObj.getRandomValues === "function") {
+  #|    try {
+  #|      const array = new Uint32Array(1);
+  #|      cryptoObj.getRandomValues(array);
+  #|      return array[0] | 0; // Convert to signed 32
+  #|    } catch (_) {
+  #|      // The host refuses Web Crypto here, e.g. Workers at module load
+  #|    }
   #|  }
+  #|  return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
   #|}
 
 ///|
