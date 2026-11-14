@@ -24,16 +24,16 @@ fn extra_field_at(
   extra : BytesView,
   pos : Int32,
 ) -> (Int32, Int32, Int32) raise ZipError {
-  if pos < 0 || 4 > extra.length() - pos {
+  guard pos >= 0 &&
+    pos <= extra.length() &&
+    extra[pos:] is [u16le(header_id), u16le(data_size), .. data] else {
     raise ZipError(UnsupportedFeature, "zip: truncated extra field header")
   }
-  let header_id = read_u16_le_at(extra, pos)
-  let data_size = read_u16_le_at(extra, pos + 2)
-  let data_offset = pos + 4
-  if data_offset > extra.length() || data_size > extra.length() - data_offset {
+  let data_size = data_size.reinterpret_as_int()
+  if data_size > data.length() {
     raise ZipError(Truncated, "zip: truncated extra field data")
   }
-  (header_id, data_size, data_offset)
+  (header_id.reinterpret_as_int(), data_size, pos + 4)
 }
 
 ///|
@@ -63,12 +63,13 @@ fn read_zip64_extra(
           "zip: zip64 extra field size mismatch",
         )
       }
-      let reader = Cursor(extra[data_offset:data_offset + data_size], 0)
-      let uncomp = if need_uncomp { Some(reader.read_u64_raw()) } else { None }
-      let comp = if need_comp { Some(reader.read_u64_raw()) } else { None }
-      let offset = if need_offset { Some(reader.read_u64_raw()) } else { None }
+      // The size check above makes every requested field present.
+      let fields = extra[data_offset:data_offset + data_size]
+      let (uncomp, fields) = take_zip64_field(fields, need_uncomp)
+      let (comp, fields) = take_zip64_field(fields, need_comp)
+      let (offset, fields) = take_zip64_field(fields, need_offset)
       if need_disk {
-        guard reader.read_u32_raw() == 0U else {
+        guard fields is [u32le(0), ..] else {
           raise ZipError(
             UnsupportedFeature,
             "zip: multi-disk archives are not supported",
@@ -97,18 +98,27 @@ fn read_zip64_extra(
 }
 
 ///|
+/// Takes one 64-bit ZIP64 extra value from the front of `fields` when `need`.
+fn take_zip64_field(fields : BytesView, need : Bool) -> (UInt64?, BytesView) {
+  guard need && fields is [u64le(value), .. rest] else { return (None, fields) }
+  (Some(value), rest)
+}
+
+///|
 fn read_zip64_eocd(
   bytes : BytesView,
   eocd_offset : Int32,
 ) -> (UInt64, UInt64, UInt64, Int32) raise ZipError {
   let locator_offset = eocd_offset - 20
-  if locator_offset < 0 ||
-    read_u32_le_at_raw(bytes, locator_offset) != ZIP64_LOCATOR_SIG {
+  guard locator_offset >= 0 &&
+    locator_offset <= bytes.length() &&
+    bytes[locator_offset:] is [u32le(ZIP64_LOCATOR_SIG), .. locator] else {
     raise ZipError(UnsupportedFeature, "zip: zip64 locator missing")
   }
-  let locator_disk = read_u32_le_at_raw(bytes, locator_offset + 4)
-  let zip64_offset_u64 = read_u64_le_at(bytes, locator_offset + 8)
-  let locator_disks = read_u32_le_at_raw(bytes, locator_offset + 16)
+  guard locator
+    is [u32le(locator_disk), u64le(zip64_offset_u64), u32le(locator_disks), ..] else {
+    raise ZipError(Truncated, "zip: truncated field")
+  }
   if locator_disk != 0 || locator_disks != 1 {
     raise ZipError(
       UnsupportedFeature,
@@ -119,24 +129,31 @@ fn read_zip64_eocd(
   if zip64_offset > locator_offset || 12 > locator_offset - zip64_offset {
     raise ZipError(Truncated, "zip: zip64 end record out of bounds")
   }
-  let reader = Cursor(bytes, zip64_offset)
-  let sig = reader.read_u32_raw()
+  // The bounds check above leaves room for the signature and record size.
+  guard bytes[zip64_offset:] is [u32le(sig), u64le(record_size), .. fields] else {
+    raise ZipError(Truncated, "zip: truncated header")
+  }
   if sig != ZIP64_EOCD_SIG {
     raise ZipError(InvalidSignature, "zip: invalid zip64 end record signature")
   }
-  let record_size = reader.read_u64_raw()
   let expected = (locator_offset - zip64_offset - 12).to_uint64()
   if record_size < 44 || record_size != expected {
     raise ZipError(UnsupportedFeature, "zip: zip64 end record size mismatch")
   }
-  ignore(reader.read_u16())
-  ignore(reader.read_u16())
-  let disk_no = reader.read_u32_raw()
-  let disk_start = reader.read_u32_raw()
-  let entries_on_disk = reader.read_u64_raw()
-  let total_entries = reader.read_u64_raw()
-  let central_size = reader.read_u64_raw()
-  let central_offset = reader.read_u64_raw()
+  guard fields
+    is [
+      u16le(_),
+      u16le(_),
+      u32le(disk_no),
+      u32le(disk_start),
+      u64le(entries_on_disk),
+      u64le(total_entries),
+      u64le(central_size),
+      u64le(central_offset),
+      ..,
+    ] else {
+    raise ZipError(Truncated, "zip: truncated header")
+  }
   if disk_no != 0 || disk_start != 0 || entries_on_disk != total_entries {
     raise ZipError(
       UnsupportedFeature,
@@ -149,28 +166,25 @@ fn read_zip64_eocd(
 ///|
 fn data_descriptor_matches(
   bytes : BytesView,
-  offset : Int32,
   crc : UInt32,
   comp_size : UInt64,
   uncomp_size : UInt64,
   zip64 : Bool,
   signed : Bool,
 ) -> Bool {
-  try {
-    let reader = Cursor(bytes, offset)
-    if signed && reader.read_u32_raw() != DATA_DESCRIPTOR_SIG {
-      return false
-    }
-    if reader.read_u32_raw() != crc {
-      return false
-    }
-    if zip64 {
-      reader.read_u64_raw() == comp_size && reader.read_u64_raw() == uncomp_size
-    } else {
-      reader.read_u32_raw().to_uint64() == comp_size &&
-      reader.read_u32_raw().to_uint64() == uncomp_size
-    }
-  } catch {
+  let fields = if signed {
+    guard bytes is [u32le(DATA_DESCRIPTOR_SIG), .. fields] else { return false }
+    fields
+  } else {
+    bytes
+  }
+  match fields {
+    [u32le(found_crc), u64le(comp), u64le(uncomp), ..] if zip64 =>
+      found_crc == crc && comp == comp_size && uncomp == uncomp_size
+    [u32le(found_crc), u32le(comp), u32le(uncomp), ..] if !zip64 =>
+      found_crc == crc &&
+      comp.to_uint64() == comp_size &&
+      uncomp.to_uint64() == uncomp_size
     _ => false
   }
 }
@@ -204,10 +218,10 @@ fn checked_data_descriptor_size(
   zip64 : Bool,
 ) -> Int32 raise ZipError {
   let signed = data_descriptor_matches(
-    bytes, 0, crc, comp_size, uncomp_size, zip64, true,
+    bytes, crc, comp_size, uncomp_size, zip64, true,
   )
   let unsigned = data_descriptor_matches(
-    bytes, 0, crc, comp_size, uncomp_size, zip64, false,
+    bytes, crc, comp_size, uncomp_size, zip64, false,
   )
   if signed && unsigned {
     raise ZipError(UnsupportedFeature, "zip: ambiguous data descriptor")

@@ -152,42 +152,28 @@ fn DirectoryReader::advance_active(
     }
     Tail(range) => {
       expect_range_input(input, range.length)
-      guard find_end_of_central(input) is Some(position) else {
+      guard find_end_of_central(input) is Some(record) else {
         raise ZipError(
           MissingEndOfCentral,
           "zip: end of central directory not found",
         )
       }
-      let reader = Cursor(input, position + 4)
-      let disk = reader.read_u16()
-      let central_disk = reader.read_u16()
-      let disk_entries = reader.read_u16()
-      let entries = reader.read_u16()
-      let central_size = reader.read_u32_raw()
-      let central_offset = reader.read_u32_raw()
-      let comment_size = reader.read_u16()
-      guard disk == 0 && central_disk == 0 else {
+      guard record.disk == 0 && record.central_disk == 0 else {
         raise ZipError(
           UnsupportedFeature,
           "zip: multi-disk archives are not supported",
         )
       }
+      let { disk_entries, entries, central_size, central_offset, .. } = record
       let classic = {
-        offset: range.offset + position.to_uint64(),
+        offset: range.offset + record.offset.to_uint64(),
         disk_entries,
         entries,
         central_size,
         central_offset,
-        comment: reader.read_bytes(comment_size).to_owned(),
+        comment: record.comment.to_owned(),
       }
-      // ZIP64 records may also be present when every classic field fits.
-      // They lie between the directory and this record, so a directory that
-      // ends right here has none, and 0xFFFF in its counts is an ordinary
-      // count: a classic archive may hold exactly 65535 entries.
-      let zip64 = central_size == MAX_U32 ||
-        central_offset == MAX_U32 ||
-        central_offset.to_uint64() + central_size.to_uint64() != classic.offset
-      guard !zip64 else {
+      guard !record.has_zip64(classic.offset) else {
         guard classic.offset >= 20UL else {
           raise ZipError(Truncated, "zip: zip64 locator out of bounds")
         }
@@ -210,13 +196,10 @@ fn DirectoryReader::advance_active(
     }
     Locator(classic) => {
       expect_range_input(input, 20)
-      let reader = Cursor(input, 0)
-      guard reader.read_u32_raw() == ZIP64_LOCATOR_SIG else {
+      guard input
+        is [u32le(ZIP64_LOCATOR_SIG), u32le(disk), u64le(offset), u32le(disks)] else {
         raise ZipError(InvalidSignature, "zip: invalid zip64 locator signature")
       }
-      let disk = reader.read_u32_raw()
-      let offset = reader.read_u64_raw()
-      let disks = reader.read_u32_raw()
       guard disk == 0 && disks == 1 else {
         raise ZipError(
           UnsupportedFeature,
@@ -232,28 +215,30 @@ fn DirectoryReader::advance_active(
     }
     Zip64(classic, offset) => {
       expect_range_input(input, 56)
-      let reader = Cursor(input, 0)
-      guard reader.read_u32_raw() == ZIP64_EOCD_SIG else {
+      guard input
+        is [
+          u32le(ZIP64_EOCD_SIG),
+          u64le(record_size),
+          u16le(_),
+          u16le(_),
+          u32le(disk),
+          u32le(central_disk),
+          u64le(disk_entries),
+          u64le(entries),
+          u64le(central_size),
+          u64le(central_offset),
+        ] else {
         raise ZipError(
           InvalidSignature,
           "zip: invalid zip64 end record signature",
         )
       }
-      let record_size = reader.read_u64_raw()
       guard record_size == classic.offset - 20UL - offset - 12UL else {
         raise ZipError(
           UnsupportedFeature,
           "zip: zip64 end record size mismatch",
         )
       }
-      ignore(reader.read_u16())
-      ignore(reader.read_u16())
-      let disk = reader.read_u32_raw()
-      let central_disk = reader.read_u32_raw()
-      let disk_entries = reader.read_u64_raw()
-      let entries = reader.read_u64_raw()
-      let central_size = reader.read_u64_raw()
-      let central_offset = reader.read_u64_raw()
       guard disk == 0 && central_disk == 0 && disk_entries == entries else {
         raise ZipError(
           UnsupportedFeature,
@@ -296,12 +281,13 @@ fn DirectoryReader::advance_active(
         self.pending + input.to_owned()
       }
       let mut position = 0
+      // Variable-length sizes sit at offset 28 of each 46-byte fixed header.
       while self.entries.length().to_uint64() < bounds.entries &&
-            bytes.length() - position >= 46 {
-        let name_size = read_u16_le_at(bytes, position + 28)
-        let extra_size = read_u16_le_at(bytes, position + 30)
-        let comment_size = read_u16_le_at(bytes, position + 32)
-        let record_size = 46 + name_size + extra_size + comment_size
+            bytes.length() - position >= 46 &&
+            bytes[position + 28:]
+            is [u16le(name_size), u16le(extra_size), u16le(comment_size), ..] {
+        let record_size = 46 +
+          (name_size + extra_size + comment_size).reinterpret_as_int()
         guard record_size <= bytes.length() - position else { break }
         let parsed = parse_directory_record(
           Cursor(bytes[position:position + record_size], 0),
@@ -366,13 +352,13 @@ fn validate_directory_signature(
   guard remaining >= 6UL && remaining <= 65541UL else {
     raise ZipError(UnsupportedFeature, "zip: invalid directory signature size")
   }
-  if bytes.length() >= 4 {
-    guard read_u32_le_at_raw(bytes, 0) == DIRECTORY_SIGNATURE_SIG else {
+  if bytes is [u32le(signature), ..] {
+    guard signature == DIRECTORY_SIGNATURE_SIG else {
       raise ZipError(InvalidSignature, "zip: invalid directory signature")
     }
   }
-  if bytes.length() >= 6 {
-    guard 6UL + read_u16_le_at(bytes, 4).to_uint64() == remaining else {
+  if bytes is [u32le(_), u16le(size), ..] {
+    guard 6UL + size.to_uint64() == remaining else {
       raise ZipError(
         UnsupportedFeature,
         "zip: directory signature size mismatch",

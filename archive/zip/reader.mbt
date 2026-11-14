@@ -54,29 +54,39 @@ fn read_local_record(
   guard meta.local_offset >= 0 && meta.local_offset < central_offset else {
     raise ZipError(Truncated, "zip: local header offset out of bounds")
   }
-  let reader = Cursor(bytes, meta.local_offset)
-  guard reader.read_u32_raw() == LOCAL_HEADER_SIG else {
-    raise ZipError(InvalidSignature, "zip: invalid local header signature")
+  let header = bytes[meta.local_offset:]
+  guard header
+    is [
+      u32le(LOCAL_HEADER_SIG),
+      u16le(_),
+      u16le(flags),
+      u16le(method_id),
+      u16le(_),
+      u16le(_),
+      u32le(local_crc),
+      u32le(comp_size_raw),
+      u32le(uncomp_size_raw),
+      u16le(name_len),
+      u16le(extra_len),
+      ..,
+    ] else {
+    raise record_error(
+      header,
+      LOCAL_HEADER_SIG,
+      "zip: invalid local header signature",
+    )
   }
-  ignore(reader.read_u16())
-  let flags = reader.read_u16()
+  let flags = flags.reinterpret_as_int()
   ensure_flags_supported(flags)
   guard flags == meta.flags else {
     raise ZipError(UnsupportedFeature, "zip: local and central flags differ")
   }
-  let method_id = reader.read_u16()
-  guard method_id == meta.method_id else {
+  guard method_id.reinterpret_as_int() == meta.method_id else {
     raise ZipError(UnsupportedFeature, "zip: local and central methods differ")
   }
-  ignore(reader.read_u16())
-  ignore(reader.read_u16())
-  let local_crc = reader.read_u32_raw()
-  let comp_size_raw = reader.read_u32_raw()
-  let uncomp_size_raw = reader.read_u32_raw()
-  let name_len = reader.read_u16()
-  let extra_len = reader.read_u16()
-  let local_name = reader.read_bytes(name_len)
-  let local_extra = reader.read_bytes(extra_len)
+  let reader = Cursor(bytes, meta.local_offset + 30)
+  let local_name = reader.read_bytes(name_len.reinterpret_as_int())
+  let local_extra = reader.read_bytes(extra_len.reinterpret_as_int())
   // The central name was already decoded and validated. Reuse its owned raw
   // bytes without allocating another String on the matching-name path.
   // Keep the old decode fallback so malformed UTF-8 still raises InvalidUtf8.
@@ -346,36 +356,28 @@ fn parse_end_of_central(
       "zip: package exceeds the input size limit",
     )
   }
-  guard find_end_of_central(bytes) is Some(eocd_offset) else {
+  guard find_end_of_central(bytes) is Some(record) else {
     raise ZipError(
       MissingEndOfCentral,
       "zip: end of central directory not found",
     )
   }
-  let reader = Cursor(bytes, eocd_offset)
-  ignore(reader.read_u32_raw())
-  let disk_no = reader.read_u16()
-  let disk_start = reader.read_u16()
-  let disk_entries = reader.read_u16()
-  let total_entries = reader.read_u16()
-  let central_size_raw = reader.read_u32_raw()
-  let central_offset_raw = reader.read_u32_raw()
-  let comment_len = reader.read_u16()
-  guard disk_no == 0 && disk_start == 0 else {
+  guard record.disk == 0 && record.central_disk == 0 else {
     raise ZipError(
       UnsupportedFeature,
       "zip: multi-disk archives are not supported",
     )
   }
-  let comment = copy_cancellable(reader.read_bytes(comment_len), cancelled)
-  // ZIP64 records lie between the directory and this record. A directory that
-  // ends right here has none, so 0xFFFF in its counts is an ordinary count: a
-  // classic archive may hold exactly 65535 entries.
-  let needs_zip64 = central_size_raw == MAX_U32 ||
-    central_offset_raw == MAX_U32 ||
-    central_offset_raw.to_uint64() + central_size_raw.to_uint64() !=
-    eocd_offset.to_uint64()
-  guard !needs_zip64 else {
+  let {
+    offset: eocd_offset,
+    disk_entries,
+    entries: total_entries,
+    central_size: central_size_raw,
+    central_offset: central_offset_raw,
+    ..
+  } = record
+  let comment = copy_cancellable(record.comment, cancelled)
+  guard !record.has_zip64(eocd_offset.to_uint64()) else {
     let (entry_count, central_size, central_offset, zip64_offset) = zip64_central_bounds(
       bytes, eocd_offset, disk_entries, total_entries, central_size_raw, central_offset_raw,
     )

@@ -184,29 +184,40 @@ priv struct ParsedDirectoryRecord {
 fn parse_directory_record(
   reader : Cursor,
 ) -> ParsedDirectoryRecord raise ZipError {
-  guard reader.read_u32_raw() == CENTRAL_HEADER_SIG else {
-    raise ZipError(InvalidSignature, "zip: invalid central directory signature")
+  let record = reader.bytes[reader.pos:]
+  guard record
+    is [
+      u32le(CENTRAL_HEADER_SIG),
+      u16le(version_made_by),
+      u16le(_),
+      u16le(flags),
+      u16le(method_id),
+      u16le(dos_time),
+      u16le(dos_date),
+      u32le(crc),
+      u32le(comp_size_raw),
+      u32le(uncomp_size_raw),
+      u16le(name_len),
+      u16le(extra_len),
+      u16le(comment_len),
+      u16le(disk),
+      u16le(_),
+      u32le(external_attributes),
+      u32le(local_offset_raw),
+      ..,
+    ] else {
+    raise record_error(
+      record,
+      CENTRAL_HEADER_SIG,
+      "zip: invalid central directory signature",
+    )
   }
-  let version_made_by = reader.read_u16()
-  ignore(reader.read_u16())
-  let flags = reader.read_u16()
-  let method_id = reader.read_u16()
-  let dos_time = reader.read_u16()
-  let dos_date = reader.read_u16()
-  let crc = reader.read_u32_raw()
-  let comp_size_raw = reader.read_u32_raw()
-  let uncomp_size_raw = reader.read_u32_raw()
-  let name_len = reader.read_u16()
-  let extra_len = reader.read_u16()
-  let comment_len = reader.read_u16()
-  let disk = reader.read_u16()
-  ignore(reader.read_u16())
-  let external_attributes = reader.read_u32_raw()
-  let local_offset_raw = reader.read_u32_raw()
+  reader.pos = reader.pos + 46
+  let name_len = name_len.reinterpret_as_int()
   let name_bytes = reader.read_bytes(name_len)
-  let extra_bytes = reader.read_bytes(extra_len)
+  let extra_bytes = reader.read_bytes(extra_len.reinterpret_as_int())
   let name = decode_name(name_bytes)
-  reader.skip(comment_len)
+  reader.skip(comment_len.reinterpret_as_int())
   guard disk == 0 || disk == 0xffff else {
     raise ZipError(
       UnsupportedFeature,
@@ -233,13 +244,13 @@ fn parse_directory_record(
       local_offset: resolve_zip64_field(
         need_offset, zip_offset, local_offset_raw,
       ),
-      method_id,
-      flags,
+      method_id: method_id.reinterpret_as_int(),
+      flags: flags.reinterpret_as_int(),
       crc,
-      creator_system: version_made_by >> 8,
+      creator_system: (version_made_by >> 8).reinterpret_as_int(),
       external_attributes,
-      dos_date,
-      dos_time,
+      dos_date: dos_date.reinterpret_as_int(),
+      dos_time: dos_time.reinterpret_as_int(),
     },
     name_len,
     central_zip64_offset_position: offset_position.map(position => {

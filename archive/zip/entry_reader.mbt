@@ -248,27 +248,36 @@ fn EntryReader::read_header(
   input : BytesView,
 ) -> EntryStep raise ZipError {
   expect_range_input(input, 30)
-  let reader = Cursor(input, 0)
-  guard reader.read_u32_raw() == LOCAL_HEADER_SIG else {
+  guard input
+    is [
+      u32le(LOCAL_HEADER_SIG),
+      u16le(_),
+      u16le(flags),
+      u16le(method_id),
+      u16le(_),
+      u16le(_),
+      u32le(crc),
+      u32le(compressed_size),
+      u32le(uncompressed_size),
+      u16le(name_length),
+      u16le(extra_length),
+    ] else {
     raise ZipError(InvalidSignature, "zip: invalid local header signature")
   }
-  ignore(reader.read_u16())
-  let flags = reader.read_u16()
+  let flags = flags.reinterpret_as_int()
   ensure_flags_supported(flags)
   guard flags == self.entry.flags else {
     raise ZipError(UnsupportedFeature, "zip: local and central flags differ")
   }
-  guard reader.read_u16() == self.entry.method_id else {
+  guard method_id.reinterpret_as_int() == self.entry.method_id else {
     raise ZipError(UnsupportedFeature, "zip: local and central methods differ")
   }
-  ignore(reader.read_u16())
-  ignore(reader.read_u16())
   let header = {
-    crc: reader.read_u32_raw(),
-    compressed_size: reader.read_u32_raw(),
-    uncompressed_size: reader.read_u32_raw(),
-    name_length: reader.read_u16(),
-    extra_length: reader.read_u16(),
+    crc,
+    compressed_size,
+    uncompressed_size,
+    name_length: name_length.reinterpret_as_int(),
+    extra_length: extra_length.reinterpret_as_int(),
   }
   let header_size = 30UL +
     header.name_length.to_uint64() +

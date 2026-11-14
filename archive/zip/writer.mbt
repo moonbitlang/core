@@ -377,8 +377,7 @@ fn Output::write_preserved_central_record(
   local_offset : Int32,
 ) -> Unit raise ZipError {
   let template = source.central_record
-  guard template.length() >= 46 &&
-    read_u32_le_at_raw(template, 0) == CENTRAL_HEADER_SIG else {
+  guard template.length() >= 46 && template is [u32le(CENTRAL_HEADER_SIG), ..] else {
     raise ZipError(
       UnsupportedFeature,
       "zip: preserved central record is malformed",
@@ -469,8 +468,7 @@ fn Output::write_preserved_trailer(
   central_offset : Int32,
 ) -> Unit raise ZipError {
   let classic = trailer.classic_end_record
-  guard classic.length() >= 22 &&
-    read_u32_le_at_raw(classic, 0) == END_OF_CENTRAL_SIG else {
+  guard classic.length() >= 22 && classic is [u32le(END_OF_CENTRAL_SIG), ..] else {
     raise ZipError(UnsupportedFeature, "zip: preserved end record is malformed")
   }
   guard trailer.zip64_end_record is Some(end_record) else {
@@ -484,8 +482,7 @@ fn Output::write_preserved_trailer(
     )
     return
   }
-  guard end_record.length() >= 56 &&
-    read_u32_le_at_raw(end_record, 0) == ZIP64_EOCD_SIG else {
+  guard end_record.length() >= 56 && end_record is [u32le(ZIP64_EOCD_SIG), ..] else {
     raise ZipError(
       UnsupportedFeature,
       "zip: preserved zip64 end record is malformed",
@@ -506,8 +503,7 @@ fn Output::write_preserved_trailer(
       "zip: preserved zip64 locator is missing",
     )
   }
-  guard locator.length() == 20 &&
-    read_u32_le_at_raw(locator, 0) == ZIP64_LOCATOR_SIG else {
+  guard locator.length() == 20 && locator is [u32le(ZIP64_LOCATOR_SIG), ..] else {
     raise ZipError(
       UnsupportedFeature,
       "zip: preserved zip64 locator is malformed",
@@ -539,31 +535,37 @@ fn Output::write_preserved_classic_end_record(
   central_offset : Int32,
   keep_zip64_sentinels~ : Bool,
 ) -> Unit raise ZipError {
-  if classic.length() < 22 ||
-    read_u32_le_at_raw(classic, 0) != END_OF_CENTRAL_SIG {
+  guard classic
+    is [
+      u32le(END_OF_CENTRAL_SIG),
+      u16le(_),
+      u16le(_),
+      u16le(entries_on_disk),
+      u16le(total_on_disk),
+      u32le(size_field),
+      u32le(offset_field),
+      u16le(_),
+      ..,
+    ] else {
     raise ZipError(UnsupportedFeature, "zip: preserved end record is malformed")
   }
   let count = total_entries.min(0xffff)
   let mut cursor = 0
-  let entries_on_disk = read_u16_le_at(classic, 8)
   if !keep_zip64_sentinels || entries_on_disk != 0xffff {
     output.write_bytes(classic[cursor:8])
     output.write_u16(count)
     cursor = 10
   }
-  let total_on_disk = read_u16_le_at(classic, 10)
   if !keep_zip64_sentinels || total_on_disk != 0xffff {
     output.write_bytes(classic[cursor:10])
     output.write_u16(count)
     cursor = 12
   }
-  let size_field = read_u32_le_at_raw(classic, 12)
   if !keep_zip64_sentinels || size_field != MAX_U32 {
     output.write_bytes(classic[cursor:12])
     output.write_u32(central_size.to_uint_checked())
     cursor = 16
   }
-  let offset_field = read_u32_le_at_raw(classic, 16)
   if !keep_zip64_sentinels || offset_field != MAX_U32 {
     output.write_bytes(classic[cursor:16])
     output.write_u32(central_offset.to_uint_checked())
