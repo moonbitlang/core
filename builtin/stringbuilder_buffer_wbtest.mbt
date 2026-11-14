@@ -29,7 +29,7 @@ test "StringBuilder empty buffer grows for a non-BMP character" {
   builder.write_string("")
   inspect(builder.data.length(), content="0")
   builder.write_char('😀')
-  inspect(builder.data.length(), content="2")
+  inspect(builder.data.length(), content="8")
   inspect(builder.to_string(), content="😀")
   builder.reset()
   builder.write_view("!ab!"[1:3])
@@ -40,6 +40,14 @@ test "StringBuilder empty buffer grows for a non-BMP character" {
 test "StringBuilder growth capacity doubles while representable" {
   inspect(stringbuilder_growth_capacity(8, 8, 9), content="16")
   inspect(stringbuilder_growth_capacity(8, 8, 33), content="64")
+}
+
+///|
+test "StringBuilder growth from empty or tiny capacity starts at 8 units" {
+  inspect(stringbuilder_growth_capacity(0, 0, 1), content="8")
+  inspect(stringbuilder_growth_capacity(0, 0, 2), content="8")
+  inspect(stringbuilder_growth_capacity(0, 0, 9), content="16")
+  inspect(stringbuilder_growth_capacity(3, 3, 4), content="8")
 }
 
 ///|

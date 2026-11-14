@@ -17,9 +17,18 @@ test "buffer growth capacity doubles while representable" {
   inspect(buffer_growth_capacity(8, 8, 9), content="16")
   inspect(buffer_growth_capacity(8, 8, 33), content="64")
   inspect(buffer_growth_capacity(1, 1, 100), content="128")
-  inspect(buffer_growth_capacity(3, 3, 24), content="24")
+  inspect(buffer_growth_capacity(12, 12, 48), content="48")
   inspect(buffer_growth_capacity(16, 16, 16), content="16")
   inspect(buffer_growth_capacity(16, 16, 17), content="32")
+}
+
+///|
+test "buffer growth from empty or tiny capacity starts at 8 bytes" {
+  inspect(buffer_growth_capacity(0, 0, 1), content="8")
+  inspect(buffer_growth_capacity(0, 0, 8), content="8")
+  inspect(buffer_growth_capacity(0, 0, 9), content="16")
+  inspect(buffer_growth_capacity(1, 1, 2), content="8")
+  inspect(buffer_growth_capacity(0, 0, 100), content="128")
 }
 
 ///|

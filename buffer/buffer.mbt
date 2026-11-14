@@ -51,7 +51,9 @@ fn buffer_growth_capacity(
   if required < len {
     abort("Buffer capacity overflow")
   }
-  let start = if current <= 0 { 1 } else { current }
+  // Never grow to fewer than 8 bytes: an empty or tiny buffer skips the 1, 2,
+  // 4 steps, where copying costs more than the space it saves.
+  let start = current.max(8)
   let enough_space = for space = start {
     if space >= required {
       break space

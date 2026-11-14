@@ -83,3 +83,14 @@ test "bench StringBuilder default single ASCII char" (it : @bench.T) {
     it.keep(builder.to_string())
   })
 }
+
+///|
+test "bench StringBuilder default 32 ASCII chars" (it : @bench.T) {
+  it.bench(() => {
+    let builder = StringBuilder()
+    for _ in 0..<32 {
+      builder.write_char('x')
+    }
+    it.keep(builder.to_string())
+  })
+}

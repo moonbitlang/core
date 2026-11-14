@@ -24,7 +24,8 @@ struct StringBuilder {
 ///
 /// * `capacity` : The initial capacity of the internal buffer,
 /// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
-/// buffer. `capacity` may be ignored on some platforms, JS for example.
+/// buffer; its first write still reserves at least 8 code units. `capacity`
+/// may be ignored on some platforms, JS for example.
 ///
 /// Returns a new `StringBuilder` instance.
 ///
