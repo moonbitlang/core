@@ -328,7 +328,7 @@ fn stored_then_backrefs(
 async fn decode_buffered(stream : Bytes) -> Bytes {
   let out = @buffer.Buffer()
   @async.with_task_group() <| root => {
-    let (r, w) = @io.pipe()
+    let (r, w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
       defer w.close()
       w.write(stream)
