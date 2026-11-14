@@ -27,7 +27,7 @@ extern "js" fn with_refused_get_random_values(f : () -> Int32) -> Int32 =
   #|    throw new Error("refused");
   #|  };
   #|  const crypto = globalThis.crypto;
-  #|  const [obj, key, value] = crypto === undefined
+  #|  const [obj, key, value] = crypto == null
   #|    ? [globalThis, "crypto", { getRandomValues: refuse }]
   #|    : [crypto, "getRandomValues", refuse];
   #|  // Throws, failing the test, if the property cannot be replaced
@@ -46,14 +46,14 @@ extern "js" fn with_refused_get_random_values(f : () -> Int32) -> Int32 =
   #|}
 
 ///|
-/// Calls `f` while `globalThis.crypto` is undefined, as on hosts without Web
-/// Crypto.
+/// Calls `f` while `globalThis.crypto` is undefined, or `null` when `as_null`
+/// is true, as on hosts without Web Crypto.
 #cfg(target="js")
-extern "js" fn with_missing_crypto(f : () -> Int32) -> Unit =
-  #|(f) => {
+extern "js" fn with_missing_crypto(f : () -> Int32, as_null : Bool) -> Unit =
+  #|(f, as_null) => {
   #|  const saved = Object.getOwnPropertyDescriptor(globalThis, "crypto");
   #|  Object.defineProperty(globalThis, "crypto", {
-  #|    value: undefined,
+  #|    value: as_null ? null : undefined,
   #|    configurable: true,
   #|    writable: true,
   #|  });
@@ -73,7 +73,7 @@ extern "js" fn with_missing_crypto(f : () -> Int32) -> Unit =
 /// above must not leave behind.
 #cfg(target="js")
 extern "js" fn crypto_has_own_get_random_values() -> Bool =
-  #|() => globalThis.crypto !== undefined &&
+  #|() => globalThis.crypto != null &&
   #|  Object.hasOwn(globalThis.crypto, "getRandomValues")
 
 ///|
@@ -87,5 +87,11 @@ test "random_seed falls back when getRandomValues is refused" {
 ///|
 #cfg(target="js")
 test "random_seed falls back without Web Crypto" {
-  with_missing_crypto(() => random_seed())
+  with_missing_crypto(() => random_seed(), false)
+}
+
+///|
+#cfg(target="js")
+test "random_seed falls back when crypto is null" {
+  with_missing_crypto(() => random_seed(), true)
 }
