@@ -23,79 +23,16 @@ test "Queue capacity is forwarded to the backing deque" {
 }
 
 ///|
-test "Queue::release_unused overwrites the slots pop vacated" {
-  let queue : Queue[String] = from_array(["a", "b", "c", "d"])
-  let (front, _) = queue.inner.as_views()
-  let _ = queue.pop()
-  let _ = queue.pop()
-  // without a release, the popped elements stay reachable from the buffer
-  @debug.debug_inspect(
-    front,
-    content=(
-      #|<ArrayView: ["a", "b", "c", "d"]>
-    ),
-  )
-  queue.release_unused(placeholder="-")
-  @debug.debug_inspect(
-    front,
-    content=(
-      #|<ArrayView: ["-", "-", "c", "d"]>
-    ),
-  )
-  @debug.debug_inspect(
-    queue,
-    content=(
-      #|<Queue: ["c", "d"]>
-    ),
-  )
-  inspect(queue.capacity(), content="4")
-}
-
-///|
-test "Queue::release_unused after clear overwrites the whole buffer" {
-  let queue : Queue[String] = from_array(["a", "b", "c"])
-  let (front, _) = queue.inner.as_views()
-  queue.clear()
-  queue.release_unused(placeholder="-")
-  inspect(queue.length(), content="0")
-  inspect(queue.capacity(), content="3")
-  @debug.debug_inspect(
-    front,
-    content=(
-      #|<ArrayView: ["-", "-", "-"]>
-    ),
-  )
-}
-
-///|
-test "Queue::release_unused covers a wrapped buffer" {
-  let queue : Queue[String] = from_array(["a", "b", "c", "d", "e"])
-  let (whole, _) = queue.inner.as_views()
-  // rotate so the contents wrap around the end of the buffer
-  for _ in 0..<3 {
-    queue.push(queue.pop().unwrap())
+test "Queue::shrink_to_fit drops the spare capacity of the backing deque" {
+  let queue : Queue[String] = Queue([], capacity=16)
+  for s in ["a", "b", "c", "d", "e"] {
+    queue.push(s)
   }
-  let (front, back) = queue.inner.as_views()
-  assert_true(back.length() > 0)
-  @debug.debug_inspect(
-    front,
-    content=(
-      #|<ArrayView: ["d", "e"]>
-    ),
-  )
   let _ = queue.pop()
-  queue.release_unused(placeholder="-")
-  @debug.debug_inspect(
-    queue,
-    content=(
-      #|<Queue: ["e", "a", "b", "c"]>
-    ),
-  )
-  // only the slot `pop` vacated (which held "d") was overwritten
-  @debug.debug_inspect(
-    whole,
-    content=(
-      #|<ArrayView: ["a", "b", "c", "-", "e"]>
-    ),
-  )
+  let _ = queue.pop()
+  queue.shrink_to_fit()
+  inspect(queue.inner.capacity(), content="3")
+  queue.clear()
+  queue.shrink_to_fit()
+  inspect(queue.inner.capacity(), content="0")
 }

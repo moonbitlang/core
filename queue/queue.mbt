@@ -96,14 +96,11 @@ pub impl[A : Hash] Hash for Queue[A] with fn hash_combine(self, hasher) {
 ///|
 /// Clears the queue.
 ///
-/// This method has no effect on the allocated capacity of the queue, only
-/// setting the length to 0.
+/// This keeps the memory the queue has allocated, only setting the length to 0.
 ///
-/// Emptying a queue is a removal like any other: the buffer keeps referring to
-/// the elements that were in it, and they are released once later pushes reuse
-/// those slots, the buffer grows, or the queue is dropped. Call
-/// `Queue::release_unused` to overwrite them at once, or `Queue::shrink_to_fit`
-/// to hand the buffer back entirely.
+/// Emptying a queue is a removal like any other: the queue may keep referring
+/// to the elements that were in it until later pushes overwrite them or the
+/// queue is dropped. Call `Queue::shrink_to_fit` to release them at once.
 ///
 /// # Example
 /// ```mbt check
@@ -118,65 +115,18 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 }
 
 ///|
-/// Returns the current capacity of the queue's internal buffer: how many
-/// elements it can hold before `push` has to grow it.
+/// Releases the memory the queue holds beyond its current elements.
 ///
-/// # Example
+/// Removing elements (`Queue::pop`, `Queue::clear`, or `Queue::transfer` on its
+/// source) does not let go of them right away: the queue may keep referring to
+/// them, so they stay reachable until later pushes overwrite them or the queue
+/// is dropped. After this call the queue refers only to the elements it
+/// currently holds, and its spare capacity is returned as well. The elements
+/// and their order are unchanged.
 ///
-/// ```mbt check
-/// test {
-///   let queue : @queue.Queue[Int32] = Queue([], capacity=10)
-///   queue.push(1)
-///   queue.push(2)
-///   inspect(queue.capacity(), content="10")
-/// }
-/// ```
-pub fn[A] Queue::capacity(self : Queue[A]) -> Int32 {
-  self.inner.capacity()
-}
-
-///|
-/// Shrinks the capacity of the queue as much as possible.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let queue : @queue.Queue[Int32] = Queue([], capacity=10)
-///   queue.push(1)
-///   queue.push(2)
-///   queue.push(3)
-///   inspect(queue.capacity(), content="10")
-///   queue.shrink_to_fit()
-///   inspect(queue.capacity(), content="3")
-/// }
-/// ```
-///
-/// The survivors are copied into the new buffer and the old one is released
-/// with them, so this also releases whatever earlier removals left in the
-/// unused capacity. It pays an allocation plus a copy of every survivor to do
-/// so; `Queue::release_unused` releases the same elements in one pass over the
-/// unused region and no allocation, at the cost of leaving the capacity alone.
-pub fn[A] Queue::shrink_to_fit(self : Queue[A]) -> Unit {
-  self.inner.shrink_to_fit()
-}
-
-///|
-/// Overwrites the queue's unused capacity -- every slot not currently holding
-/// an element -- with `placeholder`, releasing whatever those slots held.
-///
-/// Removing elements from a queue never clears the slots it vacates, so the
-/// removed elements stay reachable from the buffer and unreleased until later
-/// pushes reuse those slots, the buffer grows, or the queue is dropped. This
-/// releases them on demand without reallocating, which is what `Queue::pop`,
-/// `Queue::clear` and `Queue::transfer` (on its source) leave outstanding.
-/// `Queue::shrink_to_fit` releases them too, but by allocating an exact-size
-/// buffer and copying every survivor into it; this costs one pass over the
-/// unused region and no allocation.
-///
-/// This only matters for element types holding references -- for types such as
-/// `Int` there is nothing to release and the call merely costs a pass over the
-/// buffer.
+/// This matters only for element types holding references; it costs an
+/// allocation plus a copy of the current elements, and does nothing when the
+/// queue has no spare capacity.
 ///
 /// # Example
 ///
@@ -184,7 +134,7 @@ pub fn[A] Queue::shrink_to_fit(self : Queue[A]) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[String] = @queue.from_array(["a", "b", "c"])
 ///   let _ = queue.pop()
-///   queue.release_unused(placeholder="")
+///   queue.shrink_to_fit()
 ///   @debug.debug_inspect(
 ///     queue,
 ///     content=(
@@ -193,8 +143,8 @@ pub fn[A] Queue::shrink_to_fit(self : Queue[A]) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn[A] Queue::release_unused(self : Queue[A], placeholder~ : A) -> Unit {
-  self.inner.release_unused(placeholder~)
+pub fn[A] Queue::shrink_to_fit(self : Queue[A]) -> Unit {
+  self.inner.shrink_to_fit()
 }
 
 ///|
@@ -297,9 +247,9 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 ///|
 /// Pops the first value from the queue, which returns None if the queue is empty.
 ///
-/// The vacated slot goes on referring to the removed element, and it is
-/// released only once a later push reuses the slot, the buffer grows, or the
-/// buffer is dropped. Call `Queue::release_unused` to release it at once.
+/// The queue may keep referring to the removed element until a later push
+/// overwrites it or the queue is dropped. Call `Queue::shrink_to_fit` to
+/// release it at once.
 ///
 /// # Example
 /// ```mbt check
@@ -407,6 +357,9 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 ///
 /// Adds all of the elements of source to the end of destination, then clears source.
 /// If source and destination are the same queue, this is a no-op.
+///
+/// Like `Queue::clear`, emptying the source may leave it referring to the
+/// transferred elements; call `Queue::shrink_to_fit` on it to release them.
 ///
 /// # Example
 /// ```mbt check

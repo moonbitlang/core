@@ -396,19 +396,7 @@ test "JSON round-trip" {
 }
 
 ///|
-test "Queue::capacity reports the backing buffer" {
-  let queue : @queue.Queue[Int32] = Queue([], capacity=8)
-  inspect(queue.capacity(), content="8")
-  for i in 0..<8 {
-    queue.push(i)
-  }
-  inspect(queue.capacity(), content="8")
-  queue.push(8)
-  assert_true(queue.capacity() >= 9)
-}
-
-///|
-test "Queue::shrink_to_fit drops spare capacity and keeps the order" {
+test "Queue::shrink_to_fit keeps the elements and their order" {
   let queue : @queue.Queue[String] = Queue([], capacity=16)
   for s in ["a", "b", "c", "d", "e"] {
     queue.push(s)
@@ -416,7 +404,6 @@ test "Queue::shrink_to_fit drops spare capacity and keeps the order" {
   let _ = queue.pop()
   let _ = queue.pop()
   queue.shrink_to_fit()
-  inspect(queue.capacity(), content="3")
   @debug.debug_inspect(
     queue,
     content=(
@@ -432,9 +419,13 @@ test "Queue::shrink_to_fit drops spare capacity and keeps the order" {
       #|<Queue: ["d", "e", "f"]>
     ),
   )
+  // an emptied, shrunken queue can grow again
   queue.clear()
   queue.shrink_to_fit()
-  inspect(queue.capacity(), content="0")
+  inspect(queue.length(), content="0")
+  queue.push("g")
+  @debug.debug_inspect(queue.pop(), content="Some(\"g\")")
+  inspect(queue.is_empty(), content="true")
 }
 
 ///|

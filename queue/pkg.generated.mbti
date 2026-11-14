@@ -17,7 +17,6 @@ type Queue[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Queue::Queue(ArrayView[A], capacity? : Int32) -> Self[A]
-pub fn[A] Queue::capacity(Self[A]) -> Int32
 pub fn[A] Queue::clear(Self[A]) -> Unit
 pub fn[A : Compare] Queue::compare(Self[A], Self[A]) -> Int32
 #alias(clone, deprecated)
@@ -41,7 +40,6 @@ pub fn[A] Queue::new() -> Self[A]
 pub fn[A] Queue::peek(Self[A]) -> A?
 pub fn[A] Queue::pop(Self[A]) -> A?
 pub fn[A] Queue::push(Self[A], A) -> Unit
-pub fn[A] Queue::release_unused(Self[A], placeholder~ : A) -> Unit
 pub fn[A] Queue::shrink_to_fit(Self[A]) -> Unit
 pub fn[A] Queue::to_array(Self[A]) -> Array[A]
 pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
