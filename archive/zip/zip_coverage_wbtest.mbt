@@ -1098,3 +1098,59 @@ test "single-pass ZIP entry decoding sizes output by the payload, not the declar
     InvalidDeflate,
   )
 }
+
+///|
+test "read_all decodes a DEFLATE entry once" {
+  let data = Bytes::makei(1 << 20, i => (i / 7 % 251).to_byte())
+  let archive = Archive()
+  archive.add("a", data)
+  let bytes = write(archive)
+  let mut total = 0
+  ignore(
+    read_all(bytes, cancelled=() => {
+      total += 1
+      false
+    }),
+  )
+  // Polls of each piece measured on its own: one decode, the counting
+  // fallback's two passes, and the CRC check read_all runs afterwards.
+  let compressed = @flate.deflate_all(data)
+  let mut single = 0
+  ignore(
+    inflate_declared_entry(
+      compressed,
+      data.length(),
+      data.length(),
+      EntryUncompressedBytes,
+      data.length(),
+      () => {
+        single += 1
+        false
+      },
+    ),
+  )
+  let mut two_pass = 0
+  ignore(
+    inflate_entry(
+      compressed,
+      data.length(),
+      EntryUncompressedBytes,
+      data.length(),
+      () => {
+        two_pass += 1
+        false
+      },
+    ),
+  )
+  let mut crc = 0
+  ignore(
+    crc32_cancellable(data, cancelled=() => {
+      crc += 1
+      false
+    }),
+  )
+  // Decoding twice would add about `two_pass - single` polls, far more than
+  // the few polls read_all spends outside the decode and the CRC.
+  assert_true(two_pass - single > 64)
+  assert_true(total < single + crc + 32)
+}
