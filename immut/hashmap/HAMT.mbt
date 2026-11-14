@@ -364,7 +364,9 @@ pub fn[K, V] HashMap::filter(
       Branch(children) =>
         match children.filter(go) {
           None => None
-          Some(new_children) if same_children(new_children, children) =>
+          // `SparseArray::filter` returns `children` itself when `go`
+          // returned every child unchanged.
+          Some(new_children) if physical_equal(new_children, children) =>
             Some(node)
           Some(new_children) => Some(collapse_branch(new_children))
         }
@@ -379,22 +381,6 @@ pub fn[K, V] HashMap::filter(
         new_data => { data: new_data, }
       }
   }
-}
-
-///|
-/// Whether `filter` kept every child of a branch unchanged. `Node` is a
-/// reference type, so `physical_equal` means "the same subtree".
-fn[K, V] same_children(
-  new_children : @sparse_array.SparseArray[Node[K, V]],
-  children : @sparse_array.SparseArray[Node[K, V]],
-) -> Bool {
-  guard new_children.elem_info == children.elem_info else { return false }
-  for i in 0..<children.data.length() {
-    guard physical_equal(new_children.data[i], children.data[i]) else {
-      return false
-    }
-  }
-  true
 }
 
 ///|
