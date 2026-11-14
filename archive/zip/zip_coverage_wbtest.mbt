@@ -982,7 +982,7 @@ test "fixed records tell short input from a foreign signature" {
     () => ignore(parse_central_record(foreign, Cursor(foreign, 0))),
     InvalidSignature,
   )
-  @test.assert_eq(parse_central_record(central, Cursor(central, 0)).name, "a")
+  inspect(parse_central_record(central, Cursor(central, 0)).name, content="a")
 }
 
 ///|
@@ -995,7 +995,8 @@ test "end record scan skips a signature inside the archive comment" {
   )
   let bytes = write(archive)
   let record = find_end_of_central(bytes).unwrap()
-  @test.assert_eq(record.offset, bytes.length() - 22 - 26)
-  @test.assert_eq(record.comment.length(), 26)
-  @test.assert_eq(read_all(bytes).entries().length(), 1)
+  // The real record and its 26-byte comment end the archive.
+  inspect(bytes.length() - record.offset, content="48")
+  inspect(record.comment.length(), content="26")
+  inspect(read_all(bytes).entries().length(), content="1")
 }
