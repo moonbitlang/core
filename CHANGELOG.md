@@ -15,6 +15,7 @@
 
 #### Changed
 
+- **BREAKING**: `Array::retain`, `retain_map`, `extract_if`, `map_in_place`, and `mapi_in_place` now require non-raising callbacks, including the deprecated `map_inplace` and `mapi_inplace` aliases. For fallible transformations, use `filter`, `filter_map`, `map`, or `mapi` and commit the result after success; for extraction, compute selection decisions before removing elements. This avoids partial in-place updates when callbacks raise.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed
