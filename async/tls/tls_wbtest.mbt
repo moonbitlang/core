@@ -290,3 +290,107 @@ async test "client custom root certificate rejects different root" {
     }
   }
 }
+
+///|
+#derive(@debug.Debug)
+priv suberror ReadFailed
+
+///|
+/// A pipe reader that, once `fail` is set, fails every read,
+/// or with `eof` reaches the end of input
+priv struct FailingRead {
+  inner : @pipe.PipeRead
+  ctrl : @io.BinaryReaderController
+  eof : Bool
+  mut fail : Bool
+}
+
+///|
+impl @io.BinaryReader for FailingRead
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn raw_read_impl(
+  self,
+  buf,
+  offset~,
+  max_len~,
+) {
+  guard !self.fail else { if self.eof { 0 } else { raise ReadFailed } }
+  self.inner.read_into(buf, offset~, max_len~)
+}
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn name(_self) {
+  "FailingRead"
+}
+
+///|
+impl @io.BinaryReaderImpl for FailingRead with fn get_controller(self) {
+  self.ctrl
+}
+
+///|
+/// Returns what a large `write` raises
+/// when a concurrent `read` fails, or with `eof` reaches the end of input
+async fn write_after_failed_read(eof~ : Bool) -> Error {
+  let (client_read_from_server, server_write_to_client) = @pipe.pipe()
+  let (server_read_from_client, client_write_to_server) = @pipe.pipe()
+  defer {
+    client_read_from_server.close()
+    client_write_to_server.close()
+    server_read_from_client.close()
+    server_write_to_client.close()
+  }
+  let mut result = None
+  @async.with_task_group() <| root => {
+    root.spawn_bg() <| () => {
+      test_server(server_read_from_client, server_write_to_client).close()
+    }
+    let reader = FailingRead::{
+      inner: client_read_from_server,
+      ctrl: BinaryReaderController(),
+      eof,
+      fail: false,
+    }
+    let client = Tls::client_from_pair(
+      reader,
+      client_write_to_server,
+      trust=NoVerification,
+    )
+    defer client.close()
+    reader.fail = true
+    // Runs once the write below waits for the full pipe:
+    // fail a read, then let the write continue.
+    root.spawn_bg() <| () => {
+      ignore(client.read()) catch {
+        _ => ()
+      }
+      ignore(server_read_from_client.read_all())
+    }
+    result = Some(
+      @test.expect_error_async(() => client.write(Bytes::make(1 << 20, b'x'))),
+    )
+    // Ends the drain above
+    client_write_to_server.close()
+  }
+  result.unwrap()
+}
+
+///|
+async test "`write` after a concurrent `read` failed or reached EOF" {
+  @debug.debug_inspect(
+    write_after_failed_read(eof=false),
+    content=(
+      #|TransportError(
+      #|  TransportError(ReadFailed, context="FailingRead"),
+      #|  context="@tls.Tls",
+      #|)
+    ),
+  )
+  @debug.debug_inspect(
+    write_after_failed_read(eof=true),
+    content=(
+      #|TransportError(ConnectionClosed, context="@tls.Tls")
+    ),
+  )
+}
