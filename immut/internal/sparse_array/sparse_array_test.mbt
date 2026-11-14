@@ -103,3 +103,80 @@ test "SparseArray::iter" {
   })
   inspect(buf, content="0, 1, 3, 31")
 }
+
+///|
+test "SparseArray::filter returns self when pred changes nothing" {
+  let arr = @sparse_array.from_sorted_fixed_array([0, 3, 7, 31], [
+    "a", "b", "c", "d",
+  ])
+  guard arr.filter(x => Some(x)) is Some(kept) else { fail("dropped all") }
+  inspect(physical_equal(kept, arr), content="true")
+}
+
+///|
+test "SparseArray::filter drops or replaces from any position" {
+  let arr = @sparse_array.from_sorted_fixed_array([0, 3, 7, 31], [
+    "a", "b", "c", "d",
+  ])
+  let view = (filtered : @sparse_array.SparseArray[String]?) => {
+    filtered.map(a => (a.length(), [a.get(0), a.get(3), a.get(7), a.get(31)]))
+  }
+  // drop at the first, a middle, and the last position
+  debug_inspect(
+    view(arr.filter(x => if x == "a" { None } else { Some(x) })),
+    content=(
+      #|Some((3, [None, Some("b"), Some("c"), Some("d")]))
+    ),
+  )
+  debug_inspect(
+    view(arr.filter(x => if x == "c" { None } else { Some(x) })),
+    content=(
+      #|Some((3, [Some("a"), Some("b"), None, Some("d")]))
+    ),
+  )
+  debug_inspect(
+    view(arr.filter(x => if x == "d" { None } else { Some(x) })),
+    content=(
+      #|Some((3, [Some("a"), Some("b"), Some("c"), None]))
+    ),
+  )
+  // the first change is a replacement, followed by a drop
+  debug_inspect(
+    view(
+      arr.filter(x => {
+        match x {
+          "b" => Some("B")
+          "c" => None
+          _ => Some(x)
+        }
+      }),
+    ),
+    content=(
+      #|Some((3, [Some("a"), Some("B"), None, Some("d")]))
+    ),
+  )
+  // only replacements: same bitmap, new data
+  guard arr.filter(x => Some(x + "!")) is Some(replaced) else {
+    fail("dropped all")
+  }
+  inspect(physical_equal(replaced, arr), content="false")
+  debug_inspect(
+    view(Some(replaced)),
+    content=(
+      #|Some((4, [Some("a!"), Some("b!"), Some("c!"), Some("d!")]))
+    ),
+  )
+  // keep only an unchanged prefix, then drop everything
+  debug_inspect(
+    view(arr.filter(x => if x == "a" { Some(x) } else { None })),
+    content=(
+      #|Some((1, [Some("a"), None, None, None]))
+    ),
+  )
+  debug_inspect(
+    view(arr.filter(_ => None)),
+    content=(
+      #|None
+    ),
+  )
+}
