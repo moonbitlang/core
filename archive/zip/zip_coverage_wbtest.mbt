@@ -960,3 +960,42 @@ test "CRC-32 computation honours ZIP cancellation" {
   @test.assert_eq(kind, Cancelled)
   assert_true(polls >= 4)
 }
+
+///|
+test "fixed records tell short input from a foreign signature" {
+  let central = central_record(0, 0, 0, 0U, 0, 0, b"a", b"", 0)
+  for length in [2, 4, 45] {
+    let short = central[:length]
+    expect_zip_kind(
+      () => ignore(parse_central_record(short, Cursor(short, 0))),
+      Truncated,
+    )
+  }
+  let foreign = Bytes::makei(central.length(), i => {
+    if i < 4 {
+      b"PK\x03\x04"[i]
+    } else {
+      central[i]
+    }
+  })
+  expect_zip_kind(
+    () => ignore(parse_central_record(foreign, Cursor(foreign, 0))),
+    InvalidSignature,
+  )
+  @test.assert_eq(parse_central_record(central, Cursor(central, 0)).name, "a")
+}
+
+///|
+test "end record scan skips a signature inside the archive comment" {
+  let archive = Archive()
+  archive.add("a", b"x", compression=Store)
+  // A fake end record whose comment length does not reach the input's end.
+  archive.set_comment(
+    b"PK\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00tail",
+  )
+  let bytes = write(archive)
+  let record = find_end_of_central(bytes).unwrap()
+  @test.assert_eq(record.offset, bytes.length() - 22 - 26)
+  @test.assert_eq(record.comment.length(), 26)
+  @test.assert_eq(read_all(bytes).entries().length(), 1)
+}

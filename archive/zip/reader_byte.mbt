@@ -52,9 +52,9 @@ const ZIP64_EXTRA_ID : Int32 = 0x0001
 const MAX_U32 : UInt32 = 0xFFFFFFFF
 
 ///|
-/// Byte-level primitives and shared ZIP format constants: the little-endian
-/// cursor, fixed-width field readers, the end-of-central scan, and
-/// cancellation-aware owned copies.
+/// Byte-level primitives and shared ZIP format constants: the field cursor
+/// for variable-length data, the end-of-central scan, and cancellation-aware
+/// owned copies. Fixed-layout records are matched with byte patterns.
 
 ///|
 priv struct Cursor {
@@ -77,42 +77,6 @@ fn Cursor::Cursor(bytes : BytesView, pos : Int32) -> Cursor {
 }
 
 ///|
-fn Cursor::read_u8(self : Cursor) -> Int32 raise ZipError {
-  if self.pos < 0 || self.pos >= self.bytes.length() {
-    raise ZipError(Truncated, "zip: truncated header")
-  }
-  let value = self.bytes[self.pos].to_int()
-  self.pos = self.pos + 1
-  value
-}
-
-///|
-fn Cursor::read_u16(self : Cursor) -> Int32 raise ZipError {
-  let b0 = self.read_u8()
-  let b1 = self.read_u8()
-  b0 | (b1 << 8)
-}
-
-///|
-fn Cursor::read_u32_raw(self : Cursor) -> UInt32 raise ZipError {
-  let b0 = self.read_u8()
-  let b1 = self.read_u8()
-  let b2 = self.read_u8()
-  let b3 = self.read_u8()
-  b0.reinterpret_as_uint() |
-  (b1.reinterpret_as_uint() << 8) |
-  (b2.reinterpret_as_uint() << 16) |
-  (b3.reinterpret_as_uint() << 24)
-}
-
-///|
-fn Cursor::read_u64_raw(self : Cursor) -> UInt64 raise ZipError {
-  let lo = self.read_u32_raw()
-  let hi = self.read_u32_raw()
-  (hi.to_uint64() << 32) | lo.to_uint64()
-}
-
-///|
 fn Cursor::read_bytes(self : Cursor, len : Int32) -> BytesView raise ZipError {
   if len < 0 || self.pos < 0 || len > self.bytes.length() - self.pos {
     raise ZipError(Truncated, "zip: truncated field")
@@ -128,60 +92,93 @@ fn Cursor::skip(self : Cursor, len : Int32) -> Unit raise ZipError {
 }
 
 ///|
-fn read_u16_le_at(bytes : BytesView, offset : Int32) -> Int32 raise ZipError {
-  if offset < 0 || 2 > bytes.length() - offset {
-    raise ZipError(Truncated, "zip: truncated field")
-  }
-  let b0 = bytes[offset].to_int()
-  let b1 = bytes[offset + 1].to_int()
-  b0 | (b1 << 8)
-}
-
-///|
-fn read_u32_le_at_raw(
-  bytes : BytesView,
-  offset : Int32,
-) -> UInt32 raise ZipError {
-  if offset < 0 || 4 > bytes.length() - offset {
-    raise ZipError(Truncated, "zip: truncated field")
-  }
-  bytes[offset].to_uint() |
-  (bytes[offset + 1].to_uint() << 8) |
-  (bytes[offset + 2].to_uint() << 16) |
-  (bytes[offset + 3].to_uint() << 24)
-}
-
-///|
-fn read_u64_le_at(bytes : BytesView, offset : Int32) -> UInt64 raise ZipError {
-  if offset < 0 || 8 > bytes.length() - offset {
-    raise ZipError(Truncated, "zip: truncated field")
-  }
-  let mut result : UInt64 = 0
-  for i in 0..<8 {
-    let b = bytes[offset + i].to_uint()
-    result = result | (b.to_uint64() << (i * 8))
-  }
-  result
+/// A classic end-of-central-directory record, at `offset` in the scanned input.
+priv struct EndRecord {
+  offset : Int32
+  disk : UInt32
+  central_disk : UInt32
+  disk_entries : Int32
+  entries : Int32
+  central_size : UInt32
+  central_offset : UInt32
+  comment : BytesView
 }
 
 ///|
 /// Locate the end-of-central-directory record by scanning the conventional
 /// last (65535 + 22) bytes for the signature whose comment length reaches the
-/// end of the input. Returns its offset, or `None`.
-fn find_end_of_central(bytes : BytesView) -> Int32? raise ZipError {
+/// end of the input. Returns the parsed record, or `None`.
+fn find_end_of_central(bytes : BytesView) -> EndRecord? {
   let len = bytes.length()
-  if len < 22 {
-    return None
-  }
-  let max_scan = 22 + 0xFFFF
-  let min_offset = (len - max_scan).max(0)
+  let min_offset = (len - (22 + 0xFFFF)).max(0)
   for i in (len - 22)>=..min_offset {
-    if read_u32_le_at_raw(bytes, i) == END_OF_CENTRAL_SIG &&
-      read_u16_le_at(bytes, i + 20) == len - i - 22 {
-      return Some(i)
+    if bytes[i:] is [u32le(END_OF_CENTRAL_SIG), ..] &&
+      end_record_at(bytes, i) is Some(record) {
+      return Some(record)
     }
   } nobreak {
     None
+  }
+}
+
+///|
+/// The end record at `offset`, if its comment reaches the end of `bytes`.
+fn end_record_at(bytes : BytesView, offset : Int32) -> EndRecord? {
+  guard bytes[offset:]
+    is [
+      u32le(END_OF_CENTRAL_SIG),
+      u16le(disk),
+      u16le(central_disk),
+      u16le(disk_entries),
+      u16le(entries),
+      u32le(central_size),
+      u32le(central_offset),
+      u16le(comment_len),
+      .. comment,
+    ] &&
+    comment.length() == comment_len.reinterpret_as_int() else {
+    return None
+  }
+  Some({
+    offset,
+    disk,
+    central_disk,
+    disk_entries: disk_entries.reinterpret_as_int(),
+    entries: entries.reinterpret_as_int(),
+    central_size,
+    central_offset,
+    comment,
+  })
+}
+
+///|
+/// Whether ZIP64 records stand in for this record's directory fields, given
+/// the record's absolute offset in the archive.
+///
+/// ZIP64 records lie between the directory and this record, so a directory
+/// that ends right here has none, and 0xFFFF in its counts is an ordinary
+/// count: a classic archive may hold exactly 65535 entries. ZIP64 records may
+/// also be present when every classic field fits.
+fn EndRecord::has_zip64(self : EndRecord, absolute_offset : UInt64) -> Bool {
+  self.central_size == MAX_U32 ||
+  self.central_offset == MAX_U32 ||
+  self.central_offset.to_uint64() + self.central_size.to_uint64() !=
+  absolute_offset
+}
+
+///|
+/// The error for a fixed-size record whose layout did not match: a record
+/// that starts with some other signature is `InvalidSignature`, anything else
+/// is too short to hold the record.
+fn record_error(
+  record : BytesView,
+  signature : UInt32,
+  message : String,
+) -> ZipError {
+  if record is [u32le(found), ..] && found != signature {
+    ZipError(InvalidSignature, message)
+  } else {
+    ZipError(Truncated, "zip: truncated header")
   }
 }
 
