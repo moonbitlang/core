@@ -326,3 +326,40 @@ test "bit writer capacity arithmetic stays within Int at the doubling boundary" 
     0x7fff_ffff,
   )
 }
+
+///|
+test "a full growing output becomes the result without a copy" {
+  let out = DecodeOutput(4, limit=4)
+  out.append_bytes(b"abcd", 0, 4)
+  let bytes = out.into_owned_bytes()
+  // Shared storage: a write through the output shows in the result.
+  out.storage[0] = b'z'
+  inspect(bytes[0] == b'z', content="true")
+  inspect(bytes.length(), content="4")
+}
+
+///|
+test "a partly filled growing output is copied into its result" {
+  let out = DecodeOutput(8, limit=8)
+  out.append_bytes(b"abc", 0, 3)
+  let bytes = out.into_owned_bytes()
+  out.storage[0] = b'z'
+  @test.assert_eq(bytes, b"abc")
+}
+
+///|
+test "decompress returns exact-limit output intact across reuse" {
+  let decompressor = Decompressor()
+  let first = Bytes::makei(100_000, i => (i % 251).to_byte())
+  let second = Bytes::makei(70_000, i => (i % 13).to_byte())
+  let a = decompressor.decompress(
+      deflate_all(first),
+      max_output_bytes=first.length(),
+    ).data
+  let b = decompressor.decompress(
+      deflate_all(second),
+      max_output_bytes=second.length(),
+    ).data
+  @test.assert_eq(a, first)
+  @test.assert_eq(b, second)
+}
