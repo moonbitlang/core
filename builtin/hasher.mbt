@@ -61,6 +61,13 @@ struct Hasher {
 /// and JavaScript targets. Wasm targets default to 0. Pass `0` explicitly when
 /// deterministic output is required.
 ///
+/// On JavaScript, the process-wide seed is drawn once, when the module loads,
+/// from `crypto.getRandomValues`. If the host has no Web Crypto, or refuses it
+/// at that point (Cloudflare Workers does, in global scope), the seed silently
+/// falls back to `Math.random`, which is not cryptographically secure. The
+/// seed may then be predictable, so hash tables keyed by untrusted input are
+/// easier to flood with colliding keys.
+///
 /// Returns a new `Hasher` instance initialized with the given seed value.
 ///
 /// Example:
@@ -109,7 +116,7 @@ let seed : Int32 = random_seed()
 extern "js" fn random_seed() -> Int32 =
   #|() => {
   #|  const cryptoObj = globalThis.crypto;
-  #|  if (cryptoObj !== undefined && typeof cryptoObj.getRandomValues === "function") {
+  #|  if (cryptoObj != null && typeof cryptoObj.getRandomValues === "function") {
   #|    try {
   #|      const array = new Uint32Array(1);
   #|      cryptoObj.getRandomValues(array);
