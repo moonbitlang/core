@@ -39,11 +39,11 @@ pub fn encode(bytes : BytesView, padding~ : Bool = true) -> String {
 fn encode_scalar(bytes : BytesView, padding~ : Bool = true) -> String {
   let full_groups = bytes.length() / 3
   let remainder = bytes.length() % 3
-  let mut size_hint = full_groups * 4
+  let mut capacity = full_groups * 4
   if remainder != 0 {
-    size_hint += if padding is true { 4 } else { remainder + 1 }
+    capacity += if padding is true { 4 } else { remainder + 1 }
   }
-  let builder = StringBuilder(capacity=size_hint)
+  let builder = StringBuilder(capacity~)
   for remaining = bytes {
     match remaining {
       [b0, b1, b2, .. rest] => {

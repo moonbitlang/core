@@ -165,9 +165,12 @@ pub fn new(size_hint~ : Int32 = 0) -> Buffer {
 ///
 /// Parameters:
 ///
-/// * `capacity` : Initial capacity of the buffer in bytes. Defaults to 0.
+/// * `capacity` : Initial capacity of the buffer in bytes. Defaults to 0, which
+/// allocates nothing until the first write.
 ///
 /// Returns a new `Buffer`.
+///
+/// Aborts if `capacity` is negative.
 ///
 /// Example:
 ///
@@ -180,8 +183,8 @@ pub fn new(size_hint~ : Int32 = 0) -> Buffer {
 /// ```
 #label_migration(capacity, alias=size_hint, msg="Use capacity= instead")
 pub fn Buffer::Buffer(capacity~ : Int32 = 0) -> Buffer {
-  let initial = if capacity < 1 { 1 } else { capacity }
-  let data = FixedArray::make(initial, b'\x00')
+  guard capacity >= 0 else { abort("capacity must be non-negative") }
+  let data = FixedArray::make(capacity, b'\x00')
   { data, len: 0, }
 }
 

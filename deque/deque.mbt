@@ -187,7 +187,8 @@ test "add_empty" {
 
 ///|
 /// Creates a new deque with elements copied from an array.
-/// The optional `capacity` is treated as a minimum initial capacity.
+/// The optional `capacity` is treated as a minimum initial capacity. Aborts if
+/// `capacity` is negative.
 ///
 /// Parameters:
 ///
@@ -217,7 +218,10 @@ test "add_empty" {
 pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int32) -> Deque[A] {
   let len = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity.max(len)
+    Some(capacity) => {
+      guard capacity >= 0 else { abort("capacity must be non-negative") }
+      capacity.max(len)
+    }
     None => len
   }
   let buf = UninitializedArray::make(capacity)

@@ -90,3 +90,8 @@ test "panic shuffle_in_place with a random index above the range" {
     capacity=8,
   ).shuffle_in_place(rand=_ => 5)
 }
+
+///|
+test "panic Deque constructor negative capacity" {
+  let _ : @deque.Deque[Int32] = Deque([], capacity=-1)
+}

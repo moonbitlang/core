@@ -1193,3 +1193,8 @@ test "Map::retain: callback removes another key" {
   debug_inspect(m.get(2), content="None")
   debug_inspect(m.get(3), content="None")
 }
+
+///|
+test "panic Map constructor negative capacity" {
+  let _ : Map[Int32, Int32] = Map([], capacity=-1)
+}

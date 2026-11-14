@@ -784,7 +784,7 @@ test "zip owned copy handles chunk boundaries and cancellation" {
 test "zip output writes unaligned fields and transfers only written bytes" {
   let expected = b"\xff\x34\x12\x78\x56\x34\x12\x08\x07\x06\x05\x04\x03\x02\x01"
   for capacity in [0, 1, 15, 64] {
-    let out = Output::writing(Some(15), size_hint=capacity)
+    let out = Output::writing(Some(15), capacity~)
     out.write_bytes(b"\xff")
     out.write_u16(0x1234)
     out.write_u32(0x12345678)

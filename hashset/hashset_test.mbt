@@ -699,3 +699,8 @@ test "retain: callback removes another element" {
   // seed, so either outcome is allowed.
   inspect(s.length() == (if s.contains(2) { 3 } else { 2 }), content="true")
 }
+
+///|
+test "panic HashSet constructor negative capacity" {
+  let _ : @hashset.HashSet[Int32] = HashSet([], capacity=-1)
+}

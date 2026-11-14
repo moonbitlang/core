@@ -715,3 +715,8 @@ test "retain: callback removes another element" {
   inspect(s.contains(2), content="false")
   inspect(s.contains(3), content="false")
 }
+
+///|
+test "panic Set constructor negative capacity" {
+  let _ : @set.Set[Int32] = Set([], capacity=-1)
+}

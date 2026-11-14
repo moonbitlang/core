@@ -21,3 +21,8 @@ test "panic unsafe_peek" {
 test "panic unsafe_pop" {
   @queue.from_array([]).unsafe_pop()
 }
+
+///|
+test "panic Queue constructor negative capacity" {
+  let _ : @queue.Queue[Int32] = Queue([], capacity=-1)
+}

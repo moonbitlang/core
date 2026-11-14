@@ -53,17 +53,17 @@ test "Map::set updating existing key should not grow" {
 
 ///|
 test "capacity hint reserves entries without growing" {
-  for hint in [-1, 0, 1, 2, 3, 6, 7, 8, 13, 14, 15, 16, 26, 27, 1024, 15000] {
+  for hint in [0, 1, 2, 3, 6, 7, 8, 13, 14, 15, 16, 26, 27, 1024, 15000] {
     let map : Map[Int32, Int32] = Map([], capacity=hint)
     let initial_capacity = map.capacity
-    for i in 0..<hint.max(0) {
+    for i in 0..<hint {
       map[i] = i
       assert_true(
         map.capacity == initial_capacity,
         msg="hint=\{hint}, key=\{i}",
       )
     }
-    assert_true(map.length() == hint.max(0))
+    assert_true(map.length() == hint)
     // Reserving the same entry count as an array constructor should choose
     // the same table size, except for the default empty constructor.
     if hint > 0 {
