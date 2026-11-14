@@ -158,7 +158,7 @@ fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
 extern "js" fn get_random_values_js(to_be_filled : FixedArray[Byte]) -> Bool =
   #| function(toBeFilled) {
   #|   const cryptoObj = globalThis.crypto;
-  #|   if (cryptoObj === undefined || typeof cryptoObj.getRandomValues !== "function") {
+  #|   if (cryptoObj == null || typeof cryptoObj.getRandomValues !== "function") {
   #|     return false;
   #|   }
   #|   try {
