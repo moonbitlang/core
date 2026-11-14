@@ -54,6 +54,9 @@ test "compress output matches the original framing byte for byte" {
     ("text-1MiB", frame_text(1 << 20)),
     ("zeros-1MiB", Bytes::make(1 << 20, b'\x00')),
     ("mixed", frame_text(70_000) + frame_random(70_000)),
+    ("stored-block", frame_random(65535)),
+    ("stored-block+1", frame_random(65536)),
+    ("stored-2-blocks", frame_random(131070)),
   ]
   let strategies : Array[@flate.Strategy] = [
     Standard(level=0),
@@ -62,6 +65,10 @@ test "compress output matches the original framing byte for byte" {
     Standard(level=9),
     Split(level=6),
     Optimal(iterations=1),
+    Standard(level=-1),
+    Standard(level=12),
+    Split(level=0),
+    Split(level=-3),
   ]
   let summary = StringBuilder()
   for entry in inputs {
@@ -77,10 +84,8 @@ test "compress output matches the original framing byte for byte" {
         guard actual == expected else {
           fail("\{name} \{@debug.to_string(strategy)} fast_store=\{fast_store}")
         }
-        // The fallback for inputs too large to reserve a bound for.
-        let fallback = gzip_frame(input, strategy, fast_store, reserve_limit=-1)
-        guard fallback == expected else {
-          fail("fallback \{name} \{@debug.to_string(strategy)}")
+        if emits_stored(strategy) {
+          assert_in_place(input, strategy, fast_store)
         }
         @test.assert_eq(decompress(actual), input)
       }
@@ -100,7 +105,48 @@ test "compress output matches the original framing byte for byte" {
       #|text-1MiB: 3337 3880519454
       #|zeros-1MiB: 1236 23431936
       #|mixed: 70373 4052051841
+      #|stored-block: 65558 1531224413
+      #|stored-block+1: 65561 3159020911
+      #|stored-2-blocks: 131098 3733223290
       #|
     ),
   )
+}
+
+///|
+/// Stored output is framed in place only if `compress_into` fills exactly
+/// `deflate_bound`; otherwise the fallback silently recompresses.
+fn assert_in_place(
+  input : BytesView,
+  strategy : @flate.Strategy,
+  fast_store : Bool,
+) -> Unit raise {
+  let stored = @flate.deflate_bound(input.length(), strategy=Standard(level=0))
+  let body = FixedArray::make(stored, b'\x00')
+  let written = @flate.Compressor(strategy~, fast_store~).compress_into(
+    input,
+    body.mut_view(),
+  )
+  @test.assert_eq(written, Some(stored))
+}
+
+///|
+test "only stored strategies are framed in place" {
+  inspect(emits_stored(Standard(level=0)), content="true")
+  inspect(emits_stored(Standard(level=-1)), content="true")
+  inspect(emits_stored(Split(level=0)), content="true")
+  inspect(emits_stored(Standard(level=1)), content="false")
+  inspect(emits_stored(Split(level=6)), content="false")
+  inspect(emits_stored(Optimal(iterations=1)), content="false")
+}
+
+///|
+test "frame length stops at the Int range" {
+  inspect(frame_length(0x7FFF_FFFF - 18, 18), content="2147483647")
+  inspect(frame_length(0, 18), content="18")
+}
+
+///|
+test "panic frame length rejects an unrepresentable frame" {
+  ignore(frame_length(0x7FFF_FFFF - 17, 18))
 }
