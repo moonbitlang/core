@@ -27,7 +27,7 @@ pub fn[X] SparseArray::add(Self[X], Int32, X) -> Self[X]
 pub fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
 pub fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
 pub fn[X : Eq] SparseArray::equal(Self[X], Self[X]) -> Bool
-pub fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
+pub fn[X] SparseArray::filter_map(Self[X], (X) -> X? raise?) -> Self[X]? raise?
 pub fn[X] SparseArray::get(Self[X], Int32) -> X?
 pub fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
 #alias(size, deprecated)

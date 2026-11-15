@@ -105,16 +105,16 @@ test "SparseArray::iter" {
 }
 
 ///|
-test "SparseArray::filter returns self when pred changes nothing" {
+test "SparseArray::filter_map returns self when pred changes nothing" {
   let arr = @sparse_array.from_sorted_fixed_array([0, 3, 7, 31], [
     "a", "b", "c", "d",
   ])
-  guard arr.filter(x => Some(x)) is Some(kept) else { fail("dropped all") }
+  guard arr.filter_map(x => Some(x)) is Some(kept) else { fail("dropped all") }
   inspect(physical_equal(kept, arr), content="true")
 }
 
 ///|
-test "SparseArray::filter drops or replaces from any position" {
+test "SparseArray::filter_map drops or replaces from any position" {
   let arr = @sparse_array.from_sorted_fixed_array([0, 3, 7, 31], [
     "a", "b", "c", "d",
   ])
@@ -123,19 +123,19 @@ test "SparseArray::filter drops or replaces from any position" {
   }
   // drop at the first, a middle, and the last position
   debug_inspect(
-    view(arr.filter(x => if x == "a" { None } else { Some(x) })),
+    view(arr.filter_map(x => if x == "a" { None } else { Some(x) })),
     content=(
       #|Some((3, [None, Some("b"), Some("c"), Some("d")]))
     ),
   )
   debug_inspect(
-    view(arr.filter(x => if x == "c" { None } else { Some(x) })),
+    view(arr.filter_map(x => if x == "c" { None } else { Some(x) })),
     content=(
       #|Some((3, [Some("a"), Some("b"), None, Some("d")]))
     ),
   )
   debug_inspect(
-    view(arr.filter(x => if x == "d" { None } else { Some(x) })),
+    view(arr.filter_map(x => if x == "d" { None } else { Some(x) })),
     content=(
       #|Some((3, [Some("a"), Some("b"), Some("c"), None]))
     ),
@@ -143,7 +143,7 @@ test "SparseArray::filter drops or replaces from any position" {
   // the first change is a replacement, followed by a drop
   debug_inspect(
     view(
-      arr.filter(x => {
+      arr.filter_map(x => {
         match x {
           "b" => Some("B")
           "c" => None
@@ -156,7 +156,7 @@ test "SparseArray::filter drops or replaces from any position" {
     ),
   )
   // only replacements: same bitmap, new data
-  guard arr.filter(x => Some(x + "!")) is Some(replaced) else {
+  guard arr.filter_map(x => Some(x + "!")) is Some(replaced) else {
     fail("dropped all")
   }
   inspect(physical_equal(replaced, arr), content="false")
@@ -168,13 +168,13 @@ test "SparseArray::filter drops or replaces from any position" {
   )
   // keep only an unchanged prefix, then drop everything
   debug_inspect(
-    view(arr.filter(x => if x == "a" { Some(x) } else { None })),
+    view(arr.filter_map(x => if x == "a" { Some(x) } else { None })),
     content=(
       #|Some((1, [Some("a"), None, None, None]))
     ),
   )
   debug_inspect(
-    view(arr.filter(_ => None)),
+    view(arr.filter_map(_ => None)),
     content=(
       #|None
     ),

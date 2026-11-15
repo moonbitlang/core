@@ -256,8 +256,9 @@ pub fn[X, Y] SparseArray::map(
 /// value `pred` returns; `None` if no element is kept.
 ///
 /// If `pred` returns every element unchanged (`physical_equal` to its
-/// input), `self` itself is returned and nothing is allocated.
-pub fn[X] SparseArray::filter(
+/// input), `self` itself is returned and nothing is allocated. That is why
+/// `pred` maps `X` to `X?` rather than to another element type.
+pub fn[X] SparseArray::filter_map(
   self : SparseArray[X],
   pred : (X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
