@@ -362,9 +362,9 @@ pub fn[K, V] HashMap::filter(
           None
         }
       Branch(children) =>
-        match children.filter(go) {
+        match children.filter_map(go) {
           None => None
-          // `SparseArray::filter` returns `children` itself when `go`
+          // `SparseArray::filter_map` returns `children` itself when `go`
           // returned every child unchanged.
           Some(new_children) if physical_equal(new_children, children) =>
             Some(node)

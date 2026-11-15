@@ -132,8 +132,14 @@ test "sparse array transformations" {
     None => inspect(false, content="true")
   }
 
-  // Filter elements (keeping only those > 30)
-  let filtered = numbers.filter(fn(x) { if x > 30 { Some(x) } else { None } })
+  // Keep only the elements > 30 (each kept value can also be replaced)
+  let filtered = numbers.filter_map(fn(x) {
+    if x > 30 {
+      Some(x)
+    } else {
+      None
+    }
+  })
   match filtered {
     Some(f) => inspect(f.length(), content="1") // Only 50 remains
     None => inspect(false, content="true")
