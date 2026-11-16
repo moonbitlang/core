@@ -52,16 +52,16 @@ async test "Timer basic" {
   let log = []
   @async.with_task_group() <| group => {
     group.spawn_bg() <| () => {
-      @async.sleep(150)
+      @async.sleep(200)
       log.push("sleep: tick #1")
-      @async.sleep(300)
+      @async.sleep(400)
       log.push("sleep: tick #2")
-      @async.sleep(300)
+      @async.sleep(400)
       log.push("sleep: tick #3")
     }
-    @async.sleep(300)
+    @async.sleep(400)
     log.push("creating timer")
-    let timer = @async.Timer(300)
+    let timer = @async.Timer(400)
     @async.with_task_group() <| group => {
       for _ in 0..<3 {
         group.spawn_bg() <| () => {
