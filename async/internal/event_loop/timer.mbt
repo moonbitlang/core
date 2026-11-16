@@ -21,7 +21,9 @@ struct Timer {
 }
 
 ///|
-let timer_id : @ref.Ref[Int32] = { val: 0, }
+/// global ID for timers
+#doc(hidden)
+pub let timer_id : @ref.Ref[Int32] = { val: 0, }
 
 ///|
 /// Create a new one-shot timer that expires `duration` milliseconds later.

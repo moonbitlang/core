@@ -44,7 +44,12 @@ pub fn get_current_event_loop() -> CurrentEventLoop {
 #doc(hidden)
 #internal(internal, "This API is for compatibility with `moonbitlang/async`, do not use")
 #cfg(any(target="native", target="wasm"))
-pub using @event_loop {with_event_loop, register_hook, set_deadlock_handler}
+pub using @event_loop {
+  with_event_loop,
+  register_hook,
+  set_deadlock_handler,
+  timer_id,
+}
 
 ///|
 #doc(hidden)
