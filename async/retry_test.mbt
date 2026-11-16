@@ -81,22 +81,27 @@ async test "retry exponential" {
 async test "retry cancelled1" {
   let log = StringBuilder()
   let mut i = 0
-  @async.with_timeout(500, () => {
-    @async.retry(Immediate) <| () => {
-      @async.sleep(200)
-      log <+ "loop \{i}\n"
-      i = i + 1
-      raise Err
+  let cond = @async.Queue(kind=Unbounded)
+  @async.with_task_group <| group => {
+    let retry_task = group.spawn() <| () => {
+      @async.retry(Immediate) <| () => {
+        cond.get()
+        log <+ "loop \{i}\n"
+        i += 1
+        (
+          {
+            raise Err
+          } : Unit)
+      }
     }
-  }) catch {
-    @async.TimeoutError => ()
-    err => raise err
+    cond.put(())
+    @async.sleep(300)
+    retry_task.cancel()
   }
   inspect(
     log.to_string(),
     content=(
       #|loop 0
-      #|loop 1
       #|
     ),
   )
@@ -106,22 +111,27 @@ async test "retry cancelled1" {
 async test "retry cancelled2" {
   let log = StringBuilder()
   let mut i = 0
-  @async.with_timeout(500, () => {
-    @async.retry(FixedDelay(200)) <| () => {
-      log <+ "loop \{i}\n"
-      i = i + 1
-      raise Err
+  let cond = @async.Queue(kind=Unbounded)
+  @async.with_task_group <| group => {
+    let retry_task = group.spawn() <| () => {
+      @async.retry(FixedDelay(400)) <| () => {
+        cond.get()
+        log <+ "loop \{i}\n"
+        i = i + 1
+        (
+          {
+            raise Err
+          } : Unit)
+      }
     }
-  }) catch {
-    @async.TimeoutError => ()
-    err => raise err
+    cond.put(())
+    @async.sleep(200)
+    retry_task.cancel()
   }
   inspect(
     log.to_string(),
     content=(
       #|loop 0
-      #|loop 1
-      #|loop 2
       #|
     ),
   )
