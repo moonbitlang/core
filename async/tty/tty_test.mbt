@@ -117,8 +117,8 @@ async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
 }
 
 ///|
-/// `@tty.Tty::read` in `ttyd`, or `@tty.Tty::read_into` a `max_len`-byte
-/// buffer with `max_len`. Raise `Resized` for `@tty.Resized`.
+/// Scoped `BinaryReader::read` in `ttyd`, or `read_into` a `max_len`-byte
+/// buffer. Raise `Resized` when `with_reader` reports a resize.
 ///
 /// With `timeout`, the read is cancelled inside `ttyd` after `timeout`
 /// milliseconds and `Timeout` is raised. The timeout must not be applied
@@ -136,7 +136,7 @@ async fn Ttyd::read(self : Ttyd, max_len? : Int32, timeout? : Int32) -> Bytes? {
 }
 
 ///|
-/// `@tty.Tty::read_exactly` in `ttyd`. Raise `Resized` for `@tty.Resized`.
+/// Scoped `BinaryReader::read_exactly` in `ttyd`. Raise `Resized` on resize.
 async fn Ttyd::read_exactly(self : Ttyd, len : Int32) -> Bytes {
   let result = self.call("read_exactly", params={ "len": len })
   guard read_result("read_exactly", result) is Some(bytes) else {
@@ -354,21 +354,19 @@ async test "read delivers bytes left by read_exactly first" {
 }
 
 ///|
-async test "read_exactly keeps partial input on resize" {
+async test "scoped read_exactly completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
-      group.spawn_bg() <| () => {
-        expect_resize(() => ttyd.read_exactly(6) |> ignore)
-      }
+      group.spawn_bg() <| () => { assert_eq(ttyd.read_exactly(6), b"abcdef") }
       group.spawn_bg() <| () => {
         @async.sleep(100)
         ttyd.resize(25, 81)
+        ttyd.send_input(b"def")
       }
     }
-    ttyd.send_input(b"def")
-    assert_eq(ttyd.read_exactly(6), b"abcdef")
+    expect_resize(() => ttyd.read() |> ignore)
   }
 }
 
@@ -383,25 +381,23 @@ async test "resize stays pending until the next read" {
 }
 
 ///|
-async test "drop_exactly keeps partial input on resize and can be retried" {
+async test "scoped drop_exactly completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
         json_inspect(ttyd.call("drop_exactly", params={ "len": 6 }), content={
-          "type": "resize",
+          "type": "dropped",
         })
       }
       group.spawn_bg() <| () => {
         @async.sleep(100)
         ttyd.resize(25, 81)
+        ttyd.send_input(b"defghi")
       }
     }
-    ttyd.send_input(b"defghi")
-    json_inspect(ttyd.call("drop_exactly", params={ "len": 6 }), content={
-      "type": "dropped",
-    })
+    expect_resize(() => ttyd.read() |> ignore)
     assert_eq(ttyd.read_exactly(3), b"ghi")
   }
 }
@@ -599,26 +595,24 @@ async test "read_into reports resize without opting in" {
 }
 
 ///|
-async test "read_until preserves partial input on resize" {
+async test "scoped read_until completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
         json_inspect(ttyd.call("read_until", params={}), content={
-          "type": "resize",
+          "type": "input",
+          "bytes": "YWJjZGVm",
         })
       }
       group.spawn_bg() <| () => {
         @async.sleep(100)
         ttyd.resize(25, 81)
+        ttyd.send_input(b"def\n")
       }
     }
-    ttyd.send_input(b"def\n")
-    json_inspect(ttyd.call("read_until", params={}), content={
-      "type": "input",
-      "bytes": "YWJjZGVm",
-    })
+    expect_resize(() => ttyd.read() |> ignore)
   }
 }
 
@@ -666,5 +660,158 @@ async test "raw mode is restored when the main task fails" {
     ttyd.enter_raw_mode()
     ttyd.rpc.write(b"{\"jsonrpc\":\"2.0\",\"method\":\"fail\",\"id\":1000}\n")
     guard ttyd.rpc.read() is None else { fail("expected ttyd to exit") }
+  }
+}
+
+///|
+async test "with_reader reports resize before invoking the callback" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    @async.with_task_group() <| group => {
+      group.spawn_bg() <| () => {
+        json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+          "type": "resize",
+          "entered": false,
+        })
+      }
+      group.spawn_bg() <| () => {
+        @async.sleep(100)
+        ttyd.resize(25, 81)
+      }
+    }
+  }
+}
+
+///|
+async test "with_reader finishes a split sequence before pending resize" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    ttyd.send_input(b"\x1b[")
+    @async.with_task_group() <| group => {
+      group.spawn_bg() <| () => {
+        json_inspect(
+          ttyd.call("scoped_read", params={ "len": 3, "lookahead": 1 }),
+          content={ "type": "input", "bytes": "G1tB", "entered": true },
+        )
+      }
+      group.spawn_bg() <| () => {
+        @async.sleep(100)
+        ttyd.resize(25, 81)
+        ttyd.send_input(b"Ax")
+      }
+    }
+    // x is already buffered, but the deferred resize wins at the next scope.
+    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+      "type": "resize",
+      "entered": false,
+    })
+    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+      "type": "input",
+      "bytes": "eA==",
+      "entered": true,
+    })
+  }
+}
+
+///|
+async test "with_reader peek and drop preserves lookahead for another scope" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    ttyd.send_input(b"\x1b\x1b[A")
+    json_inspect(
+      ttyd.call("scoped_read", params={ "len": 1, "lookahead": 1 }),
+      content={ "type": "input", "bytes": "Gw==", "entered": true },
+    )
+    json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+      "type": "input",
+      "bytes": "G1tB",
+      "entered": true,
+    })
+  }
+}
+
+///|
+async test "with_reader cancellation retains peeked input and releases scope" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    ttyd.send_input(b"\x1b[")
+    json_inspect(
+      ttyd.call("scoped_read", params={ "len": 3, "timeout": 100 }),
+      content={ "type": "timeout" },
+    )
+    ttyd.send_input(b"A")
+    json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+      "type": "input",
+      "bytes": "G1tB",
+      "entered": true,
+    })
+  }
+}
+
+///|
+async test "with_reader propagates callback errors and retains unconsumed input" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    ttyd.send_input(b"ab")
+    json_inspect(ttyd.call("scoped_fail", params={}), content={
+      "type": "parser_error",
+    })
+    assert_eq(ttyd.read_exactly(2), b"ab")
+  }
+}
+
+///|
+#cfg(not(platform="windows"))
+async test "with_reader invokes callback at EOF" {
+  with_ttyd() <| ttyd => {
+    ttyd.send_input(b"\x04")
+    json_inspect(ttyd.call("scoped_eof", params={}), content={
+      "type": "eof",
+      "entered": true,
+      "eof": true,
+    })
+  }
+}
+
+///|
+#cfg(not(platform="windows"))
+async test "with_reader aborts escaped reader access even with buffered input" {
+  with_ttyd(exit_with=-6) <| ttyd => {
+    // Native panic terminates with SIGABRT, reported as -6 by wait_pid.
+    // Keep the terminal in its original mode: abort does not run exit hooks.
+    ttyd.send_input(b"ab\n")
+    ttyd.rpc.write(
+      b"{\"jsonrpc\":\"2.0\",\"method\":\"scoped_escape\",\"id\":1000}\n",
+    )
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+  }
+}
+
+///|
+#cfg(not(platform="windows"))
+async test "with_reader aborts buffered access during another read" {
+  with_ttyd(exit_with=-6) <| ttyd => {
+    ttyd.send_input(b"ab\n")
+    ttyd.rpc.write(
+      b"{\"jsonrpc\":\"2.0\",\"method\":\"scoped_overlap\",\"id\":1000}\n",
+    )
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+  }
+}
+
+///|
+async test "with_reader first-input timeout releases scope" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    json_inspect(
+      ttyd.call("scoped_read", params={ "len": 1, "timeout": 100 }),
+      content={ "type": "timeout" },
+    )
+    ttyd.send_input(b"x")
+    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+      "type": "input",
+      "bytes": "eA==",
+      "entered": true,
+    })
   }
 }

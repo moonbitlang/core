@@ -23,9 +23,9 @@
 /// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
-///   `Tty::read`, or `Tty::read_into` an `n`-byte buffer with `max_len`
+///   scoped `BinaryReader::read`, or `read_into` an `n`-byte buffer
 /// - `read_exactly`, params `{"len": n}`:
-///   `Tty::read_exactly`
+///   scoped `BinaryReader::read_exactly`
 ///
 ///   Both result in `{"type":"input","bytes":"<base64>"}`, `{"type":"resize"}`
 ///   for `Resized`, `{"type":"eof"}`, or `{"type":"timeout"}` when the read is
@@ -33,6 +33,9 @@
 /// - `peek_exactly`, `drop_exactly`: params `{"len": n}`
 /// - `read_until`: read through a newline
 /// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
+/// - `scoped_read`: peek `len + lookahead` bytes, consume `len`, optional timeout
+/// - `scoped_eof`, `scoped_fail`: verify callback EOF and error handling
+/// - `scoped_escape`, `scoped_overlap`: verify invalid reader access aborts
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -122,10 +125,10 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       }
       read_result(params, () => {
         match max_len {
-          None => input_result(tty.read())
+          None => input_result(tty.with_reader(reader => reader.read()))
           Some(max_len) => {
             let buf = FixedArray::make(max_len, b'\x00')
-            match tty.read_into(buf) {
+            match tty.with_reader(reader => reader.read_into(buf)) {
               Resized => { "type": "resize" }
               Value(0) => { "type": "eof" }
               Value(n) =>
@@ -143,7 +146,7 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         raise invalid_params("`len` must be a number")
       }
       read_result(params, () => {
-        match tty.read_exactly(len.to_int()) {
+        match tty.with_reader(reader => reader.read_exactly(len.to_int())) {
           Resized => { "type": "resize" }
           Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
         }
@@ -153,15 +156,18 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match tty.peek_exactly(len.to_int()) {
+      match
+        tty.with_reader(reader => reader.peek_exactly(len.to_int()).to_owned()) {
         Resized => { "type": "resize" }
         Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
       }
     }
     "read_until" =>
-      read_result(params, () => input_result(tty.read_until(b"\n")))
+      read_result(params, () => {
+        input_result(tty.with_reader(reader => reader.read_until(b"\n")))
+      })
     "expect_unexpected_eof" =>
-      try tty.read_exactly(2) catch {
+      try tty.with_reader(reader => reader.read_exactly(2)) catch {
         @io.UnexpectedEof => { "type": "unexpected_eof" }
         err => raise err
       } noraise {
@@ -171,11 +177,92 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match tty.drop_exactly(len.to_int()) {
+      match tty.with_reader(reader => reader.drop_exactly(len.to_int())) {
         Resized => { "type": "resize" }
         Value(_) => { "type": "dropped" }
       }
     }
+    "scoped_read" => {
+      guard params is { "len": Number(len, ..), .. } else {
+        raise invalid_params("`len` must be a number")
+      }
+      let len = len.to_int()
+      let lookahead = match params {
+        { "lookahead": Number(n, ..), .. } => n.to_int()
+        _ => 0
+      }
+      let mut entered = false
+      read_result(params, () => {
+        match
+          tty.with_reader(reader => {
+            entered = true
+            // A parser may inspect beyond the event boundary; only commit len.
+            ignore(reader.peek_exactly(len + lookahead))
+            let bytes = reader.peek_exactly(len).to_owned()
+            reader.drop_exactly(len)
+            bytes
+          }) {
+          Resized => { "type": "resize", "entered": entered }
+          Value(bytes) =>
+            {
+              "type": "input",
+              "bytes": @base64.encode(bytes),
+              "entered": entered,
+            }
+        }
+      })
+    }
+    "scoped_escape" =>
+      match
+        tty.with_reader(reader => {
+          ignore(reader.peek_exactly(2))
+          reader
+        }) {
+        Resized => { "type": "resize" }
+        Value(reader) => {
+          ignore(reader.peek())
+          null
+        }
+      }
+    "scoped_overlap" => {
+      ignore(
+        tty.with_reader(reader => {
+          @async.with_task_group() <| group => {
+            // Preserve the first line in the shared buffer while waiting for
+            // more input, then try a buffered access from another task.
+            let reading = group.spawn(() => reader.peek_exactly(32).to_owned())
+            @async.sleep(10)
+            ignore(reader.peek())
+            reading.cancel()
+          }
+        }),
+      )
+      null
+    }
+    "scoped_eof" => {
+      let mut entered = false
+      match
+        tty.with_reader(reader => {
+          entered = true
+          reader.peek() is None
+        }) {
+        Resized => { "type": "resize", "entered": entered }
+        Value(eof) => { "type": "eof", "entered": entered, "eof": eof }
+      }
+    }
+    "scoped_fail" =>
+      try {
+        let result : @tty.MaybeResized[Unit] = tty.with_reader(reader => {
+          ignore(reader.peek_exactly(2))
+          raise ParserError
+        })
+        result
+      } catch {
+        ParserError => { "type": "parser_error" }
+        err => raise err
+      } noraise {
+        _ => fail("expected callback error")
+      }
     "write" => {
       guard params is { "bytes": String(bytes), .. } else {
         raise invalid_params("`bytes` must be a base64 string")
@@ -220,3 +307,6 @@ fn input_result(result : @tty.MaybeResized[Bytes?]) -> Json {
 fn invalid_params(message : String) -> RpcError {
   RpcError(code=-32602, message~)
 }
+
+///|
+priv suberror ParserError

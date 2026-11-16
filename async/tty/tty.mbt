@@ -20,7 +20,7 @@ struct Tty {
   read_ctrl : @io.BinaryReaderController
   write_ctrl : @io.BinaryWriterController
   original_state : State
-  mut reading : Bool
+  mut reader : Reader?
 }
 
 ///|
@@ -79,7 +79,7 @@ fn Tty::new(
     read_ctrl: BinaryReaderController(),
     write_ctrl: BinaryWriterController(),
     original_state,
-    reading: false,
+    reader: None,
   }
 }
 
@@ -473,8 +473,8 @@ pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
 }
 
 ///|
-/// The result of a terminal read, or a notification that the window resized.
-/// `Resized` consumes no input; retry the operation after handling the resize.
+/// The result of `Tty::with_reader`, or a notification that the window resized.
+/// `Resized` consumes no input and does not invoke the callback.
 /// Notifications may be coalesced. Call `Tty::size` for the current size.
 #derive(@debug.Debug)
 pub enum MaybeResized[T] {
@@ -484,212 +484,6 @@ pub enum MaybeResized[T] {
 
 ///|
 priv suberror Resized
-
-///|
-/// Private implementation used by the resize-aware public read methods.
-impl @io.BinaryReader for Tty
-
-///|
-impl @io.BinaryReaderImpl for Tty with fn name(_self) {
-  "@tty.Tty"
-}
-
-///|
-impl @io.BinaryReaderImpl for Tty with fn get_controller(self) {
-  self.read_ctrl
-}
-
-///|
-impl @io.BinaryReaderImpl for Tty with fn raw_read_impl(
-  self,
-  buf,
-  offset~,
-  max_len~,
-) {
-  guard! !self.reading
-  self.reading = true
-  defer {
-    self.reading = false
-  }
-  // `-1` for a resize, see `@event_loop.Tty::read`
-  let n = self.tty.read(
-    buf,
-    offset~,
-    len=max_len,
-    raw=@event_loop.platform is Windows &&
-      State::read(self.tty.input_fd(), self.output.fd()).is_raw(),
-    block_resize=false,
-    context="@tty.Tty",
-  )
-  guard n >= 0 else { raise Resized::Resized }
-  n
-}
-
-///|
-/// Read at most `max_len` bytes into `dst[offset:]`.
-/// `Value(0)` indicates EOF. `Resized` leaves `dst` unchanged.
-///
-/// All terminal reads return `Resized` when a resize interrupts the operation.
-/// Pending notifications are retained and may be coalesced; buffered input
-/// may be returned before a pending resize. Call `size()` for the current size.
-/// Reads preserve input on resize or cancellation. Cancelling a cooked read
-/// is not supported on Windows yet; Windows reports resizes only in raw mode.
-/// Only one read may be in progress at a time; concurrent reads abort.
-pub async fn Tty::read_into(
-  self : Tty,
-  dst : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = dst.length() - offset,
-) -> MaybeResized[Int32] raise @io.ReaderError {
-  try @io.BinaryReader::read_into(self, dst, offset~, max_len~) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Read a chunk of available input, like `@io.BinaryReader::read`.
-/// Return `Value(None)` on EOF. See `Tty::read_into` for resize semantics.
-pub async fn Tty::read(
-  self : Tty,
-) -> MaybeResized[Bytes?] raise @io.ReaderError {
-  try @io.BinaryReader::read(self) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Read at least `min_len` bytes, like `@io.BinaryReader::read_at_least`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::read_at_least(
-  self : Tty,
-  min_len : Int32,
-) -> MaybeResized[Bytes] raise @io.ReaderError {
-  try @io.BinaryReader::read_at_least(self, min_len) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Read exactly `len` bytes, like `@io.BinaryReader::read_exactly`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::read_exactly(
-  self : Tty,
-  len : Int32,
-) -> MaybeResized[Bytes] raise @io.ReaderError {
-  // `@io.BinaryReader::read_exactly` loses the bytes read so far when
-  // interrupted, so peek them first, and consume them only on success.
-  match self.peek_exactly(len) {
-    Resized => Resized
-    Value(data) => {
-      let data = data.to_owned()
-      self.read_ctrl.drop(len)
-      Value(data)
-    }
-  }
-}
-
-///|
-/// Drop exactly `len` bytes, like `@io.BinaryReader::drop_exactly`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::drop_exactly(
-  self : Tty,
-  len : Int32,
-) -> MaybeResized[Unit] raise @io.ReaderError {
-  // `@io.BinaryReader::drop_exactly` drops bytes as they arrive, so the
-  // number dropped would be unknown when interrupted.
-  match self.peek_exactly(len) {
-    Resized => Resized
-    Value(_) => {
-      self.read_ctrl.drop(len)
-      Value(())
-    }
-  }
-}
-
-///|
-/// Read until `pattern`, like `@io.BinaryReader::read_until`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::read_until(
-  self : Tty,
-  pattern : BytesView,
-  include_delimiter~ : Bool = false,
-) -> MaybeResized[Bytes?] raise @io.ReaderError {
-  try @io.BinaryReader::read_until(self, pattern, include_delimiter~) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Peek a chunk of available input, like `@io.BinaryReader::peek`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::peek(
-  self : Tty,
-) -> MaybeResized[BytesView?] raise @io.ReaderError {
-  try @io.BinaryReader::peek(self) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Peek at least `min_len` bytes, like `@io.BinaryReader::peek_at_least`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::peek_at_least(
-  self : Tty,
-  min_len : Int32,
-) -> MaybeResized[BytesView] raise @io.ReaderError {
-  try @io.BinaryReader::peek_at_least(self, min_len) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Peek exactly `len` bytes, like `@io.BinaryReader::peek_exactly`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::peek_exactly(
-  self : Tty,
-  len : Int32,
-) -> MaybeResized[BytesView] raise @io.ReaderError {
-  try @io.BinaryReader::peek_exactly(self, len) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
-
-///|
-/// Peek until `pattern`, like `@io.BinaryReader::peek_until`.
-/// See `Tty::read_into` for resize semantics.
-pub async fn Tty::peek_until(
-  self : Tty,
-  pattern : BytesView,
-  include_delimiter~ : Bool = false,
-) -> MaybeResized[BytesView?] raise @io.ReaderError {
-  try @io.BinaryReader::peek_until(self, pattern, include_delimiter~) catch {
-    TransportError(Resized::Resized, ..) => Resized
-    err => raise err
-  } noraise {
-    value => Value(value)
-  }
-}
 
 ///|
 pub impl @io.BinaryWriter for Tty
