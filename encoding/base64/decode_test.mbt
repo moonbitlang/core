@@ -73,6 +73,73 @@ test "decode malformed" {
 }
 
 ///|
+test "decode url_safe" {
+  inspect(
+    try! @base64.decode("-_-_", url_safe=true),
+    content=(
+      #|b"\xfb\xff\xbf"
+    ),
+  )
+  inspect(
+    try! @base64.decode("-_8=", url_safe=true),
+    content=(
+      #|b"\xfb\xff"
+    ),
+  )
+  inspect(
+    try! @base64.decode("-_8", url_safe=true),
+    content=(
+      #|b"\xfb\xff"
+    ),
+  )
+  // A JWT header segment: URL-safe and unpadded.
+  inspect(
+    try! @base64.decode("eyJhbGciOiJIUzI1NiJ9", url_safe=true),
+    content=(
+      #|b"{\x22alg\x22:\x22HS256\x22}"
+    ),
+  )
+}
+
+///|
+test "decode rejects the other alphabet" {
+  let f = (str, url_safe) => {
+    try {
+      let _ = @base64.decode(str, url_safe~)
+      false
+    } catch {
+      Malformed(_) => true
+    }
+  }
+  assert_true(f("+/8=", true))
+  assert_true(f("-_8=", false))
+  assert_true(f("ab+_", true))
+  assert_true(f("ab-/", false))
+}
+
+///|
+test "decode_lossy url_safe skips the other alphabet" {
+  inspect(
+    @base64.decode_lossy("+Zm9v/", url_safe=true),
+    content=(
+      #|b"foo"
+    ),
+  )
+  inspect(
+    @base64.decode_lossy("-_-_", url_safe=true),
+    content=(
+      #|b"\xfb\xff\xbf"
+    ),
+  )
+  inspect(
+    @base64.decode_lossy("-Zm9v_"),
+    content=(
+      #|b"foo"
+    ),
+  )
+}
+
+///|
 test "Debug for Malformed" {
   try {
     let _ = @base64.decode("Zh==")

@@ -67,7 +67,9 @@ test "bench encode v128 n=65536" (it : @bench.T) {
 ///|
 test "bench decode scalar n=64" (it : @bench.T) {
   it.bench(fn() {
-    it.keep((decode_scalar(bench_text_64, false) catch { _ => b"" }).length())
+    it.keep(
+      (decode_scalar(bench_text_64, false, false) catch { _ => b"" }).length(),
+    )
   })
 }
 
@@ -79,7 +81,9 @@ test "bench decode v128 n=64" (it : @bench.T) {
 ///|
 test "bench decode scalar n=1024" (it : @bench.T) {
   it.bench(fn() {
-    it.keep((decode_scalar(bench_text_1k, false) catch { _ => b"" }).length())
+    it.keep(
+      (decode_scalar(bench_text_1k, false, false) catch { _ => b"" }).length(),
+    )
   })
 }
 
@@ -91,7 +95,9 @@ test "bench decode v128 n=1024" (it : @bench.T) {
 ///|
 test "bench decode scalar n=65536" (it : @bench.T) {
   it.bench(fn() {
-    it.keep((decode_scalar(bench_text_64k, false) catch { _ => b"" }).length())
+    it.keep(
+      (decode_scalar(bench_text_64k, false, false) catch { _ => b"" }).length(),
+    )
   })
 }
 

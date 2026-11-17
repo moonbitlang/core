@@ -35,11 +35,11 @@ fn decode_offsets_v128() -> V128 {
 }
 
 ///|
-/// True when every lane holds a character of the standard Base64 alphabet.
+/// True when every lane holds a character of the selected Base64 alphabet.
 /// Padding and whitespace deliberately fail this test so the caller falls
 /// back to the scalar decoder.
 #cfg(any(target="native", target="wasm"))
-fn decode_valid_v128(ascii : V128) -> Bool {
+fn decode_valid_v128(ascii : V128, url_safe : Bool) -> Bool {
   let upper = @v128.v128_and_(
     @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'A')),
     @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'Z')),
@@ -52,12 +52,39 @@ fn decode_valid_v128(ascii : V128) -> Bool {
     @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'0')),
     @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'9')),
   )
-  let plus = @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'+'))
-  let slash = @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'/'))
+  let plus = @v128.i8x16_eq(
+    ascii,
+    @v128.i8x16_splat(if url_safe { b'-' } else { b'+' }),
+  )
+  let slash = @v128.i8x16_eq(
+    ascii,
+    @v128.i8x16_splat(if url_safe { b'_' } else { b'/' }),
+  )
   @v128.i8x16_all_true(
     @v128.v128_or_(
       @v128.v128_or_(upper, lower),
       @v128.v128_or_(digit, @v128.v128_or_(plus, slash)),
+    ),
+  )
+}
+
+///|
+/// Rewrites `-` to `+` and `_` to `/` so that URL-safe text, already checked
+/// by `decode_valid_v128`, can go through the standard `decode_block_v128`.
+#cfg(any(target="native", target="wasm"))
+fn url_to_standard_v128(ascii : V128) -> V128 {
+  // '-' - '+' == 2 and '_' - '/' == 48; every other lane subtracts zero.
+  @v128.i8x16_sub(
+    ascii,
+    @v128.v128_or_(
+      @v128.v128_and_(
+        @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'-')),
+        @v128.i8x16_splat(2),
+      ),
+      @v128.v128_and_(
+        @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'_')),
+        @v128.i8x16_splat(48),
+      ),
     ),
   )
 }
@@ -107,10 +134,11 @@ fn decode_block_v128(ascii : V128) -> V128 {
 }
 
 ///|
-/// Decodes canonical Base64 text. Returns `None` when the input is not
-/// canonical, in which case the caller must use the scalar decoder.
+/// Decodes canonical Base64 text in the selected alphabet. Returns `None` when
+/// the input is not canonical, in which case the caller must use the scalar
+/// decoder.
 #cfg(any(target="native", target="wasm"))
-fn decode_v128(text : StringView) -> Bytes? {
+fn decode_v128(text : StringView, url_safe : Bool) -> Bytes? {
   let length = text.length()
   // Below this the scalar decoder wins outright: one block needs sixteen
   // characters plus a four-character tail group.
@@ -136,7 +164,8 @@ fn decode_v128(text : StringView) -> Bytes? {
       @v128.v128_load_i16x8(src, offset),
       @v128.v128_load_i16x8(src, offset + 8),
     )
-    guard decode_valid_v128(ascii) else { return None }
+    guard decode_valid_v128(ascii, url_safe) else { return None }
+    let ascii = if url_safe { url_to_standard_v128(ascii) } else { ascii }
     @v128.v128_store(out, written, decode_block_v128(ascii))
     index += 16
     written += 12
@@ -145,7 +174,7 @@ fn decode_v128(text : StringView) -> Bytes? {
   while index < body {
     let mut group = 0
     for lane in 0..<4 {
-      let value = base64_value(text.unsafe_get(index + lane).to_int())
+      let value = base64_value(text.unsafe_get(index + lane).to_int(), url_safe)
       guard value >= 0 else { return None }
       group = (group << 6) | value
     }
@@ -157,7 +186,9 @@ fn decode_v128(text : StringView) -> Bytes? {
   }
   // Reuse the scalar decoder for the final group so the padding and
   // trailing-bit rules live in exactly one place.
-  let tail_bytes = decode_scalar(text[body:], false) catch { _ => return None }
+  let tail_bytes = decode_scalar(text[body:], false, url_safe) catch {
+    _ => return None
+  }
   guard tail_bytes.length() == out.length() - written else { return None }
   for i, byte in tail_bytes {
     out[written + i] = byte

@@ -22,3 +22,32 @@ test "encode" {
   inspect(@base64.encode(b"fo", padding=false), content="Zm8")
   inspect(@base64.encode(b"foo", padding=false), content="Zm9v")
 }
+
+///|
+test "encode url_safe" {
+  // Sextets 62 and 63 are the only ones whose character differs.
+  inspect(
+    @base64.encode(b"\xfb\xff\xbf"),
+    content=(
+      #|+/+/
+    ),
+  )
+  inspect(
+    @base64.encode(b"\xfb\xff\xbf", url_safe=true),
+    content=(
+      #|-_-_
+    ),
+  )
+  inspect(
+    @base64.encode(b"\xfb\xff", url_safe=true),
+    content=(
+      #|-_8=
+    ),
+  )
+  inspect(
+    @base64.encode(b"\xfb\xff", url_safe=true, padding=false),
+    content=(
+      #|-_8
+    ),
+  )
+}

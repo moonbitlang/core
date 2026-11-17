@@ -29,13 +29,17 @@ const PADDING = -2
 const INVALID_CHAR = -1
 
 ///|
-fn base64_value(code_unit : Int32) -> Int32 {
+/// Maps a code unit to its sextet in the selected alphabet. A character that
+/// belongs only to the other alphabet is `INVALID_CHAR`.
+fn base64_value(code_unit : Int32, url_safe : Bool) -> Int32 {
   match code_unit {
     'A'..<='Z' => code_unit - 'A'
     'a'..<='z' => code_unit - 'a' + 26
     '0'..<='9' => code_unit - '0' + 52
-    '+' => 62
-    '/' => 63
+    '+' if !url_safe => 62
+    '/' if !url_safe => 63
+    '-' if url_safe => 62
+    '_' if url_safe => 63
     ' ' | '\n' | '\r' | '\t' => WRITESPACE
     '=' => PADDING
     _ => INVALID_CHAR
@@ -48,12 +52,17 @@ fn base64_value(code_unit : Int32) -> Int32 {
 /// When `ignore_whitespace` is true, spaces, tabs, CR, and LF are ignored.
 /// Padding may only appear at the end. Both padded and unpadded input are
 /// accepted, but malformed padding raises `Malformed`.
+///
+/// When `url_safe` is true, the input must use the URL- and filename-safe
+/// alphabet (RFC 4648 §5): `-` and `_` are accepted and `+` and `/` raise
+/// `Malformed`. When it is false, the reverse holds.
 #cfg(not(any(target="native", target="wasm")))
 pub fn decode(
   text : StringView,
   ignore_whitespace~ : Bool = false,
+  url_safe~ : Bool = false,
 ) -> Bytes raise Malformed {
-  decode_scalar(text, ignore_whitespace)
+  decode_scalar(text, ignore_whitespace, url_safe)
 }
 
 ///|
@@ -62,27 +71,33 @@ pub fn decode(
 /// When `ignore_whitespace` is true, spaces, tabs, CR, and LF are ignored.
 /// Padding may only appear at the end. Both padded and unpadded input are
 /// accepted, but malformed padding raises `Malformed`.
+///
+/// When `url_safe` is true, the input must use the URL- and filename-safe
+/// alphabet (RFC 4648 §5): `-` and `_` are accepted and `+` and `/` raise
+/// `Malformed`. When it is false, the reverse holds.
 #cfg(any(target="native", target="wasm"))
 pub fn decode(
   text : StringView,
   ignore_whitespace~ : Bool = false,
+  url_safe~ : Bool = false,
 ) -> Bytes raise Malformed {
-  if !ignore_whitespace && decode_v128(text) is Some(bytes) {
+  if !ignore_whitespace && decode_v128(text, url_safe) is Some(bytes) {
     return bytes
   }
-  decode_scalar(text, ignore_whitespace)
+  decode_scalar(text, ignore_whitespace, url_safe)
 }
 
 ///|
 fn decode_scalar(
   text : StringView,
   ignore_whitespace : Bool,
+  url_safe : Bool,
 ) -> Bytes raise Malformed {
   let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
   for i, code_unit in text.code_units() {
-    match base64_value(code_unit.to_int()) {
+    match base64_value(code_unit.to_int(), url_safe) {
       WRITESPACE =>
         if ignore_whitespace {
           continue
@@ -165,15 +180,20 @@ fn decode_scalar(
 /// Other invalid characters are skipped. Spaces, tabs, CR, and LF stop
 /// decoding unless `ignore_whitespace` is true, in which case they are skipped.
 /// Decoding always stops once padding is encountered.
+///
+/// When `url_safe` is true, the URL- and filename-safe alphabet (RFC 4648 §5)
+/// is decoded and `+` and `/` are skipped as invalid; when it is false, `-`
+/// and `_` are skipped instead.
 pub fn decode_lossy(
   text : StringView,
   ignore_whitespace~ : Bool = false,
+  url_safe~ : Bool = false,
 ) -> Bytes {
   let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
   for code_unit in text.code_units() {
-    match base64_value(code_unit.to_int()) {
+    match base64_value(code_unit.to_int(), url_safe) {
       WRITESPACE => if !ignore_whitespace { break }
       PADDING => break
       INVALID_CHAR => ()
