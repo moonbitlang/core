@@ -708,14 +708,26 @@ test "parse_double large magnitude cancellation" {
 
   let input = "1" + String::make(399, '0') + ".5"
   try parse_double(input) catch {
-    e => inspect(e, content="Failure(value out of range)")
+    e =>
+      inspect(
+        e,
+        content=(
+          #|Failure(): value out of range
+        ),
+      )
   } noraise {
     _ => fail("expected parse_double to raise")
   }
 
   let input = "1" + String::make(800, '0') + ".5"
   try parse_double(input) catch {
-    e => inspect(e, content="Failure(value out of range)")
+    e =>
+      inspect(
+        e,
+        content=(
+          #|Failure(): value out of range
+        ),
+      )
   } noraise {
     _ => fail("expected parse_double to raise")
   }
