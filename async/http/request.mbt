@@ -97,9 +97,9 @@ pub async fn request_stream(
   proxy? : Proxy,
 ) -> ClientConnection {
   let (protocol, host, path) = resolve_url(uri)
-  let client = ClientConnection::connect(host, headers~, protocol~, proxy?)
+  let client = ClientConnection::connect(host, protocol~, proxy?)
   errdefer client.close()
-  client.request(meth, path)
+  client.request(meth, path, extra_headers=headers)
   client
 }
 
