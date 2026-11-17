@@ -117,8 +117,8 @@ async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
 }
 
 ///|
-/// Scoped `BinaryReader::read` in `ttyd`, or `read_into` a `max_len`-byte
-/// buffer. Raise `Resized` when `with_reader` reports a resize.
+/// `Tty::read` in `ttyd`, or `read_into` a `max_len`-byte
+/// buffer. Raise `Resized` when `handle_resize` reports a resize.
 ///
 /// With `timeout`, the read is cancelled inside `ttyd` after `timeout`
 /// milliseconds and `Timeout` is raised. The timeout must not be applied
@@ -136,7 +136,7 @@ async fn Ttyd::read(self : Ttyd, max_len? : Int32, timeout? : Int32) -> Bytes? {
 }
 
 ///|
-/// Scoped `BinaryReader::read_exactly` in `ttyd`. Raise `Resized` on resize.
+/// `Tty::read_exactly` inside `handle_resize`. Raise `Resized` on resize.
 async fn Ttyd::read_exactly(self : Ttyd, len : Int32) -> Bytes {
   let result = self.call("read_exactly", params={ "len": len })
   guard read_result("read_exactly", result) is Some(bytes) else {
@@ -664,7 +664,7 @@ async test "raw mode is restored when the main task fails" {
 }
 
 ///|
-async test "with_reader reports resize before invoking the callback" {
+async test "handle_resize reports resize before invoking the callback" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     @async.with_task_group() <| group => {
@@ -683,7 +683,7 @@ async test "with_reader reports resize before invoking the callback" {
 }
 
 ///|
-async test "with_reader finishes a split sequence before pending resize" {
+async test "handle_resize finishes a split sequence before pending resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
@@ -714,7 +714,7 @@ async test "with_reader finishes a split sequence before pending resize" {
 }
 
 ///|
-async test "with_reader peek and drop preserves lookahead for another scope" {
+async test "handle_resize peek and drop preserves lookahead for another scope" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b\x1b[A")
@@ -731,7 +731,7 @@ async test "with_reader peek and drop preserves lookahead for another scope" {
 }
 
 ///|
-async test "with_reader cancellation retains peeked input and releases scope" {
+async test "handle_resize cancellation retains peeked input and releases scope" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
@@ -749,7 +749,7 @@ async test "with_reader cancellation retains peeked input and releases scope" {
 }
 
 ///|
-async test "with_reader propagates callback errors and retains unconsumed input" {
+async test "handle_resize propagates callback errors and retains unconsumed input" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"ab")
@@ -762,7 +762,7 @@ async test "with_reader propagates callback errors and retains unconsumed input"
 
 ///|
 #cfg(not(platform="windows"))
-async test "with_reader invokes callback at EOF" {
+async test "handle_resize invokes callback at EOF" {
   with_ttyd() <| ttyd => {
     ttyd.send_input(b"\x04")
     json_inspect(ttyd.call("scoped_eof", params={}), content={
@@ -775,13 +775,13 @@ async test "with_reader invokes callback at EOF" {
 
 ///|
 #cfg(not(platform="windows"))
-async test "with_reader aborts escaped reader access even with buffered input" {
+async test "reading outside handle_resize aborts even with buffered input" {
   with_ttyd(exit_with=-6) <| ttyd => {
     // Native panic terminates with SIGABRT, reported as -6 by wait_pid.
     // Keep the terminal in its original mode: abort does not run exit hooks.
     ttyd.send_input(b"ab\n")
     ttyd.rpc.write(
-      b"{\"jsonrpc\":\"2.0\",\"method\":\"scoped_escape\",\"id\":1000}\n",
+      b"{\"jsonrpc\":\"2.0\",\"method\":\"read_outside_scope\",\"id\":1000}\n",
     )
     guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
   }
@@ -789,7 +789,7 @@ async test "with_reader aborts escaped reader access even with buffered input" {
 
 ///|
 #cfg(not(platform="windows"))
-async test "with_reader aborts buffered access during another read" {
+async test "handle_resize aborts buffered access during another read" {
   with_ttyd(exit_with=-6) <| ttyd => {
     ttyd.send_input(b"ab\n")
     ttyd.rpc.write(
@@ -800,7 +800,30 @@ async test "with_reader aborts buffered access during another read" {
 }
 
 ///|
-async test "with_reader first-input timeout releases scope" {
+#cfg(not(platform="windows"))
+async test "handle_resize aborts nested scopes" {
+  with_ttyd(exit_with=-6) <| ttyd => {
+    ttyd.send_input(b"ab\n")
+    ttyd.rpc.write(
+      b"{\"jsonrpc\":\"2.0\",\"method\":\"nested_scope\",\"id\":1000}\n",
+    )
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+  }
+}
+
+///|
+#cfg(not(platform="windows"))
+async test "handle_resize aborts concurrent scopes before input" {
+  with_ttyd(exit_with=-6) <| ttyd => {
+    ttyd.rpc.write(
+      b"{\"jsonrpc\":\"2.0\",\"method\":\"concurrent_scope\",\"id\":1000}\n",
+    )
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+  }
+}
+
+///|
+async test "handle_resize first-input timeout releases scope" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     json_inspect(

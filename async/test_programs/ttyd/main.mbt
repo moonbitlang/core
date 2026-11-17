@@ -23,9 +23,9 @@
 /// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
-///   scoped `BinaryReader::read`, or `read_into` an `n`-byte buffer
+///   `Tty::read`, or `read_into` an `n`-byte buffer, inside `handle_resize`
 /// - `read_exactly`, params `{"len": n}`:
-///   scoped `BinaryReader::read_exactly`
+///   `Tty::read_exactly` inside `handle_resize`
 ///
 ///   Both result in `{"type":"input","bytes":"<base64>"}`, `{"type":"resize"}`
 ///   for `Resized`, `{"type":"eof"}`, or `{"type":"timeout"}` when the read is
@@ -35,7 +35,8 @@
 /// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
 /// - `scoped_read`: peek `len + lookahead` bytes, consume `len`, optional timeout
 /// - `scoped_eof`, `scoped_fail`: verify callback EOF and error handling
-/// - `scoped_escape`, `scoped_overlap`: verify invalid reader access aborts
+/// - `read_outside_scope`, `scoped_overlap`: verify invalid input access aborts
+/// - `nested_scope`, `concurrent_scope`: verify overlapping protection scopes abort
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -125,10 +126,10 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       }
       read_result(params, () => {
         match max_len {
-          None => input_result(tty.with_reader(reader => reader.read()))
+          None => input_result(tty.handle_resize(() => tty.read()))
           Some(max_len) => {
             let buf = FixedArray::make(max_len, b'\x00')
-            match tty.with_reader(reader => reader.read_into(buf)) {
+            match tty.handle_resize(() => tty.read_into(buf)) {
               Resized => { "type": "resize" }
               Value(0) => { "type": "eof" }
               Value(n) =>
@@ -146,7 +147,7 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         raise invalid_params("`len` must be a number")
       }
       read_result(params, () => {
-        match tty.with_reader(reader => reader.read_exactly(len.to_int())) {
+        match tty.handle_resize(() => tty.read_exactly(len.to_int())) {
           Resized => { "type": "resize" }
           Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
         }
@@ -156,18 +157,17 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match
-        tty.with_reader(reader => reader.peek_exactly(len.to_int()).to_owned()) {
+      match tty.handle_resize(() => tty.peek_exactly(len.to_int()).to_owned()) {
         Resized => { "type": "resize" }
         Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
       }
     }
     "read_until" =>
       read_result(params, () => {
-        input_result(tty.with_reader(reader => reader.read_until(b"\n")))
+        input_result(tty.handle_resize(() => tty.read_until(b"\n")))
       })
     "expect_unexpected_eof" =>
-      try tty.with_reader(reader => reader.read_exactly(2)) catch {
+      try tty.handle_resize(() => tty.read_exactly(2)) catch {
         @io.UnexpectedEof => { "type": "unexpected_eof" }
         err => raise err
       } noraise {
@@ -177,7 +177,7 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match tty.with_reader(reader => reader.drop_exactly(len.to_int())) {
+      match tty.handle_resize(() => tty.drop_exactly(len.to_int())) {
         Resized => { "type": "resize" }
         Value(_) => { "type": "dropped" }
       }
@@ -194,12 +194,12 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       let mut entered = false
       read_result(params, () => {
         match
-          tty.with_reader(reader => {
+          tty.handle_resize(() => {
             entered = true
             // A parser may inspect beyond the event boundary; only commit len.
-            ignore(reader.peek_exactly(len + lookahead))
-            let bytes = reader.peek_exactly(len).to_owned()
-            reader.drop_exactly(len)
+            ignore(tty.peek_exactly(len + lookahead))
+            let bytes = tty.peek_exactly(len).to_owned()
+            tty.drop_exactly(len)
             bytes
           }) {
           Resized => { "type": "resize", "entered": entered }
@@ -212,39 +212,50 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         }
       })
     }
-    "scoped_escape" =>
-      match
-        tty.with_reader(reader => {
-          ignore(reader.peek_exactly(2))
-          reader
-        }) {
+    "read_outside_scope" =>
+      match tty.handle_resize(() => ignore(tty.peek_exactly(2))) {
         Resized => { "type": "resize" }
-        Value(reader) => {
-          ignore(reader.peek())
+        Value(_) => {
+          // Input remains buffered, but the protection scope has ended.
+          ignore(tty.peek())
           null
         }
       }
     "scoped_overlap" => {
       ignore(
-        tty.with_reader(reader => {
+        tty.handle_resize(() => {
           @async.with_task_group() <| group => {
             // Preserve the first line in the shared buffer while waiting for
             // more input, then try a buffered access from another task.
-            let reading = group.spawn(() => reader.peek_exactly(32).to_owned())
+            let reading = group.spawn(() => tty.peek_exactly(32).to_owned())
             @async.sleep(10)
-            ignore(reader.peek())
+            ignore(tty.peek())
             reading.cancel()
           }
         }),
       )
       null
     }
+    "nested_scope" => {
+      ignore(tty.handle_resize(() => ignore(tty.handle_resize(() => ()))))
+      null
+    }
+    "concurrent_scope" => {
+      @async.with_task_group() <| group => {
+        // The first scope is still waiting for its first input.
+        let reading = group.spawn(() => tty.handle_resize(() => tty.read()))
+        @async.sleep(10)
+        ignore(tty.handle_resize(() => ()))
+        reading.cancel()
+      }
+      null
+    }
     "scoped_eof" => {
       let mut entered = false
       match
-        tty.with_reader(reader => {
+        tty.handle_resize(() => {
           entered = true
-          reader.peek() is None
+          tty.peek() is None
         }) {
         Resized => { "type": "resize", "entered": entered }
         Value(eof) => { "type": "eof", "entered": entered, "eof": eof }
@@ -252,8 +263,8 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
     }
     "scoped_fail" =>
       try {
-        let result : @tty.MaybeResized[Unit] = tty.with_reader(reader => {
-          ignore(reader.peek_exactly(2))
+        let result : @tty.MaybeResized[Unit] = tty.handle_resize(() => {
+          ignore(tty.peek_exactly(2))
           raise ParserError
         })
         result

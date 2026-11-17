@@ -17,7 +17,7 @@ pub async fn run() -> Unit {
   let (rows, cols) = tty.size()
   tty.write(@utf8.encode("\{rows}x\{cols}\r\n"))
   for ;; {
-    match tty.with_reader(reader => reader.read()) {
+    match tty.handle_resize(() => tty.read()) {
       Resized => {
         let (rows, cols) = tty.size()
         tty.write(@utf8.encode("resized to \{rows}x\{cols}\r\n"))
@@ -48,13 +48,14 @@ Notes:
 - Use `defer tty.leave_raw_mode()` to restore when a scope exits before the
   event loop finishes. Reopening the Tty does not replace the saved state.
 - In raw mode Ctrl-C no longer interrupts the program. It arrives as `b"\x03"`.
-- `with_reader` is the only input entry point. Its callback receives an
-  `@io.BinaryReader`; `Tty` itself has no read, peek, or drop methods and does
-  not implement `@io.BinaryReader`. Writing uses `@io.BinaryWriter`.
-- `with_reader` returns `MaybeResized[T]`: `Value(value)` contains the callback
-  result, while `Resized` reports a window change without calling the callback.
-  Call `size()` for the current size. Read failures raise `@io.ReaderError`;
-  callback errors propagate unchanged.
+- Use Tty's read, peek, and drop methods inside a `handle_resize`
+  callback. These methods return ordinary `@io.BinaryReader` results and raise
+  `@io.ReaderError`. Tty's `@io.BinaryReader` implementation is private;
+  writing uses its public `@io.BinaryWriter` implementation.
+- `handle_resize` returns `MaybeResized[T]`: `Value(value)` contains the
+  callback result, while `Resized` reports a window change without calling the
+  callback. Call `size()` for the current size. Callback errors propagate
+  unchanged.
 - Pending resizes are retained and may be coalesced. Already observed resizes
   are delivered at scope entry before buffered input. After input is ready,
   the callback finishes before a resize is delivered by a later scope.
@@ -67,12 +68,13 @@ Notes:
   as console input records. Raw mode needs VT support. Cancelling a cooked
   read is not supported yet.
 
-For parsing one input event, `with_reader` supplies an ordinary
-`@io.BinaryReader` for the duration of an async callback. It first waits for
-input, EOF, or a resize without consuming bytes. A resize already observed by
-the event loop takes priority over buffered input and returns `Resized` without
-calling the callback. Once the callback starts, resizes stay pending until the
-next scope; the callback completes with `Value(result)` or propagates its error.
+For parsing one input event, `handle_resize` first waits for input, EOF,
+or a resize without consuming bytes. A resize already observed by the event
+loop takes priority over buffered input and returns `Resized` without calling
+the callback. Once input or EOF is ready, the callback reads directly from the
+Tty. Resizes during the callback stay pending until the next scope; the callback
+completes with `Value(result)` or propagates its error. The protection delays
+resize delivery only; ordinary task cancellation still applies.
 
 For example, a fixed-length parser can peek and then commit its consumption:
 
@@ -80,9 +82,9 @@ For example, a fixed-length parser can peek and then commit its consumption:
 ///|
 /// Read a three-byte event without consuming an incomplete prefix.
 pub async fn read_three_bytes(tty : @tty.Tty) -> @tty.MaybeResized[Bytes] {
-  tty.with_reader() <| reader => {
-    let bytes = reader.peek_exactly(3).to_owned()
-    reader.drop_exactly(3)
+  tty.handle_resize() <| () => {
+    let bytes = tty.peek_exactly(3).to_owned()
+    tty.drop_exactly(3)
     bytes
   }
 }
@@ -95,17 +97,18 @@ drop; a peek view must not be reused after another reader operation.
 
 - Keep each scope short, normally one low-level input event. A callback that
   loops forever or waits indefinitely for a sequence also defers resize forever.
-- Put a timeout for the first input around `with_reader`; put Escape/sequence
-  timeouts inside the callback. EOF is available to the callback as ordinary
-  reader EOF, not as a resize.
+- Put a timeout for the first input around `handle_resize`; put
+  Escape/sequence timeouts inside the callback. EOF is available to the
+  callback as ordinary reader EOF, not as a resize.
 - Errors and cancellation release the scope but do not undo successful reads.
   Peek-then-drop avoids consuming an incomplete event before it is recognized.
-- The scope owns terminal input, including buffered input. Nested or concurrent
-  scopes abort, following the async runtime's concurrent-read convention.
+- Nested or concurrent `handle_resize` calls abort, as do overlapping
+  reads and accessing terminal input or its buffer outside a protection scope.
   Writing and querying terminal size remain available.
-- The supplied reader must not escape the callback, and tasks using it must
-  finish before the callback returns. Overlapping reader operations abort,
-  as does accessing terminal input or its buffer after the scope ends.
+- Coordinate all input through the protection callback. Other tasks holding
+  the same Tty must not read it while the callback is running; the scope check
+  does not distinguish which task is calling a read method. Any tasks started
+  by the callback that read the Tty must finish before the callback returns.
 - Resize notifications can be coalesced. On Windows, a resize must first be
   observed while reading console input records to become pending; scope entry
   does not poll the console for notifications that have not yet been read.

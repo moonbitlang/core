@@ -20,7 +20,16 @@ struct Tty {
   read_ctrl : @io.BinaryReaderController
   write_ctrl : @io.BinaryWriterController
   original_state : State
-  mut reader : Reader?
+  mut read_state : ReadState
+  mut block_resize : Bool
+  mut eof : Bool
+}
+
+///|
+priv enum ReadState {
+  Idle // No handle_resize scope is active.
+  Active // A scope is active, with no underlying read in progress.
+  Reading // An underlying read is in progress within the scope.
 }
 
 ///|
@@ -79,7 +88,9 @@ fn Tty::new(
     read_ctrl: BinaryReaderController(),
     write_ctrl: BinaryWriterController(),
     original_state,
-    reader: None,
+    read_state: Idle,
+    block_resize: false,
+    eof: false,
   }
 }
 
@@ -92,9 +103,74 @@ fn Tty::close(self : Tty) -> Unit {
 ///|
 /// A private snapshot of terminal configuration, like `struct termios` in C.
 ///
-/// The bytes follow the host: the kernel `struct termios2` on Linux,
-/// `struct termios` on macOS,
-/// and the input and output console modes as little-endian `u32` on Windows.
+/// Layouts used by this implementation, in increasing memory-address order.
+/// The rulers show bit offsets within a row, not integer bit significance.
+/// Multi-byte integers are little-endian; c_cc ranges below are inclusive.
+///
+/// Linux - kernel termios2, asm-generic ABI (44 bytes)
+///
+///        Bit offset within row (byte boundaries)
+///        0       8       16      24      32
+///        +-------------------------------+
+///    0   |         c_iflag : u32         |
+///        +-------------------------------+
+///    4   |         c_oflag : u32         |
+///        +-------------------------------+
+///    8   |         c_cflag : u32         |
+///        +-------------------------------+
+///   12   |         c_lflag : u32         |
+///        +-------------------------------+
+///   16   | c_line|c_cc[0]|c_cc[1]|c_cc[2]|
+///        +-------+-------+-------+-------+
+///   20   |      c_cc[3..6] : 4 x u8      |
+///        +-------------------------------+
+///   24   |      c_cc[7..10] : 4 x u8     |
+///        +-------------------------------+
+///   28   |     c_cc[11..14] : 4 x u8     |
+///        +-------------------------------+
+///   32   |     c_cc[15..18] : 4 x u8     |
+///        +-------------------------------+
+///   36   |         c_ispeed : u32        |
+///        +-------------------------------+
+///   40   |         c_ospeed : u32        |
+///        +-------------------------------+
+///   44   end (byte offsets at left)
+///
+/// macOS - 64-bit termios (72 bytes)
+///
+///        Bit offset within row (byte boundaries)
+///        0       8       16      24      32      40      48      56      64
+///        +---------------------------------------------------------------+
+///    0   |                         c_iflag : u64                         |
+///        +---------------------------------------------------------------+
+///    8   |                         c_oflag : u64                         |
+///        +---------------------------------------------------------------+
+///   16   |                         c_cflag : u64                         |
+///        +---------------------------------------------------------------+
+///   24   |                         c_lflag : u64                         |
+///        +---------------------------------------------------------------+
+///   32   |                      c_cc[0..7] : 8 x u8                      |
+///        +---------------------------------------------------------------+
+///   40   |                      c_cc[8..15] : 8 x u8                     |
+///        +---------------------------------------------------------------+
+///   48   |     c_cc[16..19] : 4 x u8     |       padding : 4 bytes       |
+///        +-------------------------------+-------------------------------+
+///   56   |                         c_ispeed : u64                        |
+///        +---------------------------------------------------------------+
+///   64   |                         c_ospeed : u64                        |
+///        +---------------------------------------------------------------+
+///   72   end (byte offsets at left)
+///
+/// Windows - saved console modes (8 bytes)
+///
+///        Bit offset within row (byte boundaries)
+///        0       8       16      24      32
+///        +-------------------------------+
+///    0   |        input mode : u32       |
+///        +-------------------------------+
+///    4   |       output mode : u32       |
+///        +-------------------------------+
+///    8   end (byte offsets at left)
 priv struct State(FixedArray[Byte])
 
 ///|
@@ -473,7 +549,7 @@ pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
 }
 
 ///|
-/// The result of `Tty::with_reader`, or a notification that the window resized.
+/// The result of `Tty::handle_resize`, or a window resize notification.
 /// `Resized` consumes no input and does not invoke the callback.
 /// Notifications may be coalesced. Call `Tty::size` for the current size.
 #derive(@debug.Debug)
@@ -484,6 +560,101 @@ pub enum MaybeResized[T] {
 
 ///|
 priv suberror Resized
+
+///|
+/// Run one input operation with resize delivery deferred until it completes.
+/// Before calling `f`, wait for input, EOF, or a resize without consuming bytes.
+/// A resize already observed by the event loop takes priority over buffered
+/// input and returns `Resized` without calling `f`. Resizes during `f` remain
+/// pending for the next scope; the result of `f` is always returned as `Value`.
+///
+/// Read input through this Tty's read, peek, and drop methods inside `f`.
+/// Accessing terminal input or its buffer without an active scope aborts.
+/// Nested or concurrent scopes and overlapping read operations also abort.
+/// All reads must be coordinated by the callback: other tasks holding the Tty
+/// must not read during this scope, and tasks started by `f` must finish their
+/// reads before `f` returns. The scope check does not identify the calling task.
+/// Writing, querying size, and changing modes do not acquire this read scope.
+///
+/// Callback errors and cancellation propagate, releasing the scope. This is
+/// not a transaction: successful reads are not rolled back. To parse without
+/// consuming partial input, peek first and drop only when an event is complete.
+/// Copy any result bytes before dropping; peek views obey BinaryReader's usual
+/// validity rules. Put first-input timeouts outside `handle_resize`, and
+/// sequence timeouts inside `f`. Keep the scope short so resizes can be delivered
+/// promptly.
+pub async fn[T] Tty::handle_resize(
+  self : Tty,
+  f : async () -> T,
+) -> MaybeResized[T] {
+  @coroutine.check_cancellation()
+  guard! self.read_state is Idle
+  if self.tty.take_pending_resize() {
+    return Resized
+  }
+  self.read_state = Active
+  self.block_resize = false
+  self.eof = false
+  defer {
+    self.read_state = Idle
+    self.block_resize = false
+    self.eof = false
+  }
+  let first = @io.BinaryReader::peek(self) catch {
+    TransportError(Resized::Resized, ..) => return Resized
+    err => raise err
+  }
+  @coroutine.check_cancellation()
+  self.eof = first is None
+  self.block_resize = true
+  Value(f())
+}
+
+///|
+/// Keep the implementation private so input is only exposed through the
+/// Tty methods documented for use inside handle_resize.
+impl @io.BinaryReader for Tty
+
+///|
+impl @io.BinaryReaderImpl for Tty with fn name(_self) {
+  "@tty.Tty::handle_resize"
+}
+
+///|
+impl @io.BinaryReaderImpl for Tty with fn get_controller(self) {
+  guard! self.read_state is Active
+  self.read_ctrl
+}
+
+///|
+impl @io.BinaryReaderImpl for Tty with fn raw_read_impl(
+  self,
+  buf,
+  offset~,
+  max_len~,
+) {
+  guard! self.read_state is Active
+  @coroutine.check_cancellation()
+  self.read_state = Reading
+  defer {
+    self.read_state = Active
+  }
+  if self.eof {
+    return 0
+  }
+  // `-1` reports resize only during prefetch, before the callback starts.
+  let n = self.tty.read(
+    buf,
+    offset~,
+    len=max_len,
+    raw=@event_loop.platform is Windows &&
+      State::read(self.tty.input_fd(), self.output.fd()).is_raw(),
+    block_resize=self.block_resize,
+    context="@tty.Tty::handle_resize",
+  )
+  guard n >= 0 else { raise Resized::Resized }
+  n
+}
 
 ///|
 pub impl @io.BinaryWriter for Tty
