@@ -111,6 +111,37 @@ async test "request to an IPv6 address" {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
+async test "toplevel helpers support explicit Content-Length" {
+  @async.with_task_group <| group => {
+    let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    let port = server.addr.port
+    group.spawn_bg(no_wait=true) <| () => {
+      server.run_forever() <| ((request, conn) => {
+        guard request.headers.get("Content-Length") is Some(len) else {
+          fail("expected Content-Length header, found nothing")
+        }
+        let len = @string.parse_int(len)
+        assert_eq(conn.read_all().length(), len)
+        conn..send_response(200, "OK").end_response()
+      })
+    }
+    let (put_response, _) = @http.put_binary(
+      "http://127.0.0.1:\{port}",
+      b"abcd",
+      headers={ "Content-Length": "4" },
+    )
+    inspect(put_response.code, content="200")
+    let (post_response, _) = @http.post_binary(
+      "http://127.0.0.1:\{port}",
+      b"abcd",
+      headers={ "Content-Length": "4" },
+    )
+    inspect(post_response.code, content="200")
+  }
+}
+
+///|
 test "RequestMethod promotes equal, compare and hash" {
   let eq : (@http.RequestMethod, @http.RequestMethod) -> Bool = @http.RequestMethod::equal
   let cmp : (@http.RequestMethod, @http.RequestMethod) -> Int32 = @http.RequestMethod::compare
