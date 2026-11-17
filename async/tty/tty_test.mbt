@@ -79,6 +79,25 @@ priv struct Ttyd {
   pty : Pty
   rpc : @socket.Tcp
   mut next_id : Int32
+  progress : TtydProgress
+}
+
+///|
+priv struct TtydProgress {
+  mut stage : String
+  mut output_eof : Bool
+}
+
+///|
+#cfg(not(platform="windows"))
+async fn Ttyd::expect_abort(self : Ttyd, name : String) -> Unit {
+  self.progress.stage = "sending abort request: " + name
+  self.rpc.write(
+    @utf8.encode("{\"jsonrpc\":\"2.0\",\"method\":\"\{name}\",\"id\":1000}\n"),
+  )
+  self.progress.stage = "waiting for RPC EOF after: " + name
+  guard self.rpc.read() is None else { fail("expected ttyd to abort") }
+  self.progress.stage = "received RPC EOF after: " + name
 }
 
 ///|
@@ -91,7 +110,9 @@ async fn Ttyd::call(self : Ttyd, name : String, params~ : Json) -> Json {
     "method": name,
     "params": params,
   }
+  self.progress.stage = "sending RPC request: " + name
   self.rpc.write(@utf8.encode("\{request.stringify()}\n"))
+  self.progress.stage = "waiting for RPC response: " + name
   guard self.rpc.read_until(b"\n") is Some(line) else {
     fail("ttyd closed the connection")
   }
@@ -233,6 +254,7 @@ async fn Ttyd::expect_output_text(self : Ttyd, expected : String) -> Unit {
 ///|
 async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
   let (pty_path, ttyd_path) = programs.wait()
+  let progress : TtydProgress = { stage: "starting PTY", output_eof: false, }
   @async.with_timeout(10000, () => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
     defer server.close()
@@ -252,11 +274,14 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
       defer process.stdout.close()
       defer process.stderr.close()
       let pty = Pty(process)
+      progress.stage = "waiting for PTY ready"
       pty.expect_ok()
+      progress.stage = "waiting for ttyd RPC connection"
       let (rpc, _) = server.accept()
       {
         defer rpc.close()
-        f({ pty, rpc, next_id: 0, })
+        progress.stage = "running test callback"
+        f({ pty, rpc, next_id: 0, progress, })
       }
       // Keep draining the output: the last close of a terminal waits for
       // unread output, such as echoed input, so ttyd could not exit otherwise.
@@ -264,13 +289,22 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
         while pty.read_some() is Some(_) {
           ()
         }
+        progress.output_eof = true
       })
+      progress.stage = "waiting for PTY process exit and exit status"
       let exit_code = pty.wait()
+      progress.stage = "checking exit status"
       guard exit_code == exit_with else {
         fail("ttyd exited with \{exit_code}, expecting \{exit_with}")
       }
     })
-  })
+  }) catch {
+    @async.TimeoutError =>
+      fail(
+        "[tty-timeout] after 10000 ms: \{progress.stage}; PTY output EOF=\{progress.output_eof}; expected exit=\{exit_with}",
+      )
+    err => raise err
+  }
 }
 
 ///|
@@ -780,10 +814,7 @@ async test "reading outside handle_resize aborts even with buffered input" {
     // Native panic terminates with SIGABRT, reported as -6 by wait_pid.
     // Keep the terminal in its original mode: abort does not run exit hooks.
     ttyd.send_input(b"ab\n")
-    ttyd.rpc.write(
-      b"{\"jsonrpc\":\"2.0\",\"method\":\"read_outside_scope\",\"id\":1000}\n",
-    )
-    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+    ttyd.expect_abort("read_outside_scope")
   }
 }
 
@@ -792,10 +823,7 @@ async test "reading outside handle_resize aborts even with buffered input" {
 async test "handle_resize aborts buffered access during another read" {
   with_ttyd(exit_with=-6) <| ttyd => {
     ttyd.send_input(b"ab\n")
-    ttyd.rpc.write(
-      b"{\"jsonrpc\":\"2.0\",\"method\":\"scoped_overlap\",\"id\":1000}\n",
-    )
-    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+    ttyd.expect_abort("scoped_overlap")
   }
 }
 
@@ -804,22 +832,14 @@ async test "handle_resize aborts buffered access during another read" {
 async test "handle_resize aborts nested scopes" {
   with_ttyd(exit_with=-6) <| ttyd => {
     ttyd.send_input(b"ab\n")
-    ttyd.rpc.write(
-      b"{\"jsonrpc\":\"2.0\",\"method\":\"nested_scope\",\"id\":1000}\n",
-    )
-    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
+    ttyd.expect_abort("nested_scope")
   }
 }
 
 ///|
 #cfg(not(platform="windows"))
 async test "handle_resize aborts concurrent scopes before input" {
-  with_ttyd(exit_with=-6) <| ttyd => {
-    ttyd.rpc.write(
-      b"{\"jsonrpc\":\"2.0\",\"method\":\"concurrent_scope\",\"id\":1000}\n",
-    )
-    guard ttyd.rpc.read() is None else { fail("expected ttyd to abort") }
-  }
+  with_ttyd(exit_with=-6) <| ttyd => { ttyd.expect_abort("concurrent_scope") }
 }
 
 ///|
