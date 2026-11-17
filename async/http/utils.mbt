@@ -55,85 +55,53 @@ fn is_token_char(c : UInt16) -> Bool {
 }
 
 ///|
+/// A `token` (RFC 9110 §5.6.2): one or more `tchar`.
 #cfg(any(target="native", target="wasm"))
-fn is_VCHAR(c : UInt16) -> Bool {
-  c is (0x21..<=0x7E | ' ' | '\t' | 0x80..<=0xFF)
-}
+const TOKEN = re"[!#$%&'*+\-.^_`|~0-9A-Za-z]+"
+
+///|
+/// Optional whitespace, `OWS` (RFC 9110 §5.6.3). `BWS` has the same syntax.
+#cfg(any(target="native", target="wasm"))
+const OWS = re"[ \t]*"
+
+///|
+/// A `quoted-string` (RFC 9110 §5.6.4): `qdtext` and `quoted-pair` between
+/// double quotes. `obs-text` is the code units 0x80 to 0xFF.
+#cfg(any(target="native", target="wasm"))
+const QUOTED_STRING = re"\"([\t !#-\[\]-~\u{80}-\u{ff}]|\\[\t -~\u{80}-\u{ff}])*\""
 
 ///|
 #cfg(any(target="native", target="wasm"))
 fn is_valid_http_header_field_name(name : StringView) -> Bool {
-  for c in name.code_units() {
-    guard is_token_char(c) else { return false }
-  } nobreak {
-    !name.is_empty()
+  lexmatch name {
+    re"^" + TOKEN + re"$" => true
+    _ => false
   }
 }
 
 ///|
-#cfg(any(target="native", target="wasm"))
-fn trim_OWS(input : ArrayView[UInt16]) -> ArrayView[UInt16] {
-  for input = input {
-    match input {
-      [' ' | '\t', .. rest] => continue rest
-      _ => break input
-    }
-  }
-}
-
-///|
-#cfg(any(target="native", target="wasm"))
-fn validate_token(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise {
-  guard input is [first, .. input] && is_token_char(first) else {
-    raise BadRequest
-  }
-  for input = input; input is [first, .. rest]; input = rest {
-    guard is_token_char(first) else { break input }
-  } nobreak {
-    input
-  }
-}
-
-///|
-/// Validate a quoted string, `input` should not contain the first character
-#cfg(any(target="native", target="wasm"))
-fn validate_quoted_string(input : ArrayView[UInt16]) -> ArrayView[UInt16] raise {
-  for input = input; input is [first, .. rest]; input = rest {
-    match first {
-      '\\' => {
-        guard rest is [next, .. rest] else { raise BadRequest }
-        guard is_VCHAR(next.to_int().to_uint16()) else { raise BadRequest }
-        continue rest
-      }
-      '"' => break rest
-      _ if is_VCHAR(first) => ()
-      _ => raise BadRequest
-    }
-  } nobreak {
-    raise BadRequest
-  }
-}
-
-///|
+/// Validates the extensions after a chunk size, starting at their first `;`
+/// (RFC 9112 §7.1.1):
+///
+/// ```text
+/// chunk-ext = *( BWS ";" BWS chunk-ext-name [ BWS "=" BWS chunk-ext-val ] )
+/// chunk-ext-name = token
+/// chunk-ext-val  = token / quoted-string
+/// ```
+///
+/// Each step matches one extension: its name, then an optional value.
 #cfg(any(target="native", target="wasm"))
 fn validate_chunk_extension(extension : StringView) -> Unit raise {
-  guard extension.code_units() is [';', .. start] else { raise BadRequest }
-  for rest = start {
-    let rest = trim_OWS(rest)
-    let rest = validate_token(rest)
-    let rest = match trim_OWS(rest) {
-      ['=', .. rest] => {
-        let rest = match trim_OWS(rest) {
-          ['"', .. rest] => validate_quoted_string(rest)
-          rest => validate_token(rest)
+  guard extension is [';', ..] else { raise BadRequest }
+  for rest = extension {
+    lexmatch rest with longest {
+      re"^$" => return
+      (re"^;" + OWS + TOKEN + OWS, after=rest) =>
+        lexmatch rest with longest {
+          (re"^=" + OWS + TOKEN + OWS, after=rest) => continue rest
+          (re"^=" + OWS + QUOTED_STRING + OWS, after=rest) => continue rest
+          _ => continue rest
         }
-        trim_OWS(rest)
-      }
-      rest => rest
-    }
-    match rest {
-      [] => return
-      [';', .. rest] => continue rest
       _ => raise BadRequest
     }
   }

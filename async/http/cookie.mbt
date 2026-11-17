@@ -104,14 +104,14 @@ fn Cookie::parse(line : StringView) -> Cookie? {
 /// is ignored as well, since it cannot be represented.
 #cfg(any(target="native", target="wasm"))
 fn parse_max_age(value : StringView) -> Int64? {
-  let digits = if value.has_prefix("-") { value[1:] } else { value }
-  guard digits.length() > 0 && digits.iter().all(c => c is ('0'..<='9')) else {
-    return None
-  }
-  try @string.parse_int64(value) catch {
+  lexmatch value {
+    re"^-?[0-9]+$" =>
+      try @string.parse_int64(value) catch {
+        _ => None
+      } noraise {
+        value => Some(value)
+      }
     _ => None
-  } noraise {
-    value => Some(value)
   }
 }
 
