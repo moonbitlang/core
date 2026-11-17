@@ -27,11 +27,11 @@ fn ParseContext::lex_value(
   allow_rbracket~ : Bool,
 ) -> Token raise ParseError {
   lexscan ctx with longest {
-    re"^[ \t\r\n]*[{]" => LBrace
-    re"^[ \t\r\n]*\[" => LBracket
-    re"^[ \t\r\n]*\"" => String(ctx.lex_string())
+    re"^[ \t\r\n]*" + re"[{]" => LBrace
+    re"^[ \t\r\n]*" + re"\[" => LBracket
+    re"^[ \t\r\n]*" + re"\"" => String(ctx.lex_string())
     re"^[ \t\r\n]*" +
-    (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+\-]?[0-9]+)?" as num) => {
+    (re"-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+\-]?[0-9]+)?" as num) => {
       let num_end = ctx.offset
       let { value: n, repr, } = ctx.lex_number_end(
         num_end - num.length(),
@@ -39,10 +39,10 @@ fn ParseContext::lex_value(
       )
       Number(n, repr.map(repr => repr.to_owned()))
     }
-    re"^[ \t\r\n]*null" => Null
-    re"^[ \t\r\n]*true" => True
-    re"^[ \t\r\n]*false" => False
-    re"^[ \t\r\n]*\]" =>
+    re"^[ \t\r\n]*" + re"null" => Null
+    re"^[ \t\r\n]*" + re"true" => True
+    re"^[ \t\r\n]*" + re"false" => False
+    re"^[ \t\r\n]*" + re"\]" =>
       if allow_rbracket {
         RBracket
       } else {
@@ -54,7 +54,7 @@ fn ParseContext::lex_value(
     // matches more than any token case. The input then stops being a token
     // right after the match, and the cursor is at the character to report.
     re"^[ \t\r\n]*" +
-    re"(?:-|-?(?:0|[1-9][0-9]*)(?:\.|(?:\.[0-9]+)?[eE][+\-]?)|n|nu|nul|t|tr|tru|f|fa|fal|fals)" =>
+    re"(-|-?(0|[1-9][0-9]*)(\.|(\.[0-9]+)?[eE][+\-]?)|n|nu|nul|t|tr|tru|f|fa|fal|fals)" =>
       ctx.unexpected_char()
     _ => ctx.unexpected_token()
   }

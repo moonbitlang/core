@@ -184,8 +184,8 @@ fn ParseContext::lex_after_array_value(
   ctx : ParseContext,
 ) -> Token raise ParseError {
   lexscan ctx {
-    re"^[ \t\r\n]*," => Comma
-    re"^[ \t\r\n]*\]" => RBracket
+    re"^[ \t\r\n]*" + re"," => Comma
+    re"^[ \t\r\n]*" + re"\]" => RBracket
     _ => ctx.unexpected_token()
   }
 }
@@ -197,7 +197,7 @@ fn ParseContext::lex_after_property_name(
   ctx : ParseContext,
 ) -> Unit raise ParseError {
   lexscan ctx {
-    re"^[ \t\r\n]*:" => ()
+    re"^[ \t\r\n]*" + re":" => ()
     _ => ctx.unexpected_token()
   }
 }
@@ -209,8 +209,8 @@ fn ParseContext::lex_after_object_value(
   ctx : ParseContext,
 ) -> Token raise ParseError {
   lexscan ctx {
-    re"^[ \t\r\n]*," => Comma
-    re"^[ \t\r\n]*[}]" => RBrace
+    re"^[ \t\r\n]*" + re"," => Comma
+    re"^[ \t\r\n]*" + re"[}]" => RBrace
     _ => ctx.unexpected_token()
   }
 }
@@ -223,11 +223,11 @@ fn ParseContext::lex_property_name(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
   lexscan ctx {
-    re"^[ \t\r\n]*\"" => {
+    re"^[ \t\r\n]*" + re"\"" => {
       let offset = ctx.offset - 1
       (String(ctx.lex_string()), offset)
     }
-    re"^[ \t\r\n]*[}]" => (RBrace, ctx.offset - 1)
+    re"^[ \t\r\n]*" + re"[}]" => (RBrace, ctx.offset - 1)
     _ => ctx.unexpected_token()
   }
 }
@@ -240,7 +240,7 @@ fn ParseContext::lex_property_name2(
   ctx : ParseContext,
 ) -> (Token, Int32) raise ParseError {
   lexscan ctx {
-    re"^[ \t\r\n]*\"" => {
+    re"^[ \t\r\n]*" + re"\"" => {
       let offset = ctx.offset - 1
       (String(ctx.lex_string()), offset)
     }
