@@ -24,6 +24,19 @@ test "encode_no_padding" {
 }
 ```
 
+Set `url_safe=true` to use the URL- and filename-safe alphabet (RFC 4648 §5),
+which writes `-` and `_` in place of `+` and `/`. JWT segments, for example,
+are URL-safe and unpadded:
+
+```mbt check
+///|
+test "encode_url_safe" {
+  let bytes : Bytes = b"\xfb\xff"
+  inspect(@base64.encode(bytes), content="+/8=")
+  inspect(@base64.encode(bytes, url_safe=true, padding=false), content="-_8")
+}
+```
+
 ## Decoding
 
 Use `decode` to convert a Base64 string back to bytes. Both padded and unpadded input are accepted. Raises `Malformed` on invalid input.
@@ -43,6 +56,18 @@ Set `ignore_whitespace=true` to skip spaces, tabs, CR, and LF in the input:
 test "decode_ignore_whitespace" {
   let bytes = @base64.decode("SGVs bG8=", ignore_whitespace=true)
   inspect(bytes, content="b\"Hello\"")
+}
+```
+
+Set `url_safe=true` to decode the URL-safe alphabet. Each alphabet is strict:
+with `url_safe=true`, `+` and `/` raise `Malformed`, and without it `-` and `_`
+do.
+
+```mbt check
+///|
+test "decode_url_safe" {
+  let bytes = @base64.decode("-_8", url_safe=true)
+  inspect(bytes, content="b\"\\xfb\\xff\"")
 }
 ```
 

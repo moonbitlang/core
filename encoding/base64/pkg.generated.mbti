@@ -6,11 +6,11 @@ import {
 }
 
 // Values
-pub fn decode(StringView, ignore_whitespace? : Bool) -> Bytes raise Malformed
+pub fn decode(StringView, ignore_whitespace? : Bool, url_safe? : Bool) -> Bytes raise Malformed
 
-pub fn decode_lossy(StringView, ignore_whitespace? : Bool) -> Bytes
+pub fn decode_lossy(StringView, ignore_whitespace? : Bool, url_safe? : Bool) -> Bytes
 
-pub fn encode(BytesView, padding? : Bool) -> String
+pub fn encode(BytesView, padding? : Bool, url_safe? : Bool) -> String
 
 // Errors
 #derive(@debug.Debug)

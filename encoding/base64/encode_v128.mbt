@@ -24,20 +24,27 @@
 ///|
 /// Per-class offsets added to a sextet to reach its Base64 character, indexed
 /// by the class computed in `encode_block_v128`:
-/// 0 -> lowercase, 1..=10 -> digits, 11 -> `+`, 12 -> `/`, 13 -> uppercase.
-/// Values are stored modulo 256 because `i8x16_add` wraps.
+/// 0 -> lowercase, 1..=10 -> digits, 11 -> `+` or `-`, 12 -> `/` or `_`,
+/// 13 -> uppercase. Values are stored modulo 256 because `i8x16_add` wraps.
 #cfg(any(target="native", target="wasm"))
-fn encode_offsets_v128() -> V128 {
-  @v128.i8x16_const(
-    71, 252, 252, 252, 252, 252, 252, 252, 252, 252, 252, 237, 240, 65, 0, 0,
-  )
+fn encode_offsets_v128(url_safe : Bool) -> V128 {
+  if url_safe {
+    @v128.i8x16_const(
+      71, 252, 252, 252, 252, 252, 252, 252, 252, 252, 252, 239, 32, 65, 0, 0,
+    )
+  } else {
+    @v128.i8x16_const(
+      71, 252, 252, 252, 252, 252, 252, 252, 252, 252, 252, 237, 240, 65, 0, 0,
+    )
+  }
 }
 
 ///|
 /// Turns twelve source bytes (the low twelve lanes of `data`) into sixteen
-/// Base64 characters, one per lane.
+/// Base64 characters, one per lane, using the table from
+/// `encode_offsets_v128`.
 #cfg(any(target="native", target="wasm"))
-fn encode_block_v128(data : V128) -> V128 {
+fn encode_block_v128(data : V128, offsets : V128) -> V128 {
   // Spread each three-byte group across one 32-bit lane so that the lane,
   // read as a little-endian integer, holds `b0 << 16 | b1 << 8 | b2`. Lane
   // byte three is taken from the zero vector.
@@ -83,7 +90,7 @@ fn encode_block_v128(data : V128) -> V128 {
       @v128.i8x16_splat(13),
     ),
   )
-  @v128.i8x16_add(sextets, @v128.i8x16_swizzle(encode_offsets_v128(), class))
+  @v128.i8x16_add(sextets, @v128.i8x16_swizzle(offsets, class))
 }
 
 ///|
@@ -97,7 +104,7 @@ fn write_code_unit(out : FixedArray[Byte], offset : Int32, code : Byte) -> Unit 
 
 ///|
 #cfg(any(target="native", target="wasm"))
-fn encode_v128(bytes : BytesView, padding : Bool) -> String {
+fn encode_v128(bytes : BytesView, padding : Bool, url_safe : Bool) -> String {
   let length = bytes.length()
   // Three source bytes become four code units and so eight buffer bytes.
   // The vector stores below are not bounds checked, so an input whose
@@ -105,7 +112,11 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
   // scalar encoder builds the string without ever materializing that
   // buffer. The bound is a round number well inside the true ceiling,
   // since no caller is near it either way.
-  guard length <= 0x2000_0000 else { return encode_scalar(bytes, padding~) }
+  guard length <= 0x2000_0000 else {
+    return encode_scalar(bytes, padding~, url_safe~)
+  }
+  let alphabet = if url_safe { BASE64_URL } else { BASE64_STD }
+  let offsets = encode_offsets_v128(url_safe)
   let full_groups = length / 3
   let remainder = length % 3
   let mut char_count = full_groups * 4
@@ -118,7 +129,7 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
   for rest = bytes, written = 0 {
     match rest {
       [v128le(block), ..] as current => {
-        let chars = encode_block_v128(block)
+        let chars = encode_block_v128(block, offsets)
         @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(chars))
         @v128.v128_store(
           out,
@@ -129,17 +140,17 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
       }
       [b0, b1, b2, .. tail] => {
         let n = (b0.to_int() << 16) | (b1.to_int() << 8) | b2.to_int()
-        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
-        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
-        write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
-        write_code_unit(out, written + 6, BASE64_STD[n & 0x3F])
+        write_code_unit(out, written, alphabet[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, alphabet[(n >> 12) & 0x3F])
+        write_code_unit(out, written + 4, alphabet[(n >> 6) & 0x3F])
+        write_code_unit(out, written + 6, alphabet[n & 0x3F])
         continue tail, written + 8
       }
       [b0, b1] => {
         let n = (b0.to_int() << 16) | (b1.to_int() << 8)
-        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
-        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
-        write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
+        write_code_unit(out, written, alphabet[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, alphabet[(n >> 12) & 0x3F])
+        write_code_unit(out, written + 4, alphabet[(n >> 6) & 0x3F])
         if padding {
           write_code_unit(out, written + 6, b'=')
         }
@@ -147,8 +158,8 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
       }
       [b0] => {
         let n = b0.to_int() << 16
-        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
-        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
+        write_code_unit(out, written, alphabet[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, alphabet[(n >> 12) & 0x3F])
         if padding {
           write_code_unit(out, written + 4, b'=')
           write_code_unit(out, written + 6, b'=')
