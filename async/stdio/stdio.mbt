@@ -80,13 +80,19 @@ pub extend Input with @io.BinaryReader::{
 }
 
 ///|
-/// Output channel type for `stdout`/`stderr`
+/// Output channel type for `stdout`/`stderr`.
+///
+/// Unlike most ordinary streams, concurrent writes to an output channel are
+/// allowed. Individual low-level writes are serialized internally. A large
+/// write may be split into multiple low-level writes and interleaved with
+/// another task's output.
 pub struct Output {
   /// A builtin UTF-8 text view of the output channel,
   /// for text output convenience
   text : @io.Utf8Writer
   priv io : Result[@event_loop.IoHandle, Error]
   priv ctrl : @io.BinaryWriterController
+  priv lock : @async.Mutex
 }
 
 ///|
@@ -101,6 +107,9 @@ pub fn Output::fd(self : Output) -> @fd_util.Fd raise {
 }
 
 ///|
+/// Unlike most ordinary streams, concurrent write over `stdout` or `stderr` is allowed.
+/// Individual writes are automatically serialized internally.
+/// Large writes may get split to multiple writes and may still be interleaved, though.
 pub impl @io.BinaryWriter for Output
 
 ///|
@@ -110,6 +119,8 @@ impl @io.BinaryWriterImpl for Output with fn raw_write_impl(
   offset~,
   len~,
 ) {
+  self.lock.acquire()
+  defer self.lock.release()
   self.io
   .unwrap_or_error()
   .write(buf, offset~, len~, context="impl @io.BinaryWriter for @stdio.Output")
@@ -171,6 +182,7 @@ pub let stdout : Output = {
     text: @io.Utf8Writer::new_uninitialized(),
     io: @event_loop.stdout,
     ctrl: BinaryWriterController(),
+    lock: Mutex(),
   }
   @event_loop.register_hook(init=() => stdout.text.set_inner(stdout), exit=() => {
     stdout.text.close()
@@ -195,6 +207,7 @@ pub let stderr : Output = {
     text: @io.Utf8Writer::new_uninitialized(),
     io: @event_loop.stderr,
     ctrl: BinaryWriterController(),
+    lock: Mutex(),
   }
   @event_loop.register_hook(init=() => stderr.text.set_inner(stderr), exit=() => {
     stderr.text.close()

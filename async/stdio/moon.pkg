@@ -4,6 +4,7 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/async",
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/async/io",
@@ -15,7 +16,6 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
-  "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/process",
 } for "test"

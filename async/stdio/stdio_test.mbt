@@ -18,6 +18,12 @@ let cat : @async.Lazy[String] = Lazy(() => @test_util.build_test_program("cat"))
 
 ///|
 #cfg(any(target="native", target="wasm"))
+let concurrent_stdio_write : @async.Lazy[String] = Lazy(() => {
+  @test_util.build_test_program("concurrent_stdio_write")
+})
+
+///|
+#cfg(any(target="native", target="wasm"))
 async test "redirect_file" {
   let cat = cat.wait()
   let out_file = "_build/stdio_file_test"
@@ -120,4 +126,28 @@ async test "stdout and stderr are the same" {
       ),
     )
   }
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+async test "concurrent stdio write" {
+  let prog = concurrent_stdio_write.wait()
+  let result = @process.run(prog, [], stdout=Collect, stderr=Collect)
+  inspect(result.exit_code, content="0")
+  inspect(
+    result.stdout_text().iter().filter(c => c is 'a').count(),
+    content="100",
+  )
+  inspect(
+    result.stdout_text().iter().filter(c => c is 'b').count(),
+    content="100",
+  )
+  inspect(
+    result.stderr_text().iter().filter(c => c is 'a').count(),
+    content="100",
+  )
+  inspect(
+    result.stderr_text().iter().filter(c => c is 'b').count(),
+    content="100",
+  )
 }
