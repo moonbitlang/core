@@ -13,23 +13,23 @@
 // limitations under the License.
 
 ///|
-/// Lexes the token that starts a value, skipping leading whitespace. A single
-/// DFA skips the whitespace, recognizes the token and validates a whole
-/// number, so a number is converted by `lex_number_end` without being lexed
-/// again.
+/// Lexes what starts a value, skipping leading whitespace. A scalar is
+/// returned as the finished value, so no token is allocated for it. For `{`
+/// or `[` the result is `None` and the cursor is just past the bracket.
+///
+/// A single DFA skips the whitespace, recognizes the token and validates a
+/// whole number, so a number is converted by `lex_number_end` without being
+/// lexed again.
 ///
 /// Malformed input is reported where the previous character-by-character
 /// lexer reported it: at the first character that cannot continue a token.
 /// The `with longest` rule makes that position the end of the longest match,
-/// so the error cases only have to match far enough.
-fn ParseContext::lex_value(
-  ctx : ParseContext,
-  allow_rbracket~ : Bool,
-) -> Token raise ParseError {
+/// so the error cases only have to match far enough. `]` does not start a
+/// value: `parse_array` lexes the `]` of an empty array itself.
+fn ParseContext::lex_value(ctx : ParseContext) -> Json? raise ParseError {
   lexscan ctx with longest {
-    re"^[ \t\r\n]*" + re"[{]" => LBrace
-    re"^[ \t\r\n]*" + re"\[" => LBracket
-    re"^[ \t\r\n]*" + re"\"" => String(ctx.lex_string())
+    re"^[ \t\r\n]*" + re"[{\[]" => None
+    re"^[ \t\r\n]*" + re"\"" => Some(Json::string(ctx.lex_string()))
     re"^[ \t\r\n]*" +
     ((re"-?(0|[1-9][0-9]*)" + re"(\.[0-9]+)?" + re"([eE][+\-]?[0-9]+)?") as num) => {
       let num_end = ctx.offset
@@ -37,17 +37,12 @@ fn ParseContext::lex_value(
         num_end - num.length(),
         num_end,
       )
-      Number(n, repr.map(repr => repr.to_owned()))
+      let repr = repr.map(repr => repr.to_owned())
+      Some(Json::number(n, repr?))
     }
-    re"^[ \t\r\n]*" + re"null" => Null
-    re"^[ \t\r\n]*" + re"true" => True
-    re"^[ \t\r\n]*" + re"false" => False
-    re"^[ \t\r\n]*" + re"\]" =>
-      if allow_rbracket {
-        RBracket
-      } else {
-        ctx.invalid_char(shift=-1)
-      }
+    re"^[ \t\r\n]*" + re"null" => Some(null)
+    re"^[ \t\r\n]*" + re"true" => Some(Json::boolean(true))
+    re"^[ \t\r\n]*" + re"false" => Some(Json::boolean(false))
     // Malformed input: a token cut short. None of these is a token, so
     // `with longest` picks one of them only when it matches more than any
     // token case. The input then stops being a token right after the match,
