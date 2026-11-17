@@ -120,16 +120,13 @@ test "expect_char with surrogate pair" {
 }
 
 ///|
-// Hot path: this runs at the start of every `lex_value` and
-// `lex_after_*` step. The previous `lexmatch` path constructed a
-// fresh `StringView` of the remaining input on every call, which
-// shows up as a top allocation source in JSON parsing workloads.
-// JSON whitespace is ASCII-only, so we can scan UTF-16 code units
-// directly on the existing input view with the same semantics.
+// Skips JSON whitespace (ASCII only, RFC 8259 §2). The token lexers skip
+// whitespace inside their `lexscan` DFAs; this is used by their slow paths
+// and by `parse` after the top-level value.
 //
 // `offset` is held in a local for the duration of the scan so each
 // consumed whitespace character is one `local.set` instead of a
-// `struct.set` against `ctx`.
+// `struct.set` against the context.
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   let end = ctx.end_offset
   ctx.offset = for offset = ctx.offset {
@@ -170,76 +167,14 @@ test "lex_skip_whitespace" {
 }
 
 ///|
-fn ParseContext::lex_after_array_value(
-  ctx : ParseContext,
-) -> Token raise ParseError {
+/// Reports the error for an unexpected token: skips whitespace, then raises
+/// `InvalidChar` for the next character, or `InvalidEof` at the end of the
+/// input. The punctuation lexers call it from their `lexscan` fallback, which
+/// leaves the cursor before the whitespace, so the next character is never
+/// one they accept.
+fn[T] ParseContext::unexpected_token(ctx : ParseContext) -> T raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
-    Some(']') => RBracket
-    Some(',') => Comma
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
-}
-
-///|
-fn ParseContext::lex_after_property_name(
-  ctx : ParseContext,
-) -> Unit raise ParseError {
-  ctx.lex_skip_whitespace()
-  match ctx.read_char() {
-    Some(':') => ()
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
-}
-
-///|
-fn ParseContext::lex_after_object_value(
-  ctx : ParseContext,
-) -> Token raise ParseError {
-  ctx.lex_skip_whitespace()
-  match ctx.read_char() {
-    Some('}') => RBrace
-    Some(',') => Comma
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
-}
-
-///|
-/// In the context of `{`, try to lex token `}` or a property name,
-/// otherwise raise an error.
-fn ParseContext::lex_property_name(
-  ctx : ParseContext,
-) -> (Token, Int32) raise ParseError {
-  ctx.lex_skip_whitespace()
-  let offset = ctx.offset
-  match ctx.read_char() {
-    Some('}') => (RBrace, offset)
-    Some('"') => {
-      let s = ctx.lex_string()
-      (String(s), offset)
-    }
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
-}
-
-///|
-/// In the context of `{ ...,` try to lex a property name,
-/// otherwise raise an error.
-/// since it is in comma context, `}` is not allowed.
-fn ParseContext::lex_property_name2(
-  ctx : ParseContext,
-) -> (Token, Int32) raise ParseError {
-  ctx.lex_skip_whitespace()
-  let offset = ctx.offset
-  match ctx.read_char() {
-    Some('"') => {
-      let s = ctx.lex_string()
-      (String(s), offset)
-    }
     Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
@@ -251,4 +186,75 @@ test "expect_char at the upper BMP boundary" {
   ctx.expect_char('\u{FFFF}')
   ctx.expect_char('😀')
   json_inspect(ctx.offset, content=3)
+}
+
+///|
+/// Lexes `,` or `]` after an array element, skipping leading whitespace.
+/// Anything else is an error, reported by `unexpected_token`.
+fn ParseContext::lex_after_array_value(
+  ctx : ParseContext,
+) -> Token raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*," => Comma
+    re"^[ \t\r\n]*\]" => RBracket
+    _ => ctx.unexpected_token()
+  }
+}
+
+///|
+/// Lexes the `:` after a property name, skipping leading whitespace.
+/// Anything else is an error, reported by `unexpected_token`.
+fn ParseContext::lex_after_property_name(
+  ctx : ParseContext,
+) -> Unit raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*:" => ()
+    _ => ctx.unexpected_token()
+  }
+}
+
+///|
+/// Lexes `,` or `}` after a property value, skipping leading whitespace.
+/// Anything else is an error, reported by `unexpected_token`.
+fn ParseContext::lex_after_object_value(
+  ctx : ParseContext,
+) -> Token raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*," => Comma
+    re"^[ \t\r\n]*[}]" => RBrace
+    _ => ctx.unexpected_token()
+  }
+}
+
+///|
+/// In the context of `{`, lexes `}` or a property name, skipping leading
+/// whitespace, and returns the token with the offset of its first character.
+/// Anything else is an error, reported by `unexpected_token`.
+fn ParseContext::lex_property_name(
+  ctx : ParseContext,
+) -> (Token, Int32) raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*\"" => {
+      let offset = ctx.offset - 1
+      (String(ctx.lex_string()), offset)
+    }
+    re"^[ \t\r\n]*[}]" => (RBrace, ctx.offset - 1)
+    _ => ctx.unexpected_token()
+  }
+}
+
+///|
+/// In the context of `{ ...,`, lexes a property name, skipping leading
+/// whitespace, and returns it with the offset of its opening quote. Anything
+/// else is an error, reported by `unexpected_token`.
+fn ParseContext::lex_property_name2(
+  ctx : ParseContext,
+) -> (Token, Int32) raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*\"" => {
+      let offset = ctx.offset - 1
+      (String(ctx.lex_string()), offset)
+    }
+    _ => ctx.unexpected_token()
+  }
 }
