@@ -114,3 +114,69 @@ test "number prefix errors inside containers" {
     ),
   )
 }
+
+///|
+/// Cut-short literals and other value errors, where `lex_value` matches the
+/// longest prefix of a token and reports the character after it. The errors
+/// must be the ones the character-by-character lexer on `main` reported.
+test "literal prefix and value errors" {
+  let inputs = [
+    "n", "nu", "nul", "nux", "nulL", "t", "tr", "tru", "trUe", "f", "fa", "fal",
+    "fals", "falsE", "[tru]", "[n,1]", "{\"a\":fals}", "{\"a\": nu }", " \r\nfa",
+    "nul\n", "n\u{1F600}", "[t\u{1F600}]", "nulll", "truex", "[falsee]", "nil", "-",
+    "[-x]", "[-\u{1F600}]", "", " ", "[", "[ ", "x", "[x]", "\u{1F600}", "{\"a\":}",
+  ]
+  let results = inputs.map(input => {
+    let result = try {
+      @json.parse(input) |> ignore
+      "ok"
+    } catch {
+      err => err.to_string()
+    }
+    (input, result)
+  })
+  debug_inspect(
+    results,
+    content=(
+      #|[
+      #|  ("n", "Unexpected end of file"),
+      #|  ("nu", "Unexpected end of file"),
+      #|  ("nul", "Unexpected end of file"),
+      #|  ("nux", "Invalid character 'x' at line 1, column 2"),
+      #|  ("nulL", "Invalid character 'L' at line 1, column 3"),
+      #|  ("t", "Unexpected end of file"),
+      #|  ("tr", "Unexpected end of file"),
+      #|  ("tru", "Unexpected end of file"),
+      #|  ("trUe", "Invalid character 'U' at line 1, column 2"),
+      #|  ("f", "Unexpected end of file"),
+      #|  ("fa", "Unexpected end of file"),
+      #|  ("fal", "Unexpected end of file"),
+      #|  ("fals", "Unexpected end of file"),
+      #|  ("falsE", "Invalid character 'E' at line 1, column 4"),
+      #|  ("[tru]", "Invalid character ']' at line 1, column 4"),
+      #|  ("[n,1]", "Invalid character ',' at line 1, column 2"),
+      #|  ("{\"a\":fals}", "Invalid character '}' at line 1, column 9"),
+      #|  ("{\"a\": nu }", "Invalid character ' ' at line 1, column 8"),
+      #|  (" \r\nfa", "Unexpected end of file"),
+      #|  ("nul\n", "Invalid character '\\n' at line 1, column 3"),
+      #|  ("n😀", "Invalid character '😀' at line 1, column 1"),
+      #|  ("[t😀]", "Invalid character '😀' at line 1, column 2"),
+      #|  ("nulll", "Invalid character 'l' at line 1, column 4"),
+      #|  ("truex", "Invalid character 'x' at line 1, column 4"),
+      #|  ("[falsee]", "Invalid character 'e' at line 1, column 6"),
+      #|  ("nil", "Invalid character 'i' at line 1, column 1"),
+      #|  ("-", "Unexpected end of file"),
+      #|  ("[-x]", "Invalid character 'x' at line 1, column 2"),
+      #|  ("[-😀]", "Invalid character '😀' at line 1, column 2"),
+      #|  ("", "Unexpected end of file"),
+      #|  (" ", "Unexpected end of file"),
+      #|  ("[", "Unexpected end of file"),
+      #|  ("[ ", "Unexpected end of file"),
+      #|  ("x", "Invalid character 'x' at line 1, column 0"),
+      #|  ("[x]", "Invalid character 'x' at line 1, column 1"),
+      #|  ("😀", "Invalid character '😀' at line 1, column 0"),
+      #|  ("{\"a\":}", "Invalid character '}' at line 1, column 5"),
+      #|]
+    ),
+  )
+}
