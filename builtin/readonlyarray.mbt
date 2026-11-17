@@ -945,6 +945,7 @@ pub fn[T] ReadOnlyArray::get_view(
 ///   )
 /// }
 /// ```
+#intrinsic("%readonlyarray.clamped_view")
 #alias("_[_:_]")
 pub fn[T] ReadOnlyArray::clamped_view(
   self : ReadOnlyArray[T],

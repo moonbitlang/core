@@ -409,6 +409,7 @@ pub fn[T] MutArrayView::exact_view(
 ///   json_inspect(view.clamped_view(start=1, end=10).to_owned(), content=[3, 4])
 /// }
 /// ```
+#intrinsic("%mutarrayview.clamped_view")
 #alias("_[_:_]")
 pub fn[T] MutArrayView::clamped_view(
   self : MutArrayView[T],

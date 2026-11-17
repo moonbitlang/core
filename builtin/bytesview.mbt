@@ -296,6 +296,7 @@ pub fn BytesView::exact_view(
 ///   inspect(bs.clamped_view(start=4, end=1).length(), content="0")
 /// }
 /// ```
+#intrinsic("%bytes.clamped_view")
 #alias("_[_:_]")
 pub fn Bytes::clamped_view(
   self : Bytes,
@@ -327,6 +328,7 @@ pub fn Bytes::clamped_view(
 ///   inspect(bv.clamped_view(start=3, end=1).length(), content="0")
 /// }
 /// ```
+#intrinsic("%bytesview.clamped_view")
 #alias("_[_:_]")
 pub fn BytesView::clamped_view(
   self : BytesView,
