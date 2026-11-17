@@ -55,15 +55,3 @@ impl @lexbuf.Scannable for ParseContext with fn scan_cursor(self) {
 impl @lexbuf.Scannable for ParseContext with fn set_scan_cursor(self, cursor) {
   self.offset = cursor
 }
-
-///|
-priv enum Token {
-  Null
-  True
-  False
-  Number(Double, String?)
-  String(String)
-  LBrace
-  LBracket
-  RBracket
-}

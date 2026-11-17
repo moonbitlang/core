@@ -90,7 +90,10 @@ pub fn parse(
     reject_duplicate_keys~,
     preserve_number_repr~,
   )
-  let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
+  let val = match ctx.lex_value() {
+    Some(value) => value
+    None => ctx.parse_container(remaining_available_depth=max_nesting_depth)
+  }
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
@@ -100,31 +103,18 @@ pub fn parse(
 }
 
 ///|
-fn ParseContext::parse_value(
+/// Parses the rest of a container, after `lex_value` has returned `None`: the
+/// cursor is just past the opening bracket. The recursion happens here, after
+/// `lex_value` has returned, so the stack of nested containers does not hold
+/// the frame of its DFA.
+fn ParseContext::parse_container(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
-  let tok = ctx.lex_value(allow_rbracket=false)
-  ctx.parse_value2(tok, remaining_available_depth~)
-}
-
-///|
-fn ParseContext::parse_value2(
-  ctx : ParseContext,
-  tok : Token,
-  remaining_available_depth~ : Int32,
-) -> Json raise ParseError {
-  match tok {
-    Null => null
-    True => Json::boolean(true)
-    False => Json::boolean(false)
-    Number(n, repr) => Json::number(n, repr?)
-    String(s) => Json::string(s)
-    LBrace => ctx.parse_object(remaining_available_depth~)
-    LBracket => ctx.parse_array(remaining_available_depth~)
-    // `lex_value(allow_rbracket=false)` never returns `]`, and `parse_array`
-    // handles it itself when it is allowed.
-    RBracket => abort("unreachable")
+  if ctx.input.unsafe_get(ctx.offset - 1) == '{' {
+    ctx.parse_object(remaining_available_depth~)
+  } else {
+    ctx.parse_array(remaining_available_depth~)
   }
 }
 
@@ -157,9 +147,13 @@ fn ParseContext::parse_object(
       re"^[ \t\r\n]*" + re":" => ()
       _ => ctx.unexpected_token()
     }
-    map[name] = ctx.parse_value(
-      remaining_available_depth=child_remaining_available_depth,
-    )
+    map[name] = match ctx.lex_value() {
+      Some(value) => value
+      None =>
+        ctx.parse_container(
+          remaining_available_depth=child_remaining_available_depth,
+        )
+    }
     lexscan ctx {
       re"^[ \t\r\n]*" + re"," => ()
       re"^[ \t\r\n]*" + re"[}]" => break Json::object(map)
@@ -186,22 +180,35 @@ fn ParseContext::parse_array(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
-  // `]` may close the array only before its first element.
-  let first = ctx.lex_value(allow_rbracket=true)
-  if first is RBracket {
+  if ctx.lex_empty_array_end() {
     return Json::array(vec)
   }
-  for tok = first {
-    vec.push(
-      ctx.parse_value2(
-        tok,
-        remaining_available_depth=child_remaining_available_depth,
-      ),
-    )
+  for ;; {
+    let value = match ctx.lex_value() {
+      Some(value) => value
+      None =>
+        ctx.parse_container(
+          remaining_available_depth=child_remaining_available_depth,
+        )
+    }
+    vec.push(value)
     lexscan ctx {
-      re"^[ \t\r\n]*" + re"," => continue ctx.lex_value(allow_rbracket=false)
+      re"^[ \t\r\n]*" + re"," => continue
       re"^[ \t\r\n]*" + re"\]" => break Json::array(vec)
       _ => ctx.unexpected_token()
     }
+  }
+}
+
+///|
+/// In the context of `[`, lexes the `]` of an empty array, skipping leading
+/// whitespace, and returns whether it was there. Otherwise the cursor stays
+/// before the first element. It is a function of its own, not a `lexscan` in
+/// `parse_array`, so the DFA's locals are not in the frame that recursion
+/// into nested containers keeps alive.
+fn ParseContext::lex_empty_array_end(ctx : ParseContext) -> Bool {
+  lexscan ctx {
+    re"^[ \t\r\n]*" + re"\]" => true
+    _ => false
   }
 }
