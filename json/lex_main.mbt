@@ -13,82 +13,15 @@
 // limitations under the License.
 
 ///|
-/// Character-by-character lexer for a value. `lex_value` calls it only for
-/// input its DFA does not lex, which is always an error, so this function
-/// decides which error is reported and where.
-fn ParseContext::lex_value_slow(
-  ctx : ParseContext,
-  allow_rbracket~ : Bool,
-) -> Token raise ParseError {
-  ctx.lex_skip_whitespace()
-  match ctx.read_char() {
-    Some('{') => return LBrace
-    Some('[') => return LBracket
-    Some(']') =>
-      if allow_rbracket {
-        return RBracket
-      } else {
-        ctx.invalid_char(shift=-1)
-      }
-    Some('n') => {
-      ctx.expect_ascii_char(b'u')
-      ctx.expect_ascii_char(b'l')
-      ctx.expect_ascii_char(b'l')
-      return Null
-    }
-    Some('t') => {
-      ctx.expect_ascii_char(b'r')
-      ctx.expect_ascii_char(b'u')
-      ctx.expect_ascii_char(b'e')
-      return True
-    }
-    Some('f') => {
-      ctx.expect_ascii_char(b'a')
-      ctx.expect_ascii_char(b'l')
-      ctx.expect_ascii_char(b's')
-      ctx.expect_ascii_char(b'e')
-      return False
-    }
-    Some('-') =>
-      match ctx.read_char() {
-        Some('0') => {
-          let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 2)
-          return Number(n, repr.map(repr => repr.to_owned()))
-        }
-        Some('1'..<='9') => {
-          let { value: n, repr, } = ctx.lex_decimal_integer(
-            start=ctx.offset - 2,
-          )
-          return Number(n, repr.map(repr => repr.to_owned()))
-        }
-        Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-        None => raise InvalidEof
-      }
-    Some('0') => {
-      let { value: n, repr, } = ctx.lex_zero(start=ctx.offset - 1)
-      return Number(n, repr.map(repr => repr.to_owned()))
-    }
-    Some('1'..<='9') => {
-      let { value: n, repr, } = ctx.lex_decimal_integer(start=ctx.offset - 1)
-      return Number(n, repr.map(repr => repr.to_owned()))
-    }
-    Some('"') => {
-      let s = ctx.lex_string()
-      return String(s)
-    }
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
-}
-
-///|
 /// Lexes the token that starts a value, skipping leading whitespace. A single
 /// DFA skips the whitespace, recognizes the token and validates a whole
 /// number, so a number is converted by `lex_number_end` without being lexed
-/// again. Every input the DFA does not lex is malformed; it goes to
-/// `lex_value_slow` with the cursor before the token (before its leading
-/// whitespace, or at the start of an incomplete number), so the error is the
-/// one that lexer reports.
+/// again.
+///
+/// Malformed input is reported where the previous character-by-character
+/// lexer reported it: at the first character that cannot continue a token.
+/// The `with longest` rule makes that position the end of the longest match,
+/// so the error cases only have to match far enough.
 fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool,
@@ -115,16 +48,14 @@ fn ParseContext::lex_value(
       } else {
         ctx.invalid_char(shift=-1)
       }
-    // A prefix that starts like a number but does not finish as one, such
-    // as `1.` or `1e+`, is longer than any valid number match, so this case
-    // wins. `lexscan` has already moved the cursor past the prefix; move it
-    // back to the start of the number so `lex_value_slow` lexes it again and
-    // reports the error at the usual position.
+    // A token cut short: a sign or a number that stops after `.`, `e` or its
+    // sign (`-`, `1.`, `1e+`), or a prefix of a literal (`nu`, `fals`). None
+    // of these is a token, so `with longest` picks this case only when it
+    // matches more than any token case. The input then stops being a token
+    // right after the match, and the cursor is at the character to report.
     re"^[ \t\r\n]*" +
-    (re"-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][+\-]?[0-9]*)?" as prefix) => {
-      ctx.offset -= prefix.length()
-      ctx.lex_value_slow(allow_rbracket~)
-    }
-    _ => ctx.lex_value_slow(allow_rbracket~)
+    re"(?:-|-?(?:0|[1-9][0-9]*)(?:\.|(?:\.[0-9]+)?[eE][+\-]?)|n|nu|nul|t|tr|tru|f|fa|fal|fals)" =>
+      ctx.unexpected_char()
+    _ => ctx.unexpected_token()
   }
 }

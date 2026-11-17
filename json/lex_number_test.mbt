@@ -27,7 +27,7 @@ test "parse invalid decimal exponent sign" {
 }
 
 ///|
-test "lex_zero invalid case" {
+test "parse rejects a leading zero" {
   debug_inspect(
     expect_parse_error("01", "expected InvalidChar"),
     content=(
