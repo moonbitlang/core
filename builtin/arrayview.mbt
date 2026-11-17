@@ -469,6 +469,7 @@ pub fn[T] ArrayView::get_view(
 ///   )
 /// }
 /// ```
+#intrinsic("%array.clamped_view")
 #alias("_[_:_]")
 pub fn[T] Array::clamped_view(
   self : Array[T],
@@ -510,6 +511,7 @@ pub fn[T] Array::clamped_view(
 ///   )
 /// }
 /// ```
+#intrinsic("%arrayview.clamped_view")
 #alias("_[_:_]")
 pub fn[T] ArrayView::clamped_view(
   self : ArrayView[T],
@@ -649,6 +651,7 @@ pub fn[T] FixedArray::get_view(
 ///   )
 /// }
 /// ```
+#intrinsic("%fixedarray.clamped_view")
 #alias("_[_:_]")
 pub fn[T] FixedArray::clamped_view(
   self : FixedArray[T],
