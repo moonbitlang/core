@@ -64,9 +64,6 @@ priv enum Token {
   Number(Double, String?)
   String(String)
   LBrace
-  RBrace
   LBracket
   RBracket
-  Comma
-  // Colon
 }

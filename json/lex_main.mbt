@@ -31,7 +31,7 @@ fn ParseContext::lex_value(
     re"^[ \t\r\n]*" + re"\[" => LBracket
     re"^[ \t\r\n]*" + re"\"" => String(ctx.lex_string())
     re"^[ \t\r\n]*" +
-    (re"-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+\-]?[0-9]+)?" as num) => {
+    ((re"-?(0|[1-9][0-9]*)" + re"(\.[0-9]+)?" + re"([eE][+\-]?[0-9]+)?") as num) => {
       let num_end = ctx.offset
       let { value: n, repr, } = ctx.lex_number_end(
         num_end - num.length(),
@@ -48,13 +48,22 @@ fn ParseContext::lex_value(
       } else {
         ctx.invalid_char(shift=-1)
       }
-    // A token cut short: a sign or a number that stops after `.`, `e` or its
-    // sign (`-`, `1.`, `1e+`), or a prefix of a literal (`nu`, `fals`). None
-    // of these is a token, so `with longest` picks this case only when it
-    // matches more than any token case. The input then stops being a token
-    // right after the match, and the cursor is at the character to report.
+    // Malformed input: a token cut short. None of these is a token, so
+    // `with longest` picks one of them only when it matches more than any
+    // token case. The input then stops being a token right after the match,
+    // and the cursor is at the character to report (or at the end of input).
+    //
+    // `-` with no digits after it.
+    re"^[ \t\r\n]*" + re"-" => ctx.unexpected_char()
+    // A number with no digits after its `.`.
+    re"^[ \t\r\n]*" + re"-?(0|[1-9][0-9]*)" + re"\." => ctx.unexpected_char()
+    // A number with no digits after its `e` or the exponent sign.
     re"^[ \t\r\n]*" +
-    re"(-|-?(0|[1-9][0-9]*)(\.|(\.[0-9]+)?[eE][+\-]?)|n|nu|nul|t|tr|tru|f|fa|fal|fals)" =>
+    re"-?(0|[1-9][0-9]*)" +
+    re"(\.[0-9]+)?" +
+    re"[eE][+\-]?" => ctx.unexpected_char()
+    // A prefix of `null`, `true` or `false`.
+    re"^[ \t\r\n]*" + re"(n|nu|nul|t|tr|tru|f|fa|fal|fals)" =>
       ctx.unexpected_char()
     _ => ctx.unexpected_token()
   }

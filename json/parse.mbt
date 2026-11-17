@@ -122,11 +122,16 @@ fn ParseContext::parse_value2(
     String(s) => Json::string(s)
     LBrace => ctx.parse_object(remaining_available_depth~)
     LBracket => ctx.parse_array(remaining_available_depth~)
-    RBracket | RBrace | Comma => abort("unreachable")
+    // `lex_value(allow_rbracket=false)` never returns `]`, and `parse_array`
+    // handles it itself when it is allowed.
+    RBracket => abort("unreachable")
   }
 }
 
 ///|
+/// Parses the rest of an object after its `{`. Each step lexes the
+/// punctuation it expects with `lexscan`, which skips the whitespace before
+/// it; anything else is an error, reported by `unexpected_token`.
 fn ParseContext::parse_object(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
@@ -136,29 +141,42 @@ fn ParseContext::parse_object(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let map = Map([])
-  for x = ctx.lex_property_name() {
-    match x {
-      (RBrace, _) => break Json::object(map)
-      (String(name), offset) => {
-        if ctx.reject_duplicate_keys && map.contains(name) {
-          raise DuplicateKey(offset_to_position(ctx.input, offset), name)
-        }
-        ctx.lex_after_property_name()
-        map[name] = ctx.parse_value(
-          remaining_available_depth=child_remaining_available_depth,
-        )
-        match ctx.lex_after_object_value() {
-          Comma => continue ctx.lex_property_name2()
-          RBrace => break Json::object(map)
-          _ => abort("unreachable")
-        }
-      }
-      _ => abort("unreachable")
+  lexscan ctx {
+    re"^[ \t\r\n]*" + re"\"" => ()
+    re"^[ \t\r\n]*" + re"[}]" => return Json::object(map)
+    _ => ctx.unexpected_token()
+  }
+  for ;; {
+    // The cursor is just past the opening quote of a property name.
+    let offset = ctx.offset - 1
+    let name = ctx.lex_string()
+    if ctx.reject_duplicate_keys && map.contains(name) {
+      raise DuplicateKey(offset_to_position(ctx.input, offset), name)
+    }
+    lexscan ctx {
+      re"^[ \t\r\n]*" + re":" => ()
+      _ => ctx.unexpected_token()
+    }
+    map[name] = ctx.parse_value(
+      remaining_available_depth=child_remaining_available_depth,
+    )
+    lexscan ctx {
+      re"^[ \t\r\n]*" + re"," => ()
+      re"^[ \t\r\n]*" + re"[}]" => break Json::object(map)
+      _ => ctx.unexpected_token()
+    }
+    // After `,` only a property name may follow, not `}`.
+    lexscan ctx {
+      re"^[ \t\r\n]*" + re"\"" => ()
+      _ => ctx.unexpected_token()
     }
   }
 }
 
 ///|
+/// Parses the rest of an array after its `[`. After each element, `lexscan`
+/// lexes the `,` or `]` that must follow, skipping the whitespace before it;
+/// anything else is an error, reported by `unexpected_token`.
 fn ParseContext::parse_array(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
@@ -168,23 +186,22 @@ fn ParseContext::parse_array(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
-  for x = ctx.lex_value(allow_rbracket=true) {
-    match x {
-      RBracket => break Json::array(vec)
-      tok => {
-        vec.push(
-          ctx.parse_value2(
-            tok,
-            remaining_available_depth=child_remaining_available_depth,
-          ),
-        )
-        let tok2 = ctx.lex_after_array_value()
-        match tok2 {
-          Comma => continue ctx.lex_value(allow_rbracket=false)
-          RBracket => break Json::array(vec)
-          _ => abort("unreachable")
-        }
-      }
+  // `]` may close the array only before its first element.
+  let first = ctx.lex_value(allow_rbracket=true)
+  if first is RBracket {
+    return Json::array(vec)
+  }
+  for tok = first {
+    vec.push(
+      ctx.parse_value2(
+        tok,
+        remaining_available_depth=child_remaining_available_depth,
+      ),
+    )
+    lexscan ctx {
+      re"^[ \t\r\n]*" + re"," => continue ctx.lex_value(allow_rbracket=false)
+      re"^[ \t\r\n]*" + re"\]" => break Json::array(vec)
+      _ => ctx.unexpected_token()
     }
   }
 }
