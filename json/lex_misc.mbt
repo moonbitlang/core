@@ -76,21 +76,6 @@ fn ParseContext::expect_char(
 }
 
 ///|
-/// `ctx.expect_ascii_char(c)` check the current context is c,
-/// 
-fn ParseContext::expect_ascii_char(
-  ctx : ParseContext,
-  c : Byte,
-) -> Unit raise ParseError {
-  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-  ctx.offset += 1
-  if c.to_int() != c1 {
-    ctx.invalid_char(shift=-1)
-  }
-}
-
-///|
 test "expect_char" {
   let ctx = ParseContext::make("abc")
   ctx.expect_char('a')
@@ -121,7 +106,7 @@ test "expect_char with surrogate pair" {
 
 ///|
 // Skips JSON whitespace (ASCII only, RFC 8259 §2). The token lexers skip
-// whitespace inside their `lexscan` DFAs; this is used by their slow paths
+// whitespace inside their `lexscan` DFAs; this is used by `unexpected_token`
 // and by `parse` after the top-level value.
 //
 // `offset` is held in a local for the duration of the scan so each
@@ -167,17 +152,21 @@ test "lex_skip_whitespace" {
 }
 
 ///|
+/// Raises the error for the character at the cursor: `InvalidChar` for it,
+/// or `InvalidEof` at the end of the input.
+fn[T] ParseContext::unexpected_char(ctx : ParseContext) -> T raise ParseError {
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  ctx.invalid_char()
+}
+
+///|
 /// Reports the error for an unexpected token: skips whitespace, then raises
-/// `InvalidChar` for the next character, or `InvalidEof` at the end of the
-/// input. The punctuation lexers call it from their `lexscan` fallback, which
-/// leaves the cursor before the whitespace, so the next character is never
-/// one they accept.
+/// for the next character. The token lexers call it from their `lexscan`
+/// fallback, which leaves the cursor before the whitespace, so the next
+/// character is never one they accept.
 fn[T] ParseContext::unexpected_token(ctx : ParseContext) -> T raise ParseError {
   ctx.lex_skip_whitespace()
-  match ctx.read_char() {
-    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-    None => raise InvalidEof
-  }
+  ctx.unexpected_char()
 }
 
 ///|
