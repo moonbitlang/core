@@ -838,7 +838,7 @@ test "Show for Failure" {
   inspect(
     f.to_string(),
     content=(
-      #|Failure(test error message)
+      #|Failure(): test error message
     ),
   )
 }

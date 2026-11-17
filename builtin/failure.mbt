@@ -34,10 +34,6 @@
 ///   @json.json_inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
-// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
-// or a manual `Show` implementation, then remove this annotation.
-#derive(Show)
-#warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
 }
@@ -59,4 +55,10 @@ pub(all) suberror Failure {
 #callsite(autofill(loc))
 pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise Failure {
   raise Failure("\{loc} FAILED: \{msg}")
+}
+
+///|
+pub impl Show for Failure with fn output(self, logger) {
+  let Failure(msg) = self
+  logger..write_string("Failure(): ").write_string(msg)
 }

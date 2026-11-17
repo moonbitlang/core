@@ -43,11 +43,11 @@ pub(all) suberror BenchError {
   BenchError(String)
 }
 
-#derive(Show)
 pub(all) suberror Failure {
   Failure(String)
 }
 pub fn Failure::to_string(Self) -> String
+pub impl Show for Failure
 
 pub(all) suberror InspectError {
   InspectError(String)
