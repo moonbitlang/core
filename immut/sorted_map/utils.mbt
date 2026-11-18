@@ -249,6 +249,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 fn[K : Compare, V] sorted_map_from_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
+  guard array.length() > 0 else { return Empty }
   let (order, has_duplicates) = sorted_map_array_order(array)
   if order == 1 {
     if has_duplicates {
