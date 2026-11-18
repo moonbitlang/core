@@ -61,6 +61,7 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 pub fn[K : Eq + Hash, V] VectorMap::VectorMap(
   arr : ArrayView[(K, V)],
 ) -> VectorMap[K, V] {
+  guard arr.length() > 0 else { return new() }
   from_pairs(arr.iter())
 }
 

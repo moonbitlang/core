@@ -545,3 +545,10 @@ test "Default is the empty map" {
   inspect(m == @vector_map.new(), content="true")
   inspect(m.add("a", 1).length(), content="1")
 }
+
+///|
+test "VectorMap from empty array" {
+  let m : @vector_map.VectorMap[String, Int32] = VectorMap([])
+  inspect(m.is_empty(), content="true")
+  inspect(m.add("a", 1).length(), content="1")
+}
