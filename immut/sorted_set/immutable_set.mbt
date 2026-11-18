@@ -51,6 +51,7 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
 
 ///|
 fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
+  guard array.length() > 0 else { return Empty }
   let (order, has_duplicates) = sorted_set_array_order(array)
   if order == 1 {
     if has_duplicates {
