@@ -6,6 +6,8 @@
 
 #### Added
 
+- Added Node.js support for `@os_error.OsError`, preserving libuv error codes and mapping common system errors to portable `Kind` values.
+
 - Added `unsafe_view(start~, end~)` for built-in arrays, bytes, strings, and their views. It skips validation and requires valid bounds. `clamped_view` remains the named form of bracket slicing, `exact_view` remains strict, and legacy `view` behavior is preserved. String `view` deprecation awaits compiler migration.
 
 - Added `@cmp.Bound` (`Included`, `Excluded`, `Unbounded`) and `SortedMap::range_bounds`, `rev_range_bounds` and `rev_range` for bounded iteration.
