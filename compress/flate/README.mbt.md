@@ -158,14 +158,15 @@ test "README streaming IncrementalEncoder" {
   input source is exhausted means the stream is truncated. On `NeedMoreOutput`,
   keep calling `step` with the unconsumed suffix and fresh output space, even
   if the suffix is empty; stop at `Done`.
-- gzip/zlib decoders use `step(input, output)` for ordinary input. Once the
-  source reports EOF and every supplied byte has been accepted, call
-  `check_end()` with no buffers. It returns `Done`, returns `NeedMoreOutput`
-  when output space is required to continue, or raises an error for incomplete
-  input. Continue draining with `step(b"", output)` after `NeedMoreOutput`;
-  EOF remains latched and later input is not accepted. Do not call `check_end`
-  while any source suffix remains unaccepted. A raw decoder must be discarded
-  or reset after errors; container decoders stably rethrow their first error.
+- gzip/zlib decoders use `step(input, output)` for ordinary input. If `step`
+  has not returned `Done` when the source reports EOF and every supplied byte
+  has been accepted, call `check_end()` with no buffers. It returns `Done`,
+  returns `NeedMoreOutput` when output space is required to continue, or raises
+  an error for incomplete input. Continue draining with `step(b"", output)`
+  after `NeedMoreOutput`; EOF remains latched and later input is not accepted.
+  Do not call `check_end` while any source suffix remains unaccepted. A raw
+  decoder must be discarded or reset after errors; container decoders stably
+  rethrow their first error.
 - Once `Done` is returned, new input is not consumed; reset the raw engine or
   gzip/zlib encoder before reuse, or create a new decoder wrapper. A reset
   encoder produces the same bytes as a fresh one with the same options and
@@ -173,10 +174,17 @@ test "README streaming IncrementalEncoder" {
 - Configure a raw preset dictionary through `IncrementalEncoder(...)`/`IncrementalDecoder(...)`, or
   while starting a fresh stream through `reset(dictionary=...)`; dictionary
   selection cannot be mutated after a stream begins.
-- gzip/zlib decoders may accept transport read-ahead beyond their trailer;
-  after `Done`, recover that suffix with `unused_input()` before parsing the
-  next protocol frame. For an exact one-member gzip boundary, construct the
-  decoder with `multistream=false`.
+- The incremental gzip decoder handles exactly one member. It reports exact
+  consumption and leaves every byte beyond the trailer in the caller's input
+  view. To decode concatenated RFC 1952 members, reset only when another member
+  is available, then re-present the unconsumed suffix. If the suffix is empty,
+  read first: EOF completes the sequence; non-empty input can begin the next
+  member. Reset preserves the decoder's allocations. The gzip decoder has no
+  fixed per-call input budget and may scan a complete supplied view for an
+  FNAME or FCOMMENT terminator; pass bounded slices when per-call latency must
+  also be bounded.
+  The zlib decoder may still accept transport read-ahead beyond its trailer;
+  after `Done`, recover that suffix with `unused_input()`.
 - Raw failures expose a stable `InflateErrorKind` (`Truncated`, `Corrupt`,
   `TrailingData`, `OutputLimitExceeded`, `Cancelled`, or `InvalidArgument`)
   alongside diagnostic text; gzip/zlib similarly expose `GzipErrorKind`/`ZlibErrorKind`.

@@ -209,7 +209,14 @@ test "gzip coverage: subsequent member boundaries" {
   let payload = b"first member"
   let first_member = @gzip.compress(payload)
   cov_expect_gunzip_error(cov_join([first_member, b"\x1F"]), Truncated)
-  cov_expect_decoder_error(cov_join([first_member, b"\x1F"]), Truncated)
+  // The incremental decoder finishes exactly at the first member, independent
+  // of the following transport prefix.
+  let split_magic = cov_join([first_member, b"\x1F"])
+  let split_decoder = @gzip.Decoder()
+  let split_output = FixedArray::make(256, b'\x00')
+  let split_result = split_decoder.step(split_magic, split_output.mut_view())
+  assert_true(split_result.status is Done)
+  @test.assert_eq(split_result.consumed, first_member.length())
 
   let plain_tail = b"NEXT"
   @test.assert_eq(
@@ -230,10 +237,10 @@ test "gzip coverage: subsequent member boundaries" {
   let consumed = status_result.consumed
   let produced = status_result.produced
   assert_true(status is Done)
-  @test.assert_eq(consumed, combined.length())
+  @test.assert_eq(consumed, first_member.length())
   assert_true(decoder.check_end() is Done)
   @test.assert_eq(Bytes::from_array(output[0:produced].to_owned()), payload)
-  @test.assert_eq(decoder.unused_input(), partial_magic)
+  @test.assert_eq(combined[consumed:].to_owned(), partial_magic)
 }
 
 ///|
@@ -246,7 +253,7 @@ test "gzip coverage: end after a clean member boundary" {
   let first_status = first_status_result.status
   let first_consumed = first_status_result.consumed
   let first_produced = first_status_result.produced
-  assert_true(first_status is NeedMoreInput)
+  assert_true(first_status is Done)
   @test.assert_eq(first_consumed, first_member.length())
   @test.assert_eq(
     Bytes::from_array(output[0:first_produced].to_owned()),

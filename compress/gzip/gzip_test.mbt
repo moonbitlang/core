@@ -94,10 +94,9 @@ test "decompress decodes a multi-member stream" {
 }
 
 ///|
-/// A member boundary may coincide with an input boundary, and the next call
-/// may contain only the first magic byte. Neither boundary means EOF without
-/// `check_end()`; both must suspend for more input.
-test "streaming gzip Decoder suspends across a split member magic" {
+/// The incremental decoder finishes at one exact member boundary. Resetting it
+/// reuses the core for a following member, whose header may arrive in pieces.
+test "streaming gzip Decoder resets across a split member magic" {
   let first_payload = b"first member"
   let second_payload = b"second member"
   let first = @gzip.compress(first_payload)
@@ -109,11 +108,12 @@ test "streaming gzip Decoder suspends across a split member magic" {
   let at_boundary = at_boundary_result.status
   let first_used = at_boundary_result.consumed
   let first_produced = at_boundary_result.produced
-  assert_true(at_boundary is NeedMoreInput)
+  assert_true(at_boundary is Done)
   @test.assert_eq(first_used, first.length())
   for i in 0..<first_produced {
     out.write_byte(obuf[i])
   }
+  dec.reset()
   let at_magic_result = dec.step(second[0:1], obuf.mut_view())
   let at_magic = at_magic_result.status
   let magic_used = at_magic_result.consumed
@@ -125,7 +125,7 @@ test "streaming gzip Decoder suspends across a split member magic" {
   let rest_used = _done_result.consumed
   let rest_produced = _done_result.produced
   @test.assert_eq(rest_used, second.length() - 1)
-  assert_true(dec.check_end() is Done)
+  assert_true(_done_result.status is Done)
   for i in 0..<rest_produced {
     out.write_byte(obuf[i])
   }
@@ -134,11 +134,25 @@ test "streaming gzip Decoder suspends across a split member magic" {
 }
 
 ///|
-/// Multi-member fed 3 input bytes at a time: with `check_end` marking true EOF, the
-/// decoder never mistakes a chunk boundary that lands on a member boundary for
-/// the end of the stream — the case the buffered heuristic alone could not
-/// handle. Three members, the middle one python's real stream.
-test "streaming gzip Decoder decodes a multi-member stream in tiny chunks" {
+test "streaming gzip Decoder reset clears a failed member" {
+  let dec = @gzip.Decoder()
+  let output = FixedArray::make(128, b'\x00')
+  try ignore(dec.step(Bytes::make(10, b'\x00'), output.mut_view())) catch {
+    GzipError(kind, _) => assert_true(kind == InvalidHeader)
+  } noraise {
+    _ => @test.fail("invalid gzip header was accepted")
+  }
+  dec.reset()
+  let payload = b"fresh member after reset"
+  let result = dec.step(@gzip.compress(payload), output.mut_view())
+  assert_true(result.status is Done)
+  @test.assert_eq(Bytes::from_array(output[:result.produced]), payload)
+}
+
+///|
+/// Decode concatenated members in three-byte chunks by resetting the same core
+/// at each exact boundary. The middle member is python's real stream.
+test "streaming gzip Decoder reset loop decodes multi-member tiny chunks" {
   let stream = concat_bytes([
     @gzip.compress(b"one "),
     py_gzip,
@@ -150,7 +164,7 @@ test "streaming gzip Decoder decodes a multi-member stream in tiny chunks" {
   let out = @buffer.Buffer()
   let n = stream.length()
   let mut fed = 0
-  let mut ending = false
+  let mut members = 0
   for ;; {
     let next = if fed + 3 < n { fed + 3 } else { n }
     let _st_result = dec.step(stream[fed:next], obuf.mut_view())
@@ -161,14 +175,17 @@ test "streaming gzip Decoder decodes a multi-member stream in tiny chunks" {
       out.write_byte(obuf[i])
     }
     fed = fed + c
-    if fed == n && !ending {
-      ending = true
-      ignore(dec.check_end())
-    }
-    if dec.is_finished() {
-      break
+    if _st is Done {
+      members += 1
+      if fed == n {
+        break
+      }
+      dec.reset()
+    } else {
+      assert_true(c > 0 || p > 0)
     }
   }
+  @test.assert_eq(members, 3)
   @test.assert_eq(out.to_bytes(), want)
 }
 
@@ -417,42 +434,44 @@ test "gzip decoders wrap malformed DEFLATE as GzipError" {
 }
 
 ///|
-/// The final-input signal survives output backpressure, and terminal calls do
-/// not claim to consume bytes that cannot belong to the completed stream.
-test "streaming gzip Decoder latches end across one-byte output" {
-  let payload = b"end latch with one-byte output and a long repeated repeated repeated tail"
+/// EOF remains latched while a partially emitted match drains. Input offered
+/// after EOF is never consumed, and the missing remainder is eventually
+/// reported as truncation.
+test "streaming gzip Decoder latches EOF across pending match output" {
+  let payload = Bytes::make(4096, b'x')
   let gz = @gzip.compress(payload)
+  let probe = @gzip.Decoder()
+  let initial_output = FixedArray::make(2, b'\x00')
+  let probe_result = probe.step(gz, initial_output.mut_view())
+  assert_true(probe_result.status is NeedMoreOutput)
+  assert_true(probe_result.consumed > 10)
+  assert_true(probe_result.consumed < gz.length())
+
+  // Reproduce the suspension using exactly the accepted prefix, making this
+  // a valid EOF declaration for an intentionally truncated source.
+  let prefix = gz[:probe_result.consumed]
   let dec = @gzip.Decoder()
-  let obuf = FixedArray::make(1, b'\x00')
-  let plain = @buffer.Buffer()
-  let mut first = true
-  let mut finished = false
-  for _i in 0..<4096 {
-    let view = if first { gz[:] } else { b"" }
-    let st_result = dec.step(view, obuf.mut_view())
-    let c = st_result.consumed
-    let p = st_result.produced
-    @test.assert_eq(c, if first { gz.length() } else { 0 })
-    let st = if first { dec.check_end() } else { st_result.status }
-    assert_true(p <= 1)
-    if p == 1 {
-      plain.write_byte(obuf[0])
+  let first = dec.step(prefix, initial_output.mut_view())
+  @test.assert_eq(first.consumed, prefix.length())
+  @test.assert_eq(first.produced, 2)
+  assert_true(first.status is NeedMoreOutput)
+  assert_true(dec.check_end() is NeedMoreOutput)
+
+  let byte = FixedArray::make(1, b'\x00')
+  let mut drained = 0
+  let error = @test.expect_error(() => {
+    for _ in 0..<payload.length() {
+      let result = dec.step(b"late input", byte.mut_view())
+      @test.assert_eq(result.consumed, 0)
+      assert_true(result.status is NeedMoreOutput)
+      @test.assert_eq(result.produced, 1)
+      drained += 1
     }
-    first = false
-    if st is Done {
-      finished = true
-      break
-    }
-  }
-  assert_true(finished)
-  @test.assert_eq(plain.to_bytes(), payload)
-  let st_result = dec.step(b"ignored", obuf.mut_view())
-  let st = st_result.status
-  let c = st_result.consumed
-  let p = st_result.produced
-  assert_true(st is Done)
-  @test.assert_eq(c, 0)
-  @test.assert_eq(p, 0)
+  })
+  assert_true(error is @gzip.GzipError(Truncated, _))
+  // More than a few literal bytes remained, so this exercised suspended match
+  // copying rather than only an output-full boundary between symbols.
+  assert_true(drained > 32)
 }
 
 ///|
@@ -501,9 +520,8 @@ test "streaming gzip Decoder resumes with one-byte input and output" {
 }
 
 ///|
-/// Drain a sizeable stored stream one byte at a time. Besides minimum-buffer
-/// correctness, this crosses the decoder's compaction threshold and guards the
-/// amortized-linear pending-buffer path end to end.
+/// Drain a sizeable stored stream one byte at a time, exercising the
+/// minimum-buffer suspend/resume path end to end.
 test "streaming gzip Decoder drains a large stored member one byte at a time" {
   let bytes : Array[Byte] = []
   for i in 0..<8192 {
@@ -514,28 +532,29 @@ test "streaming gzip Decoder drains a large stored member one byte at a time" {
   let dec = @gzip.Decoder()
   let obuf = FixedArray::make(1, b'\x00')
   let plain = @buffer.Buffer()
-  let mut first = true
+  let mut position = 0
+  let mut ending = false
   let mut finished = false
   for _i in 0..<20000 {
-    let view = if first { gz[:] } else { b"" }
-    let _st_result = dec.step(view, obuf.mut_view())
+    let _st_result = dec.step(gz[position:], obuf.mut_view())
     let _st = _st_result.status
     let c = _st_result.consumed
     let p = _st_result.produced
-    @test.assert_eq(c, if first { gz.length() } else { 0 })
-    if first {
+    position += c
+    if position == gz.length() && !ending {
+      ending = true
       ignore(dec.check_end())
     }
     if p == 1 {
       plain.write_byte(obuf[0])
     }
-    first = false
     if dec.is_finished() {
       finished = true
       break
     }
   }
   assert_true(finished)
+  @test.assert_eq(position, gz.length())
   @test.assert_eq(plain.to_bytes(), payload)
 }
 
@@ -579,19 +598,17 @@ test "streaming gzip Encoder latches flush across header backpressure" {
   let prefix = encoded.to_bytes()
   let dec = @gzip.Decoder()
   let plain = @buffer.Buffer()
-  let mut fed_prefix = false
+  let mut position = 0
   let mut reached_boundary = false
   for _i in 0..<4096 {
-    let view = if fed_prefix { b""[:] } else { prefix }
-    let st_result = dec.step(view, obuf.mut_view())
+    let st_result = dec.step(prefix[position:], obuf.mut_view())
     let st = st_result.status
-    let _c = st_result.consumed
+    position += st_result.consumed
     let p = st_result.produced
-    fed_prefix = true
     if p == 1 {
       plain.write_byte(obuf[0])
     }
-    if st is NeedMoreInput {
+    if st is NeedMoreInput && position == prefix.length() {
       reached_boundary = true
       break
     }
@@ -655,25 +672,27 @@ test "streaming gzip Decoder preserves input after the final member" {
   let decoder = @gzip.Decoder()
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
-  let mut first = true
+  let mut position = 0
   for _ in 0..<4096 {
-    let chunk = if first { combined.to_bytes()[:] } else { b"" }
-    let status_result = decoder.step(chunk, output.mut_view())
+    let status_result = decoder.step(
+      combined.to_bytes()[position:],
+      output.mut_view(),
+    )
     let status = status_result.status
     let consumed = status_result.consumed
     let produced = status_result.produced
-    @test.assert_eq(consumed, if first { combined.length() } else { 0 })
+    position += consumed
     if produced == 1 {
       decoded.write_byte(output[0])
     }
-    first = false
     if status is Done {
       break
     }
   }
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), source)
-  @test.assert_eq(decoder.unused_input(), next_frame)
+  @test.assert_eq(position, encoded.length())
+  @test.assert_eq(combined.to_bytes()[position:].to_owned(), next_frame)
   let status_result = decoder.step(b"late", output.mut_view())
   let status = status_result.status
   let consumed = status_result.consumed
@@ -681,13 +700,12 @@ test "streaming gzip Decoder preserves input after the final member" {
   assert_true(status is Done)
   @test.assert_eq(consumed, 0)
   @test.assert_eq(produced, 0)
-  @test.assert_eq(decoder.unused_input(), next_frame)
 }
 
 ///|
-/// In a framed protocol the next frame may itself begin with gzip magic. The
-/// explicit one-member mode makes the first trailer an unambiguous boundary.
-test "streaming gzip Decoder can stop after one member" {
+/// The core always stops after one member even when the following frame begins
+/// with gzip magic.
+test "streaming gzip Decoder stops after one member" {
   let first_payload = b"first framed member"
   let second_member = @gzip.compress(b"belongs to the next frame")
   let first_member = @gzip.compress(first_payload)
@@ -698,28 +716,30 @@ test "streaming gzip Decoder can stop after one member" {
   for byte in second_member {
     combined.write_byte(byte)
   }
-  let decoder = @gzip.Decoder(multistream=false)
+  let decoder = @gzip.Decoder()
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
-  let mut first = true
+  let mut position = 0
   for _ in 0..<4096 {
-    let chunk = if first { combined.to_bytes()[:] } else { b"" }
-    let status_result = decoder.step(chunk, output.mut_view())
+    let status_result = decoder.step(
+      combined.to_bytes()[position:],
+      output.mut_view(),
+    )
     let status = status_result.status
     let consumed = status_result.consumed
     let produced = status_result.produced
-    @test.assert_eq(consumed, if first { combined.length() } else { 0 })
+    position += consumed
     if produced == 1 {
       decoded.write_byte(output[0])
     }
-    first = false
     if status is Done {
       break
     }
   }
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), first_payload)
-  @test.assert_eq(decoder.unused_input(), second_member)
+  @test.assert_eq(position, first_member.length())
+  @test.assert_eq(combined.to_bytes()[position:].to_owned(), second_member)
 }
 
 ///|
@@ -750,7 +770,7 @@ test "streaming gzip verifies independent members while output is reused" {
   let output = padded.mut_view(start=3, end=260)
   let decoded = @buffer.Buffer()
   let mut position = 0
-  let mut ending = false
+  let mut members = 0
   for ;; {
     let result = decoder.step(stream[position:], output)
     position += result.consumed
@@ -758,17 +778,17 @@ test "streaming gzip verifies independent members while output is reused" {
     for i in 0..<output.length() {
       output[i] = b'\xCC'
     }
-    let status = if position == stream.length() && !ending {
-      ending = true
-      decoder.check_end()
+    if result.status is Done {
+      members += 1
+      if position == stream.length() {
+        break
+      }
+      decoder.reset()
     } else {
-      result.status
+      assert_true(result.consumed > 0 || result.produced > 0)
     }
-    if status is Done {
-      break
-    }
-    assert_true(result.consumed > 0 || result.produced > 0)
   }
+  @test.assert_eq(members, payloads.length())
   @test.assert_eq(position, stream.length())
   @test.assert_eq(decoded.to_bytes(), concat_bytes(payloads))
   @test.assert_eq(padded[2], b'\xA5')

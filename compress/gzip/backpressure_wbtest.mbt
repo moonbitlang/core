@@ -33,16 +33,17 @@ test "gzip wrappers bound accepted input under output backpressure" {
 
   let compressed = compress(source, strategy=Standard(level=0))
   let decoder = Decoder()
-  @test.assert_eq(decoder.unused_input(), b"")
   let dec_status_result = decoder.step(compressed, no_output.mut_view())
   let dec_status = dec_status_result.status
   let dec_consumed = dec_status_result.consumed
   let dec_produced = dec_status_result.produced
   assert_true(dec_status is NeedMoreOutput)
-  @test.assert_eq(dec_consumed, DECODER_INPUT_LIMIT)
+  // Only framing and body metadata preceding the first plaintext byte are
+  // consumed. The remaining compressed body stays caller-owned.
+  assert_true(dec_consumed >= 10)
   assert_true(dec_consumed < compressed.length())
   @test.assert_eq(dec_produced, 0)
-  assert_true(decoder.pending.length() <= DECODER_INPUT_LIMIT)
+  @test.assert_eq(decoder.pending.length(), 0)
   assert_false(decoder.borrowed_input)
   assert_false(decoder.ending)
   for _ in 0..<8 {
@@ -56,7 +57,7 @@ test "gzip wrappers bound accepted input under output backpressure" {
     assert_true(status is NeedMoreOutput)
     @test.assert_eq(consumed, 0)
     @test.assert_eq(produced, 0)
-    assert_true(decoder.pending.length() <= DECODER_INPUT_LIMIT)
+    @test.assert_eq(decoder.pending.length(), 0)
     assert_false(decoder.borrowed_input)
     assert_false(decoder.ending)
   }
