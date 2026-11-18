@@ -38,7 +38,7 @@ impl Compare for SameRankValue with fn compare(self, other) {
 
 ///|
 test "new" {
-  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   debug_inspect(
     empty,
     content=(
@@ -111,17 +111,17 @@ test "subset" {
     content="true",
   )
   // empty is subset of anything
-  inspect(@sorted_set.new().is_subset(SortedSet([1, 2, 3])), content="true")
+  inspect(@sorted_set.empty().is_subset(SortedSet([1, 2, 3])), content="true")
   // nothing is subset of empty (except empty)
   inspect(
-    @sorted_set.SortedSet([1]).is_subset(@sorted_set.new()),
+    @sorted_set.SortedSet([1]).is_subset(@sorted_set.empty()),
     content="false",
   )
 }
 
 ///|
 test "diff" {
-  let empty = @sorted_set.new()
+  let empty = @sorted_set.empty()
   debug_inspect(
     empty.difference(SortedSet([1, 2, 3])),
     content=(
@@ -178,7 +178,7 @@ test "inter" {
 
 ///|
 test "union" {
-  let empty = @sorted_set.new()
+  let empty = @sorted_set.empty()
   debug_inspect(
     empty.union(SortedSet([4, 5, 6])),
     content=(
@@ -493,7 +493,7 @@ test "add" {
 
 ///|
 test "remove" {
-  let empty = @sorted_set.new()
+  let empty = @sorted_set.empty()
   debug_inspect(
     empty.remove(1),
     content=(
@@ -534,14 +534,14 @@ test "remove" {
 
 ///|
 test "merge and concat with empty right" {
-  let set = @sorted_set.new().add(2).add(1)
+  let set = @sorted_set.empty().add(2).add(1)
   debug_inspect(
     set.remove(2),
     content=(
       #|<SortedSet: [1]>
     ),
   )
-  let other = @sorted_set.new().add(1)
+  let other = @sorted_set.empty().add(1)
   debug_inspect(
     set.intersection(other),
     content=(
@@ -557,7 +557,7 @@ test "min" {
 
 ///|
 test "min_option" {
-  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   debug_inspect(empty.min_option(), content="None")
   debug_inspect(
     @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
@@ -572,7 +572,7 @@ test "max" {
 
 ///|
 test "max_option" {
-  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   debug_inspect(empty.max_option(), content="None")
   debug_inspect(
     @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
@@ -880,7 +880,7 @@ test "from_iter empty iter" {
 ///|
 test "size" {
   // Empty set should have size 0
-  let empty_set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let empty_set : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   inspect(empty_set.length(), content="0")
 
   // Single element set should have size 1
@@ -897,7 +897,7 @@ test "size" {
 ///|
 test "@sorted_set.symmetric_difference" {
   // Empty sets
-  let empty = @sorted_set.new()
+  let empty = @sorted_set.empty()
   let set1 = @sorted_set.SortedSet([1, 2, 3])
   debug_inspect(
     empty.symmetric_difference(empty),
@@ -947,7 +947,7 @@ test "@sorted_set.symmetric_difference/overlapping" {
 
 ///|
 test "range on empty set" {
-  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   let count = for _ in empty.range(low=1, high=5); count = 0 {
     continue count + 1
   } nobreak {

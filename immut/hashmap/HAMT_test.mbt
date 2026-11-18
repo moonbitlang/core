@@ -14,7 +14,7 @@
 
 ///|
 test "HAMT::size" {
-  for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
+  for i = 0, map = @hashmap.empty(); i < 20; i = i + 1, map = map.add(i, i) {
     assert_eq(map.length(), i)
   } nobreak {
     assert_eq(map.add(0, 0).length(), 20)
@@ -23,7 +23,7 @@ test "HAMT::size" {
 
 ///|
 test "HAMT" {
-  let map = for i = 0, map = @hashmap.new() {
+  let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
       (i, map) => continue i + 1, map.add(i, i)
@@ -50,7 +50,7 @@ test "HAMT" {
 
 ///|
 test "HAMT::get" {
-  let map = for i = 0, map = @hashmap.new() {
+  let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
       (i, map) => continue i + 1, map.add(i, i)
@@ -63,13 +63,13 @@ test "HAMT::get" {
 
 ///|
 test "panic HAMT::get" {
-  let map = @hashmap.new()
+  let map = @hashmap.empty()
   map[0]
 }
 
 ///|
 test "HAMT::remove" {
-  let map = for i = 0, map = @hashmap.new() {
+  let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
       (i, map) => continue i + 1, map.add(i, i)
@@ -180,7 +180,7 @@ test "HAMT::from_iter empty" {
 fn rebuild_from_iter_by_add(
   data : Array[(Int32, Int32)],
 ) -> @hashmap.HashMap[Int32, Int32] {
-  for kv in data; map = @hashmap.new() {
+  for kv in data; map = @hashmap.empty() {
     continue map.add(kv.0, kv.1)
   } nobreak {
     map
@@ -228,7 +228,7 @@ test "HAMT::from_iter duplicate keeps last value" {
 ///|
 #warnings("-deprecated")
 test "HAMT::to_string" {
-  let map = @hashmap.new()
+  let map = @hashmap.empty()
     .add(1, 1)
     .add(3, 3)
     .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
@@ -258,7 +258,7 @@ test "to_array" {
 
 ///|
 test "HAMT::iter on empty map" {
-  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   let iter = map.iter()
   @test.assert_eq(iter.next(), None)
 }
@@ -288,8 +288,8 @@ test "HAMT::iter on branch map" {
 ///|
 test "eq for boundary cases" {
   // Test with empty maps
-  let empty_map1 : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
-  let empty_map2 : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let empty_map1 : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
+  let empty_map2 : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   inspect(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
@@ -439,7 +439,7 @@ test "filter with collision" {
 
 ///|
 test "filter with branch nodes" {
-  let map = for i = 0, map = @hashmap.new() {
+  let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (10, map) => break map
       (i, map) => continue i + 1, map.add(i, i * 10)
@@ -490,7 +490,7 @@ test "HAMT::map with overflow" {
 
 ///|
 test "HAMT::map_with_key empty" {
-  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   let mapped = map.map((_k, v) => v)
   inspect(mapped.length(), content="0")
 }
@@ -514,7 +514,7 @@ test "HAMT::map_with_key collision" {
 
 ///|
 test "HAMT::map_with_key branch" {
-  let map = for i = 0, map = @hashmap.new() {
+  let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (10, map) => break map
       (i, map) => continue i + 1, map.add(i, i * 10)
@@ -582,14 +582,14 @@ test "add_with_hash collision" {
 test "HAMT join_2 last segment split" {
   let k1 = SegKey(1, 0)
   let k2 = SegKey(2, 1 << 25)
-  let map = @hashmap.new().add(k1, "a").add(k2, "b")
+  let map = @hashmap.empty().add(k1, "a").add(k2, "b")
   debug_inspect(map.get(k1), content="Some(\"a\")")
   debug_inspect(map.get(k2), content="Some(\"b\")")
 }
 
 ///|
 test "HAMT leaf bucket updates" {
-  let map = @hashmap.new()
+  let map = @hashmap.empty()
     .add(MyString("a"), 1)
     .add(MyString("b"), 2)
     .add(MyString("c"), 3)
@@ -633,7 +633,7 @@ test "filter with collision - more than one left" {
 
 ///|
 test "HAMT::fold_with_key on empty" {
-  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   let result = map.fold(init=0, (acc, _k, _v) => acc + 1)
   inspect(result, content="0")
 }
@@ -660,7 +660,7 @@ test "HAMT::remove_with_hash collision" {
 
 ///|
 test "HAMT::remove from empty map" {
-  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let map : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   let map2 = map.remove(42)
   assert_eq(map2.length(), 0)
 }
@@ -682,7 +682,7 @@ test "HAMT::remove from collision bucket non-primary key" {
 ///|
 test "HAMT::merge with empty" {
   let m1 = @hashmap.HashMap([(1, 1)])
-  let m2 = @hashmap.new()
+  let m2 = @hashmap.empty()
   @debug.assert_eq(m1.merge(m2), m1)
   @debug.assert_eq(m2.merge(m1), m1)
 }
@@ -734,7 +734,7 @@ test "HAMT::merge collision all keys in second" {
 
 ///|
 test "HAMT::merge all cases" {
-  let empty = @hashmap.new()
+  let empty = @hashmap.empty()
   let leaf = @hashmap.singleton(1, 1)
   let branch = @hashmap.HashMap([(1, 1), (2, 2)])
   let collision = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
@@ -763,7 +763,7 @@ test "HAMT::merge leaf to non-overlapping map" {
 ///|
 test "HAMT::intersection with empty" {
   let m1 = @hashmap.HashMap([(1, 1)])
-  let m2 = @hashmap.new()
+  let m2 = @hashmap.empty()
   assert_eq(m1.intersection(m2).length(), 0)
   assert_eq(m2.intersection(m1).length(), 0)
 }
@@ -838,7 +838,7 @@ test "HAMT::intersection with collision no overlap" {
 ///|
 test "HAMT::intersection_with with empty" {
   let m1 = @hashmap.HashMap([(1, 1)])
-  let m2 = @hashmap.new()
+  let m2 = @hashmap.empty()
   assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).length(), 0)
   assert_eq(m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).length(), 0)
 }
@@ -922,7 +922,7 @@ test "HAMT::intersection_with collision no overlap" {
 ///|
 test "HAMT::difference with empty" {
   let m1 = @hashmap.HashMap([(1, 1)])
-  let m2 = @hashmap.new()
+  let m2 = @hashmap.empty()
   @debug.assert_eq(m1.difference(m2), m1)
   assert_eq(m2.difference(m1).length(), 0)
 }
@@ -996,7 +996,7 @@ test "HAMT::difference collision becomes empty" {
 
 ///|
 test "HAMT::each" {
-  let empty = @hashmap.new()
+  let empty = @hashmap.empty()
   let mut sum = 0
   empty.each((k : Int32, v : Int32) => sum += k + v)
   inspect(sum, content="0")
@@ -1019,8 +1019,8 @@ test "equal imply hash equal when collision" {
   let s1 = MyString("1")
   let s2 = MyString("2")
   inspect(Hash::hash(s1) == Hash::hash(s2), content="true") // collisions
-  let ma = @hashmap.new().add(s1, 1).add(s2, 2)
-  let mb = @hashmap.new().add(s2, 2).add(s1, 1)
+  let ma = @hashmap.empty().add(s1, 1).add(s2, 2)
+  let mb = @hashmap.empty().add(s2, 2).add(s1, 1)
   inspect(ma == mb, content="true")
   inspect(Hash::hash(ma) == Hash::hash(mb), content="true")
 }
@@ -1028,7 +1028,7 @@ test "equal imply hash equal when collision" {
 ///|
 test "HAMT::merge_with with empty" {
   let m1 = @hashmap.HashMap([(1, 1), (2, 2)])
-  let m2 = @hashmap.new()
+  let m2 = @hashmap.empty()
   let u1 = m1.merge_with(m2, (_k, v1, v2) => v1 + v2)
   @test.assert_eq(u1.get(1), Some(1))
   @test.assert_eq(u1.get(2), Some(2))

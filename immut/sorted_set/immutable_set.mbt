@@ -20,8 +20,10 @@
 
 ///|
 /// Creates an empty immutable sorted set.
+#alias(new, deprecated="Use `SortedSet::empty()` instead")
+#as_free_fn(new, deprecated="Use `empty()` instead")
 #as_free_fn
-pub fn[A] SortedSet::new() -> SortedSet[A] {
+pub fn[A] SortedSet::empty() -> SortedSet[A] {
   Empty
 }
 
@@ -1014,7 +1016,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
   guard json is Array(arr) else {
     raise path.error("@immut/sorted_set.from_json: expected array")
   }
-  for i, x in arr; set = (new() : SortedSet[A]) {
+  for i, x in arr; set = (empty() : SortedSet[A]) {
     continue set.add(@json.FromJson::from_json(x, path.add_index(i)))
   } nobreak {
     set

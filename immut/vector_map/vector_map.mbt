@@ -14,15 +14,17 @@
 
 ///|
 /// Create an empty map. `O(1)`.
+#alias(new, deprecated="Use `VectorMap::empty()` instead")
+#as_free_fn(new, deprecated="Use `empty()` instead")
 #as_free_fn
-pub fn[K, V] VectorMap::new() -> VectorMap[K, V] {
-  { index: @hashmap.new(), spine: @vector.new(), size: 0, }
+pub fn[K, V] VectorMap::empty() -> VectorMap[K, V] {
+  { index: @hashmap.empty(), spine: @vector.empty(), size: 0, }
 }
 
 ///|
-/// The empty map, same as `VectorMap::new()`.
+/// The empty map, same as `VectorMap::empty()`.
 pub impl[K, V] Default for VectorMap[K, V] with fn default() {
-  VectorMap::new()
+  VectorMap::empty()
 }
 
 ///|
@@ -84,7 +86,7 @@ pub fn[K : Eq + Hash, V] VectorMap::from_iter(
 /// slot, every later one overwrites that slot's value in place.
 fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
   let entries : Array[(K, V)] = []
-  let mut index : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let mut index : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for kv in iter {
     let (key, value) = kv
     match index.get(key) {

@@ -30,7 +30,7 @@ fn balance_bench_values(scrambled~ : Bool) -> Array[Int32] {
 
 ///|
 fn balance_bench_build(values : Array[Int32]) -> @sorted_set.SortedSet[Int32] {
-  let mut s = @sorted_set.new()
+  let mut s = @sorted_set.empty()
   for v in values {
     s = s.add(v)
   }

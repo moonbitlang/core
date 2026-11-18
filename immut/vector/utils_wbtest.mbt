@@ -77,7 +77,7 @@ fn random_test_gen(rng : Random, times : Int32, max_lvl : Int32) -> Array[Op] {
 /// 
 /// The `rs` array is a sequence of operations to be executed.
 fn execute_array_test(rs : Array[Op]) -> Unit raise {
-  let mut t = new()
+  let mut t = empty()
   let a : Array[Int32] = []
   for op in rs {
     match op {

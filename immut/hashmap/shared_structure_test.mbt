@@ -22,7 +22,7 @@ fn[K : Eq + Hash] derived_map_versions_agree(
 ) -> Bool {
   let (xs, edits) = input
   let model : Array[(Int32, Int32)] = []
-  let mut a : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let mut a : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
     a = a.add(mk(k), x)
@@ -71,7 +71,7 @@ fn[K : Eq + Hash] derived_map_versions_agree(
   b.difference(a) == rebuild(diff(b_model, model)) &&
   a.merge(a) == a &&
   a.intersection(a) == a &&
-  a.difference(a) == @hashmap.new()
+  a.difference(a) == @hashmap.empty()
 }
 
 ///|

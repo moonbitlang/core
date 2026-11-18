@@ -176,7 +176,7 @@ test "quickcheck: bulk set build matches inserting one at a time" {
         let built = @sorted_set.SortedSet(values)
         // Same size as folding `add`, and every element reachable through the
         // tree rather than merely present in `to_array`.
-        let empty : @sorted_set.SortedSet[BElem] = @sorted_set.new()
+        let empty : @sorted_set.SortedSet[BElem] = @sorted_set.empty()
         let folded = for value in values; s = empty {
           continue s.add(value)
         } nobreak {

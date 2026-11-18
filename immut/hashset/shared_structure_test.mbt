@@ -22,7 +22,7 @@ fn[A : Eq + Hash] derived_versions_agree(
 ) -> Bool {
   let (xs, edits) = input
   let model : Array[Int32] = []
-  let mut a : @hashset.HashSet[A] = @hashset.new()
+  let mut a : @hashset.HashSet[A] = @hashset.empty()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
     a = a.add(mk(k))
@@ -62,7 +62,7 @@ fn[A : Eq + Hash] derived_versions_agree(
   b.difference(a) == rebuild(b_model.filter(k => !model.contains(k))) &&
   a.union(a) == a &&
   a.intersection(a) == a &&
-  a.difference(a) == @hashset.new()
+  a.difference(a) == @hashset.empty()
 }
 
 ///|

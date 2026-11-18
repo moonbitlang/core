@@ -19,7 +19,7 @@
 /// node that stayed marked as full (`sizes = None`), so iteration was correct
 /// but radix random access (`get`/`at`/`set`) went out of bounds.
 test "concat preserves random access (issue #3721)" {
-  let mut v = @vector.new()
+  let mut v = @vector.empty()
   let mut total = 0
   for _ in 0..<8 {
     v = v.concat(@vector.from_iter(total.until(total + 17)))
@@ -44,7 +44,7 @@ test "concat preserves random access (issue #3721)" {
 test "concat random access matches iteration for many chunkings (issue #3721)" {
   for chunk in [1, 5, 17, 31, 32, 33, 50] {
     for count in [2, 3, 5, 8, 16] {
-      let mut v = @vector.new()
+      let mut v = @vector.empty()
       let mut total = 0
       for _ in 0..<count {
         v = v.concat(@vector.from_iter(total.until(total + chunk)))
@@ -74,7 +74,7 @@ test "concat random access matches iteration for many chunkings (issue #3721)" {
 /// index, so it stayed correct throughout.
 test "concat of a push-built vector keeps random access (issue #4086)" {
   for left_len in [1056, 1057, 2080] {
-    let mut left : @vector.Vector[Int32] = @vector.new()
+    let mut left : @vector.Vector[Int32] = @vector.empty()
     for i in 0..<left_len {
       left = left.push(i)
     }

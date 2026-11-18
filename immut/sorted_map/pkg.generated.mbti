@@ -23,6 +23,10 @@ pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int32, K, V) -> Unit raise?) -> Unit raise?
 #deprecated
 pub fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
+#alias(new, deprecated)
+#as_free_fn
+#as_free_fn(new, deprecated)
+pub fn[K, V] SortedMap::empty() -> Self[K, V]
 pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] SortedMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
@@ -56,9 +60,6 @@ pub fn[K, V] SortedMap::length(Self[K, V]) -> Int32
 #alias(map_with_key, deprecated)
 pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y raise?) -> Self[K, Y] raise?
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
-#alias(empty, deprecated)
-#as_free_fn
-pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], low~ : K, high~ : K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key, deprecated)

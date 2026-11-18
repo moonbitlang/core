@@ -14,7 +14,7 @@
 
 ///|
 test "construction" {
-  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.empty()
   inspect(empty.length(), content="0")
   inspect(empty.is_empty(), content="true")
   let single = @vector_map.singleton("a", 1)
@@ -51,7 +51,11 @@ test "a repeated key keeps the first position and the last value" {
   )
   inspect(m.length(), content="3")
   // …exactly as repeated `add`s would leave it
-  let built = @vector_map.new().add("a", 1).add("b", 2).add("a", 3).add("c", 4)
+  let built = @vector_map.empty()
+    .add("a", 1)
+    .add("b", 2)
+    .add("a", 3)
+    .add("c", 4)
   assert_true(m == built)
 }
 
@@ -93,7 +97,7 @@ test "lookup" {
 
 ///|
 test "panic at on a missing key" {
-  let m : @vector_map.VectorMap[String, Int32] = @vector_map.new()
+  let m : @vector_map.VectorMap[String, Int32] = @vector_map.empty()
   ignore(m["missing"])
 }
 
@@ -274,13 +278,13 @@ test "equality is order sensitive" {
   assert_false(ab == ba)
   assert_true(ab != ba)
   // equal content in equal order compares equal however it was built
-  assert_true(ab == @vector_map.new().add("a", 1).add("b", 2))
+  assert_true(ab == @vector_map.empty().add("a", 1).add("b", 2))
   // A prefix is not equal to the whole — and this has to be checked from BOTH
   // sides. Comparing entry by entry only detects the short side running out
   // when it is on the right, so a length check that fired one way round would
   // leave `Eq` asymmetric.
   let a_only = @vector_map.singleton("a", 1)
-  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.empty()
   assert_false(ab == a_only)
   assert_false(a_only == ab)
   assert_false(ab == empty)
@@ -338,7 +342,7 @@ test "every part of an entry feeds the hash" {
     hash_of(ab) == hash_of(@vector_map.singleton("a", 1)),
     content="false",
   )
-  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.empty()
   inspect(hash_of(ab) == hash_of(empty), content="false")
 }
 
@@ -542,6 +546,6 @@ test "a replaced entry keeps the key it was first inserted with" {
 test "Default is the empty map" {
   let m : @vector_map.VectorMap[String, Int32] = Default::default()
   inspect(m.is_empty(), content="true")
-  inspect(m == @vector_map.new(), content="true")
+  inspect(m == @vector_map.empty(), content="true")
   inspect(m.add("a", 1).length(), content="1")
 }

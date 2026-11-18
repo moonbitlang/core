@@ -17,6 +17,10 @@ pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 pub fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#alias(new, deprecated)
+#as_free_fn
+#as_free_fn(new, deprecated)
+pub fn[A] HashSet::empty() -> Self[A]
 pub fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
@@ -34,8 +38,6 @@ pub fn[A] HashSet::is_empty(Self[A]) -> Bool
 pub fn[A] HashSet::iter(Self[A]) -> Iter[A]
 #alias(size, deprecated)
 pub fn[A] HashSet::length(Self[A]) -> Int32
-#as_free_fn
-pub fn[A] HashSet::new() -> Self[A]
 pub fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
 pub fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 pub impl[A : Hash] Hash for HashSet[A]

@@ -10,7 +10,7 @@ Create immutable sets using various methods:
 ///|
 test "creating immutable sets" {
   // Empty set
-  let empty : @hashset.HashSet[Int32] = @hashset.new()
+  let empty : @hashset.HashSet[Int32] = @hashset.empty()
   inspect(empty.length(), content="0")
   inspect(empty.is_empty(), content="true")
 
@@ -92,8 +92,8 @@ same elements, no matter which sequence of operations produced them.
 ///|
 test "equality is content equality" {
   // Insertion order never matters
-  let a = @hashset.new().add("x").add("y").add("z")
-  let b = @hashset.new().add("z").add("y").add("x")
+  let a = @hashset.empty().add("x").add("y").add("z")
+  let b = @hashset.empty().add("z").add("y").add("x")
   assert_true(a == b)
   // Bulk construction and incremental adds agree
   let c : @hashset.HashSet[String] = HashSet(["x", "y", "z"])
@@ -130,8 +130,8 @@ impl Hash for OneBucketElem with fn hash_combine(_, hasher) {
 
 ///|
 test "collisions preserve content equality" {
-  let a = @hashset.new().add(OneBucketElem(1)).add(OneBucketElem(2))
-  let b = @hashset.new().add(OneBucketElem(2)).add(OneBucketElem(1))
+  let a = @hashset.empty().add(OneBucketElem(1)).add(OneBucketElem(2))
+  let b = @hashset.empty().add(OneBucketElem(2)).add(OneBucketElem(1))
   assert_true(a == b)
   // Shrinking a bucket back to one element restores the exact
   // single-element shape

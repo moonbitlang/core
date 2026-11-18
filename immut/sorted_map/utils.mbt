@@ -14,9 +14,10 @@
 
 ///|
 /// Create an empty map.
+#alias(new, deprecated="Use `SortedMap::empty()` instead")
+#as_free_fn(new, deprecated="Use `empty()` instead")
 #as_free_fn
-#alias(empty, deprecated)
-pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
+pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
   Empty
 }
 
@@ -634,7 +635,7 @@ pub fn[K : Compare, V] SortedMap::from_iter(
   // materialize the whole iterator, so live memory would grow with the input
   // length instead of the number of distinct keys. Callers who want the bulk
   // path and can afford the buffer can write `SortedMap(iter.to_array())`.
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  iter.fold(init=empty(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|

@@ -15,7 +15,7 @@
 ///|
 test "is_empty" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.Vector[Int32] = @vector.new()
+  let ve : @vector.Vector[Int32] = @vector.empty()
   inspect(v.is_empty(), content="false")
   inspect(ve.is_empty(), content="true")
 }
@@ -47,7 +47,7 @@ test "set with valid index at end" {
 ///|
 test "to_string" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.Vector[Int32] = @vector.new()
+  let ve : @vector.Vector[Int32] = @vector.empty()
   debug_inspect(
     v,
     content=(
@@ -91,7 +91,7 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let v : @vector.Vector[Int32] = @vector.new()
+  let v : @vector.Vector[Int32] = @vector.empty()
   debug_inspect(v.to_array(), content="[]")
 }
 
@@ -100,7 +100,7 @@ test "to_json" {
   let v = @vector.from_iter((0).until(40))
   let expected = Json::array(Array::makei(40, i => Json(i)))
   @json.json_inspect(v, content=expected)
-  let empty : @vector.Vector[Int32] = @vector.new()
+  let empty : @vector.Vector[Int32] = @vector.empty()
   @json.json_inspect(empty, content=[])
 }
 
@@ -180,7 +180,7 @@ test "concat preserves random access after normalizing singleton tail" {
 ///|
 test "length" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.Vector[Int32] = @vector.new()
+  let ve : @vector.Vector[Int32] = @vector.empty()
   inspect(v.length(), content="5")
   inspect(ve.length(), content="0")
 }
@@ -216,7 +216,7 @@ test "set" {
 
 ///|
 test "push" {
-  let v = @vector.new().push(1).push(2).push(3)
+  let v = @vector.empty().push(1).push(2).push(3)
   debug_inspect(
     v,
     content=(
@@ -306,7 +306,7 @@ test "Vector constructor" {
 
 ///|
 test "iteri" {
-  let v : @vector.Vector[Int32] = @vector.new()
+  let v : @vector.Vector[Int32] = @vector.empty()
   v.eachi((_i, _e) => abort("never reach"))
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let mut s = 0
@@ -326,7 +326,7 @@ test "equal" {
   let v4 = @vector.from_array([1, 2, 3, 4])
   let v5 = @vector.make(5, 1)
   let v6 = @vector.from_array([1, 1, 1, 1, 1])
-  inspect(v0 == @vector.new(), content="true")
+  inspect(v0 == @vector.empty(), content="true")
   inspect(v1 == v2, content="true")
   inspect(v1 == v3, content="false")
   inspect(v1 == v4, content="false")
@@ -347,7 +347,7 @@ test "add concat" {
 
 ///|
 test "fold" {
-  let e = @vector.new()
+  let e = @vector.empty()
   let v = @vector.from_array([1, 2, 3, 4, 5])
   inspect(e.fold((a, b) => a + b, init=0), content="0")
   inspect(v.fold((a, b) => a + b, init=0), content="15")
@@ -355,7 +355,7 @@ test "fold" {
 
 ///|
 test "rev_fold" {
-  let e = @vector.new()
+  let e = @vector.empty()
   inspect(e.rev_fold((a, b) => a + b, init=0), content="0")
   let v = @vector.from_array([1, 2, 3, 4, 5])
   inspect(e.fold((a, b) => a + b, init=0), content="0")
@@ -384,7 +384,7 @@ test "map" {
     ),
   )
   debug_inspect(
-    @vector.new().map((e : Int32) => e),
+    @vector.empty().map((e : Int32) => e),
     content=(
       #|<Vector: []>
     ),
@@ -460,7 +460,7 @@ test "rev" {
     ),
   )
   debug_inspect(
-    (@vector.new() : @vector.Vector[Int32]).rev(),
+    (@vector.empty() : @vector.Vector[Int32]).rev(),
     content=(
       #|<Vector: []>
     ),
@@ -474,7 +474,10 @@ test "contains" {
   inspect(values.contains(31), content="true")
   inspect(values.contains(39), content="true")
   inspect(values.contains(40), content="false")
-  inspect((@vector.new() : @vector.Vector[Int32]).contains(1), content="false")
+  inspect(
+    (@vector.empty() : @vector.Vector[Int32]).contains(1),
+    content="false",
+  )
 }
 
 ///|
@@ -710,7 +713,7 @@ test "hash" {
 ///|
 test "concat_empty" {
   let a = @vector.from_array([1, 2, 3])
-  let b : @vector.Vector[Int32] = @vector.new()
+  let b : @vector.Vector[Int32] = @vector.empty()
   let c = a.concat(b)
   debug_inspect(
     c,
@@ -718,7 +721,7 @@ test "concat_empty" {
       #|<Vector: [1, 2, 3]>
     ),
   )
-  let a : @vector.Vector[Int32] = @vector.new()
+  let a : @vector.Vector[Int32] = @vector.empty()
   let b = @vector.from_array([1, 2, 3])
   let c = a.concat(b)
   debug_inspect(
@@ -767,7 +770,7 @@ test "compare" {
   let arr1 = @vector.from_array([1, 2, 3])
   let arr2 = @vector.from_array([1, 2, 4])
   let arr3 = @vector.from_array([1, 2])
-  let empty : @vector.Vector[Int32] = @vector.new()
+  let empty : @vector.Vector[Int32] = @vector.empty()
   inspect(arr1.compare(arr2), content="-1")
   inspect(arr1.compare(arr3), content="1")
   inspect(arr3.compare(arr1), content="-1")
@@ -798,7 +801,7 @@ test "@vector.get/out_of_bounds" {
 test "Default is the empty vector" {
   let v : @vector.Vector[Int32] = Default::default()
   inspect(v.is_empty(), content="true")
-  inspect(v == @vector.new(), content="true")
+  inspect(v == @vector.empty(), content="true")
   debug_inspect(
     v.push(1),
     content=(

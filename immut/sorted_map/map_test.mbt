@@ -62,7 +62,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+  let m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
   inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
   inspect(m.is_empty(), content="false")
@@ -407,7 +407,7 @@ test "@immut/sorted_map.merge" {
 
 ///|
 test "@immut/sorted_map.merge empty maps" {
-  let map1 : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[Int32, String] = @sorted_map.empty()
   let map2 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -502,7 +502,7 @@ test "higher-order functions propagate callback errors" {
 
 ///|
 test "remove of an absent key returns the original map" {
-  let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+  let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
   inspect(physical_equal(empty.remove(1), empty), content="true")
   let m = @sorted_map.SortedMap(Array::makei(100, i => (i * 2, i)))
   // absent keys below, between, and above the present ones

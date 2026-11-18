@@ -14,7 +14,7 @@
 
 ///|
 test "HashMap::is_empty" {
-  let empty : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let empty : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   inspect(empty.is_empty(), content="true")
   let one = empty.add(1, 1)
   inspect(one.is_empty(), content="false")

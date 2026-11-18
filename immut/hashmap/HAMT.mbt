@@ -46,8 +46,10 @@ let bulk_build_threshold = 64
 
 ///|
 /// Create a new instance.
+#alias(new, deprecated="Use `HashMap::empty()` instead")
+#as_free_fn(new, deprecated="Use `empty()` instead")
 #as_free_fn
-pub fn[K, V] HashMap::new() -> HashMap[K, V] {
+pub fn[K, V] HashMap::empty() -> HashMap[K, V] {
   { data: None, }
 }
 
@@ -297,14 +299,14 @@ fn[K : Eq, V] build_hashmap_node_range(
 fn[K : Eq + Hash, V] hash_map_from_iter_by_add(
   iter : Iter[(K, V)],
 ) -> HashMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  iter.fold(init=empty(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|
 fn[K : Eq + Hash, V] hash_map_from_array_by_add(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  for (k, v) in arr; map = new() {
+  for (k, v) in arr; map = empty() {
     continue map.add(k, v)
   } nobreak {
     map
@@ -992,7 +994,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
   }
   iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0), }))
   if entries.is_empty() {
-    new()
+    empty()
   } else {
     { data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0)), }
   }
