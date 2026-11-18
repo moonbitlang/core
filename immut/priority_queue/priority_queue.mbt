@@ -33,6 +33,7 @@
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
+  guard array.length() > 0 else { return { node: Empty, size: 0, } }
   // `array` is borrowed, so copy it into a buffer we own before heapifying.
   from_array_in_place(array.to_owned().mut_view())
 }
