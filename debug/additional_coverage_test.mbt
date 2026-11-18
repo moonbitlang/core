@@ -30,7 +30,7 @@ test "debug repr for iterators and map" {
   let iter : Iter[Unit] = Iter(() => None)
   let iter_str = @debug.to_string(iter)
   assert_true(iter_str.contains("Iter"))
-  let iter2 : Iter2[Unit, Unit] = Iter2::new(() => None)
+  let iter2 : Iter2[Unit, Unit] = Iter(() => None)
   let iter2_str = @debug.to_string(iter2)
   assert_true(iter2_str.contains("Iter2"))
   let map = { "a": 1 }
