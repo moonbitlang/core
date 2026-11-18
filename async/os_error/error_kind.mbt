@@ -30,6 +30,7 @@ pub(all) enum Kind {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 let errno_table : Map[Int32, Kind] = match @env_util.platform {
   Linux =>
     Map([
@@ -68,9 +69,31 @@ let errno_table : Map[Int32, Kind] = match @env_util.platform {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 fn Kind::Kind(code : Int32) -> Kind {
   match errno_table.get(code) {
     None => Unknown
     Some(kind) => kind
+  }
+}
+
+///|
+#cfg(target="js")
+fn Kind::Kind(code : Int32) -> Kind {
+  kind_from_node_name(@errno.errno_to_name(code))
+}
+
+///|
+#cfg(target="js")
+fn kind_from_node_name(name : String) -> Kind {
+  match name {
+    "ENOENT" => NotFound
+    "EEXIST" => AlreadyExists
+    "EACCES" => AccessDenied
+    "ENOTDIR" => NotDirectory
+    "ECONNREFUSED" => ConnectionRefused
+    "ENOTSUP" | "EOPNOTSUPP" => OperationNotSupported
+    "ENOTEMPTY" => NotEmpty
+    _ => Unknown
   }
 }

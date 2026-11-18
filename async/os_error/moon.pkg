@@ -2,12 +2,16 @@ import {
   "moonbitlang/core/builtin",
 }
 
-#cfg(any(target="native", target="wasm"))
+#cfg(any(target="native", target="wasm", target="js"))
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/debug",
-  "moonbitlang/core/async/internal/env_util",
   "moonbitlang/core/async/internal/errno_util" @errno,
+}
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/async/internal/env_util",
 }
 
 import {
@@ -25,10 +29,12 @@ options(
   "allow-experimental-packages": true,
   experimental: true,
   targets: {
-    "error.mbt": [ "native", "wasm" ],
-    "error_kind.mbt": [ "native", "wasm" ],
-    "deprecated.mbt": [ "native", "wasm" ],
-    "extends.mbt": [ "native", "wasm" ],
-    "os_error_test.mbt": [ "native", "wasm" ],
+    "error.mbt": [ "native", "wasm", "js" ],
+    "error_kind.mbt": [ "native", "wasm", "js" ],
+    "deprecated.mbt": [ "native", "wasm", "js" ],
+    "extends.mbt": [ "native", "wasm", "js" ],
+    "os_error_test.mbt": [ "native", "wasm", "js" ],
+    "os_error_js_test.mbt": [ "js" ],
+    "os_error_js_wbtest.mbt": [ "js" ],
   },
 )

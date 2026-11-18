@@ -22,13 +22,17 @@
 ///
 /// `raw_code` is the raw, system-specific error number.
 /// `context` describe the context that generated this error.
+///
+/// On JS, constructing an error from errno or formatting it requires Node.js.
+/// The error lookup uses `node:util.getSystemErrorMap` (Node.js 14.17/16.0+);
+/// other APIs used by an application may require a newer Node.js version.
 #derive(@json.ToJson)
 pub suberror OsError {
   OsError(Kind, raw_code~ : Int32, context~ : String)
 }
 
 ///|
-/// Create a `OsError` from a raw error number
+/// Create a `OsError` from a raw error number.
 #as_free_fn
 pub fn OsError::from_errno(errno : Int32, context~ : String) -> OsError {
   OsError(Kind(errno), raw_code=errno, context~)
@@ -60,6 +64,7 @@ pub extend OsError with Show::{to_string}
 
 ///|
 /// Check system error code, and raise `OsError` if the error code is non-zero
+#cfg(any(target="native", target="wasm"))
 pub fn check_errno(context : String) -> Unit raise OsError {
   let err_code = @errno.get_errno()
   if err_code != 0 {

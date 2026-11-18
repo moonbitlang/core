@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#cfg(any(target="native", target="wasm"))
 async test "NotFound" {
   let err = @test.expect_error_async <| () => {
     @fs.open("does_not_exist", mode=ReadOnly)
@@ -24,6 +25,7 @@ async test "NotFound" {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
 async test "AlreadyExists" {
   let err = @test.expect_error_async <| () => {
     @fs.mkdir("async", permission=0o755)
