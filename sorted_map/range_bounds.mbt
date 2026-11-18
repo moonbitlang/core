@@ -46,37 +46,39 @@ pub fn[K : Compare, V] SortedMap::range_bounds(
 ) -> Iter2[K, V] {
   let stack : Array[Node[K, V]] = []
   let mut next_node = self.root
-  Iter2::new(fn() {
-    for x = next_node {
-      match x {
-        Some(node) =>
-          if !satisfies_lower(node.key, lower) {
-            // The node and its left subtree are below the range.
-            continue node.right
-          } else if !satisfies_upper(node.key, upper) {
-            // The node and its right subtree are above the range.
-            continue node.left
-          } else if node.left is None {
-            next_node = node.right
-            break Some((node.key, node.value))
-          } else {
-            stack.push(node)
-            continue node.left
-          }
-        None =>
-          match stack.pop() {
-            Some(node) => {
+  Iter2(
+    Iter(fn() {
+      for x = next_node {
+        match x {
+          Some(node) =>
+            if !satisfies_lower(node.key, lower) {
+              // The node and its left subtree are below the range.
+              continue node.right
+            } else if !satisfies_upper(node.key, upper) {
+              // The node and its right subtree are above the range.
+              continue node.left
+            } else if node.left is None {
               next_node = node.right
               break Some((node.key, node.value))
+            } else {
+              stack.push(node)
+              continue node.left
             }
-            None => {
-              next_node = None
-              break None
+          None =>
+            match stack.pop() {
+              Some(node) => {
+                next_node = node.right
+                break Some((node.key, node.value))
+              }
+              None => {
+                next_node = None
+                break None
+              }
             }
-          }
+        }
       }
-    }
-  })
+    }),
+  )
 }
 
 ///|
@@ -98,37 +100,39 @@ pub fn[K : Compare, V] SortedMap::rev_range_bounds(
 ) -> Iter2[K, V] {
   let stack : Array[Node[K, V]] = []
   let mut next_node = self.root
-  Iter2::new(fn() {
-    for x = next_node {
-      match x {
-        Some(node) =>
-          if !satisfies_upper(node.key, upper) {
-            // The node and its right subtree are above the range.
-            continue node.left
-          } else if !satisfies_lower(node.key, lower) {
-            // The node and its left subtree are below the range.
-            continue node.right
-          } else if node.right is None {
-            next_node = node.left
-            break Some((node.key, node.value))
-          } else {
-            stack.push(node)
-            continue node.right
-          }
-        None =>
-          match stack.pop() {
-            Some(node) => {
+  Iter2(
+    Iter(fn() {
+      for x = next_node {
+        match x {
+          Some(node) =>
+            if !satisfies_upper(node.key, upper) {
+              // The node and its right subtree are above the range.
+              continue node.left
+            } else if !satisfies_lower(node.key, lower) {
+              // The node and its left subtree are below the range.
+              continue node.right
+            } else if node.right is None {
               next_node = node.left
               break Some((node.key, node.value))
+            } else {
+              stack.push(node)
+              continue node.right
             }
-            None => {
-              next_node = None
-              break None
+          None =>
+            match stack.pop() {
+              Some(node) => {
+                next_node = node.left
+                break Some((node.key, node.value))
+              }
+              None => {
+                next_node = None
+                break None
+              }
             }
-          }
+        }
       }
-    }
-  })
+    }),
+  )
 }
 
 ///|
