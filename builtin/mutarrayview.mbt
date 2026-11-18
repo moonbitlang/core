@@ -486,16 +486,14 @@ pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
 pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int32, X] {
   let mut i = 0
   let len = self.length()
-  Iter2(
-    Iter(
-      fn() {
-        guard i < len else { None }
-        let result = Some((i, self.unsafe_get(i)))
-        i += 1
-        result
-      },
-      size_hint=len,
-    ),
+  Iter2::new(
+    fn() {
+      guard i < len else { None }
+      let result = Some((i, self.unsafe_get(i)))
+      i += 1
+      result
+    },
+    size_hint=len,
   )
 }
 
