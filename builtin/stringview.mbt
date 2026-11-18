@@ -522,11 +522,22 @@ pub fn StringView::lexical_compare(
 /// units outside that range — including all non-ASCII code units — are returned
 /// unchanged.
 fn ascii_fold_lower_u16(c : UInt16) -> UInt16 {
-  if c >= ('A' : UInt16) && c <= ('Z' : UInt16) {
-    c + (32 : UInt16)
+  // One wrapping compare covers both bounds: `c < 'A'` wraps to a huge value.
+  if c - 'A' < 26 {
+    c | 0x20
   } else {
     c
   }
+}
+
+///|
+/// Reports whether two *distinct* code units are equal under ASCII case
+/// folding. ASCII letter pairs differ only in bit 5 (`0x20`), and the member
+/// with that bit set is the lowercase letter, so this checks both facts
+/// instead of folding each side.
+#inline
+fn ascii_case_pair_u16(a : UInt16, b : UInt16) -> Bool {
+  (a ^ b) == 0x20 && (a | 0x20) - 'a' < 26
 }
 
 ///|
@@ -577,10 +588,17 @@ pub fn StringView::compare_ignore_ascii_case(
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
   for i in 0..<min_len {
-    let a = ascii_fold_lower_u16(self.unsafe_get(i))
-    let b = ascii_fold_lower_u16(other.unsafe_get(i))
-    if a != b {
-      return if a < b { -1 } else { 1 }
+    let a = self.unsafe_get(i)
+    let b = other.unsafe_get(i)
+    if a == b || ascii_case_pair_u16(a, b) {
+      continue
+    }
+    // Every case-equal pair was skipped above, so the folded units differ:
+    // folding happens only at this one deciding position.
+    return if ascii_fold_lower_u16(a) < ascii_fold_lower_u16(b) {
+      -1
+    } else {
+      1
     }
   }
   self_len.compare(other_len)
@@ -629,11 +647,7 @@ pub fn StringView::equal_ignore_ascii_case(
   for i in 0..<len {
     let a = self.str().unsafe_get(self.start() + i)
     let b = other.str().unsafe_get(other.start() + i)
-    // Fast path: identical code units need no folding.
-    if a == b {
-      continue
-    }
-    if ascii_fold_lower_u16(a) != ascii_fold_lower_u16(b) {
+    if a != b && !ascii_case_pair_u16(a, b) {
       return false
     }
   }
