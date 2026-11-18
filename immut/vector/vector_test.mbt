@@ -842,3 +842,10 @@ test "makei calls f in ascending index order" {
   }
   inspect(msg.has_suffix("index 40"), content="true")
 }
+
+///|
+test "Vector from empty array" {
+  let v : @vector.Vector[Int32] = Vector([])
+  inspect(v.is_empty(), content="true")
+  inspect(v.push(1).length(), content="1")
+}
