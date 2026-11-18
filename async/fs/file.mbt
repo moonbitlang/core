@@ -491,6 +491,23 @@ pub async fn read_text(path : StringView) -> String {
 }
 
 ///|
+/// Read the text content of the file located at `path` as an array of lines.
+/// `\n` and `\r\n` are treated as line delimiters, while a plain `\r` is left as-is.
+/// The last line of the file, even if not terminated by newline delimiter,
+/// will be returned as well, if any.
+///
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included as well in each line.
+pub async fn read_lines(
+  path : StringView,
+  include_newline~ : Bool = false,
+) -> Array[String] {
+  let file = open(path, mode=ReadOnly)
+  defer file.close()
+  file.text.read_lines(include_newline~)
+}
+
+///|
 /// Write binary data to a file located at `path`.
 /// The meaning of `sync`, `append`, `create_mode` and `permission`,
 /// is the same as `open`, except that `create_mode` defaults to `OpenOrCreate` when `append=true`,

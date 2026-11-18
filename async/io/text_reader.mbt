@@ -24,10 +24,23 @@
 ///
 /// `read_until()` is similar to `BinaryReader::read_until`,
 /// except that it operates over text instead of binary input.
+///
+/// `read_line()` reads a whole line from the reader.
+/// The line delimiter could be either `\n` or `\r\n`.
+/// A plain `\r` is left as-is and not interpreted as newline delimiter.
+/// If the stream reaches EOF without a trailing newline,
+/// all remaining content will be returned as a line.
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included as well.
+///
+/// `read_lines()` is similar to `read_line()`,
+/// except that it automatically collects all lines in the stream until EOF.
 pub(open) trait TextReader {
   async fn read(Self) -> String? raise ReaderError
   async fn read_all(Self) -> String raise ReaderError
   async fn read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
+  async fn read_line(Self, include_newline? : Bool) -> String? raise ReaderError
+  async fn read_lines(Self, include_newline? : Bool) -> Array[String] raise ReaderError = _
 }
 
 ///|
@@ -131,4 +144,48 @@ pub impl TextReader for Utf8Reader with fn read_until(
 }
 
 ///|
-pub extend Utf8Reader with TextReader::{read, read_all, read_until}
+pub impl TextReader for Utf8Reader with fn read_line(
+  self,
+  include_newline~ : Bool = false,
+) {
+  guard! self.inner is Some(inner)
+  guard inner.peek_until(b"\n", include_delimiter=true) is Some(whole_line) else {
+    return None
+  }
+  let line_bytes = match whole_line {
+    line if include_newline => line
+    [.. line, b'\r', b'\n'] => line
+    [.. line, b'\n'] => line
+    line => line
+  }
+  inner.drop_exactly(whole_line.length())
+  Some(@utf8.decode(line_bytes)) catch {
+    Malformed(_) => raise MalformedText
+  }
+}
+
+///|
+/// `read_lines()` read all remaining content from a text reader,
+/// and split them into an array of lines.
+/// The line delimiter could be either `\n` or `\r\n`.
+/// A plain `\r` is left as-is and not interpreted as newline delimiter.
+/// Non-empty trailer after the last newline is returned as the last line.
+///
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included in each returned line as well.
+impl TextReader with fn read_lines(self, include_newline~ : Bool = false) {
+  let lines = []
+  while self.read_line(include_newline~) is Some(line) {
+    lines.push(line)
+  }
+  lines
+}
+
+///|
+pub extend Utf8Reader with TextReader::{
+  read,
+  read_all,
+  read_until,
+  read_line,
+  read_lines,
+}
