@@ -1,4 +1,20 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/env",
+  "moonbitlang/core/encoding/hex",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/internal/snapshot_io",
 }
+
+#cfg(target="wasm")
+import {
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/fs",
+} for "wbtest"
+
+options(
+  "allow-experimental-packages": true,
+  targets: { "file_snapshot_wbtest.mbt": [ "wasm" ] },
+)

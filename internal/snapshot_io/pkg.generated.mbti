@@ -1,0 +1,15 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/snapshot_io"
+
+// Values
+pub fn compare(String, String) -> Int64 raise
+
+pub fn create(String) -> Unit raise
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

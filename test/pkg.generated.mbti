@@ -45,12 +45,18 @@ pub fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 // Errors
 
 // Types and methods
+type File
+pub fn File::path(Self) -> String
+#callsite(autofill(loc))
+pub fn File::snapshot(Self, filename~ : String, loc~ : SourceLoc) -> Unit raise
+
 #derive(@debug.Debug)
 type Test
 #alias(new, deprecated)
 #as_free_fn(new, deprecated)
 #as_free_fn
 pub fn Test::Test(String) -> Self
+pub fn Test::create_file(Self) -> File raise
 pub fn Test::name(Self) -> String
 #callsite(autofill(args_loc, loc))
 pub fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
