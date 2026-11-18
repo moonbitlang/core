@@ -253,7 +253,7 @@ async fn Sender::optimized_write_reader(
         if self.send_len >= self.send_buf.length() {
           self.flush()
         }
-        let n = reader.read_into(self.send_buf, offset=self.send_len)
+        let n = reader.read_into(self.send_buf.mut_view(start=self.send_len))
         if n == 0 {
           break
         }
@@ -263,7 +263,7 @@ async fn Sender::optimized_write_reader(
         if self.send_len >= self.send_buf.length() {
           self.flush()
         }
-        let n = reader.read_into(self.send_buf, offset=self.send_len)
+        let n = reader.read_into(self.send_buf.mut_view(start=self.send_len))
         if n == 0 {
           mode.remaining = remaining
           break
@@ -295,9 +295,9 @@ async fn Sender::optimized_write_reader(
       self.flush()
       self.send_buf[3] = b'\r'
       self.send_buf[4] = b'\n'
-      let max_len = self.send_buf.length() - 7
+      let end = self.send_buf.length() - 2
       for ;; {
-        let len = reader.read_into(self.send_buf, offset=5, max_len~)
+        let len = reader.read_into(self.send_buf.mut_view(start=5, end~))
         if len == 0 {
           break
         }

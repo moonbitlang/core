@@ -18,7 +18,7 @@ async test "cancel before submit" {
   defer file.close()
   let buf = FixedArray::make(1, b'\x00')
   let result = @async.with_timeout_opt(1, () => {
-    while file.read_into(buf, offset=0, max_len=1) is 1 {
+    while file.read_into(buf.mut_view()) is 1 {
 
     }
   })

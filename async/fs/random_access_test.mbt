@@ -47,12 +47,12 @@ async test "read through file views" {
   // still read from the start
   json_inspect(r.read_exactly(2), content="ab")
   let buf = FixedArray::make(2, b'\x00')
-  let n = r.at(5).read_into(buf)
+  let n = r.at(5).read_into(buf.mut_view())
   inspect(n, content="1")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[:n], content="f")
   // `max_len` caps the read even when more data is available
   let buf = FixedArray::make(4, b'\x00')
-  let n = r.at(1).read_into(buf, offset=1, max_len=2)
+  let n = r.at(1).read_into(buf.mut_view(start=1, end=3))
   inspect(n, content="2")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[1:3], content="bc")
   json_inspect(r.at(2).read_all(), content="cdef")

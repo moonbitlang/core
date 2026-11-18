@@ -120,7 +120,7 @@ pub async fn ReadFromProcess::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn ReadFromProcess::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn ReadFromProcess::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn ReadFromProcess::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn ReadFromProcess::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ReadFromProcess::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn ReadFromProcess::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub impl @io.BinaryReader for ReadFromProcess
 

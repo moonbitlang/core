@@ -58,9 +58,12 @@ pub fn RawFd::close(self : RawFd) -> Unit {
 }
 
 ///|
-/// Read data from a raw fd into `buf[offset:offset+max_len]`.
+fn MutArrayView::buf(self : MutArrayView[Byte]) -> FixedArray[Byte] = "%arrayview.buf"
+
+///|
+/// Read data from a raw fd into `dst`.
 /// The number of bytes actually read will be returned,
-/// note that the number may be smaller than `max_len`.
+/// note that the number may be smaller than `dst.length()`.
 /// A zero return value indicates EOF.
 ///
 /// `read_into_once` always correspond to exactly one `read` syscall.
@@ -70,14 +73,12 @@ pub fn RawFd::close(self : RawFd) -> Unit {
 /// is more convenient to use and provides richer API.
 pub async fn RawFd::read_into_once(
   self : RawFd,
-  buf : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
+  dst : MutArrayView[Byte],
 ) -> Int32 {
   self.io.read(
-    buf,
-    offset~,
-    len=max_len,
+    dst.buf(),
+    offset=dst.start_offset(),
+    len=dst.length(),
     context="@raw_fd.RawFd::read_into_once()",
   )
 }

@@ -116,7 +116,7 @@ pub async fn ClientConnection::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn ClientConnection::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn ClientConnection::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn ClientConnection::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn ClientConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ClientConnection::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn ClientConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn ClientConnection::request(Self, RequestMethod, StringView, extra_headers? : Map[CaseInsensitiveString, String]) -> Unit
 pub async fn ClientConnection::skip_response_body(Self) -> Unit
@@ -225,7 +225,7 @@ pub async fn ServerConnection::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn ServerConnection::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn ServerConnection::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn ServerConnection::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn ServerConnection::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn ServerConnection::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn ServerConnection::read_request(Self) -> RequestHeader
 pub async fn ServerConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn ServerConnection::send_response(Self, Int32, String, extra_headers? : Map[CaseInsensitiveString, String], cookies? : Array[Cookie]) -> Unit

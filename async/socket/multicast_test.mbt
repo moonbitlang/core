@@ -65,7 +65,7 @@ async test "multicast discovery then unicast" {
       log.push("client sending discovery packet")
       let _ = client.send(b"anybody here?")
       let buf = FixedArray::make(1024, b'\x00')
-      let (n, server_addr) = client.recv_into_with_addr(buf)
+      let (n, server_addr) = client.recv_into_with_addr(buf.mut_view())
       let data = buf.unsafe_reinterpret_as_bytes()[:n]
       log.push("client found server via message: \{@utf8.decode(data)}")
       client.connect(server_addr)

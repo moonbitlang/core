@@ -187,7 +187,7 @@ async test "decoder yields plain chunks lazily across delayed chunks" {
     }
     let decoder = @gzip.Decoder(compressed_r)
     let buf = FixedArray::make(2, b'\x00')
-    while decoder.read_into(buf, max_len=2) is 2 {
+    while decoder.read_into(buf.mut_view()) is 2 {
       let chunk = buf.unsafe_reinterpret_as_bytes()
       log.push("read plain \{@utf8.decode(chunk)}")
     }
@@ -215,7 +215,7 @@ async test "decoder supports reads smaller than writer chunks" {
     let decoder = @gzip.Decoder(compressed_r)
     let buf = FixedArray::make(2, b'\x00')
     let chunks = [
-      for ; decoder.read_into(buf, max_len=2) is 2; => {
+      for ; decoder.read_into(buf.mut_view()) is 2; => {
         @utf8.decode(buf.unsafe_reinterpret_as_bytes())
       }
     ]
@@ -341,7 +341,7 @@ async fn decode_buffered(stream : Bytes) -> Bytes {
     // An output buffer larger than the history ring lets a whole stored block
     // be produced by a single call.
     let buf = FixedArray::make(131072, b'\x00')
-    while decoder.read_into(buf) is n && n > 0 {
+    while decoder.read_into(buf.mut_view()) is n && n > 0 {
       out.write_bytes(buf.unsafe_reinterpret_as_bytes()[:n])
     }
   }

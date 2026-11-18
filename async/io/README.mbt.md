@@ -36,8 +36,8 @@ async test "binary pipe quick start" {
 `BinaryReader` owns a read-ahead buffer. Its methods provide three useful styles
 of reading:
 
-- `read_into(dst, offset?, max_len?)` reads into caller-owned storage and
-  returns the number of bytes read. A zero return value indicates EOF.
+- `read_into(dst)` reads into the caller-owned mutable view and returns the
+  number of bytes read. A zero return value indicates EOF.
 - `read()` returns an owned chunk as soon as data is available, or `None` at EOF.
 - `read_at_least(min_len)` returns an owned chunk containing at least `min_len`
   bytes, and may return more.
@@ -47,7 +47,7 @@ of reading:
   `min_len` bytes without consuming it.
 
 If EOF arrives before `min_len` bytes are buffered, `read_at_least` and
-`peek_at_least` raise `ReaderClosed`. Any shorter trailing data remains buffered
+`peek_at_least` raise `UnexpectedEof`. Any shorter trailing data remains buffered
 and can still be obtained by a later operation with a smaller minimum.
 
 ```moonbit check
@@ -61,7 +61,7 @@ async test "read into caller-owned storage" {
       writer.write(b"hello")
     }
     let dst = FixedArray::make(9, b'.')
-    let count = reader.read_into(dst, offset=2, max_len=5)
+    let count = reader.read_into(dst.mut_view(start=2, end=7))
     inspect(count, content="5")
     inspect(
       @utf8.decode(dst.unsafe_reinterpret_as_bytes()[2:7]),
@@ -96,7 +96,7 @@ bytes must outlive that operation.
 Other binary reader operations are:
 
 - `read_exactly(len)` and `peek_exactly(len)` wait for exactly `len` bytes and
-  raise `ReaderClosed` if EOF arrives first.
+  raise `UnexpectedEof` if EOF arrives first.
 - `drop_exactly(len)` consumes exactly `len` bytes without returning them.
 - `read_all()` drains the stream into a `Bytes` value.
 - `drop_all()` drains the stream and returns the number of discarded bytes.
