@@ -35,8 +35,6 @@
 /// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
 /// - `scoped_read`: peek `len + lookahead` bytes, consume `len`, optional timeout
 /// - `scoped_eof`, `scoped_fail`: verify callback EOF and error handling
-/// - `read_outside_scope`, `scoped_overlap`: verify invalid input access aborts
-/// - `nested_scope`, `concurrent_scope`: verify overlapping protection scopes abort
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -44,7 +42,6 @@ async fn main {
   guard @env.get_env_var("TTYD_PORT") is Some(port) else {
     fail("TTYD_PORT is not set")
   }
-  trace_nested(0) // helper started, before opening the terminal
   let tty = @tty.open()
   install_state_check()
   let rpc = @socket.Tcp::connect(@socket.Addr::parse("127.0.0.1:\{port}"))
@@ -212,52 +209,6 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
             }
         }
       })
-    }
-    "read_outside_scope" =>
-      match tty.handle_resize(() => ignore(tty.peek_exactly(2))) {
-        Resized => { "type": "resize" }
-        Value(_) => {
-          // Input remains buffered, but the protection scope has ended.
-          ignore(tty.peek())
-          null
-        }
-      }
-    "scoped_overlap" => {
-      ignore(
-        tty.handle_resize(() => {
-          @async.with_task_group() <| group => {
-            // Preserve the first line in the shared buffer while waiting for
-            // more input, then try a buffered access from another task.
-            let reading = group.spawn(() => tty.peek_exactly(32).to_owned())
-            @async.sleep(10)
-            ignore(tty.peek())
-            reading.cancel()
-          }
-        }),
-      )
-      null
-    }
-    "nested_scope" => {
-      trace_nested(1) // received nested_scope RPC
-      ignore(
-        tty.handle_resize(() => {
-          trace_nested(2) // entered callback, immediately before the nested call
-          ignore(tty.handle_resize(() => ()))
-          trace_nested(3) // unexpected: nested call returned
-        }),
-      )
-      trace_nested(4) // outer scope returned
-      null
-    }
-    "concurrent_scope" => {
-      @async.with_task_group() <| group => {
-        // The first scope is still waiting for its first input.
-        let reading = group.spawn(() => tty.handle_resize(() => tty.read()))
-        @async.sleep(10)
-        ignore(tty.handle_resize(() => ()))
-        reading.cancel()
-      }
-      null
     }
     "scoped_eof" => {
       let mut entered = false

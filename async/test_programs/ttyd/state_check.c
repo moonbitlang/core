@@ -74,18 +74,3 @@ static void verify_restored(void) {
 MOONBIT_FFI_EXPORT int32_t ttyd_watch_state(void) {
   return ttyd_save_state() && atexit(verify_restored) == 0;
 }
-
-// Temporary CI diagnostics. Each marker is closed immediately so it survives
-// abort without sharing the RPC socket or terminal output path.
-MOONBIT_FFI_EXPORT void ttyd_trace_nested(int32_t stage) {
-#ifndef _WIN32
-  const char *path = getenv("TTYD_TRACE_PATH");
-  if (!path || !*path) return;
-  FILE *out = fopen(path, "a");
-  if (!out) return;
-  fprintf(out, "pid %ld stage %d\n", (long)getpid(), stage);
-  fclose(out);
-#else
-  (void)stage;
-#endif
-}

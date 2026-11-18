@@ -19,7 +19,6 @@ import {
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/async",
   "moonbitlang/core/async/process",
-  "moonbitlang/core/async/fs",
   "moonbitlang/core/async/socket",
   "moonbitlang/core/async/internal/test_util",
 } for "test"

@@ -20,6 +20,3 @@ fn install_state_check() -> Unit raise {
 
 ///|
 extern "C" fn watch_state() -> Bool = "ttyd_watch_state"
-
-///|
-extern "C" fn trace_nested(stage : Int32) -> Unit = "ttyd_trace_nested"
