@@ -2,6 +2,7 @@
 package "moonbitlang/core/compress/gzip"
 
 import {
+  "moonbitlang/core/async/io",
   "moonbitlang/core/compress/flate",
   "moonbitlang/core/debug",
 }
@@ -46,6 +47,30 @@ pub(all) enum GzipErrorKind {
   InvalidArgument
 }
 pub fn GzipErrorKind::equal(Self, Self) -> Bool
+
+type StreamDecoder[R]
+pub fn[R] StreamDecoder::StreamDecoder(R, multistream? : Bool) -> Self[R]
+pub async fn[R : @io.BinaryReader] StreamDecoder::drop_all(Self[R]) -> Int64 raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::drop_exactly(Self[R], Int32) -> Unit raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::peek(Self[R]) -> BytesView? raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::peek_at_least(Self[R], Int32) -> BytesView raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::peek_exactly(Self[R], Int32) -> BytesView raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::peek_until(Self[R], BytesView, include_delimiter? : Bool) -> BytesView? raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read(Self[R]) -> Bytes? raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read_all(Self[R]) -> Bytes raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read_at_least(Self[R], Int32) -> Bytes raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read_exactly(Self[R], Int32) -> Bytes raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read_into(Self[R], MutArrayView[Byte]) -> Int32 raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] StreamDecoder::read_until(Self[R], BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
+pub impl[R : @io.BinaryReader] @io.BinaryReader for StreamDecoder[R]
+
+type StreamEncoder[W]
+pub fn[W] StreamEncoder::StreamEncoder(W, level? : Int32, fast_store? : Bool) -> Self[W]
+pub async fn[W : @io.BinaryWriter] StreamEncoder::end(Self[W]) -> Unit
+pub async fn[W : @io.BinaryWriter] StreamEncoder::flush_partial_data(Self[W]) -> Unit
+pub async fn[W : @io.BinaryWriter] StreamEncoder::write(Self[W], BytesView) -> Unit raise @io.WriterError
+pub async fn[W : @io.BinaryWriter] StreamEncoder::write_reader(Self[W], &@io.BinaryReader) -> Unit
+pub impl[W : @io.BinaryWriter] @io.BinaryWriter for StreamEncoder[W]
 
 // Type aliases
 pub using @flate {type DeflateAction}

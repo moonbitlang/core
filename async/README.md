@@ -33,7 +33,6 @@ In order to use asynchronous programming API, users do need to import specific p
 - `moonbitlang/core/async/signal`: control signal handling behavior
 - `moonbitlang/core/async/raw_fd`: integrate arbitrary file descriptor into `moonbitlang/core/async`'s event loop.
     Only supports native backend
-- `moonbitlang/core/async/gzip`: wrap async stream with gzip compression/decompression
 - `moonbitlang/core/async/tls`: TLS support via OpenSSL/Schannel
 - `moonbitlang/core/async/js_async`: integration with JavaScript promise and readable stream.
     Only supports JavaScript backend.

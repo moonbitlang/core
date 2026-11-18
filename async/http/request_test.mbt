@@ -77,7 +77,7 @@ async test "manual Accept-Encoding" {
         conn.send_response(200, "OK", extra_headers={
           "Content-Encoding": "gzip",
         })
-        @gzip_stream.Encoder(conn)..write_reader(file).end()
+        @compress/gzip.StreamEncoder(conn)..write_reader(file).end()
         conn.end_response()
       })
     }
