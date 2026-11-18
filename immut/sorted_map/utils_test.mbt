@@ -49,19 +49,6 @@ test "get with non-existing key" {
 }
 
 ///|
-test "get with pattern" {
-  let map = @sorted_map.SortedMap([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  guard! map
-    is { 3: "three", 8: "eight", 1: "one", 2: "two", 0: "zero", 4? : None, .. }
-}
-
-///|
 test "get after insertion" {
   let map = @sorted_map.SortedMap([
     (3, "three"),

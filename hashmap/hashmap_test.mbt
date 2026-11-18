@@ -39,9 +39,6 @@ test "get" {
   debug_inspect(m.get("b"), content="Some(2)")
   debug_inspect(m.get("c"), content="Some(3)")
   debug_inspect(m.get("d"), content="None")
-
-  // pattern
-  guard! m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
 }
 
 ///|
@@ -331,9 +328,9 @@ test "get_nonexistent_key_with_psl" {
 ///|
 test "from_iter multiple elements iter" {
   let map = @hashmap.from_iter([|(1, 1), (2, 2), (3, 3)|])
-  guard map is { 1: 1, 2: 2, 3: 3, .. } else {
-    fail("Map is not expected: \{Repr(map)}")
-  }
+  debug_inspect(map.get(1), content="Some(1)")
+  debug_inspect(map.get(2), content="Some(2)")
+  debug_inspect(map.get(3), content="Some(3)")
   inspect(map.length(), content="3")
 }
 

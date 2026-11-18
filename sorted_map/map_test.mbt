@@ -55,9 +55,6 @@ test "get" {
     ),
   )
   debug_inspect(map.get(4), content="None")
-
-  // pattern
-  guard! map is { 1: "a", 2: "b", 3: "c", 4? : None, .. }
 }
 
 ///|
