@@ -1782,7 +1782,7 @@ pub fn[X] default() -> List[X] {
 #alias(iterator, deprecated)
 pub fn[A] List::iter(self : List[A]) -> Iter[A] {
   let mut next = self
-  Iter::new(fn() {
+  Iter(fn() {
     match next {
       Empty => None
       More(head, tail~) => {

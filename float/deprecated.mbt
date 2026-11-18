@@ -57,7 +57,7 @@ pub fn Float::until(
     return [||]
   }
   let mut curr_value = Some(self)
-  Iter::new(() => {
+  Iter(() => {
     guard curr_value is Some(i) else { None }
     guard (step > 0.0 && i < end) ||
       (step < 0.0 && i > end) ||

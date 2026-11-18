@@ -524,7 +524,7 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
   let parents = []
   let mut tail_index = 0
   let tail_len = self.tail.length()
-  Iter::new(
+  Iter(
     fn() {
       if leaf_index < leaf_len {
         let elem = curr_leaf.unsafe_get(leaf_index)

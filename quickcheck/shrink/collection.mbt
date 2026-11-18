@@ -16,7 +16,7 @@
 fn[T : Shrink] shrink_list_elements(xs : @list.List[T]) -> Iter[@list.List[T]] {
   let mut prefix : @list.List[T] = List([])
   let mut remaining = xs
-  Iter::new(fn() {
+  Iter(fn() {
     match remaining {
       Empty => None
       More(x, tail~) => {

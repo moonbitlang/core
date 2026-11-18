@@ -1656,7 +1656,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut index = 0
-  Iter::new(
+  Iter(
     fn() {
       guard index < len else { None }
       let elem = buf.unsafe_get(wrap_index(head + index, cap))
@@ -1741,7 +1741,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
   let { buf, head, len, } = self
   let cap = buf.length()
   let mut index = len
-  Iter::new(
+  Iter(
     fn() {
       guard index > 0 else { None }
       index -= 1

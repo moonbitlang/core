@@ -453,7 +453,7 @@ pub fn[T] MutArrayView::to_owned(self : MutArrayView[T]) -> Array[T] {
 pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = 0
   let len = self.length()
-  Iter::new(
+  Iter(
     fn() {
       guard i < len else { None }
       let elem = self.unsafe_get(i)
@@ -470,7 +470,7 @@ pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
 pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
   let len = self.length()
   let mut i = len
-  Iter::new(
+  Iter(
     fn() {
       guard i > 0 else { None }
       i -= 1

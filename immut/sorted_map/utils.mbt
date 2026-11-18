@@ -507,7 +507,7 @@ fn[K, V] sorted_map_from_sorted_entries(
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -664,7 +664,7 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -701,7 +701,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {

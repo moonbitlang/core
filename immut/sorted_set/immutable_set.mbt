@@ -550,7 +550,7 @@ pub fn[A : Compare] SortedSet::range(
 ) -> Iter[A] {
   let todo_list = []
   let mut next_node = self
-  Iter::new(fn() {
+  Iter(fn() {
     for x = next_node {
       match x {
         Node(left~, right~, value~, ..) => {

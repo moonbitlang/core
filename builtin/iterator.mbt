@@ -231,8 +231,9 @@ pub fn[X] Iter::count_if(
 ///
 /// This function is intended for use by data structure authors,
 /// and should not be called by end users in general.
+#alias(new, deprecated="Use `Iter(f, size_hint=...)` instead")
 #owned(f)
-pub fn[X] Iter::new(f : () -> X?, size_hint? : Int32) -> Iter[X] {
+pub fn[X] Iter::Iter(f : () -> X?, size_hint? : Int32) -> Iter[X] {
   let size_hint = match size_hint {
     Some(n) if n > 0 => Some(n)
     Some(_) => Some(0)
@@ -254,7 +255,7 @@ pub fn[X] Iter::new(f : () -> X?, size_hint? : Int32) -> Iter[X] {
 ///
 /// Returns an empty iterator of type `Iter[X]`.
 pub fn[X] Iter::empty() -> Iter[X] {
-  Iter::new(() => None, size_hint=0)
+  Iter(() => None, size_hint=0)
 }
 
 ///|
@@ -275,7 +276,7 @@ pub fn[X] Iter::empty() -> Iter[X] {
 /// Returns an iterator of type `Iter[X]` that contains the single element `elem`.
 pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
   let mut consumed = false
-  Iter::new(
+  Iter(
     fn() {
       if consumed {
         None
@@ -303,7 +304,7 @@ pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
 ///
 /// Returns an iterator of type `Iter[X]` that repeats the element `x` indefinitely.
 pub fn[X] Iter::repeat(x : X) -> Iter[X] {
-  Iter::new(() => Some(x))
+  Iter(() => Some(x))
 }
 
 ///|
@@ -325,7 +326,7 @@ pub fn[X] Iter::repeat(x : X) -> Iter[X] {
 /// # Note
 /// The old iterator `self` must not be used again after calling `filter`.
 pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
-  Iter::new(fn() {
+  Iter(fn() {
     for x in self {
       if f(x) {
         break Some(x)
@@ -403,7 +404,7 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int32, X) -> Y) -> Iter[Y] {
 ///
 /// The old iterator `self` must not be used again after calling `filter_map`.
 pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
-  Iter::new(fn() {
+  Iter(fn() {
     while self.next() is Some(x) {
       guard f(x) is (Some(_) as y) else { () }
       break y
@@ -435,7 +436,7 @@ pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
 /// must not be used again after calling `flat_map`.
 pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
   let mut current_iter = Some([||])
-  Iter::new(fn() {
+  Iter(fn() {
     guard current_iter is Some(iter) else { None }
     for x = iter.next() {
       match x {
@@ -576,7 +577,7 @@ pub fn[X] Iter::take(self : Iter[X], n : Int32) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `take_while`.
 pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut still_running = true
-  Iter::new(fn() {
+  Iter(fn() {
     guard still_running else { None }
     let result = self.next()
     if result is Some(x) && !f(x) {
@@ -593,7 +594,7 @@ pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `map_while`.
 pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
   let mut still_running = true
-  Iter::new(fn() {
+  Iter(fn() {
     guard still_running else { None }
     let src = self.next()
     guard src is Some(x) else { None }
@@ -664,7 +665,7 @@ pub fn[X] Iter::drop(self : Iter[X], n : Int32) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `drop_while`.
 pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut dropped = false
-  Iter::new(fn() {
+  Iter(fn() {
     if !dropped {
       dropped = true
       for x = self.next() {

@@ -362,7 +362,7 @@ pub fn BytesView::clamped_view(
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   let mut i = 0
   let len = self.length()
-  Iter::new(
+  Iter(
     fn() {
       guard i < len else { None }
       let result = self.unsafe_get(i)

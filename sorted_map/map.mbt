@@ -417,7 +417,7 @@ pub fn[K, V] SortedMap::eachi(
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
@@ -451,7 +451,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
@@ -493,7 +493,7 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {

@@ -65,7 +65,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   let mut i = 0
   let len = self.entries.length()
-  Iter::new(
+  Iter(
     fn() {
       while i < len {
         let entry = self.entries.unsafe_get(i)
@@ -320,7 +320,7 @@ pub fn[K, V] HashMap::eachi(
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
-  Iter::new(
+  Iter(
     () => {
       while i < self.entries.length() {
         let entry = self.entries[i]
@@ -364,7 +364,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
-  Iter::new(
+  Iter(
     () => {
       while i < self.entries.length() {
         let entry = self.entries[i]

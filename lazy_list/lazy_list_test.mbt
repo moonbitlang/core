@@ -33,7 +33,7 @@ test "from_iter is re-traversable and memoizes pulls" {
   let pulls : Ref[Int32] = Ref(0)
   let source = [1, 2, 3, 4]
   let underlying = source.iter()
-  let counted = Iter::new(() => {
+  let counted = Iter(() => {
     match underlying.next() {
       None => None
       Some(x) => {
@@ -356,7 +356,7 @@ test "concat keeps both sides memoized across traversals" {
   fn counted(source : Array[Int32]) -> @lazy_list.LazyList[Int32] {
     let underlying = source.iter()
     @lazy_list.from_iter(
-      Iter::new(() => {
+      Iter(() => {
         match underlying.next() {
           None => None
           Some(x) => {

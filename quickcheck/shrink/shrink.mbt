@@ -73,7 +73,7 @@ pub impl Shrink for @bigint.BigInt with fn shrink(x) {
   let negative = x < zero
   let mut shift = bit_length - 1
   let mut emit_zero = true
-  Iter::new(
+  Iter(
     () => {
       if shift > 0 {
         let delta = magnitude >> shift

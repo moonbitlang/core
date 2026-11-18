@@ -558,7 +558,7 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
   }
   let mut curr_index = 0
   let parents = []
-  Iter::new(fn() {
+  Iter(fn() {
     for cn = curr_node {
       match cn {
         Tree(Flat(x, _)) => {

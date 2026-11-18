@@ -27,7 +27,7 @@ test "debug repr for core values" {
 
 ///|
 test "debug repr for iterators and map" {
-  let iter : Iter[Unit] = Iter::new(() => None)
+  let iter : Iter[Unit] = Iter(() => None)
   let iter_str = @debug.to_string(iter)
   assert_true(iter_str.contains("Iter"))
   let iter2 : Iter2[Unit, Unit] = Iter2::new(() => None)

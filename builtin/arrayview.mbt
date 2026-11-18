@@ -701,7 +701,7 @@ pub fn[T] ArrayView::suffixes(
 ) -> Iter[ArrayView[T]] {
   let len = self.length()
   let mut i = 0
-  Iter::new(
+  Iter(
     fn() -> ArrayView[T]? {
       if i < len {
         let suffix = self[i:]
@@ -954,7 +954,7 @@ pub fn[T1, T2] ArrayView::unzip(
 pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
   let mut i = 0
   let len = self.length()
-  Iter::new(
+  Iter(
     fn() {
       guard i < len else { None }
       let elem = self.unsafe_get(i)
@@ -982,7 +982,7 @@ pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
 pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
   let len = self.length()
   let mut i = len
-  Iter::new(
+  Iter(
     fn() {
       guard i > 0 else { None }
       i -= 1
