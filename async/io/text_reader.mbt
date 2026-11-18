@@ -24,10 +24,23 @@
 ///
 /// `read_until()` is similar to `BinaryReader::read_until`,
 /// except that it operates over text instead of binary input.
+///
+/// `read_line()` reads a whole line from the reader.
+/// The line delimiter could be either `\n` or `\r\n`.
+/// A plain `\r` is left as-is and not interpreted as newline delimiter.
+/// If the stream reaches EOF without a trailing newline,
+/// all remaining content will be returned as a line.
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included as well.
+///
+/// `read_lines()` is similar to `read_line()`,
+/// except that it automatically collects all lines in the stream until EOF.
 pub(open) trait TextReader {
   async fn read(Self) -> String? raise ReaderError
   async fn read_all(Self) -> String raise ReaderError
   async fn read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
+  async fn read_line(Self, include_newline? : Bool) -> String? raise ReaderError
+  async fn read_lines(Self, include_newline? : Bool) -> Array[String] raise ReaderError = _
 }
 
 ///|
@@ -65,6 +78,13 @@ pub fn Utf8Reader::close(self : Utf8Reader) -> Unit {
 }
 
 ///|
+/// `read()` fetch and returns a chunk of text from the stream.
+/// The length of the returned chunk is random.
+/// `read()` will return as soon as enough data has arrived.
+///
+/// `read()` is cancellation safe as long as
+/// the underlying binray stream is cancellation safe.
+/// When `read()` is cancelled, no data will be lost.
 pub impl TextReader for Utf8Reader with fn read(self) {
   guard! self.inner is Some(inner)
   let controller = BinaryReaderImpl::get_controller(inner)
@@ -103,6 +123,7 @@ pub impl TextReader for Utf8Reader with fn read(self) {
 }
 
 ///|
+/// `read_all()` returns all remaining text in the stream.
 pub impl TextReader for Utf8Reader with fn read_all(self) {
   guard! self.inner is Some(inner)
   let data = inner.read_all()
@@ -112,6 +133,24 @@ pub impl TextReader for Utf8Reader with fn read_all(self) {
 }
 
 ///|
+/// `reader.read_until(pat, include_delimiter~ : Bool = false)` is similar to
+/// `BinaryReader::read_until`, except that it operates over text instead of binary input.
+///
+/// If `pat` is found in the input stream, content before that occurrence is returned
+/// and the delimiter is consumed.
+/// If `include_delimiter` is `true`, `pat` itself is included at the end of the result.
+/// The returned data may be empty in this case if `include_delimiter` is `false`.
+///
+/// EOF is implicitly treated as a delimiter by `reader.read_until()`.
+/// If `pat` is not found in the input stream when EOF is reached,
+/// trailing data before EOF will be returned (or `None` if there is no trailing data).
+/// In this case, the returned data contains no trailing delimiter
+/// even if `include_delimiter=true`. This can be used to detect the presence of
+/// trailing delimiter in the input stream.
+///
+/// `read_until()` is cancellation safe as long as
+/// the underlying binray stream is cancellation safe.
+/// When `read_until()` is cancelled, no data will be lost.
 pub impl TextReader for Utf8Reader with fn read_until(
   self,
   pattern,
@@ -131,4 +170,60 @@ pub impl TextReader for Utf8Reader with fn read_until(
 }
 
 ///|
-pub extend Utf8Reader with TextReader::{read, read_all, read_until}
+/// `read_line()` reads a whole line from the reader.
+/// The line delimiter could be either `\n` or `\r\n`.
+/// A plain `\r` is left as-is and not interpreted as newline delimiter.
+/// If the stream reaches EOF without a trailing newline,
+/// all remaining content will be returned as a line.
+///
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included as well.
+///
+/// `read_line()` is cancellation safe as long as
+/// the underlying binray stream is cancellation safe.
+/// When `read_line()` is cancelled, no data will be lost.
+pub impl TextReader for Utf8Reader with fn read_line(
+  self,
+  include_newline~ : Bool = false,
+) {
+  guard! self.inner is Some(inner)
+  guard inner.peek_until(b"\n", include_delimiter=true) is Some(whole_line) else {
+    return None
+  }
+  let line_bytes = match whole_line {
+    line if include_newline => line
+    [.. line, b'\r', b'\n'] => line
+    [.. line, b'\n'] => line
+    line => line
+  }
+  inner.drop_exactly(whole_line.length())
+  Some(@utf8.decode(line_bytes)) catch {
+    Malformed(_) => raise MalformedText
+  }
+}
+
+///|
+/// `read_lines()` read all remaining content from a text reader,
+/// and split them into an array of lines.
+/// The line delimiter could be either `\n` or `\r\n`.
+/// A plain `\r` is left as-is and not interpreted as newline delimiter.
+/// Non-empty trailer after the last newline is returned as the last line.
+///
+/// If `include_newline` is `true` (`false` by default),
+/// the newline delimiter, if any, will be included in each returned line as well.
+impl TextReader with fn read_lines(self, include_newline~ : Bool = false) {
+  let lines = []
+  while self.read_line(include_newline~) is Some(line) {
+    lines.push(line)
+  }
+  lines
+}
+
+///|
+pub extend Utf8Reader with TextReader::{
+  read,
+  read_all,
+  read_until,
+  read_line,
+  read_lines,
+}

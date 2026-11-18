@@ -119,9 +119,14 @@ fn ParseContext::parse_container(
 }
 
 ///|
-/// Parses the rest of an object after its `{`. Each step lexes the
-/// punctuation it expects with `lexscan`, which skips the whitespace before
-/// it; anything else is an error, reported by `unexpected_token`.
+/// Parses the rest of an object after its `{`.
+///
+/// This frame stays on the stack for every level of nesting, and in a debug
+/// native build each `lexscan` in it reserves its own stack slots. With all
+/// four of an object's `lexscan`s inline, 1024 nested objects overflowed the
+/// 1 MiB main-thread stack on Windows. So only the `,` or `}` after each value
+/// is lexed here; the property name and its `:` are lexed by
+/// `lex_property_name`.
 fn ParseContext::parse_object(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
@@ -131,22 +136,11 @@ fn ParseContext::parse_object(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let map = Map([])
-  lexscan ctx {
-    re"^[ \t\r\n]*" + re"\"" => ()
-    re"^[ \t\r\n]*" + re"[}]" => return Json::object(map)
-    _ => ctx.unexpected_token()
+  if ctx.lex_empty_container_end('}') {
+    return Json::object(map)
   }
   for ;; {
-    // The cursor is just past the opening quote of a property name.
-    let offset = ctx.offset - 1
-    let name = ctx.lex_string()
-    if ctx.reject_duplicate_keys && map.contains(name) {
-      raise DuplicateKey(offset_to_position(ctx.input, offset), name)
-    }
-    lexscan ctx {
-      re"^[ \t\r\n]*" + re":" => ()
-      _ => ctx.unexpected_token()
-    }
+    let name = ctx.lex_property_name(map)
     map[name] = match ctx.lex_value() {
       Some(value) => value
       None =>
@@ -154,16 +148,36 @@ fn ParseContext::parse_object(
           remaining_available_depth=child_remaining_available_depth,
         )
     }
+    // After `,` only a property name may follow, not `}`, and
+    // `lex_property_name` reports anything else.
     lexscan ctx {
-      re"^[ \t\r\n]*" + re"," => ()
+      re"^[ \t\r\n]*" + re"," => continue
       re"^[ \t\r\n]*" + re"[}]" => break Json::object(map)
       _ => ctx.unexpected_token()
     }
-    // After `,` only a property name may follow, not `}`.
-    lexscan ctx {
-      re"^[ \t\r\n]*" + re"\"" => ()
-      _ => ctx.unexpected_token()
-    }
+  }
+}
+
+///|
+/// Lexes a property name and the `:` that follows it, skipping the whitespace
+/// before each. With `reject_duplicate_keys`, raises `DuplicateKey` if `map`
+/// already has the name.
+fn ParseContext::lex_property_name(
+  ctx : ParseContext,
+  map : Map[String, Json],
+) -> String raise ParseError {
+  lexscan ctx {
+    re"^[ \t\r\n]*" + re"\"" => ()
+    _ => ctx.unexpected_token()
+  }
+  let offset = ctx.offset - 1
+  let name = ctx.lex_string()
+  if ctx.reject_duplicate_keys && map.contains(name) {
+    raise DuplicateKey(offset_to_position(ctx.input, offset), name)
+  }
+  lexscan ctx {
+    re"^[ \t\r\n]*" + re":" => name
+    _ => ctx.unexpected_token()
   }
 }
 
@@ -180,7 +194,7 @@ fn ParseContext::parse_array(
   }
   let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
-  if ctx.lex_empty_array_end() {
+  if ctx.lex_empty_container_end(']') {
     return Json::array(vec)
   }
   for ;; {
@@ -201,11 +215,16 @@ fn ParseContext::parse_array(
 }
 
 ///|
-/// Skips whitespace after `[` and consumes `]` if the array is empty.
-/// Otherwise `lex_value` starts at the first non-whitespace character or EOF.
-fn ParseContext::lex_empty_array_end(ctx : ParseContext) -> Bool {
+/// Skips whitespace after a container's opening bracket and consumes `close`
+/// if the container is empty. Otherwise the cursor is left at the first
+/// non-whitespace character or EOF, where `lex_value` (for an array) or
+/// `lex_property_name` (for an object) starts.
+fn ParseContext::lex_empty_container_end(
+  ctx : ParseContext,
+  close : UInt16,
+) -> Bool {
   ctx.lex_skip_whitespace()
-  if ctx.offset < ctx.end_offset && ctx.input.unsafe_get(ctx.offset) == ']' {
+  if ctx.offset < ctx.end_offset && ctx.input.unsafe_get(ctx.offset) == close {
     ctx.offset += 1
     true
   } else {

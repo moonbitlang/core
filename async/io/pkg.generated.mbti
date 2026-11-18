@@ -87,12 +87,16 @@ type Utf8Reader
 pub fn[R : BinaryReader] Utf8Reader::Utf8Reader(R) -> Self
 pub async fn Utf8Reader::read(Self) -> String? raise ReaderError
 pub async fn Utf8Reader::read_all(Self) -> String raise ReaderError
+pub async fn Utf8Reader::read_line(Self, include_newline? : Bool) -> String? raise ReaderError
+pub async fn Utf8Reader::read_lines(Self, include_newline? : Bool) -> Array[String] raise ReaderError
 pub async fn Utf8Reader::read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
 pub impl TextReader for Utf8Reader
 
 type Utf8TextView
 pub async fn Utf8TextView::read(Self) -> String? raise ReaderError
 pub async fn Utf8TextView::read_all(Self) -> String raise ReaderError
+pub async fn Utf8TextView::read_line(Self, include_newline? : Bool) -> String? raise ReaderError
+pub async fn Utf8TextView::read_lines(Self, include_newline? : Bool) -> Array[String] raise ReaderError
 pub async fn Utf8TextView::read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
 pub async fn Utf8TextView::write(Self, StringView) -> Unit raise WriterError
 pub async fn Utf8TextView::write_json(Self, @json.Json) -> Unit raise WriterError
@@ -146,6 +150,8 @@ pub(open) trait TextReader {
   async fn read(Self) -> String? raise ReaderError
   async fn read_all(Self) -> String raise ReaderError
   async fn read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
+  async fn read_line(Self, include_newline? : Bool) -> String? raise ReaderError
+  async fn read_lines(Self, include_newline? : Bool) -> Array[String] raise ReaderError = _
 }
 
 pub(open) trait TextWriter {

@@ -1246,3 +1246,46 @@ test "stringview equal_ignore_ascii_case" {
     )
   }
 }
+
+///|
+// Every pair of single code units drawn from Latin-1, units whose low byte is
+// an ASCII letter (U+0141, U+0161, U+1041, U+1061), and fullwidth 'Ａ'/'ａ'
+// (U+FF21, U+FF41), checked against a naive per-character fold.
+// This pins the bit-5 near-misses that a bare `c | 0x20` would get wrong:
+// '@'/'`', '['/'{', NUL/' ', 'Ä'/'ä', 'ß'/'ÿ', and U+0141/U+0161.
+test "ignore_ascii_case matches naive fold on single code units" {
+  let units : Array[Int32] = [0x141, 0x161, 0x1041, 0x1061, 0xFF21, 0xFF41]
+  for c in 0..<0x100 {
+    units.push(c)
+  }
+  for x in units {
+    for y in units {
+      let a = x.unsafe_to_char()
+      let b = y.unsafe_to_char()
+      let fa = a.to_ascii_lowercase().to_int()
+      let fb = b.to_ascii_lowercase().to_int()
+      let expected = fa.compare(fb)
+      let sa = String::make(1, a)
+      let sb = String::make(1, b)
+      let got = sa[:].compare_ignore_ascii_case(sb)
+      assert_eq(got.compare(0), expected, msg="compare \{x} \{y}")
+      assert_eq(
+        sa[:].equal_ignore_ascii_case(sb),
+        expected == 0,
+        msg="equal \{x} \{y}",
+      )
+    }
+  }
+}
+
+///|
+test "compare_ignore_ascii_case orders by the folded unit" {
+  // Raw '_' (0x5F) > 'A' (0x41), but after folding 'A' -> 'a' (0x61) it is less.
+  inspect("_".compare_ignore_ascii_case("A"), content="-1")
+  inspect("A".compare_ignore_ascii_case("_"), content="1")
+  // The deciding position comes after a run of case-differing letters.
+  inspect("HELLO_".compare_ignore_ascii_case("helloa"), content="-1")
+  inspect("helloA".compare_ignore_ascii_case("HELLO_"), content="1")
+  // Lengths decide once the common prefix matches under folding.
+  inspect("HeLLo".compare_ignore_ascii_case("hello!"), content="-1")
+}
