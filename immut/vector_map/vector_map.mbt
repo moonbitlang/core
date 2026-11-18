@@ -58,8 +58,6 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 ///   )
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
 pub fn[K : Eq + Hash, V] VectorMap::VectorMap(
   arr : ArrayView[(K, V)],
 ) -> VectorMap[K, V] {

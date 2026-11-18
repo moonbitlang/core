@@ -11,8 +11,6 @@ import {
 
 // Types and methods
 type LazyList[A]
-#alias(from_array)
-#as_free_fn(from_array)
 pub fn[A] LazyList::LazyList(ArrayView[A]) -> Self[A]
 pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
 pub fn[A] LazyList::drop(Self[A], Int32) -> Self[A]
