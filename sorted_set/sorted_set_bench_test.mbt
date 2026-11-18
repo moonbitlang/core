@@ -20,7 +20,7 @@ let sorted_set_bench_n = 50000
 /// are both kept because the element type decides whether the per-element
 /// store carries reference-counting traffic.
 test "bench SortedSet::to_array Int n=50000" (it : @bench.T) {
-  let s = @sorted_set.from_array(
+  let s = @sorted_set.SortedSet(
     Array::makei(sorted_set_bench_n, i => i * 1103515245),
   )
   it.bench(fn() { it.keep(s.to_array()) })
@@ -28,7 +28,7 @@ test "bench SortedSet::to_array Int n=50000" (it : @bench.T) {
 
 ///|
 test "bench SortedSet::to_array Ref n=50000" (it : @bench.T) {
-  let s = @sorted_set.from_array(
+  let s = @sorted_set.SortedSet(
     Array::makei(sorted_set_bench_n, i => "value\{i}"),
   )
   it.bench(fn() { it.keep(s.to_array()) })

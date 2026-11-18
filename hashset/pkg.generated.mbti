@@ -12,10 +12,10 @@ import {
 
 // Types and methods
 type HashSet[K]
-#alias(from_array)
+#alias(from_array, deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array)
+#as_free_fn(from_array, deprecated)
 pub fn[K : Hash + Eq] HashSet::HashSet(ArrayView[K], capacity? : Int32) -> Self[K]
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit

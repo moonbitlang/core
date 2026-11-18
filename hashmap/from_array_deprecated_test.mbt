@@ -13,29 +13,23 @@
 // limitations under the License.
 
 ///|
-test "from_array aliases preserve constructor semantics on views" {
+#warnings("-deprecated")
+test "deprecated from_array aliases retain constructor semantics" {
   let source = [
     (9, "outside"),
-    (2, "two"),
-    (1, "first"),
-    (1, "last"),
+    (2, "first"),
+    (1, "one"),
+    (2, "last"),
     (8, "outside"),
   ]
   let view = source[1:4]
-  let by_method = @hashmap.HashMap::from_array(view)
-  let by_function = @hashmap.from_array(view)
-  inspect(by_method == HashMap(view), content="true")
-  inspect(by_function == by_method, content="true")
+  let by_method = @hashmap.HashMap::from_array(view, capacity=8)
+  let by_function = @hashmap.from_array(view, capacity=8)
+  inspect(by_method == by_function, content="true")
+  inspect(by_method == HashMap(view, capacity=8), content="true")
+  source[3] = (2, "changed")
   debug_inspect(
-    (
-      by_method.length(),
-      by_method.get(1),
-      by_function.length(),
-      by_function.get(1),
-    ),
-    content="(2, Some(\"last\"), 2, Some(\"last\"))",
+    (by_method.length(), by_method.get(2)),
+    content="(2, Some(\"last\"))",
   )
-  let empty_items : ArrayView[(Int32, String)] = []
-  inspect(@hashmap.HashMap::from_array(empty_items).is_empty(), content="true")
-  inspect(@hashmap.from_array(empty_items).is_empty(), content="true")
 }

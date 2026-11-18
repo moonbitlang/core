@@ -631,6 +631,16 @@ pub impl[A : Show] Show for HashSet[A] with fn output(self, logger) {
 
 ///|
 /// Creates a hash set from an array of values.
+#as_free_fn(deprecated="Use @immut/hashset.HashSet([...]) instead")
+#alias(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
+#deprecated("Use @immut/hashset.HashSet([...]) instead")
+pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
+  hash_set_from_array(arr)
+}
+
+///|
+/// Creates a hash set from an array of values.
 ///
 /// Of several equal values, the first one is kept, as if the values were
 /// `add`ed in order.
@@ -644,10 +654,6 @@ pub impl[A : Show] Show for HashSet[A] with fn output(self, logger) {
 ///   @test.assert_eq(set.contains(4), false)
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
-#as_free_fn(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
 pub fn[A : Eq + Hash] HashSet::HashSet(arr : ArrayView[A]) -> HashSet[A] {
   hash_set_from_array(arr)
 }

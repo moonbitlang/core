@@ -32,7 +32,7 @@ Create an empty deque with `Deque([])`, or construct one from an array or iterat
 test {
   let dv : @deque.Deque[Int32] = Deque([])
   @test.assert_eq(dv.is_empty(), true)
-  let dv2 = @deque.from_array([1, 2, 3, 4, 5])
+  let dv2 = @deque.Deque([1, 2, 3, 4, 5])
   @test.assert_eq(dv2.length(), 5)
   let dv3 = @deque.from_iter([|1, 2, 3|])
   @test.assert_eq(dv3.length(), 3)
@@ -54,7 +54,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   @test.assert_eq(dv.length(), 3)
   @test.assert_eq(dv.is_empty(), false)
   // reserve additional capacity
@@ -73,7 +73,7 @@ Use index syntax `dv[i]` or `at()` for direct access. Use `get()` for a safe loo
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([10, 20, 30, 40, 50])
+  let dv = @deque.Deque([10, 20, 30, 40, 50])
   @test.assert_eq(dv[0], 10)
   @test.assert_eq(dv[4], 50)
   @test.assert_eq(dv.get(2), Some(30))
@@ -90,7 +90,7 @@ Push and pop at both ends in O(1) amortized time:
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([2, 3])
+  let dv = @deque.Deque([2, 3])
   dv.push_front(1)
   dv.push_back(4)
   debug_inspect(
@@ -119,7 +119,7 @@ Mutate elements by index:
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   dv[1] = 20
   @test.assert_eq(dv[1], 20)
 }
@@ -132,7 +132,7 @@ Insert or remove elements at arbitrary positions (O(n)):
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 4])
+  let dv = @deque.Deque([1, 2, 4])
   dv.insert(2, 3) // insert 3 at index 2
   debug_inspect(
     dv,
@@ -158,8 +158,8 @@ Use `+` or `append()` to combine deques. `append` mutates the receiver in place.
 ```mbt check
 ///|
 test {
-  let a = @deque.from_array([1, 2])
-  let b = @deque.from_array([3, 4])
+  let a = @deque.Deque([1, 2])
+  let b = @deque.Deque([3, 4])
   debug_inspect(
     a + b,
     content=(
@@ -183,7 +183,7 @@ Linear search with `contains()` and `search()`. Binary search on sorted deques w
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   @test.assert_eq(dv.contains(3), true)
   @test.assert_eq(dv.search(3), Some(2))
   // binary_search returns Ok(index) if found, Err(insertion_point) if not
@@ -201,7 +201,7 @@ Forward and reverse iteration via `each`, `eachi`, `iter`, and their `rev_*` cou
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   // each / eachi
   let buf = []
   dv.each(fn(x) { buf.push(x) })
@@ -226,7 +226,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   debug_inspect(
     dv.map(fn(x) { x * 2 }),
     content=(
@@ -246,7 +246,7 @@ test {
     ),
   )
   // retain modifies in place
-  let dv2 = @deque.from_array([1, 2, 3, 4, 5])
+  let dv2 = @deque.Deque([1, 2, 3, 4, 5])
   dv2.retain(fn(x) { x > 3 })
   debug_inspect(
     dv2,
@@ -255,7 +255,7 @@ test {
     ),
   )
   // retain_map: keep Some values, drop None
-  let dv3 = @deque.from_array([1, 2, 3, 4])
+  let dv3 = @deque.Deque([1, 2, 3, 4])
   dv3.retain_map(fn(x) { if x % 2 == 0 { Some(x * 10) } else { None } })
   debug_inspect(
     dv3,
@@ -273,7 +273,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   let extracted = dv.extract_if(fn(x) { x % 2 == 0 })
   debug_inspect(
     extracted,
@@ -287,7 +287,7 @@ test {
       #|<Deque: [1, 3, 5]>
     ),
   )
-  let dv2 = @deque.from_array([1, 2, 3, 4, 5])
+  let dv2 = @deque.Deque([1, 2, 3, 4, 5])
   let drained = dv2.drain(start=1, len=2)
   debug_inspect(
     drained,
@@ -311,7 +311,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   let cs = dv.chunks(2)
   debug_inspect(
     cs,
@@ -320,7 +320,7 @@ test {
     ),
   )
   // chunk_by groups consecutive elements that satisfy a predicate
-  let dv2 = @deque.from_array([1, 1, 2, 2, 3])
+  let dv2 = @deque.Deque([1, 1, 2, 2, 3])
   let grouped = dv2.chunk_by(fn(a, b) { a == b })
   debug_inspect(
     grouped,
@@ -336,7 +336,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   // rev returns a new reversed deque
   debug_inspect(
     dv.rev(),
@@ -360,7 +360,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   let shuffled = dv.shuffle(rand=fn(_n) { 0 }) // deterministic for test
   @test.assert_eq(shuffled.length(), 5)
 }
@@ -373,7 +373,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let dv = @deque.Deque([1, 2, 3, 4, 5])
   dv.truncate(3)
   debug_inspect(
     dv,
@@ -393,8 +393,8 @@ test {
 ```mbt check
 ///|
 test {
-  let src = @deque.from_array([1, 2, 3, 4, 5])
-  let dst = @deque.from_array([0, 0, 0, 0, 0])
+  let src = @deque.Deque([1, 2, 3, 4, 5])
+  let dst = @deque.Deque([0, 0, 0, 0, 0])
   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
   debug_inspect(
     dst,
@@ -412,9 +412,9 @@ test {
 ```mbt check
 ///|
 test {
-  let nested : @deque.Deque[@deque.Deque[Int32]] = @deque.from_array([
-    @deque.from_array([1, 2]),
-    @deque.from_array([3, 4]),
+  let nested : @deque.Deque[@deque.Deque[Int32]] = Deque([
+    Deque([1, 2]),
+    Deque([3, 4]),
   ])
   debug_inspect(
     nested.flatten(),
@@ -422,7 +422,7 @@ test {
       #|<Deque: [1, 2, 3, 4]>
     ),
   )
-  let words = @deque.from_array(["hello", "world"])
+  let words = @deque.Deque(["hello", "world"])
   inspect(words.join(", "), content="hello, world")
 }
 ```
@@ -434,7 +434,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   let (v1, v2) = dv.as_views()
   // for a non-wrapped deque, all elements are in the first view
   @test.assert_eq(v1.length() + v2.length(), 3)
@@ -446,7 +446,7 @@ test {
 ```mbt check
 ///|
 test {
-  let dv = @deque.from_array([1, 2, 3])
+  let dv = @deque.Deque([1, 2, 3])
   @test.assert_eq(dv.to_array(), [1, 2, 3])
 }
 ```
@@ -458,9 +458,9 @@ Deques support `==` (element-wise equality) and `compare()` (shortlex order).
 ```mbt check
 ///|
 test {
-  let a = @deque.from_array([1, 2, 3])
-  let b = @deque.from_array([1, 2, 3])
+  let a = @deque.Deque([1, 2, 3])
+  let b = @deque.Deque([1, 2, 3])
   @test.assert_eq(a == b, true)
-  @test.assert_eq(a.compare(@deque.from_array([1, 2, 4])) < 0, true)
+  @test.assert_eq(a.compare(Deque([1, 2, 4])) < 0, true)
 }
 ```

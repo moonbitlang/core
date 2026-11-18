@@ -28,7 +28,7 @@ Create an empty vector with `new()`, or construct one from an array or iterator.
 test {
   let v1 : @vector.Vector[Int32] = @vector.new()
   @test.assert_eq(v1.length(), 0)
-  let v2 = @vector.from_array([1, 2, 3, 4, 5])
+  let v2 = @vector.Vector([1, 2, 3, 4, 5])
   @test.assert_eq(v2.length(), 5)
   let v3 = @vector.from_iter((1).until(5))
   @debug.assert_eq(v3.to_array(), [1, 2, 3, 4])
@@ -54,7 +54,7 @@ Use index syntax `v[i]` or `at()` for direct access. Use `get()` for a safe look
 ```mbt check
 ///|
 test {
-  let v = @vector.from_array([10, 20, 30, 40, 50])
+  let v = @vector.Vector([10, 20, 30, 40, 50])
   @test.assert_eq(v[2], 30)
   assert_true(v.get(2) == Some(30))
   assert_true(v.get(99) == None)
@@ -67,7 +67,7 @@ test {
 ```mbt check
 ///|
 test {
-  let v1 = @vector.from_array([1, 2, 3])
+  let v1 = @vector.Vector([1, 2, 3])
   let v2 = v1.set(1, 20)
   @debug.assert_eq(v1.to_array(), [1, 2, 3]) // original unchanged
   @debug.assert_eq(v2.to_array(), [1, 20, 3])
@@ -81,7 +81,7 @@ test {
 ```mbt check
 ///|
 test {
-  let v1 = @vector.from_array([1, 2, 3])
+  let v1 = @vector.Vector([1, 2, 3])
   let v2 = v1.push(4)
   @debug.assert_eq(v2.to_array(), [1, 2, 3, 4])
   let v3 = v2.pop().unwrap()
@@ -99,8 +99,8 @@ Use `concat()` or the `+` operator to join two vectors.
 ```mbt check
 ///|
 test {
-  let a = @vector.from_array([1, 2, 3])
-  let b = @vector.from_array([4, 5, 6])
+  let a = @vector.Vector([1, 2, 3])
+  let b = @vector.Vector([4, 5, 6])
   @debug.assert_eq(a.concat(b).to_array(), [1, 2, 3, 4, 5, 6])
   @debug.assert_eq((a + b).to_array(), [1, 2, 3, 4, 5, 6])
 }
@@ -134,7 +134,7 @@ Use `iter()` to get an iterator, or `each()` / `eachi()` for direct traversal.
 ```mbt check
 ///|
 test {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   // iterator
   debug_inspect(v.iter().to_array(), content="[1, 2, 3, 4, 5]")
   // each
@@ -155,7 +155,7 @@ test {
 ```mbt check
 ///|
 test {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   // sum via fold
   @test.assert_eq(v.fold(fn(acc, x) { acc + x }, init=0), 15)
   // reverse fold
@@ -171,7 +171,7 @@ test {
 ```mbt check
 ///|
 test {
-  let v = @vector.from_array([1, 2, 3])
+  let v = @vector.Vector([1, 2, 3])
   @test.assert_eq(v.length(), 3)
   @test.assert_eq(v.is_empty(), false)
   let empty : @vector.Vector[Int32] = @vector.new()
@@ -186,9 +186,9 @@ Vectors support `==` (element-wise equality) and `compare()` (shortlex order: sh
 ```mbt check
 ///|
 test {
-  let a = @vector.from_array([1, 2, 3])
-  let b = @vector.from_array([1, 2, 3])
-  let c = @vector.from_array([1, 2, 4])
+  let a = @vector.Vector([1, 2, 3])
+  let b = @vector.Vector([1, 2, 3])
+  let c = @vector.Vector([1, 2, 4])
   @test.assert_eq(a == b, true)
   @test.assert_eq(a == c, false)
   @test.assert_eq(a.compare(c) < 0, true)

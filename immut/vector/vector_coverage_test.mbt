@@ -145,7 +145,7 @@ test "repeated pop collapses a relaxed tree element by element" {
 
 ///|
 test "pop on a singleton returns the empty vector" {
-  let v = @vector.from_array([42])
+  let v = @vector.Vector([42])
   let popped = v.pop()
   inspect(popped is Some(_), content="true")
   @debug.assert_eq(popped.unwrap().length(), 0)
@@ -157,7 +157,7 @@ test "concat normalizes a single-element tail through push_end" {
   // and right is a full 32-element leaf with an empty tree, so concat must fold
   // the left tail into the tree before appending the right chunk.
   let left = @vector.from_iter((0).until(1025))
-  let right = @vector.from_array(Array::makei(32, i => 1025 + i))
+  let right = @vector.Vector(Array::makei(32, i => 1025 + i))
   let c = left.concat(right)
   @debug.assert_eq(c.length(), 1057)
   @debug.assert_eq(c.iter().to_array(), ident(1057))

@@ -40,7 +40,7 @@ fn agrees_with_model(q : @queue.Queue[Int32], model : Array[Int32]) -> Bool {
 test "quickcheck: mutation sequences agree with an array model" {
   @quickcheck.check(
     (ops : Array[(Int32, Int32)]) => {
-      let q : @queue.Queue[Int32] = @queue.from_array([])
+      let q : @queue.Queue[Int32] = Queue([])
       let model : Array[Int32] = []
       let mut step = 0
       for op in ops {
@@ -103,7 +103,7 @@ test "quickcheck: mutation sequences agree with an array model" {
 test "quickcheck: FIFO law - pushing xs then popping yields xs in order" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let q : @queue.Queue[Int32] = @queue.from_array([])
+      let q : @queue.Queue[Int32] = Queue([])
       for x in xs {
         q.push(x)
       }
@@ -127,7 +127,7 @@ test "quickcheck: interleaved pushes and pops match the model prediction" {
       let (a_elems, b_elems, r) = input
       // Split point: pop k elements between the two push phases.
       let k = (r & 0x3fffffff) % (a_elems.length() + 1)
-      let q : @queue.Queue[Int32] = @queue.from_array([])
+      let q : @queue.Queue[Int32] = Queue([])
       let out : Array[Int32] = []
       for x in a_elems {
         q.push(x)
@@ -159,7 +159,7 @@ test "quickcheck: interleaved pushes and pops match the model prediction" {
 test "quickcheck: construction roundtrips and non-consuming iteration" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let q = @queue.from_array(xs)
+      let q = @queue.Queue(xs)
       guard agrees_with_model(q, xs) else { return false }
       guard agrees_with_model(@queue.from_iter(xs.iter()), xs) else {
         return false
@@ -181,7 +181,7 @@ test "quickcheck: copy is deep - either side can mutate independently" {
   @quickcheck.check(
     (input : (Array[Int32], Int32)) => {
       let (xs, v) = input
-      let original = @queue.from_array(xs)
+      let original = @queue.Queue(xs)
       let copied = original.copy()
       guard agrees_with_model(copied, xs) else { return false }
       // Mutating the copy must not touch the original.
@@ -206,8 +206,8 @@ test "quickcheck: transfer appends source to destination and empties source" {
   @quickcheck.check(
     (input : (Array[Int32], Array[Int32])) => {
       let (src_elems, dst_elems) = input
-      let src = @queue.from_array(src_elems)
-      let dst = @queue.from_array(dst_elems)
+      let src = @queue.Queue(src_elems)
+      let dst = @queue.Queue(dst_elems)
       src.transfer(dst)
       guard agrees_with_model(src, []) && src.pop() == None else {
         return false
@@ -230,7 +230,7 @@ test "quickcheck: transfer appends source to destination and empties source" {
 test "quickcheck: after clear the queue is indistinguishable from new" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let q = @queue.from_array(xs)
+      let q = @queue.Queue(xs)
       q.clear()
       guard agrees_with_model(q, []) && q.pop() == None && q.peek() == None else {
         return false

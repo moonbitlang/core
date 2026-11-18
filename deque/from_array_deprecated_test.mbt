@@ -13,15 +13,14 @@
 // limitations under the License.
 
 ///|
-test "from_array aliases preserve constructor semantics on views" {
-  let source = [9, 3, 1, 3, 8]
+#warnings("-deprecated")
+test "deprecated from_array aliases retain constructor semantics" {
+  let source = [9, 2, 1, 2, 8]
   let view = source[1:4]
-  let by_method = @list.List::from_array(view)
-  let by_function = @list.from_array(view)
-  inspect(by_method == List(view), content="true")
-  inspect(by_function == by_method, content="true")
-  debug_inspect(by_method.to_array(), content="[3, 1, 3]")
-  let empty_items : ArrayView[Int32] = []
-  inspect(@list.List::from_array(empty_items).is_empty(), content="true")
-  inspect(@list.from_array(empty_items).is_empty(), content="true")
+  let by_method = @deque.Deque::from_array(view, capacity=8)
+  let by_function = @deque.from_array(view, capacity=8)
+  inspect(by_method == by_function, content="true")
+  inspect(by_method == Deque(view, capacity=8), content="true")
+  source[2] = 99
+  debug_inspect(by_method.to_array(), content="[2, 1, 2]")
 }

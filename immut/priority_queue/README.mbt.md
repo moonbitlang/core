@@ -6,13 +6,13 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 ## Create
 
-You can use `PriorityQueue([])` or `from_array()` to create an immutable priority queue.
+Use `PriorityQueue(array)` to create an immutable priority queue, or `PriorityQueue([])` for an empty one.
 
 ```mbt check
 ///|
 test {
   let _queue1 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
-  let _queue2 = @priority_queue.from_array([1, 2, 3])
+  let _queue2 = @priority_queue.PriorityQueue([1, 2, 3])
 }
 ```
 
@@ -48,7 +48,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   @test.assert_eq(pq.peek(), Some(5))
   // @json.json_inspect(pq)
   // we have to add `@json` package in test-import
@@ -71,7 +71,7 @@ You can use `pop()` to remove the element at the front of the priority queue and
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
+  let pq = @priority_queue.PriorityQueue([5, 4, 3, 2, 1])
   let val = match pq.pop() {
     Some(q) => q.peek()
     None => None

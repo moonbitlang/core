@@ -67,7 +67,7 @@ You can use `remove()` to remove a key-value pair.
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   map.remove("a") |> ignore
   assert_false(map.contains("a"))
 }
@@ -80,7 +80,7 @@ You can use `contains()` to check whether a key exists.
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.contains("a"), true)
   @test.assert_eq(map.contains("d"), false)
 }
@@ -95,7 +95,7 @@ to pre-size the table.
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.length(), 3)
   let sized : @hashmap.HashMap[String, Int32] = HashMap([], capacity=100)
   @test.assert_eq(sized.length(), 0)
@@ -119,7 +119,7 @@ You can use `clear` to remove all key-value pairs from the map, but the allocate
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   map.clear()
   @test.assert_eq(map.is_empty(), true)
 }
@@ -132,7 +132,7 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs.
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let arr = []
   map.each((k, v) => arr.push((k, v)))
   let arr2 = []
@@ -145,7 +145,7 @@ Or use `iter()`, `keys()`, or `values()` to get iterators:
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1)])
+  let map = @hashmap.HashMap([("a", 1)])
   let _iter = map.iter()
   let _keys = map.keys()
   let _vals = map.values()
@@ -173,10 +173,10 @@ Use `map()` to transform values and `retain()` to filter in place:
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([(1, "a"), (2, "b")])
+  let map = @hashmap.HashMap([(1, "a"), (2, "b")])
   let mapped = map.map((k, _v) => k * 10)
   @test.assert_eq(mapped.get(1), Some(10))
-  let map2 = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map2 = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   map2.retain((_k, v) => v > 1)
   @test.assert_eq(map2.contains("a"), false)
   @test.assert_eq(map2.contains("b"), true)
@@ -190,7 +190,7 @@ Use subscript syntax `map[key]` for direct access. Panics if the key is not foun
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("x", 10), ("y", 20)])
+  let map = @hashmap.HashMap([("x", 10), ("y", 20)])
   @test.assert_eq(map["x"], 10)
   map["z"] = 30
   @test.assert_eq(map["z"], 30)
@@ -204,7 +204,7 @@ test {
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2)])
   @test.assert_eq(map.contains_kv("a", 1), true)
   @test.assert_eq(map.contains_kv("a", 99), false)
 }
@@ -217,7 +217,7 @@ test {
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1)])
+  let map = @hashmap.HashMap([("a", 1)])
   let cloned = map.copy()
   cloned.set("b", 2)
   @test.assert_eq(map.contains("b"), false) // original unchanged
@@ -241,14 +241,14 @@ test {
 ```mbt check
 ///|
 test {
-  let m1 = @hashmap.from_array([("a", 1)])
-  let m2 = @hashmap.from_array([("b", 2)])
+  let m1 = @hashmap.HashMap([("a", 1)])
+  let m2 = @hashmap.HashMap([("b", 2)])
   let merged = m1.merge(m2)
   @test.assert_eq(merged.get("a"), Some(1))
   @test.assert_eq(merged.get("b"), Some(2))
   // merge_in_place
-  let m3 = @hashmap.from_array([("x", 1)])
-  let m4 = @hashmap.from_array([("y", 2)])
+  let m3 = @hashmap.HashMap([("x", 1)])
+  let m4 = @hashmap.HashMap([("y", 2)])
   m3.merge_in_place(m4)
   @test.assert_eq(m3.contains("y"), true)
 }

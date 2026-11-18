@@ -14,7 +14,7 @@
 
 ///|
 test "is_empty" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int32] = @vector.new()
   inspect(v.is_empty(), content="false")
   inspect(ve.is_empty(), content="true")
@@ -22,7 +22,7 @@ test "is_empty" {
 
 ///|
 test "set with valid index" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic
   debug_inspect(
     v1,
@@ -34,7 +34,7 @@ test "set with valid index" {
 
 ///|
 test "set with valid index at end" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let v1 = v.set(4, 10) // This should not trigger the panic
   debug_inspect(
     v1,
@@ -46,7 +46,7 @@ test "set with valid index at end" {
 
 ///|
 test "to_string" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int32] = @vector.new()
   debug_inspect(
     v,
@@ -84,7 +84,7 @@ test "make with full leaf" {
 
 ///|
 test "to_array" {
-  let v = @vector.from_array([1, 2, 3, 4])
+  let v = @vector.Vector([1, 2, 3, 4])
   debug_inspect(v.to_array(), content="[1, 2, 3, 4]")
   debug_inspect(v.push(5).to_array(), content="[1, 2, 3, 4, 5]")
 }
@@ -134,7 +134,7 @@ test "from_json rejects invalid input" {
 ///|
 test "iter" {
   let buf = StringBuilder(capacity=20)
-  let v = @vector.from_array([1, 2, 3])
+  let v = @vector.Vector([1, 2, 3])
   v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[1][2][3]")
   buf.reset()
@@ -179,7 +179,7 @@ test "concat preserves random access after normalizing singleton tail" {
 
 ///|
 test "length" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int32] = @vector.new()
   inspect(v.length(), content="5")
   inspect(ve.length(), content="0")
@@ -187,7 +187,7 @@ test "length" {
 
 ///|
 test "get" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   inspect(v[0], content="1")
   inspect(v[1], content="2")
   inspect(v[2], content="3")
@@ -197,7 +197,7 @@ test "get" {
 
 ///|
 test "set" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
   debug_inspect(
@@ -245,8 +245,8 @@ test "push" {
 
 ///|
 test "from_array" {
-  let v = @vector.from_array([1, 1, 4, 5, 1, 4])
-  let vv = @vector.from_array(Array::make(30, 1))
+  let v = @vector.Vector([1, 1, 4, 5, 1, 4])
+  let vv = @vector.Vector(Array::make(30, 1))
   debug_inspect(
     v,
     content=(
@@ -308,7 +308,7 @@ test "Vector constructor" {
 test "iteri" {
   let v : @vector.Vector[Int32] = @vector.new()
   v.eachi((_i, _e) => abort("never reach"))
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let mut s = 0
   v.eachi((i, e) => s += i * e)
   inspect(s, content="40")
@@ -319,13 +319,13 @@ test "iteri" {
 
 ///|
 test "equal" {
-  let v0 : @vector.Vector[Int32] = @vector.from_array([])
-  let v1 = @vector.from_array([1, 2, 3, 4, 5])
-  let v2 = @vector.from_array([1, 2, 3, 4, 5])
-  let v3 = @vector.from_array([1, 2, 3, 4, 6])
-  let v4 = @vector.from_array([1, 2, 3, 4])
+  let v0 : @vector.Vector[Int32] = Vector([])
+  let v1 = @vector.Vector([1, 2, 3, 4, 5])
+  let v2 = @vector.Vector([1, 2, 3, 4, 5])
+  let v3 = @vector.Vector([1, 2, 3, 4, 6])
+  let v4 = @vector.Vector([1, 2, 3, 4])
   let v5 = @vector.make(5, 1)
-  let v6 = @vector.from_array([1, 1, 1, 1, 1])
+  let v6 = @vector.Vector([1, 1, 1, 1, 1])
   inspect(v0 == @vector.new(), content="true")
   inspect(v1 == v2, content="true")
   inspect(v1 == v3, content="false")
@@ -335,8 +335,8 @@ test "equal" {
 
 ///|
 test "add concat" {
-  let left = @vector.from_array([1, 2])
-  let right = @vector.from_array([3, 4])
+  let left = @vector.Vector([1, 2])
+  let right = @vector.Vector([3, 4])
   debug_inspect(
     left + right,
     content=(
@@ -348,7 +348,7 @@ test "add concat" {
 ///|
 test "fold" {
   let e = @vector.new()
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   inspect(e.fold((a, b) => a + b, init=0), content="0")
   inspect(v.fold((a, b) => a + b, init=0), content="15")
 }
@@ -357,14 +357,14 @@ test "fold" {
 test "rev_fold" {
   let e = @vector.new()
   inspect(e.rev_fold((a, b) => a + b, init=0), content="0")
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   inspect(e.fold((a, b) => a + b, init=0), content="0")
   inspect(v.rev_fold((a, b) => a + b, init=0), content="15")
 }
 
 ///|
 test "map" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   debug_inspect(
     v.map(e => e * 2),
     content=(
@@ -697,19 +697,19 @@ test "from_iter empty iter" {
 
 ///|
 test "hash" {
-  let l1 = @vector.from_array([1, 2, 3, 4, 5])
-  let l2 = @vector.from_array([1, 2, 3, 4, 5])
+  let l1 = @vector.Vector([1, 2, 3, 4, 5])
+  let l2 = @vector.Vector([1, 2, 3, 4, 5])
   inspect(Hash::hash(l1) == Hash::hash(l2), content="true")
-  let l3 = @vector.from_array([5, 4, 3, 2, 1])
+  let l3 = @vector.Vector([5, 4, 3, 2, 1])
   inspect(Hash::hash(l1) == Hash::hash(l3), content="false")
-  let l4 : @vector.Vector[Int32] = @vector.from_array([])
+  let l4 : @vector.Vector[Int32] = Vector([])
   inspect(Hash::hash(l1) == Hash::hash(l4), content="false")
   inspect(Hash::hash(l4) == Hash::hash(l4), content="true")
 }
 
 ///|
 test "concat_empty" {
-  let a = @vector.from_array([1, 2, 3])
+  let a = @vector.Vector([1, 2, 3])
   let b : @vector.Vector[Int32] = @vector.new()
   let c = a.concat(b)
   debug_inspect(
@@ -719,7 +719,7 @@ test "concat_empty" {
     ),
   )
   let a : @vector.Vector[Int32] = @vector.new()
-  let b = @vector.from_array([1, 2, 3])
+  let b = @vector.Vector([1, 2, 3])
   let c = a.concat(b)
   debug_inspect(
     c,
@@ -764,9 +764,9 @@ test "take drop and slice" {
 
 ///|
 test "compare" {
-  let arr1 = @vector.from_array([1, 2, 3])
-  let arr2 = @vector.from_array([1, 2, 4])
-  let arr3 = @vector.from_array([1, 2])
+  let arr1 = @vector.Vector([1, 2, 3])
+  let arr2 = @vector.Vector([1, 2, 4])
+  let arr3 = @vector.Vector([1, 2])
   let empty : @vector.Vector[Int32] = @vector.new()
   inspect(arr1.compare(arr2), content="-1")
   inspect(arr1.compare(arr3), content="1")
@@ -777,19 +777,19 @@ test "compare" {
 
 ///|
 test "@vector.get/normal" {
-  let arr = @vector.from_array([1, 2, 3, 4, 5])
+  let arr = @vector.Vector([1, 2, 3, 4, 5])
   debug_inspect(arr.get(2), content="Some(3)")
 }
 
 ///|
 test "@vector.get/first" {
-  let arr = @vector.from_array([42])
+  let arr = @vector.Vector([42])
   debug_inspect(arr.get(0), content="Some(42)")
 }
 
 ///|
 test "@vector.get/out_of_bounds" {
-  let arr = @vector.from_array([1, 2, 3])
+  let arr = @vector.Vector([1, 2, 3])
   debug_inspect(arr.get(-1), content="None")
   debug_inspect(arr.get(3), content="None")
 }

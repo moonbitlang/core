@@ -27,7 +27,7 @@ test "quickcheck: range_bounds matches filtering the sorted entries" {
     input : (Array[(Int32, Int32)], (Int32, Int32), (Int32, Int32)),
   ) => {
     let (entries, (lk, lo), (hk, hi)) = input
-    let map = @sorted_map.from_array(entries)
+    let map = @sorted_map.SortedMap(entries)
     let lower = bound_of(lk, lo)
     let upper = bound_of(hk, hi)
     let expected = map

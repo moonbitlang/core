@@ -13,18 +13,24 @@
 // limitations under the License.
 
 ///|
-test "from_array aliases preserve constructor semantics on views" {
-  let source = [9, 3, 1, 3, 8]
+#warnings("-deprecated")
+test "deprecated from_array aliases retain constructor semantics" {
+  let source = [
+    (9, "outside"),
+    (2, "first"),
+    (1, "one"),
+    (2, "last"),
+    (8, "outside"),
+  ]
   let view = source[1:4]
-  let by_method = @hashset.HashSet::from_array(view)
-  let by_function = @hashset.from_array(view)
-  inspect(by_method == HashSet(view), content="true")
-  inspect(by_function == by_method, content="true")
+  let legacy_from_array = @sorted_map.SortedMap::from_array
+  let by_method = legacy_from_array(view)
+  let by_function = @sorted_map.from_array(view)
+  inspect(by_method == by_function, content="true")
+  inspect(by_method == SortedMap(view), content="true")
+  source[3] = (2, "changed")
   debug_inspect(
-    (by_method.length(), by_method.contains(1), by_method.contains(9)),
-    content="(2, true, false)",
+    (by_method.length(), by_method.get(2)),
+    content="(2, Some(\"last\"))",
   )
-  let empty_items : ArrayView[Int32] = []
-  inspect(@hashset.HashSet::from_array(empty_items).is_empty(), content="true")
-  inspect(@hashset.from_array(empty_items).is_empty(), content="true")
 }

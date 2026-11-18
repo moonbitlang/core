@@ -27,8 +27,8 @@ test "copy empty" {
 
 ///|
 test "from_array_1" {
-  let queue = @queue.from_array([1, 2, 3, 4])
-  let queue2 = @queue.from_array([1])
+  let queue = @queue.Queue([1, 2, 3, 4])
+  let queue2 = @queue.Queue([1])
   @test.assert_eq(queue.length(), 4)
   @test.assert_eq(queue.unsafe_pop(), 1)
   @test.assert_eq(queue.unsafe_pop(), 2)
@@ -49,7 +49,7 @@ test "Queue constructor" {
 
 ///|
 test "from_array_2" {
-  let q : @queue.Queue[Int32] = @queue.from_array([])
+  let q : @queue.Queue[Int32] = Queue([])
   debug_inspect(
     q,
     content=(
@@ -57,14 +57,14 @@ test "from_array_2" {
     ),
   )
   let array = Array::makei(3, idx => idx + 1)
-  let q : @queue.Queue[Int32] = @queue.from_array(array)
+  let q : @queue.Queue[Int32] = Queue(array)
   debug_inspect(
     q,
     content=(
       #|<Queue: [1, 2, 3]>
     ),
   )
-  let q : @queue.Queue[Int32] = @queue.from_array(Array(capacity=10))
+  let q : @queue.Queue[Int32] = Queue(Array(capacity=10))
   debug_inspect(
     q,
     content=(
@@ -75,7 +75,7 @@ test "from_array_2" {
 
 ///|
 test "to_string" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   debug_inspect(
     queue,
     content=(
@@ -96,14 +96,14 @@ test "to_string" {
       #|<Queue: [2, 3, 4, 11]>
     ),
   )
-  let queue : @queue.Queue[Int32] = @queue.from_array([])
+  let queue : @queue.Queue[Int32] = Queue([])
   debug_inspect(
     queue,
     content=(
       #|<Queue: []>
     ),
   )
-  let queue : @queue.Queue[Int32] = @queue.from_array([9, 8, 7, 5])
+  let queue : @queue.Queue[Int32] = Queue([9, 8, 7, 5])
   debug_inspect(
     queue,
     content=(
@@ -114,7 +114,7 @@ test "to_string" {
 
 ///|
 test "clear" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   @test.assert_eq(queue.length(), 4)
   queue.clear()
   @test.assert_eq(queue.length(), 0)
@@ -133,7 +133,7 @@ test "is_empty" {
 
 ///|
 test "unsafe_peek" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   @test.assert_eq(queue.unsafe_peek(), 1)
   @test.assert_eq(queue.length(), 4)
   @test.assert_eq(queue.unsafe_pop(), 1)
@@ -143,7 +143,7 @@ test "unsafe_peek" {
 
 ///|
 test "peek" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   @test.assert_eq(queue.peek(), Some(1))
   queue.clear()
   @test.assert_eq(queue.peek(), None)
@@ -151,7 +151,7 @@ test "peek" {
 
 ///|
 test "unsafe_pop" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   @test.assert_eq(queue.unsafe_pop(), 1)
   @test.assert_eq(queue.unsafe_pop(), 2)
   @test.assert_eq(queue.unsafe_pop(), 3)
@@ -161,7 +161,7 @@ test "unsafe_pop" {
 
 ///|
 test "pop" {
-  let queue : @queue.Queue[Int32] = @queue.from_array([1, 2, 3, 4])
+  let queue : @queue.Queue[Int32] = Queue([1, 2, 3, 4])
   @test.assert_eq(queue.pop(), Some(1))
   @test.assert_eq(queue.pop(), Some(2))
   @test.assert_eq(queue.pop(), Some(3))
@@ -175,7 +175,7 @@ test "each" {
   let mut sum = 0
   queue.each(x => sum += x)
   @test.assert_eq(sum, 0)
-  @queue.from_array([1, 2, 3, 4]).transfer(queue)
+  @queue.Queue([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.each(x => sum += x)
   @test.assert_eq(sum, 10)
@@ -183,7 +183,7 @@ test "each" {
 
 ///|
 test "iter_fold" {
-  let q = @queue.from_array([1, 2, 3, 4, 5])
+  let q = @queue.Queue([1, 2, 3, 4, 5])
   inspect(q.iter().fold((x, y) => x + y, init=0), content="15")
 }
 
@@ -193,7 +193,7 @@ test "iteri" {
   let mut sum = 0
   queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 0)
-  @queue.from_array([1, 2, 3, 4]).transfer(queue)
+  @queue.Queue([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 20)
@@ -204,13 +204,13 @@ test "fold" {
   let queue : @queue.Queue[Int32] = Queue([])
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   @test.assert_eq(sum, 0)
-  @queue.from_array([1, 2, 3, 4]).transfer(queue)
+  @queue.Queue([1, 2, 3, 4]).transfer(queue)
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   @test.assert_eq(sum, 10)
-  let sum2 = @queue.from_array([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
+  let sum2 = @queue.Queue([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
   @test.assert_eq(sum2, 10)
   inspect(
-    @queue.from_array([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
+    @queue.Queue([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
     content="10",
   )
 }
@@ -234,19 +234,19 @@ fn fail_on_two(x : Int32) -> Unit raise {
 
 ///|
 test "each with error callback" {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   expect_callback_failure(() => queue.each(fail_on_two))
 }
 
 ///|
 test "eachi with error callback" {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   expect_callback_failure(() => queue.eachi((_i, x) => fail_on_two(x)))
 }
 
 ///|
 test "fold with error callback" {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   expect_callback_failure(() => {
     queue.fold(init=0, (acc, x) => {
       fail_on_two(x)
@@ -258,9 +258,9 @@ test "fold with error callback" {
 
 ///|
 test "length" {
-  let empty : @queue.Queue[Unit] = @queue.from_array([])
+  let empty : @queue.Queue[Unit] = Queue([])
   inspect(empty.length(), content="0")
-  inspect(@queue.from_array([1, 2, 3]).length(), content="3")
+  inspect(@queue.Queue([1, 2, 3]).length(), content="3")
 }
 
 ///|
@@ -297,7 +297,7 @@ test "from_iter empty iter" {
 ///|
 test "transfer_self" {
   // Test self-transfer: q.transfer(q) should be a no-op
-  let q : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
+  let q : @queue.Queue[Int32] = Queue([1, 2, 3])
   q.transfer(q)
   // After self-transfer, queue should remain unchanged
   debug_inspect(
@@ -430,15 +430,15 @@ test "Queue::shrink_to_fit keeps the elements and their order" {
 
 ///|
 test "Queue::compare orders by length, then front to back" {
-  let q123 : @queue.Queue[Int32] = @queue.from_array([1, 2, 3])
-  let q124 : @queue.Queue[Int32] = @queue.from_array([1, 2, 4])
-  let q12 : @queue.Queue[Int32] = @queue.from_array([1, 2])
-  let q9 : @queue.Queue[Int32] = @queue.from_array([9])
+  let q123 : @queue.Queue[Int32] = Queue([1, 2, 3])
+  let q124 : @queue.Queue[Int32] = Queue([1, 2, 4])
+  let q12 : @queue.Queue[Int32] = Queue([1, 2])
+  let q9 : @queue.Queue[Int32] = Queue([9])
   inspect(q123.compare(q124), content="-1")
   inspect(q124.compare(q123), content="1")
   inspect(q123.compare(q12), content="1")
   inspect(q9.compare(q12), content="-1")
-  inspect(q123.compare(@queue.from_array([1, 2, 3])), content="0")
+  inspect(q123.compare(Queue([1, 2, 3])), content="0")
   assert_true(q123 < q124)
   assert_true(q12 <= q123)
   assert_true(q124 > q9)
@@ -458,12 +458,9 @@ test "Queue::compare agrees with the backing deque and with ==" {
   ]
   for a in arrays {
     for b in arrays {
-      let qa : @queue.Queue[Int32] = @queue.from_array(a)
-      let qb : @queue.Queue[Int32] = @queue.from_array(b)
-      @test.assert_eq(
-        qa.compare(qb),
-        @deque.from_array(a).compare(@deque.from_array(b)),
-      )
+      let qa : @queue.Queue[Int32] = Queue(a)
+      let qb : @queue.Queue[Int32] = Queue(b)
+      @test.assert_eq(qa.compare(qb), @deque.Deque(a).compare(Deque(b)))
       @test.assert_eq(qa.compare(qb) == 0, qa == qb)
     }
   }
@@ -480,15 +477,15 @@ test "Queue::hash is consistent with ==" {
     let _ = pushed.pop()
   }
   pushed.push(6)
-  let built : @queue.Queue[Int32] = @queue.from_array([3, 4, 5, 6])
+  let built : @queue.Queue[Int32] = Queue([3, 4, 5, 6])
   assert_true(pushed == built)
   @test.assert_eq(pushed.hash(), built.hash())
   // they hash as the backing deque does
-  @test.assert_eq(built.hash(), @deque.from_array([3, 4, 5, 6]).hash())
+  @test.assert_eq(built.hash(), @deque.Deque([3, 4, 5, 6]).hash())
   // order and length matter
-  let reversed : @queue.Queue[Int32] = @queue.from_array([6, 5, 4, 3])
+  let reversed : @queue.Queue[Int32] = Queue([6, 5, 4, 3])
   @test.assert_not_eq(built.hash(), reversed.hash())
-  @test.assert_not_eq(built.hash(), @queue.from_array([3, 4, 5]).hash())
+  @test.assert_not_eq(built.hash(), @queue.Queue([3, 4, 5]).hash())
   // queues work as hash-map keys
   let seen : Map[@queue.Queue[Int32], Int32] = Map([])
   seen[pushed] = 1

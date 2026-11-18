@@ -66,7 +66,7 @@ test "union_in_place with itself is a no-op" {
   // Six elements fill a capacity-8 set exactly to its grow threshold, so one
   // more insertion attempt would grow it: without the self check, absorbing
   // itself would resize the set while iterating its own entries.
-  let s = from_array([ for i in 0..<6 => i ])
+  let s = HashSet([ for i in 0..<6 => i ])
   let capacity = s.capacity
   s.union_in_place(s)
   @test.assert_eq(sorted_elements(s), [0, 1, 2, 3, 4, 5])

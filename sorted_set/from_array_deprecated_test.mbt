@@ -13,21 +13,18 @@
 // limitations under the License.
 
 ///|
-test "from_array aliases preserve constructor semantics on views" {
-  let source = [9, 3, 1, 3, 8]
+#warnings("-deprecated")
+test "deprecated from_array aliases retain constructor semantics" {
+  let source = [9, 2, 1, 2, 8]
   let view = source[1:4]
-  let by_method = @sorted_set.SortedSet::from_array(view)
+  let legacy_from_array = @sorted_set.SortedSet::from_array
+  let by_method = legacy_from_array(view)
   let by_function = @sorted_set.from_array(view)
+  inspect(by_method == by_function, content="true")
   inspect(by_method == SortedSet(view), content="true")
-  inspect(by_function == by_method, content="true")
+  source[2] = 99
   debug_inspect(
     (by_method.length(), by_method.contains(1), by_method.contains(9)),
     content="(2, true, false)",
   )
-  let empty_items : ArrayView[Int32] = []
-  inspect(
-    @sorted_set.SortedSet::from_array(empty_items).is_empty(),
-    content="true",
-  )
-  inspect(@sorted_set.from_array(empty_items).is_empty(), content="true")
 }

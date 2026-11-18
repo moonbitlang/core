@@ -14,6 +14,6 @@
 
 ///|
 test "panic unsafe_pop" {
-  let pq : @priority_queue.PriorityQueue[Int32] = @priority_queue.from_array([])
+  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   pq.unsafe_pop()
 }

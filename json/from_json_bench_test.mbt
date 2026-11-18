@@ -24,7 +24,7 @@ let from_json_bench_doubles : Json = Json(
 
 ///|
 let from_json_bench_object : Json = Json(
-  Map::from_array(Array::makei(1000, i => ("key\{i}", i))),
+  Map(Array::makei(1000, i => ("key\{i}", i))),
 )
 
 ///|

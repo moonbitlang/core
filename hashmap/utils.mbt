@@ -25,7 +25,7 @@
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2)])
 ///   map.clear()
 ///   inspect(map.length(), content="0")
 ///   debug_inspect(map.get("a"), content="None")
@@ -54,7 +54,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
+///   let map = @hashmap.HashMap([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
 ///   inspect(pairs.length(), content="2")
 ///   inspect(pairs.contains((1, "one")), content="true")
@@ -149,7 +149,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
+///   let map = @hashmap.HashMap([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
 ///   arr.sort()
 ///   debug_inspect(
@@ -184,7 +184,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
 ///   inspect(map.length(), content="3")
 /// }
 /// ```
@@ -234,7 +234,7 @@ pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
+///   let map = @hashmap.HashMap([(1, "one"), (2, "two")])
 ///   let array = []
 ///   map.each((k, v) => array.push((k, v)))
 ///   array.sort()
@@ -310,7 +310,7 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+///   let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
 ///   let keys = map.keys().to_array()
 ///   inspect(keys.length(), content="3")
 ///   inspect(keys.contains(1), content="true")
@@ -354,7 +354,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.values().to_array()
 ///   inspect(values.length(), content="3")
 ///   inspect(values.contains(1), content="true")
@@ -400,7 +400,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   map.retain((_k, v) => v % 2 == 0) // Keep only even values
 ///   inspect(map.length(), content="2")
 ///   debug_inspect(map.get("a"), content="None")
@@ -462,7 +462,7 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   let even = map.filter((_k, v) => v % 2 == 0)
 ///   inspect(even.length(), content="2")
 ///   debug_inspect(even.get("b"), content="Some(2)")

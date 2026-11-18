@@ -40,10 +40,10 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 ///   @test.assert_eq(set.length(), 3)
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, deprecated="Use `SortedSet(...)` instead")
+#as_free_fn(from_array, deprecated="Use `SortedSet(...)` instead")
+#alias(of, deprecated="Use `SortedSet(...)` instead")
+#as_free_fn(of, deprecated="Use `SortedSet(...)` instead")
 pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
   let set = new_sorted_set()
   for x in array {
@@ -397,8 +397,8 @@ pub fn[V : Compare] SortedSet::difference(
 ///
 /// ```mbt check
 /// test {
-///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
-///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
+///   let set1 = @sorted_set.SortedSet([1, 2, 3, 4])
+///   let set2 = @sorted_set.SortedSet([3, 4, 5, 6])
 ///   let diff = set1.symmetric_difference(set2)
 ///   @debug.debug_inspect(
 ///     diff,
@@ -907,7 +907,7 @@ fn[V : Compare] delete_node(root : Node[V], value : V) -> (Node[V]?, Bool) {
 
 ///|
 test "copy" {
-  let set = from_array([1, 2, 3, 4, 5])
+  let set = SortedSet([1, 2, 3, 4, 5])
   let copied_set = set.copy()
   @debug.debug_inspect(
     copied_set,
@@ -916,7 +916,7 @@ test "copy" {
     ),
   )
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
-  let set : SortedSet[Int32] = from_array([])
+  let set : SortedSet[Int32] = SortedSet([])
   let copied_set = set.copy()
   @debug.debug_inspect(
     copied_set,
@@ -930,8 +930,8 @@ test "copy" {
 ///|
 test "union" {
   // Test 1: Union of two sets with no common elements
-  let set1 = from_array([1, 2, 3])
-  let set2 = from_array([4, 5, 6])
+  let set1 = SortedSet([1, 2, 3])
+  let set2 = SortedSet([4, 5, 6])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -945,8 +945,8 @@ test "union" {
   )
 
   // Test 2: Union of two sets with some common elements
-  let set1 = from_array([1, 2, 3])
-  let set2 = from_array([2, 3, 4])
+  let set1 = SortedSet([1, 2, 3])
+  let set2 = SortedSet([2, 3, 4])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -957,8 +957,8 @@ test "union" {
   inspect(set3.debug_tree(), content="([3]2,([1]1,_,_),([2]3,_,([1]4,_,_)))")
 
   // Test 3: Union of two sets where one is a subset of the other
-  let set1 = from_array([1, 2, 3])
-  let set2 = from_array([2, 3])
+  let set1 = SortedSet([1, 2, 3])
+  let set2 = SortedSet([2, 3])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -981,8 +981,8 @@ test "union" {
   inspect(set3.debug_tree(), content="_")
 
   // Test 5: Union of an empty set with a non-empty set
-  let set1 = from_array([1, 2, 3])
-  let set2 = from_array([])
+  let set1 = SortedSet([1, 2, 3])
+  let set2 = SortedSet([])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -991,8 +991,8 @@ test "union" {
     ),
   )
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
-  let set1 = from_array([])
-  let set2 = from_array([1, 2, 3])
+  let set1 = SortedSet([])
+  let set2 = SortedSet([1, 2, 3])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -1003,8 +1003,8 @@ test "union" {
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 6: Union of two large sets with no common elements
-  let set1 = from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-  let set2 = from_array([11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+  let set1 = SortedSet([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = SortedSet([11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -1040,8 +1040,8 @@ test "union" {
   )
 
   // Test 7: Union of two large sets with some common elements
-  let set1 = from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-  let set2 = from_array([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+  let set1 = SortedSet([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = SortedSet([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -1055,8 +1055,8 @@ test "union" {
   )
 
   // Test 8: Union of two large sets where one is a subset of the other
-  let set1 = from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-  let set2 = from_array([6, 7, 8, 9, 10])
+  let set1 = SortedSet([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = SortedSet([6, 7, 8, 9, 10])
   let set3 = set1.union(set2)
   @debug.debug_inspect(
     set3,
@@ -1118,40 +1118,40 @@ test "join" {
     ({ root: Some(root), size: l.size + r.size + 1, } : SortedSet[Int32]).to_array()
   }
 
-  let l = from_array([13, 8, 17, 1, 11, 15, 25, 6])
-  let r = from_array([27, 28, 40, 35, 33])
+  let l = SortedSet([13, 8, 17, 1, 11, 15, 25, 6])
+  let r = SortedSet([27, 28, 40, 35, 33])
   @debug.debug_inspect(
     join_to_array(l, 26, r),
     content=(
       #|[1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40]
     ),
   )
-  let l = from_array([3, 2, 5, 1, 4])
-  let r = from_array([7])
+  let l = SortedSet([3, 2, 5, 1, 4])
+  let r = SortedSet([7])
   @debug.debug_inspect(
     join_to_array(l, 6, r),
     content=(
       #|[1, 2, 3, 4, 5, 6, 7]
     ),
   )
-  let l = from_array([3, 2, 5, 1, 4])
-  let r = from_array([])
+  let l = SortedSet([3, 2, 5, 1, 4])
+  let r = SortedSet([])
   @debug.debug_inspect(
     join_to_array(l, 6, r),
     content=(
       #|[1, 2, 3, 4, 5, 6]
     ),
   )
-  let l = from_array([])
-  let r = from_array([])
+  let l = SortedSet([])
+  let r = SortedSet([])
   @debug.debug_inspect(
     join_to_array(l, 6, r),
     content=(
       #|[6]
     ),
   )
-  let l = from_array([])
-  let r = from_array([7, 8, 9, 10, 11, 12])
+  let l = SortedSet([])
+  let r = SortedSet([7, 8, 9, 10, 11, 12])
   @debug.debug_inspect(
     join_to_array(l, 6, r),
     content=(
@@ -1203,7 +1203,7 @@ test "add multiple values" {
 
 ///|
 test "add_and_remove" {
-  let set = from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)
   @debug.debug_inspect(
     set,
@@ -1215,7 +1215,7 @@ test "add_and_remove" {
     set.debug_tree(),
     content="([4]5,([3]3,([2]2,([1]1,_,_),_),([1]4,_,_)),([2]7,([1]6,_,_),([1]9,_,_)))",
   )
-  let set = from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set = SortedSet([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
   // Test 1: Remove elements
   set.remove(1)
@@ -1447,7 +1447,7 @@ test "add_and_remove" {
     ),
   )
   inspect(set.debug_tree(), content="_")
-  let set = from_array([7, 2, 9, 4, 5, 6, 3, 1])
+  let set = SortedSet([7, 2, 9, 4, 5, 6, 3, 1])
   set.remove(3)
   @debug.debug_inspect(
     set,
@@ -1555,7 +1555,7 @@ pub impl[V : @json.ToJson] @json.ToJson for SortedSet[V] with fn to_json(self) {
 
 ///|
 /// Decodes a sorted set from a JSON array, the form `to_json` produces. A
-/// repeated element is kept once, as in `@sorted_set.from_array`.
+/// repeated element is kept once, as in `@sorted_set.SortedSet(...)`.
 ///
 /// # Example
 ///

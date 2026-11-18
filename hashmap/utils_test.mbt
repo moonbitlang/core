@@ -14,13 +14,7 @@
 
 ///|
 test "T::retain - keep even values" {
-  let map = @hashmap.from_array([
-    ("a", 1),
-    ("b", 2),
-    ("c", 3),
-    ("d", 4),
-    ("e", 5),
-  ])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
   map.retain((_k, v) => v % 2 == 0)
   inspect(map.length(), content="2")
   debug_inspect(map.get("a"), content="None")
@@ -32,7 +26,7 @@ test "T::retain - keep even values" {
 
 ///|
 test "T::retain - keep all" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="3")
   debug_inspect(map.get("a"), content="Some(1)")
@@ -42,7 +36,7 @@ test "T::retain - keep all" {
 
 ///|
 test "T::retain - remove all" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   map.retain((_k, _v) => false)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
@@ -61,7 +55,7 @@ test "T::retain - empty map" {
 
 ///|
 test "T::retain - key-based filtering" {
-  let map = @hashmap.from_array([
+  let map = @hashmap.HashMap([
     ("apple", 5),
     ("banana", 6),
     ("cherry", 5),
@@ -77,7 +71,7 @@ test "T::retain - key-based filtering" {
 
 ///|
 test "T::retain - filter by both key and value" {
-  let map = @hashmap.from_array([
+  let map = @hashmap.HashMap([
     ("a1", 1),
     ("b2", 2),
     ("c3", 3),
@@ -95,7 +89,7 @@ test "T::retain - filter by both key and value" {
 
 ///|
 test "T::retain - single element map" {
-  let map = @hashmap.from_array([("only", 42)])
+  let map = @hashmap.HashMap([("only", 42)])
 
   // Test keeping the element
   map.retain((_k, v) => v > 30)
@@ -147,7 +141,7 @@ test "T::retain - with collisions" {
 
 ///|
 test "T::retain - preserve map integrity after retain" {
-  let map = @hashmap.from_array([("x", 1), ("y", 2), ("z", 3)])
+  let map = @hashmap.HashMap([("x", 1), ("y", 2), ("z", 3)])
   map.retain((_k, v) => v != 2) // Remove middle element
 
   // Test that map operations still work correctly

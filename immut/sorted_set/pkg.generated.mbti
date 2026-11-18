@@ -12,10 +12,6 @@ import {
 
 // Types and methods
 type SortedSet[A]
-#alias(from_array)
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn(from_array)
 pub fn[A : Compare] SortedSet::SortedSet(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
@@ -28,6 +24,11 @@ pub fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(deprecated)
+#deprecated
+pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

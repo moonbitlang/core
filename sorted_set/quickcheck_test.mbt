@@ -15,14 +15,14 @@
 ///|
 test "quickcheck: iteration is sorted and duplicate-free" {
   @quickcheck.check((xs : Array[Int32]) => {
-    let set = @sorted_set.from_array(xs)
+    let set = @sorted_set.SortedSet(xs)
     let actual = set.to_array()
     for i in 1..<actual.length() {
       if actual[i - 1] >= actual[i] {
         return false
       }
     }
-    @sorted_set.from_array(actual) == set
+    @sorted_set.SortedSet(actual) == set
   })
 }
 
@@ -30,8 +30,8 @@ test "quickcheck: iteration is sorted and duplicate-free" {
 test "quickcheck: difference matches the filter model" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let d = a.difference(b)
     let expected = a.to_array().filter(x => !b.contains(x))
     d.to_array() == expected && d.length() == expected.length()
@@ -42,8 +42,8 @@ test "quickcheck: difference matches the filter model" {
 test "quickcheck: intersection matches the filter model" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let i = a.intersection(b)
     let expected = a.to_array().filter(x => b.contains(x))
     i.to_array() == expected && i.length() == expected.length()
@@ -54,8 +54,8 @@ test "quickcheck: intersection matches the filter model" {
 test "quickcheck: symmetric_difference matches the filter model" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let s = a.symmetric_difference(b)
     let expected = a.to_array().filter(x => !b.contains(x))
     expected.append(b.to_array().filter(y => !a.contains(y)))
@@ -72,8 +72,8 @@ test "quickcheck: strongly asymmetric sizes match the filter model" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
     let k = if xs.length() < 10 { xs.length() } else { 10 }
-    let small = @sorted_set.from_array(xs[0:k])
-    let big = @sorted_set.from_array(ys)
+    let small = @sorted_set.SortedSet(xs[0:k])
+    let big = @sorted_set.SortedSet(ys)
     for i in 0..<600 {
       big.add(10000 + i)
     }
@@ -100,8 +100,8 @@ test "quickcheck: strongly asymmetric sizes match the filter model" {
 test "quickcheck: set algebra laws relate the operations" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let a_minus_b = a.difference(b)
     let b_minus_a = b.difference(a)
     let both = a.intersection(b)
@@ -118,8 +118,8 @@ test "quickcheck: set algebra laws relate the operations" {
 ///|
 test "quickcheck: operations with self and empty are identities" {
   @quickcheck.check((xs : Array[Int32]) => {
-    let a = @sorted_set.from_array(xs)
-    let empty : @sorted_set.SortedSet[Int32] = @sorted_set.from_array([])
+    let a = @sorted_set.SortedSet(xs)
+    let empty : @sorted_set.SortedSet[Int32] = SortedSet([])
     a.difference(a).is_empty() &&
     a.intersection(a) == a &&
     a.symmetric_difference(a).is_empty() &&
@@ -135,8 +135,8 @@ test "quickcheck: operations with self and empty are identities" {
 test "quickcheck: results do not share nodes with the inputs" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let a0 = a.to_array()
     let b0 = b.to_array()
     let d = a.difference(b)
@@ -156,8 +156,8 @@ test "quickcheck: results do not share nodes with the inputs" {
       return false
     }
     // mutating the results must not disturb (fresh copies of) the inputs
-    let a2 = @sorted_set.from_array(xs)
-    let b2 = @sorted_set.from_array(ys)
+    let a2 = @sorted_set.SortedSet(xs)
+    let b2 = @sorted_set.SortedSet(ys)
     for
       result in [
         a2.difference(b2),
@@ -179,8 +179,8 @@ test "quickcheck: results do not share nodes with the inputs" {
 test "quickcheck: set operations obey membership laws" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @sorted_set.from_array(xs)
-    let b = @sorted_set.from_array(ys)
+    let a = @sorted_set.SortedSet(xs)
+    let b = @sorted_set.SortedSet(ys)
     let union = a.union(b)
     let intersection = a.intersection(b)
     let difference = a.difference(b)

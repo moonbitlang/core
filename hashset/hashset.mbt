@@ -50,10 +50,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// `arr.length()` is ignored. Without a hint, an empty set uses a small default
 /// size. Aborts if `capacity` is negative or if the requested element count
 /// exceeds the supported table size.
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, deprecated="Use `HashSet(...)` instead")
+#as_free_fn(from_array, deprecated="Use `HashSet(...)` instead")
+#alias(of, deprecated="Use `HashSet(...)` instead")
+#as_free_fn(of, deprecated="Use `HashSet(...)` instead")
 pub fn[K : Hash + Eq] HashSet::HashSet(
   arr : ArrayView[K],
   capacity? : Int32,
@@ -243,7 +243,7 @@ fn[K : Eq] HashSet::find_entry_with_hash(
 ///
 /// ```mbt check
 /// test {
-///   let set = @hashset.from_array(["a", "b"])
+///   let set = @hashset.HashSet(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.length(), content="1")
@@ -473,8 +473,8 @@ pub fn[K : Eq] HashSet::union(
 ///
 /// ```mbt check
 /// test {
-///   let set = @hashset.from_array([3, 1])
-///   set.union_in_place(@hashset.from_array([2, 3, 4]))
+///   let set = @hashset.HashSet([3, 1])
+///   set.union_in_place(HashSet([2, 3, 4]))
 ///   inspect(set.length(), content="4")
 ///   inspect(set.contains(4), content="true")
 /// }
@@ -670,9 +670,9 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 /// `true` means *keep*, as with `Array::filter`. To filter in place instead,
 /// use `HashSet::retain`.
 ///
-/// The result is sized for the elements kept, like `@hashset.from_array`. It
+/// The result is sized for the elements kept, like `@hashset.HashSet(...)`. It
 /// is faster than rebuilding from a comprehension such as
-/// `@hashset.from_array([for k in s if f(k) => k])` because each element's
+/// `@hashset.HashSet([for k in s if f(k) => k])` because each element's
 /// stored hash is reused: elements are never hashed again.
 ///
 /// If `f` structurally modifies `self` (adds or removes elements, or clears
@@ -682,7 +682,7 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let set = @hashset.from_array([1, 2, 3, 4])
+///   let set = @hashset.HashSet([1, 2, 3, 4])
 ///   let even = set.filter(x => x % 2 == 0)
 ///   inspect(even.length(), content="2")
 ///   inspect(even.contains(2), content="true")
@@ -861,7 +861,7 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(
 ///
 /// ```mbt check
 /// test {
-///   let set = @hashset.from_array(["a", "b"])
+///   let set = @hashset.HashSet(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true") // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.length(), content="1")
@@ -908,7 +908,7 @@ pub impl[X : @json.ToJson] @json.ToJson for HashSet[X] with fn to_json(self) {
 
 ///|
 /// Decodes a hash set from a JSON array, the form `to_json` produces. A
-/// repeated element is kept once, as in `@hashset.from_array`.
+/// repeated element is kept once, as in `@hashset.HashSet(...)`.
 ///
 /// # Example
 ///
@@ -926,7 +926,7 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for HashSet[X] with fn f
   guard json is Array(arr) else {
     raise path.error("@hashset.from_json: expected array")
   }
-  // Sized the way `@hashset.from_array` sizes itself for this many elements.
+  // Sized the way `@hashset.HashSet(...)` sizes itself for this many elements.
   let res : HashSet[X] = new_hashset(
     default_init_capacity.max(capacity_for_length(arr.length())),
   )

@@ -161,7 +161,7 @@ test "contains" {
 
 ///|
 test "from_array" {
-  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(m.get("a"), Some(1))
   @test.assert_eq(m.get("b"), Some(2))
   @test.assert_eq(m.get("c"), Some(3))
@@ -187,7 +187,7 @@ test "is_empty" {
 
 ///|
 test "each" {
-  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each((_k, v) => sum += v)
   inspect(sum, content="6")
@@ -195,7 +195,7 @@ test "each" {
 
 ///|
 test "iter_collect" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter().collect()
   array.sort()
   debug_inspect(
@@ -208,7 +208,7 @@ test "iter_collect" {
 
 ///|
 test "iteri" {
-  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
   m.eachi((i, _k, v) => {
@@ -221,7 +221,7 @@ test "iteri" {
 
 ///|
 test "iter2" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter2().to_array()
   array.sort()
   debug_inspect(
@@ -234,7 +234,7 @@ test "iter2" {
 
 ///|
 test "to_array" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   let array = map.to_array()
   array.sort()
   debug_inspect(
@@ -363,14 +363,14 @@ test "@hashmap.contains/empty" {
 
 ///|
 test "@hashmap.contains/basic" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.contains(2), content="true")
   inspect(map.contains(4), content="false")
 }
 
 ///|
 test "@hashmap.contains/after_operations" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two")])
   map.remove(1)
   inspect(map.contains(1), content="false")
   map.set(1, "ONE")
@@ -382,7 +382,7 @@ test "@hashmap.contains/after_operations" {
 ///|
 test "@hashmap.from_array" {
   let array : ReadOnlyArray[(String, Int32)] = [("a", 1), ("b", 2), ("c", 3)]
-  let map = @hashmap.from_array(array)
+  let map = @hashmap.HashMap(array)
   for k, v in map {
     @test.assert_eq(map.get(k), Some(v))
   }
@@ -396,7 +396,7 @@ test "@hashmap.from_array with int key" {
     (2, "two"),
     (3, "three"),
   ]
-  let map = @hashmap.from_array(array)
+  let map = @hashmap.HashMap(array)
   for k, v in map {
     @test.assert_eq(map.get(k), Some(v))
   }
@@ -413,7 +413,7 @@ test "@hashmap.HashMap constructor" {
 
 ///|
 test "@hashmap.contains_kv" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.contains_kv(1, "one"), content="true")
   inspect(map.contains_kv(1, "two"), content="false")
   inspect(map.contains_kv(4, "four"), content="false")
@@ -421,14 +421,14 @@ test "@hashmap.contains_kv" {
 
 ///|
 test "@hashmap.eq" {
-  let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let map2 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map1 = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   inspect(map1 == map2, content="true")
 }
 
 ///|
 test "@hashmap.map" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let v = map.map((k, v) => k + v.to_string())
   verify_content(v, [("a", "a1"), ("b", "b2"), ("c", "c3")])
   map["d"] = 10
@@ -449,7 +449,7 @@ test "@hashmap.map" {
 
 ///|
 test "@hashmap.copy" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let copy = map.copy()
   verify_content(copy, [("a", 1), ("b", 2), ("c", 3)])
   map["d"] = 10
@@ -483,15 +483,15 @@ fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
 
 ///|
 test "hashmap.to_json" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.HashMap([(1, "one"), (2, "two"), (3, "three")])
   let json : Json = { "1": "one", "2": "two", "3": "three" }
   @test.assert_eq(@json.to_json(map), json)
 }
 
 ///|
 test "@hashmap.merge" {
-  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
-  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  let map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+  let map2 = @hashmap.HashMap([("b", 3), ("c", 4)])
   let merged = map1.merge(map2)
   debug_inspect(merged.get("a"), content="Some(1)")
   debug_inspect(merged.get("b"), content="Some(3)")
@@ -505,7 +505,7 @@ test "@hashmap.merge" {
 ///|
 test "@hashmap.merge empty maps" {
   let map1 : @hashmap.HashMap[String, Int32] = HashMap([])
-  let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.HashMap([("a", 1), ("b", 2)])
   let merged1 = map1.merge(map2)
   verify_content(merged1, [("a", 1), ("b", 2)])
   let merged2 = map2.merge(map1)
@@ -516,8 +516,8 @@ test "@hashmap.merge empty maps" {
 
 ///|
 test "@hashmap.merge_in_place" {
-  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
-  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  let map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+  let map2 = @hashmap.HashMap([("b", 3), ("c", 4)])
   map1.merge_in_place(map2)
   debug_inspect(map1.get("a"), content="Some(1)")
   debug_inspect(map1.get("b"), content="Some(3)")
@@ -530,7 +530,7 @@ test "@hashmap.merge_in_place" {
 ///|
 test "@hashmap.merge_in_place empty maps" {
   let map1 : @hashmap.HashMap[String, Int32] = HashMap([])
-  let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.HashMap([("a", 1), ("b", 2)])
   map1.merge_in_place(map2)
   verify_content(map1, [("a", 1), ("b", 2)])
   map1.merge_in_place(map1)
@@ -712,7 +712,7 @@ test "filter propagates errors" {
 
 ///|
 test "map propagates errors and leaves the source unchanged" {
-  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   // Raise on the second call, after part of the result has been built;
   // which key that is depends on the hash order.
   let mut calls = 0

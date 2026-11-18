@@ -12,10 +12,10 @@ import {
 
 // Types and methods
 type Set[K]
-#alias(from_array)
+#alias(from_array, deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array)
+#as_free_fn(from_array, deprecated)
 pub fn[K : Hash + Eq] Set::Set(ArrayView[K], capacity? : Int32) -> Self[K]
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit

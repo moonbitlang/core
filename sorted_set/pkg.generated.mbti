@@ -12,10 +12,10 @@ import {
 
 // Types and methods
 type SortedSet[V]
-#alias(from_array)
+#alias(from_array, deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array)
+#as_free_fn(from_array, deprecated)
 pub fn[V : Compare] SortedSet::SortedSet(ArrayView[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
 pub fn[V] SortedSet::clear(Self[V]) -> Unit
