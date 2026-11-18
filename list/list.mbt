@@ -1812,19 +1812,17 @@ pub fn[A] List::iter(self : List[A]) -> Iter[A] {
 pub fn[A] List::iter2(self : List[A]) -> Iter2[Int32, A] {
   let mut i = 0
   let mut next = self
-  Iter2(
-    Iter(fn() {
-      match next {
-        Empty => None
-        More(head, tail~) => {
-          let result = (i, head)
-          next = tail
-          i += 1
-          Some(result)
-        }
+  Iter2::new(fn() {
+    match next {
+      Empty => None
+      More(head, tail~) => {
+        let result = (i, head)
+        next = tail
+        i += 1
+        Some(result)
       }
-    }),
-  )
+    }
+  })
 }
 
 ///|

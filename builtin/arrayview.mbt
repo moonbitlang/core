@@ -884,16 +884,14 @@ pub fn[A, B] ArrayView::zip_iter2(
 ) -> Iter2[A, B] {
   let length = Int32::min(self.length(), other.length())
   let mut i = 0
-  Iter2(
-    Iter(
-      () => {
-        guard i < length else { None }
-        let elem = (self.unsafe_get(i), other.unsafe_get(i))
-        i += 1
-        Some(elem)
-      },
-      size_hint=length,
-    ),
+  Iter2::new(
+    () => {
+      guard i < length else { None }
+      let elem = (self.unsafe_get(i), other.unsafe_get(i))
+      i += 1
+      Some(elem)
+    },
+    size_hint=length,
   )
 }
 
@@ -1019,16 +1017,14 @@ pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
 pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int32, X] {
   let mut i = 0
   let len = self.length()
-  Iter2(
-    Iter(
-      fn() {
-        guard i < len else { None }
-        let result = Some((i, self.unsafe_get(i)))
-        i += 1
-        result
-      },
-      size_hint=len,
-    ),
+  Iter2::new(
+    fn() {
+      guard i < len else { None }
+      let result = Some((i, self.unsafe_get(i)))
+      i += 1
+      result
+    },
+    size_hint=len,
   )
 }
 

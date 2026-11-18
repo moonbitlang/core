@@ -1220,7 +1220,6 @@ pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit raise?) -> Unit raise?
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2, deprecated)
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
-#deprecated
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int32) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
