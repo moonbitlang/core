@@ -44,6 +44,7 @@ async fn main {
   guard @env.get_env_var("TTYD_PORT") is Some(port) else {
     fail("TTYD_PORT is not set")
   }
+  trace_nested(0) // helper started, before opening the terminal
   let tty = @tty.open()
   install_state_check()
   let rpc = @socket.Tcp::connect(@socket.Addr::parse("127.0.0.1:\{port}"))
@@ -237,7 +238,15 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       null
     }
     "nested_scope" => {
-      ignore(tty.handle_resize(() => ignore(tty.handle_resize(() => ()))))
+      trace_nested(1) // received nested_scope RPC
+      ignore(
+        tty.handle_resize(() => {
+          trace_nested(2) // entered callback, immediately before the nested call
+          ignore(tty.handle_resize(() => ()))
+          trace_nested(3) // unexpected: nested call returned
+        }),
+      )
+      trace_nested(4) // outer scope returned
       null
     }
     "concurrent_scope" => {

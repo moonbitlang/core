@@ -86,6 +86,7 @@ priv struct Ttyd {
 priv struct TtydProgress {
   mut stage : String
   mut output_eof : Bool
+  mut diagnostics : String
 }
 
 ///|
@@ -252,9 +253,36 @@ async fn Ttyd::expect_output_text(self : Ttyd, expected : String) -> Unit {
 }
 
 ///|
-async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
+// Only executed for the nested_scope diagnostic, before timeout cancellation.
+let nested_snapshot_script : String =
+  #|echo "helper markers:"
+  #|cat "$1"
+  #|pid=$(awk 'NR == 1 { print $2 }' "$1")
+  #|case "$pid" in ''|*[!0-9]*) exit 1;; esac
+  #|echo "core dump configuration:"
+  #|cat /proc/sys/kernel/core_pattern /proc/sys/kernel/core_pipe_limit
+  #|echo "helper limits and status:"
+  #|cat "/proc/$pid/limits" "/proc/$pid/status" "/proc/$pid/wchan"
+  #|for task in /proc/"$pid"/task/*; do
+  #|  echo "thread $task:"
+  #|  cat "$task/status" "$task/wchan" "$task/stack"
+  #|done
+
+///|
+async fn with_ttyd(
+  f : async (Ttyd) -> Unit,
+  exit_with~ : Int32 = 0,
+  diagnose~ : Bool = false,
+) -> Unit {
   let (pty_path, ttyd_path) = programs.wait()
-  let progress : TtydProgress = { stage: "starting PTY", output_eof: false, }
+  let trace_dir = if diagnose { @fs.tmpdir(prefix="tty-nested") } else { "" }
+  defer (if diagnose { @fs.remove(trace_dir, recursive=true) })
+  let trace_path = if diagnose { trace_dir + "/trace" } else { "" }
+  let progress : TtydProgress = {
+    stage: "starting PTY",
+    output_eof: false,
+    diagnostics: "",
+  }
   @async.with_timeout(10000, () => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
     defer server.close()
@@ -265,7 +293,10 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
         group,
         pty_path,
         [ttyd_path],
-        extra_env={ "TTYD_PORT": server.addr.port.to_string() },
+        extra_env={
+          "TTYD_PORT": server.addr.port.to_string(),
+          "TTYD_TRACE_PATH": trace_path,
+        },
         stdin=FeedFromParent,
         stdout=Collect,
         stderr=Collect,
@@ -273,6 +304,19 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
       defer process.stdin.close()
       defer process.stdout.close()
       defer process.stderr.close()
+      if diagnose {
+        group.spawn_bg(no_wait=true, () => {
+          @async.sleep(8000)
+          let snapshot = @process.run(
+            "sh",
+            ["-c", nested_snapshot_script, "tty-diagnostics", trace_path],
+            stdout=Collect,
+            stderr=DuplicateStdout,
+          )
+          progress.diagnostics = snapshot.stdout_text()
+          println("[tty-nested-snapshot]\n\{progress.diagnostics}")
+        })
+      }
       let pty = Pty(process)
       progress.stage = "waiting for PTY ready"
       pty.expect_ok()
@@ -301,7 +345,7 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
   }) catch {
     @async.TimeoutError =>
       fail(
-        "[tty-timeout] after 10000 ms: \{progress.stage}; PTY output EOF=\{progress.output_eof}; expected exit=\{exit_with}",
+        "[tty-timeout] after 10000 ms: \{progress.stage}; PTY output EOF=\{progress.output_eof}; expected exit=\{exit_with}\n\{progress.diagnostics}",
       )
     err => raise err
   }
@@ -830,7 +874,7 @@ async test "handle_resize aborts buffered access during another read" {
 ///|
 #cfg(not(platform="windows"))
 async test "handle_resize aborts nested scopes" {
-  with_ttyd(exit_with=-6) <| ttyd => {
+  with_ttyd(exit_with=-6, diagnose=true) <| ttyd => {
     ttyd.send_input(b"ab\n")
     ttyd.expect_abort("nested_scope")
   }
