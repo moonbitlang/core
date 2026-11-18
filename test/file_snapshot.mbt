@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#cfg(target="wasm")
+#cfg(any(target="wasm", target="wasm-gc", target="js"))
 fn snapshot_matches(
   actual : String,
   filename : String,
@@ -26,7 +26,7 @@ fn snapshot_matches(
 }
 
 ///|
-#cfg(not(target="wasm"))
+#cfg(not(any(target="wasm", target="wasm-gc", target="js")))
 #warnings("-unused_error_type")
 fn snapshot_matches(
   _actual : String,

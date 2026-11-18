@@ -3,7 +3,7 @@ import {
   "moonbitlang/core/debug",
 }
 
-#cfg(target="wasm")
+#cfg(any(target="wasm", target="wasm-gc", target="js"))
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/encoding/utf8",
@@ -11,5 +11,5 @@ import {
 }
 
 options(
-  targets: { "file_snapshot_wbtest.mbt": [ "wasm" ] },
+  targets: { "file_snapshot_wbtest.mbt": [ "wasm", "wasm-gc", "js" ] },
 )

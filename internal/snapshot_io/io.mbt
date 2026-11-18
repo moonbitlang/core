@@ -16,6 +16,7 @@
 /// Compare UTF-8 text using Moon's snapshot semantics: remove every CR.
 /// A missing baseline is empty. Only the baseline read buffer is bounded;
 /// the actual output and legacy mismatch payload remain buffered in memory.
+/// WasmGC also buffers the entire baseline in the legacy host ABI.
 pub fn matches(
   source : String,
   filename : String,

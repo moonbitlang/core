@@ -11,6 +11,8 @@ options(
   "allow-experimental-packages": true,
   targets: {
     "wasm.mbt": [ "wasm" ],
-    "unsupported.mbt": [ "native", "wasm-gc", "js", "llvm" ],
+    "unsupported.mbt": [ "native", "llvm" ],
+    "js.mbt": [ "js" ],
+    "wasm_gc.mbt": [ "wasm-gc" ],
   },
 )

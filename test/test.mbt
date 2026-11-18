@@ -236,7 +236,7 @@ pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
 
 ///|
 /// Compare the current buffer with a file in `__snapshot__` beside the test source.
-/// On Wasm, matching text clears the buffer and returns. CR characters are
+/// On Wasm, WasmGC and Node.js, matching text clears the buffer and returns. CR characters are
 /// ignored, matching Moon's comparison; a missing baseline is empty text.
 /// A mismatch raises `SnapshotError` for Moon to report or update. I/O errors
 /// raise without consuming the buffer. Other targets retain the legacy behavior

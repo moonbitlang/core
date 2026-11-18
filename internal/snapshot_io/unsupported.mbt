@@ -18,7 +18,7 @@ priv type Handle
 
 ///|
 fn open(_path : String) -> Handle? raise {
-  fail("file snapshot I/O currently supports only wasm")
+  fail("file snapshot I/O currently supports wasm, wasm-gc and Node.js")
 }
 
 ///|
@@ -29,12 +29,12 @@ fn Handle::read(
   _len : Int32,
   _position : Int64,
 ) -> Int32 raise {
-  fail("file snapshot I/O currently supports only wasm")
+  fail("file snapshot I/O currently supports wasm, wasm-gc and Node.js")
 }
 
 ///|
 fn Handle::close(_self : Handle) -> Unit raise {
-  fail("file snapshot I/O currently supports only wasm")
+  fail("file snapshot I/O currently supports wasm, wasm-gc and Node.js")
 }
 
 ///|

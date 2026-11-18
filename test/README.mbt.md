@@ -342,7 +342,7 @@ The test package provides essential tools for ensuring code quality and correctn
 
 ## File snapshot control flow
 
-On Wasm, `t.snapshot(filename="output.txt")` compares the text accumulated by
+On Wasm, WasmGC and Node.js, `t.snapshot(filename="output.txt")` compares the text accumulated by
 `t.write` and `t.writeln` with `__snapshot__/output.txt` beside the test source.
 A match clears the buffer and returns, so one test can compare multiple files
 and execute assertions after a matching snapshot. Comparison ignores every CR
@@ -355,12 +355,16 @@ Updates are not transactional across files or later assertions.
 
 I/O errors also raise and preserve the buffer. Consequently `snapshot` now
 uses general `raise`; wrappers restricted to `raise SnapshotError` must widen
-their error annotation. The implementation reads baselines in 64 KiB chunks,
-but actual output and mismatch diagnostics still occupy memory proportional
-to the output size. It neither creates temporary candidates nor writes baselines.
+their error annotation. Wasm and Node.js read baselines in 64 KiB chunks.
+WasmGC uses the existing `x/fs` host ABI, which loads the entire baseline into
+host memory and transfers bytes individually into the same chunked comparison
+buffer. Thus WasmGC has higher memory and call overhead. On every backend,
+actual output and mismatch diagnostics still occupy memory proportional to the
+output size. Comparison neither creates temporary candidates nor writes baselines.
 
 Other backends retain the legacy behavior: each snapshot reports to Moon and
-terminates the test body, even when it matches. Wasm uses synchronous host file
-operations; no async test context or Moon driver changes are required.
+terminates the test body, even when it matches. All three supported backends
+use synchronous file operations; no async test context or Moon driver changes
+are required. JS file access requires Node.js.
 Windows rooted or drive-prefixed snapshot filenames also retain that legacy
 reporting behavior; relative snapshot filenames use the new comparison path.
