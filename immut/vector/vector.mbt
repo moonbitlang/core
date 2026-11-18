@@ -115,6 +115,7 @@ pub fn[A] Vector::makei(
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Vector::Vector(arr : ArrayView[A]) -> Vector[A] {
+  guard arr.length() > 0 else { return new() }
   Vector::makei(arr.length(), i => arr[i])
 }
 
