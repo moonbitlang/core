@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/builtin",
+}
+
+#cfg(target="wasm")
+import {
+  "moonbitlang/core/async/os_error",
+}
+
+options(
+  "allow-experimental-packages": true,
+  targets: {
+    "wasm.mbt": [ "wasm" ],
+    "unsupported.mbt": [ "native", "wasm-gc", "js", "llvm" ],
+  },
+)
