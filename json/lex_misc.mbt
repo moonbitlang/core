@@ -105,9 +105,7 @@ test "expect_char with surrogate pair" {
 }
 
 ///|
-// Skips JSON whitespace (ASCII only, RFC 8259 §2). The token lexers skip
-// whitespace inside their `lexscan` DFAs; this is used by `unexpected_token`
-// and by `parse` after the top-level value.
+// Advances the cursor past JSON whitespace (ASCII only, RFC 8259 §2).
 //
 // `offset` is held in a local for the duration of the scan so each
 // consumed whitespace character is one `local.set` instead of a
