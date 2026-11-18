@@ -19,7 +19,7 @@
 priv struct BitWriter {
   out : Array[Byte]
   mut bitbuf : Int32
-  mut bit_count : Int32 // bits currently held in `bitbuf`, not yet flushed to a byte
+  mut bit_count : Int32 // streaming Tokens may extend bitbuf with token_high
   mut direct_output : FixedArray[Byte]?
   mut direct_start : Int32
   spill_on_full : Bool

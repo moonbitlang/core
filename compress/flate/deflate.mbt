@@ -53,6 +53,7 @@ struct IncrementalEncoder {
   w : BitWriter // persistent bit sink spanning all blocks
   mut phase : EmissionPhase
   mut cursor : Int32 // next payload byte, header symbol, or token in `phase`
+  mut token_high : UInt32 // upper word of the suspended Huffman bit accumulator
   mut out_pos : Int32 // next byte of the bounded spill
   mut flushing : Bool // an accepted flush has started emitting its blocks
   mut emitted_final : Bool // the current or just-completed block has BFINAL
@@ -90,6 +91,7 @@ pub fn IncrementalEncoder::IncrementalEncoder(
     w: BitWriter(spill_on_full=true),
     phase: Idle,
     cursor: 0,
+    token_high: 0U,
     flushing: false,
     out_pos: 0,
     emitted_final: false,
@@ -143,6 +145,7 @@ pub fn IncrementalEncoder::reset(
   self.phase = Idle
   self.flushing = false
   self.cursor = 0
+  self.token_high = 0U
   self.w.out.clear()
   self.w.bitbuf = 0
   self.w.bit_count = 0
@@ -255,10 +258,36 @@ pub fn IncrementalEncoder::step(
     }
     return { status: NeedMoreOutput, consumed: 0, produced: output.length(), }
   }
+  self.step_emission(input, output, action)
+}
+
+///|
+fn IncrementalEncoder::step_emission(
+  self : IncrementalEncoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+  action : DeflateAction,
+) -> StepResult {
+  let mut pos = 0
+  if self.phase is Tokens(codes) && self.w.out.is_empty() {
+    if output.length() == 1 && self.w.bit_count >= 16 {
+      // A second whole byte guarantees backpressure, even at the last token.
+      output.unsafe_set(0, self.w.bitbuf.to_byte())
+      self.w.bitbuf = ((self.w.bitbuf.reinterpret_as_uint() >> 8) |
+      (self.token_high << 24)).reinterpret_as_int()
+      self.token_high = self.token_high >> 8
+      self.w.bit_count -= 8
+      return { status: NeedMoreOutput, consumed: 0, produced: 1, }
+    }
+    pos = self.resume_token_prefix(codes, output, 0)
+    if self.phase is Tokens(_) {
+      return { status: NeedMoreOutput, consumed: 0, produced: pos, }
+    }
+  }
   self.w.direct_output = Some(output_storage(output))
   self.w.direct_start = output.start_offset()
   self.w.direct_capacity = output.length()
-  self.w.direct_pos = 0
+  self.w.direct_pos = pos
   let result = self.step_blocks(input, output, action)
   self.w.direct_output = None // do not retain caller-owned output between steps
   result

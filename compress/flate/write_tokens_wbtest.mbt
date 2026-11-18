@@ -95,23 +95,6 @@ test "wide token writer matches the bytewise writer in every sink" {
           dd_len,
         )
       }
-      // The streaming wide loop stores into the caller's backing, not a
-      // scratch chunk. Compare the whole backing, including its unused tail.
-      assert_token_writers_agree(
-        () => {
-          let out = FixedArray::make(6 * count + 2, b'\xA5')
-          {
-            ..BitWriter::into(out.mut_view(start=1, end=out.length() - 1)),
-            spill_on_full: true,
-          }
-        },
-        7,
-        tokens,
-        ll_val,
-        ll_len,
-        dd_val,
-        dd_len,
-      )
       // A direct sink: ample (the sentinel behind the output must survive),
       // exact, one byte short, far too small, empty; then growable ones.
       let probe = BitWriter()
@@ -147,6 +130,57 @@ test "wide token writer matches the bytewise writer in every sink" {
       }
     }
   }
+}
+
+///|
+test "resuming Huffman tokens preserves the prefix and unwritten tail" {
+  let ll_val = FixedArray::make(MAX_NUM_LIT, 0x7FFFU)
+  let ll_len = FixedArray::make(MAX_NUM_LIT, 15)
+  ll_val[0] = 1U
+  ll_len[0] = 1
+  let dd_val = FixedArray::make(MAX_NUM_DIST, 0x7FFFU)
+  let dd_len = FixedArray::make(MAX_NUM_DIST, 15)
+  let enc = IncrementalEncoder()
+  enc.tokens.append(
+    Array::makei(513, i => {
+      match i % 5 {
+        0 | 1 => 0
+        2 => 1
+        _ => pack_match_token(257, 32768) // 48 bits, including both extra fields
+      }
+    }),
+  )
+  let reference = BitWriter()
+  reference.write_bits(0x55, 7)
+  enc.w.write_bits(0x55, 7)
+  reference.write_tokens_bytewise(enc.tokens, ll_val, ll_len, dd_val, dd_len)
+  let rooms : ReadOnlyArray[Int32] = [8, 0, 1, 2, 7, 9, 256]
+  let mut offset = 0
+  for step = 0; offset < reference.out.length(); step = step + 1 {
+    let room = rooms[step % rooms.length()]
+    let actual = FixedArray::make(room + 3, b'\xA5')
+    let expected = FixedArray::make(room + 3, b'\xA5')
+    let count = room.min(reference.out.length() - offset)
+    expected
+    .mut_view(start=2)
+    .blit_from_array(reference.out[offset:offset + count])
+    let pos = enc.write_token_prefix(
+      actual.mut_view(start=1, end=room + 2),
+      1,
+      ll_val,
+      ll_len,
+      dd_val,
+      dd_len,
+    )
+    @test.assert_eq(pos, 1 + count)
+    @test.assert_eq(actual, expected)
+    assert_true(enc.w.bit_count <= 55)
+    offset += count
+  }
+  @test.assert_eq(enc.cursor, enc.tokens.length())
+  @test.assert_eq(enc.w.bit_count, reference.bit_count)
+  @test.assert_eq(enc.w.bitbuf, reference.bitbuf)
+  @test.assert_eq(enc.token_high, 0U)
 }
 
 ///|

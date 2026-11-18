@@ -60,9 +60,145 @@ fn IncrementalEncoder::copy_stored(
 }
 
 ///|
-// Only whole bytes from the current header field, token, or EOB can spill.
-// A match emits at most floor((7 pending + 48 token bits) / 8) = 6 bytes;
-// a byte-aligned stored header including LEN/NLEN also emits at most six.
+#cfg(any(target="native", target="wasm"))
+const STREAM_WIDE_TOKENS : Bool = true
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+const STREAM_WIDE_TOKENS : Bool = false
+
+///|
+fn IncrementalEncoder::resume_token_prefix(
+  self : IncrementalEncoder,
+  codes : DynamicCodes?,
+  output : MutArrayView[Byte],
+  pos : Int32,
+) -> Int32 {
+  let pos = if codes is Some(c) {
+    self.write_token_prefix(
+      output,
+      pos,
+      c.dll_val,
+      c.lengths.dll_len,
+      c.dd_val,
+      c.lengths.dd_len,
+    )
+  } else {
+    self.write_token_prefix(
+      output, pos, fixed_ll_val, fixed_ll_len, fixed_dist_val, fixed_dist_len,
+    )
+  }
+  if self.cursor == self.tokens.length() && self.w.bit_count < 8 {
+    self.phase = EndBlock(codes)
+  }
+  pos
+}
+
+///|
+// Refill a word before draining it. With output room we can assemble up to
+// 63 bits: draining at least one byte leaves at most 55 (six whole bytes).
+// With no room, append to at most seven bits, stopping after the first whole
+// byte becomes available. Other phases always see the normal 0..7 bits.
+fn IncrementalEncoder::write_token_prefix(
+  self : IncrementalEncoder,
+  output : MutArrayView[Byte],
+  start : Int32,
+  ll_val : FixedArray[UInt32],
+  ll_len : FixedArray[Int32],
+  dd_val : FixedArray[UInt32],
+  dd_len : FixedArray[Int32],
+) -> Int32 {
+  let mut pos = start
+  let mut cursor = self.cursor
+  let end = self.tokens.length()
+  let mut lo = self.w.bitbuf.reinterpret_as_uint()
+  let mut hi = self.token_high
+  let mut bits = self.w.bit_count
+  for ;; {
+    while bits >= 8 && pos < output.length() {
+      output.unsafe_set(pos, lo.to_byte())
+      pos += 1
+      lo = (lo >> 8) | (hi << 24)
+      hi = hi >> 8
+      bits -= 8
+    }
+    let room = output.length() - pos
+    // Eight more tokens guarantee another byte. Near EOB resolve whether
+    // this exact fit actually stalls or leaves only a sub-byte remainder.
+    if bits >= 8 || cursor == end || (room == 0 && end - cursor >= 8) {
+      break
+    }
+    if STREAM_WIDE_TOKENS && room >= 8 && end - cursor > 64 {
+      // Each token advances at most six bytes. Leave eight bytes for the last
+      // speculative store and 64 tokens (at least eight bytes) to cover it.
+      let count = (end - cursor - 64).min(1 + (room - 8) / 6)
+      self.w.bitbuf = lo.reinterpret_as_int()
+      self.w.bit_count = bits
+      pos += self.w.write_wide_run(
+        self.tokens[cursor:cursor + count],
+        ll_val,
+        ll_len,
+        dd_val,
+        dd_len,
+        output_storage(output),
+        output.start_offset() + pos,
+      )
+      lo = self.w.bitbuf.reinterpret_as_uint()
+      bits = self.w.bit_count
+      cursor += count
+      continue
+    }
+    // Below 48 bits even the longest literal fits. Check a whole match's
+    // width before committing it so that neither half of the word overflows.
+    let goal = if room == 0 { 8 } else { 48 }
+    while cursor < end && bits < goal {
+      let tok = self.tokens.unsafe_get(cursor)
+      let (low, high, width) = if tok < 256 {
+        (ll_val[tok], 0U, ll_len[tok])
+      } else {
+        let length = tok >> 16
+        let dist = tok & 0xFFFF
+        let lidx = len_to_idx[length]
+        let lsym = 257 + lidx
+        let didx = dist_index(dist)
+        let lbits = ll_len[lsym] + len_extra[lidx]
+        let l = ll_val[lsym] |
+          ((length - len_base[lidx]).reinterpret_as_uint() << ll_len[lsym])
+        let d = dd_val[didx] |
+          ((dist - dist_base[didx]).reinterpret_as_uint() << dd_len[didx])
+        (
+          l | (d << lbits),
+          d >> (32 - lbits),
+          lbits + dd_len[didx] + dist_extra[didx],
+        )
+      }
+      if bits + width > 63 {
+        break
+      }
+      if bits >= 32 {
+        hi = hi | (low << (bits - 32))
+      } else {
+        hi = if bits == 0 {
+          high
+        } else {
+          (high << bits) | (low >> (32 - bits))
+        }
+        lo = lo | (low << bits)
+      }
+      bits += width
+      cursor += 1
+    }
+  }
+  self.cursor = cursor
+  self.w.bitbuf = lo.reinterpret_as_int()
+  self.token_high = hi
+  self.w.bit_count = bits
+  pos
+}
+
+///|
+// Headers and EOB can spill at most six bytes (a stored header after seven
+// pending bits). Drain them before entering the token writer or stored data.
 fn IncrementalEncoder::resume_block(
   self : IncrementalEncoder,
   output : MutArrayView[Byte],
@@ -139,30 +275,9 @@ fn IncrementalEncoder::resume_block(
         }
       }
       Tokens(codes) => {
-        // A batch fitting even the longest matches needs no capacity checks at
-        // token boundaries. With less room finish just one bounded token.
-        let count = (self.tokens.length() - self.cursor).min(
-          ((output.length() - w.direct_pos) / 6).max(1),
-        )
-        if count > 0 {
-          let batch = self.tokens[self.cursor:self.cursor + count]
-          if codes is Some(c) {
-            w.write_tokens(
-              batch,
-              c.dll_val,
-              c.lengths.dll_len,
-              c.dd_val,
-              c.lengths.dd_len,
-            )
-          } else {
-            w.write_tokens(
-              batch, fixed_ll_val, fixed_ll_len, fixed_dist_val, fixed_dist_len,
-            )
-          }
-          self.cursor += count
-        }
-        if self.cursor == self.tokens.length() {
-          self.phase = EndBlock(codes)
+        w.direct_pos = self.resume_token_prefix(codes, output, w.direct_pos)
+        if self.phase is Tokens(_) {
+          return false
         }
       }
       EndBlock(codes) => {

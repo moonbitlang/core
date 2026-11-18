@@ -380,8 +380,7 @@ const TOKEN_CHUNK_BYTES : Int32 = 6 * TOKEN_CHUNK_TOKENS + 8
 /// accumulator is stored as eight little-endian bytes and the write position
 /// advances by the complete bytes only, so the incomplete byte is stored again
 /// (completed) by the next token. Whole-buffer writers hand off a scratch
-/// chunk in bulk; streaming writers use the caller's view when the batch fits.
-/// The emitted bytes and remaining bits match `write_tokens_bytewise`.
+/// chunk in bulk. The emitted bytes and remaining bits match `write_tokens_bytewise`.
 #cfg(any(target="native", target="wasm"))
 fn BitWriter::write_tokens_wide(
   writer : BitWriter,
@@ -391,34 +390,6 @@ fn BitWriter::write_tokens_wide(
   dd_val : FixedArray[UInt32],
   dd_len : FixedArray[Int32],
 ) -> Unit {
-  if writer.spill_on_full {
-    // Every token contributes at least one bit. The last 64 tokens therefore
-    // overwrite all speculative bytes of the wide loop before step returns.
-    let tail = tokens.length() - 64
-    if tail > 0 &&
-      writer.direct_output is Some(dst) &&
-      tokens.length() <= (writer.direct_capacity - writer.direct_pos) / 6 {
-      writer.direct_pos += writer.write_wide_run(
-        tokens[:tail],
-        ll_val,
-        ll_len,
-        dd_val,
-        dd_len,
-        dst,
-        writer.direct_start + writer.direct_pos,
-      )
-      writer.write_tokens_bytewise(
-        tokens[tail:],
-        ll_val,
-        ll_len,
-        dd_val,
-        dd_len,
-      )
-    } else {
-      writer.write_tokens_bytewise(tokens, ll_val, ll_len, dd_val, dd_len)
-    }
-    return
-  }
   let chunk = FixedArray::make(TOKEN_CHUNK_BYTES, b'\x00')
   let mut start = 0
   while start < tokens.length() {
@@ -438,7 +409,6 @@ fn BitWriter::write_tokens_wide(
 }
 
 ///|
-#cfg(any(target="native", target="wasm"))
 fn BitWriter::write_wide_run(
   writer : BitWriter,
   tokens : ArrayView[Int32],
