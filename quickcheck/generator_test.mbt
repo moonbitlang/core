@@ -62,31 +62,68 @@ test "range and choices" {
 }
 
 ///|
+test "int_range samples both parts of a wide signed interval without modulo bias" {
+  // The first 2^32 % 3_000_000_000 offsets occupy about 43.2% of
+  // this interval, but take about 60.3% of raw 32-bit draws modulo its width.
+  let mut prefix = 0
+  for x in @quickcheck.int_range(-1500000000, 1500000000).samples(count=4096) {
+    assert_true(x >= -1500000000 && x < 1500000000)
+    if x < -205032704 {
+      prefix += 1
+    }
+  }
+  assert_true(prefix >= 1550 && prefix <= 1950)
+}
+
+///|
+test "frequency gives equal large weights equal coverage" {
+  fn check(weight : UInt32) -> Unit raise {
+    let generator = @quickcheck.frequency([
+      (weight, @quickcheck.pure(0)),
+      (0U, @quickcheck.pure(2)),
+      (weight, @quickcheck.pure(1)),
+    ])
+    let mut left = 0
+    for x in generator.samples(count=4096) {
+      assert_true(x == 0 || x == 1)
+      if x == 0 {
+        left += 1
+      }
+    }
+    assert_true(left >= 1850 && left <= 2250)
+  }
+
+  check(0x80000000U) // exactly 2^32
+  check(1500000000U) // a total below 2^32, with pronounced modulo bias
+  check(0x90000000U) // above 2^32
+}
+
+///|
 test "elements selects only supplied values" {
   debug_inspect(
     @quickcheck.elements(["red", "green", "blue"]).samples(count=20),
     content=(
       #|[
       #|  "green",
+      #|  "red",
+      #|  "red",
+      #|  "green",
       #|  "blue",
-      #|  "red",
       #|  "green",
-      #|  "red",
-      #|  "green",
-      #|  "red",
-      #|  "green",
-      #|  "green",
-      #|  "red",
-      #|  "green",
-      #|  "red",
       #|  "red",
       #|  "blue",
       #|  "green",
       #|  "green",
-      #|  "green",
       #|  "blue",
       #|  "red",
+      #|  "red",
+      #|  "red",
       #|  "blue",
+      #|  "blue",
+      #|  "blue",
+      #|  "blue",
+      #|  "red",
+      #|  "green",
       #|]
     ),
   )
@@ -143,7 +180,7 @@ test "zip pairs two generators" {
   debug_inspect(
     pairs,
     content=(
-      #|[(7, 'b'), (7, 'e'), (5, 'd'), (3, 'd')]
+      #|[(4, 'd'), (9, 'e'), (9, 'a'), (8, 'b')]
     ),
   )
 }
@@ -156,7 +193,7 @@ test "zip_with and zip_with3 combine generator outputs" {
   debug_inspect(
     sums,
     content=(
-      #|[8, 9, 6, 8, 5, 6]
+      #|[5, 11, 15, 17, 12, 8]
     ),
   )
   let dates = @quickcheck.int_range(2000, 2002)
@@ -169,7 +206,7 @@ test "zip_with and zip_with3 combine generator outputs" {
   debug_inspect(
     dates,
     content=(
-      #|["2001-10-6", "2001-6-12", "2001-1-25"]
+      #|["2001-2-26", "2001-10-25", "2001-10-16"]
     ),
   )
 }

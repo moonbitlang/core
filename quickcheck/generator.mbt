@@ -185,7 +185,7 @@ pub fn int_range(lower : Int32, upper : Int32) -> Generator[Int32] {
   }
   let width = (upper - lower).reinterpret_as_uint()
   Generator((_, state) => {
-    (state.next_uint() % width).reinterpret_as_int() + lower
+    state.next_uint(limit=width).reinterpret_as_int() + lower
   })
 }
 
@@ -236,21 +236,22 @@ pub fn[T] elements(values : Array[T]) -> Generator[T] {
 /// Randomly selects a generator according to its weight.
 pub fn[T] frequency(generators : Array[(UInt32, Generator[T])]) -> Generator[T] {
   guard !generators.is_empty() else { abort("frequency: empty array") }
-  let total = for pair in generators; total = 0U {
+  // UInt32 weights in an Int32-indexed array sum to less than 2^63.
+  let total = for pair in generators; total = UInt64(0) {
     let (weight, _) = pair
-    continue total + weight
+    continue total + weight.to_uint64()
   } nobreak {
     total
   }
   guard total > 0 else { abort("frequency: total weight is zero") }
   Generator((size, state) => {
-    let choice = state.next_uint() % total
+    let choice = state.next_uint64(limit=total)
     for pair in generators; remaining = choice {
       let (weight, generator) = pair
-      if remaining < weight {
+      if remaining < weight.to_uint64() {
         break generator.run(size, state)
       }
-      continue remaining - weight
+      continue remaining - weight.to_uint64()
     } nobreak {
       abort("frequency: invalid weights")
     }
