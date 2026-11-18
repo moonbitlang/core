@@ -95,6 +95,23 @@ test "wide token writer matches the bytewise writer in every sink" {
           dd_len,
         )
       }
+      // The streaming wide loop stores into the caller's backing, not a
+      // scratch chunk. Compare the whole backing, including its unused tail.
+      assert_token_writers_agree(
+        () => {
+          let out = FixedArray::make(6 * count + 2, b'\xA5')
+          {
+            ..BitWriter::into(out.mut_view(start=1, end=out.length() - 1)),
+            spill_on_full: true,
+          }
+        },
+        7,
+        tokens,
+        ll_val,
+        ll_len,
+        dd_val,
+        dd_len,
+      )
       // A direct sink: ample (the sentinel behind the output must survive),
       // exact, one byte short, far too small, empty; then growable ones.
       let probe = BitWriter()
