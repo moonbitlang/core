@@ -12,6 +12,8 @@ import {
 
 // Types and methods
 type VectorMap[K, V]
+#alias(from_array)
+#as_free_fn(from_array)
 pub fn[K : Eq + Hash, V] VectorMap::VectorMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] VectorMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")

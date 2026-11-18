@@ -1015,18 +1015,6 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger)
 
 ///|
 /// Creates a hash map from an array of key-value pairs.
-#as_free_fn(deprecated="Use @immut/hashmap.HashMap([...]) instead")
-#alias(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
-#as_free_fn(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
-#deprecated("Use @immut/hashmap.HashMap([...]) instead")
-pub fn[K : Eq + Hash, V] HashMap::from_array(
-  arr : ArrayView[(K, V)],
-) -> HashMap[K, V] {
-  hash_map_from_array(arr)
-}
-
-///|
-/// Creates a hash map from an array of key-value pairs.
 ///
 /// If a key appears more than once, the later value overrides the earlier one
 /// (the key that was seen first is kept), as if the pairs were `add`ed in order.
@@ -1040,6 +1028,10 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 ///   @test.assert_eq(m.get(2), Some("two"))
 /// }
 /// ```
+#alias(from_array)
+#as_free_fn(from_array)
+#alias(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
 pub fn[K : Eq + Hash, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {

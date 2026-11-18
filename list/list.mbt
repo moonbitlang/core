@@ -117,25 +117,8 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
 }
 
 ///|
-/// Convert array to list.
+/// Builds a list from the elements of the array view, in order.
 ///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls = @list.List([1, 2, 3, 4, 5])
-///   @debug.assert_eq(ls, List([1, 2, 3, 4, 5]))
-/// }
-/// ```
-#as_free_fn(deprecated="Use @list.List([...]) instead")
-#alias(of, deprecated="Use @list.List([...]) instead")
-#as_free_fn(of, deprecated="Use @list.List([...]) instead")
-#deprecated("Use @list.List([...]) instead")
-pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
-  List(arr)
-}
-
-///|
 /// ```mbt check
 /// test {
 ///   let lst = @list.List([1, 2, 3, 4, 5])
@@ -147,6 +130,10 @@ pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
 ///   )
 /// }
 /// ```
+#alias(from_array)
+#as_free_fn(from_array)
+#alias(of, deprecated="Use @list.List([...]) instead")
+#as_free_fn(of, deprecated="Use @list.List([...]) instead")
 pub fn[A] List::List(arr : ArrayView[A]) -> List[A] {
   for i in arr.length()>..0; list = Empty {
     continue More(arr[i], tail=list)

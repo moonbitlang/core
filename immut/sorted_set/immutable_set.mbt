@@ -39,17 +39,6 @@ pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
 }
 
 ///|
-/// Initialize a `SortedSet[A]` from an array.
-/// O(n) when the input is already monotonic, otherwise O(n*log n).
-#as_free_fn(deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
-#alias(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
-#as_free_fn(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
-#deprecated("Use @immut/sorted_set.SortedSet([...]) instead")
-pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] {
-  sorted_set_from_array(array)
-}
-
-///|
 fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
   guard array.length() > 0 else { return Empty }
   let (order, has_duplicates) = sorted_set_array_order(array)
@@ -138,6 +127,10 @@ fn[A : Compare] sorted_set_from_array_by_add(
 ///   @test.assert_eq(@sorted_set.SortedSet([3, 1, 2, 3]).to_array(), [1, 2, 3])
 /// }
 /// ```
+#alias(from_array)
+#as_free_fn(from_array)
+#alias(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
   sorted_set_from_array(array)
 }

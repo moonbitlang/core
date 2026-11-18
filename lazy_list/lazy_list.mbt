@@ -66,6 +66,8 @@ pub impl[A] Default for LazyList[A] with fn default() {
 ///   inspect(@lazy_list.LazyList(([] : Array[Int32])).is_empty(), content="true")
 /// }
 /// ```
+#alias(from_array)
+#as_free_fn(from_array)
 pub fn[A] LazyList::LazyList(arr : ArrayView[A]) -> LazyList[A] {
   for i = arr.length() - 1, acc = LazyList::empty(); i >= 0; {
     continue i - 1, { cell: Cons(arr[i], tail=Tail::ready(acc)), }

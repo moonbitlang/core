@@ -12,6 +12,10 @@ import {
 // Types and methods
 #derive(Eq)
 type HashMap[K, V]
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
 pub fn[K : Eq + Hash, V] HashMap::HashMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
@@ -24,11 +28,6 @@ pub fn[K : Eq, V : Eq] HashMap::equal(Self[K, V], Self[K, V]) -> Bool
 pub fn[K, V] HashMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(fold_with_key, deprecated)
 pub fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn(deprecated)
-#deprecated
-pub fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

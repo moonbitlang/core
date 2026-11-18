@@ -233,19 +233,6 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 ///|
 
 ///|
-/// Build a map from an array of key-value pairs.
-/// O(n) when the input is already monotonic by key, otherwise O(n*log n).
-#as_free_fn(deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
-#alias(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
-#as_free_fn(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
-#deprecated("Use @immut/sorted_map.SortedMap([...]) instead")
-pub fn[K : Compare, V] SortedMap::from_array(
-  array : ArrayView[(K, V)],
-) -> SortedMap[K, V] {
-  sorted_map_from_array(array)
-}
-
-///|
 fn[K : Compare, V] sorted_map_from_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
@@ -348,6 +335,10 @@ fn[K : Compare, V] sorted_map_from_array_by_add(
 ///   @test.assert_eq(m.get(3), Some("c"))
 /// }
 /// ```
+#alias(from_array)
+#as_free_fn(from_array)
+#alias(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 pub fn[K : Compare, V] SortedMap::SortedMap(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
