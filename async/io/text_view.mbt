@@ -68,7 +68,21 @@ pub impl TextReader for Utf8TextView with fn read_until(
 }
 
 ///|
-pub extend Utf8TextView with TextReader::{read, read_all, read_until}
+pub impl TextReader for Utf8TextView with fn read_line(
+  self,
+  include_newline~ : Bool = false,
+) {
+  self.reader.read_line(include_newline~)
+}
+
+///|
+pub extend Utf8TextView with TextReader::{
+  read,
+  read_all,
+  read_until,
+  read_line,
+  read_lines,
+}
 
 ///|
 pub impl TextWriter for Utf8TextView with fn write(self, data) {

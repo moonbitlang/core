@@ -19,3 +19,25 @@ async test "text file" {
   defer @fs.remove(path)
   inspect(@fs.read_text(path), content="abcd")
 }
+
+///|
+async test "read text file as lines" {
+  let path = "_build/read_lines_text_file_test"
+  @fs.write_text(path, "first\nsecond\r\nplain\rreturn\nlast")
+  defer @fs.remove(path)
+  json_inspect(@fs.read_lines(path), content=[
+    "first", "second", "plain\rreturn", "last",
+  ])
+  json_inspect(@fs.read_lines(path, include_newline=true), content=[
+    "first\n", "second\r\n", "plain\rreturn\n", "last",
+  ])
+  let file = @fs.open(path, mode=ReadOnly)
+  defer file.close()
+  guard file.text.read_line() is Some(first) else {
+    fail("expected first line")
+  }
+  inspect(first, content="first")
+  json_inspect(file.text.read_lines(), content=[
+    "second", "plain\rreturn", "last",
+  ])
+}
