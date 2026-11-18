@@ -2985,14 +2985,16 @@ pub fn[A, B] Array::zip_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] 
     other.length()
   }
   let mut i = 0
-  Iter2::new(
-    () => {
-      guard i < length else { None }
-      let elem = (self[i], other[i])
-      i += 1
-      Some(elem)
-    },
-    size_hint=length,
+  Iter2(
+    Iter(
+      () => {
+        guard i < length else { None }
+        let elem = (self[i], other[i])
+        i += 1
+        Some(elem)
+      },
+      size_hint=length,
+    ),
   ).iter2()
 }
 

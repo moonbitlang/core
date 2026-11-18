@@ -513,7 +513,7 @@ fn[T : Eq + Hash] iter_matches(
     None // reached end of arrays
   }
 
-  Iter2::new(go)
+  Iter2(Iter(go))
 }
 
 ///|

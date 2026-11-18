@@ -114,7 +114,7 @@ pub fn Regex::replace_by(
 pub fn Regex::find(regex : Regex, str : StringView) -> Iter[MatchResult] {
   let mut search_index = 0
   let len = str.length()
-  Iter::new(() => {
+  Iter(() => {
     guard search_index <= len else { None }
     match regex.execute(str, last_index=search_index) {
       None => None
@@ -154,7 +154,7 @@ pub fn Regex::split(regex : Regex, str : StringView) -> Iter[StringView] {
   let mut search_index = 0
   let len = str.length()
   let mut done = false
-  Iter::new(() => {
+  Iter(() => {
     guard !done else { None }
     while search_index <= len {
       match regex.execute(str, last_index=search_index) {

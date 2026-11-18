@@ -312,3 +312,11 @@ pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 /// `UInt::to_uint64`.
 #deprecated("Use `x.to_uint64()` (`UInt::to_uint64`) instead")
 pub fn UInt64::extend_uint(val : UInt32) -> UInt64 = "%u32.to_u64"
+
+///|
+/// Construct an `Iter2` from a pair-producing callback.
+#deprecated("Use `Iter2(Iter(f, size_hint=...))` instead")
+#owned(f)
+pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, size_hint? : Int32) -> Iter2[X, Y] {
+  Iter2(Iter(f, size_hint?))
+}

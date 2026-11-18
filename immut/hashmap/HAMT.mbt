@@ -932,7 +932,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   }
   let mut curr_index = 0
   let parents = []
-  Iter::new(fn() {
+  Iter(fn() {
     for cn = curr_node {
       match cn {
         Tree(Flat(k, v, _)) => {

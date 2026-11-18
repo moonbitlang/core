@@ -436,10 +436,10 @@ test "Iter::clamped_view clamps finite iterator bounds" {
     let result = arr.iter().clamped_view(start~, end~)
     assert_eq(result.size_hint(), Some(expected.length()))
     assert_eq(result.collect(), expected)
-    // Iter::new has no size hint, so it also exercises the streaming path.
+    // An Iter without a size hint also exercises the streaming path.
     let source = arr.iter()
     assert_eq(
-      Iter::new(() => source.next()).clamped_view(start~, end~).collect(),
+      Iter(() => source.next()).clamped_view(start~, end~).collect(),
       expected,
     )
   }
@@ -461,7 +461,7 @@ test "Iter::clamped_view clamps finite iterator bounds" {
 ///|
 test "Iter::clamped_view stays lazy and composes" {
   let mut reads = 0
-  let source = Iter::new(fn() {
+  let source = Iter(fn() {
     reads += 1
     Some(reads)
   })

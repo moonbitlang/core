@@ -484,7 +484,7 @@ pub fn String::code_units(self : String) -> ArrayView[UInt16] {
 pub fn String::iter(self : String) -> Iter[Char] {
   let len = self.length()
   let mut index = 0
-  Iter::new(fn() {
+  Iter(fn() {
     guard index < len else { None }
     let c1 = self.unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < len {

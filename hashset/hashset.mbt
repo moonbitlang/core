@@ -416,7 +416,7 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
   let mut i = 0
   let len = self.entries.length()
-  Iter::new(
+  Iter(
     fn() {
       while i < len {
         let entry = self.entries.unsafe_get(i)

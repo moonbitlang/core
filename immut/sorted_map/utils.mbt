@@ -507,7 +507,7 @@ fn[K, V] sorted_map_from_sorted_entries(
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -592,34 +592,36 @@ pub fn[K : Compare, V] SortedMap::range(
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self
-  Iter2::new(fn() {
-    for x = next_node {
-      match x {
-        Tree(k, value~, l, r, ..) => {
-          let cmp_key_low = k.compare(low)
-          let cmp_key_high = k.compare(high)
-          if cmp_key_low < 0 {
-            // k < low, skip left subtree and current node, visit right
-            continue r
-          } else if cmp_key_high > 0 {
-            // k > high, skip right subtree and current node, visit left
-            continue l
-          } else if l is Empty {
+  Iter2(
+    Iter(fn() {
+      for x = next_node {
+        match x {
+          Tree(k, value~, l, r, ..) => {
+            let cmp_key_low = k.compare(low)
+            let cmp_key_high = k.compare(high)
+            if cmp_key_low < 0 {
+              // k < low, skip left subtree and current node, visit right
+              continue r
+            } else if cmp_key_high > 0 {
+              // k > high, skip right subtree and current node, visit left
+              continue l
+            } else if l is Empty {
+              next_node = r
+              break Some((k, value))
+            } else {
+              todo_list.push((k, value, r))
+              continue l
+            }
+          }
+          Empty if todo_list.pop() is Some((k, value, r)) => {
             next_node = r
             break Some((k, value))
-          } else {
-            todo_list.push((k, value, r))
-            continue l
           }
+          Empty => break None
         }
-        Empty if todo_list.pop() is Some((k, value, r)) => {
-          next_node = r
-          break Some((k, value))
-        }
-        Empty => break None
       }
-    }
-  })
+    }),
+  )
 }
 
 ///|
@@ -664,7 +666,7 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -701,7 +703,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {

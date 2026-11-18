@@ -30,7 +30,7 @@
 pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -60,7 +60,7 @@ pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {

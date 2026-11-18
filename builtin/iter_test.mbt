@@ -317,28 +317,25 @@ test "size_hint" {
   debug_inspect([|1, 2, 3|].zip([|4, 5|]).size_hint(), content="Some(2)")
   let empty_left : Iter[Int32] = [||]
   debug_inspect(
-    empty_left.zip(Iter::new(() => Some(1))).size_hint(),
+    empty_left.zip(Iter(() => Some(1))).size_hint(),
     content="Some(0)",
   )
   let empty_right : Iter[Int32] = [||]
   debug_inspect(
-    Iter::new(() => Some(1)).zip(empty_right).size_hint(),
+    Iter(() => Some(1)).zip(empty_right).size_hint(),
     content="Some(0)",
   )
-  debug_inspect(Iter::new(() => Some(1)).zip([|1|]).size_hint(), content="None")
+  debug_inspect(Iter(() => Some(1)).zip([|1|]).size_hint(), content="None")
   debug_inspect([|1, 2, 3|].intersperse(0).size_hint(), content="Some(5)")
-  debug_inspect(
-    Iter::new(() => Some(1)).intersperse(0).size_hint(),
-    content="None",
-  )
+  debug_inspect(Iter(() => Some(1)).intersperse(0).size_hint(), content="None")
   debug_inspect([|1, 2, 3|][1:3].size_hint(), content="Some(2)")
   debug_inspect([|1, 2, 3|][3:5].size_hint(), content="Some(0)")
   debug_inspect(
-    Iter::new(() => Some(1)).clamped_view(start=2, end=1).size_hint(),
+    Iter(() => Some(1)).clamped_view(start=2, end=1).size_hint(),
     content="Some(0)",
   )
   debug_inspect(
-    Iter::new(() => Some(1)).clamped_view(start=1, end=3).size_hint(),
+    Iter(() => Some(1)).clamped_view(start=1, end=3).size_hint(),
     content="None",
   )
   debug_inspect([|1, 2, 3|].filter(x => x > 1).size_hint(), content="None")
@@ -347,12 +344,12 @@ test "size_hint" {
     content="None",
   )
   debug_inspect([|1, 2, 3|].take_while(x => x < 3).size_hint(), content="None")
-  let unknown : Iter[Int32] = Iter::new(() => None)
-  let known_empty : Iter[Int32] = Iter::new(() => None, size_hint=0)
+  let unknown : Iter[Int32] = Iter(() => None)
+  let known_empty : Iter[Int32] = Iter(() => None, size_hint=0)
   debug_inspect(unknown.size_hint(), content="None")
   debug_inspect(known_empty.size_hint(), content="Some(0)")
   let mut i = 0
-  let too_small = Iter::new(
+  let too_small = Iter(
     fn() {
       if i < 3 {
         i += 1
@@ -365,10 +362,10 @@ test "size_hint" {
   )
   debug_inspect(too_small.collect(), content="[1, 2, 3]")
   debug_inspect(too_small.size_hint(), content="Some(0)")
-  let too_large : Iter[Int32] = Iter::new(() => None, size_hint=3)
+  let too_large : Iter[Int32] = Iter(() => None, size_hint=3)
   debug_inspect(too_large.next(), content="None")
   debug_inspect(too_large.size_hint(), content="Some(0)")
-  let negative_hint : Iter[Int32] = Iter::new(() => None, size_hint=-1)
+  let negative_hint : Iter[Int32] = Iter(() => None, size_hint=-1)
   debug_inspect(negative_hint.size_hint(), content="Some(0)")
 }
 
@@ -813,7 +810,7 @@ enum Tree {
 fn Tree::iter(self : Tree) -> Iter[Int32] {
   let parents = []
   let mut head = Some(self)
-  Iter::new(fn() {
+  Iter(fn() {
     for v = head {
       match v {
         Some(Leaf(x)) => {

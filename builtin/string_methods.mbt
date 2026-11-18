@@ -1869,7 +1869,7 @@ pub fn StringView::split(
     return self.iter().map(c => c.to_string())
   }
   let mut remaining = Some(self)
-  Iter::new(() => {
+  Iter(() => {
     guard remaining is Some(view) else { None }
     guard view.find(sep) is Some(end) else {
       remaining = None
