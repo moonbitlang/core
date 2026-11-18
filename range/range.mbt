@@ -53,7 +53,7 @@ impl Step with fn enumerate(from, to, step, inclusive) {
   let dir = direction_of(step)
   let mut i = from
   let mut done = false
-  Iter::new(() => {
+  Iter(() => {
     guard !done else { None }
     guard in_range(dir, i, to) || (inclusive && i == to) else { None }
     let value = i
@@ -193,7 +193,7 @@ pub impl Step for @float.Float with fn enumerate(from, to, step, inclusive) {
   // number on js (an `Int64` counter would be a BigInt there)
   let mut k = 1.0
   let mut done = false
-  Iter::new(() => {
+  Iter(() => {
     guard !done else { None }
     guard in_range(dir, i, to) || (inclusive && i == to) else { None }
     let value = i
@@ -248,7 +248,7 @@ pub impl Step for Double with fn enumerate(from, to, step, inclusive) {
   // `COUNTER_LIMIT`
   let mut k = 1.0
   let mut done = false
-  Iter::new(() => {
+  Iter(() => {
     guard !done else { None }
     guard in_range(dir, i, to) || (inclusive && i == to) else { None }
     let value = i

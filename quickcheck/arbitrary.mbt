@@ -85,7 +85,7 @@ pub impl Arbitrary for String with fn arbitrary(size, rs) {
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut i = 0
-  Iter::new(() => {
+  Iter(() => {
     guard i < len else { None }
     let elem = X::arbitrary(i, rs)
     i += 1

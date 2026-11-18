@@ -397,7 +397,7 @@ pub fn[A] LazyList::to_array(self : LazyList[A]) -> Array[A] {
 /// the tail thunk.
 pub fn[A] LazyList::iter(self : LazyList[A]) -> Iter[A] {
   let mut advance : () -> LazyList[A] = () => self
-  Iter::new(() => {
+  Iter(() => {
     match advance().cell {
       Empty => None
       Cons(head, tail~) => {

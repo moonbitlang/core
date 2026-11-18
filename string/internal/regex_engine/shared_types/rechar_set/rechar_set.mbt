@@ -320,7 +320,7 @@ pub fn RecharSet::offset_by(
 pub fn RecharSet::intervals(self : RecharSet) -> Iter[(Rechar, Rechar)] {
   let mut node = self.0
   let parents = []
-  Iter::new(fn() {
+  Iter(fn() {
     for curr = node {
       match curr {
         Node(l=Empty, lo~, hi~, r~, ..) => {

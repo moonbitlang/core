@@ -417,7 +417,7 @@ pub fn[K, V] SortedMap::eachi(
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
@@ -451,7 +451,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
@@ -493,7 +493,7 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
@@ -559,39 +559,41 @@ pub fn[K : Compare, V] SortedMap::range(
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self.root
-  Iter2::new(fn() {
-    for x = next_node {
-      match x {
-        Some({ left, key, value, right, height: _, }) => {
-          let cmp_key_low = key.compare(low)
-          let cmp_key_high = key.compare(high)
-          if cmp_key_low < 0 {
-            // `key < low`, the left subtree and the key itself
-            // are all below the range, skip to the right subtree
-            continue right
-          } else if cmp_key_high > 0 {
-            // `key > high`, the right subtree and the key itself
-            // are all above the range, skip to the left subtree
-            continue left
-            // `low <= key <= high`,
-            // the value itself falls in the range,
-            // and both the left and right sub tree need to be visited
-          } else if left is None {
+  Iter2(
+    Iter(fn() {
+      for x = next_node {
+        match x {
+          Some({ left, key, value, right, height: _, }) => {
+            let cmp_key_low = key.compare(low)
+            let cmp_key_high = key.compare(high)
+            if cmp_key_low < 0 {
+              // `key < low`, the left subtree and the key itself
+              // are all below the range, skip to the right subtree
+              continue right
+            } else if cmp_key_high > 0 {
+              // `key > high`, the right subtree and the key itself
+              // are all above the range, skip to the left subtree
+              continue left
+              // `low <= key <= high`,
+              // the value itself falls in the range,
+              // and both the left and right sub tree need to be visited
+            } else if left is None {
+              next_node = right
+              break Some((key, value))
+            } else {
+              todo_list.push((key, value, right))
+              continue left
+            }
+          }
+          None if todo_list.pop() is Some((key, value, right)) => {
             next_node = right
             break Some((key, value))
-          } else {
-            todo_list.push((key, value, right))
-            continue left
           }
+          None => break None
         }
-        None if todo_list.pop() is Some((key, value, right)) => {
-          next_node = right
-          break Some((key, value))
-        }
-        None => break None
       }
-    }
-  }).iter2()
+    }),
+  ).iter2()
 }
 
 ///|

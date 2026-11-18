@@ -624,7 +624,7 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
-  Iter::new(
+  Iter(
     fn() {
       for x = curr_node {
         match x {
@@ -705,7 +705,7 @@ pub fn[V : Compare] SortedSet::range(
 ) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
-  let iter = Iter::new(() => {
+  let iter = Iter(() => {
     for x = curr_node {
       match x {
         Some({ value, left, right, height: _, }) => {

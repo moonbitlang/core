@@ -16,7 +16,7 @@
 test "join consumes the iterator once" {
   let calls = [0]
   let values : FixedArray[String] = ["a", "", "😀"]
-  let source = Iter::new(() => {
+  let source = Iter(() => {
     let index = calls[0]
     calls[0] += 1
     if index < values.length() {

@@ -20,7 +20,7 @@
 /// dormant until the structural candidates have been exhausted.
 fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
   let cell = @lazy.Lazy(f)
-  Iter::new(fn() { cell.force().next() })
+  Iter(fn() { cell.force().next() })
 }
 
 ///|
@@ -32,7 +32,7 @@ fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
 fn[T] removes_array(k : Int32, n : Int32, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
   let mut start = 0
-  Iter::new(
+  Iter(
     fn() {
       guard start + k <= n else { None }
       let candidate = [..xs[:start], ..xs[start + k:]]
@@ -55,7 +55,7 @@ fn[T] removes_list(
 ) -> Iter[@list.List[T]] {
   guard k <= n else { [||] }
   let mut start = (n - k) / k * k
-  Iter::new(
+  Iter(
     fn() {
       guard start >= 0 else { None }
       let candidate = xs.take(start).concat(xs.drop(start + k))

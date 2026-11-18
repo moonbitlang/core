@@ -59,7 +59,7 @@ pub fn StringView::suffixes(
   let end = self.end()
   let mut next_start = self.start()
   let mut finished = false
-  Iter::new(fn() -> StringView? {
+  Iter(fn() -> StringView? {
     if finished {
       None
     } else if next_start == end {
@@ -202,7 +202,7 @@ pub fn StringView::iter(self : StringView) -> Iter[Char] {
   let start = self.start()
   let end = self.end()
   let mut index = start
-  Iter::new(fn() {
+  Iter(fn() {
     guard index < end else { None }
     let c1 = self.str().unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
@@ -226,26 +226,28 @@ pub fn StringView::iter2(self : StringView) -> Iter2[Int32, Char] {
   let end = self.end()
   let mut index = start
   let mut char_index = 0
-  Iter2::new(fn() {
-    guard index < end else { None }
-    let c1 = self.str().unsafe_get(index)
-    if c1.is_leading_surrogate() && index + 1 < self.end() {
-      let c2 = self.str().unsafe_get(index + 1)
-      if c2.is_trailing_surrogate() {
-        let result = (
-          char_index,
-          code_point_of_surrogate_pair(c1.to_int(), c2.to_int()),
-        )
-        index += 2
-        char_index += 1
-        return Some(result)
+  Iter2(
+    Iter(fn() {
+      guard index < end else { None }
+      let c1 = self.str().unsafe_get(index)
+      if c1.is_leading_surrogate() && index + 1 < self.end() {
+        let c2 = self.str().unsafe_get(index + 1)
+        if c2.is_trailing_surrogate() {
+          let result = (
+            char_index,
+            code_point_of_surrogate_pair(c1.to_int(), c2.to_int()),
+          )
+          index += 2
+          char_index += 1
+          return Some(result)
+        }
       }
-    }
-    let result = (char_index, c1.unsafe_to_char())
-    index += 1
-    char_index += 1
-    Some(result)
-  })
+      let result = (char_index, c1.unsafe_to_char())
+      index += 1
+      char_index += 1
+      Some(result)
+    }),
+  )
 }
 
 ///|
@@ -255,7 +257,7 @@ pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
   let start = self.start()
   let end = self.end()
   let mut index = end
-  Iter::new(fn() {
+  Iter(fn() {
     guard index > start else { None }
     index -= 1
     let c1 = self.str().unsafe_get(index)

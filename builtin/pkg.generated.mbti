@@ -1157,6 +1157,8 @@ pub fn Hasher::finalize(Self) -> Int32
 
 #alias(Iterator, deprecated)
 type Iter[X]
+#alias(new, deprecated)
+pub fn[X] Iter::Iter(() -> X?, size_hint? : Int32) -> Self[X]
 pub fn[T] Iter::add(Self[T], Self[T]) -> Self[T]
 pub fn[X] Iter::all(Self[X], (X) -> Bool raise?) -> Bool raise?
 pub fn[X] Iter::any(Self[X], (X) -> Bool raise?) -> Bool raise?
@@ -1192,7 +1194,6 @@ pub fn[X, Y] Iter::map_while(Self[X], (X) -> Y?) -> Self[Y]
 pub fn[X, Y] Iter::mapi(Self[X], (Int32, X) -> Y) -> Self[Y]
 pub fn[X : Compare] Iter::maximum(Self[X]) -> X?
 pub fn[X : Compare] Iter::minimum(Self[X]) -> X?
-pub fn[X] Iter::new(() -> X?, size_hint? : Int32) -> Self[X]
 #alias(head)
 #alias(peek, deprecated)
 pub fn[X] Iter::next(Self[X]) -> X?
@@ -1219,6 +1220,7 @@ pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit raise?) -> Unit raise?
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2, deprecated)
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
+#deprecated
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int32) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]

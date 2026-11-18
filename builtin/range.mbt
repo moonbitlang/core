@@ -29,7 +29,7 @@ fn[T : Add + Compare + Default] until_impl(
   }
   let mut i = start
   let mut done = false
-  Iter::new(() => {
+  Iter(() => {
     guard !done else { None }
     guard (step > zero && i < end) ||
       (step < zero && i > end) ||

@@ -219,7 +219,7 @@ pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
 fn[K, V] rev_nodes(map : SortedMap[K, V]) -> Iter[Node[K, V]] {
   let stack : Array[Node[K, V]] = []
   let mut next_node = map.root
-  Iter::new(
+  Iter(
     fn() {
       for x = next_node {
         match x {
