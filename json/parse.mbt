@@ -201,14 +201,14 @@ fn ParseContext::parse_array(
 }
 
 ///|
-/// In the context of `[`, lexes the `]` of an empty array, skipping leading
-/// whitespace, and returns whether it was there. Otherwise the cursor stays
-/// before the first element. It is a function of its own, not a `lexscan` in
-/// `parse_array`, so the DFA's locals are not in the frame that recursion
-/// into nested containers keeps alive.
+/// Skips whitespace after `[` and consumes `]` if the array is empty.
+/// Otherwise `lex_value` starts at the first non-whitespace character or EOF.
 fn ParseContext::lex_empty_array_end(ctx : ParseContext) -> Bool {
-  lexscan ctx {
-    re"^[ \t\r\n]*" + re"\]" => true
-    _ => false
+  ctx.lex_skip_whitespace()
+  if ctx.offset < ctx.end_offset && ctx.input.unsafe_get(ctx.offset) == ']' {
+    ctx.offset += 1
+    true
+  } else {
+    false
   }
 }
