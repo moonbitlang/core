@@ -20,4 +20,4 @@ pub extend Tty with @io.BinaryWriter::{flush_partial_data}
 ///|
 #deprecated(skip_current_package=true)
 #doc(hidden)
-pub extend MaybeResized with @debug.Debug::{to_repr}
+pub extend Event with @debug.Debug::{to_repr}

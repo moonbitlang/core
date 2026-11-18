@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-/// Read terminal input inside `Tty::handle_resize`.
+/// Read terminal input, deferring resizes until the next wait.
 /// These methods follow `@io.BinaryReader` semantics and raise `@io.ReaderError`.
-/// Accessing terminal input or its buffer without an active scope aborts.
+/// A single task must coordinate all input operations on the terminal.
 pub extend Tty with @io.BinaryReader::{
   read_into,
   read,

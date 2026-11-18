@@ -118,7 +118,7 @@ async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
 
 ///|
 /// `Tty::read` in `ttyd`, or `read_into` a `max_len`-byte
-/// buffer. Raise `Resized` when `handle_resize` reports a resize.
+/// buffer. Raise `Resized` when `wait_event` reports a resize.
 ///
 /// With `timeout`, the read is cancelled inside `ttyd` after `timeout`
 /// milliseconds and `Timeout` is raised. The timeout must not be applied
@@ -136,7 +136,7 @@ async fn Ttyd::read(self : Ttyd, max_len? : Int32, timeout? : Int32) -> Bytes? {
 }
 
 ///|
-/// `Tty::read_exactly` inside `handle_resize`. Raise `Resized` on resize.
+/// `Tty::read_exactly` on the terminal.
 async fn Ttyd::read_exactly(self : Ttyd, len : Int32) -> Bytes {
   let result = self.call("read_exactly", params={ "len": len })
   guard read_result("read_exactly", result) is Some(bytes) else {
@@ -163,7 +163,7 @@ fn read_result(name : String, result : Json) -> Bytes? raise {
 priv suberror Timeout
 
 ///|
-/// Raised by the reads of `Ttyd` for `@tty.Resized`.
+/// Raised by the reads of `Ttyd` for the `Resize` event.
 #derive(Debug)
 priv suberror Resized
 
@@ -336,7 +336,7 @@ async test "read delivers bytes left by read_exactly first" {
 }
 
 ///|
-async test "scoped read_exactly completes before reporting resize" {
+async test "direct read_exactly completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
@@ -353,7 +353,7 @@ async test "scoped read_exactly completes before reporting resize" {
 }
 
 ///|
-async test "resize stays pending until the next read" {
+async test "resize stays pending until the next wait" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.resize(25, 81)
@@ -363,7 +363,7 @@ async test "resize stays pending until the next read" {
 }
 
 ///|
-async test "scoped drop_exactly completes before reporting resize" {
+async test "direct drop_exactly completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
@@ -566,7 +566,7 @@ async test "peek then drop consumes only the peeked prefix" {
 }
 
 ///|
-async test "read_into reports resize without opting in" {
+async test "wait_event reports resize before read_into" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.resize(25, 81)
@@ -577,7 +577,7 @@ async test "read_into reports resize without opting in" {
 }
 
 ///|
-async test "scoped read_until completes before reporting resize" {
+async test "direct read_until completes before reporting resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"abc")
@@ -646,14 +646,13 @@ async test "raw mode is restored when the main task fails" {
 }
 
 ///|
-async test "handle_resize reports resize before invoking the callback" {
+async test "wait_event reports resize before parsing input" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
-        json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+        json_inspect(ttyd.call("parse_input", params={ "len": 3 }), content={
           "type": "resize",
-          "entered": false,
         })
       }
       group.spawn_bg() <| () => {
@@ -665,15 +664,15 @@ async test "handle_resize reports resize before invoking the callback" {
 }
 
 ///|
-async test "handle_resize finishes a split sequence before pending resize" {
+async test "wait_event finishes a split sequence before pending resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
     @async.with_task_group() <| group => {
       group.spawn_bg() <| () => {
         json_inspect(
-          ttyd.call("scoped_read", params={ "len": 3, "lookahead": 1 }),
-          content={ "type": "input", "bytes": "G1tB", "entered": true },
+          ttyd.call("parse_input", params={ "len": 3, "lookahead": 1 }),
+          content={ "type": "input", "bytes": "G1tB" },
         )
       }
       group.spawn_bg() <| () => {
@@ -682,92 +681,78 @@ async test "handle_resize finishes a split sequence before pending resize" {
         ttyd.send_input(b"Ax")
       }
     }
-    // x is already buffered, but the deferred resize wins at the next scope.
-    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+    // x is already buffered, but the deferred resize wins at the next wait.
+    json_inspect(ttyd.call("parse_input", params={ "len": 1 }), content={
       "type": "resize",
-      "entered": false,
     })
-    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+    json_inspect(ttyd.call("parse_input", params={ "len": 1 }), content={
       "type": "input",
       "bytes": "eA==",
-      "entered": true,
     })
   }
 }
 
 ///|
-async test "handle_resize peek and drop preserves lookahead for another scope" {
+async test "wait_event peek and drop preserves lookahead for the next wait" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b\x1b[A")
     json_inspect(
-      ttyd.call("scoped_read", params={ "len": 1, "lookahead": 1 }),
-      content={ "type": "input", "bytes": "Gw==", "entered": true },
+      ttyd.call("parse_input", params={ "len": 1, "lookahead": 1 }),
+      content={ "type": "input", "bytes": "Gw==" },
     )
-    json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+    json_inspect(ttyd.call("parse_input", params={ "len": 3 }), content={
       "type": "input",
       "bytes": "G1tB",
-      "entered": true,
     })
   }
 }
 
 ///|
-async test "handle_resize cancellation retains peeked input and releases scope" {
+async test "wait_event cancellation retains peeked input" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
     json_inspect(
-      ttyd.call("scoped_read", params={ "len": 3, "timeout": 100 }),
+      ttyd.call("parse_input", params={ "len": 3, "timeout": 100 }),
       content={ "type": "timeout" },
     )
     ttyd.send_input(b"A")
-    json_inspect(ttyd.call("scoped_read", params={ "len": 3 }), content={
+    json_inspect(ttyd.call("parse_input", params={ "len": 3 }), content={
       "type": "input",
       "bytes": "G1tB",
-      "entered": true,
     })
-  }
-}
-
-///|
-async test "handle_resize propagates callback errors and retains unconsumed input" {
-  with_ttyd() <| ttyd => {
-    ttyd.enter_raw_mode()
-    ttyd.send_input(b"ab")
-    json_inspect(ttyd.call("scoped_fail", params={}), content={
-      "type": "parser_error",
-    })
-    assert_eq(ttyd.read_exactly(2), b"ab")
   }
 }
 
 ///|
 #cfg(not(platform="windows"))
-async test "handle_resize invokes callback at EOF" {
+async test "wait_event retains cooked EOF until read and accepts later input" {
   with_ttyd() <| ttyd => {
     ttyd.send_input(b"\x04")
-    json_inspect(ttyd.call("scoped_eof", params={}), content={
-      "type": "eof",
-      "entered": true,
-      "eof": true,
-    })
+    for _ in 0..<2 {
+      json_inspect(ttyd.call("wait_event", params={}), content={
+        "type": "input",
+      })
+    }
+    guard ttyd.read() is None else { fail("expected cooked EOF") }
+    ttyd.send_input(b"x\n")
+    assert_eq(ttyd.read(), Some(b"x\n"))
   }
 }
 
 ///|
-async test "handle_resize first-input timeout releases scope" {
+async test "wait_event can retry after first-input timeout" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     json_inspect(
-      ttyd.call("scoped_read", params={ "len": 1, "timeout": 100 }),
+      ttyd.call("parse_input", params={ "len": 1, "timeout": 100 }),
       content={ "type": "timeout" },
     )
     ttyd.send_input(b"x")
-    json_inspect(ttyd.call("scoped_read", params={ "len": 1 }), content={
+    json_inspect(ttyd.call("parse_input", params={ "len": 1 }), content={
       "type": "input",
       "bytes": "eA==",
-      "entered": true,
     })
   }
 }

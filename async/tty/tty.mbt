@@ -20,16 +20,8 @@ struct Tty {
   read_ctrl : @io.BinaryReaderController
   write_ctrl : @io.BinaryWriterController
   original_state : State
-  mut read_state : ReadState
-  mut block_resize : Bool
-  mut eof : Bool
-}
-
-///|
-priv enum ReadState {
-  Idle // No handle_resize scope is active.
-  Active // A scope is active, with no underlying read in progress.
-  Reading // An underlying read is in progress within the scope.
+  mut waiting_for_event : Bool
+  mut pending_eof : Bool
 }
 
 ///|
@@ -88,9 +80,8 @@ fn Tty::new(
     read_ctrl: BinaryReaderController(),
     write_ctrl: BinaryWriterController(),
     original_state,
-    read_state: Idle,
-    block_resize: false,
-    eof: false,
+    waiting_for_event: false,
+    pending_eof: false,
   }
 }
 
@@ -549,80 +540,52 @@ pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
 }
 
 ///|
-/// The result of `Tty::handle_resize`, or a window resize notification.
-/// `Resized` consumes no input and does not invoke the callback.
-/// Notifications may be coalesced. Call `Tty::size` for the current size.
+/// The result of waiting for terminal input. Input includes EOF.
 #derive(@debug.Debug)
-pub enum MaybeResized[T] {
-  Value(T)
-  Resized
+pub enum Event {
+  Input
+  Resize
 }
 
 ///|
 priv suberror Resized
 
 ///|
-/// Run one input operation with resize delivery deferred until it completes.
-/// Before calling `f`, wait for input, EOF, or a resize without consuming bytes.
-/// A resize already observed by the event loop takes priority over buffered
-/// input and returns `Resized` without calling `f`. Resizes during `f` remain
-/// pending for the next scope; the result of `f` is always returned as `Value`.
-///
-/// Read input through this Tty's read, peek, and drop methods inside `f`.
-/// Accessing terminal input or its buffer without an active scope aborts.
-/// Nested or concurrent scopes and overlapping read operations also abort.
-/// All reads must be coordinated by the callback: other tasks holding the Tty
-/// must not read during this scope, and tasks started by `f` must finish their
-/// reads before `f` returns. The scope check does not identify the calling task.
-/// Writing, querying size, and changing modes do not acquire this read scope.
-///
-/// Callback errors and cancellation propagate, releasing the scope. This is
-/// not a transaction: successful reads are not rolled back. To parse without
-/// consuming partial input, peek first and drop only when an event is complete.
-/// Copy any result bytes before dropping; peek views obey BinaryReader's usual
-/// validity rules. Put first-input timeouts outside `handle_resize`, and
-/// sequence timeouts inside `f`. Keep the scope short so resizes can be delivered
-/// promptly.
-pub async fn[T] Tty::handle_resize(
-  self : Tty,
-  f : async () -> T,
-) -> MaybeResized[T] {
+/// Wait for bytes, EOF, or a window resize. An already observed resize takes
+/// priority over buffered input. Input leaves bytes or EOF for the reader.
+/// Coordinate waits and reads from a single task. Direct reader operations
+/// defer resize notifications until the next wait.
+pub async fn Tty::wait_event(self : Tty) -> Event raise @io.ReaderError {
   @coroutine.check_cancellation()
-  guard! self.read_state is Idle
   if self.tty.take_pending_resize() {
-    return Resized
+    return Resize
   }
-  self.read_state = Active
-  self.block_resize = false
-  self.eof = false
+  if self.pending_eof {
+    return Input
+  }
+  self.waiting_for_event = true
   defer {
-    self.read_state = Idle
-    self.block_resize = false
-    self.eof = false
+    self.waiting_for_event = false
   }
   let first = @io.BinaryReader::peek(self) catch {
-    TransportError(Resized::Resized, ..) => return Resized
+    TransportError(Resized::Resized, ..) => return Resize
     err => raise err
   }
+  self.pending_eof = first is None
   @coroutine.check_cancellation()
-  self.eof = first is None
-  self.block_resize = true
-  Value(f())
+  Input
 }
 
 ///|
-/// Keep the implementation private so input is only exposed through the
-/// Tty methods documented for use inside handle_resize.
 impl @io.BinaryReader for Tty
 
 ///|
 impl @io.BinaryReaderImpl for Tty with fn name(_self) {
-  "@tty.Tty::handle_resize"
+  "@tty.Tty"
 }
 
 ///|
 impl @io.BinaryReaderImpl for Tty with fn get_controller(self) {
-  guard! self.read_state is Active
   self.read_ctrl
 }
 
@@ -633,24 +596,20 @@ impl @io.BinaryReaderImpl for Tty with fn raw_read_impl(
   offset~,
   max_len~,
 ) {
-  guard! self.read_state is Active
   @coroutine.check_cancellation()
-  self.read_state = Reading
-  defer {
-    self.read_state = Active
-  }
-  if self.eof {
+  if self.pending_eof {
+    // A cooked terminal can deliver more input after Ctrl-D.
+    self.pending_eof = false
     return 0
   }
-  // `-1` reports resize only during prefetch, before the callback starts.
   let n = self.tty.read(
     buf,
     offset~,
     len=max_len,
     raw=@event_loop.platform is Windows &&
       State::read(self.tty.input_fd(), self.output.fd()).is_raw(),
-    block_resize=self.block_resize,
-    context="@tty.Tty::handle_resize",
+    block_resize=!self.waiting_for_event,
+    context="@tty.Tty",
   )
   guard n >= 0 else { raise Resized::Resized }
   n

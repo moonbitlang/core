@@ -23,18 +23,17 @@
 /// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
-///   `Tty::read`, or `read_into` an `n`-byte buffer, inside `handle_resize`
+///   `Tty::read`, or `read_into` an `n`-byte buffer, after `wait_event`
 /// - `read_exactly`, params `{"len": n}`:
-///   `Tty::read_exactly` inside `handle_resize`
+///   `Tty::read_exactly` directly
 ///
-///   Both result in `{"type":"input","bytes":"<base64>"}`, `{"type":"resize"}`
-///   for `Resized`, `{"type":"eof"}`, or `{"type":"timeout"}` when the read is
-///   cancelled after `timeout`.
+///   Reads report input bytes, EOF or timeout. The `read` RPC can also
+///   report resize when its initial wait returns `Resize`.
 /// - `peek_exactly`, `drop_exactly`: params `{"len": n}`
 /// - `read_until`: read through a newline
 /// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
-/// - `scoped_read`: peek `len + lookahead` bytes, consume `len`, optional timeout
-/// - `scoped_eof`, `scoped_fail`: verify callback EOF and error handling
+/// - `parse_input`: peek `len + lookahead` bytes, consume `len`, optional timeout
+/// - `wait_event`: wait without consuming input
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -123,18 +122,14 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         _ => None
       }
       read_result(params, () => {
+        guard tty.wait_event() is Input else { return { "type": "resize" } }
         match max_len {
-          None => input_result(tty.handle_resize(() => tty.read()))
+          None => input_result(tty.read())
           Some(max_len) => {
             let buf = FixedArray::make(max_len, b'\x00')
-            match tty.handle_resize(() => tty.read_into(buf)) {
-              Resized => { "type": "resize" }
-              Value(0) => { "type": "eof" }
-              Value(n) =>
-                {
-                  "type": "input",
-                  "bytes": @base64.encode(Bytes::from_array(buf[:n])),
-                }
+            match tty.read_into(buf.mut_view()) {
+              0 => { "type": "eof" }
+              n => input_result(Some(Bytes::from_array(buf[:n])))
             }
           }
         }
@@ -145,27 +140,19 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         raise invalid_params("`len` must be a number")
       }
       read_result(params, () => {
-        match tty.handle_resize(() => tty.read_exactly(len.to_int())) {
-          Resized => { "type": "resize" }
-          Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
-        }
+        input_result(Some(tty.read_exactly(len.to_int())))
       })
     }
     "peek_exactly" => {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match tty.handle_resize(() => tty.peek_exactly(len.to_int()).to_owned()) {
-        Resized => { "type": "resize" }
-        Value(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
-      }
+      input_result(Some(tty.peek_exactly(len.to_int()).to_owned()))
     }
     "read_until" =>
-      read_result(params, () => {
-        input_result(tty.handle_resize(() => tty.read_until(b"\n")))
-      })
+      read_result(params, () => input_result(tty.read_until(b"\n")))
     "expect_unexpected_eof" =>
-      try tty.handle_resize(() => tty.read_exactly(2)) catch {
+      try tty.read_exactly(2) catch {
         @io.UnexpectedEof => { "type": "unexpected_eof" }
         err => raise err
       } noraise {
@@ -175,12 +162,10 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
-      match tty.handle_resize(() => tty.drop_exactly(len.to_int())) {
-        Resized => { "type": "resize" }
-        Value(_) => { "type": "dropped" }
-      }
+      tty.drop_exactly(len.to_int())
+      { "type": "dropped" }
     }
-    "scoped_read" => {
+    "parse_input" => {
       guard params is { "len": Number(len, ..), .. } else {
         raise invalid_params("`len` must be a number")
       }
@@ -189,50 +174,18 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         { "lookahead": Number(n, ..), .. } => n.to_int()
         _ => 0
       }
-      let mut entered = false
       read_result(params, () => {
-        match
-          tty.handle_resize(() => {
-            entered = true
-            // A parser may inspect beyond the event boundary; only commit len.
-            ignore(tty.peek_exactly(len + lookahead))
-            let bytes = tty.peek_exactly(len).to_owned()
-            tty.drop_exactly(len)
-            bytes
-          }) {
-          Resized => { "type": "resize", "entered": entered }
-          Value(bytes) =>
-            {
-              "type": "input",
-              "bytes": @base64.encode(bytes),
-              "entered": entered,
-            }
-        }
+        guard tty.wait_event() is Input else { return { "type": "resize" } }
+        ignore(tty.peek_exactly(len + lookahead))
+        let bytes = tty.peek_exactly(len).to_owned()
+        tty.drop_exactly(len)
+        input_result(Some(bytes))
       })
     }
-    "scoped_eof" => {
-      let mut entered = false
-      match
-        tty.handle_resize(() => {
-          entered = true
-          tty.peek() is None
-        }) {
-        Resized => { "type": "resize", "entered": entered }
-        Value(eof) => { "type": "eof", "entered": entered, "eof": eof }
-      }
-    }
-    "scoped_fail" =>
-      try {
-        let result : @tty.MaybeResized[Unit] = tty.handle_resize(() => {
-          ignore(tty.peek_exactly(2))
-          raise ParserError
-        })
-        result
-      } catch {
-        ParserError => { "type": "parser_error" }
-        err => raise err
-      } noraise {
-        _ => fail("expected callback error")
+    "wait_event" =>
+      match tty.wait_event() {
+        Resize => { "type": "resize" }
+        Input => { "type": "input" }
       }
     "write" => {
       guard params is { "bytes": String(bytes), .. } else {
@@ -266,11 +219,10 @@ async fn read_result(params : Json, f : async () -> Json) -> Json {
 }
 
 ///|
-fn input_result(result : @tty.MaybeResized[Bytes?]) -> Json {
+fn input_result(result : Bytes?) -> Json {
   match result {
-    Value(Some(bytes)) => { "type": "input", "bytes": @base64.encode(bytes) }
-    Value(None) => { "type": "eof" }
-    Resized => { "type": "resize" }
+    Some(bytes) => { "type": "input", "bytes": @base64.encode(bytes) }
+    None => { "type": "eof" }
   }
 }
 
@@ -278,6 +230,3 @@ fn input_result(result : @tty.MaybeResized[Bytes?]) -> Json {
 fn invalid_params(message : String) -> RpcError {
   RpcError(code=-32602, message~)
 }
-
-///|
-priv suberror ParserError

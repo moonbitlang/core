@@ -17,14 +17,17 @@ pub async fn run() -> Unit {
   let (rows, cols) = tty.size()
   tty.write(@utf8.encode("\{rows}x\{cols}\r\n"))
   for ;; {
-    match tty.handle_resize(() => tty.read()) {
-      Resized => {
+    match tty.wait_event() {
+      Resize => {
         let (rows, cols) = tty.size()
         tty.write(@utf8.encode("resized to \{rows}x\{cols}\r\n"))
       }
-      Value(None) | Value(Some(b"q")) => break
-      Value(Some(bytes)) =>
-        tty.write(@utf8.encode("got \{bytes.length()} bytes\r\n"))
+      Input =>
+        match tty.read() {
+          None | Some(b"q") => break
+          Some(bytes) =>
+            tty.write(@utf8.encode("got \{bytes.length()} bytes\r\n"))
+        }
     }
   }
 }
@@ -48,67 +51,37 @@ Notes:
 - Use `defer tty.leave_raw_mode()` to restore when a scope exits before the
   event loop finishes. Reopening the Tty does not replace the saved state.
 - In raw mode Ctrl-C no longer interrupts the program. It arrives as `b"\x03"`.
-- Use Tty's read, peek, and drop methods inside a `handle_resize`
-  callback. These methods return ordinary `@io.BinaryReader` results and raise
-  `@io.ReaderError`. Tty's `@io.BinaryReader` implementation is private;
-  writing uses its public `@io.BinaryWriter` implementation.
-- `handle_resize` returns `MaybeResized[T]`: `Value(value)` contains the
-  callback result, while `Resized` reports a window change without calling the
-  callback. Call `size()` for the current size. Callback errors propagate
-  unchanged.
-- Pending resizes are retained and may be coalesced. Already observed resizes
-  are delivered at scope entry before buffered input. After input is ready,
-  the callback finishes before a resize is delivered by a later scope.
-- Inside the callback, EOF follows normal `BinaryReader` semantics: `None`
-  for `read`/`peek`/`read_until`/`peek_until`, `0` for `read_into`, and
-  `@io.UnexpectedEof` for unsatisfied exact/minimum-length requests.
+- One task must coordinate all waits and reads on the shared Tty.
+  `wait_event()` returns `Input` when bytes or EOF are ready for the reader.
+  Repeated waits preserve that input. An already observed resize takes priority
+  over buffered input and returns `Resize`. Call `size()` for the current size.
+- Read, peek and drop can also be called directly. They use ordinary
+  `BinaryReader` results and errors, including EOF. During a read, resize
+  notifications stay pending for the next wait and may be coalesced.
+  Reads can still be cancelled. The reader impl is private, and Tty implements
+  the public `@io.BinaryWriter` trait.
 - Native only. On Windows `open()` opens the console
   (`CONIN$`/`CONOUT$`). Console input is converted to the same VT byte stream
   as on Unix, and resizes are only reported in raw mode, where input is read
   as console input records. Raw mode needs VT support. Cancelling a cooked
   read is not supported yet.
 
-For parsing one input event, `handle_resize` first waits for input, EOF,
-or a resize without consuming bytes. A resize already observed by the event
-loop takes priority over buffered input and returns `Resized` without calling
-the callback. Once input or EOF is ready, the callback reads directly from the
-Tty. Resizes during the callback stay pending until the next scope; the callback
-completes with `Value(result)` or propagates its error. The protection delays
-resize delivery only; ordinary task cancellation still applies.
-
-For example, a fixed-length parser can peek and then commit its consumption:
+After `Input`, a VT parser can peek ahead and drop only the bytes belonging
+to a completed event. Copy a peek view before another reader operation.
+For example, a parser expecting a three-byte event can use:
 
 ```moonbit check
 ///|
-/// Read a three-byte event without consuming an incomplete prefix.
-pub async fn read_three_bytes(tty : @tty.Tty) -> @tty.MaybeResized[Bytes] {
-  tty.handle_resize() <| () => {
-    let bytes = tty.peek_exactly(3).to_owned()
-    tty.drop_exactly(3)
-    bytes
-  }
+/// Consume the event only after all three bytes arrive.
+pub async fn read_three_bytes(tty : @tty.Tty) -> Bytes {
+  let bytes = tty.peek_exactly(3).to_owned()
+  tty.drop_exactly(3)
+  bytes
 }
 ```
 
-A VT parser can keep a byte offset, peek enough bytes to inspect the next one,
-and drop only the bytes belonging to the completed event. Extra lookahead stays
-in the terminal buffer for the next scope. Copy returned payloads before the
-drop; a peek view must not be reused after another reader operation.
-
-- Keep each scope short, normally one low-level input event. A callback that
-  loops forever or waits indefinitely for a sequence also defers resize forever.
-- Put a timeout for the first input around `handle_resize`; put
-  Escape/sequence timeouts inside the callback. EOF is available to the
-  callback as ordinary reader EOF, not as a resize.
-- Errors and cancellation release the scope but do not undo successful reads.
-  Peek-then-drop avoids consuming an incomplete event before it is recognized.
-- Nested or concurrent `handle_resize` calls abort, as do overlapping
-  reads and accessing terminal input or its buffer outside a protection scope.
-  Writing and querying terminal size remain available.
-- Coordinate all input through the protection callback. Other tasks holding
-  the same Tty must not read it while the callback is running; the scope check
-  does not distinguish which task is calling a read method. Any tasks started
-  by the callback that read the Tty must finish before the callback returns.
-- Resize notifications can be coalesced. On Windows, a resize must first be
-  observed while reading console input records to become pending; scope entry
-  does not poll the console for notifications that have not yet been read.
+`Input` can represent a single byte. Requests for a longer sequence may
+still suspend, so apply any Escape/sequence timeout to the parser and any
+first-input timeout to `wait_event()`. A resize arriving mid-sequence is
+reported on a subsequent wait. On Windows, a resize becomes pending when
+its console input record is observed.
