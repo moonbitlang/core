@@ -515,3 +515,10 @@ test "remove of an absent key returns the original map" {
   inspect(removed.length(), content="99")
   inspect(removed.contains(50), content="false")
 }
+
+///|
+test "SortedMap from empty array" {
+  let m : @sorted_map.SortedMap[Int32, String] = SortedMap([])
+  inspect(m.is_empty(), content="true")
+  inspect(m.add(1, "a").length(), content="1")
+}
