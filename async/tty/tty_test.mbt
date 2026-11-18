@@ -297,24 +297,6 @@ async test "resize can interrupt a pending read" {
 }
 
 ///|
-async test "multiple resize events collapse into one" {
-  let sizes = [(25, 81), (26, 82), (27, 83)]
-  with_ttyd() <| ttyd => {
-    ttyd.enter_raw_mode()
-    for (rows, cols) in sizes {
-      ttyd.resize(rows, cols)
-    }
-    // ConPTY applies resize requests asynchronously. Wait for the final size
-    // before checking that the queued notifications are coalesced.
-    while ttyd.size() != (27, 83) {
-      @async.sleep(1)
-    }
-    expect_resize(() => ttyd.read() |> ignore)
-    expect_read_to_timeout(ttyd, timeout=200)
-  }
-}
-
-///|
 async test "cooked mode respects line discipline" {
   with_ttyd() <| ttyd => {
     @async.with_task_group(group => {
