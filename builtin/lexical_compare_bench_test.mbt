@@ -139,3 +139,44 @@ test "bench StringView::compare_ignore_ascii_case common-prefix n=256" (
     it.keep(lc_str_prefix_a[:].compare_ignore_ascii_case(lc_str_prefix_b))
   })
 }
+
+///|
+// Same letters as `lc_str_prefix_a`, all uppercase: every position takes the
+// case-differs path instead of the identical-code-unit fast path.
+let lc_str_upper : String = lc_str_prefix_a.to_upper()
+
+///|
+test "bench StringView::compare_ignore_ascii_case equal same-case n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() {
+    it.keep(lc_str_equal_a[:].compare_ignore_ascii_case(lc_str_equal_b))
+  })
+}
+
+///|
+test "bench StringView::compare_ignore_ascii_case equal mixed-case n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() {
+    it.keep(lc_str_equal_a[:].compare_ignore_ascii_case(lc_str_upper))
+  })
+}
+
+///|
+test "bench StringView::equal_ignore_ascii_case equal same-case n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() {
+    it.keep(lc_str_equal_a[:].equal_ignore_ascii_case(lc_str_equal_b))
+  })
+}
+
+///|
+test "bench StringView::equal_ignore_ascii_case equal mixed-case n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() {
+    it.keep(lc_str_equal_a[:].equal_ignore_ascii_case(lc_str_upper))
+  })
+}
