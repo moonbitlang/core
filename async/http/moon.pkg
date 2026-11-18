@@ -41,7 +41,7 @@ import {
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/async/gzip" @gzip_stream,
+  "moonbitlang/core/compress/gzip" @compress/gzip,
 } for "test"
 
 import {
@@ -55,7 +55,7 @@ import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/internal/bytes_util",
-  "moonbitlang/core/async/gzip" @gzip_stream,
+  "moonbitlang/core/compress/gzip" @compress/gzip,
 } for "wbtest"
 
 options(

@@ -595,7 +595,9 @@ async test "gzip split between chunks" {
     let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
-      @gzip_stream.Encoder(w)..write(b"A simple message to compress").end()
+      @compress/gzip.StreamEncoder(w)
+      ..write(b"A simple message to compress")
+      .end()
     }
     defer r.close()
     compressed = r.read_all()
@@ -680,7 +682,9 @@ async test "close-delimited gzip" {
       ..write(b"HTTP/1.1 200 OK\r\n")
       ..write(b"Content-Encoding: gzip\r\n")
       .write(b"\r\n")
-      @gzip_stream.Encoder(w)..write(b"A simple message to compress").end()
+      @compress/gzip.StreamEncoder(w)
+      ..write(b"A simple message to compress")
+      .end()
     }
     defer r.close()
     let input = Reader::new(r)

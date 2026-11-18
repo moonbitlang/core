@@ -7,13 +7,23 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
   "moonbitlang/core/buffer",
+  "moonbitlang/core/async/io",
   "moonbitlang/core/compress/flate",
   "moonbitlang/core/internal/checksum",
 }
 
 import {
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
+} for "test"
+
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/async/fs",
+  "moonbitlang/core/async/process",
 } for "test"
 
 import {
