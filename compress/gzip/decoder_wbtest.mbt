@@ -39,9 +39,8 @@ test "gzip header FNAME bytes are discarded, not retained" {
 }
 
 ///|
-/// Successful completion must retain only the cached transport suffix, not the
-/// consumed member.
-test "gzip completion releases consumed input and caches read-ahead" {
+/// Successful completion stops consumption at the exact transport boundary.
+test "gzip completion leaves transport suffix unconsumed" {
   let gzip_stream = compress(b"release the completed member")
   let suffix = b"NEXT-FRAME"
   let combined : Array[Byte] = []
@@ -61,13 +60,10 @@ test "gzip completion releases consumed input and caches read-ahead" {
   let consumed = status_result.consumed
   let _produced = status_result.produced
   assert_true(status is Done)
-  @test.assert_eq(consumed, gzip_stream.length() + suffix.length())
+  @test.assert_eq(consumed, gzip_stream.length())
   @test.assert_eq(decoder.pending.length(), 0)
-  @test.assert_eq(decoder.pending_pos, 0)
   assert_false(decoder.borrowed_input)
-  @test.assert_eq(decoder.unused, suffix)
-  @test.assert_eq(decoder.unused_input(), suffix)
-  @test.assert_eq(decoder.unused_input(), suffix)
+  @test.assert_eq(Bytes::from_array(combined)[consumed:].to_owned(), suffix)
 }
 
 ///|
@@ -84,7 +80,6 @@ test "gzip failed state freezes decoder cursors" {
     decoder.step(malformed, output.mut_view())
   })
 
-  let pending_pos = decoder.pending_pos
   let pending_length = decoder.pending.length()
   let snapshot = decoder.pending.to_owned()
   assert_false(decoder.borrowed_input)
@@ -100,7 +95,6 @@ test "gzip failed state freezes decoder cursors" {
   assert_true(first_kind == InvalidDeflate)
   assert_true(repeated_kind == first_kind)
   @test.assert_eq(repeated_error, first_error)
-  @test.assert_eq(decoder.pending_pos, pending_pos)
   @test.assert_eq(decoder.pending.length(), pending_length)
   @test.assert_eq(decoder.pending.to_owned(), snapshot)
   assert_false(decoder.borrowed_input)
@@ -203,29 +197,29 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
 }
 
 ///|
-test "gzip repeated check_end preserves pending output and sticky EOF" {
+test "gzip repeated check_end preserves terminal state" {
   let payload = Bytes::make(200, b'x')
   let stream = compress(payload)
   let decoder = Decoder()
-  let result = decoder.step(stream, [].mut_view())
-  @test.assert_eq(result.consumed, stream.length())
-  @test.assert_eq(result.produced, 0)
-  @test.assert_eq(result.status, NeedMoreOutput)
-  @test.assert_eq(decoder.check_end(), NeedMoreOutput)
-  @test.assert_eq(decoder.check_end(), NeedMoreOutput)
-  assert_true(decoder.ending)
   let output = FixedArray::make(1, b'\x00')
   let decoded = @buffer.Buffer()
-  for _ in 0..<1000 {
-    let result = decoder.step(b"ignored", output.mut_view())
-    @test.assert_eq(result.consumed, 0)
+  let mut position = 0
+  let mut status : @flate.Status = NeedMoreInput
+  while position < stream.length() {
+    let result = decoder.step(stream[position:], output.mut_view())
+    position += result.consumed
     decoded.write_bytes(Bytes::from_array(output[:result.produced]))
-    if result.status is Done {
-      break
-    }
-    @test.assert_eq(result.status, NeedMoreOutput)
-    @test.assert_eq(result.produced, 1)
+    status = result.status
+    assert_true(result.consumed > 0 || result.produced > 0)
   }
+  @test.assert_eq(status, Done)
+  @test.assert_eq(decoder.check_end(), Done)
+  @test.assert_eq(decoder.check_end(), Done)
+  assert_false(decoder.ending)
+  let terminal = decoder.step(b"ignored", output.mut_view())
+  @test.assert_eq(terminal.status, Done)
+  @test.assert_eq(terminal.consumed, 0)
+  @test.assert_eq(terminal.produced, 0)
   assert_true(decoder.is_finished())
   @test.assert_eq(decoded.to_bytes(), payload)
   @test.assert_eq(decoder.check_end(), Done)
