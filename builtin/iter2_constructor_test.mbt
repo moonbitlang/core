@@ -43,3 +43,28 @@ test "deprecated Iter2 new preserves lazy callbacks and size hints" {
   let negative : Iter2[Int32, Int32] = Iter2::new(() => None, size_hint=-1)
   debug_inspect(negative.iter().size_hint(), content="Some(0)")
 }
+
+///|
+fn implicitly_wrapped_pairs() -> Iter2[Int32, Int32] {
+  let mut next = 0
+  Iter(
+    () => {
+      guard next < 2 else { None }
+      let key = next + 5
+      next += 1
+      Some((key, key + 10))
+    },
+    size_hint=2,
+  )
+}
+
+///|
+test "expected Iter2 types elide the tuple constructor" {
+  let returned = implicitly_wrapped_pairs()
+  debug_inspect(returned.iter().size_hint(), content="Some(2)")
+  debug_inspect(returned.to_array(), content="[(5, 15), (6, 16)]")
+  let source = [(2, "two"), (3, "three")].iter()
+  let annotated : Iter2[Int32, String] = Iter(() => source.next(), size_hint=2)
+  debug_inspect(annotated.iter().size_hint(), content="Some(2)")
+  debug_inspect(annotated.to_array(), content="[(2, \"two\"), (3, \"three\")]")
+}

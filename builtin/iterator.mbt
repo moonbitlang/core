@@ -1054,6 +1054,7 @@ pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
 /// This type is used for `for _, _ in ..` loop
 /// (`for .. in` loop with two loop variables).
 /// Construct it directly from an iterator of pairs with `Iter2(iter)`.
+/// When `Iter2` is the expected type, its tuple constructor can be omitted.
 #alias(Iterator2, deprecated="The name `Iterator2` is deprecated, use `Iter2` instead. Note that if you have defined `iterator2()` method to support `for .. in` loop, you should also rename `iterator2()` to `iter2()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
