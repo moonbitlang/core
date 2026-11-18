@@ -13,41 +13,28 @@
 // limitations under the License.
 
 ///|
-test "matching snapshots consume the buffer and continue" {
-  let t = Test("manual context")
+test "file snapshots continue and preserve errors" {
+  let t = Test("file snapshots")
   t.write("he\rllo\r\n")
-  t.snapshot(filename="test.txt")
+  t.snapshot(filename="file_snapshot_first.txt")
   inspect(t.buffer.to_string(), content="")
-  t.writeln("hello")
-  t.snapshot(filename="test.txt")
+  t.writeln("中😀")
+  t.snapshot(filename="file_snapshot_second.txt")
   inspect(t.buffer.to_string(), content="")
-}
 
-///|
-test "snapshot mismatch preserves the buffer and protocol" {
-  let t = Test("mismatch")
+  // Moon treats a missing baseline as empty and ignores all CR characters.
+  t.write("\r\r")
+  t.snapshot(filename="missing-empty-snapshot.txt")
+  inspect(t.buffer.to_string(), content="")
+
   t.write("different")
-  guard expect_error(() => t.snapshot(filename="test.txt"))
+  guard expect_error(() => t.snapshot(filename="file_snapshot_first.txt"))
     is SnapshotError(message) else {
     fail("expected legacy snapshot error")
   }
   assert_true(message.has_prefix("@SNAPSHOT_TESTING "))
   inspect(t.buffer.to_string(), content="different")
-}
-
-///|
-test "snapshot I/O errors preserve the buffer" {
-  let t = Test("I/O failure")
-  t.write("hello")
   let error = expect_error(() => t.snapshot(filename="\u0000"))
   assert_false(error is SnapshotError(_))
-  inspect(t.buffer.to_string(), content="hello")
-}
-
-///|
-test "missing snapshots follow Moon's empty text semantics" {
-  let t = Test("empty")
-  t.write("\r\r")
-  t.snapshot(filename="missing-empty-snapshot.txt")
-  inspect(t.buffer.to_string(), content="")
+  inspect(t.buffer.to_string(), content="different")
 }
