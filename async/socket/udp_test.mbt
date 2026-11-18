@@ -22,7 +22,7 @@ async test "UDP recv_into" {
       defer client.close()
       client.send(b"request")
       let buf = FixedArray::make(16, b'.')
-      let n = client.recv_into(buf, offset=2)
+      let n = client.recv_into(buf.mut_view(start=2))
       inspect(n, content="8")
       inspect(
         @utf8.decode(buf.unsafe_reinterpret_as_bytes()),
@@ -30,7 +30,7 @@ async test "UDP recv_into" {
       )
     })
     let buf = FixedArray::make(16, b'.')
-    let (n, peer_addr) = server.recv_into(buf, offset=2)
+    let (n, peer_addr) = server.recv_into(buf.mut_view(start=2))
     inspect(n, content="7")
     inspect(
       @utf8.decode(buf.unsafe_reinterpret_as_bytes()),

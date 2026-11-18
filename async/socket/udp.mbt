@@ -438,9 +438,11 @@ pub fn UdpServer::join_multicast_group_v6(
 }
 
 ///|
+fn MutArrayView::buf(self : MutArrayView[Byte]) -> FixedArray[Byte] = "%arrayview.buf"
+
+///|
 /// Receive packet from a UDP client.
-/// For `udp.recv_into(buf, offset~, max_len~)`,
-/// at most `max_len` bytes of data will be written to `buf`, starting from `offset`.
+/// At most `dst.length()` bytes of data will be written to `dst`.
 /// The number of received bytes will be returned.
 ///
 /// UDP is a datagram based protocol,
@@ -451,14 +453,12 @@ pub fn UdpServer::join_multicast_group_v6(
 /// use a worker task for reading and use `@async.Queue` to distribute the data.
 pub async fn UdpClient::recv_into(
   self : UdpClient,
-  buf : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
+  dst : MutArrayView[Byte],
 ) -> Int32 {
   self.io.read(
-    buf,
-    offset~,
-    len=max_len,
+    dst.buf(),
+    offset=dst.start_offset(),
+    len=dst.length(),
     context="@socket.UdpClient::recv_into()",
   )
 }
@@ -498,16 +498,14 @@ pub async fn UdpClient::recv(
 /// so this is mainly useful for multicast clients.
 pub async fn UdpClient::recv_into_with_addr(
   self : UdpClient,
-  buf : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
+  dst : MutArrayView[Byte],
 ) -> (Int32, Addr) {
   // Create a big enough Addr to hold both IPv4 and IPv6 address
   let addr_buf = OsAddr::empty(self.addr.family())
   let n_read = self.io.recvfrom(
-    buf,
-    offset~,
-    len=max_len,
+    dst.buf(),
+    offset=dst.start_offset(),
+    len=dst.length(),
     addr=addr_buf.0,
     context="@socket.UdpClient::recv_into_with_addr()",
   )
@@ -541,8 +539,7 @@ pub async fn UdpClient::recv_with_addr(
 
 ///|
 /// Receive packet from a UDP server, and obtain the source address of the packet.
-/// For `udp.recv_into(buf, offset~, max_len~)`,
-/// at most `max_len` bytes of data will be written to `buf`, starting from `offset`.
+/// At most `dst.length()` bytes of data will be written to `dst`.
 /// The number of received bytes and the source address of the packet will be returned.
 ///
 /// UDP is a datagram based protocol,
@@ -553,16 +550,14 @@ pub async fn UdpClient::recv_with_addr(
 /// use a worker task for reading and use `@async.Queue` to distribute the data.
 pub async fn UdpServer::recv_into(
   self : UdpServer,
-  buf : FixedArray[Byte],
-  offset~ : Int32 = 0,
-  max_len~ : Int32 = buf.length() - offset,
+  dst : MutArrayView[Byte],
 ) -> (Int32, Addr) {
   // Create a big enough Addr to hold both IPv4 and IPv6 address
   let addr_buf = OsAddr::empty(self.addr.family())
   let n_read = self.io.recvfrom(
-    buf,
-    offset~,
-    len=max_len,
+    dst.buf(),
+    offset=dst.start_offset(),
+    len=dst.length(),
     addr=addr_buf.0,
     context="@socket.UdpServer::recv_into()",
   )

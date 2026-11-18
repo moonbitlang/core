@@ -18,7 +18,7 @@ pub struct RawFd {
 #alias(new, deprecated)
 pub async fn RawFd::RawFd(@types.Fd) -> Self
 pub fn RawFd::close(Self) -> Unit
-pub async fn RawFd::read_into_once(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32
+pub async fn RawFd::read_into_once(Self, MutArrayView[Byte]) -> Int32
 pub async fn RawFd::write_once(Self, Bytes, offset? : Int32, len? : Int32) -> Int32
 
 pub struct RawFdStream {
@@ -37,7 +37,7 @@ pub async fn RawFdStream::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn RawFdStream::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn RawFdStream::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn RawFdStream::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn RawFdStream::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn RawFdStream::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn RawFdStream::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn RawFdStream::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn RawFdStream::write_reader(Self, &@io.BinaryReader) -> Unit

@@ -663,7 +663,7 @@ async test "fixed length gzip direct bytes one byte reads" {
     )
     inspect(response.code, content="200")
     let output = FixedArray::make(1, b'\x00')
-    while input.read_into(output) > 0 {
+    while input.read_into(output.mut_view()) > 0 {
 
     }
     inspect(true, content="true")

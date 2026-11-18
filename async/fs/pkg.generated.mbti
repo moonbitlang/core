@@ -108,7 +108,7 @@ pub async fn File::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn File::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn File::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn File::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn File::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn File::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn File::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn File::size(Self) -> Int64
 pub async fn File::sync(Self, only_data? : Bool) -> Unit
@@ -145,7 +145,7 @@ pub async fn FileView::read(Self) -> Bytes? raise @io.ReaderError
 pub async fn FileView::read_all(Self) -> Bytes raise @io.ReaderError
 pub async fn FileView::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn FileView::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
-pub async fn FileView::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn FileView::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn FileView::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub async fn FileView::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn FileView::write_reader(Self, &@io.BinaryReader) -> Unit

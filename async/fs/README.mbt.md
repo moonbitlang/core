@@ -120,7 +120,7 @@ async test "read in chunks using File" {
   let file = @fs.open(test_file, mode=ReadOnly)
   defer file.close()
   let buf = FixedArray::make(5, b'0')
-  let n = file.read_into(buf)
+  let n = file.read_into(buf.mut_view())
   inspect(n, content="5")
   inspect(@utf8.decode(buf.unsafe_reinterpret_as_bytes()), content="01234")
 }
@@ -237,7 +237,7 @@ async test "read through a file view" {
 
   // Use `read_into` on the view to handle EOF without requiring an exact size.
   let buf = FixedArray::make(10, b'\x00')
-  let n = file.at(5).read_into(buf)
+  let n = file.at(5).read_into(buf.mut_view())
   inspect(n, content="5")
   json_inspect(buf.unsafe_reinterpret_as_bytes()[:n], content="56789")
 }

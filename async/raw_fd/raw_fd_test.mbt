@@ -28,7 +28,7 @@ async test "pipe as raw fd" {
       defer r.close()
       let buf = FixedArray::make(1024, b'\x00')
       for ;; {
-        let n = r.read_into_once(buf)
+        let n = r.read_into_once(buf.mut_view())
         guard n > 0 else { break }
         @async.sleep(50)
         let data = buf.unsafe_reinterpret_as_bytes()[:n]
@@ -109,7 +109,7 @@ async test "file as raw fd" {
   assert_true(@event_loop.kind_of_fd(fd, context="kind_of_fd") is Regular)
   let buf = FixedArray::make(truth.length() + 1, b'\x00')
   let len = for n = 0; n < buf.length(); {
-    let delta = file.read_into_once(buf, offset=n)
+    let delta = file.read_into_once(buf.mut_view(start=n))
     guard delta > 0 else { break n }
     continue n + delta
   } nobreak {
@@ -175,7 +175,7 @@ async test "socket as raw fd" {
       guard client.write_once(data) == data.length() else {
         raise Failure::Failure("UDP packet not fully sent")
       }
-      let n = client.read_into_once(buf)
+      let n = client.read_into_once(buf.mut_view())
       let data = buf.unsafe_reinterpret_as_bytes()[:n]
       @async.sleep(50)
       log.push("client received \{@utf8.decode(data).escape()}")

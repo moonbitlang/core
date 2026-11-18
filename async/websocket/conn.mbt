@@ -390,9 +390,10 @@ async fn Conn::handle_ping(self : Conn, frame : FrameHeader) -> Unit {
   }
   for received = 0; received < len; {
     let n = self.transport.read_into(
-      pong_message,
-      offset=payload_start + received,
-      max_len=len - received,
+      pong_message.mut_view(
+        start=payload_start + received,
+        end=payload_start + len,
+      ),
     )
     guard n > 0 else { self.protocol_error("Unexpected EOF") }
     continue received + n
@@ -416,11 +417,7 @@ async fn Conn::handle_pong(self : Conn, frame : FrameHeader) -> Unit {
   let len = frame.payload_len.to_int()
   let msg = FixedArray::make(len, b'\x00')
   for received = 0; received < len; {
-    let n = self.transport.read_into(
-      msg,
-      offset=received,
-      max_len=len - received,
-    )
+    let n = self.transport.read_into(msg.mut_view(start=received, end=len))
     guard n > 0 else { self.protocol_error("Unexpected EOF") }
     continue received + n
   }
@@ -450,9 +447,7 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
   }
   for received = 0; received < len; {
     let n = self.transport.read_into(
-      reply,
-      offset=payload_start + received,
-      max_len=len - received,
+      reply.mut_view(start=payload_start + received, end=payload_start + len),
     )
     guard n > 0 else { self.protocol_error("Unexpected EOF") }
     continue received + n
@@ -618,7 +613,9 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
 
   // we have a non-empty frame pending, read from that frame
   let max_len = @cmp.minimum(conn.curr_frame_remaining, max_len.to_int64()).to_int()
-  let n = conn.transport.read_into(buf, offset~, max_len~) catch {
+  let n = conn.transport.read_into(
+    buf.mut_view(start=offset, end=offset + max_len),
+  ) catch {
     err => {
       self.state = Error(err)
       raise err

@@ -68,7 +68,9 @@ async fn Reader::decode_chunk(
 ) -> (Int32, Int32) {
   guard self.gzip is Some(gzip) else {
     let max_len = @cmp.minimum(max_len, limit)
-    let n = self.transport.read_into(buf, offset~, max_len~)
+    let n = self.transport.read_into(
+      buf.mut_view(start=offset, end=offset + max_len),
+    )
     (n, n)
   }
 

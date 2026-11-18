@@ -225,14 +225,14 @@ pub impl @io.BinaryReader for File with fn read_all(self) {
   }
   let size_hint = size.to_int()
   let buf = FixedArray::make(size_hint, b'\x00')
-  let n = self.read_into(buf, offset=0, max_len=size_hint)
+  let n = self.read_into(buf.mut_view())
   if n is 0 {
     return b""
   }
   // The only reliable way to detect EOF is `read` returning `0`,
   // even for regular files. So do a simple EOF probe here.
   let eof_probe = FixedArray::make(1, b'\x00')
-  if self.read_into(eof_probe, offset=0, max_len=1) is 0 {
+  if self.read_into(eof_probe.mut_view()) is 0 {
     // happy path, the file size is accurate
     return buf.unsafe_reinterpret_as_bytes()[:n].to_owned()
   }

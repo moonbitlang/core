@@ -55,7 +55,7 @@ pub async fn MemoryPipeRead::read(Self) -> Bytes? raise ReaderError
 pub async fn MemoryPipeRead::read_all(Self) -> Bytes raise ReaderError
 pub async fn MemoryPipeRead::read_at_least(Self, Int32) -> Bytes raise ReaderError
 pub async fn MemoryPipeRead::read_exactly(Self, Int32) -> Bytes raise ReaderError
-pub async fn MemoryPipeRead::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError
+pub async fn MemoryPipeRead::read_into(Self, MutArrayView[Byte]) -> Int32 raise ReaderError
 pub async fn MemoryPipeRead::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError
 pub impl BinaryReader for MemoryPipeRead
 
@@ -79,7 +79,7 @@ pub async fn MemoryReader::read(Self) -> Bytes? raise ReaderError
 pub async fn MemoryReader::read_all(Self) -> Bytes raise ReaderError
 pub async fn MemoryReader::read_at_least(Self, Int32) -> Bytes raise ReaderError
 pub async fn MemoryReader::read_exactly(Self, Int32) -> Bytes raise ReaderError
-pub async fn MemoryReader::read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError
+pub async fn MemoryReader::read_into(Self, MutArrayView[Byte]) -> Int32 raise ReaderError
 pub async fn MemoryReader::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise ReaderError
 pub impl BinaryReader for MemoryReader
 
@@ -113,7 +113,7 @@ pub impl TextWriter for Utf8Writer
 
 // Traits
 pub(open) trait BinaryReader : BinaryReaderImpl {
-  async fn read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError = _
+  async fn read_into(Self, MutArrayView[Byte]) -> Int32 raise ReaderError = _
   async fn read(Self) -> Bytes? raise ReaderError = _
   async fn read_at_least(Self, Int32) -> Bytes raise ReaderError = _
   async fn peek(Self) -> BytesView? raise ReaderError = _

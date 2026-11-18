@@ -23,7 +23,7 @@ pub async fn[R : @io.BinaryReader] Decoder::read(Self[R]) -> Bytes? raise @io.Re
 pub async fn[R : @io.BinaryReader] Decoder::read_all(Self[R]) -> Bytes raise @io.ReaderError
 pub async fn[R : @io.BinaryReader] Decoder::read_at_least(Self[R], Int32) -> Bytes raise @io.ReaderError
 pub async fn[R : @io.BinaryReader] Decoder::read_exactly(Self[R], Int32) -> Bytes raise @io.ReaderError
-pub async fn[R : @io.BinaryReader] Decoder::read_into(Self[R], FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise @io.ReaderError
+pub async fn[R : @io.BinaryReader] Decoder::read_into(Self[R], MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn[R : @io.BinaryReader] Decoder::read_until(Self[R], BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
 pub impl[R : @io.BinaryReader] @io.BinaryReader for Decoder[R]
 

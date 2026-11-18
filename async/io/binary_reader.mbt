@@ -55,7 +55,7 @@ pub(open) trait BinaryReaderImpl {
 /// When overridden for a reader-specific optimization,
 /// the alternative implementation should respect behavior of the default implementation.
 pub(open) trait BinaryReader: BinaryReaderImpl {
-  async fn read_into(Self, FixedArray[Byte], offset? : Int32, max_len? : Int32) -> Int32 raise ReaderError = _
+  async fn read_into(Self, MutArrayView[Byte]) -> Int32 raise ReaderError = _
   async fn read(Self) -> Bytes? raise ReaderError = _
   async fn read_at_least(Self, Int32) -> Bytes raise ReaderError = _
   async fn peek(Self) -> BytesView? raise ReaderError = _
@@ -92,26 +92,27 @@ pub(all) suberror ReaderError {
 }
 
 ///|
-/// `reader.read_into(dst, offset~, max_len~)` reads at most `max_len` bytes from the reader,
-/// storing the result in `dst[offset:]`.
+fn MutArrayView::buf(self : MutArrayView[Byte]) -> FixedArray[Byte] = "%arrayview.buf"
+
+///|
+/// `reader.read_into(dst)` reads at most `dst.length()` bytes from the reader
+/// into `dst`.
 /// The number of bytes actually read is returned.
-/// Note that the return value may be smaller than `max_len`
+/// Note that the return value may be smaller than `dst.length()`
 /// if not enough data is *immediately* available.
 /// If EOF is reached and no more data is available, zero will be returned.
-impl BinaryReader with fn read_into(
-  self,
-  dst,
-  offset~ = 0,
-  max_len~ = dst.length() - offset,
-) {
+impl BinaryReader with fn read_into(self, dst) {
+  let buf = dst.buf()
+  let offset = dst.start_offset()
+  let max_len = dst.length()
   guard max_len > 0 else {
-    abort("`BinaryReader::read_into()`: `max_len` must not be zero")
+    abort("`BinaryReader::read_into()`: `dst` must not be empty")
   }
   let controller = BinaryReaderImpl::get_controller(self)
   if controller.buf_len > 0 {
-    controller.blit_to(dst, offset~, max_len~)
+    controller.blit_to(buf, offset~, max_len~)
   } else {
-    BinaryReaderImpl::raw_read_impl(self, dst, offset~, max_len~) catch {
+    BinaryReaderImpl::raw_read_impl(self, buf, offset~, max_len~) catch {
       err => raise TransportError(err, context=BinaryReaderImpl::name(self))
     }
   }
@@ -226,11 +227,7 @@ impl BinaryReader with fn peek_at_least(self, min_len : Int32) {
 impl BinaryReader with fn read_exactly(self, len) {
   let buf = FixedArray::make(len, b'\x00')
   for received = 0; received < len; {
-    let new_received = self.read_into(
-      buf,
-      offset=received,
-      max_len=len - received,
-    )
+    let new_received = self.read_into(buf.mut_view(start=received, end=len))
     if new_received is 0 {
       raise UnexpectedEof
     }
@@ -308,8 +305,7 @@ pub async fn[R : BinaryReader] read_all_binary(
   let buffer_list = []
   let mut buffer = FixedArray::make(chunk_size, b'\x00')
   let mut offset = 0
-  while reader.read_into(buffer, offset~, max_len=buffer.length() - offset) is n &&
-        n > 0 {
+  while reader.read_into(buffer.mut_view(start=offset)) is n && n > 0 {
     offset += n
     if offset == buffer.length() {
       buffer_list.push(buffer)

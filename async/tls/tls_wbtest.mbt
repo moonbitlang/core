@@ -316,7 +316,7 @@ impl @io.BinaryReaderImpl for FailingRead with fn raw_read_impl(
   max_len~,
 ) {
   guard !self.fail else { if self.eof { 0 } else { raise ReadFailed } }
-  self.inner.read_into(buf, offset~, max_len~)
+  self.inner.read_into(buf.mut_view(start=offset, end=offset + max_len))
 }
 
 ///|

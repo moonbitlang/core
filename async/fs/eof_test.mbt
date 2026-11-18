@@ -25,7 +25,7 @@ async test "read EOF" {
   let n = {
     let r = @fs.open(path, mode=ReadOnly)
     defer r.close()
-    r.read_into(buf)
+    r.read_into(buf.mut_view())
   }
   assert_eq(n, 4)
   inspect(@utf8.decode(buf.unsafe_reinterpret_as_bytes()[0:n]), content="abcd")
