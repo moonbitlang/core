@@ -145,7 +145,7 @@ async test "all failure propagates" {
     inspect(
       result,
       content=(
-        #|Failure(): Err
+        #|Failure: Err
       ),
     )
     json_inspect(log, content=[
@@ -246,7 +246,7 @@ async test "any failure without allow_failure" {
   inspect(
     result,
     content=(
-      #|Failure(): Err
+      #|Failure: Err
     ),
   )
   json_inspect(log, content=["task #1 cancelled"])

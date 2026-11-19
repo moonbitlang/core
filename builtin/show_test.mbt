@@ -838,7 +838,18 @@ test "Show for Failure" {
   inspect(
     f.to_string(),
     content=(
-      #|Failure(): test error message
+      #|Failure: test error message
+    ),
+  )
+}
+
+///|
+test "Show for Failure preserves message punctuation" {
+  let failure = Failure::Failure("expected \")\", got \",\"")
+  inspect(
+    failure.to_string(),
+    content=(
+      #|Failure: expected ")", got ","
     ),
   )
 }

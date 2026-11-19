@@ -60,5 +60,5 @@ pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise Failure {
 ///|
 pub impl Show for Failure with fn output(self, logger) {
   let Failure(msg) = self
-  logger..write_string("Failure(): ").write_string(msg)
+  logger..write_string("Failure: ").write_string(msg)
 }
