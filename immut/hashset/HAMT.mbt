@@ -258,6 +258,7 @@ fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
+  guard arr.length() > 0 else { return new() }
   if arr.length() <= bulk_build_threshold {
     return hash_set_from_array_by_add(arr)
   }
