@@ -468,71 +468,59 @@ fn[T : Eq + Hash] diff_(
 }
 
 ///|
-/// `iter_matches(old~, new~, cutoff?)` diffs `old` and `new` (as in /usr/bin/diff),
-/// and returns index pair of longest common subsequence in increasing order. 
-///
-/// The `cutoff` is an upper bound on the minimum edit distance between `old~` and `new~`. When
-/// `cutoff` is exceeded, `iter_matches` returns a correct, but not necessarily minimal
-/// diff. It defaults to about the square root of the compacted input sizes
-/// (elements present in both sequences), floored at 4096.
-fn[T : Eq + Hash] iter_matches(
-  cutoff~ : Int32?, // optional computation cost limit
-  old~ : ArrayView[T], // original array
-  new~ : ArrayView[T], // new array
-) -> Iter2[Int32, Int32] {
-  // First compute difference markers
-  let (d1, d2) = diff_(cutoff, old, new)
-  let mut i1 = 0
-  let mut i2 = 0
-  // Iterative rather than recursive: a run of consecutive changed elements
-  // would otherwise recurse once per element, and MoonBit does not guarantee
-  // tail-call optimization for local functions.
-  fn go() {
-    // traverse two arrays, find unchanged element pairs
-    while i1 < d1.length() && i2 < d2.length() {
-      if !d1[i1] {
-        // old[i1] unchanged
-        if !d2[i2] {
-          // new[i2] also unchanged - found matching pair
-          let matching_pair = (i1, i2)
-          i1 += 1
-          i2 += 1
-          return Some(matching_pair)
-        }
-        // new[i2] changed (insertion) - skip element in new
-        i2 += 1
-      } else if !d2[i2] {
-        // old[i1] changed but new[i2] didn't (deletion) - skip element in old
-        i1 += 1
-      } else {
-        // both elements changed - skip both and find next possible match
-        i1 += 1
-        i2 += 1
-      }
-    }
-    None // reached end of arrays
-  }
-
-  Iter2::new(go)
-}
-
-///|
 fn[T : Eq + Hash] append_myers_matches(
-  matches : Array[(Int32, Int32)],
+  builder : EditBuilder,
   cutoff : Int32?,
   old : ArrayView[T],
   new : ArrayView[T],
   old_offset : Int32,
   new_offset : Int32,
 ) -> Unit {
-  for old_idx, new_idx in iter_matches(cutoff~, old~, new~) {
-    matches.push((old_offset + old_idx, new_offset + new_idx))
+  if old.is_empty() || new.is_empty() {
+    return
+  }
+  let (old_changed, new_changed) = diff_(cutoff, old, new)
+  builder.append_unchanged_runs(
+    old_changed, new_changed, old_offset, new_offset,
+  )
+}
+
+///|
+/// Pair unchanged elements in order, emitting adjacent matches as one run.
+fn EditBuilder::append_unchanged_runs(
+  self : EditBuilder,
+  old_changed : FixedArray[Bool],
+  new_changed : FixedArray[Bool],
+  old_offset : Int32,
+  new_offset : Int32,
+) -> Unit {
+  let mut i = 0
+  let mut j = 0
+  while i < old_changed.length() && j < new_changed.length() {
+    if old_changed[i] {
+      i += 1
+    } else if new_changed[j] {
+      j += 1
+    } else {
+      let start = i
+      let new_start = j
+      i += 1
+      j += 1
+      while i < old_changed.length() &&
+            j < new_changed.length() &&
+            !old_changed[i] &&
+            !new_changed[j] {
+        i += 1
+        j += 1
+      }
+      self.push_run(old_offset + start, new_offset + new_start, i - start)
+    }
   }
 }
 
 ///|
 fn[T : Eq + Hash] append_patience_matches(
-  matches : Array[(Int32, Int32)],
+  builder : EditBuilder,
   cutoff : Int32?,
   old : ArrayView[T],
   new : ArrayView[T],
@@ -541,7 +529,7 @@ fn[T : Eq + Hash] append_patience_matches(
 ) -> Unit {
   let anchors = unique_lcs(old~, new~)
   if anchors.is_empty() {
-    append_myers_matches(matches, cutoff, old, new, old_offset, new_offset)
+    append_myers_matches(builder, cutoff, old, new, old_offset, new_offset)
     return
   }
 
@@ -553,20 +541,20 @@ fn[T : Eq + Hash] append_patience_matches(
   let mut prev_new_idx = 0
   for (old_idx, new_idx) in anchors {
     append_myers_matches(
-      matches,
+      builder,
       cutoff,
       old.exact_view(start=prev_old_idx, end=old_idx),
       new.exact_view(start=prev_new_idx, end=new_idx),
       old_offset + prev_old_idx,
       new_offset + prev_new_idx,
     )
-    matches.push((old_offset + old_idx, new_offset + new_idx))
+    builder.push_run(old_offset + old_idx, new_offset + new_idx, 1)
     prev_old_idx = old_idx + 1
     prev_new_idx = new_idx + 1
   }
 
   append_myers_matches(
-    matches,
+    builder,
     cutoff,
     old.exact_view(start=prev_old_idx, end=old.length()),
     new.exact_view(start=prev_new_idx, end=new.length()),
@@ -588,21 +576,6 @@ fn[T : Eq + Hash] append_patience_matches(
 pub(all) enum DiffAlgorithm {
   Myers
   Patience
-}
-
-///|
-fn[T : Eq + Hash] collect_matches(
-  cutoff : Int32?,
-  old : ArrayView[T],
-  new : ArrayView[T],
-  algorithm : DiffAlgorithm,
-) -> Array[(Int32, Int32)] {
-  let matches = Array(capacity=old.length().min(new.length()))
-  match algorithm {
-    Patience => append_patience_matches(matches, cutoff, old, new, 0, 0)
-    Myers => append_myers_matches(matches, cutoff, old, new, 0, 0)
-  }
-  matches
 }
 
 ///|
@@ -660,101 +633,77 @@ pub fn[T : Hash + Eq] Diff::Diff(
   cutoff? : Int32,
   algorithm~ : DiffAlgorithm = Myers,
 ) -> Diff[T] {
-  let result : Array[Edit] = Array(capacity=old.length() + new.length())
-  let matches = collect_matches(cutoff, old, new, algorithm)
-  let mut prev_old_idx = 0
-  let mut prev_new_idx = 0
-  let mut equal_old_idx = 0
-  let mut equal_new_idx = 0
-  let mut consecutive_equal_length = 0
-  for (old_idx, new_idx) in matches {
-    // emit delete
-    if prev_old_idx != old_idx {
-      if consecutive_equal_length != 0 {
-        result.push(
-          Equal(
-            old_index=equal_old_idx,
-            new_index=equal_new_idx,
-            len=consecutive_equal_length,
-          ),
-        )
-      }
-      consecutive_equal_length = 0
-      result.push(
-        Delete(
-          old_index=prev_old_idx,
-          old_len=old_idx - prev_old_idx,
-          new_index=prev_new_idx,
-        ),
-      )
-      prev_old_idx = old_idx
-    }
-    // emit insert
-    if prev_new_idx != new_idx {
-      if consecutive_equal_length != 0 {
-        result.push(
-          Equal(
-            old_index=equal_old_idx,
-            new_index=equal_new_idx,
-            len=consecutive_equal_length,
-          ),
-        )
-      }
-      consecutive_equal_length = 0
-      result.push(
-        Insert(
-          old_index=prev_old_idx,
-          new_index=prev_new_idx,
-          new_len=new_idx - prev_new_idx,
-        ),
-      )
-    }
-    prev_old_idx = old_idx + 1
-    prev_new_idx = new_idx + 1
-    // emit equal
-    if consecutive_equal_length == 0 {
-      equal_old_idx = old_idx
-      equal_new_idx = new_idx
-      consecutive_equal_length = 1
-    } else {
-      consecutive_equal_length += 1
-    }
-  } nobreak {
-    // emit remain equal
-    if consecutive_equal_length != 0 {
-      result.push(
-        Equal(
-          old_index=equal_old_idx,
-          new_index=equal_new_idx,
-          len=consecutive_equal_length,
-        ),
-      )
-    }
-    // emit remaining deletions
-    if prev_old_idx != old.length() {
-      result.push(
-        Delete(
-          old_index=prev_old_idx,
-          old_len=old.length() - prev_old_idx,
-          new_index=prev_new_idx,
-        ),
-      )
-      // update prev_old_idx
-      prev_old_idx = old.length()
-    }
+  let builder : EditBuilder = {
+    edits: Array(capacity=old.length() + new.length()),
+    old_pos: 0,
+    new_pos: 0,
+    equal_len: 0,
+  }
+  match algorithm {
+    Patience => append_patience_matches(builder, cutoff, old, new, 0, 0)
+    Myers => append_myers_matches(builder, cutoff, old, new, 0, 0)
+  }
+  builder.flush(old.length(), new.length())
+  { old, new, edits: builder.edits, }
+}
 
-    // emit remaining insertions
+///|
+/// The cursors point just past the last match. Adjacent matches form a single Equal edit.
+priv struct EditBuilder {
+  edits : Array[Edit]
+  mut old_pos : Int32
+  mut new_pos : Int32
+  mut equal_len : Int32
+}
 
-    if prev_new_idx != new.length() {
-      result.push(
-        Insert(
-          old_index=prev_old_idx,
-          new_index=prev_new_idx,
-          new_len=new.length() - prev_new_idx,
-        ),
-      )
-    }
-    return { old, new, edits: result, }
+///|
+fn EditBuilder::push_run(
+  self : EditBuilder,
+  old_idx : Int32,
+  new_idx : Int32,
+  len : Int32,
+) -> Unit {
+  if self.old_pos != old_idx || self.new_pos != new_idx {
+    self.flush(old_idx, new_idx)
+  }
+  self.old_pos = old_idx + len
+  self.new_pos = new_idx + len
+  self.equal_len += len
+}
+
+///|
+fn EditBuilder::flush(
+  self : EditBuilder,
+  old_end : Int32,
+  new_end : Int32,
+) -> Unit {
+  if self.equal_len > 0 {
+    self.edits.push(
+      Equal(
+        old_index=self.old_pos - self.equal_len,
+        new_index=self.new_pos - self.equal_len,
+        len=self.equal_len,
+      ),
+    )
+    self.equal_len = 0
+  }
+  if self.old_pos < old_end {
+    self.edits.push(
+      Delete(
+        old_index=self.old_pos,
+        old_len=old_end - self.old_pos,
+        new_index=self.new_pos,
+      ),
+    )
+  }
+  if self.new_pos < new_end {
+    self.edits.push(
+      Insert(
+        old_index=old_end,
+        new_index=self.new_pos,
+        new_len=new_end - self.new_pos,
+      ),
+    )
   }
 }
 
