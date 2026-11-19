@@ -15,8 +15,17 @@ import {
   "moonbitlang/core/test",
 }
 
+#cfg(not(target="wasm-gc"))
+import {
+  "moonbitlang/core/async",
+}
+
 warnings = "-test_unqualified_package"
 
 import {
   "moonbitlang/core/test",
 } for "test"
+
+options(
+  "allow-experimental-packages": true,
+)
