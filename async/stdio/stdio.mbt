@@ -182,7 +182,7 @@ pub let stdout : Output = {
     text: @io.Utf8Writer::new_uninitialized(),
     io: @event_loop.stdout,
     ctrl: BinaryWriterController(),
-    lock: Mutex(),
+    lock: @runtime_internal.stdout_lock,
   }
   @event_loop.register_hook(init=() => stdout.text.set_inner(stdout), exit=() => {
     stdout.text.close()
@@ -207,7 +207,7 @@ pub let stderr : Output = {
     text: @io.Utf8Writer::new_uninitialized(),
     io: @event_loop.stderr,
     ctrl: BinaryWriterController(),
-    lock: Mutex(),
+    lock: @runtime_internal.stderr_lock,
   }
   @event_loop.register_hook(init=() => stderr.text.set_inner(stderr), exit=() => {
     stderr.text.close()

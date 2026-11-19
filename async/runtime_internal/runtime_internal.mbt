@@ -74,4 +74,16 @@ pub let stdout : StdioChannel = @event_loop.stdout
 #doc(hidden)
 #internal(internal, "This API is for compatibility with `moonbitlang/async`, do not use")
 #cfg(any(target="native", target="wasm"))
+pub let stdout_lock : @async.Mutex = Mutex()
+
+///|
+#doc(hidden)
+#internal(internal, "This API is for compatibility with `moonbitlang/async`, do not use")
+#cfg(any(target="native", target="wasm"))
 pub let stderr : StdioChannel = @event_loop.stderr
+
+///|
+#doc(hidden)
+#internal(internal, "This API is for compatibility with `moonbitlang/async`, do not use")
+#cfg(any(target="native", target="wasm"))
+pub let stderr_lock : @async.Mutex = Mutex()

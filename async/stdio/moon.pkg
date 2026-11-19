@@ -8,6 +8,7 @@ import {
   "moonbitlang/core/async/internal/event_loop",
   "moonbitlang/core/async/internal/fd_util",
   "moonbitlang/core/async/io",
+  "moonbitlang/core/async/runtime_internal",
 }
 
 import {
