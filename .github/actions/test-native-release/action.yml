@@ -15,7 +15,9 @@ runs:
         SCCACHE_GHA_RW_MODE: ${{ github.ref == 'refs/heads/main' && 'READ_WRITE' || 'READ_ONLY' }}
       run: |
         ulimit -s 8176
-        moon test --target native --release
+        for _ in $(seq 1 10); do
+          moon test --target native --release
+        done
 
     - name: Setup MSVC
       if: ${{ runner.os == 'Windows' }}
