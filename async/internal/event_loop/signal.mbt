@@ -70,11 +70,7 @@ let global_signal_handler_initialized : @ref.Ref[Bool] = Ref(false)
 /// Can be invoked after the event loop started or invoked multiple times.
 pub fn set_global_cancellation_signals(signals : ReadOnlyArray[Int32]) -> Unit {
   global_signal_handler_initialized.val = true
-  let signals = if SIGWINCH < 0 {
-    signals
-  } else {
-    ReadOnlyArray::from_array([..signals, SIGWINCH])
-  }
+  let signals = ReadOnlyArray::from_array([..signals, SIGWINCH])
   set_global_cancellation_signals_ffi(
     all_signals,
     all_signals.length(),
