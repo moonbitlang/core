@@ -349,37 +349,6 @@ test "parse stays total on mutated JSON text" {
 }
 
 ///|
-/// `max_nesting_depth` is used only to exercise the
-/// depth-limit guard cheaply at randomized boundaries.
-fn parse_outcome_with_limit(text : String, limit : Int32) -> String {
-  try {
-    ignore(@json.parse(text, max_nesting_depth=limit))
-    "parsed"
-  } catch {
-    DepthLimitExceeded => "depth limit"
-    _ => "other error"
-  }
-}
-
-///|
-test "max_nesting_depth accepts exactly the documented depth" {
-  @quickcheck.check((input : (Int32, Int32, Bool)) => {
-    let (raw_depth, raw_delta, use_objects) = input
-    let depth = wrap_index(raw_depth, 40) + 1
-    // Concentrate the limit within +-2 of the actual depth so every run
-    // probes the exact boundary instead of far-away values.
-    let limit = depth + wrap_index(raw_delta, 5) - 2
-    let text = if use_objects {
-      "{\"k\":".repeat(depth) + "0" + "}".repeat(depth)
-    } else {
-      "[".repeat(depth) + "0" + "]".repeat(depth)
-    }
-    parse_outcome_with_limit(text, limit) ==
-    (if limit >= depth { "parsed" } else { "depth limit" })
-  })
-}
-
-///|
 test "ToJson/FromJson roundtrips across the type zoo" {
   @quickcheck.check((x : Int32) => {
     let back : Int32 = @json.from_json(@json.to_json(x))

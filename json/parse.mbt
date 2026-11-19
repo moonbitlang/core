@@ -131,14 +131,17 @@ fn ParseContext::parse_object(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
-  if remaining_available_depth <= 0 {
-    raise DepthLimitExceeded
-  }
-  let child_remaining_available_depth = remaining_available_depth - 1
   let map = Map([])
   if ctx.lex_empty_container_end('}') {
     return Json::object(map)
   }
+  if remaining_available_depth <= 0 {
+    let name = ctx.lex_property_name(map)
+    return ctx.stack_safe_parse(
+      InsideObject(map, last_key=name, next=Outermost),
+    )
+  }
+  let child_remaining_available_depth = remaining_available_depth - 1
   for ;; {
     let name = ctx.lex_property_name(map)
     map[name] = match ctx.lex_value() {
@@ -189,14 +192,14 @@ fn ParseContext::parse_array(
   ctx : ParseContext,
   remaining_available_depth~ : Int32,
 ) -> Json raise ParseError {
-  if remaining_available_depth <= 0 {
-    raise DepthLimitExceeded
-  }
-  let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
   if ctx.lex_empty_container_end(']') {
     return Json::array(vec)
   }
+  if remaining_available_depth <= 0 {
+    return ctx.stack_safe_parse(InsideArray(vec, next=Outermost))
+  }
+  let child_remaining_available_depth = remaining_available_depth - 1
   for ;; {
     let value = match ctx.lex_value() {
       Some(value) => value
@@ -229,5 +232,67 @@ fn ParseContext::lex_empty_container_end(
     true
   } else {
     false
+  }
+}
+
+///|
+priv enum ParserStack {
+  Outermost
+  InsideArray(Array[Json], next~ : ParserStack)
+  InsideObject(Map[String, Json], mut last_key~ : String, next~ : ParserStack)
+}
+
+///|
+fn ParseContext::stack_safe_parse(
+  ctx : ParseContext,
+  stack : ParserStack,
+) -> Json raise ParseError {
+  main_parse_loop~: for stack = stack {
+    let value = if ctx.lex_value() is Some(value) {
+      value
+    } else if ctx.input.unsafe_get(ctx.offset - 1) == '{' {
+      let map = Map([])
+      if ctx.lex_empty_container_end('}') {
+        Json::object(map)
+      } else {
+        let last_key = ctx.lex_property_name(map)
+        continue main_parse_loop~ InsideObject(map, last_key~, next=stack)
+      }
+    } else {
+      let vec = []
+      if ctx.lex_empty_container_end(']') {
+        Json::array(vec)
+      } else {
+        continue main_parse_loop~ InsideArray(vec, next=stack)
+      }
+    }
+    // we have obtained a new complete JSON value,
+    // feed the value to surrounding containers, if any
+    for value = value, stack = stack {
+      match stack {
+        Outermost => break main_parse_loop~ value
+        InsideArray(vec, next~) => {
+          vec.push(value)
+          lexscan ctx {
+            re"^[ \t\r\n]*" + re"," => continue main_parse_loop~ stack
+            re"^[ \t\r\n]*" + re"\]" => continue Json::array(vec), next
+            _ => ctx.unexpected_token()
+          }
+        }
+        InsideObject(map, last_key~, next~) as obj => {
+          map[last_key] = value
+          // After `,` only a property name may follow, not `}`, and
+          // `lex_property_name` reports anything else.
+          lexscan ctx {
+            re"^[ \t\r\n]*" + re"," => {
+              obj.last_key = ctx.lex_property_name(map)
+              continue main_parse_loop~ stack
+            }
+            re"^[ \t\r\n]*" + re"[}]" => continue Json::object(map), next
+            _ => ctx.unexpected_token()
+          }
+        }
+      }
+    }
   }
 }

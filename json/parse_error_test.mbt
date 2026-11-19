@@ -136,15 +136,6 @@ test "parse error branches" {
     is InvalidEof else {
     fail("expected InvalidEof after trailing comma")
   }
-  let err = expect_parse_error(
-    String::make(1025, '[') + String::make(1025, ']'),
-    "expected DepthLimitExceeded",
-  )
-  guard err is DepthLimitExceeded else { fail("expected DepthLimitExceeded") }
-  inspect(
-    err.to_string(),
-    content="Depth limit exceeded, please increase the max_nesting_depth parameter",
-  )
   ignore(@json.parse("-999999999999999999999999999999999999"))
   ignore(@json.parse("-1e999999999999999999999999999999999999"))
 }

@@ -91,31 +91,6 @@ test "unterminated string escape raises an error" {
 }
 
 ///|
-test "nesting beyond the configured depth limit is rejected" {
-  // Exceed a small configured depth limit rather than the 1024 default. The
-  // parser recurses once per nesting level, so approaching the default depth
-  // overflows the limited native stack on some platforms (e.g. Windows) before
-  // the guard can fire. A small limit exercises the same DepthLimitExceeded
-  // path with only a handful of frames.
-  //
-  // 9 nested arrays exceed a max nesting depth of 8.
-  let deep_array = String::make(9, '[') + String::make(9, ']')
-  inspect(parse_raises(deep_array, max_nesting_depth=8), content="true")
-  // the same for deeply nested objects (a separate depth check)
-  let sb = StringBuilder()
-  for _ in 0..<9 {
-    sb <+ "{\"a\":"
-  }
-  sb <+ "1"
-  for _ in 0..<9 {
-    sb <+ "}"
-  }
-  inspect(parse_raises(sb.to_string(), max_nesting_depth=8), content="true")
-  // a document within the limit parses fine
-  inspect(parse_raises("[[1]]", max_nesting_depth=8), content="false")
-}
-
-///|
 test "Int64 and UInt64 from_json reject non-numeric strings" {
   let bad = @json.parse("\"not-a-number\"")
   let i64 = try {
