@@ -19,19 +19,19 @@ test "Error display without importing error" {
   inspect(
     to_string(error),
     content=(
-      #|Failure(): test error
+      #|Failure: test error
     ),
   )
   inspect(
     error.to_string(),
     content=(
-      #|Failure(): test error
+      #|Failure: test error
     ),
   )
   inspect(
     error,
     content=(
-      #|Failure(): test error
+      #|Failure: test error
     ),
   )
 }

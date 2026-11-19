@@ -712,7 +712,7 @@ test "parse_double large magnitude cancellation" {
       inspect(
         e,
         content=(
-          #|Failure(): value out of range
+          #|Failure: value out of range
         ),
       )
   } noraise {
@@ -725,7 +725,7 @@ test "parse_double large magnitude cancellation" {
       inspect(
         e,
         content=(
-          #|Failure(): value out of range
+          #|Failure: value out of range
         ),
       )
   } noraise {
