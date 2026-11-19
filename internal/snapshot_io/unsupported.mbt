@@ -38,4 +38,6 @@ fn Handle::close(_self : Handle) -> Unit raise {
 }
 
 ///|
-let file_host_is_unix : Bool = true
+fn file_host_is_unix() -> Bool {
+  true
+}

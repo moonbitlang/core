@@ -78,10 +78,8 @@ extern "js" fn close_result(close : (Int32) -> Unit, fd : Int32) -> FileResult =
   #| }
 
 ///|
-extern "js" fn is_unix() -> Bool = "() => process.platform !== 'win32'"
-
-///|
-let file_host_is_unix : Bool = is_unix()
+// Called only during snapshot comparison, never while loading the package.
+extern "js" fn file_host_is_unix() -> Bool = "() => process.platform !== 'win32'"
 
 ///|
 fn open(path : String) -> Handle? raise {

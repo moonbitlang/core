@@ -34,9 +34,11 @@ priv enum FileHostPlatform {
 fn file_host_platform() -> FileHostPlatform = "moonbitlang/async" "runtime/get_platform"
 
 ///|
-let file_host_is_unix : Bool = match file_host_platform() {
-  Linux | MacOS => true
-  Windows => false
+fn file_host_is_unix() -> Bool {
+  match file_host_platform() {
+    Linux | MacOS => true
+    Windows => false
+  }
 }
 
 ///|
@@ -113,7 +115,7 @@ fn Handle::read(
     defer job.free()
     job.run()
     let error = job.err()
-    if file_host_is_unix && error == UNIX_EINTR {
+    if error == UNIX_EINTR && file_host_is_unix() {
       continue
     }
     guard error == 0 else { raise @os_error.from_errno(error, context="read") }

@@ -106,7 +106,9 @@ fn finish_read(handle : Handle) -> Unit = "__moonbit_fs_unstable" "finish_read_b
 fn platform() -> Int32 = "moonbitlang/async" "runtime/get_platform"
 
 ///|
-let file_host_is_unix : Bool = platform() != 2
+fn file_host_is_unix() -> Bool {
+  platform() != 2
+}
 
 ///|
 fn open(path : String) -> Handle? raise {

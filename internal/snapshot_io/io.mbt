@@ -22,6 +22,9 @@ pub fn matches(
   filename : String,
   actual : Bytes,
 ) -> Bool raise {
+  // Probe only when comparing a snapshot: prelude transitively imports this
+  // package, including in programs that never use filesystem I/O.
+  let file_host_is_unix = file_host_is_unix()
   // Moon runs tests at the module root; SourceLoc includes the source directory.
   // Keep path components intact (especially .. next to symlinks).
   let source = if file_host_is_unix {
