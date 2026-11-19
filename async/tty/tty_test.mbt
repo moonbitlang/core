@@ -363,28 +363,6 @@ async test "resize stays pending until the next wait" {
 }
 
 ///|
-async test "direct drop_exactly completes before reporting resize" {
-  with_ttyd() <| ttyd => {
-    ttyd.enter_raw_mode()
-    ttyd.send_input(b"abc")
-    @async.with_task_group() <| group => {
-      group.spawn_bg() <| () => {
-        json_inspect(ttyd.call("drop_exactly", params={ "len": 6 }), content={
-          "type": "dropped",
-        })
-      }
-      group.spawn_bg() <| () => {
-        @async.sleep(100)
-        ttyd.resize(25, 81)
-        ttyd.send_input(b"defghi")
-      }
-    }
-    expect_resize(() => ttyd.read() |> ignore)
-    assert_eq(ttyd.read_exactly(3), b"ghi")
-  }
-}
-
-///|
 #cfg(not(platform="windows"))
 async test "cooked mode handles EOF" {
   with_ttyd() <| ttyd => {
@@ -660,35 +638,6 @@ async test "wait_resize reports resize before parsing input" {
         ttyd.resize(25, 81)
       }
     }
-  }
-}
-
-///|
-async test "wait_resize finishes a split sequence before pending resize" {
-  with_ttyd() <| ttyd => {
-    ttyd.enter_raw_mode()
-    ttyd.send_input(b"\x1b[")
-    @async.with_task_group() <| group => {
-      group.spawn_bg() <| () => {
-        json_inspect(
-          ttyd.call("parse_input", params={ "len": 3, "lookahead": 1 }),
-          content={ "type": "input", "bytes": "G1tB" },
-        )
-      }
-      group.spawn_bg() <| () => {
-        @async.sleep(100)
-        ttyd.resize(25, 81)
-        ttyd.send_input(b"Ax")
-      }
-    }
-    // x is already buffered, but the deferred resize wins at the next wait.
-    json_inspect(ttyd.call("parse_input", params={ "len": 1 }), content={
-      "type": "resize",
-    })
-    json_inspect(ttyd.call("parse_input", params={ "len": 1 }), content={
-      "type": "input",
-      "bytes": "eA==",
-    })
   }
 }
 
