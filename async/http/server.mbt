@@ -180,25 +180,6 @@ impl @io.BinaryWriterImpl for ServerConnection with fn flush_partial_data(self) 
 }
 
 ///|
-/// Integrate a `@http.ServerConnection` with string interpolation syntax
-pub async fn[X : Show] ServerConnection::write_string_interpolation(
-  self : ServerConnection,
-  data : X,
-) -> Unit {
-  self.text.write(data.to_string())
-}
-
-///|
-/// Introduced so that the sugar `writer <+ "hello \{world}"` can work on `ServerConnection`.
-/// Performance will be improved in the future
-pub async fn ServerConnection::write_string(
-  self : ServerConnection,
-  s : String,
-) -> Unit {
-  self.text.write(s)
-}
-
-///|
 pub impl @io.BinaryWriter for ServerConnection with fn write_reader(
   self,
   reader,

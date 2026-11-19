@@ -133,4 +133,9 @@ pub impl TextWriter for Utf8TextView with fn write_json(self, data) {
 }
 
 ///|
-pub extend Utf8TextView with TextWriter::{write, write_json}
+pub extend Utf8TextView with TextWriter::{
+  write,
+  write_json,
+  write_string,
+  write_string_interpolation,
+}
