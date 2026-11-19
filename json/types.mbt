@@ -23,6 +23,7 @@ pub(all) struct Position {
 ///|
 /// Error type `ParseError`.
 #derive(Eq, ToJson)
+#visibility(change_to="abstract")
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof

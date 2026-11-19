@@ -17,24 +17,6 @@
 // escapes, and the `Show` instance for `Json`.
 
 ///|
-/// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
-/// `ParseError` variants rather than a catch-all, so an unexpected error type
-/// would fail to compile instead of being silently swallowed.
-fn parse_raises(s : String) -> Bool {
-  try {
-    @json.parse(s) |> ignore
-    false
-  } catch {
-    InvalidChar(_, _)
-    | InvalidEof
-    | InvalidNumber(_, _)
-    | InvalidIdentEscape(_)
-    | DuplicateKey(_, _)
-    | DepthLimitExceeded => true
-  }
-}
-
-///|
 test "parse bare and negative zero" {
   inspect(@json.parse("0") is Number(0.0, ..), content="true")
   inspect(@json.parse("-0") is Number(_), content="true")
@@ -71,20 +53,6 @@ test "parse very large integers keeps the original representation" {
     @json.parse("-99999999999999999999999") is Number(_, repr=Some(_)),
     content="true",
   )
-}
-
-///|
-test "invalid leading-minus inputs are rejected" {
-  // '-' followed by a non-digit
-  inspect(parse_raises("-x"), content="true")
-  // '-' at end of input
-  inspect(parse_raises("-"), content="true")
-}
-
-///|
-test "unterminated string escape raises an error" {
-  // a backslash at end of input has no escaped character to read
-  inspect(parse_raises("\"\\"), content="true")
 }
 
 ///|

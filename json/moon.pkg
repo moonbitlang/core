@@ -21,4 +21,5 @@ import {
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
+  "moonbitlang/core/test",
 } for "wbtest"

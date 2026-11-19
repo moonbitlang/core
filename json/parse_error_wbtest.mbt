@@ -136,6 +136,6 @@ test "parse error branches" {
     is InvalidEof else {
     fail("expected InvalidEof after trailing comma")
   }
-  ignore(@json.parse("-999999999999999999999999999999999999"))
-  ignore(@json.parse("-1e999999999999999999999999999999999999"))
+  ignore(parse("-999999999999999999999999999999999999"))
+  ignore(parse("-1e999999999999999999999999999999999999"))
 }

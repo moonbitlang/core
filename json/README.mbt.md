@@ -276,27 +276,24 @@ test "replacer custom" {
 
 ## Parse Errors
 
-`parse()` raises `ParseError` with specific variants indicating what went wrong:
+`parse()` raises `ParseError` when the input is invalid:
 
 ```mbt check
 ///|
 test "parse errors" {
-  // InvalidChar
-  try {
-    let _ = @json.parse("{invalid")
-    panic()
-  } catch {
-    InvalidChar(pos, _ch) =>
-      debug_inspect((pos.line, pos.column), content="(1, 1)")
-    _ => panic()
+  try @json.parse("{invalid") |> ignore catch {
+    err =>
+      inspect(
+        err.to_string(),
+        content="Invalid character 'i' at line 1, column 1",
+      )
+  } noraise {
+    _ => fail("expected parse error")
   }
-  // InvalidEof
-  try {
-    let _ = @json.parse("{\"a\":")
-    panic()
-  } catch {
-    InvalidEof => ()
-    _ => panic()
+  try @json.parse("{\"a\":") |> ignore catch {
+    err => inspect(err.to_string(), content="Unexpected end of file")
+  } noraise {
+    _ => fail("expected parse error")
   }
 }
 ```

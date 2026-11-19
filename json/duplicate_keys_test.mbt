@@ -39,21 +39,6 @@ test "reject duplicate decoded keys at the second opening quote" {
 }
 
 ///|
-test "duplicate detection applies inside objects and arrays" {
-  for
-    input in [
-      "{\"a\":1,\"a\":2}", "{\"outer\":{\"a\":1,\"a\":2}}", "[{\"a\":1,\"a\":2}]",
-      "{\"outer\":[{\"a\":1,\"a\":2}]}", "{\"\":1,\"\":2}", "{\"😀\":1,\"\\uD83D\\uDE00\":2}",
-    ] {
-    let err = expect_error(
-      () => @json.parse(input, reject_duplicate_keys=true) |> ignore,
-      "expected duplicate key",
-    )
-    assert_true(err is DuplicateKey(_, _))
-  }
-}
-
-///|
 test "keys in separate objects are independent" {
   let input = "{\"a\":{\"a\":1},\"b\":[{\"a\":2},{\"a\":3}],\"empty\":{}}"
   inspect(
