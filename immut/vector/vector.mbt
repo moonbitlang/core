@@ -110,8 +110,8 @@ pub fn[A] Vector::makei(
 ///   @debug.assert_eq(v, Vector([1, 2, 3]))
 /// }
 /// ```
-#alias(from_array, deprecated="Use `Vector(...)` instead")
-#as_free_fn(from_array, deprecated="Use `Vector(...)` instead")
+#alias(from_array, pending_deprecated="Use `Vector(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `Vector(...)` instead")
 #alias(of, deprecated="Use `Vector(...)` instead")
 #as_free_fn(of, deprecated="Use `Vector(...)` instead")
 pub fn[A] Vector::Vector(arr : ArrayView[A]) -> Vector[A] {

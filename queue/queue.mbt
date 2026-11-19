@@ -32,8 +32,8 @@ fn[A] new_queue() -> Queue[A] {
 ///   @test.assert_eq(queue.length(), 3)
 /// }
 /// ```
-#alias(from_array, deprecated="Use `Queue(...)` instead")
-#as_free_fn(from_array, deprecated="Use `Queue(...)` instead")
+#alias(from_array, pending_deprecated="Use `Queue(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `Queue(...)` instead")
 #alias(of, deprecated="Use `Queue(...)` instead")
 #as_free_fn(of, deprecated="Use `Queue(...)` instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A], capacity? : Int32) -> Queue[A] {

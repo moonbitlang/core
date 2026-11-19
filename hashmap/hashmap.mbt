@@ -80,8 +80,8 @@ fn capacity_for_length(length : Int32) -> Int32 {
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-#alias(from_array, deprecated="Use `HashMap(...)` instead")
-#as_free_fn(from_array, deprecated="Use `HashMap(...)` instead")
+#alias(from_array, pending_deprecated="Use `HashMap(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `HashMap(...)` instead")
 #alias(of, deprecated="Use `HashMap(...)` instead")
 #as_free_fn(of, deprecated="Use `HashMap(...)` instead")
 pub fn[K : Hash + Eq, V] HashMap::HashMap(

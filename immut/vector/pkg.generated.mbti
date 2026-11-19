@@ -12,10 +12,10 @@ import {
 
 // Types and methods
 type Vector[A]
-#alias(from_array, deprecated)
+#alias(from_array, pending_deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array, deprecated)
+#as_free_fn(from_array, pending_deprecated)
 pub fn[A] Vector::Vector(ArrayView[A]) -> Self[A]
 pub fn[A] Vector::add(Self[A], Self[A]) -> Self[A]
 #alias("_[_]")

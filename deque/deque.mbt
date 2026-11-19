@@ -211,8 +211,8 @@ test "add_empty" {
 ///   )
 /// }
 /// ```
-#alias(from_array, deprecated="Use `Deque(...)` instead")
-#as_free_fn(from_array, deprecated="Use `Deque(...)` instead")
+#alias(from_array, pending_deprecated="Use `Deque(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `Deque(...)` instead")
 #alias(of, deprecated="Use `Deque(...)` instead")
 #as_free_fn(of, deprecated="Use `Deque(...)` instead")
 pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int32) -> Deque[A] {

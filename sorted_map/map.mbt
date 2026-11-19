@@ -64,8 +64,8 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 ///   assert_true(map.get(1) == Some("one"))
 /// }
 /// ```
-#alias(from_array, deprecated="Use `SortedMap(...)` instead")
-#as_free_fn(from_array, deprecated="Use `SortedMap(...)` instead")
+#alias(from_array, pending_deprecated="Use `SortedMap(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `SortedMap(...)` instead")
 #alias(of, deprecated="Use `SortedMap(...)` instead")
 #as_free_fn(of, deprecated="Use `SortedMap(...)` instead")
 pub fn[K : Compare, V] SortedMap::SortedMap(

@@ -40,8 +40,8 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 ///   @test.assert_eq(set.length(), 3)
 /// }
 /// ```
-#alias(from_array, deprecated="Use `SortedSet(...)` instead")
-#as_free_fn(from_array, deprecated="Use `SortedSet(...)` instead")
+#alias(from_array, pending_deprecated="Use `SortedSet(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `SortedSet(...)` instead")
 #alias(of, deprecated="Use `SortedSet(...)` instead")
 #as_free_fn(of, deprecated="Use `SortedSet(...)` instead")
 pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {

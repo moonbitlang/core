@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated")
-test "deprecated from_array aliases retain constructor semantics" {
+#warnings("-pending_deprecated")
+test "from_array aliases retain constructor semantics" {
   let source = [9, 2, 1, 2, 8]
   let view = source[1:4]
   let by_method = @hashset.HashSet::from_array(view, capacity=8)

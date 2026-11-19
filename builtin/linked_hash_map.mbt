@@ -127,7 +127,7 @@ fn capacity_for_length(length : Int32) -> Int32 {
 ///   inspect(map.length(), content="16")
 /// }
 /// ```
-#alias(from_array, deprecated="Use `Map(...)` instead")
+#alias(from_array, pending_deprecated="Use `Map(...)` instead")
 pub fn[K : Hash + Eq, V] Map::Map(
   arr : ArrayView[(K, V)],
   capacity? : Int32,

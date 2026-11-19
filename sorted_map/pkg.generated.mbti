@@ -13,10 +13,10 @@ import {
 
 // Types and methods
 type SortedMap[K, V]
-#alias(from_array, deprecated)
+#alias(from_array, pending_deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array, deprecated)
+#as_free_fn(from_array, pending_deprecated)
 pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V

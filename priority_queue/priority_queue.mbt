@@ -27,8 +27,8 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 ///   @test.assert_eq(queue.length(), 5)
 /// }
 /// ```
-#alias(from_array, deprecated="Use `PriorityQueue(...)` instead")
-#as_free_fn(from_array, deprecated="Use `PriorityQueue(...)` instead")
+#alias(from_array, pending_deprecated="Use `PriorityQueue(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `PriorityQueue(...)` instead")
 #alias(of, deprecated="Use `PriorityQueue(...)` instead")
 #as_free_fn(of, deprecated="Use `PriorityQueue(...)` instead")
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
