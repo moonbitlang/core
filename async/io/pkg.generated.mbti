@@ -102,6 +102,8 @@ pub async fn Utf8TextView::read_lines(Self, include_newline? : Bool) -> Array[St
 pub async fn Utf8TextView::read_until(Self, StringView, include_delimiter? : Bool) -> String? raise ReaderError
 pub async fn Utf8TextView::write(Self, StringView) -> Unit raise WriterError
 pub async fn Utf8TextView::write_json(Self, @json.Json) -> Unit raise WriterError
+pub async fn Utf8TextView::write_string(Self, String) -> Unit raise WriterError
+pub async fn Utf8TextView::write_string_interpolation(Self, &Show) -> Unit raise WriterError
 pub impl TextReader for Utf8TextView
 pub impl TextWriter for Utf8TextView
 
@@ -109,6 +111,8 @@ type Utf8Writer
 pub fn[W : BinaryWriter] Utf8Writer::Utf8Writer(W) -> Self
 pub async fn Utf8Writer::write(Self, StringView) -> Unit raise WriterError
 pub async fn Utf8Writer::write_json(Self, @json.Json) -> Unit raise WriterError
+pub async fn Utf8Writer::write_string(Self, String) -> Unit raise WriterError
+pub async fn Utf8Writer::write_string_interpolation(Self, &Show) -> Unit raise WriterError
 pub impl TextWriter for Utf8Writer
 
 // Type aliases
@@ -159,4 +163,6 @@ pub(open) trait TextReader {
 pub(open) trait TextWriter {
   async fn write(Self, StringView) -> Unit raise WriterError
   async fn write_json(Self, @json.Json) -> Unit raise WriterError
+  async fn write_string(Self, String) -> Unit raise WriterError = _
+  async fn write_string_interpolation(Self, &Show) -> Unit raise WriterError = _
 }

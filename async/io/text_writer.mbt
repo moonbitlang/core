@@ -22,6 +22,20 @@
 pub(open) trait TextWriter {
   async fn write(Self, StringView) -> Unit raise WriterError
   async fn write_json(Self, @json.Json) -> Unit raise WriterError
+  async fn write_string(Self, String) -> Unit raise WriterError = _
+  async fn write_string_interpolation(Self, &Show) -> Unit raise WriterError = _
+}
+
+///|
+/// Integrate a text writer with string interpolation syntax
+impl TextWriter with fn write_string(self, str) {
+  self.write(str)
+}
+
+///|
+/// Integrate a text writer with string interpolation syntax
+impl TextWriter with fn write_string_interpolation(self, obj) {
+  self.write(obj.to_string())
 }
 
 ///|
@@ -70,4 +84,9 @@ pub impl TextWriter for Utf8Writer with fn write_json(self, data) {
 }
 
 ///|
-pub extend Utf8Writer with TextWriter::{write, write_json}
+pub extend Utf8Writer with TextWriter::{
+  write,
+  write_json,
+  write_string,
+  write_string_interpolation,
+}
