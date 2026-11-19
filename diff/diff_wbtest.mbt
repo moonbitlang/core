@@ -13,6 +13,23 @@
 // limitations under the License.
 
 ///|
+fn[T : Eq + Hash] iter_matches(
+  cutoff~ : Int32?,
+  old~ : ArrayView[T],
+  new~ : ArrayView[T],
+) -> Iter2[Int32, Int32] {
+  let matches = []
+  for edit in Diff(old~, new~, cutoff?).edits() {
+    if edit is Equal(old_index~, new_index~, len~) {
+      for i in 0..<len {
+        matches.push((old_index + i, new_index + i))
+      }
+    }
+  }
+  Iter2(matches.iter())
+}
+
+///|
 fn print_edits(
   cutoff? : Int32,
   old : ArrayView[String],
