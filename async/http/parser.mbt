@@ -49,6 +49,7 @@ fn[R : @io.BinaryReader] Reader::new(transport : R) -> Reader {
 ///|
 /// Error raised when an invalid HTTP message is processed
 #derive(@debug.Debug, @json.ToJson)
+#non_exhaustive
 pub suberror HttpProtocolError {
   BadRequest
   HttpVersionNotSupported(String)

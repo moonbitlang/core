@@ -66,6 +66,7 @@ pub(open) trait BinaryWriter: BinaryWriterImpl {
 ///|
 /// Error raised by `@io.BinaryWriter` API
 #derive(@debug.Debug, @json.ToJson)
+#non_exhaustive
 pub(all) suberror WriterError {
   /// When using `@io.BinaryWriter` API, error raised by the underlying writer implementation
   /// will be wrapped in `TransportError`, so that callers can classify the source of error

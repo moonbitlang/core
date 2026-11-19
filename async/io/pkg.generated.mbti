@@ -13,6 +13,7 @@ pub fn memory_pipe() -> (MemoryPipeRead, MemoryPipeWrite)
 #derive(@debug.Debug, @json.ToJson)
 pub suberror PipeClosed
 
+#non_exhaustive
 #derive(@debug.Debug, @json.ToJson)
 pub(all) suberror ReaderError {
   UnexpectedEof
@@ -21,6 +22,7 @@ pub(all) suberror ReaderError {
   TransportError(Error, context~ : String)
 }
 
+#non_exhaustive
 #derive(@debug.Debug, @json.ToJson)
 pub(all) suberror WriterError {
   TransportError(Error, context~ : String)

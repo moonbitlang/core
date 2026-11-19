@@ -72,6 +72,7 @@ pub(open) trait BinaryReader: BinaryReaderImpl {
 ///|
 /// Error raised by `@io.BinaryReader` API
 #derive(@debug.Debug, @json.ToJson)
+#non_exhaustive
 pub(all) suberror ReaderError {
   /// Error raised by binary reader APIs when the binary stream reaches EOF
   /// before enough data can be fetched according to user request
