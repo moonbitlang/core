@@ -226,7 +226,7 @@ pub fn StringView::iter2(self : StringView) -> Iter2[Int32, Char] {
   let end = self.end()
   let mut index = start
   let mut char_index = 0
-  Iter2::new(fn() {
+  Iter(fn() {
     guard index < end else { None }
     let c1 = self.str().unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {

@@ -46,7 +46,7 @@ pub fn[K : Compare, V] SortedMap::range_bounds(
 ) -> Iter2[K, V] {
   let stack : Array[Node[K, V]] = []
   let mut next_node = self.root
-  Iter2::new(fn() {
+  Iter(fn() {
     for x = next_node {
       match x {
         Some(node) =>
@@ -98,7 +98,7 @@ pub fn[K : Compare, V] SortedMap::rev_range_bounds(
 ) -> Iter2[K, V] {
   let stack : Array[Node[K, V]] = []
   let mut next_node = self.root
-  Iter2::new(fn() {
+  Iter(fn() {
     for x = next_node {
       match x {
         Some(node) =>

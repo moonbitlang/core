@@ -593,7 +593,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self
-  Iter2::new(fn() {
+  Iter(fn() {
     for x = next_node {
       match x {
         Tree(k, value~, l, r, ..) => {

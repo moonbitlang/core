@@ -559,7 +559,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self.root
-  Iter2::new(fn() {
+  Iter(fn() {
     for x = next_node {
       match x {
         Some({ left, key, value, right, height: _, }) => {
@@ -591,7 +591,7 @@ pub fn[K : Compare, V] SortedMap::range(
         None => break None
       }
     }
-  }).iter2()
+  })
 }
 
 ///|

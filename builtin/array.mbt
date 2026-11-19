@@ -2985,7 +2985,7 @@ pub fn[A, B] Array::zip_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] 
     other.length()
   }
   let mut i = 0
-  Iter2::new(
+  Iter(
     () => {
       guard i < length else { None }
       let elem = (self[i], other[i])
@@ -2993,7 +2993,7 @@ pub fn[A, B] Array::zip_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] 
       Some(elem)
     },
     size_hint=length,
-  ).iter2()
+  )
 }
 
 ///|
