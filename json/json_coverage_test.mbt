@@ -23,9 +23,9 @@
 ///
 /// `max_nesting_depth` is used only to exercise the
 /// depth-limit guard cheaply; see the depth-limit test for why.
-fn parse_raises(s : String, max_nesting_depth~ : Int32 = 1024) -> Bool {
+fn parse_raises(s : String) -> Bool {
   try {
-    @json.parse(s, max_nesting_depth~) |> ignore
+    @json.parse(s) |> ignore
     false
   } catch {
     InvalidChar(_, _)
