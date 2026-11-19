@@ -32,8 +32,8 @@ const DEFLATE_BLOCK_SIZE : Int32 = 16384
 //  - `Finish` tokenizes whatever remains into a final block and flushes.
 //  - A persistent `BitWriter` carries the sub-byte bit remainder across blocks
 //    (the bit stream is continuous; only the final block pads to a byte). Its
-//    byte buffer is drained into the caller's output and reclaimed each block,
-//    suspending with `NeedMoreOutput` whenever that buffer fills.
+//    whole bytes go to the caller's current view, suspending block emission
+//    at a stored payload, header field, or token boundary.
 
 ///|
 /// Clamp a compression level to 0-9.
@@ -51,8 +51,12 @@ struct IncrementalEncoder {
   mut hashed_through : Int32 // first historical position not yet chained
   finder : MatchFinder // persistent 32 KiB hash-chain matchfinder
   w : BitWriter // persistent bit sink spanning all blocks
-  mut out_pos : Int32 // next `w.out` index to hand to the caller
-  mut emitted_final : Bool // the final block has been written into `w`
+  mut phase : EmissionPhase
+  mut cursor : Int32 // next payload byte, header symbol, or token in `phase`
+  mut token_high : UInt32 // upper word of the suspended Huffman bit accumulator
+  mut out_pos : Int32 // next byte of the bounded spill
+  mut flushing : Bool // an accepted flush has started emitting its blocks
+  mut emitted_final : Bool // the current or just-completed block has BFINAL
   mut done : Bool // the final block has been fully drained
   mut flush_done : Bool // the current buffered content has been sync-flushed
   mut flush_requested : Bool // sticky until the requested flush is emitted
@@ -84,7 +88,11 @@ pub fn IncrementalEncoder::IncrementalEncoder(
     pending_end: 0,
     hashed_through: 0,
     finder: MatchFinder(),
-    w: BitWriter(),
+    w: BitWriter(spill_on_full=true),
+    phase: Idle,
+    cursor: 0,
+    token_high: 0U,
+    flushing: false,
     out_pos: 0,
     emitted_final: false,
     done: false,
@@ -134,6 +142,10 @@ pub fn IncrementalEncoder::reset(
   self.parse_pos = 0
   self.pending_end = 0
   self.hashed_through = 0
+  self.phase = Idle
+  self.flushing = false
+  self.cursor = 0
+  self.token_high = 0U
   self.w.out.clear()
   self.w.bitbuf = 0
   self.w.bit_count = 0
@@ -170,29 +182,6 @@ fn IncrementalEncoder::latch_action(
     SyncFlush if !self.flush_done => self.flush_requested = true
     Continue | SyncFlush => ()
   }
-}
-
-///|
-/// Copy compressed bytes already produced into the caller's buffer, returning
-/// the new write position.
-fn IncrementalEncoder::drain_output(
-  self : IncrementalEncoder,
-  output : MutArrayView[Byte],
-  write_pos : Int32,
-  out_end : Int32,
-) -> Int32 {
-  let pending = self.w.out
-  let from = self.out_pos
-  let count = (pending.length() - from).min(out_end - write_pos)
-  guard count > 0 else { return write_pos }
-  // SAFETY: `count` is positive and at most both `pending.length() - from`
-  // and `out_end - write_pos`; `from` and `write_pos` are non-negative and
-  // `out_end` is `output.length()`. Every index below is in bounds.
-  for k in 0..<count {
-    output.unsafe_set(write_pos + k, pending.unsafe_get(from + k))
-  }
-  self.out_pos = from + count
-  write_pos + count
 }
 
 ///|
@@ -257,36 +246,87 @@ pub fn IncrementalEncoder::step(
   if input.length() == 0 && !self.end_requested && !self.emitted_final {
     self.latch_action(action)
   }
-  let out_end = output.length()
+  if self.phase is StoredPayload(end) &&
+    self.w.out.is_empty() &&
+    output.length() < end - self.cursor {
+    if output.length() == 1 {
+      // SAFETY: a nonempty mirrored payload and one output slot remain.
+      output.unsafe_set(0, self.pending.unsafe_get(self.cursor))
+      self.cursor += 1
+    } else {
+      self.copy_stored(output, 0, output.length())
+    }
+    return { status: NeedMoreOutput, consumed: 0, produced: output.length(), }
+  }
+  self.step_emission(input, output, action)
+}
+
+///|
+fn IncrementalEncoder::step_emission(
+  self : IncrementalEncoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+  action : DeflateAction,
+) -> StepResult {
+  let mut pos = 0
+  if self.phase is Tokens(codes) && self.w.out.is_empty() {
+    if output.length() == 1 && self.w.bit_count >= 16 {
+      // A second whole byte guarantees backpressure, even at the last token.
+      output.unsafe_set(0, self.w.bitbuf.to_byte())
+      self.w.bitbuf = ((self.w.bitbuf.reinterpret_as_uint() >> 8) |
+      (self.token_high << 24)).reinterpret_as_int()
+      self.token_high = self.token_high >> 8
+      self.w.bit_count -= 8
+      return { status: NeedMoreOutput, consumed: 0, produced: 1, }
+    }
+    pos = self.resume_token_prefix(codes, output, 0)
+    if self.phase is Tokens(_) {
+      return { status: NeedMoreOutput, consumed: 0, produced: pos, }
+    }
+  }
+  self.w.direct_output = Some(output_storage(output))
+  self.w.direct_start = output.start_offset()
+  self.w.direct_capacity = output.length()
+  self.w.direct_pos = pos
+  let result = self.step_blocks(input, output, action)
+  self.w.direct_output = None // do not retain caller-owned output between steps
+  result
+}
+
+///|
+fn IncrementalEncoder::step_blocks(
+  self : IncrementalEncoder,
+  input : BytesView,
+  output : MutArrayView[Byte],
+  action : DeflateAction,
+) -> StepResult {
   let input_end = input.length()
   let input_limit = DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD
   let mut consumed = 0
-  let mut write_pos = 0
   for ;; {
-    // Drain compressed bytes already produced into the caller's buffer.
-    write_pos = self.drain_output(output, write_pos, out_end)
-    guard self.out_pos >= self.w.out.length() else {
-      return { status: NeedMoreOutput, consumed, produced: write_pos, }
-    }
-    // The current block buffer is fully drained; reclaim it.
-    if self.w.out.length() > 0 {
-      self.w.out.clear()
-      self.out_pos = 0
+    guard self.resume_block(output) else {
+      return { status: NeedMoreOutput, consumed, produced: self.w.direct_pos, }
     }
     guard !self.emitted_final else {
       self.done = true
-      return { status: Done, consumed, produced: write_pos, }
+      return { status: Done, consumed, produced: self.w.direct_pos, }
     }
-    // Produce already-requested control blocks before accepting later input.
-    guard !self.end_requested else {
+    // A flush already underway owns its empty stored marker, even if Finish
+    // arrives while a preceding block is backpressured.
+    if self.flushing || self.flush_requested {
       self.flush_requested = false
-      self.emit_final()
+      if self.pending_bytes() > 0 {
+        self.flushing = true
+        self.plan_block(finish=false)
+      } else {
+        self.start_stored(0, 0, is_final=false)
+        self.flushing = false
+        self.flush_done = true
+      }
       continue
     }
-    guard !self.flush_requested else {
-      self.emit_flush()
-      self.flush_done = true
-      self.flush_requested = false
+    if self.end_requested {
+      self.plan_block(finish=true)
       continue
     }
     // A full token window becomes one bounded non-final block before more
@@ -294,11 +334,11 @@ pub fn IncrementalEncoder::step(
     // backpressure through `consumed`.
     let buffered = self.pending_bytes()
     guard buffered < input_limit else {
-      self.emit_one()
+      self.plan_block(finish=false)
       continue
     }
     guard consumed < input_end else {
-      return { status: NeedMoreInput, consumed, produced: write_pos, }
+      return { status: NeedMoreInput, consumed, produced: self.w.direct_pos, }
     }
     consumed = self.accept_input(
       input,

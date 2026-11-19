@@ -19,9 +19,10 @@
 priv struct BitWriter {
   out : Array[Byte]
   mut bitbuf : Int32
-  mut bit_count : Int32 // bits currently held in `bitbuf`, not yet flushed to a byte
+  mut bit_count : Int32 // streaming Tokens may extend bitbuf with token_high
   mut direct_output : FixedArray[Byte]?
-  direct_start : Int32
+  mut direct_start : Int32
+  spill_on_full : Bool
   mut direct_capacity : Int32
   growable : Bool
   mut direct_pos : Int32
@@ -29,8 +30,9 @@ priv struct BitWriter {
 }
 
 ///|
-fn BitWriter::BitWriter() -> BitWriter {
+fn BitWriter::BitWriter(spill_on_full~ : Bool = false) -> BitWriter {
   {
+    spill_on_full,
     out: [],
     bitbuf: 0,
     bit_count: 0,
@@ -51,6 +53,7 @@ fn BitWriter::into(output : MutArrayView[Byte]) -> BitWriter {
     out: [],
     bitbuf: 0,
     bit_count: 0,
+    spill_on_full: false,
     direct_output: Some(output_storage(output)),
     direct_start: output.start_offset(),
     direct_capacity: output.length(),
@@ -117,6 +120,8 @@ fn BitWriter::write_byte(self : BitWriter, byte : Byte) -> Unit {
       let grown = self.grow(output, required)
       grown[self.direct_pos] = byte
       self.direct_pos = required
+    } else if self.spill_on_full {
+      self.out.push(byte)
     } else {
       self.overflowed = true
     }

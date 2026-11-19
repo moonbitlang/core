@@ -192,28 +192,26 @@ test "rebasing preserves live match distances and pending ring bytes" {
   @test.assert_eq(d.parse_pos, position - offset)
   d.record_chained_positions(d.parse_pos - 3)
   @test.assert_eq(d.hashed_through, d.parse_pos - 2)
-  d.write_stored_pending(is_final=true)
-  @test.assert_eq(inflate_prefix(Bytes::from_array(d.w.out)).data, b"abc")
+  let out = FixedArray::make(16, b'\x00')
+  let result = d.step(b"", out.mut_view(), action=Finish)
+  @test.assert_eq(result.status, Done)
+  @test.assert_eq(
+    inflate_prefix(Bytes::from_array(out[:result.produced])).data,
+    b"abc",
+  )
 }
 
 ///|
-test "stored ring blocks split at LEN limit and preserve wrapped bytes" {
-  let ring = FixedArray::make(STREAM_RING_STORAGE_SIZE, b'\x00')
-  for i in 0..<STREAM_RING_SIZE {
-    let byte = ((i * 73 + i / 17) & 255).to_byte()
-    ring[i] = byte
-    ring[i + STREAM_RING_SIZE] = byte
-  }
-  let start = STREAM_RING_SIZE - 7
-  for length in [0, 65535, 65536] {
-    let w = BitWriter()
-    w.write_stored_window(ring, start, start + length, is_final=true)
-    let expected = Bytes::makei(length, i => {
-      ring[(start + i) & STREAM_RING_MASK]
-    })
-    @test.assert_eq(inflate_prefix(Bytes::from_array(w.out)).data, expected)
-    @test.assert_eq(w.out.length(), length + 5 * stored_block_count(length))
-  }
+test "suspended stored payload reads across the ring wrap" {
+  let enc = IncrementalEncoder(level=0)
+  enc.parse_pos = STREAM_RING_SIZE - 7
+  enc.pending_end = enc.parse_pos
+  let source = b"a stored payload across the ring boundary"
+  let out = FixedArray::make(source.length() + 5, b'\x00')
+  let r = enc.step(source, out.mut_view(end=8), action=Finish)
+  @test.assert_eq(r.status, NeedMoreOutput)
+  @test.assert_eq(enc.step(b"", out.mut_view(start=r.produced)).status, Done)
+  @test.assert_eq(inflate_prefix(Bytes::from_array(out)).data, source)
 }
 
 ///|

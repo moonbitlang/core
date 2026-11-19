@@ -32,7 +32,7 @@ test "IncrementalEncoder pending stays bounded after a large feed" {
   assert_true(first_consumed < src.length())
   @test.assert_eq(first_produced, 0)
   assert_true(d.pending_bytes() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD)
-  assert_true(d.w.out.length() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD + 16)
+  assert_true(d.w.out.length() <= 6)
 
   let buf = FixedArray::make(65536, b'\x00')
   let mut pos = first_consumed
@@ -42,7 +42,7 @@ test "IncrementalEncoder pending stays bounded after a large feed" {
     let consumed = status_result.consumed
     pos = pos + consumed
     assert_true(d.pending_bytes() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD)
-    assert_true(d.w.out.length() <= DEFLATE_BLOCK_SIZE + MIN_LOOKAHEAD + 16)
+    assert_true(d.w.out.length() <= 6)
     if status is NeedMoreInput && pos == src.length() {
       break
     }
@@ -87,6 +87,42 @@ test "IncrementalEncoder latches end before a completed view is backpressured" {
     assert_true(status is NeedMoreOutput)
   }
   @test.assert_eq(inflate_prefix(compressed.to_bytes()).data, source)
+}
+
+///|
+test "Finish while SyncFlush is emitting preserves the flush marker" {
+  let source = Bytes::makei(DEFLATE_BLOCK_SIZE + 1, i => (i % 251).to_byte())
+  for level in [0, 6] {
+    let reference = IncrementalEncoder(level~)
+    let bytes = FixedArray::make(source.length() + 64, b'\x00')
+    let a = reference.step(source, bytes.mut_view(), action=SyncFlush)
+    @test.assert_eq(a.status, NeedMoreInput)
+    let b = reference.step(b"", bytes.mut_view(start=a.produced), action=Finish)
+    @test.assert_eq(b.status, Done)
+    let expected = bytes[:a.produced + b.produced]
+    let enc = IncrementalEncoder(level~)
+    let slot = FixedArray::make(1, b'\x00')
+    let start = enc.step(source, slot.mut_view(end=0), action=SyncFlush)
+    @test.assert_eq(start.consumed, source.length())
+    @test.assert_eq(start.status, NeedMoreOutput)
+    for i in 0..<expected.length() {
+      let r = enc.step(
+        b"",
+        slot.mut_view(),
+        action=if i == 0 { Finish } else { Continue },
+      )
+      @test.assert_eq(r.produced, 1)
+      @test.assert_eq(slot[0], expected[i])
+      @test.assert_eq(
+        r.status,
+        if i + 1 == expected.length() {
+          Done
+        } else {
+          NeedMoreOutput
+        },
+      )
+    }
+  }
 }
 
 ///|
