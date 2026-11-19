@@ -1,0 +1,20 @@
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async",
+  "moonbitlang/core/async/io",
+  "moonbitlang/core/async/socket",
+  "moonbitlang/core/async/tty",
+}
+
+supported_targets = "-all+native"
+
+pkgtype(kind: "executable")
+
+options(
+  "allow-experimental-packages": true,
+  "native-stub": [ "state_check.c" ],
+)
