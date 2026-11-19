@@ -34,11 +34,13 @@ async test "reuse addr" {
       }
     }
   }
-  for _ in 0..<2 {
+  for i in 0..<2 {
     let server = @socket.TcpServer(
       @socket.Addr::parse("127.0.0.1:\{port}"),
       reuse_addr=true,
-    )
+    ) catch {
+      err => raise Failure("server #\{i + 1} failed with: \{err}")
+    }
     defer server.close()
     run_server(server)
   }
