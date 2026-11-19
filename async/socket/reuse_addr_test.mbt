@@ -35,6 +35,7 @@ async test "reuse addr" {
     }
   }
   for i in 0..<2 {
+    @async.sleep(500)
     let server = @socket.TcpServer(
       @socket.Addr::parse("127.0.0.1:\{port}"),
       reuse_addr=true,
