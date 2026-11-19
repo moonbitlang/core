@@ -5,6 +5,11 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/async",
   "moonbitlang/core/ref",
   "moonbitlang/core/async/internal/event_loop",
 }
+
+options(
+  "allow-experimental-packages": true,
+)
