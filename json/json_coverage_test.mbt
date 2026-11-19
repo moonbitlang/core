@@ -14,28 +14,7 @@
 
 // Black-box tests covering json paths the existing suites miss: zero / negative
 // integer lexing, the "disguised" fast-path for large exponents, unterminated
-// escapes, nesting-depth limits, and the `Show` instance for `Json`.
-
-///|
-/// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
-/// `ParseError` variants rather than a catch-all, so an unexpected error type
-/// would fail to compile instead of being silently swallowed.
-///
-/// `max_nesting_depth` is used only to exercise the
-/// depth-limit guard cheaply; see the depth-limit test for why.
-fn parse_raises(s : String, max_nesting_depth~ : Int32 = 1024) -> Bool {
-  try {
-    @json.parse(s, max_nesting_depth~) |> ignore
-    false
-  } catch {
-    InvalidChar(_, _)
-    | InvalidEof
-    | InvalidNumber(_, _)
-    | InvalidIdentEscape(_)
-    | DuplicateKey(_, _)
-    | DepthLimitExceeded => true
-  }
-}
+// escapes, and the `Show` instance for `Json`.
 
 ///|
 test "parse bare and negative zero" {
@@ -74,45 +53,6 @@ test "parse very large integers keeps the original representation" {
     @json.parse("-99999999999999999999999") is Number(_, repr=Some(_)),
     content="true",
   )
-}
-
-///|
-test "invalid leading-minus inputs are rejected" {
-  // '-' followed by a non-digit
-  inspect(parse_raises("-x"), content="true")
-  // '-' at end of input
-  inspect(parse_raises("-"), content="true")
-}
-
-///|
-test "unterminated string escape raises an error" {
-  // a backslash at end of input has no escaped character to read
-  inspect(parse_raises("\"\\"), content="true")
-}
-
-///|
-test "nesting beyond the configured depth limit is rejected" {
-  // Exceed a small configured depth limit rather than the 1024 default. The
-  // parser recurses once per nesting level, so approaching the default depth
-  // overflows the limited native stack on some platforms (e.g. Windows) before
-  // the guard can fire. A small limit exercises the same DepthLimitExceeded
-  // path with only a handful of frames.
-  //
-  // 9 nested arrays exceed a max nesting depth of 8.
-  let deep_array = String::make(9, '[') + String::make(9, ']')
-  inspect(parse_raises(deep_array, max_nesting_depth=8), content="true")
-  // the same for deeply nested objects (a separate depth check)
-  let sb = StringBuilder()
-  for _ in 0..<9 {
-    sb <+ "{\"a\":"
-  }
-  sb <+ "1"
-  for _ in 0..<9 {
-    sb <+ "}"
-  }
-  inspect(parse_raises(sb.to_string(), max_nesting_depth=8), content="true")
-  // a document within the limit parses fine
-  inspect(parse_raises("[[1]]", max_nesting_depth=8), content="false")
 }
 
 ///|

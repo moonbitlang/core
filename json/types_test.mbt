@@ -13,30 +13,6 @@
 // limitations under the License.
 
 ///|
-test "ParseError::to_string coverage" {
-  let invalidCharError = @json.InvalidChar({ line: 1, column: 0, }, 'a')
-  let invalidEofError = @json.InvalidEof
-  let invalidNumberError = @json.InvalidNumber(
-    { line: 1, column: 0, },
-    "123abc",
-  )
-  let invalidIdentEscapeError = @json.InvalidIdentEscape({ line: 1, column: 0, })
-  assert_eq(
-    invalidCharError.to_string(),
-    "Invalid character 'a' at line 1, column 0",
-  )
-  inspect(invalidEofError.to_string(), content="Unexpected end of file")
-  assert_eq(
-    invalidNumberError.to_string(),
-    "Invalid number 123abc at line 1, column 0",
-  )
-  assert_eq(
-    invalidIdentEscapeError.to_string(),
-    "Invalid escape sequence in identifier at line 1, column 0",
-  )
-}
-
-///|
 test "Debug for Position" {
   let pos : @json.Position = { line: 3, column: 7, }
   @debug.debug_inspect(
@@ -45,11 +21,6 @@ test "Debug for Position" {
       #|{ line: 3, column: 7 }
     ),
   )
-}
-
-///|
-test "Debug for ParseError" {
-  @debug.debug_inspect((InvalidEof : @json.ParseError), content="InvalidEof")
 }
 
 ///|

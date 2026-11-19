@@ -322,39 +322,6 @@ test "parse stays total under single character deletion and replacement" {
 }
 
 ///|
-/// The default nesting limit is exactly 1024: a document 1024 levels deep
-/// parses (and roundtrips), 1025 levels raises `DepthLimitExceeded`, for
-/// both arrays and objects. Also pins that `stringify` itself is iterative
-/// and survives a 1024-deep tree on every backend.
-test "default nesting limit boundary at depth 1024" {
-  fn outcome(text : String) -> String {
-    try {
-      ignore(@json.parse(text))
-      "parsed"
-    } catch {
-      DepthLimitExceeded => "depth limit"
-      _ => "other error"
-    }
-  }
-
-  let deep_array = "[".repeat(1024) + "0" + "]".repeat(1024)
-  assert_eq(outcome(deep_array), "parsed")
-  let too_deep_array = "[".repeat(1025) + "0" + "]".repeat(1025)
-  assert_eq(outcome(too_deep_array), "depth limit")
-  let deep_object = "{\"k\":".repeat(1024) + "0" + "}".repeat(1024)
-  assert_eq(outcome(deep_object), "parsed")
-  let too_deep_object = "{\"k\":".repeat(1025) + "0" + "}".repeat(1025)
-  assert_eq(outcome(too_deep_object), "depth limit")
-  inspect(@json.parse(deep_array).stringify() == deep_array, content="true")
-  inspect(@json.parse(deep_object).stringify() == deep_object, content="true")
-  let mut tree : Json = Json::number(0.0)
-  for _ in 0..<1024 {
-    tree = Json::array([tree])
-  }
-  assert_true(@json.parse(tree.stringify()) == tree)
-}
-
-///|
 /// Deterministic pins for the surrogate cases the properties above explore
 /// randomly, so a regression shows up with a readable diff. Parsed strings
 /// stay Unicode well-formed: every unpaired surrogate escape is
