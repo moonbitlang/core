@@ -13,7 +13,7 @@ pub async fn open() -> Tty
 
 // Types and methods
 #derive(@debug.Debug)
-pub enum Event {
+pub(all) enum Event {
   Input
   Resize
 }

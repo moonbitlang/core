@@ -542,7 +542,7 @@ pub fn Tty::size(self : Tty) -> (Int32, Int32) raise {
 ///|
 /// The result of waiting for terminal input. Input includes EOF.
 #derive(@debug.Debug)
-pub enum Event {
+pub(all) enum Event {
   Input
   Resize
 }
