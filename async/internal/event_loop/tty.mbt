@@ -315,7 +315,7 @@ extern "C" fn ReadConsoleInputJob::resized(job : ReadConsoleInputJob) -> Bool = 
 
 ///|
 /// Consume a resize already observed by the event loop, without reading input.
-/// Checked by wait_event before looking at buffered input.
+/// Checked by `Tty::wait_resize()` before looking at buffered input.
 pub fn Tty::take_pending_resize(self : Tty) -> Bool {
   ignore(self)
   if resize_state.val is Some(resize) && resize.pending {

@@ -23,7 +23,7 @@
 /// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
-///   `Tty::read`, or `read_into` an `n`-byte buffer, after `wait_event`
+///   `Tty::read`, or `read_into` an `n`-byte buffer, after `wait_resize`
 /// - `read_exactly`, params `{"len": n}`:
 ///   `Tty::read_exactly` directly
 ///
@@ -33,7 +33,7 @@
 /// - `read_until`: read through a newline
 /// - `expect_unexpected_eof`: verify the typed error from `read_exactly(2)`
 /// - `parse_input`: peek `len + lookahead` bytes, consume `len`, optional timeout
-/// - `wait_event`: wait without consuming input
+/// - `wait_resize`: wait without consuming input
 /// - `write`, params `{"bytes": "<base64>"}`: result `null`
 ///
 /// An error raised by `@tty` is reported as error `-32000` with its description.
@@ -122,7 +122,7 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         _ => None
       }
       read_result(params, () => {
-        guard tty.wait_event() is Input else { return { "type": "resize" } }
+        guard tty.wait_resize() is Input else { return { "type": "resize" } }
         match max_len {
           None => input_result(tty.read())
           Some(max_len) => {
@@ -175,15 +175,15 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
         _ => 0
       }
       read_result(params, () => {
-        guard tty.wait_event() is Input else { return { "type": "resize" } }
+        guard tty.wait_resize() is Input else { return { "type": "resize" } }
         ignore(tty.peek_exactly(len + lookahead))
         let bytes = tty.peek_exactly(len).to_owned()
         tty.drop_exactly(len)
         input_result(Some(bytes))
       })
     }
-    "wait_event" =>
-      match tty.wait_event() {
+    "wait_resize" =>
+      match tty.wait_resize() {
         Resize => { "type": "resize" }
         Input => { "type": "input" }
       }

@@ -19,7 +19,7 @@ pub async fn run() -> Unit {
   let (rows, cols) = tty.size()
   tty.write(@utf8.encode("\{rows}x\{cols}\r\n"))
   for ;; {
-    match tty.wait_event() {
+    match tty.wait_resize() {
       Resize => {
         let (rows, cols) = tty.size()
         tty.write(@utf8.encode("resized to \{rows}x\{cols}\r\n"))
@@ -36,7 +36,7 @@ pub async fn run() -> Unit {
 ```
 
 One task must coordinate all waits and reads on the shared terminal.
-`wait_event()` returns `Input` when bytes or EOF are ready. The available bytes
+`wait_resize()` returns `Input` when bytes or EOF are ready. The available bytes
 may contain only the beginning of a VT sequence. A resize already observed by
 the event loop takes priority over buffered input. Direct reads, peeks and
-drops defer resize notifications until the next `wait_event()`.
+drops defer resize notifications until the next `wait_resize()`.

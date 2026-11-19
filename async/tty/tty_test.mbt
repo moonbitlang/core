@@ -118,7 +118,7 @@ async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
 
 ///|
 /// `Tty::read` in `ttyd`, or `read_into` a `max_len`-byte
-/// buffer. Raise `Resized` when `wait_event` reports a resize.
+/// buffer. Raise `Resized` when `wait_resize` reports a resize.
 ///
 /// With `timeout`, the read is cancelled inside `ttyd` after `timeout`
 /// milliseconds and `Timeout` is raised. The timeout must not be applied
@@ -566,7 +566,7 @@ async test "peek then drop consumes only the peeked prefix" {
 }
 
 ///|
-async test "wait_event reports resize before read_into" {
+async test "wait_resize reports resize before read_into" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.resize(25, 81)
@@ -646,7 +646,7 @@ async test "raw mode is restored when the main task fails" {
 }
 
 ///|
-async test "wait_event reports resize before parsing input" {
+async test "wait_resize reports resize before parsing input" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     @async.with_task_group() <| group => {
@@ -664,7 +664,7 @@ async test "wait_event reports resize before parsing input" {
 }
 
 ///|
-async test "wait_event finishes a split sequence before pending resize" {
+async test "wait_resize finishes a split sequence before pending resize" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
@@ -693,7 +693,7 @@ async test "wait_event finishes a split sequence before pending resize" {
 }
 
 ///|
-async test "wait_event peek and drop preserves lookahead for the next wait" {
+async test "wait_resize peek and drop preserves lookahead for the next wait" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b\x1b[A")
@@ -709,7 +709,7 @@ async test "wait_event peek and drop preserves lookahead for the next wait" {
 }
 
 ///|
-async test "wait_event cancellation retains peeked input" {
+async test "wait_resize cancellation retains peeked input" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     ttyd.send_input(b"\x1b[")
@@ -727,11 +727,11 @@ async test "wait_event cancellation retains peeked input" {
 
 ///|
 #cfg(not(platform="windows"))
-async test "wait_event retains cooked EOF until read and accepts later input" {
+async test "wait_resize retains cooked EOF until read and accepts later input" {
   with_ttyd() <| ttyd => {
     ttyd.send_input(b"\x04")
     for _ in 0..<2 {
-      json_inspect(ttyd.call("wait_event", params={}), content={
+      json_inspect(ttyd.call("wait_resize", params={}), content={
         "type": "input",
       })
     }
@@ -742,7 +742,7 @@ async test "wait_event retains cooked EOF until read and accepts later input" {
 }
 
 ///|
-async test "wait_event can retry after first-input timeout" {
+async test "wait_resize can retry after first-input timeout" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     json_inspect(

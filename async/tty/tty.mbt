@@ -512,17 +512,17 @@ fn Tty::set_state(self : Tty, state : State) -> Unit raise {
 
 ///|
 /// Enter raw mode derived from the state saved by the first `open()`.
-/// Repeated calls apply the same mode; they do not nest or replace the saved
-/// state. Terminal mode is shared: the application should coordinate its use.
+/// This operation is idempotent. Repeated calls apply the same raw mode and
+/// preserve the saved state. Coordinate mode changes on the shared terminal.
 /// Restore early with `leave_raw_mode`, or let event loop cleanup restore it.
 pub fn Tty::enter_raw_mode(self : Tty) -> Unit raise {
   self.set_state(self.original_state.make_raw())
 }
 
 ///|
-/// Restore the state saved by the first `open()`, including after repeated
-/// calls to `enter_raw_mode`. This is idempotent, not reference counted.
-/// The saved state may itself be raw; this does not force cooked mode.
+/// Restore the state saved by the first `open()`. This operation is idempotent.
+/// One call restores that state even after several calls to `enter_raw_mode()`.
+/// If the terminal was originally in raw mode, it returns to raw mode.
 /// Errors are propagated so restoration can be retried. Event loop cleanup
 /// also attempts restoration, even if an earlier mode change failed.
 pub fn Tty::leave_raw_mode(self : Tty) -> Unit raise {
@@ -551,11 +551,16 @@ pub(all) enum Event {
 priv suberror Resized
 
 ///|
-/// Wait for bytes, EOF, or a window resize. An already observed resize takes
-/// priority over buffered input. Input leaves bytes or EOF for the reader.
-/// Coordinate waits and reads from a single task. Direct reader operations
-/// defer resize notifications until the next wait.
-pub async fn Tty::wait_event(self : Tty) -> Event raise @io.ReaderError {
+/// Wait for terminal input or a window resize.
+/// `Input` leaves the available bytes or EOF for the next read. The bytes
+/// may contain only part of a VT sequence.
+/// `Resize` consumes a pending resize notification. Call `size()` for the
+/// current dimensions. An already observed resize takes priority over input.
+///
+/// Coordinate waits and reads from one task. Reads, peeks and drops defer
+/// resize notifications until the next `wait_resize()`. On Windows, observing
+/// resizes requires raw mode, and a pending cooked read cannot be cancelled.
+pub async fn Tty::wait_resize(self : Tty) -> Event raise @io.ReaderError {
   @coroutine.check_cancellation()
   if self.tty.take_pending_resize() {
     return Resize
