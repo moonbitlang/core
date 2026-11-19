@@ -315,6 +315,7 @@ fn[K : Eq + Hash, V] hash_map_from_array_by_add(
 fn[K : Eq + Hash, V] hash_map_from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
+  guard arr.length() > 0 else { return new() }
   if arr.length() <= bulk_build_threshold {
     return hash_map_from_array_by_add(arr)
   }
