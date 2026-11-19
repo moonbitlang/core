@@ -27,7 +27,7 @@ pub fn valid(input : StringView) -> Bool {
 }
 
 ///|
-/// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
+/// Parse a JSON input string into a Json value.
 ///
 /// By default, duplicate object keys keep the last value. Set
 /// `reject_duplicate_keys=true` to raise `DuplicateKey` instead, in any object.

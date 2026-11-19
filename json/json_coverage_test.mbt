@@ -14,15 +14,12 @@
 
 // Black-box tests covering json paths the existing suites miss: zero / negative
 // integer lexing, the "disguised" fast-path for large exponents, unterminated
-// escapes, nesting-depth limits, and the `Show` instance for `Json`.
+// escapes, and the `Show` instance for `Json`.
 
 ///|
 /// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
 /// `ParseError` variants rather than a catch-all, so an unexpected error type
 /// would fail to compile instead of being silently swallowed.
-///
-/// `max_nesting_depth` is used only to exercise the
-/// depth-limit guard cheaply; see the depth-limit test for why.
 fn parse_raises(s : String) -> Bool {
   try {
     @json.parse(s) |> ignore
