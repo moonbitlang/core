@@ -22,29 +22,24 @@ pub fn matches(
   filename : String,
   actual : Bytes,
 ) -> Bool raise {
-  // Probe only when comparing a snapshot: prelude transitively imports this
-  // package, including in programs that never use filesystem I/O.
-  let file_host_is_unix = file_host_is_unix()
+  // Query the platform only during comparison: prelude imports this package.
   // Moon runs tests at the module root; SourceLoc includes the source directory.
   // Keep path components intact (especially .. next to symlinks).
-  let source = if file_host_is_unix {
+  let source = if file_host_is_unix() {
     source
   } else {
+    // Rooted and drive-prefixed Windows filenames require drive resolution.
+    // Leave those names to Moon's existing protocol instead of guessing.
+    if filename.contains(":") ||
+      filename.has_prefix("\\") ||
+      filename.has_prefix("/") {
+      return false
+    }
     source.replace(old="\\", new="/")
   }
   let parts = source.split("/").to_array()
   ignore(parts.pop())
   let directory = parts.join("/")
-  // Windows rooted and drive-prefixed paths require drive resolution. Leave
-  // those uncommon names to Moon's existing protocol instead of guessing.
-  if !file_host_is_unix &&
-    (
-      filename.contains(":") ||
-      filename.has_prefix("\\") ||
-      filename.has_prefix("/")
-    ) {
-    return false
-  }
   let path = if filename.has_prefix("/") {
     filename
   } else {
