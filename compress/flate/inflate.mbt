@@ -29,6 +29,7 @@
 ///|
 /// Stable classification for failures raised by the raw DEFLATE APIs.
 #derive(Eq, @debug.Debug)
+#non_exhaustive
 pub(all) enum InflateErrorKind {
   /// Physical input ended before a complete raw DEFLATE stream.
   Truncated

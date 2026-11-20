@@ -70,6 +70,7 @@ pub fn IncrementalEncoder::is_finished(Self) -> Bool
 pub fn IncrementalEncoder::reset(Self, dictionary? : BytesView) -> Unit
 pub fn IncrementalEncoder::step(Self, BytesView, MutArrayView[Byte], action? : DeflateAction) -> StepResult
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum InflateErrorKind {
   Truncated
