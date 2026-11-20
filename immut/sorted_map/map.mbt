@@ -543,7 +543,7 @@ test "singleton" {
 
 ///|
 test "empty" {
-  let m : SortedMap[Int32, Int32] = new()
+  let m : SortedMap[Int32, Int32] = empty()
   inspect(m.debug_tree(), content="_")
 }
 
