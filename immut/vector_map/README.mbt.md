@@ -9,7 +9,7 @@ Reach for it over `@immut/hashmap` when the order in which entries were added is
 ```mbt check
 ///|
 test "create" {
-  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.new()
+  let empty : @vector_map.VectorMap[String, Int32] = @vector_map.empty()
   inspect(empty.is_empty(), content="true")
   let one = @vector_map.singleton("a", 1)
   inspect(one.length(), content="1")
@@ -61,7 +61,7 @@ test "order" {
 ```mbt check
 ///|
 test "add_get_remove" {
-  let m = @vector_map.new().add("a", 1).add("b", 2)
+  let m = @vector_map.empty().add("a", 1).add("b", 2)
   debug_inspect(m.get("a"), content="Some(1)")
   inspect(m["b"], content="2")
   inspect(m.contains("z"), content="false")
@@ -149,7 +149,7 @@ test "equality" {
   let ab = @vector_map.VectorMap([("a", 1), ("b", 2)])
   let ba = @vector_map.VectorMap([("b", 2), ("a", 1)])
   inspect(ab == ba, content="false")
-  inspect(ab == @vector_map.new().add("a", 1).add("b", 2), content="true")
+  inspect(ab == @vector_map.empty().add("a", 1).add("b", 2), content="true")
 }
 ```
 

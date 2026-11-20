@@ -14,15 +14,17 @@
 
 ///|
 /// Create an empty map. `O(1)`.
+#alias(new, pending_deprecated)
+#as_free_fn(new, pending_deprecated)
 #as_free_fn
-pub fn[K, V] VectorMap::new() -> VectorMap[K, V] {
+pub fn[K, V] VectorMap::empty() -> VectorMap[K, V] {
   { index: @hashmap.new(), spine: @vector.new(), size: 0, }
 }
 
 ///|
-/// The empty map, same as `VectorMap::new()`.
+/// The empty map, same as `VectorMap::empty()`.
 pub impl[K, V] Default for VectorMap[K, V] with fn default() {
-  VectorMap::new()
+  VectorMap::empty()
 }
 
 ///|
@@ -61,7 +63,7 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 pub fn[K : Eq + Hash, V] VectorMap::VectorMap(
   arr : ArrayView[(K, V)],
 ) -> VectorMap[K, V] {
-  guard arr.length() > 0 else { return new() }
+  guard arr.length() > 0 else { return empty() }
   from_pairs(arr.iter())
 }
 
