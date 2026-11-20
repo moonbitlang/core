@@ -366,6 +366,17 @@ async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
       self.protocol_error("Invalid payload length format")
     }
   }
+  // RFC 6455 section 5.1: clients mask every frame and servers never do.
+  // We are a client exactly when we mask our own frames.
+  if (masked != 0) == (self.write_mask is Some(_)) {
+    self.protocol_error(
+      if masked != 0 {
+        "Frames from a server must not be masked"
+      } else {
+        "Frames from a client must be masked"
+      },
+    )
+  }
   self.read_mask = if masked != 0 {
     self.mask_offset = 0
     Some(self.transport.read_exactly(4))
