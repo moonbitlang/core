@@ -9,3 +9,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
 } for "test"
+
+options(
+  experimental: true,
+)

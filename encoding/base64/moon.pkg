@@ -17,3 +17,7 @@ import {
 // The simd import is only reachable from the linear-memory backends.
 
 warnings = "-29"
+
+options(
+  "allow-experimental-packages": [ "moonbitlang/core/simd" ],
+)
