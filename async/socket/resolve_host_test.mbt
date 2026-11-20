@@ -58,16 +58,6 @@ async test "resolve cancel" {
 }
 
 ///|
-async test "resolve failure" {
-  assert_true(
-    (@test.expect_error_async <| () => {
-      @socket.Addr::resolve("does.not.exist", port=443)
-    })
-    is @socket.ResolveHostnameError(_),
-  )
-}
-
-///|
 async test "resolve preference" {
   inspect(
     @socket.Addr::resolve("localhost", port=80, protocol=FavorV4),

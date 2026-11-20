@@ -15,9 +15,7 @@ import {
 pub suberror InvalidAddr
 
 #derive(@debug.Debug, @json.ToJson)
-pub suberror ResolveHostnameError {
-  ResolveHostnameError(String)
-}
+type ResolveHostnameError
 pub fn ResolveHostnameError::to_string(Self) -> String
 pub impl Show for ResolveHostnameError
 
