@@ -28,6 +28,7 @@ pub using @flate {
 /// `GzipError` message remains intended for diagnostics rather than branching.
 /// Output limits, cancellation and invalid limits apply to `decompress` only.
 #derive(Eq, @debug.Debug)
+#non_exhaustive
 pub(all) enum GzipErrorKind {
   /// The input ended before a complete member, header field, body, or trailer.
   Truncated

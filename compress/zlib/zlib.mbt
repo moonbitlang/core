@@ -28,6 +28,7 @@ pub using @flate {
 /// `ZlibError` message remains intended for diagnostics rather than branching.
 /// Output limits, cancellation and invalid limits apply to `decompress` only.
 #derive(Eq, @debug.Debug)
+#non_exhaustive
 pub(all) enum ZlibErrorKind {
   /// The input ended before the header, body, DICTID, or trailer completed.
   Truncated
