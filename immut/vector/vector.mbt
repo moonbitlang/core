@@ -18,15 +18,17 @@
 
 ///|
 /// Return a new empty vector
+#alias(new, pending_deprecated)
+#as_free_fn(new, pending_deprecated)
 #as_free_fn
-pub fn[A] Vector::new() -> Vector[A] {
+pub fn[A] Vector::empty() -> Vector[A] {
   make_t(Tree::empty(), [], 0, 0)
 }
 
 ///|
-/// The empty vector, same as `Vector::new()`.
+/// The empty vector, same as `Vector::empty()`.
 pub impl[A] Default for Vector[A] with fn default() {
-  Vector::new()
+  Vector::empty()
 }
 
 ///|
@@ -51,7 +53,7 @@ pub fn[A] Vector::singleton(value : A) -> Vector[A] {
 #as_free_fn
 #owned(value)
 pub fn[A] Vector::make(len : Int32, value : A) -> Vector[A] {
-  guard len > 0 else { new() }
+  guard len > 0 else { empty() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
   let tail = FixedArray::make(tail_len, value)
@@ -79,7 +81,7 @@ pub fn[A] Vector::makei(
   len : Int32,
   f : (Int32) -> A raise?,
 ) -> Vector[A] raise? {
-  guard len > 0 else { new() }
+  guard len > 0 else { empty() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
   // Build the leaves before the tail so that `f` sees ascending indices.
@@ -115,7 +117,7 @@ pub fn[A] Vector::makei(
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Vector::Vector(arr : ArrayView[A]) -> Vector[A] {
-  guard arr.length() > 0 else { return new() }
+  guard arr.length() > 0 else { return empty() }
   Vector::makei(arr.length(), i => arr[i])
 }
 
@@ -145,7 +147,7 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
     }
   }
   if index == 0 {
-    return new()
+    return empty()
   }
   let tail = if index == BRANCHING_FACTOR {
     if leaves.is_empty() {
@@ -362,7 +364,7 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
   if self.size == 0 {
     None
   } else if self.size == 1 {
-    Some(new())
+    Some(empty())
   } else if self.tail.length() > 1 {
     Some(
       make_t(
@@ -396,7 +398,7 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
       let stripped = self.tree.pop_rightmost_leaf(self.shift)
       let (promoted_tree, promoted_shift) = stripped.shrink_top(self.shift)
       if promoted_tree is Empty {
-        Some(new())
+        Some(empty())
       } else {
         let new_tail = promoted_tree.last_leaf_elements()
         let (tree, shift) = promoted_tree
@@ -709,7 +711,7 @@ pub fn[A] Vector::filter(
 /// ```
 pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
   if self.size == 0 {
-    new()
+    empty()
   } else {
     let arr = Array::make(self.size, self[0])
     self.eachi((i, value) => arr[self.size - 1 - i] = value)
@@ -773,7 +775,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
     raise path.error("@immut/vector.from_json: expected array")
   }
   let len = arr.length()
-  guard len != 0 else { return new() }
+  guard len != 0 else { return empty() }
   let values : Array[A] = Array(capacity=len)
   for i, value in arr {
     values.push(A::from_json(value, path.add_index(i)))
@@ -956,7 +958,7 @@ fn[A] Vector::slice_unchecked(
 ) -> Vector[A] {
   let len = end - start
   if len == 0 {
-    new()
+    empty()
   } else if start == 0 && end == self.size {
     self
   } else {

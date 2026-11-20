@@ -29,6 +29,10 @@ pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[A] Vector::drop(Self[A], Int32) -> Self[A]
 pub fn[A] Vector::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::eachi(Self[A], (Int32, A) -> Unit raise?) -> Unit raise?
+#alias(new, pending_deprecated)
+#as_free_fn
+#as_free_fn(new, pending_deprecated)
+pub fn[A] Vector::empty() -> Self[A]
 pub fn[A : Eq] Vector::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #alias(fold_left, deprecated)
@@ -48,8 +52,6 @@ pub fn[A] Vector::make(Int32, A) -> Self[A]
 #as_free_fn
 pub fn[A] Vector::makei(Int32, (Int32) -> A raise?) -> Self[A] raise?
 pub fn[A, B] Vector::map(Self[A], (A) -> B raise?) -> Self[B] raise?
-#as_free_fn
-pub fn[A] Vector::new() -> Self[A]
 pub fn[A] Vector::peek(Self[A]) -> A?
 pub fn[A] Vector::pop(Self[A]) -> Self[A]?
 pub fn[A] Vector::push(Self[A], A) -> Self[A]
