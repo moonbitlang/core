@@ -313,13 +313,34 @@ async fn[X] Conn::protocol_error(
 }
 
 ///|
+fn Conn::truncated(self : Conn) -> WebSocketError {
+  let err : WebSocketError = ConnectionClosed(Abnormal, None)
+  self.closed = Some(err)
+  err
+}
+
+///|
+async fn Conn::read_header_bytes(self : Conn, len : Int32) -> Bytes {
+  self.transport.read_exactly(len) catch {
+    UnexpectedEof => raise self.truncated()
+    err => raise err
+  }
+}
+
+///|
 async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
   if self.closed is Some(err) {
     raise err
   }
 
-  // Read first two bytes
-  guard! self.transport.read_exactly(2)
+  // EOF between complete messages retains the transport's EOF behavior.
+  guard @io.BinaryReader::peek(self.transport) is Some(_) else {
+    if self.read_opcode is Some(_) {
+      raise self.truncated()
+    }
+    raise @io.UnexpectedEof
+  }
+  guard! self.read_header_bytes(2)
     is [
       u1be(fin),
       u1be(rsv1),
@@ -351,13 +372,13 @@ async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
 
   // Validate payload length according to RFC 6455 Section 5.2
   if payload_len == 126L {
-    guard! self.transport.read_exactly(2) is [u16be(len)]
+    guard! self.read_header_bytes(2) is [u16be(len)]
     payload_len = len.to_int64()
     if payload_len < 126L {
       self.protocol_error("Invalid payload length format")
     }
   } else if payload_len == 127L {
-    guard! self.transport.read_exactly(8) is [u64be(len)]
+    guard! self.read_header_bytes(8) is [u64be(len)]
     payload_len = len.reinterpret_as_int64()
     if payload_len < 0L {
       self.protocol_error("Invalid payload length format")
@@ -368,7 +389,7 @@ async fn Conn::recv_frame_header(self : Conn) -> FrameHeader {
   }
   self.read_mask = if masked != 0 {
     self.mask_offset = 0
-    Some(self.transport.read_exactly(4))
+    Some(self.read_header_bytes(4))
   } else {
     None
   }
@@ -395,7 +416,7 @@ async fn Conn::handle_ping(self : Conn, frame : FrameHeader) -> Unit {
         end=payload_start + len,
       ),
     )
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { raise self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -418,7 +439,7 @@ async fn Conn::handle_pong(self : Conn, frame : FrameHeader) -> Unit {
   let msg = FixedArray::make(len, b'\x00')
   for received = 0; received < len; {
     let n = self.transport.read_into(msg.mut_view(start=received, end=len))
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { raise self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -449,7 +470,7 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
     let n = self.transport.read_into(
       reply.mut_view(start=payload_start + received, end=payload_start + len),
     )
-    guard n > 0 else { self.protocol_error("Unexpected EOF") }
+    guard n > 0 else { raise self.truncated() }
     continue received + n
   }
   if self.read_mask is Some(mask) {
@@ -620,6 +641,11 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
       self.state = Error(err)
       raise err
     }
+  }
+  guard n > 0 else {
+    let err = conn.truncated()
+    self.state = Error(err)
+    raise err
   }
   conn.curr_frame_remaining -= n.to_int64()
   if conn.read_mask is Some(mask) {
