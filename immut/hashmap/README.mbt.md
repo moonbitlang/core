@@ -7,7 +7,7 @@ A persistent hash map based on hash array mapped tries (HAMT). All operations re
 ```mbt check
 ///|
 test "create" {
-  let empty : @hashmap.HashMap[String, Int32] = @hashmap.new()
+  let empty : @hashmap.HashMap[String, Int32] = @hashmap.empty()
   inspect(empty.length(), content="0")
   let single = @hashmap.singleton("a", 1)
   debug_inspect(single.get("a"), content="Some(1)")
@@ -23,7 +23,7 @@ test "create" {
 ```mbt check
 ///|
 test "add_get_remove" {
-  let map = @hashmap.new().add("a", 1).add("b", 2)
+  let map = @hashmap.empty().add("a", 1).add("b", 2)
   debug_inspect(map.get("a"), content="Some(1)")
   inspect(map.contains("b"), content="true")
   inspect(map["a"], content="1")
@@ -121,8 +121,8 @@ same key-value pairs, no matter which sequence of operations produced them.
 ///|
 test "equality is content equality" {
   // Insertion order never matters
-  let a = @hashmap.new().add("x", 1).add("y", 2).add("z", 3)
-  let b = @hashmap.new().add("z", 3).add("y", 2).add("x", 1)
+  let a = @hashmap.empty().add("x", 1).add("y", 2).add("z", 3)
+  let b = @hashmap.empty().add("z", 3).add("y", 2).add("x", 1)
   assert_true(a == b)
   // Bulk construction and incremental adds agree
   let c : @hashmap.HashMap[String, Int32] = HashMap([
@@ -253,8 +253,8 @@ impl Hash for SameHashKey with fn hash_combine(_, hasher) {
 
 ///|
 test "collisions preserve content equality" {
-  let a = @hashmap.new().add(SameHashKey(1), 1).add(SameHashKey(2), 2)
-  let b = @hashmap.new().add(SameHashKey(2), 2).add(SameHashKey(1), 1)
+  let a = @hashmap.empty().add(SameHashKey(1), 1).add(SameHashKey(2), 2)
+  let b = @hashmap.empty().add(SameHashKey(2), 2).add(SameHashKey(1), 1)
   assert_true(a == b)
   // Shrinking a bucket back to one entry restores the exact
   // singleton shape
