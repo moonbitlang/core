@@ -48,16 +48,6 @@ fn[R : @io.BinaryReader] Reader::new(transport : R) -> Reader {
 }
 
 ///|
-/// Error raised when an invalid HTTP message is processed
-#derive(@debug.Debug, @json.ToJson)
-#non_exhaustive
-pub suberror HttpProtocolError {
-  BadRequest
-  HttpVersionNotSupported(String)
-  NotImplemented
-}
-
-///|
 /// Decode some data from current chunk, perform gzip decompression if necessary.
 /// At most `limit` bytes of data will be read from the underlying transport,
 /// and decoded into `buf[offset:offset+max_len]`.
@@ -170,13 +160,13 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       } else {
         len_str
       }
-      guard len_str =~ re"^[0-9A-Fa-f]+$" else { raise BadRequest }
+      guard len_str =~ re"^[0-9A-Fa-f]+$" else { raise BadMessage }
       let next_chunk_len = @string.parse_uint64(len_str, radix=16) catch {
-        _ => raise BadRequest
+        _ => raise BadMessage
       }
       guard next_chunk_len > 0 else {
         let (trailer, cookies) = self.read_headers()
-        guard cookies.is_empty() else { raise BadRequest }
+        guard cookies.is_empty() else { raise BadMessage }
         self.trailer = Some(trailer)
         if self.gzip is Some(_) {
           self.body = GzipEnd
@@ -201,7 +191,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       let remaining = next_chunk_len - consumed.to_uint64()
       if remaining == 0 {
         guard self.transport.read_exactly(2) == b"\r\n" else {
-          raise BadRequest
+          raise BadMessage
         }
       }
       self.body = Chunked(remaining)
@@ -225,7 +215,7 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       let remaining = curr_chunk_remaining - consumed.to_uint64()
       if remaining == 0 {
         guard self.transport.read_exactly(2) == b"\r\n" else {
-          raise BadRequest
+          raise BadMessage
         }
       }
       self.body = Chunked(remaining)
@@ -268,13 +258,13 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       )
       if self.gzip is Some(gzip) {
         if gzip.is_finished() {
-          guard self.transport.peek() is None else { raise BadRequest }
+          guard self.transport.peek() is None else { raise BadMessage }
           self.gzip = None
           self.body = Empty
           self.trailer = Some({})
           produced
         } else if produced is 0 {
-          guard consumed > 0 else { raise BadRequest }
+          guard consumed > 0 else { raise BadMessage }
           @io.BinaryReaderImpl::raw_read_impl(self, buf, offset~, max_len~)
         } else {
           produced
@@ -319,10 +309,10 @@ async fn Reader::read_headers(self : Reader) -> (Headers, Array[Cookie]) {
       // empty line indicates end of header
       break
     }
-    guard header_line.find(b":") is Some(colon_index) else { raise BadRequest }
+    guard header_line.find(b":") is Some(colon_index) else { raise BadMessage }
     let key = CaseInsensitiveString(@utf8.decode(header_line[:colon_index]))
     if !is_valid_http_header_field_name(key.0) {
-      raise BadRequest
+      raise BadMessage
     }
     let value = if colon_index + 1 == header_line.length() {
       ""
@@ -354,10 +344,10 @@ fn Reader::setup_message_body(
   let content_length = match headers.get("Content-Length") {
     None => None
     Some(value) => {
-      guard value =~ re"^[0-9]+$" else { raise BadRequest }
+      guard value =~ re"^[0-9]+$" else { raise BadMessage }
       Some(
         @string.parse_uint64(value, radix=10) catch {
-          _ => raise BadRequest
+          _ => raise BadMessage
         },
       )
     }
@@ -412,7 +402,7 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
   guard self.transport.read_until(b"\r\n") is Some(request_line) else {
     raise @io.UnexpectedEof
   }
-  guard request_line.find(b" ") is Some(meth_len) else { raise BadRequest }
+  guard request_line.find(b" ") is Some(meth_len) else { raise BadMessage }
   let meth = match request_line[:meth_len] {
     b"GET" => Get
     b"HEAD" => Head
@@ -424,22 +414,22 @@ async fn Reader::read_request(self : Reader) -> RequestHeader {
     b"TRACE" => Trace
     b"PATCH" => Patch
     name => {
-      guard name.length() > 0 else { raise BadRequest }
+      guard name.length() > 0 else { raise BadMessage }
       for c in name {
-        guard is_token_char(c.to_uint16()) else { raise BadRequest }
+        guard is_token_char(c.to_uint16()) else { raise BadMessage }
       }
       Extension(@utf8.decode(name))
     }
   }
   let request_line = request_line[meth_len + 1:]
-  guard request_line.find(b" ") is Some(path_len) else { raise BadRequest }
+  guard request_line.find(b" ") is Some(path_len) else { raise BadMessage }
   let path = @utf8.decode(request_line[:path_len])
   match request_line[path_len + 1:] {
     b"HTTP/1.1" | b"HTTP/1.0" => ()
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
   }
   let (headers, cookies) = self.read_headers()
-  guard cookies.length() is 0 else { raise BadRequest }
+  guard cookies.length() is 0 else { raise BadMessage }
   self.setup_message_body(headers, default=Empty)
   { meth, path, headers, }
 }
@@ -473,7 +463,7 @@ async fn Reader::read_response(
   guard self.transport.read_until(b"\r\n") is Some(response_line) else {
     raise @io.UnexpectedEof
   }
-  guard response_line.find(b" ") is Some(protocol_len) else { raise BadRequest }
+  guard response_line.find(b" ") is Some(protocol_len) else { raise BadMessage }
   match response_line[:protocol_len] {
     b"HTTP/1.1" | b"HTTP/1.0" => ()
     protocol => raise HttpVersionNotSupported(@utf8.decode(protocol))
@@ -487,7 +477,7 @@ async fn Reader::read_response(
       b' ',
       .. reason,
     ] else {
-    raise BadRequest
+    raise BadMessage
   }
   let code = (hundreds.to_int() - '0') * 100 +
     (tens.to_int() - '0') * 10 +

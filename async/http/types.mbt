@@ -125,3 +125,14 @@ pub fn MessageBody::text(self : MessageBody) -> String raise {
 pub fn MessageBody::json(self : MessageBody) -> @json.Json raise {
   @json.parse(@utf8.decode(self.0))
 }
+
+///|
+/// Error raised when parsing a HTTP message
+#cfg(any(target="native", target="wasm"))
+#derive(@debug.Debug, @json.ToJson)
+#non_exhaustive
+pub suberror ProtocolError {
+  BadMessage
+  HttpVersionNotSupported(String)
+  NotImplemented
+}

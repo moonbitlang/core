@@ -297,7 +297,7 @@ async test "read_request invalid extension method" {
     @debug.debug_inspect(
       @test.expect_error_async(() => input.read_request()),
       content=(
-        #|BadRequest
+        #|BadMessage
       ),
     )
   }
@@ -1003,27 +1003,27 @@ async test "numeric fields accept plain digits only" {
     content=(
       #|chunk size "1F" => 31
       #|chunk size "01f" => 31
-      #|chunk size "0x1f" => TransportError(BadRequest, context="@http.Reader")
-      #|chunk size "1_f" => TransportError(BadRequest, context="@http.Reader")
-      #|chunk size "+1f" => TransportError(BadRequest, context="@http.Reader")
-      #|chunk size "-1f" => TransportError(BadRequest, context="@http.Reader")
-      #|chunk size " 1f" => TransportError(BadRequest, context="@http.Reader")
+      #|chunk size "0x1f" => TransportError(BadMessage, context="@http.Reader")
+      #|chunk size "1_f" => TransportError(BadMessage, context="@http.Reader")
+      #|chunk size "+1f" => TransportError(BadMessage, context="@http.Reader")
+      #|chunk size "-1f" => TransportError(BadMessage, context="@http.Reader")
+      #|chunk size " 1f" => TransportError(BadMessage, context="@http.Reader")
       #|status "099" => 99
-      #|status "+200" => BadRequest
-      #|status "-200" => BadRequest
-      #|status "2_00" => BadRequest
-      #|status "0200" => BadRequest
-      #|status "20" => BadRequest
-      #|status "0x20" => BadRequest
+      #|status "+200" => BadMessage
+      #|status "-200" => BadMessage
+      #|status "2_00" => BadMessage
+      #|status "0200" => BadMessage
+      #|status "20" => BadMessage
+      #|status "0x20" => BadMessage
       #|Content-Length "10" => 10
       #|Content-Length "010" => 10
-      #|Content-Length "1_0" => BadRequest
-      #|Content-Length "+10" => BadRequest
-      #|Content-Length "-1" => BadRequest
-      #|Content-Length "0x10" => BadRequest
-      #|Content-Length "10 " => BadRequest
-      #|Content-Length "" => BadRequest
-      #|Content-Length "18446744073709551616" => BadRequest
+      #|Content-Length "1_0" => BadMessage
+      #|Content-Length "+10" => BadMessage
+      #|Content-Length "-1" => BadMessage
+      #|Content-Length "0x10" => BadMessage
+      #|Content-Length "10 " => BadMessage
+      #|Content-Length "" => BadMessage
+      #|Content-Length "18446744073709551616" => BadMessage
       #|
     ),
   )

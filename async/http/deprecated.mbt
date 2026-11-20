@@ -28,13 +28,13 @@ pub extend ProxyError with @json.ToJson::{to_json}
 #cfg(any(target="native", target="wasm"))
 #deprecated
 #doc(hidden)
-pub extend HttpProtocolError with @debug.Debug::{to_repr}
+pub extend ProtocolError with @debug.Debug::{to_repr}
 
 ///|
 #cfg(any(target="native", target="wasm"))
 #deprecated
 #doc(hidden)
-pub extend HttpProtocolError with @json.ToJson::{to_json}
+pub extend ProtocolError with @json.ToJson::{to_json}
 
 ///|
 #deprecated
