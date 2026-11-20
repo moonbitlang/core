@@ -264,7 +264,7 @@ async fn Tls::connect(self : Tls) -> Unit {
         self.transport.read_more()
       }
       WantWrite => self.transport.flush_write()
-      Eof => raise ConnectionClosed
+      Eof => raise @io.UnexpectedEof
       Error => raise TlsError(self.conn.take_error_message())
       ReNegotiation => panic()
     }
@@ -297,7 +297,7 @@ async fn Tls::accept(self : Tls) -> Unit {
         self.transport.read_more()
       }
       WantWrite => self.transport.flush_write()
-      Eof => raise ConnectionClosed
+      Eof => raise @io.UnexpectedEof
       Error => raise TlsError(self.conn.take_error_message())
       ReNegotiation => panic()
     }
@@ -475,7 +475,7 @@ impl @io.BinaryWriterImpl for Tls with fn raw_write_impl(
         } else {
           return 0
         }
-      TLS_CLOSED => raise ConnectionClosed
+      TLS_CLOSED => raise @io.UnexpectedEof
       TLS_ERROR => raise TlsError(self.conn.take_error_message())
       _ => abort("unexpected status code \{n} from TLS write")
     }

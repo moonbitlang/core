@@ -369,14 +369,17 @@ async fn Tls::handle_error(self : Tls, err : Int32) -> Unit {
       // so OpenSSL keeps reporting `SSL_ERROR_WANT_WRITE` instead of failing.
       match self.transport.state {
         Normal => ()
-        Closed => raise ConnectionClosed
+        Closed => raise @io.UnexpectedEof
         Error(err) => raise err
       }
       self.transport.write_buf.enlarge_to(1)
     }
     SSL_ERROR_SSL | SSL_ERROR_SYSCALL =>
       raise TlsError(@tls_util.get_tls_error())
-    SSL_ERROR_ZERO_RETURN => raise ConnectionClosed
+    SSL_ERROR_ZERO_RETURN =>
+      // `SSL_ERROR_ZERO_RETURN` during handshake is unexpected.
+      // `impl @io.BinaryReader` will handle `SSL_ERROR_ZERO_RETURN` before `handle_error`
+      raise @io.UnexpectedEof
     err => abort("unexpected error code \{err} from OpenSSL")
   }
 }
@@ -562,7 +565,7 @@ pub async fn Tls::shutdown(self : Tls) -> Unit {
   self.shutdown = true
   match self.transport.state {
     Normal => ()
-    Closed => raise ConnectionClosed
+    Closed => raise @io.UnexpectedEof
     Error(err) => raise err
   }
   while self.ssl.shutdown() is ret && ret < 0 {

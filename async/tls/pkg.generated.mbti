@@ -11,9 +11,6 @@ import {
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)
-pub suberror ConnectionClosed
-
-#derive(@debug.Debug, @json.ToJson)
 type TlsError
 pub fn TlsError::to_string(Self) -> String
 pub impl Show for TlsError

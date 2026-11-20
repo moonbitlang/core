@@ -26,13 +26,3 @@ pub extend TlsError with @json.ToJson::{to_json}
 #deprecated
 #doc(hidden)
 pub extend TlsError with Show::{output}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend ConnectionClosed with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend ConnectionClosed with @json.ToJson::{to_json}
