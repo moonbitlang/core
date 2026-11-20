@@ -29,12 +29,6 @@ pub impl Show for TlsError with fn to_string(self) {
 pub extend TlsError with Show::{to_string}
 
 ///|
-/// Error raised when the peer abnormally close the underlying transport
-/// in a TLS connection.
-#derive(@debug.Debug, @json.ToJson)
-pub suberror ConnectionClosed
-
-///|
 const PEM_BEGIN = "-----BEGIN CERTIFICATE-----"
 
 ///|

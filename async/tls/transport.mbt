@@ -54,7 +54,7 @@ async fn Transport::read_more(self : Transport) -> Unit {
   defer self.read_lock.release()
   match self.state {
     Normal => ()
-    Closed => raise ConnectionClosed
+    Closed => raise @io.UnexpectedEof
     Error(err) => raise err
   }
   let controller = @io.BinaryReaderImpl::get_controller(self.reader)
@@ -77,7 +77,7 @@ async fn Transport::flush_write(self : Transport) -> Unit {
   guard self.write_buf.len > 0 else {  }
   match self.state {
     Normal => ()
-    Closed => raise ConnectionClosed
+    Closed => raise @io.UnexpectedEof
     Error(err) => raise err
   }
   let start = self.write_buf.start

@@ -146,7 +146,9 @@ async test "`connect` accidental close" {
             trust=NoVerification,
           )
         },
-        content="ConnectionClosed",
+        content=(
+          #|UnexpectedEof
+        ),
       )
     }
   }
@@ -390,7 +392,7 @@ async test "`write` after a concurrent `read` failed or reached EOF" {
   @debug.debug_inspect(
     write_after_failed_read(eof=true),
     content=(
-      #|TransportError(ConnectionClosed, context="@tls.Tls")
+      #|TransportError(UnexpectedEof, context="@tls.Tls")
     ),
   )
 }
