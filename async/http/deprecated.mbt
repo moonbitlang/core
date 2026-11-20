@@ -122,16 +122,14 @@ pub extend UriParseError with @debug.Debug::{to_repr}
 pub extend UriParseError with @json.ToJson::{to_json}
 
 ///|
-#cfg(any(target="native", target="wasm"))
 #deprecated
 #doc(hidden)
-pub extend IncorrectBodyLength with @debug.Debug::{to_repr}
+pub extend InvalidMessage with @debug.Debug::{to_repr}
 
 ///|
-#cfg(any(target="native", target="wasm"))
 #deprecated
 #doc(hidden)
-pub extend IncorrectBodyLength with @json.ToJson::{to_json}
+pub extend InvalidMessage with @json.ToJson::{to_json}
 
 ///|
 #deprecated
@@ -142,13 +140,3 @@ pub extend Cookie with @debug.Debug::{to_repr}
 #deprecated
 #doc(hidden)
 pub extend Cookie with @json.ToJson::{to_json}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend InvalidMethod with @debug.Debug::{to_repr}
-
-///|
-#deprecated
-#doc(hidden)
-pub extend InvalidMethod with @json.ToJson::{to_json}

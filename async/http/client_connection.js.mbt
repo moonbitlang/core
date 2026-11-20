@@ -361,3 +361,6 @@ pub async fn ClientConnection::request(
   }
   self.request = Some(request)
 }
+
+///|
+let _mute_unused_warning : Unit = ignore(IncorrectBodyLength)
