@@ -295,10 +295,8 @@ fn AddrInfo::free(self : AddrInfo) -> Unit = "moonbitlang/async" "socket/addrinf
 
 ///|
 /// Error message from failure in resolving a network hostname.
-/// The content of the error message is platfrom-dependent,
-/// so users should never depend on it.
 #derive(@debug.Debug, @json.ToJson)
-pub suberror ResolveHostnameError {
+suberror ResolveHostnameError {
   ResolveHostnameError(String)
 }
 

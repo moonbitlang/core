@@ -34,6 +34,11 @@ import {
   "moonbitlang/core/async/fs",
 } for "test"
 
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/test",
+} for "wbtest"
+
 options(
   "allow-experimental-packages": true,
   experimental: true,
@@ -56,6 +61,7 @@ options(
     "read_exactly_test.mbt": [ "native", "wasm" ],
     "resolve_host_test.mbt": [ "native" ],
     "resolve_host_wasm_test.mbt": [ "wasm" ],
+    "resolve_host_wbtest.mbt": [ "native", "wasm" ],
     "reuse_addr_test.mbt": [ "native", "wasm" ],
     "reuse_port_test.mbt": [ "native", "wasm" ],
     "tcp.mbt": [ "native", "wasm" ],
