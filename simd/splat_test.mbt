@@ -17,12 +17,12 @@ test "packed splats exhaust all byte and UInt16 values" {
   for code in 0..<256 {
     let b = code.to_byte()
     assert_eq(
-      @v128.i8x16_splat(b),
-      @v128.i8x16_const(b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b),
+      @simd.i8x16_splat(b),
+      @simd.i8x16_const(b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b),
     )
   }
   for code in 0..<0x10000 {
     let u = code.to_uint16()
-    assert_eq(@v128.i16x8_splat(u), @v128.i16x8_const(u, u, u, u, u, u, u, u))
+    assert_eq(@simd.i16x8_splat(u), @simd.i16x8_const(u, u, u, u, u, u, u, u))
   }
 }

@@ -180,18 +180,18 @@ fn copy_match_bytes(
 ) -> Unit {
   if distance >= 16 && length >= 16 {
     for offset = 0; offset + 16 <= length; offset = offset + 16 {
-      @v128.v128_store(
+      @simd.v128_store(
         storage,
         start + offset,
-        @v128.v128_load(storage, start + offset - distance),
+        @simd.v128_load(storage, start + offset - distance),
       )
     }
     if (length & 15) != 0 {
       let offset = length - 16
-      @v128.v128_store(
+      @simd.v128_store(
         storage,
         start + offset,
-        @v128.v128_load(storage, start + offset - distance),
+        @simd.v128_load(storage, start + offset - distance),
       )
     }
   } else {
@@ -758,31 +758,31 @@ fn MemDecoder::decode_batch(
       if length <= 7 {
         // The batch reserves 258 bytes, so these eight-byte reads/writes stay
         // in bounds even for a three-byte match. The shuffle retains the tail.
-        let history = @v128.v128_load64_zero(storage, written - distance)
-        let combined = @v128.v128_load64_lane(storage, written, history, 1)
-        let control = @v128.v128_load(
+        let history = @simd.v128_load64_zero(storage, written - distance)
+        let combined = @simd.v128_load64_lane(storage, written, history, 1)
+        let control = @simd.v128_load(
           short_copy_shuffle,
           (length * 8 + distance.min(7)) * 16,
         )
-        @v128.v128_store64_lane(
+        @simd.v128_store64_lane(
           storage,
           written,
-          @v128.i8x16_swizzle(combined, control),
+          @simd.i8x16_swizzle(combined, control),
           0,
         )
       } else if length <= 16 && distance >= 8 {
-        @v128.v128_store64_lane(
+        @simd.v128_store64_lane(
           storage,
           written,
-          @v128.v128_load64_zero(storage, written - distance),
+          @simd.v128_load64_zero(storage, written - distance),
           0,
         )
         if length > 8 {
           let tail = written + length - 8
-          @v128.v128_store64_lane(
+          @simd.v128_store64_lane(
             storage,
             tail,
-            @v128.v128_load64_zero(storage, tail - distance),
+            @simd.v128_load64_zero(storage, tail - distance),
             0,
           )
         }
@@ -834,23 +834,23 @@ fn MemDecoder::decode_batch(
       } else if length <= 48 && distance >= 16 {
         // Length is now 17..48. Two or three forward vectors cover the
         // match without a helper call, and the last store ends exactly.
-        @v128.v128_store(
+        @simd.v128_store(
           storage,
           written,
-          @v128.v128_load(storage, written - distance),
+          @simd.v128_load(storage, written - distance),
         )
         if length > 32 {
-          @v128.v128_store(
+          @simd.v128_store(
             storage,
             written + 16,
-            @v128.v128_load(storage, written + 16 - distance),
+            @simd.v128_load(storage, written + 16 - distance),
           )
         }
         let tail = written + length - 16
-        @v128.v128_store(
+        @simd.v128_store(
           storage,
           tail,
-          @v128.v128_load(storage, tail - distance),
+          @simd.v128_load(storage, tail - distance),
         )
       } else if distance == 1 {
         storage.fill(storage[written - 1], start=written, end=written + length)

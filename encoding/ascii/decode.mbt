@@ -26,7 +26,7 @@ fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "
 #cfg(target="js")
 #warnings("-unused_value")
 fn suppress_unused_v128_import_on_js() -> Unit {
-  ignore(@v128.i8x16_splat(0))
+  ignore(@simd.i8x16_splat(0))
 }
 
 ///|
@@ -65,19 +65,19 @@ fn decode_v128(bytes : BytesView) -> String raise Malformed {
   for rest = bytes, result_offset = 0 {
     match rest {
       [v128le(block), .. tail] => {
-        let non_ascii = @v128.i8x16_bitmask(block)
+        let non_ascii = @simd.i8x16_bitmask(block)
         if non_ascii != 0 {
           raise Malformed(bytes[result_offset / 2 + non_ascii.ctz():])
         }
-        @v128.v128_store(
+        @simd.v128_store(
           result,
           result_offset,
-          @v128.i16x8_extend_low_i8x16_u(block),
+          @simd.i16x8_extend_low_i8x16_u(block),
         )
-        @v128.v128_store(
+        @simd.v128_store(
           result,
           result_offset + 16,
-          @v128.i16x8_extend_high_i8x16_u(block),
+          @simd.i16x8_extend_high_i8x16_u(block),
         )
         continue tail, result_offset + 32
       }

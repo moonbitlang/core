@@ -31,7 +31,7 @@
 /// `i8x16_add` wraps.
 #cfg(any(target="native", target="wasm"))
 fn decode_offsets_v128() -> V128 {
-  @v128.i8x16_const(0, 16, 19, 4, 191, 191, 185, 185, 0, 0, 0, 0, 0, 0, 0, 0)
+  @simd.i8x16_const(0, 16, 19, 4, 191, 191, 185, 185, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
 ///|
@@ -40,30 +40,30 @@ fn decode_offsets_v128() -> V128 {
 /// back to the scalar decoder.
 #cfg(any(target="native", target="wasm"))
 fn decode_valid_v128(ascii : V128, url_safe : Bool) -> Bool {
-  let upper = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'A')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'Z')),
+  let upper = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'A')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'Z')),
   )
-  let lower = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'a')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'z')),
+  let lower = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'a')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'z')),
   )
-  let digit = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'0')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'9')),
+  let digit = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'0')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'9')),
   )
-  let plus = @v128.i8x16_eq(
+  let plus = @simd.i8x16_eq(
     ascii,
-    @v128.i8x16_splat(if url_safe { b'-' } else { b'+' }),
+    @simd.i8x16_splat(if url_safe { b'-' } else { b'+' }),
   )
-  let slash = @v128.i8x16_eq(
+  let slash = @simd.i8x16_eq(
     ascii,
-    @v128.i8x16_splat(if url_safe { b'_' } else { b'/' }),
+    @simd.i8x16_splat(if url_safe { b'_' } else { b'/' }),
   )
-  @v128.i8x16_all_true(
-    @v128.v128_or_(
-      @v128.v128_or_(upper, lower),
-      @v128.v128_or_(digit, @v128.v128_or_(plus, slash)),
+  @simd.i8x16_all_true(
+    @simd.v128_or_(
+      @simd.v128_or_(upper, lower),
+      @simd.v128_or_(digit, @simd.v128_or_(plus, slash)),
     ),
   )
 }
@@ -74,16 +74,16 @@ fn decode_valid_v128(ascii : V128, url_safe : Bool) -> Bool {
 #cfg(any(target="native", target="wasm"))
 fn url_to_standard_v128(ascii : V128) -> V128 {
   // '-' - '+' == 2 and '_' - '/' == 48; every other lane subtracts zero.
-  @v128.i8x16_sub(
+  @simd.i8x16_sub(
     ascii,
-    @v128.v128_or_(
-      @v128.v128_and_(
-        @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'-')),
-        @v128.i8x16_splat(2),
+    @simd.v128_or_(
+      @simd.v128_and_(
+        @simd.i8x16_eq(ascii, @simd.i8x16_splat(b'-')),
+        @simd.i8x16_splat(2),
       ),
-      @v128.v128_and_(
-        @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'_')),
-        @v128.i8x16_splat(48),
+      @simd.v128_and_(
+        @simd.i8x16_eq(ascii, @simd.i8x16_splat(b'_')),
+        @simd.i8x16_splat(48),
       ),
     ),
   )
@@ -95,40 +95,40 @@ fn url_to_standard_v128(ascii : V128) -> V128 {
 #cfg(any(target="native", target="wasm"))
 fn decode_block_v128(ascii : V128) -> V128 {
   // `i8x16_eq` yields all-ones, i.e. -1, so adding it subtracts one for '/'.
-  let hash = @v128.i8x16_add(
-    @v128.i8x16_shr_u(ascii, 4),
-    @v128.i8x16_eq(ascii, @v128.i8x16_splat(b'/')),
+  let hash = @simd.i8x16_add(
+    @simd.i8x16_shr_u(ascii, 4),
+    @simd.i8x16_eq(ascii, @simd.i8x16_splat(b'/')),
   )
-  let sextets = @v128.i8x16_add(
+  let sextets = @simd.i8x16_add(
     ascii,
-    @v128.i8x16_swizzle(decode_offsets_v128(), hash),
+    @simd.i8x16_swizzle(decode_offsets_v128(), hash),
   )
   // Fuse each group of four sextets into a 24-bit value held in the low three
   // bytes of its 32-bit lane.
-  let groups = @v128.v128_or_(
-    @v128.v128_or_(
-      @v128.i32x4_shl(
-        @v128.v128_and_(sextets, @v128.i32x4_splat(0x0000003F)),
+  let groups = @simd.v128_or_(
+    @simd.v128_or_(
+      @simd.i32x4_shl(
+        @simd.v128_and_(sextets, @simd.i32x4_splat(0x0000003F)),
         18,
       ),
-      @v128.i32x4_shl(
-        @v128.v128_and_(sextets, @v128.i32x4_splat(0x00003F00)),
+      @simd.i32x4_shl(
+        @simd.v128_and_(sextets, @simd.i32x4_splat(0x00003F00)),
         4,
       ),
     ),
-    @v128.v128_or_(
-      @v128.i32x4_shr_u(
-        @v128.v128_and_(sextets, @v128.i32x4_splat(0x003F0000)),
+    @simd.v128_or_(
+      @simd.i32x4_shr_u(
+        @simd.v128_and_(sextets, @simd.i32x4_splat(0x003F0000)),
         10,
       ),
-      @v128.i32x4_shr_u(
-        @v128.v128_and_(sextets, @v128.i32x4_splat(0x3F000000)),
+      @simd.i32x4_shr_u(
+        @simd.v128_and_(sextets, @simd.i32x4_splat(0x3F000000)),
         24,
       ),
     ),
   )
   // Emit each lane's three payload bytes most-significant first.
-  @v128.i8x16_shuffle(
+  @simd.i8x16_shuffle(
     groups, groups, 2, 1, 0, 6, 5, 4, 10, 9, 8, 14, 13, 12, 0, 0, 0, 0,
   )
 }
@@ -160,13 +160,13 @@ fn decode_v128(text : StringView, url_safe : Bool) -> Bytes? {
   let mut written = 0
   while body - index >= 16 && out.length() - written >= 16 {
     let offset = base + index
-    let ascii = @v128.i8x16_narrow_i16x8_u(
-      @v128.v128_load_i16x8(src, offset),
-      @v128.v128_load_i16x8(src, offset + 8),
+    let ascii = @simd.i8x16_narrow_i16x8_u(
+      @simd.v128_load_i16x8(src, offset),
+      @simd.v128_load_i16x8(src, offset + 8),
     )
     guard decode_valid_v128(ascii, url_safe) else { return None }
     let ascii = if url_safe { url_to_standard_v128(ascii) } else { ascii }
-    @v128.v128_store(out, written, decode_block_v128(ascii))
+    @simd.v128_store(out, written, decode_block_v128(ascii))
     index += 16
     written += 12
   }

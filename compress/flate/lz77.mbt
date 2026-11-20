@@ -377,10 +377,10 @@ fn match_len_up_to(
   let start = data.start_offset()
   let mut k = 0
   while k + 16 <= limit {
-    let equal_lanes = @v128.i8x16_bitmask(
-      @v128.i8x16_eq(
-        @v128.v128_load(bytes, start + src + k),
-        @v128.v128_load(bytes, start + pos + k),
+    let equal_lanes = @simd.i8x16_bitmask(
+      @simd.i8x16_eq(
+        @simd.v128_load(bytes, start + src + k),
+        @simd.v128_load(bytes, start + pos + k),
       ),
     )
     if equal_lanes != 0xFFFF {
@@ -406,10 +406,10 @@ fn match_len_in_window(
   let pos = pos & STREAM_RING_MASK
   let mut k = 0
   while k + 16 <= limit {
-    let equal_lanes = @v128.i8x16_bitmask(
-      @v128.i8x16_eq(
-        @v128.v128_load(data, src + k),
-        @v128.v128_load(data, pos + k),
+    let equal_lanes = @simd.i8x16_bitmask(
+      @simd.i8x16_eq(
+        @simd.v128_load(data, src + k),
+        @simd.v128_load(data, pos + k),
       ),
     )
     if equal_lanes != 0xFFFF {
@@ -1423,17 +1423,17 @@ fn MatchFinder::insert_matched_window_positions(
 #cfg(any(target="native", target="wasm"))
 #inline
 fn matched_quad_hashes(bytes : V128, shift : Int32, shorts : Bool) -> V128 {
-  let words = @v128.i8x16_shuffle(
+  let words = @simd.i8x16_shuffle(
     bytes, bytes, 0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6,
   )
-  let products = @v128.i32x4_mul(words, @v128.i32x4_splat(0x1E35A7BDU))
+  let products = @simd.i32x4_mul(words, @simd.i32x4_splat(0x1E35A7BDU))
   if shorts {
-    @v128.i32x4_shr_u(
-      @v128.v128_and_(products, @v128.i32x4_splat(0xFFFFFFU)),
+    @simd.i32x4_shr_u(
+      @simd.v128_and_(products, @simd.i32x4_splat(0xFFFFFFU)),
       shift,
     )
   } else {
-    @v128.i32x4_shr_u(products, shift)
+    @simd.i32x4_shr_u(products, shift)
   }
 }
 
@@ -1491,7 +1491,7 @@ fn MatchFinder::insert_matched_quads(
   // sixteen bytes lie inside the view. Only bytes 0..6 are used, the words
   // of `position..position + 3`, all below `long_end`.
   while position <= long_end - 4 && position <= length - 16 {
-    let block = @v128.v128_load(bytes, offset + position)
+    let block = @simd.v128_load(bytes, offset + position)
     let longs = matched_quad_hashes(block, long_shift, false)
     let shorts = matched_quad_hashes(block, short_shift, true)
     link_matched_position(
@@ -1500,8 +1500,8 @@ fn MatchFinder::insert_matched_quads(
       prev,
       base,
       position,
-      @v128.i32x4_extract_lane(longs, 0),
-      @v128.i32x4_extract_lane(shorts, 0),
+      @simd.i32x4_extract_lane(longs, 0),
+      @simd.i32x4_extract_lane(shorts, 0),
     )
     link_matched_position(
       short_head,
@@ -1509,8 +1509,8 @@ fn MatchFinder::insert_matched_quads(
       prev,
       base,
       position + 1,
-      @v128.i32x4_extract_lane(longs, 1),
-      @v128.i32x4_extract_lane(shorts, 1),
+      @simd.i32x4_extract_lane(longs, 1),
+      @simd.i32x4_extract_lane(shorts, 1),
     )
     link_matched_position(
       short_head,
@@ -1518,8 +1518,8 @@ fn MatchFinder::insert_matched_quads(
       prev,
       base,
       position + 2,
-      @v128.i32x4_extract_lane(longs, 2),
-      @v128.i32x4_extract_lane(shorts, 2),
+      @simd.i32x4_extract_lane(longs, 2),
+      @simd.i32x4_extract_lane(shorts, 2),
     )
     link_matched_position(
       short_head,
@@ -1527,8 +1527,8 @@ fn MatchFinder::insert_matched_quads(
       prev,
       base,
       position + 3,
-      @v128.i32x4_extract_lane(longs, 3),
-      @v128.i32x4_extract_lane(shorts, 3),
+      @simd.i32x4_extract_lane(longs, 3),
+      @simd.i32x4_extract_lane(shorts, 3),
     )
     position = position + 4
   }
@@ -1556,7 +1556,7 @@ fn MatchFinder::insert_matched_window_quads(
     // SAFETY: the masked offset is below `STREAM_RING_SIZE` and the storage
     // is twice that, so sixteen bytes are there. Only bytes 0..6 are used,
     // the words of `position..position + 3`, which the mirror keeps equal.
-    let block = @v128.v128_load(data, position & STREAM_RING_MASK)
+    let block = @simd.v128_load(data, position & STREAM_RING_MASK)
     let longs = matched_quad_hashes(block, long_shift, false)
     let shorts = matched_quad_hashes(block, short_shift, true)
     link_matched_position(
@@ -1565,8 +1565,8 @@ fn MatchFinder::insert_matched_window_quads(
       prev,
       base,
       position,
-      @v128.i32x4_extract_lane(longs, 0),
-      @v128.i32x4_extract_lane(shorts, 0),
+      @simd.i32x4_extract_lane(longs, 0),
+      @simd.i32x4_extract_lane(shorts, 0),
     )
     link_matched_position(
       short_head,
@@ -1574,8 +1574,8 @@ fn MatchFinder::insert_matched_window_quads(
       prev,
       base,
       position + 1,
-      @v128.i32x4_extract_lane(longs, 1),
-      @v128.i32x4_extract_lane(shorts, 1),
+      @simd.i32x4_extract_lane(longs, 1),
+      @simd.i32x4_extract_lane(shorts, 1),
     )
     link_matched_position(
       short_head,
@@ -1583,8 +1583,8 @@ fn MatchFinder::insert_matched_window_quads(
       prev,
       base,
       position + 2,
-      @v128.i32x4_extract_lane(longs, 2),
-      @v128.i32x4_extract_lane(shorts, 2),
+      @simd.i32x4_extract_lane(longs, 2),
+      @simd.i32x4_extract_lane(shorts, 2),
     )
     link_matched_position(
       short_head,
@@ -1592,8 +1592,8 @@ fn MatchFinder::insert_matched_window_quads(
       prev,
       base,
       position + 3,
-      @v128.i32x4_extract_lane(longs, 3),
-      @v128.i32x4_extract_lane(shorts, 3),
+      @simd.i32x4_extract_lane(longs, 3),
+      @simd.i32x4_extract_lane(shorts, 3),
     )
     position = position + 4
   }

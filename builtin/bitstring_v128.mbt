@@ -14,7 +14,7 @@
 
 // Runtime support for the `v128le(v)` bitstring pattern. A `V128` has no
 // inherent lane structure, so its byte view is the little-endian layout of
-// `@v128.v128_load`: byte `k` -> i8x16 lane `k`, with bytes 0..7 in `lo` and
+// `@simd.v128_load`: byte `k` -> i8x16 lane `k`, with bytes 0..7 in `lo` and
 // bytes 8..15 in `hi`. The bitstring pattern is restricted to byte-aligned
 // offsets and uses that intrinsic through the private `v128_load` helper in
 // `simd.mbt`.

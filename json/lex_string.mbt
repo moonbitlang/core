@@ -260,21 +260,21 @@ fn find_string_special_long(str : String, start : Int32, end : Int32) -> Int32 {
 /// cannot overflow near `Int::max_value`).
 #cfg(any(target="native", target="wasm"))
 fn find_string_special_long(str : String, start : Int32, end : Int32) -> Int32 {
-  let control_limit = @v128.i16x8_splat(' ')
-  let quote = @v128.i16x8_splat('"')
-  let backslash = @v128.i16x8_splat('\\')
+  let control_limit = @simd.i16x8_splat(' ')
+  let quote = @simd.i16x8_splat('"')
+  let backslash = @simd.i16x8_splat('\\')
   let tail_start = for pos = start; end - pos >= 8; {
-    let block = @v128.v128_load_i16x8(str, pos)
-    let special = @v128.v128_or_(
-      @v128.i16x8_lt_u(block, control_limit),
-      @v128.v128_or_(
-        @v128.i16x8_eq(block, quote),
-        @v128.i16x8_eq(block, backslash),
+    let block = @simd.v128_load_i16x8(str, pos)
+    let special = @simd.v128_or_(
+      @simd.i16x8_lt_u(block, control_limit),
+      @simd.v128_or_(
+        @simd.i16x8_eq(block, quote),
+        @simd.i16x8_eq(block, backslash),
       ),
     )
-    if @v128.v128_any_true(special) {
+    if @simd.v128_any_true(special) {
       // Bit `k` of the mask is lane `k`, the code unit at `pos + k`.
-      return pos + @v128.i16x8_bitmask(special).ctz()
+      return pos + @simd.i16x8_bitmask(special).ctz()
     }
     continue pos + 8
   } nobreak {

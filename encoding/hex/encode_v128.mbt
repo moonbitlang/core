@@ -26,7 +26,7 @@
 /// code of the lowercase digit for nibble value `n`.
 #cfg(any(target="native", target="wasm"))
 fn hex_digits_v128() -> V128 {
-  @v128.i8x16_const(
+  @simd.i8x16_const(
     48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
   )
 }
@@ -56,22 +56,22 @@ fn encode_v128(bytes : BytesView) -> String {
   for rest = bytes, written = 0 {
     match rest {
       [v128le(data), .. tail] => {
-        let hi = @v128.i8x16_shr_u(data, 4)
-        let lo = @v128.v128_and_(data, @v128.i8x16_splat(0x0F))
+        let hi = @simd.i8x16_shr_u(data, 4)
+        let lo = @simd.v128_and_(data, @simd.i8x16_splat(0x0F))
         // interleave: source byte k produces digits at output positions 2k
         // (high nibble) and 2k + 1 (low nibble)
-        let first = @v128.i8x16_shuffle(
+        let first = @simd.i8x16_shuffle(
           hi, lo, 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23,
         )
-        let second = @v128.i8x16_shuffle(
+        let second = @simd.i8x16_shuffle(
           hi, lo, 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31,
         )
-        let d0 = @v128.i8x16_swizzle(table, first)
-        let d1 = @v128.i8x16_swizzle(table, second)
-        @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(d0))
-        @v128.v128_store(out, written + 16, @v128.i16x8_extend_high_i8x16_u(d0))
-        @v128.v128_store(out, written + 32, @v128.i16x8_extend_low_i8x16_u(d1))
-        @v128.v128_store(out, written + 48, @v128.i16x8_extend_high_i8x16_u(d1))
+        let d0 = @simd.i8x16_swizzle(table, first)
+        let d1 = @simd.i8x16_swizzle(table, second)
+        @simd.v128_store(out, written, @simd.i16x8_extend_low_i8x16_u(d0))
+        @simd.v128_store(out, written + 16, @simd.i16x8_extend_high_i8x16_u(d0))
+        @simd.v128_store(out, written + 32, @simd.i16x8_extend_low_i8x16_u(d1))
+        @simd.v128_store(out, written + 48, @simd.i16x8_extend_high_i8x16_u(d1))
         continue tail, written + 64
       }
       [byte, .. tail] => {

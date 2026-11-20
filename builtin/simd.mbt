@@ -14,7 +14,7 @@
 
 // The 128-bit vector operations used by the SIMD byte and UTF-16 scanners in
 // `bytes_find.mbt`, `string_find_code_unit.mbt`, and `string_methods.mbt`.
-// `builtin` cannot import `moonbitlang/core/v128` (that would be a cycle), so
+// `builtin` cannot import `moonbitlang/core/simd` (that would be a cycle), so
 // the few ops the scanners need are hosted here directly.
 //
 // Scanner-only operations are gated to the linear-memory backends that use

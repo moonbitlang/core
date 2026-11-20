@@ -30,19 +30,19 @@
 /// True when every lane holds an ASCII hex digit (`0-9`, `a-f`, `A-F`).
 #cfg(any(target="native", target="wasm"))
 fn hex_valid_v128(ascii : V128) -> Bool {
-  let digit = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'0')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'9')),
+  let digit = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'0')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'9')),
   )
-  let lower = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'a')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'f')),
+  let lower = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'a')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'f')),
   )
-  let upper = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'A')),
-    @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'F')),
+  let upper = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'A')),
+    @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'F')),
   )
-  @v128.i8x16_all_true(@v128.v128_or_(digit, @v128.v128_or_(lower, upper)))
+  @simd.i8x16_all_true(@simd.v128_or_(digit, @simd.v128_or_(lower, upper)))
 }
 
 ///|
@@ -53,20 +53,20 @@ fn hex_valid_v128(ascii : V128) -> Bool {
 /// complements because `i8x16_add` wraps.
 #cfg(any(target="native", target="wasm"))
 fn hex_nibbles_v128(ascii : V128) -> V128 {
-  let lower = @v128.v128_and_(
-    @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'a')),
-    @v128.i8x16_splat(217), // -39 mod 256
+  let lower = @simd.v128_and_(
+    @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'a')),
+    @simd.i8x16_splat(217), // -39 mod 256
   )
-  let upper = @v128.v128_and_(
-    @v128.v128_and_(
-      @v128.i8x16_ge_u(ascii, @v128.i8x16_splat(b'A')),
-      @v128.i8x16_le_u(ascii, @v128.i8x16_splat(b'F')),
+  let upper = @simd.v128_and_(
+    @simd.v128_and_(
+      @simd.i8x16_ge_u(ascii, @simd.i8x16_splat(b'A')),
+      @simd.i8x16_le_u(ascii, @simd.i8x16_splat(b'F')),
     ),
-    @v128.i8x16_splat(249), // -7 mod 256
+    @simd.i8x16_splat(249), // -7 mod 256
   )
-  @v128.i8x16_add(
-    @v128.i8x16_add(ascii, @v128.i8x16_splat(208)), // -48 mod 256
-    @v128.v128_or_(lower, upper),
+  @simd.i8x16_add(
+    @simd.i8x16_add(ascii, @simd.i8x16_splat(208)), // -48 mod 256
+    @simd.v128_or_(lower, upper),
   )
 }
 
@@ -87,25 +87,25 @@ fn decode_v128(text : StringView) -> Bytes? {
   // subtraction, so that the bound cannot wrap on a very long input
   while length - index >= 32 {
     let offset = base + index
-    let ascii0 = @v128.i8x16_narrow_i16x8_u(
-      @v128.v128_load_i16x8(src, offset),
-      @v128.v128_load_i16x8(src, offset + 8),
+    let ascii0 = @simd.i8x16_narrow_i16x8_u(
+      @simd.v128_load_i16x8(src, offset),
+      @simd.v128_load_i16x8(src, offset + 8),
     )
-    let ascii1 = @v128.i8x16_narrow_i16x8_u(
-      @v128.v128_load_i16x8(src, offset + 16),
-      @v128.v128_load_i16x8(src, offset + 24),
+    let ascii1 = @simd.i8x16_narrow_i16x8_u(
+      @simd.v128_load_i16x8(src, offset + 16),
+      @simd.v128_load_i16x8(src, offset + 24),
     )
     guard hex_valid_v128(ascii0) && hex_valid_v128(ascii1) else { return None }
     let n0 = hex_nibbles_v128(ascii0)
     let n1 = hex_nibbles_v128(ascii1)
     // high nibbles sit in the even lanes, low nibbles in the odd lanes
-    let hi = @v128.i8x16_shuffle(
+    let hi = @simd.i8x16_shuffle(
       n0, n1, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30,
     )
-    let lo = @v128.i8x16_shuffle(
+    let lo = @simd.i8x16_shuffle(
       n0, n1, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31,
     )
-    @v128.v128_store(out, written, @v128.v128_or_(@v128.i8x16_shl(hi, 4), lo))
+    @simd.v128_store(out, written, @simd.v128_or_(@simd.i8x16_shl(hi, 4), lo))
     index += 32
     written += 16
   }

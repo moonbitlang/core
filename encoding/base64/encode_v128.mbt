@@ -29,11 +29,11 @@
 #cfg(any(target="native", target="wasm"))
 fn encode_offsets_v128(url_safe : Bool) -> V128 {
   if url_safe {
-    @v128.i8x16_const(
+    @simd.i8x16_const(
       71, 252, 252, 252, 252, 252, 252, 252, 252, 252, 252, 239, 32, 65, 0, 0,
     )
   } else {
-    @v128.i8x16_const(
+    @simd.i8x16_const(
       71, 252, 252, 252, 252, 252, 252, 252, 252, 252, 252, 237, 240, 65, 0, 0,
     )
   }
@@ -48,33 +48,33 @@ fn encode_block_v128(data : V128, offsets : V128) -> V128 {
   // Spread each three-byte group across one 32-bit lane so that the lane,
   // read as a little-endian integer, holds `b0 << 16 | b1 << 8 | b2`. Lane
   // byte three is taken from the zero vector.
-  let zero = @v128.i8x16_splat(0)
-  let groups = @v128.i8x16_shuffle(
+  let zero = @simd.i8x16_splat(0)
+  let groups = @simd.i8x16_shuffle(
     data, zero, 2, 1, 0, 16, 5, 4, 3, 16, 8, 7, 6, 16, 11, 10, 9, 16,
   )
 
   // Slice each group into four sextets, positioned so that lane byte `k`
   // holds the `k`-th output character. `i16x8`-style multiply tricks are not
   // available on SIMD128, but uniform shifts are, and they are cheap.
-  let sextets = @v128.v128_or_(
-    @v128.v128_or_(
-      @v128.v128_and_(
-        @v128.i32x4_shr_u(groups, 18),
-        @v128.i32x4_splat(0x0000003F),
+  let sextets = @simd.v128_or_(
+    @simd.v128_or_(
+      @simd.v128_and_(
+        @simd.i32x4_shr_u(groups, 18),
+        @simd.i32x4_splat(0x0000003F),
       ),
-      @v128.v128_and_(
-        @v128.i32x4_shr_u(groups, 4),
-        @v128.i32x4_splat(0x00003F00),
+      @simd.v128_and_(
+        @simd.i32x4_shr_u(groups, 4),
+        @simd.i32x4_splat(0x00003F00),
       ),
     ),
-    @v128.v128_or_(
-      @v128.v128_and_(
-        @v128.i32x4_shl(groups, 10),
-        @v128.i32x4_splat(0x003F0000),
+    @simd.v128_or_(
+      @simd.v128_and_(
+        @simd.i32x4_shl(groups, 10),
+        @simd.i32x4_splat(0x003F0000),
       ),
-      @v128.v128_and_(
-        @v128.i32x4_shl(groups, 24),
-        @v128.i32x4_splat(0x3F000000),
+      @simd.v128_and_(
+        @simd.i32x4_shl(groups, 24),
+        @simd.i32x4_splat(0x3F000000),
       ),
     ),
   )
@@ -83,14 +83,14 @@ fn encode_block_v128(data : V128, offsets : V128) -> V128 {
   // table. Saturating subtraction collapses 0..=51 to class zero and maps
   // 52..=63 to 1..=12; the separate `< 26` test splits uppercase off as
   // class thirteen.
-  let class = @v128.v128_or_(
-    @v128.i8x16_sub_sat_u(sextets, @v128.i8x16_splat(51)),
-    @v128.v128_and_(
-      @v128.i8x16_lt_u(sextets, @v128.i8x16_splat(26)),
-      @v128.i8x16_splat(13),
+  let class = @simd.v128_or_(
+    @simd.i8x16_sub_sat_u(sextets, @simd.i8x16_splat(51)),
+    @simd.v128_and_(
+      @simd.i8x16_lt_u(sextets, @simd.i8x16_splat(26)),
+      @simd.i8x16_splat(13),
     ),
   )
-  @v128.i8x16_add(sextets, @v128.i8x16_swizzle(offsets, class))
+  @simd.i8x16_add(sextets, @simd.i8x16_swizzle(offsets, class))
 }
 
 ///|
@@ -130,11 +130,11 @@ fn encode_v128(bytes : BytesView, padding : Bool, url_safe : Bool) -> String {
     match rest {
       [v128le(block), ..] as current => {
         let chars = encode_block_v128(block, offsets)
-        @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(chars))
-        @v128.v128_store(
+        @simd.v128_store(out, written, @simd.i16x8_extend_low_i8x16_u(chars))
+        @simd.v128_store(
           out,
           written + 16,
-          @v128.i16x8_extend_high_i8x16_u(chars),
+          @simd.i16x8_extend_high_i8x16_u(chars),
         )
         continue current[12:], written + 32
       }
