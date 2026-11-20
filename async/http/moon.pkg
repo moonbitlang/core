@@ -20,7 +20,7 @@ import {
   "moonbitlang/core/set",
   "moonbitlang/core/cmp",
   "moonbitlang/core/async/socket",
-  "moonbitlang/core/async/internal/gzip_internal" @gzip,
+  "moonbitlang/core/compress/gzip",
 }
 
 #cfg(target="js")
@@ -41,7 +41,6 @@ import {
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/async/fs",
-  "moonbitlang/core/compress/gzip" @compress/gzip,
 } for "test"
 
 import {
@@ -55,7 +54,6 @@ import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
   "moonbitlang/core/async/internal/bytes_util",
-  "moonbitlang/core/compress/gzip" @compress/gzip,
 } for "wbtest"
 
 options(

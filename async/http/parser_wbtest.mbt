@@ -595,9 +595,7 @@ async test "gzip split between chunks" {
     let (r, w) = @io.memory_pipe()
     group.spawn_bg() <| () => {
       defer w.close()
-      @compress/gzip.StreamEncoder(w)
-      ..write(b"A simple message to compress")
-      .end()
+      @gzip.StreamEncoder(w)..write(b"A simple message to compress").end()
     }
     defer r.close()
     compressed = r.read_all()
@@ -665,10 +663,16 @@ async test "fixed length gzip direct bytes one byte reads" {
     )
     inspect(response.code, content="200")
     let output = FixedArray::make(1, b'\x00')
+    let decoded = @buffer.Buffer()
     while input.read_into(output.mut_view()) > 0 {
-
+      decoded.write_byte(output[0])
     }
-    inspect(true, content="true")
+    inspect(
+      decoded.to_bytes(),
+      content=(
+        #|b"abcabcabcabcabcabcabcabcabcabcabcabc"
+      ),
+    )
   }
 }
 
@@ -682,9 +686,7 @@ async test "close-delimited gzip" {
       ..write(b"HTTP/1.1 200 OK\r\n")
       ..write(b"Content-Encoding: gzip\r\n")
       .write(b"\r\n")
-      @compress/gzip.StreamEncoder(w)
-      ..write(b"A simple message to compress")
-      .end()
+      @gzip.StreamEncoder(w)..write(b"A simple message to compress").end()
     }
     defer r.close()
     let input = Reader::new(r)

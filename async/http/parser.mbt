@@ -17,6 +17,7 @@ priv enum BodyKind {
   Empty
   Fixed(UInt64)
   Chunked(UInt64)
+  GzipEnd
   PassThrough
   WaitConnectionClose
 }
@@ -75,52 +76,35 @@ async fn Reader::decode_chunk(
     (n, n)
   }
 
-  let controller = @io.BinaryReaderImpl::get_controller(self.transport)
-  for consumed = 0; !gzip.is_finished(); {
-    let limit = limit - consumed
-    let min_len = gzip.minimum_input_size()
-    let target = @cmp.minimum(min_len, limit)
-
-    // Read from underlying transport until we have enough data to make progress
-    try self.transport.peek_at_least(target) catch {
-      UnexpectedEof => raise BadRequest
-      err => raise err
-    } noraise {
-      _ => ()
+  let output = buf.mut_view(start=offset, end=offset + max_len)
+  for consumed = 0 {
+    // Pending plaintext never requires more compressed input.
+    let drained = gzip.step(b"", output)
+    if drained.produced > 0 {
+      break (consumed, drained.produced)
+    }
+    match drained.status {
+      Done => break (consumed, 0)
+      NeedMoreOutput => panic()
+      NeedMoreInput => ()
     }
 
-    let data = controller.buffered()
-    let available = @cmp.minimum(data.length(), limit)
-    if limit < min_len {
-      gzip.write_partial_data(
-        data.data(),
-        input_offset=data.start_offset(),
-        input_len=available,
-      )
-      self.transport.drop_exactly(available)
-      let consumed = consumed + available
-      break (consumed, 0)
+    // Reaching `limit` may only be a chunk boundary. The caller decides when
+    // it is the end of the complete encoded HTTP body and calls `check_end`.
+    guard consumed < limit else { break (consumed, 0) }
+    guard self.transport.peek() is Some(data) else { raise @io.UnexpectedEof }
+    let available = @cmp.minimum(data.length(), limit - consumed)
+    let result = gzip.step(data[:available], output)
+    self.transport.drop_exactly(result.consumed)
+    let consumed = consumed + result.consumed
+    if result.produced > 0 {
+      break (consumed, result.produced)
     }
-
-    // Perform the decoding
-    let (new_consumed, produced) = gzip.write(
-      data.data(),
-      input_offset=data.start_offset(),
-      input_len=available,
-      buf,
-      output_offset=offset,
-      output_len=max_len,
-    )
-    self.transport.drop_exactly(new_consumed)
-    let consumed = consumed + new_consumed
-    if produced > 0 {
-      break (consumed, produced)
-    } else {
-      continue consumed
+    match result.status {
+      Done => break (consumed, 0)
+      NeedMoreInput => continue consumed
+      NeedMoreOutput => panic()
     }
-  } nobreak {
-    guard consumed > 0 else { raise BadRequest }
-    (consumed, 0)
   }
 }
 
@@ -154,12 +138,12 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       }
       let remaining = remaining - consumed.to_uint64()
       self.body = if remaining == 0 {
-        if self.gzip is Some(gzip) {
-          guard gzip.is_finished() else { raise BadRequest }
-          self.gzip = None
-        }
         self.trailer = Some({})
-        Empty
+        if self.gzip is Some(_) {
+          GzipEnd
+        } else {
+          Empty
+        }
       } else {
         Fixed(remaining)
       }
@@ -170,6 +154,12 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       }
     }
     Chunked(0) => {
+      if self.gzip is Some(_) {
+        let (_, produced) = self.decode_chunk(buf, offset~, max_len~, limit=0)
+        if produced > 0 {
+          return produced
+        }
+      }
       guard self.transport.read_until(b"\r\n") is Some(len_bytes) else {
         raise @io.UnexpectedEof
       }
@@ -187,13 +177,19 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       guard next_chunk_len > 0 else {
         let (trailer, cookies) = self.read_headers()
         guard cookies.is_empty() else { raise BadRequest }
-        if self.gzip is Some(gzip) {
-          guard gzip.is_finished() else { raise BadRequest }
-          self.gzip = None
-        }
-        self.body = Empty
         self.trailer = Some(trailer)
-        return 0
+        if self.gzip is Some(_) {
+          self.body = GzipEnd
+          return @io.BinaryReaderImpl::raw_read_impl(
+            self,
+            buf,
+            offset~,
+            max_len~,
+          )
+        } else {
+          self.body = Empty
+          return 0
+        }
       }
       let limit = @cmp.minimum(next_chunk_len, @int.MAX_VALUE.to_uint64()).to_int()
       let (consumed, produced) = self.decode_chunk(
@@ -237,6 +233,23 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
         @io.BinaryReaderImpl::raw_read_impl(self, buf, offset~, max_len~)
       } else {
         produced
+      }
+    }
+    GzipEnd => {
+      guard! self.gzip is Some(gzip)
+      let output = buf.mut_view(start=offset, end=offset + max_len)
+      let result = gzip.step(b"", output)
+      if result.produced > 0 {
+        return result.produced
+      }
+      match result.status {
+        Done => {
+          self.gzip = None
+          self.body = Empty
+          0
+        }
+        NeedMoreOutput => panic()
+        NeedMoreInput => raise @io.UnexpectedEof
       }
     }
     PassThrough =>
