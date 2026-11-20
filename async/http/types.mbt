@@ -136,3 +136,11 @@ pub suberror ProtocolError {
   HttpVersionNotSupported(String)
   NotImplemented
 }
+
+///|
+/// Error raised when an invalid URI is specified
+#derive(@debug.Debug, @json.ToJson)
+suberror UriParseError {
+  InvalidFormat
+  UnsupportedProtocol(String)
+}
