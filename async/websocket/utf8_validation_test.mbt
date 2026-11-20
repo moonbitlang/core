@@ -55,6 +55,7 @@ async test "UTF8 validation" {
       @async.sleep(100)
     }
 
+    send_bad_message([0xe2, 0x82])
     send_bad_message([0x80])
     send_bad_message([0x79, 0x80])
     send_bad_message([0xc0, 0x80, 0x80])
@@ -66,21 +67,23 @@ async test "UTF8 validation" {
     send_bad_message([0xf0, 0x79, 0x80, 0x80])
   }
   json_inspect(log, content=[
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 2",
+    "client: [0xe2, 0x82] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
     "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 0",
     "client: [0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
     "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0x79, 0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 2",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 0",
     "client: [0xc0, 0x80, 0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 0",
     "client: [0xc0, 0x79] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 3",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0xe0, 0x80, 0x80, 0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 2",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0xe0, 0x80, 0x79] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 4",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0xf0, 0x80, 0x80, 0x80, 0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
-    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 3",
+    "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0xf0, 0x80, 0x80, 0x79] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",
     "server failed with TransportError(\n  ProtocolError(\"Text message is not valid UTF8\"),\n  context=\"@websocket.Conn\",\n) at byte 1",
     "client: [0xf0, 0x79, 0x80, 0x80] => Err(ConnectionClosed(\n  InvalidFramePayload,\n  Some(\"Text message is not valid UTF8\"),\n))",

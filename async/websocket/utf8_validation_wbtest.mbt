@@ -13,127 +13,160 @@
 // limitations under the License.
 
 ///|
+fn check(
+  bytes : Array[Byte],
+  state~ : Utf8State = Complete,
+) -> Utf8State raise InvalidUtf8 {
+  verify_utf8(Bytes::from_array(bytes), state~)
+}
+
+///|
 test "validate utf8 single byte" {
-  @debug.debug_inspect(verify_utf8([0x79], remaining=0), content="0")
+  assert_true(check([0x79]) is Complete)
+  assert_true(check([0x00, 0x7f]) is Complete)
 }
 
 ///|
 test "validate utf8 two bytes" {
-  @debug.debug_inspect(verify_utf8([0xc0], remaining=0), content="1")
-  @debug.debug_inspect(verify_utf8([0xdf, 0x80], remaining=0), content="0")
+  assert_true(check([0xc2]) is NeedOne)
+  assert_true(check([0xc2, 0x80]) is Complete)
+  assert_true(check([0xdf, 0xbf]) is Complete)
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xc0, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0xc2, 0x79])),
+    content="InvalidUtf8(1)",
+  )
+  // overlong encodings of U+0000..U+007F
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xc0, 0x80])),
+    content="InvalidUtf8(0)",
+  )
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xc1, 0xbf])),
+    content="InvalidUtf8(0)",
   )
 }
 
 ///|
 test "validate utf8 three bytes" {
-  @debug.debug_inspect(verify_utf8([0xe0], remaining=0), content="2")
-  @debug.debug_inspect(verify_utf8([0xe0, 0x80], remaining=0), content="1")
+  assert_true(check([0xe1]) is NeedTwo)
+  assert_true(check([0xe1, 0x80]) is NeedOne)
+  assert_true(check([0xef, 0xbf, 0xbf]) is Complete)
+  assert_true(check([0xe0, 0xa0, 0x80]) is Complete)
+  assert_true(check([0xed, 0x9f, 0xbf]) is Complete)
   @debug.debug_inspect(
-    verify_utf8([0xef, 0x80, 0x80], remaining=0),
-    content="0",
+    @test.expect_error(() => check([0xe1, 0x79])),
+    content="InvalidUtf8(1)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xe0, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0xe1, 0x80, 0x79])),
+    content="InvalidUtf8(2)",
+  )
+  // overlong encodings below U+0800
+  assert_true(check([0xe0]) is AfterE0)
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xe0, 0x80, 0x80])),
+    content="InvalidUtf8(1)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xe0, 0x80, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0xe0, 0x9f, 0xbf])),
+    content="InvalidUtf8(1)",
+  )
+  // UTF-16 surrogates U+D800..U+DFFF
+  assert_true(check([0xed]) is AfterED)
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xed, 0xa0, 0x80])),
+    content="InvalidUtf8(1)",
+  )
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xed, 0xbf, 0xbf])),
+    content="InvalidUtf8(1)",
   )
 }
 
 ///|
 test "validate utf8 four bytes" {
-  @debug.debug_inspect(verify_utf8([0xf0], remaining=0), content="3")
-  @debug.debug_inspect(verify_utf8([0xf0, 0x80], remaining=0), content="2")
+  assert_true(check([0xf1]) is NeedThree)
+  assert_true(check([0xf1, 0x80]) is NeedTwo)
+  assert_true(check([0xf1, 0x80, 0x80]) is NeedOne)
+  assert_true(check([0xf0, 0x90, 0x80, 0x80]) is Complete)
+  assert_true(check([0xf4, 0x8f, 0xbf, 0xbf]) is Complete)
   @debug.debug_inspect(
-    verify_utf8([0xf0, 0x80, 0x80], remaining=0),
-    content="1",
+    @test.expect_error(() => check([0xf1, 0x79])),
+    content="InvalidUtf8(1)",
   )
   @debug.debug_inspect(
-    verify_utf8([0xf7, 0x80, 0x80, 0x80], remaining=0),
-    content="0",
+    @test.expect_error(() => check([0xf1, 0x80, 0x80, 0x79])),
+    content="InvalidUtf8(3)",
+  )
+  assert_true(check([0xf1, 0x80, 0x80, 0x80, 0x79]) is Complete)
+  // overlong encodings below U+10000
+  assert_true(check([0xf0]) is AfterF0)
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xf0, 0x80, 0x80, 0x80])),
+    content="InvalidUtf8(1)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xf0, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0xf0, 0x8f, 0xbf, 0xbf])),
+    content="InvalidUtf8(1)",
+  )
+  // above U+10FFFF
+  assert_true(check([0xf4]) is AfterF4)
+  @debug.debug_inspect(
+    @test.expect_error(() => check([0xf4, 0x90, 0x80, 0x80])),
+    content="InvalidUtf8(1)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xf0, 0x80, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0xf5, 0x80, 0x80, 0x80])),
+    content="InvalidUtf8(0)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xf0, 0x80, 0x80, 0x79], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
-  )
-  @debug.debug_inspect(
-    verify_utf8([0xf0, 0x80, 0x80, 0x80, 0x79], remaining=0),
-    content="0",
+    @test.expect_error(() => check([0xf7, 0x80, 0x80, 0x80])),
+    content="InvalidUtf8(0)",
   )
 }
 
 ///|
 test "invalid utf8 first byte" {
-  @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xf8], remaining=0)),
-    content=(
-      #|Malformed(<BytesView: [0xf8]>)
-    ),
-  )
+  let bytes : Array[Byte] = [0x80, 0xbf, 0xc0, 0xc1, 0xf5, 0xf8, 0xff]
+  for b in bytes {
+    @debug.debug_inspect(
+      @test.expect_error(() => check([b])),
+      content="InvalidUtf8(0)",
+    )
+  }
 }
 
 ///|
 test "validate utf8 in the middle" {
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0x79], remaining=1)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0x79]>)
-    ),
+    @test.expect_error(() => check([0x79], state=NeedOne)),
+    content="InvalidUtf8(0)",
   )
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xc0], remaining=1)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0xc0]>)
-    ),
+    @test.expect_error(() => check([0xc2], state=NeedOne)),
+    content="InvalidUtf8(0)",
   )
+  assert_true(check([0x80], state=NeedOne) is Complete)
+  assert_true(check([0x80], state=NeedTwo) is NeedOne)
+  assert_true(check([0x80, 0x80], state=NeedThree) is NeedOne)
+  assert_true(check([0x80, 0x80, 0x79], state=NeedTwo) is Complete)
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xe0], remaining=1)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0xe0]>)
-    ),
+    @test.expect_error(() => check([0x80, 0x80, 0x80], state=NeedTwo)),
+    content="InvalidUtf8(2)",
   )
+  // the restricted first continuation byte also applies across chunks
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0xf0], remaining=1)),
-    content=(
-      #|Malformed(<BytesView: [0xc0, 0xf0]>)
-    ),
+    @test.expect_error(() => check([0x80], state=AfterE0)),
+    content="InvalidUtf8(0)",
   )
-  @debug.debug_inspect(verify_utf8([0x80], remaining=1), content="0")
-  @debug.debug_inspect(verify_utf8([0x80], remaining=2), content="1")
-  @debug.debug_inspect(verify_utf8([0x80, 0x80], remaining=3), content="1")
+  assert_true(check([0xa0, 0x80], state=AfterE0) is Complete)
   @debug.debug_inspect(
-    verify_utf8([0x80, 0x80, 0x79], remaining=2),
-    content="0",
+    @test.expect_error(() => check([0xa0], state=AfterED)),
+    content="InvalidUtf8(0)",
   )
+  assert_true(check([0x90], state=AfterF0) is NeedTwo)
   @debug.debug_inspect(
-    @test.expect_error(() => verify_utf8([0x80, 0x80, 0x80], remaining=2)),
-    content=(
-      #|Malformed(<BytesView: [0x80]>)
-    ),
+    @test.expect_error(() => check([0x90], state=AfterF4)),
+    content="InvalidUtf8(0)",
   )
 }
