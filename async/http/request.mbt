@@ -30,14 +30,6 @@ pub fn Protocol::default_port(p : Protocol) -> UInt16 {
 }
 
 ///|
-/// Error raised when an invalid URI is specified
-#derive(@debug.Debug, @json.ToJson)
-pub suberror UriParseError {
-  InvalidFormat
-  UnsupportedProtocol(String)
-}
-
-///|
 fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
   guard uri.find("://") is Some(protocol_len) else { raise InvalidFormat }
   let protocol = match uri[:protocol_len] {

@@ -61,10 +61,7 @@ pub suberror ProxyError {
 }
 
 #derive(@debug.Debug, @json.ToJson)
-pub suberror UriParseError {
-  InvalidFormat
-  UnsupportedProtocol(String)
-}
+type UriParseError
 
 // Types and methods
 #derive(@json.ToJson)
