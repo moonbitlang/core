@@ -23,3 +23,7 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "wbtest"
+
+options(
+  "allow-experimental-packages": [ "moonbitlang/core/simd" ],
+)

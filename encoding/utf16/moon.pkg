@@ -8,3 +8,7 @@ import {
   "moonbitlang/core/bench",
   "moonbitlang/core/quickcheck",
 } for "test"
+
+options(
+  "allow-experimental-packages": [ "moonbitlang/core/simd" ],
+)
