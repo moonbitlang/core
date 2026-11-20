@@ -39,8 +39,10 @@ let bulk_build_threshold = 64
 
 ///|
 /// Create a new instance.
+#alias(new, pending_deprecated)
+#as_free_fn(new, pending_deprecated)
 #as_free_fn
-pub fn[A] HashSet::new() -> HashSet[A] {
+pub fn[A] HashSet::empty() -> HashSet[A] {
   { data: None, }
 }
 
@@ -244,12 +246,12 @@ fn[A : Eq] build_hashset_node_range(
 
 ///|
 fn[A : Eq + Hash] hash_set_from_iter_by_add(iter : Iter[A]) -> HashSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
+  iter.fold(init=empty(), (s, e) => s.add(e))
 }
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
-  for value in arr; set = new() {
+  for value in arr; set = empty() {
     continue set.add(value)
   } nobreak {
     set
@@ -258,7 +260,7 @@ fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
-  guard arr.length() > 0 else { return new() }
+  guard arr.length() > 0 else { return empty() }
   if arr.length() <= bulk_build_threshold {
     return hash_set_from_array_by_add(arr)
   }
@@ -610,7 +612,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
   }
   iter.each(value => entries.push({ value, path: @path.of(value), }))
   if entries.is_empty() {
-    new()
+    empty()
   } else {
     { data: Some(build_hashset_node_range(entries, 0, entries.length(), 0)), }
   }
