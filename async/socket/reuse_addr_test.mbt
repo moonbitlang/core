@@ -17,8 +17,8 @@ async test "reuse addr" {
   let port : UInt16 = 8342
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
+  let mut last_server_closed = true
   async fn run_server(server : @socket.TcpServer) -> Unit {
-    defer server.close()
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
         let (conn, _) = server.accept()
@@ -34,12 +34,139 @@ async test "reuse addr" {
       }
     }
   }
-  for _ in 0..<2 {
+  for i in 0..<2 {
+    assert_true(last_server_closed)
     let server = @socket.TcpServer(
       @socket.Addr::parse("127.0.0.1:\{port}"),
       reuse_addr=true,
-    )
-    defer server.close()
+    ) catch {
+      err => raise Failure("server #\{i + 1} failed with: \{err}")
+    }
+    last_server_closed = false
+    defer {
+      server.close()
+      last_server_closed = true
+    }
+    run_server(server)
+  }
+}
+
+///|
+async test "reuse addr zero delay" {
+  let port : UInt16 = 8343
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
+  let mut last_server_closed = true
+  async fn run_server(server : @socket.TcpServer) -> Unit {
+    @async.with_task_group <| group => {
+      group.spawn_bg() <| () => {
+        let (conn, _) = server.accept()
+        defer conn.close()
+        conn.write(b"abcd")
+      }
+      group.spawn_bg() <| () => {
+        let conn = @socket.Tcp::connect(
+          @socket.Addr::parse("127.0.0.1:\{port}"),
+        )
+        defer conn.close()
+        inspect(@utf8.decode(conn.read_all()), content="abcd")
+      }
+    }
+  }
+  for i in 0..<2 {
+    @async.sleep(0)
+    assert_true(last_server_closed)
+    let server = @socket.TcpServer(
+      @socket.Addr::parse("127.0.0.1:\{port}"),
+      reuse_addr=true,
+    ) catch {
+      err => raise Failure("server #\{i + 1} failed with: \{err}")
+    }
+    last_server_closed = false
+    defer {
+      server.close()
+      last_server_closed = true
+    }
+    run_server(server)
+  }
+}
+
+///|
+async test "reuse addr small delay" {
+  let port : UInt16 = 8345
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
+  let mut last_server_closed = true
+  async fn run_server(server : @socket.TcpServer) -> Unit {
+    @async.with_task_group <| group => {
+      group.spawn_bg() <| () => {
+        let (conn, _) = server.accept()
+        defer conn.close()
+        conn.write(b"abcd")
+      }
+      group.spawn_bg() <| () => {
+        let conn = @socket.Tcp::connect(
+          @socket.Addr::parse("127.0.0.1:\{port}"),
+        )
+        defer conn.close()
+        inspect(@utf8.decode(conn.read_all()), content="abcd")
+      }
+    }
+  }
+  for i in 0..<2 {
+    @async.sleep(10)
+    assert_true(last_server_closed)
+    let server = @socket.TcpServer(
+      @socket.Addr::parse("127.0.0.1:\{port}"),
+      reuse_addr=true,
+    ) catch {
+      err => raise Failure("server #\{i + 1} failed with: \{err}")
+    }
+    last_server_closed = false
+    defer {
+      server.close()
+      last_server_closed = true
+    }
+    run_server(server)
+  }
+}
+
+///|
+async test "reuse addr large delay" {
+  let port : UInt16 = 8347
+  let lock = lock_port(port, protocol="tcp")
+  defer lock.unlock()
+  let mut last_server_closed = true
+  async fn run_server(server : @socket.TcpServer) -> Unit {
+    @async.with_task_group <| group => {
+      group.spawn_bg() <| () => {
+        let (conn, _) = server.accept()
+        defer conn.close()
+        conn.write(b"abcd")
+      }
+      group.spawn_bg() <| () => {
+        let conn = @socket.Tcp::connect(
+          @socket.Addr::parse("127.0.0.1:\{port}"),
+        )
+        defer conn.close()
+        inspect(@utf8.decode(conn.read_all()), content="abcd")
+      }
+    }
+  }
+  for i in 0..<2 {
+    @async.sleep(500)
+    assert_true(last_server_closed)
+    let server = @socket.TcpServer(
+      @socket.Addr::parse("127.0.0.1:\{port}"),
+      reuse_addr=true,
+    ) catch {
+      err => raise Failure("server #\{i + 1} failed with: \{err}")
+    }
+    last_server_closed = false
+    defer {
+      server.close()
+      last_server_closed = true
+    }
     run_server(server)
   }
 }

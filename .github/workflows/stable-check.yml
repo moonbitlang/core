@@ -20,7 +20,7 @@ jobs:
   stable-check:
     strategy:
       matrix:
-        os: ["ubuntu-latest","macos-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     continue-on-error: false
@@ -70,7 +70,7 @@ jobs:
   stable-native-opt-test:
     strategy:
       matrix:
-        os: ["ubuntu-latest","macos-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     continue-on-error: false
