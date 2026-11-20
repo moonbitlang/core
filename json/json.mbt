@@ -434,7 +434,7 @@ fn needs_escape_unit(code : UInt16, escape_slash : Bool) -> Bool {
 #cfg(not(any(target="native", target="wasm")))
 #warnings("-unused_value")
 fn suppress_unused_v128_import_on_scalar_targets() -> Unit {
-  ignore(@v128.i16x8_splat(0))
+  ignore(@simd.i16x8_splat(0))
 }
 
 ///|
@@ -450,25 +450,25 @@ fn need_escape(str : String, escape_slash : Bool) -> Bool {
 fn need_escape(str : String, escape_slash : Bool) -> Bool {
   let len = str.length()
   guard len >= 8 else { return need_escape_scalar(str, escape_slash, 0, len) }
-  let control_limit = @v128.i16x8_splat(' ')
-  let quote = @v128.i16x8_splat('"')
-  let backslash = @v128.i16x8_splat('\\')
-  let slash = @v128.i16x8_splat('/')
+  let control_limit = @simd.i16x8_splat(' ')
+  let quote = @simd.i16x8_splat('"')
+  let backslash = @simd.i16x8_splat('\\')
+  let slash = @simd.i16x8_splat('/')
   let tail_start = for pos = 0; pos + 8 <= len; {
-    let block = @v128.v128_load_i16x8(str, pos)
-    let escaped = @v128.v128_or_(
-      @v128.i16x8_lt_u(block, control_limit),
-      @v128.v128_or_(
-        @v128.i16x8_eq(block, quote),
-        @v128.i16x8_eq(block, backslash),
+    let block = @simd.v128_load_i16x8(str, pos)
+    let escaped = @simd.v128_or_(
+      @simd.i16x8_lt_u(block, control_limit),
+      @simd.v128_or_(
+        @simd.i16x8_eq(block, quote),
+        @simd.i16x8_eq(block, backslash),
       ),
     )
     let escaped = if escape_slash {
-      @v128.v128_or_(escaped, @v128.i16x8_eq(block, slash))
+      @simd.v128_or_(escaped, @simd.i16x8_eq(block, slash))
     } else {
       escaped
     }
-    if @v128.v128_any_true(escaped) {
+    if @simd.v128_any_true(escaped) {
       return true
     }
     continue pos + 8

@@ -16,12 +16,12 @@
 test "bench byte subtraction n=10000" (it : @bench.T) {
   let values = Array::makei(10000, i => {
     let x = i.to_uint64() + 1UL
-    @v128.i64x2_const(x * 0x123456789abcdefUL, x * 0xfedcba987654321UL)
+    @simd.i64x2_const(x * 0x123456789abcdefUL, x * 0xfedcba987654321UL)
   })
   it.bench(fn() {
-    let mut acc = @v128.i64x2_const(1UL, 2UL)
+    let mut acc = @simd.i64x2_const(1UL, 2UL)
     for value in values {
-      acc = @v128.i8x16_sub(acc, value)
+      acc = @simd.i8x16_sub(acc, value)
     }
     it.keep(acc)
   })
@@ -31,18 +31,18 @@ test "bench byte subtraction n=10000" (it : @bench.T) {
 test "bench mixed byte operations n=10000" (it : @bench.T) {
   let values = Array::makei(10001, i => {
     let x = i.to_uint64() + 1UL
-    @v128.i64x2_const(x * 0x123456789abcdefUL, x * 0xfedcba987654321UL)
+    @simd.i64x2_const(x * 0x123456789abcdefUL, x * 0xfedcba987654321UL)
   })
   it.bench(fn() {
-    let mut acc = @v128.i64x2_const(1UL, 2UL)
+    let mut acc = @simd.i64x2_const(1UL, 2UL)
     for i in 0..<10000 {
       let a = values.unsafe_get(i)
       let b = values.unsafe_get(i + 1)
-      acc = @v128.i8x16_add(acc, a)
-      acc = @v128.i8x16_sub(acc, b)
-      let equal = @v128.i8x16_eq(acc, a)
-      let less = @v128.i8x16_lt_u(acc, b)
-      acc = @v128.v128_xor(acc, @v128.v128_xor(equal, less))
+      acc = @simd.i8x16_add(acc, a)
+      acc = @simd.i8x16_sub(acc, b)
+      let equal = @simd.i8x16_eq(acc, a)
+      let less = @simd.i8x16_lt_u(acc, b)
+      acc = @simd.v128_xor(acc, @simd.v128_xor(equal, less))
     }
     it.keep(acc)
   })

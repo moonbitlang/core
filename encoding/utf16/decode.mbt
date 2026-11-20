@@ -28,13 +28,13 @@ const U_REP = '\u{FFFD}'
 #cfg(target="js")
 #warnings("-unused_value")
 fn suppress_unused_v128_import_on_js() -> Unit {
-  ignore(@v128.i8x16_splat(0))
+  ignore(@simd.i8x16_splat(0))
 }
 
 ///|
 #cfg(not(target="js"))
 fn utf16_swap_u16x8(value : V128) -> V128 {
-  @v128.i8x16_shuffle(
+  @simd.i8x16_shuffle(
     value, value, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
   )
 }
@@ -42,12 +42,12 @@ fn utf16_swap_u16x8(value : V128) -> V128 {
 ///|
 #cfg(not(target="js"))
 fn utf16_v128_has_surrogate(value : V128) -> Bool {
-  let lower = @v128.i16x8_splat(0xD800)
-  let upper = @v128.i16x8_splat(0xDFFF)
-  @v128.i16x8_bitmask(
-    @v128.v128_and_(
-      @v128.i16x8_ge_u(value, lower),
-      @v128.i16x8_le_u(value, upper),
+  let lower = @simd.i16x8_splat(0xD800)
+  let upper = @simd.i16x8_splat(0xDFFF)
+  @simd.i16x8_bitmask(
+    @simd.v128_and_(
+      @simd.i16x8_ge_u(value, lower),
+      @simd.i16x8_le_u(value, upper),
     ),
   ) !=
   0
@@ -105,7 +105,7 @@ fn utf16_decode_be_no_surrogate_v128(bytes : BytesView) -> String {
   for rest = bytes, written = 0 {
     match rest {
       [v128le(block), .. tail] => {
-        @v128.v128_store(string_bytes, written, utf16_swap_u16x8(block))
+        @simd.v128_store(string_bytes, written, utf16_swap_u16x8(block))
         continue tail, written + 16
       }
       [u16be(code_unit), .. tail] => {

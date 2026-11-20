@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/buffer",
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
-  "moonbitlang/core/v128",
+  "moonbitlang/core/simd",
 }
 
 import {
@@ -14,6 +14,6 @@ import {
   "moonbitlang/core/test",
 } for "wbtest"
 
-// The v128 import is only reachable from the linear-memory backends.
+// The simd import is only reachable from the linear-memory backends.
 
 warnings = "-29"

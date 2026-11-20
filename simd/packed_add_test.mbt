@@ -16,13 +16,13 @@
 test "packed byte addition handles every pair without carrying between lanes" {
   for a in 0..<256 {
     for b in 0..<256 {
-      let left = @v128.i8x16_splat(a.to_byte())
-      let right = @v128.i8x16_splat(b.to_byte())
+      let left = @simd.i8x16_splat(a.to_byte())
+      let right = @simd.i8x16_splat(b.to_byte())
       assert_eq(
-        @v128.i8x16_add(left, right),
-        @v128.i8x16_splat(((a + b) & 0xFF).to_byte()),
+        @simd.i8x16_add(left, right),
+        @simd.i8x16_splat(((a + b) & 0xFF).to_byte()),
       )
-      let neighbors = @v128.i8x16_const(
+      let neighbors = @simd.i8x16_const(
         0xff,
         0,
         a.to_byte(),
@@ -40,7 +40,7 @@ test "packed byte addition handles every pair without carrying between lanes" {
         0,
         0xff,
       )
-      let increments = @v128.i8x16_const(
+      let increments = @simd.i8x16_const(
         1,
         0,
         b.to_byte(),
@@ -58,11 +58,11 @@ test "packed byte addition handles every pair without carrying between lanes" {
         0,
         1,
       )
-      let result = @v128.i8x16_add(neighbors, increments)
+      let result = @simd.i8x16_add(neighbors, increments)
       let sum = ((a + b) & 0xff).to_byte()
       assert_eq(
         result,
-        @v128.i8x16_const(
+        @simd.i8x16_const(
           0, 0, sum, 0, 0, 0, 0, sum, sum, 0, 0, 0, 0, sum, 0, 0,
         ),
       )

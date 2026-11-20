@@ -71,8 +71,8 @@ fn encode_be_into(
   let base = str.start_offset()
   let mut index = 0
   while length - index >= 8 {
-    let block = @v128.v128_load_i16x8(source, base + index)
-    @v128.v128_store(out, offset + index * 2, utf16_swap_u16x8(block))
+    let block = @simd.v128_load_i16x8(source, base + index)
+    @simd.v128_store(out, offset + index * 2, utf16_swap_u16x8(block))
     index += 8
   }
   while index < length {

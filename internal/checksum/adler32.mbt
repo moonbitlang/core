@@ -114,10 +114,10 @@ fn adler_bytes_as_fixedarray(data : Bytes) -> FixedArray[Byte] = "%identity"
 #cfg(any(target="native", target="wasm"))
 #inline
 fn adler_lane_sum(lanes : V128) -> Int32 {
-  (@v128.i32x4_extract_lane(lanes, 0) +
-  @v128.i32x4_extract_lane(lanes, 1) +
-  @v128.i32x4_extract_lane(lanes, 2) +
-  @v128.i32x4_extract_lane(lanes, 3)).reinterpret_as_int()
+  (@simd.i32x4_extract_lane(lanes, 0) +
+  @simd.i32x4_extract_lane(lanes, 1) +
+  @simd.i32x4_extract_lane(lanes, 2) +
+  @simd.i32x4_extract_lane(lanes, 3)).reinterpret_as_int()
 }
 
 ///|
@@ -144,36 +144,36 @@ fn Adler32::fold_chunks16(
   guard chunks > 0 else { return start }
   let bytes = adler_bytes_as_fixedarray(data.data())
   let offset = data.start_offset() + start
-  let weights_low = @v128.i16x8_const(16, 15, 14, 13, 12, 11, 10, 9)
-  let weights_high = @v128.i16x8_const(8, 7, 6, 5, 4, 3, 2, 1)
-  let mut sums = @v128.i32x4_splat(0)
-  let mut before = @v128.i32x4_splat(0)
-  let mut weighted = @v128.i32x4_splat(0)
+  let weights_low = @simd.i16x8_const(16, 15, 14, 13, 12, 11, 10, 9)
+  let weights_high = @simd.i16x8_const(8, 7, 6, 5, 4, 3, 2, 1)
+  let mut sums = @simd.i32x4_splat(0)
+  let mut before = @simd.i32x4_splat(0)
+  let mut weighted = @simd.i32x4_splat(0)
   for chunk in 0..<chunks {
     // SAFETY: `chunk < chunks` gives `start + 16 * chunk + 16 <= end`, and
     // `end <= data.length()`: the sixteen bytes lie inside the view, hence
     // inside its backing bytes.
-    let block = @v128.v128_load(bytes, offset + chunk * 16)
-    before = @v128.i32x4_add(before, sums)
-    sums = @v128.i32x4_add(
+    let block = @simd.v128_load(bytes, offset + chunk * 16)
+    before = @simd.i32x4_add(before, sums)
+    sums = @simd.i32x4_add(
       sums,
-      @v128.i32x4_extadd_pairwise_i16x8_u(
-        @v128.i16x8_extadd_pairwise_i8x16_u(block),
+      @simd.i32x4_extadd_pairwise_i16x8_u(
+        @simd.i16x8_extadd_pairwise_i8x16_u(block),
       ),
     )
     // Zero-extended bytes times weights of at most 16: the signed 16-bit
     // products of the dot product are exact.
-    weighted = @v128.i32x4_add(
+    weighted = @simd.i32x4_add(
       weighted,
-      @v128.i32x4_dot_i16x8_s(
-        @v128.i16x8_extend_low_i8x16_u(block),
+      @simd.i32x4_dot_i16x8_s(
+        @simd.i16x8_extend_low_i8x16_u(block),
         weights_low,
       ),
     )
-    weighted = @v128.i32x4_add(
+    weighted = @simd.i32x4_add(
       weighted,
-      @v128.i32x4_dot_i16x8_s(
-        @v128.i16x8_extend_high_i8x16_u(block),
+      @simd.i32x4_dot_i16x8_s(
+        @simd.i16x8_extend_high_i8x16_u(block),
         weights_high,
       ),
     )

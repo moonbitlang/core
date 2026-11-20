@@ -1,11 +1,4 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/float",
-  "moonbitlang/core/int16",
+  "moonbitlang/core/simd",
 }
-
-import {
-  "moonbitlang/core/bench",
-  "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
-} for "test"

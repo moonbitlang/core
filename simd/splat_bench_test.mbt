@@ -16,9 +16,9 @@
 test "bench byte splat and XOR n=10000" (it : @bench.T) {
   let values = Array::makei(10000, i => (i * 73 + (i >> 3)).to_byte())
   it.bench(fn() {
-    let mut acc = @v128.i64x2_const(1UL, 2UL)
+    let mut acc = @simd.i64x2_const(1UL, 2UL)
     for value in values {
-      acc = @v128.v128_xor(acc, @v128.i8x16_splat(value))
+      acc = @simd.v128_xor(acc, @simd.i8x16_splat(value))
     }
     it.keep(acc)
   })
@@ -28,9 +28,9 @@ test "bench byte splat and XOR n=10000" (it : @bench.T) {
 test "bench UInt16 splat and XOR n=10000" (it : @bench.T) {
   let values = Array::makei(10000, i => (i * 977 + (i >> 2)).to_uint16())
   it.bench(fn() {
-    let mut acc = @v128.i64x2_const(1UL, 2UL)
+    let mut acc = @simd.i64x2_const(1UL, 2UL)
     for value in values {
-      acc = @v128.v128_xor(acc, @v128.i16x8_splat(value))
+      acc = @simd.v128_xor(acc, @simd.i16x8_splat(value))
     }
     it.keep(acc)
   })

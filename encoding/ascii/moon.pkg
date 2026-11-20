@@ -1,7 +1,7 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
-  "moonbitlang/core/v128",
+  "moonbitlang/core/simd",
 }
 
 import {
