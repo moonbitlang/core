@@ -148,13 +148,6 @@ const NON_EMPTY_MESSAGE_HEADER_END : Bytes = b"Transfer-Encoding: chunked\r\n\r\
 const EMPTY_MESSAGE_HEADER_END : Bytes = b"Content-Length: 0\r\n\r\n"
 
 ///|
-/// Error raised when the user is sending a fixed length HTTP message body,
-/// but the actual length of the message body is incorrect,
-/// or when the `Content-Length` header is not a decimal number.
-#derive(@debug.Debug, @json.ToJson)
-pub suberror IncorrectBodyLength
-
-///|
 impl @io.BinaryWriter for Sender
 
 ///|

@@ -48,14 +48,6 @@ pub impl Show for RequestMethod with fn to_string(self) {
 pub extend RequestMethod with Show::{to_string}
 
 ///|
-/// Error raised when an invalid extension method (i.e. not valid HTTP method name)
-/// is supplied when sending a HTTP request
-#derive(@debug.Debug, @json.ToJson)
-pub(all) suberror InvalidMethod {
-  InvalidMethod(String)
-}
-
-///|
 /// Type for HTTP headers. The names of headers are case insensitive.
 ///
 /// The RFC requires that multiple header entries with the same name
@@ -143,4 +135,14 @@ pub suberror ProtocolError {
 suberror UriParseError {
   InvalidFormat
   UnsupportedProtocol(String)
+}
+
+///|
+/// Error raised when the user intent to send an invalid HTTP message,
+/// for example sending with an invalid extension method name,
+/// or sending a fixed-length body with incorrect amount of data.
+#derive(@debug.Debug, @json.ToJson)
+suberror InvalidMessage {
+  InvalidMethod(String)
+  IncorrectBodyLength
 }

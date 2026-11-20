@@ -40,12 +40,7 @@ pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)
-pub suberror IncorrectBodyLength
-
-#derive(@debug.Debug, @json.ToJson)
-pub(all) suberror InvalidMethod {
-  InvalidMethod(String)
-}
+type InvalidMessage
 
 #non_exhaustive
 #derive(@debug.Debug, @json.ToJson)
