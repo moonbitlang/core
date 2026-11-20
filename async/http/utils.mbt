@@ -92,7 +92,7 @@ fn is_valid_http_header_field_name(name : StringView) -> Bool {
 /// Each step matches one extension: its name, then an optional value.
 #cfg(any(target="native", target="wasm"))
 fn validate_chunk_extension(extension : StringView) -> Unit raise {
-  guard extension is [';', ..] else { raise BadRequest }
+  guard extension is [';', ..] else { raise BadMessage }
   for rest = extension {
     lexmatch rest with longest {
       re"^$" => return
@@ -102,7 +102,7 @@ fn validate_chunk_extension(extension : StringView) -> Unit raise {
           (re"^=" + OWS + QUOTED_STRING + OWS, after=rest) => continue rest
           _ => continue rest
         }
-      _ => raise BadRequest
+      _ => raise BadMessage
     }
   }
 }

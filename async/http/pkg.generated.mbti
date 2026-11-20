@@ -39,20 +39,20 @@ pub async fn request_stream(RequestMethod, StringView, headers? : Map[CaseInsens
 pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
 // Errors
-#non_exhaustive
-#derive(@debug.Debug, @json.ToJson)
-pub suberror HttpProtocolError {
-  BadRequest
-  HttpVersionNotSupported(String)
-  NotImplemented
-}
-
 #derive(@debug.Debug, @json.ToJson)
 pub suberror IncorrectBodyLength
 
 #derive(@debug.Debug, @json.ToJson)
 pub(all) suberror InvalidMethod {
   InvalidMethod(String)
+}
+
+#non_exhaustive
+#derive(@debug.Debug, @json.ToJson)
+pub suberror ProtocolError {
+  BadMessage
+  HttpVersionNotSupported(String)
+  NotImplemented
 }
 
 #derive(@debug.Debug, @json.ToJson)
