@@ -97,7 +97,7 @@ pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
   // materialize the whole iterator, so live memory would grow with the input
   // length instead of the number of distinct elements. Callers who want the
   // bulk path and can afford the buffer can write `SortedSet(iter.to_array())`.
-  iter.fold(init=new(), (s, e) => s.add(e))
+  iter.fold(init=empty(), (s, e) => s.add(e))
 }
 
 ///|
@@ -162,14 +162,14 @@ test "Eq - different sizes" {
 
 ///|
 test "Eq - empty sets" {
-  let s1 : SortedSet[Int32] = new()
-  let s2 : SortedSet[Int32] = new()
+  let s1 : SortedSet[Int32] = empty()
+  let s2 : SortedSet[Int32] = empty()
   inspect(s1 == s2, content="true")
 }
 
 ///|
 test "Eq - one empty one not" {
-  let s1 : SortedSet[Int32] = new()
+  let s1 : SortedSet[Int32] = empty()
   let s2 = SortedSet([1])
   inspect(s1 == s2, content="false")
 }
@@ -211,7 +211,7 @@ test "Compare - same size first larger by elements" {
 
 ///|
 test "Compare - empty sets" {
-  let s1 : SortedSet[Int32] = new()
-  let s2 : SortedSet[Int32] = new()
+  let s1 : SortedSet[Int32] = empty()
+  let s2 : SortedSet[Int32] = empty()
   inspect(s1.compare(s2), content="0")
 }
