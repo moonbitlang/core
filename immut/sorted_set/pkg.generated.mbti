@@ -21,6 +21,10 @@ pub fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
 #alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#alias(new, pending_deprecated)
+#as_free_fn
+#as_free_fn(new, pending_deprecated)
+pub fn[A] SortedSet::empty() -> Self[A]
 pub fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -54,8 +58,6 @@ pub fn[A] SortedSet::max(Self[A]) -> A
 pub fn[A] SortedSet::max_option(Self[A]) -> A?
 pub fn[A] SortedSet::min(Self[A]) -> A
 pub fn[A] SortedSet::min_option(Self[A]) -> A?
-#as_free_fn
-pub fn[A] SortedSet::new() -> Self[A]
 pub fn[A : Compare] SortedSet::range(Self[A], low~ : A, high~ : A) -> Iter[A]
 pub fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::remove_min(Self[A]) -> Self[A]
