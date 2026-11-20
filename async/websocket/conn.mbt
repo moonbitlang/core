@@ -75,14 +75,8 @@ pub struct Conn {
   // In this case, we use `mask_offset` to store current offset in the mask.
   priv mut mask_offset : Int32
 
-  // when receiving a text message,
-  // we perform rolling UTF8 validation to confront to the protocol spec.
-  // Sometimes maybe only a part of a complete UTF8 char have been received.
-  // In this case, we use `utf8_remaining` to store
-  // the remaining number of bytes expected in the current UTF8 character,
-  // so that we can continue UTF8 validation when more data arrives.
-  // `-1` indicates that current message is a binary message.
-  priv mut utf8_remaining : Int32
+  // Incremental UTF-8 state for text messages.
+  priv mut utf8_state : Utf8State?
 
   // =================
   // state for writing
@@ -169,7 +163,7 @@ fn Conn::new(
     curr_message: None,
     read_mask: None,
     mask_offset: 0,
-    utf8_remaining: -1,
+    utf8_state: None,
     text: @io.Utf8Writer::new_uninitialized(),
     writer_ctrl: BinaryWriterController(),
     write_lock: Semaphore(1),
@@ -513,7 +507,7 @@ pub async fn Conn::recv(self : Conn) -> Message {
           self.read_opcode = Some(Text)
         }
         self.curr_frame_remaining = frame.payload_len
-        self.utf8_remaining = 0
+        self.utf8_state = Some(Complete)
         break Text
       }
       Binary => {
@@ -521,7 +515,7 @@ pub async fn Conn::recv(self : Conn) -> Message {
           self.read_opcode = Some(Binary)
         }
         self.curr_frame_remaining = frame.payload_len
-        self.utf8_remaining = -1
+        self.utf8_state = None
         break Binary
       }
     }
@@ -575,6 +569,12 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
     // if we are not in the last frame of a message,
     // the end of this frame is the end of the whole message
     if conn.read_opcode is None {
+      if conn.utf8_state is Some(state) && !(state is Complete) {
+        conn.protocol_error(
+          "Text message is not valid UTF8",
+          code=InvalidFramePayload,
+        )
+      }
       self.state = Closed
       if conn.curr_message is Some(message) {
         message.text.close()
@@ -626,10 +626,10 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
     mask_payload(buf, mask, offset~, len=n, mask_offset=conn.mask_offset)
     conn.mask_offset = (conn.mask_offset + n) % 4
   }
-  if conn.utf8_remaining >= 0 {
-    conn.utf8_remaining = verify_utf8(
+  if conn.utf8_state is Some(state) {
+    let next = verify_utf8(
       buf.unsafe_reinterpret_as_bytes()[offset:offset + n],
-      remaining=conn.utf8_remaining,
+      state~,
     ) catch {
       _ =>
         conn.protocol_error(
@@ -637,6 +637,7 @@ impl @io.BinaryReaderImpl for Message with fn raw_read_impl(
           code=InvalidFramePayload,
         )
     }
+    conn.utf8_state = Some(next)
   }
   n
 }

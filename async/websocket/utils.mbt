@@ -45,24 +45,49 @@ fn generate_accept_key(client_key : String) -> String raise {
 }
 
 ///|
-fn verify_utf8(data : BytesView, remaining~ : Int32) -> Int32 raise {
-  for i = 0, remaining = remaining; i < data.length(); {
-    match (remaining, data.unsafe_get(i)) {
-      (0, 0..<0x80) => continue i + 1, 0
-      (0, 0xc0..<0xe0) => continue i + 1, 1
-      (0, 0xe0..<0xf0) => continue i + 1, 2
-      (0, 0xf0..<0xf8) => continue i + 1, 3
-      (0, _) => {
-        ignore(@utf8.decode(data[i:i + 1]))
-        panic()
-      }
-      (remaining, 0x80..<0xc0) => continue i + 1, remaining - 1
-      (_, byte) => {
-        ignore(@utf8.decode([0xc0, byte]))
-        panic()
-      }
+/// Raised by `verify_utf8` with the offset of the offending byte.
+#derive(@debug.Debug)
+priv suberror InvalidUtf8 {
+  InvalidUtf8(Int32)
+}
+
+///|
+priv enum Utf8State {
+  Complete
+  NeedOne
+  NeedTwo
+  NeedThree
+  AfterE0
+  AfterED
+  AfterF0
+  AfterF4
+}
+
+///|
+/// Validate a chunk starting in the state left by the preceding chunk.
+fn verify_utf8(
+  data : BytesView,
+  state~ : Utf8State,
+) -> Utf8State raise InvalidUtf8 {
+  for i = 0, state = state; i < data.length(); {
+    let next = match (state, data.unsafe_get(i)) {
+      (Complete, 0x00..<=0x7f) => Complete
+      (Complete, 0xc2..<=0xdf) => NeedOne
+      (Complete, 0xe0) => AfterE0
+      (Complete, 0xe1..<=0xec | 0xee..<=0xef) => NeedTwo
+      (Complete, 0xed) => AfterED
+      (Complete, 0xf0) => AfterF0
+      (Complete, 0xf1..<=0xf3) => NeedThree
+      (Complete, 0xf4) => AfterF4
+      (NeedOne, 0x80..<=0xbf) => Complete
+      (NeedTwo, 0x80..<=0xbf) => NeedOne
+      (NeedThree, 0x80..<=0xbf) => NeedTwo
+      (AfterE0, 0xa0..<=0xbf) | (AfterED, 0x80..<=0x9f) => NeedOne
+      (AfterF0, 0x90..<=0xbf) | (AfterF4, 0x80..<=0x8f) => NeedTwo
+      _ => raise InvalidUtf8(i)
     }
+    continue i + 1, next
   } nobreak {
-    remaining
+    state
   }
 }
