@@ -314,3 +314,39 @@ async test "duplicated ping" {
     }
   }
 }
+
+///|
+async test "invalid send_close leaves the connection usable" {
+  @async.with_task_group() <| group => {
+    let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    defer server.close()
+    group.spawn_bg() <| () => {
+      let (http, _) = server.accept()
+      defer http.close()
+      let ws = @websocket.from_http_server(http.read_request(), http)
+      defer ws.close()
+      ws.send_text(ws.recv().text.read_all())
+    }
+    let client = @websocket.connect("ws://127.0.0.1:\{server.addr.port}")
+    defer client.close()
+    let codes : Array[@websocket.CloseCode] = [
+      Abnormal,
+      Other(1005),
+      Other(1015),
+      Other(999),
+      Other(2000),
+      Other(5000),
+    ]
+    for code in codes {
+      assert_true(
+        @test.expect_error_async(() => client.send_close(code~)) is Failure(_),
+      )
+    }
+    let reason = "é".repeat(62) // 124 UTF-8 bytes
+    assert_true(
+      @test.expect_error_async(() => client.send_close(reason~)) is Failure(_),
+    )
+    client.send_text("still open")
+    inspect(client.recv().text.read_all(), content="still open")
+  }
+}
