@@ -19,6 +19,10 @@ pub fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
 pub fn[K : Eq + Hash, V] HashMap::contains(Self[K, V], K) -> Bool
 pub fn[K : Eq, V] HashMap::difference(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
+#alias(new, pending_deprecated)
+#as_free_fn
+#as_free_fn(new, pending_deprecated)
+pub fn[K, V] HashMap::empty() -> Self[K, V]
 pub fn[K : Eq, V : Eq] HashMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] HashMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
@@ -52,8 +56,6 @@ pub fn[K, V, A] HashMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise
 pub fn[K : Eq, V] HashMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(union_with, deprecated)
 pub fn[K : Eq, V] HashMap::merge_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
-#as_free_fn
-pub fn[K, V] HashMap::new() -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 pub fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
