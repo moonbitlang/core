@@ -152,22 +152,22 @@ pub impl Compare for Byte with fn compare(self : Byte, that : Byte) -> Int32 {
 }
 
 ///|
-pub impl Compare for Byte with fn op_lt(x, y) {
+pub impl Compare for Byte with fn lt(x, y) {
   x.to_int() < y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with fn op_le(x, y) {
+pub impl Compare for Byte with fn le(x, y) {
   x.to_int() <= y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with fn op_gt(x, y) {
+pub impl Compare for Byte with fn gt(x, y) {
   x.to_int() > y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with fn op_ge(x, y) {
+pub impl Compare for Byte with fn ge(x, y) {
   x.to_int() >= y.to_int()
 }
 

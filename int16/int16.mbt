@@ -86,22 +86,22 @@ pub impl Compare for Int16 with fn compare(self, that) {
 ///|
 // Int16 values may arrive as raw 16-bit bits, for example from SIMD lane
 // extraction on JavaScript. Normalize both operands before comparing them.
-pub impl Compare for Int16 with fn op_lt(x, y) {
+pub impl Compare for Int16 with fn lt(x, y) {
   x.to_int() < y.to_int()
 }
 
 ///|
-pub impl Compare for Int16 with fn op_le(x, y) {
+pub impl Compare for Int16 with fn le(x, y) {
   x.to_int() <= y.to_int()
 }
 
 ///|
-pub impl Compare for Int16 with fn op_gt(x, y) {
+pub impl Compare for Int16 with fn gt(x, y) {
   x.to_int() > y.to_int()
 }
 
 ///|
-pub impl Compare for Int16 with fn op_ge(x, y) {
+pub impl Compare for Int16 with fn ge(x, y) {
   x.to_int() >= y.to_int()
 }
 

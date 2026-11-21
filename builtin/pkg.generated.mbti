@@ -1551,9 +1551,17 @@ pub(open) trait BitXOr {
 
 pub(open) trait Compare : Eq {
   fn compare(Self, Self) -> Int32
+  fn lt(Self, Self) -> Bool = _
+  #pending_deprecated
   fn op_lt(Self, Self) -> Bool = _
+  fn gt(Self, Self) -> Bool = _
+  #pending_deprecated
   fn op_gt(Self, Self) -> Bool = _
+  fn le(Self, Self) -> Bool = _
+  #pending_deprecated
   fn op_le(Self, Self) -> Bool = _
+  fn ge(Self, Self) -> Bool = _
+  #pending_deprecated
   fn op_ge(Self, Self) -> Bool = _
 }
 pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)

@@ -783,16 +783,16 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 pub impl Compare for Float with fn compare(self, other) = "%f32.compare"
 
 ///|
-pub impl Compare for Float with fn op_lt(x, y) = "%f32.lt"
+pub impl Compare for Float with fn lt(x, y) = "%f32.lt"
 
 ///|
-pub impl Compare for Float with fn op_le(x, y) = "%f32.le"
+pub impl Compare for Float with fn le(x, y) = "%f32.le"
 
 ///|
-pub impl Compare for Float with fn op_gt(x, y) = "%f32.gt"
+pub impl Compare for Float with fn gt(x, y) = "%f32.gt"
 
 ///|
-pub impl Compare for Float with fn op_ge(x, y) = "%f32.ge"
+pub impl Compare for Float with fn ge(x, y) = "%f32.ge"
 
 ///|
 /// Reinterprets the bits of a 32-bit floating-point number as an unsigned 32-bit
