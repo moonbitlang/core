@@ -20,7 +20,7 @@
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(3, "c"), (1, "a"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(3, "c"), (1, "a"), (2, "b")])
 ///   @debug.debug_inspect(map.first(), content="Some((1, \"a\"))")
 /// }
 /// ```
@@ -39,7 +39,7 @@ pub fn[K, V] SortedMap::first(self : SortedMap[K, V]) -> (K, V)? {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(3, "c"), (1, "a"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(3, "c"), (1, "a"), (2, "b")])
 ///   @debug.debug_inspect(map.last(), content="Some((3, \"c\"))")
 /// }
 /// ```
@@ -59,7 +59,7 @@ pub fn[K, V] SortedMap::last(self : SortedMap[K, V]) -> (K, V)? {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(3, "c"), (1, "a"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(3, "c"), (1, "a"), (2, "b")])
 ///   @debug.debug_inspect(map.pop_first(), content="Some((1, \"a\"))")
 ///   @debug.debug_inspect(map.to_array(), content="[(2, \"b\"), (3, \"c\")]")
 /// }
@@ -78,7 +78,7 @@ pub fn[K, V] SortedMap::pop_first(self : SortedMap[K, V]) -> (K, V)? {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(3, "c"), (1, "a"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(3, "c"), (1, "a"), (2, "b")])
 ///   @debug.debug_inspect(map.pop_last(), content="Some((3, \"c\"))")
 ///   @debug.debug_inspect(map.to_array(), content="[(1, \"a\"), (2, \"b\")]")
 /// }
@@ -97,7 +97,7 @@ pub fn[K, V] SortedMap::pop_last(self : SortedMap[K, V]) -> (K, V)? {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+///   let map = @sorted_map.SortedMap([(10, "a"), (20, "b"), (30, "c")])
 ///   @debug.debug_inspect(map.first_ge(20), content="Some((20, \"b\"))")
 ///   @debug.debug_inspect(map.first_ge(21), content="Some((30, \"c\"))")
 ///   @debug.debug_inspect(map.first_ge(31), content="None")
@@ -116,7 +116,7 @@ pub fn[K : Compare, V] SortedMap::first_ge(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+///   let map = @sorted_map.SortedMap([(10, "a"), (20, "b"), (30, "c")])
 ///   @debug.debug_inspect(map.first_gt(20), content="Some((30, \"c\"))")
 ///   @debug.debug_inspect(map.first_gt(30), content="None")
 /// }
@@ -134,7 +134,7 @@ pub fn[K : Compare, V] SortedMap::first_gt(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+///   let map = @sorted_map.SortedMap([(10, "a"), (20, "b"), (30, "c")])
 ///   @debug.debug_inspect(map.last_le(20), content="Some((20, \"b\"))")
 ///   @debug.debug_inspect(map.last_le(19), content="Some((10, \"a\"))")
 ///   @debug.debug_inspect(map.last_le(9), content="None")
@@ -153,7 +153,7 @@ pub fn[K : Compare, V] SortedMap::last_le(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+///   let map = @sorted_map.SortedMap([(10, "a"), (20, "b"), (30, "c")])
 ///   @debug.debug_inspect(map.last_lt(20), content="Some((10, \"a\"))")
 ///   @debug.debug_inspect(map.last_lt(10), content="None")
 /// }
@@ -174,7 +174,7 @@ pub fn[K : Compare, V] SortedMap::last_lt(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(1, "a"), (3, "c"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(1, "a"), (3, "c"), (2, "b")])
 ///   @debug.debug_inspect(
 ///     map.rev_iter().to_array(),
 ///     content="[(3, \"c\"), (2, \"b\"), (1, \"a\")]",
@@ -191,7 +191,7 @@ pub fn[K, V] SortedMap::rev_iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(1, "a"), (3, "c"), (2, "b")])
+///   let map = @sorted_map.SortedMap([(1, "a"), (3, "c"), (2, "b")])
 ///   let entries = []
 ///   for key, value in map.rev_iter2() {
 ///     entries.push((key, value))

@@ -64,10 +64,10 @@ fn[K, V] new_sorted_map() -> SortedMap[K, V] {
 ///   assert_true(map.get(1) == Some("one"))
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, pending_deprecated="Use `SortedMap(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `SortedMap(...)` instead")
+#alias(of, deprecated="Use `SortedMap(...)` instead")
+#as_free_fn(of, deprecated="Use `SortedMap(...)` instead")
 pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
@@ -614,7 +614,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+///   let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
 ///   let map2 = map1.copy()
 ///   map2.set(4, "d")
 ///   inspect(map1.length(), content="3")
@@ -659,8 +659,8 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
 ///   let merged = map1.merge(map2)
 ///   debug_inspect(merged.get(1), content="Some(\"a\")")
 ///   debug_inspect(merged.get(2), content="Some(\"c\")")
@@ -692,8 +692,8 @@ pub fn[K : Compare, V] SortedMap::merge(
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
 ///   map1.merge_in_place(map2)
 ///   debug_inspect(map1.get(1), content="Some(\"a\")")
 ///   debug_inspect(map1.get(2), content="Some(\"c\")")
@@ -917,7 +917,7 @@ test "new" {
 
 ///|
 test "of" {
-  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = SortedMap([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   inspect(map.length(), content="3")
 }
@@ -982,7 +982,7 @@ test "add4" {
 
 ///|
 test "add duplicate key" {
-  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = SortedMap([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
   map.set(1, "x")
   inspect(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
@@ -1059,7 +1059,7 @@ test "_[_]=_" {
 
 ///|
 test "clear" {
-  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = SortedMap([(3, "c"), (2, "b"), (1, "a")])
   map.clear()
   inspect(map.debug_tree(), content="_")
   inspect(map.length(), content="0")
@@ -1067,7 +1067,7 @@ test "clear" {
 
 ///|
 test "copy" {
-  let map1 = from_array([
+  let map1 = SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),

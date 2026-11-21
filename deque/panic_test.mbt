@@ -14,64 +14,64 @@
 
 ///|
 test "panic unsafe_pop_front" {
-  @deque.from_array(([] : Array[Int32])).unsafe_pop_front()
+  @deque.Deque(([] : Array[Int32])).unsafe_pop_front()
 }
 
 ///|
 test "panic unsafe_pop_back" {
-  @deque.from_array(([] : Array[Int32])).unsafe_pop_back()
+  @deque.Deque(([] : Array[Int32])).unsafe_pop_back()
 }
 
 ///|
 test "panic get" {
-  @deque.from_array([1, 2, 3])[-1] |> ignore
+  @deque.Deque([1, 2, 3])[-1] |> ignore
 }
 
 ///|
 test "panic Deque::set" {
-  @deque.from_array([1, 2, 3])[-1] = 1
+  @deque.Deque([1, 2, 3])[-1] = 1
 }
 
 ///|
 test "panic insert out of bounds" {
-  @deque.from_array([1, 2, 3]).insert(4, 9)
+  @deque.Deque([1, 2, 3]).insert(4, 9)
 }
 
 ///|
 test "panic remove out of bounds" {
-  @deque.from_array([1, 2, 3]).remove(3) |> ignore
+  @deque.Deque([1, 2, 3]).remove(3) |> ignore
 }
 
 ///|
 test "panic drain with negative start" {
-  @deque.from_array([5, 6]).drain(start=-1) |> ignore
+  @deque.Deque([5, 6]).drain(start=-1) |> ignore
 }
 
 ///|
 test "panic drain with start out of bounds" {
-  @deque.from_array([5, 6]).drain(start=100) |> ignore
+  @deque.Deque([5, 6]).drain(start=100) |> ignore
 }
 
 ///|
 test "panic drain with negative len" {
-  @deque.from_array([5, 6]).drain(start=0, len=-1) |> ignore
+  @deque.Deque([5, 6]).drain(start=0, len=-1) |> ignore
 }
 
 ///|
 test "panic drain with len exceeding bounds" {
-  @deque.from_array([5, 6]).drain(start=1, len=100) |> ignore
+  @deque.Deque([5, 6]).drain(start=1, len=100) |> ignore
 }
 
 ///|
 test "panic blit_to with overflowing source range" {
-  let source = @deque.from_array([1, 2, 3])
-  let destination = @deque.from_array([0])
+  let source = @deque.Deque([1, 2, 3])
+  let destination = @deque.Deque([0])
   source.blit_to(destination, src_offset=0x7fffffff, len=1)
 }
 
 ///|
 test "panic drain with overflowing range" {
-  @deque.from_array([1, 2, 3]).drain(start=1, len=0x7fffffff) |> ignore
+  @deque.Deque([1, 2, 3]).drain(start=1, len=0x7fffffff) |> ignore
 }
 
 ///|

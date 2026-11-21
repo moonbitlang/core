@@ -20,13 +20,13 @@ let deque_bench_n = 50000
 /// variants are both kept because the element type decides whether the
 /// per-element store carries reference-counting traffic.
 test "bench Deque::to_array Int n=50000" (it : @bench.T) {
-  let d = @deque.from_array(Array::makei(deque_bench_n, i => i))
+  let d = @deque.Deque(Array::makei(deque_bench_n, i => i))
   it.bench(fn() { it.keep(d.to_array()) })
 }
 
 ///|
 test "bench Deque::to_array Ref n=50000" (it : @bench.T) {
-  let d = @deque.from_array(Array::makei(deque_bench_n, i => "value\{i}"))
+  let d = @deque.Deque(Array::makei(deque_bench_n, i => "value\{i}"))
   it.bench(fn() { it.keep(d.to_array()) })
 }
 

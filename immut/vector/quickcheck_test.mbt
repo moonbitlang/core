@@ -135,7 +135,7 @@ test "quickcheck: push agrees with the array model and preserves history" {
       }
       // Content equality and hashing must not depend on the construction
       // path (push-built tail/tree layout vs. bulk construction).
-      let built = @vector.from_array(xs)
+      let built = @vector.Vector(xs)
       v == built && v.hash() == built.hash()
     },
     max_size=2000,
@@ -150,7 +150,7 @@ test "quickcheck: set is a persistent point update" {
       let (xs, updates) = input
       guard xs.length() > 0 else { return true }
       let n = xs.length()
-      let orig = @vector.from_array(xs)
+      let orig = @vector.Vector(xs)
       let model = xs.copy()
       let mut cur = orig
       for u in updates {
@@ -235,7 +235,7 @@ test "quickcheck: iteration, folds and roundtrips agree with the array model" {
       guard xs.length() == n && v.is_empty() == (n == 0) else { return false }
       guard v.iter().to_array() == xs else { return false }
       guard @vector.from_iter(xs.iter()) == v else { return false }
-      guard @vector.from_array(xs) == v else { return false }
+      guard @vector.Vector(xs) == v else { return false }
       guard v.rev().to_array() == xs.rev() else { return false }
       let folded : Array[Int32] = v.fold(init=[], (acc, x) => {
         acc.push(x)
@@ -444,7 +444,7 @@ test "quickcheck: bulk constructors round-trip at level boundaries" {
       let built = [
         @vector.makei(n, i => i),
         @vector.from_iter(model.iter()),
-        @vector.from_array(model),
+        Vector(model),
       ]
       for v in built {
         guard v.length() == n else { return false }
@@ -477,7 +477,7 @@ test "quickcheck: Eq and Compare agree with the array model" {
     guard a.compare(b) == ax.compare(bx) else { return false }
     guard a.compare(b) == -b.compare(a) else { return false }
     // reflexivity, and equality with an independently built copy
-    let rebuilt = @vector.from_array(ax)
+    let rebuilt = @vector.Vector(ax)
     a == a && a.compare(a) == 0 && a == rebuilt && a.compare(rebuilt) == 0
   })
 }

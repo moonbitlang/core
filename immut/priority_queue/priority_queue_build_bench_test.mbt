@@ -37,19 +37,19 @@ fn make_priority_queue_random_values() -> Array[Int32] {
 ///|
 test "bench PriorityQueue::from_array ordered n=10000" (it : @bench.T) {
   let values = make_priority_queue_ordered_values()
-  it.bench(fn() { it.keep(@priority_queue.from_array(values)) })
+  it.bench(fn() { it.keep(@priority_queue.PriorityQueue(values)) })
 }
 
 ///|
 test "bench PriorityQueue::from_array reverse n=10000" (it : @bench.T) {
   let values = make_priority_queue_reverse_values()
-  it.bench(fn() { it.keep(@priority_queue.from_array(values)) })
+  it.bench(fn() { it.keep(@priority_queue.PriorityQueue(values)) })
 }
 
 ///|
 test "bench PriorityQueue::from_array random n=10000" (it : @bench.T) {
   let values = make_priority_queue_random_values()
-  it.bench(fn() { it.keep(@priority_queue.from_array(values)) })
+  it.bench(fn() { it.keep(@priority_queue.PriorityQueue(values)) })
 }
 
 ///|

@@ -27,10 +27,10 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 ///   @test.assert_eq(queue.length(), 5)
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, pending_deprecated="Use `PriorityQueue(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `PriorityQueue(...)` instead")
+#alias(of, deprecated="Use `PriorityQueue(...)` instead")
+#as_free_fn(of, deprecated="Use `PriorityQueue(...)` instead")
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   arr : ArrayView[A],
 ) -> PriorityQueue[A] {
@@ -93,7 +93,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
 ///   let queue2 = queue.copy()
 ///   inspect(queue2.length(), content="4")
 /// }
@@ -210,7 +210,7 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int32 {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
 ///   queue.unsafe_pop()
 ///   inspect(queue.length(), content="3")
 /// }
@@ -231,7 +231,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(self : PriorityQueue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
 ///   let first = queue.pop() // Some(4)
 ///   @debug.debug_inspect(first, content="Some(4)")
 ///   inspect(queue.length(), content="3")
@@ -278,7 +278,7 @@ pub fn[A : Compare] PriorityQueue::push(
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
 ///   @test.assert_eq(first, Some(4))
 /// }
@@ -296,7 +296,7 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
 ///   queue.clear()
 ///   @test.assert_eq(queue.length(), 0)
 /// }

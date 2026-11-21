@@ -14,14 +14,14 @@
 
 ///|
 test "panic set with out-of-bounds index" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let v1 = v.set(10, 10) // This should trigger the panic in set function
   debug_inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
 }
 
 ///|
 test "panic set with negative index" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   let v1 = v.set(-1, 10) // This should trigger the panic in set function
   debug_inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
 }
@@ -35,13 +35,13 @@ test "panic set with empty vector" {
 
 ///|
 test "panic at with negative index" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   v[-1] |> ignore
 }
 
 ///|
 test "panic at with out-of-bounds index" {
-  let v = @vector.from_array([1, 2, 3, 4, 5])
+  let v = @vector.Vector([1, 2, 3, 4, 5])
   v[5] |> ignore
 }
 

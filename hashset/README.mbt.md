@@ -41,7 +41,7 @@ You can use `remove()` to remove a key.
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array(["a", "b", "c"])
+  let set = @hashset.HashSet(["a", "b", "c"])
   set.remove("a")
   @test.assert_eq(set.contains("a"), false)
 }
@@ -56,7 +56,7 @@ pre-size the table.
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array(["a", "b", "c"])
+  let set = @hashset.HashSet(["a", "b", "c"])
   @test.assert_eq(set.length(), 3)
   let sized : @hashset.HashSet[String] = HashSet([], capacity=100)
   @test.assert_eq(sized.length(), 0)
@@ -80,7 +80,7 @@ You can use `clear` to remove all keys from the set, but the allocated memory wi
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array(["a", "b", "c"])
+  let set = @hashset.HashSet(["a", "b", "c"])
   set.clear()
   @test.assert_eq(set.is_empty(), true)
 }
@@ -93,7 +93,7 @@ You can use `each()` or `eachi()` to iterate through all keys.
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array(["a", "b", "c"])
+  let set = @hashset.HashSet(["a", "b", "c"])
   let arr = []
   set.each(k => arr.push(k))
   let arr2 = []
@@ -108,7 +108,7 @@ test {
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array([1, 2, 3])
+  let set = @hashset.HashSet([1, 2, 3])
   @test.assert_eq(set.add_and_check(4), true) // new element
   @test.assert_eq(set.add_and_check(4), false) // already exists
   @test.assert_eq(set.remove_and_check(4), true) // removed
@@ -123,7 +123,7 @@ test {
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array([1, 2, 3, 4, 5])
+  let set = @hashset.HashSet([1, 2, 3, 4, 5])
   set.retain(fn(x) { x % 2 == 0 })
   @test.assert_eq(set.contains(1), false)
   @test.assert_eq(set.contains(2), true)
@@ -137,7 +137,7 @@ test {
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array([1, 2, 3])
+  let set = @hashset.HashSet([1, 2, 3])
   let cloned = set.copy()
   cloned.add(4)
   @test.assert_eq(set.contains(4), false) // original unchanged
@@ -152,7 +152,7 @@ test {
 ```mbt check
 ///|
 test {
-  let set = @hashset.from_array([1, 2, 3])
+  let set = @hashset.HashSet([1, 2, 3])
   let arr = set.to_array()
   arr.sort()
   @test.assert_eq(arr, [1, 2, 3])
@@ -169,8 +169,8 @@ test {
 ```mbt check
 ///|
 test {
-  let m1 = @hashset.from_array(["a", "b", "c"])
-  let m2 = @hashset.from_array(["b", "c", "d"])
+  let m1 = @hashset.HashSet(["a", "b", "c"])
+  let m2 = @hashset.HashSet(["b", "c", "d"])
   fn to_sorted_array(set : @hashset.HashSet[String]) {
     let arr = set.to_array()
     arr.sort()
@@ -196,9 +196,9 @@ test {
 ```mbt check
 ///|
 test {
-  let small = @hashset.from_array([1, 2])
-  let big = @hashset.from_array([1, 2, 3, 4])
-  let other = @hashset.from_array([5, 6])
+  let small = @hashset.HashSet([1, 2])
+  let big = @hashset.HashSet([1, 2, 3, 4])
+  let other = @hashset.HashSet([5, 6])
   @test.assert_eq(small.is_subset(big), true)
   @test.assert_eq(big.is_superset(small), true)
   @test.assert_eq(small.is_disjoint(other), true)

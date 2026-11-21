@@ -30,7 +30,7 @@ You can create an empty SortedMap or a SortedMap from other containers.
 ///|
 test {
   let _map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
-  let _map2 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let _map2 = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
 }
 ```
 
@@ -41,7 +41,7 @@ Add a key-value pair to the SortedMap in place.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two")])
   map.set(3, "three")
   @test.assert_eq(map.length(), 3)
 }
@@ -64,7 +64,7 @@ Remove a key-value pair from the SortedMap in place.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   map.remove(2)
   @test.assert_eq(map.length(), 2)
   @test.assert_eq(map.contains(2), false)
@@ -76,7 +76,7 @@ Get a value by its key. The return type is `Option[V]`.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   assert_true(map.get(2) == Some("two"))
   assert_true(map.get(4) == None)
 }
@@ -87,7 +87,7 @@ Safe access with error handling:
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two")])
   let key = 3
   debug_inspect(map.get(key), content="None")
 }
@@ -98,7 +98,7 @@ Check if a key exists in the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(map.contains(2), true)
   @test.assert_eq(map.contains(4), false)
 }
@@ -109,7 +109,7 @@ Iterate over all key-value pairs in the map in sorted key order.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   let keys = []
   let values = []
   map.each((k, v) => {
@@ -126,7 +126,7 @@ Iterate with index:
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   let result = []
   map.eachi((i, k, v) => result.push((i, k, v)))
   @debug.assert_eq(result, [(0, 1, "one"), (1, 2, "two"), (2, 3, "three")])
@@ -138,7 +138,7 @@ Get the size of the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(map.length(), 3)
 }
 ```
@@ -158,7 +158,7 @@ Clear the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   map.clear()
   @test.assert_eq(map.is_empty(), true)
 }
@@ -178,7 +178,7 @@ underlying key and the last entry has the smallest.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(10, "a"), (20, "b"), (30, "c")])
+  let map = @sorted_map.SortedMap([(10, "a"), (20, "b"), (30, "c")])
   @debug.assert_eq(map.first(), Some((10, "a")))
   @debug.assert_eq(map.last(), Some((30, "c")))
   @debug.assert_eq(map.first_ge(15), Some((20, "b")))
@@ -200,7 +200,7 @@ ordering. `rev_iter2` supports `for key, value in map.rev_iter2()`.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   @debug.assert_eq(map.rev_keys().to_array(), [3, 2, 1])
   @debug.assert_eq(map.rev_iter().take(1).to_array(), [(3, "c")])
 }
@@ -247,11 +247,11 @@ impl Compare for IndexKey with fn compare(a, b) {
 ///|
 test {
   // Descending order with @cmp.Reverse
-  let desc = @sorted_map.from_array([(@cmp.Reverse(1), "a"), (Reverse(3), "c")])
+  let desc = @sorted_map.SortedMap([(@cmp.Reverse(1), "a"), (Reverse(3), "c")])
   @debug.assert_eq(desc.keys().map(k => k.0).to_array(), [3, 1])
   // Order chosen at runtime: first column ascending, second descending
   let descending = [false, true]
-  let index : @sorted_map.SortedMap[IndexKey, String] = @sorted_map.from_array([])
+  let index : @sorted_map.SortedMap[IndexKey, String] = SortedMap([])
   index.set({ cols: [1, 5], descending, }, "x")
   index.set({ cols: [1, 9], descending, }, "y")
   index.set({ cols: [0, 7], descending, }, "z")
@@ -266,7 +266,7 @@ Get all keys or values from the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   @debug.assert_eq(map.keys().collect(), [1, 2, 3])
   @debug.assert_eq(map.values().collect(), ["one", "two", "three"])
 }
@@ -277,7 +277,7 @@ Convert the map to an array of key-value pairs.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   @debug.assert_eq(map.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 ```
@@ -289,7 +289,7 @@ Get a subset of the map within a specified range of keys. The range is inclusive
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "one"),
     (2, "two"),
     (3, "three"),
@@ -311,7 +311,7 @@ Edge cases for range operations:
 ///|
 ///  Example with out-of-bounds range
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
   map.range(0, 10).each((k, v) => range_items.push((k, v)))
   @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
@@ -333,7 +333,7 @@ order. Both iterators are lazy, so taking the first few entries is cheap.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
   // 1 < key <= 3
   let mid = map.range_bounds(Excluded(1), Included(3)).iter().map(p => p.0)
   @debug.assert_eq(mid.to_array(), [2, 3])
@@ -368,7 +368,7 @@ Use the `iter` method to get an iterator over key-value pairs:
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   let pairs = map.iter().to_array()
   @debug.assert_eq(pairs, [(1, "one"), (2, "two"), (3, "three")])
 }
@@ -379,7 +379,7 @@ Use the `iter2` method for a more convenient key-value iteration:
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(3, "three"), (1, "one"), (2, "two")])
   let transformed = []
   map.iter2().each((k, v) => transformed.push(k.to_string() + ": " + v))
   @debug.assert_eq(transformed, ["1: one", "2: two", "3: three"])
@@ -393,8 +393,8 @@ Maps with the same key-value pairs are considered equal, regardless of the order
 ```mbt check
 ///|
 test {
-  let map1 = @sorted_map.from_array([(1, "one"), (2, "two")])
-  let map2 = @sorted_map.from_array([(2, "two"), (1, "one")])
+  let map1 = @sorted_map.SortedMap([(1, "one"), (2, "two")])
+  let map2 = @sorted_map.SortedMap([(2, "two"), (1, "one")])
   @test.assert_eq(map1 == map2, true)
 }
 ```
@@ -406,7 +406,7 @@ Use subscript syntax `map[key]` (the `at` operator) for direct access. Panics if
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two")])
   @test.assert_eq(map[1], "one")
   @test.assert_eq(map[2], "two")
 }
@@ -419,7 +419,7 @@ test {
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "one")])
+  let map = @sorted_map.SortedMap([(1, "one")])
   @test.assert_eq(map.get_or_default(1, "???"), "one")
   @test.assert_eq(map.get_or_default(2, "???"), "???")
   // get_or_init inserts the value if missing
@@ -450,7 +450,7 @@ the computation.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let cloned = map.copy()
   cloned.set(3, "c")
   @test.assert_eq(map.contains(3), false) // original unchanged
@@ -465,14 +465,14 @@ test {
 ```mbt check
 ///|
 test {
-  let m1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-  let m2 = @sorted_map.from_array([(2, "B"), (3, "c")])
+  let m1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+  let m2 = @sorted_map.SortedMap([(2, "B"), (3, "c")])
   let merged = m1.merge(m2)
   assert_true(merged.get(2) == Some("B")) // right wins
   assert_true(merged.get(3) == Some("c"))
   // merge_in_place
-  let m3 = @sorted_map.from_array([(1, "x")])
-  let m4 = @sorted_map.from_array([(2, "y")])
+  let m3 = @sorted_map.SortedMap([(1, "x")])
+  let m4 = @sorted_map.SortedMap([(2, "y")])
   m3.merge_in_place(m4)
   @test.assert_eq(m3.contains(2), true)
 }
@@ -503,7 +503,7 @@ fn get_score(
 ///|
 test "safe_key_access" {
   // Create a mapping storing student IDs and their scores
-  let scores = @sorted_map.from_array([(1001, 85), (1002, 92), (1003, 78)])
+  let scores = @sorted_map.SortedMap([(1001, 85), (1002, 92), (1003, 78)])
 
   // Access an existing key
   @test.assert_eq(get_score(scores, 1001), 85)

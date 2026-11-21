@@ -6,13 +6,13 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 ## Create
 
-You can use `PriorityQueue([])` or `from_array()` to create a priority queue.
+Use `PriorityQueue(array)` to create a priority queue, or `PriorityQueue([])` for an empty one.
 
 ```mbt check
 ///|
 test {
   let queue1 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
-  let queue2 = @priority_queue.from_array([1, 2, 3])
+  let queue2 = @priority_queue.PriorityQueue([1, 2, 3])
   @json.json_inspect(queue1, content=[])
   @json.json_inspect(queue2, content=[3, 2, 1])
 }
@@ -28,7 +28,7 @@ You can easily create a min-heap (smallest element first) using `@cmp.Reverse` t
 ///|
 test {
   // Create a min-heap by wrapping elements with @cmp.Reverse
-  let min_heap = @priority_queue.from_array([
+  let min_heap = @priority_queue.PriorityQueue([
     @cmp.Reverse(5),
     Reverse(2),
     Reverse(8),
@@ -47,7 +47,7 @@ You can use `length()` to get the number of elements in the current priority que
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   @test.assert_eq(pq.length(), 5)
 }
 ```
@@ -69,7 +69,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   @test.assert_eq(pq.peek(), Some(5))
 }
 ```
@@ -95,7 +95,7 @@ You can use `pop()` to pop the element at the front of the priority queue, respe
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
+  let pq = @priority_queue.PriorityQueue([5, 4, 3, 2, 1])
   @test.assert_eq(pq.pop(), Some(5))
 }
 ```
@@ -103,7 +103,7 @@ test {
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
+  let pq = @priority_queue.PriorityQueue([5, 4, 3, 2, 1])
   @test.assert_eq(pq.length(), 5)
 }
 ```
@@ -115,7 +115,7 @@ You can use `clear` to clear a priority queue.
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   pq.clear()
   @test.assert_eq(pq.is_empty(), true)
 }
@@ -138,7 +138,7 @@ test {
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([3, 1, 4, 1, 5])
+  let pq = @priority_queue.PriorityQueue([3, 1, 4, 1, 5])
   let arr = pq.to_array()
   // to_array returns elements sorted by priority (descending)
   @debug.assert_eq(arr, [5, 4, 3, 1, 1])
@@ -152,7 +152,7 @@ test {
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_array([1, 2, 3])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3])
   let pq2 = pq.copy()
   @test.assert_eq(pq2.pop(), Some(3))
   @test.assert_eq(pq.length(), 3) // original unchanged

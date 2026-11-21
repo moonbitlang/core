@@ -14,12 +14,12 @@
 
 ///|
 test "panic unsafe_peek" {
-  @queue.from_array([]).unsafe_peek()
+  @queue.Queue([]).unsafe_peek()
 }
 
 ///|
 test "panic unsafe_pop" {
-  @queue.from_array([]).unsafe_pop()
+  @queue.Queue([]).unsafe_pop()
 }
 
 ///|

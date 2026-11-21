@@ -12,10 +12,10 @@ import {
 
 // Types and methods
 type Deque[A]
-#alias(from_array)
+#alias(from_array, pending_deprecated)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn(from_array)
+#as_free_fn(from_array, pending_deprecated)
 pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int32) -> Self[A]
 pub fn[A] Deque::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit

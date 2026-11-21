@@ -49,8 +49,8 @@ test "quickcheck: construction and mutation preserve set semantics" {
 test "quickcheck: union, intersection, and difference obey membership laws" {
   @quickcheck.check((input : (Array[Int32], Array[Int32])) => {
     let (xs, ys) = input
-    let a = @hashset.from_array(xs.map(x => x % 47))
-    let b = @hashset.from_array(ys.map(x => x % 47))
+    let a = @hashset.HashSet(xs.map(x => x % 47))
+    let b = @hashset.HashSet(ys.map(x => x % 47))
     let union = a.union(b)
     let intersection = a.intersection(b)
     let difference = a.difference(b)
@@ -73,8 +73,8 @@ test "quickcheck: set predicates and equality agree with a sorted-array model" {
     let key = (x : Int32) => "k\{x % 23}"
     let xs = normalized(xs.map(x => x % 23))
     let ys = normalized(ys.map(y => y % 23))
-    let a = @hashset.from_array(xs.map(key))
-    let b = @hashset.from_array(ys.map(key))
+    let a = @hashset.HashSet(xs.map(key))
+    let b = @hashset.HashSet(ys.map(key))
     let model_sub = xs.all(x => ys.contains(x))
     let model_sup = ys.all(y => xs.contains(y))
     let model_dis = xs.all(x => !ys.contains(x))

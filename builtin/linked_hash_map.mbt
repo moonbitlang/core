@@ -127,7 +127,7 @@ fn capacity_for_length(length : Int32) -> Int32 {
 ///   inspect(map.length(), content="16")
 /// }
 /// ```
-#alias(from_array)
+#alias(from_array, pending_deprecated="Use `Map(...)` instead")
 pub fn[K : Hash + Eq, V] Map::Map(
   arr : ArrayView[(K, V)],
   capacity? : Int32,
@@ -921,7 +921,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with fn equal(
 
 ///|
 /// Function `of`.
-#deprecated("Use `Map([(k, v), ...])` or `Map::from_array` instead")
+#deprecated("Use `Map([(k, v), ...])` instead")
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let m = new_map(capacity_for_length(length))

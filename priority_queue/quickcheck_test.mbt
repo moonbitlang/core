@@ -51,7 +51,7 @@ fn model_pop(model : Array[Int32]) -> Int32? {
 test "quickcheck: draining from_array yields descending sorted order" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let queue = @priority_queue.from_array(xs)
+      let queue = @priority_queue.PriorityQueue(xs)
       let drained : Array[Int32] = []
       while queue.pop() is Some(x) {
         drained.push(x)
@@ -72,7 +72,7 @@ test "quickcheck: draining with heavy duplication stays sorted" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
       let dups = xs.map(x => x % 8)
-      let queue = @priority_queue.from_array(dups)
+      let queue = @priority_queue.PriorityQueue(dups)
       let drained : Array[Int32] = []
       while queue.pop() is Some(x) {
         drained.push(x)
@@ -140,7 +140,7 @@ test "quickcheck: to_array/iter are descending views and peek is their head" {
 test "quickcheck: copy is independent of the original" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let original = @priority_queue.from_array(xs)
+      let original = @priority_queue.PriorityQueue(xs)
       let snapshot = original.to_array()
       let copied = original.copy()
       while !copied.is_empty() {

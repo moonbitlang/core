@@ -104,9 +104,9 @@ test "debug_inspect" {
 ```mbt check
 ///|
 test "collections" {
-  let q = @queue.from_array([1, 2, 3])
+  let q = @queue.Queue([1, 2, 3])
   @debug.debug_inspect(q, content="<Queue: [1, 2, 3]>")
-  let dq = @deque.from_array([1, 2])
+  let dq = @deque.Deque([1, 2])
   @debug.debug_inspect(dq, content="<Deque: [1, 2]>")
 }
 ```

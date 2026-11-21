@@ -14,7 +14,7 @@
 
 ///|
 test "remove2" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   inspect(map.length(), content="2")
   map.remove(1)
   inspect(map.length(), content="1")
@@ -22,7 +22,7 @@ test "remove2" {
 
 ///|
 test "remove3" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
   inspect(map.length(), content="3")
   map.remove(4)
@@ -45,7 +45,7 @@ test "SortedMap constructor" {
 
 ///|
 test "get" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(map.get(1), content="Some(\"a\")")
   debug_inspect(map.get(2), content="Some(\"b\")")
   debug_inspect(
@@ -59,7 +59,7 @@ test "get" {
 
 ///|
 test "contains" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.contains(1), content="true")
   inspect(map.contains(2), content="true")
   inspect(map.contains(3), content="true")
@@ -68,7 +68,7 @@ test "contains" {
 
 ///|
 test "at" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   inspect(map[1], content="a")
   inspect(map[2], content="b")
   inspect(map[3], content="c")
@@ -76,14 +76,14 @@ test "at" {
 
 ///|
 test "panic at" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   map[4] |> ignore
 }
 
 ///|
 test "equal" {
-  let a = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  let b = @sorted_map.from_array([(4, "d"), (5, "e"), (6, "f")])
+  let a = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
+  let b = @sorted_map.SortedMap([(4, "d"), (5, "e"), (6, "f")])
   inspect(a == a, content="true")
   inspect(b == b, content="true")
   inspect(a == b, content="false")
@@ -100,13 +100,13 @@ test "is_empty" {
 
 ///|
 test "size" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.length() == map.length(), content="true")
 }
 
 ///|
 test "each" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder()
   map.each((k, v) => buf <+ "\{k}\{v}")
   inspect(buf.to_string(), content="1a2b3c")
@@ -114,7 +114,7 @@ test "each" {
 
 ///|
 test "eachi" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder()
   map.eachi((i, k, v) => buf <+ "[\{i}]\{k}\{v}")
   inspect(buf.to_string(), content="[0]1a[1]2b[2]3c")
@@ -122,7 +122,7 @@ test "eachi" {
 
 ///|
 test "keys" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
     map.keys().to_array(),
     content=(
@@ -133,7 +133,7 @@ test "keys" {
 
 ///|
 test "values" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
     [..map.values()],
     content=(
@@ -144,7 +144,7 @@ test "values" {
 
 ///|
 test "to_array" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
     map.to_array(),
     content=(
@@ -155,7 +155,7 @@ test "to_array" {
 
 ///|
 test "iter_collect" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
     map.iter().collect(),
     content=(
@@ -203,7 +203,7 @@ test "from_iter empty iter" {
 
 ///|
 test "iter2" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder()
   for k, v in map {
     buf <+ "[\{k}\{v}]"
@@ -213,7 +213,7 @@ test "iter2" {
 
 ///|
 test "range" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -242,7 +242,7 @@ test "range" {
 
 ///|
 test "to_json with non-empty map" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -299,8 +299,8 @@ test "json roundtrip verification" {
 
 ///|
 test "@sorted_map.merge" {
-  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
   let merged = map1.merge(map2)
   debug_inspect(merged.get(1), content="Some(\"a\")")
   debug_inspect(merged.get(2), content="Some(\"c\")")
@@ -314,7 +314,7 @@ test "@sorted_map.merge" {
 ///|
 test "@sorted_map.merge empty maps" {
   let map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
-  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged2 = map2.merge(map1)
@@ -325,8 +325,8 @@ test "@sorted_map.merge empty maps" {
 
 ///|
 test "@sorted_map.merge_in_place" {
-  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
   map1.merge_in_place(map2)
   debug_inspect(map1.get(1), content="Some(\"a\")")
   debug_inspect(map1.get(2), content="Some(\"c\")")
@@ -339,7 +339,7 @@ test "@sorted_map.merge_in_place" {
 ///|
 test "@sorted_map.merge_in_place empty maps" {
   let map1 : @sorted_map.SortedMap[Int32, String] = SortedMap([])
-  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   map1.merge_in_place(map2)
   debug_inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   map1.merge_in_place(map1)
@@ -348,7 +348,7 @@ test "@sorted_map.merge_in_place empty maps" {
 
 ///|
 test "get_or_init inserts when absent" {
-  let map = @sorted_map.from_array([(1, "a"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (3, "c")])
   let v = map.get_or_init(2, fn() { "b" })
   inspect(v, content="b")
   debug_inspect(map.get(2), content="Some(\"b\")")
@@ -357,7 +357,7 @@ test "get_or_init inserts when absent" {
 
 ///|
 test "get_or_init returns existing value" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let mut called = false
   let v = map.get_or_init(2, fn() {
     called = true
@@ -371,7 +371,7 @@ test "get_or_init returns existing value" {
 
 ///|
 test "get_or_default returns default when absent" {
-  let map = @sorted_map.from_array([(1, "a"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (3, "c")])
   inspect(map.get_or_default(2, "x"), content="x")
   // map should not be modified
   inspect(map.contains(2), content="false")
@@ -380,13 +380,13 @@ test "get_or_default returns default when absent" {
 
 ///|
 test "get_or_default returns existing value" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   inspect(map.get_or_default(2, "x"), content="b")
 }
 
 ///|
 test "update_or_default inserts default when absent" {
-  let map = @sorted_map.from_array([(1, "a"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (3, "c")])
   map.update_or_default(2, "b", x => x + "!")
   // f is NOT applied to default on first insert
   debug_inspect(map.get(2), content="Some(\"b\")")
@@ -395,7 +395,7 @@ test "update_or_default inserts default when absent" {
 
 ///|
 test "update_or_default applies f when present" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   // default is ignored when key is present; f is applied to the existing value
   map.update_or_default(2, "z", x => x + "!")
   debug_inspect(map.get(2), content="Some(\"b!\")")
@@ -418,7 +418,7 @@ test "update_or_default counter pattern" {
 
 ///|
 test "range with inverted bounds returns empty" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -435,7 +435,7 @@ test "range with inverted bounds returns empty" {
 
 ///|
 test "range with out-of-bounds keys" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -463,7 +463,7 @@ test "range on empty map" {
 
 ///|
 test "copy independence" {
-  let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   let map2 = map1.copy()
   // Modify the copy
   map2.set(4, "d")

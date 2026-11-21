@@ -30,7 +30,7 @@
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+///   let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
 ///   let keys = map.range_bounds(Excluded(1), Included(3)).iter().map(p => p.0)
 ///   @debug.debug_inspect(keys.to_array(), content="[2, 3]")
 ///   let tail = map.range_bounds(Included(3), Unbounded).iter().map(p => p.0)
@@ -86,7 +86,7 @@ pub fn[K : Compare, V] SortedMap::range_bounds(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+///   let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
 ///   let keys = map.rev_range_bounds(Unbounded, Excluded(4)).iter().map(p => p.0)
 ///   @debug.debug_inspect(keys.to_array(), content="[3, 2, 1]")
 /// }
@@ -137,7 +137,7 @@ pub fn[K : Compare, V] SortedMap::rev_range_bounds(
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
+///   let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
 ///   let keys = map.rev_range(2, 3).iter().map(p => p.0)
 ///   @debug.debug_inspect(keys.to_array(), content="[3, 2]")
 /// }

@@ -14,7 +14,7 @@
 
 ///|
 fn iter_bench_map() -> @sorted_map.SortedMap[Int32, Int32] {
-  @sorted_map.from_array(Array::makei(16384, i => (i, i)))
+  SortedMap(Array::makei(16384, i => (i, i)))
 }
 
 ///|
@@ -45,14 +45,14 @@ test "bench sorted_map iter take n=8" (it : @bench.T) {
 
 ///|
 test "bench sorted_map empty iter" (it : @bench.T) {
-  let map : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.from_array([])
+  let map : @sorted_map.SortedMap[Int32, Int32] = SortedMap([])
   it.bench(fn() { it.keep(map.iter().next()) })
 }
 
 ///|
 test "bench sorted_map iter string keys and values n=16384" (it : @bench.T) {
   let entries = Array::makei(16384, i => ("key/\{1000000 + i}", "value/\{i}"))
-  let map = @sorted_map.from_array(entries)
+  let map = @sorted_map.SortedMap(entries)
   it.bench(fn() {
     it.keep(
       map.iter().fold(init=0, (sum, p) => sum + p.0.length() + p.1.length()),

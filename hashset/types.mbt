@@ -54,8 +54,8 @@ struct HashSet[K] {
 ///
 /// ```mbt check
 /// test {
-///   let a = @hashset.from_array([1, 2, 3])
-///   let b = @hashset.from_array([3, 2, 1])
+///   let a = @hashset.HashSet([1, 2, 3])
+///   let b = @hashset.HashSet([3, 2, 1])
 ///   inspect(a == b, content="true")
 ///   b.remove(3)
 ///   inspect(a == b, content="false")

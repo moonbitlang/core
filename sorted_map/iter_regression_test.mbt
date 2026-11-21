@@ -16,7 +16,7 @@
 test "forward iterators resume across leaves and stay exhausted" {
   for size in [0, 1, 2, 3, 7, 16, 31, 64, 1024] {
     let entries = Array::makei(size, i => (i * 2, "value/\{i}"))
-    let map = @sorted_map.from_array(entries)
+    let map = @sorted_map.SortedMap(entries)
     let iter = map.iter()
     let keys = map.keys()
     let values = map.values()
@@ -36,7 +36,7 @@ test "forward iterators resume across leaves and stay exhausted" {
 
 ///|
 test "forward iterators preserve values already pending on their stack" {
-  let map = @sorted_map.from_array([(2, "two"), (1, "one"), (3, "three")])
+  let map = @sorted_map.SortedMap([(2, "two"), (1, "one"), (3, "three")])
   let iter = map.iter()
   let values = map.values()
   @test.assert_eq(iter.next(), Some((1, "one")))
@@ -52,7 +52,7 @@ test "forward iterators preserve values already pending on their stack" {
 test "reverse iterators resume across leaves and stay exhausted" {
   for size in [0, 1, 2, 3, 7, 16, 31, 64, 1024] {
     let entries = Array::makei(size, i => (i * 2, "value/\{i}"))
-    let map = @sorted_map.from_array(entries)
+    let map = @sorted_map.SortedMap(entries)
     let iter = map.rev_iter()
     let keys = map.rev_keys()
     let values = map.rev_values()
@@ -73,7 +73,7 @@ test "reverse iterators resume across leaves and stay exhausted" {
 test "bounded iterators resume and stay exhausted after pruning" {
   for size in [0, 1, 2, 3, 7, 16, 31, 64, 1024] {
     let entries = Array::makei(size, i => (i * 2, "value/\{i}"))
-    let map = @sorted_map.from_array(entries)
+    let map = @sorted_map.SortedMap(entries)
     for
       (low, high) in [
         (-1, size * 2),
@@ -102,7 +102,7 @@ test "bounded iterators resume and stay exhausted after pruning" {
 
 ///|
 test "reverse and bounded iterators observe updates to pending nodes" {
-  let map = @sorted_map.from_array([(2, "two"), (1, "one"), (3, "three")])
+  let map = @sorted_map.SortedMap([(2, "two"), (1, "one"), (3, "three")])
   let reverse = map.rev_iter()
   let values = map.rev_values()
   let forward_range = map.range_bounds(Unbounded, Unbounded).iter()

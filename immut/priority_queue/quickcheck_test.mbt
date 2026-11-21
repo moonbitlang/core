@@ -68,7 +68,7 @@ fn model_pop(model : Array[Int32]) -> Int32? {
 test "quickcheck: draining from_array yields descending sorted order" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
-      let queue = @priority_queue.from_array(xs)
+      let queue = @priority_queue.PriorityQueue(xs)
       drain(queue) == descending_sorted(xs) &&
       queue.length() == xs.length() && // the original queue is untouched
       queue.pop().map(q => q.length()) ==
@@ -86,7 +86,7 @@ test "quickcheck: draining with heavy duplication stays sorted" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
       let dups = xs.map(x => x % 8)
-      drain(@priority_queue.from_array(dups)) == descending_sorted(dups)
+      drain(PriorityQueue(dups)) == descending_sorted(dups)
     },
     count=300,
   )
@@ -204,7 +204,7 @@ test "quickcheck: equal multisets built in different orders are equal" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
       let dups = xs.map(x => x % 8)
-      let built = @priority_queue.from_array(dups)
+      let built = @priority_queue.PriorityQueue(dups)
       let ascending = dups.copy()
       ascending.sort()
       let mut fwd : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])

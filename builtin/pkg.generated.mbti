@@ -1225,7 +1225,7 @@ pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
 
 type Map[K, V]
-#alias(from_array)
+#alias(from_array, pending_deprecated)
 pub fn[K : Hash + Eq, V] Map::Map(ArrayView[(K, V)], capacity? : Int32) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(Self[K, V], K) -> V

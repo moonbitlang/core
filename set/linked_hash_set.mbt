@@ -131,10 +131,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 /// `arr.length()` is ignored. Without a hint, an empty set uses a small default
 /// size. Aborts if `capacity` is negative or if the requested element count
 /// exceeds the supported table size.
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, pending_deprecated="Use `Set(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `Set(...)` instead")
+#alias(of, deprecated="Use `Set(...)` instead")
+#as_free_fn(of, deprecated="Use `Set(...)` instead")
 pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int32) -> Set[K] {
   let length = arr.length()
   let capacity = match capacity {

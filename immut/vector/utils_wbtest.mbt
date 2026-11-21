@@ -92,7 +92,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
         for x in v {
           a.push(x)
         }
-        t = t.concat(from_array(v))
+        t = t.concat(Vector(v))
         check_array_eq(a, t)
       }
       Set(idx, v) => {

@@ -80,10 +80,10 @@ fn capacity_for_length(length : Int32) -> Int32 {
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(from_array, pending_deprecated="Use `HashMap(...)` instead")
+#as_free_fn(from_array, pending_deprecated="Use `HashMap(...)` instead")
+#alias(of, deprecated="Use `HashMap(...)` instead")
+#as_free_fn(of, deprecated="Use `HashMap(...)` instead")
 pub fn[K : Hash + Eq, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
   capacity? : Int32,
@@ -230,7 +230,7 @@ fn[K, V] HashMap::push_away(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("key", 42)])
+///   let map = @hashmap.HashMap([("key", 42)])
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   debug_inspect(map.get("nonexistent"), content="None")
 /// }
@@ -264,7 +264,7 @@ pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([(b"hello", 1), (b"world", 2)])
+///   let map = @hashmap.HashMap([(b"hello", 1), (b"world", 2)])
 ///   let bytes = b"prefix_hello_suffix"
 ///   let view = bytes[7:12] // view of "hello"
 ///   @debug.debug_inspect(map.get_from_bytes(view), content="Some(1)")
@@ -301,7 +301,7 @@ pub fn[V] HashMap::get_from_bytes(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("hello", 1), ("world", 2)])
+///   let map = @hashmap.HashMap([("hello", 1), ("world", 2)])
 ///   let str = "say hello to everyone"
 ///   let view = str.exact_view(start=4, end=9) // view of "hello"
 ///   @debug.debug_inspect(map.get_from_string(view), content="Some(1)")
@@ -339,7 +339,7 @@ pub fn[V] HashMap::get_from_string(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("key", 42)])
+///   let map = @hashmap.HashMap([("key", 42)])
 ///   inspect(map["key"], content="42")
 /// }
 /// ```
@@ -602,7 +602,7 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2)])
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 0), content="0")
 /// }
@@ -640,7 +640,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_default(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2)])
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
 /// }
@@ -721,7 +721,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2)])
 ///   map.remove("a")
 ///   debug_inspect(map.get("a"), content="None")
 ///   inspect(map.length(), content="1")
@@ -765,7 +765,7 @@ fn[K : Eq, V] HashMap::remove_with_hash(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   let map = @hashmap.HashMap([("a", 1), ("b", 2)])
 ///   debug_inspect(map.remove_and_get("a"), content="Some(1)")
 ///   debug_inspect(map.remove_and_get("a"), content="None")
 ///   inspect(map.length(), content="1")
@@ -860,7 +860,7 @@ fn[K, V] HashMap::rehash_place_entry(
 
 ///|
 test "of" {
-  let m = from_array([(1, 2), (3, 4)])
+  let m = HashMap([(1, 2), (3, 4)])
   @debug.debug_inspect(m.get(1), content="Some(2)")
   @debug.debug_inspect(m.get(3), content="Some(4)")
 }
@@ -940,8 +940,8 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
-///   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+///   let map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+///   let map2 = @hashmap.HashMap([("b", 3), ("c", 4)])
 ///   let merged = map1.merge(map2).to_array()
 ///   merged.sort()
 ///   @json.json_inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
@@ -972,8 +972,8 @@ pub fn[K : Eq, V] HashMap::merge(
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
-///   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+///   let map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+///   let map2 = @hashmap.HashMap([("b", 3), ("c", 4)])
 ///   map1.merge_in_place(map2)
 ///   let merged = map1.to_array()
 ///   merged.sort()
@@ -1049,7 +1049,7 @@ test "remove_unexist_key" {
 
 ///|
 test "clear" {
-  let m : HashMap[MyString, Int32] = from_array([("a", 1), ("b", 2), ("c", 3)])
+  let m : HashMap[MyString, Int32] = HashMap([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity, content="8")

@@ -14,7 +14,7 @@
 
 ///|
 test "from_array" {
-  let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
+  let queue = @priority_queue.PriorityQueue([1, 6, 3, 4, 5])
   debug_inspect(queue.peek(), content="Some(6)")
 }
 
@@ -24,7 +24,7 @@ test "from_array large pop order" {
   let expected = values.copy()
   expected.sort()
   expected.rev_in_place()
-  let pq = @priority_queue.from_array(values)
+  let pq = @priority_queue.PriorityQueue(values)
   let pq = for value in expected; pq = pq {
     @test.assert_eq(pq.peek(), Some(value))
     continue pq.pop().unwrap()
@@ -43,7 +43,7 @@ test "PriorityQueue constructor" {
 
 ///|
 test "to_array" {
-  let v = @priority_queue.from_array([1, 2, 3, 4])
+  let v = @priority_queue.PriorityQueue([1, 2, 3, 4])
   debug_inspect(v.to_array(), content="[4, 3, 2, 1]")
   debug_inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   debug_inspect(
@@ -55,7 +55,7 @@ test "to_array" {
 ///|
 test "iter" {
   let buf = StringBuilder(capacity=20)
-  let v = @priority_queue.from_array([1, 2, 3])
+  let v = @priority_queue.PriorityQueue([1, 2, 3])
   v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[3][2][1]")
   buf.reset()
@@ -65,7 +65,7 @@ test "iter" {
 
 ///|
 test "pop" {
-  let queue = @priority_queue.from_array([1, 2, 3, 4])
+  let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
   let first = queue.pop()
   debug_inspect(
     match first {
@@ -74,8 +74,7 @@ test "pop" {
     },
     content="Some(3)",
   )
-  let empty : @priority_queue.PriorityQueue[Int32] = @priority_queue.from_array([],
-  )
+  let empty : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   debug_inspect(
     match empty.pop() {
       Some(q) => q.peek()
@@ -87,7 +86,7 @@ test "pop" {
 
 ///|
 test "pop_exn" {
-  let queue = @priority_queue.from_array([1, 2, 3, 4])
+  let queue = @priority_queue.PriorityQueue([1, 2, 3, 4])
   let first = queue.unsafe_pop()
   debug_inspect(first.peek(), content="Some(3)")
   debug_inspect(
@@ -106,7 +105,7 @@ test "pop_exn" {
 
 ///|
 test "push" {
-  let queue = @priority_queue.from_array([1, 2, 3])
+  let queue = @priority_queue.PriorityQueue([1, 2, 3])
   debug_inspect(queue.push(4).peek(), content="Some(4)")
 }
 
@@ -126,7 +125,7 @@ test "is_empty" {
 
 ///|
 test "length" {
-  let pq = @priority_queue.from_array([1, 2])
+  let pq = @priority_queue.PriorityQueue([1, 2])
   inspect(pq.length(), content="2")
   inspect(pq.unsafe_pop().length(), content="1")
   inspect(pq.unsafe_pop().unsafe_pop().length(), content="0")
@@ -165,29 +164,29 @@ test "from_iter empty iter" {
 
 ///|
 test "hash" {
-  let pq1 = @priority_queue.from_array([1, 2, 3, 4, 5])
-  let pq2 = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq1 = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
+  let pq2 = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   inspect(Hash::hash(pq1) == Hash::hash(pq2), content="true")
-  let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
+  let pq3 = @priority_queue.PriorityQueue([5, 4, 3, 2, 1])
   inspect(Hash::hash(pq1) == Hash::hash(pq3), content="true")
   let pq4 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(Hash::hash(pq1) == Hash::hash(pq4), content="false")
   inspect(Hash::hash(pq4) == Hash::hash(pq4), content="true")
-  let pq5 = @priority_queue.from_array([1, 2, 3, 4, 6])
+  let pq5 = @priority_queue.PriorityQueue([1, 2, 3, 4, 6])
   inspect(Hash::hash(pq1) == Hash::hash(pq5), content="false")
 }
 
 ///|
 test "equal" {
-  let pq1 = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq1 = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   inspect(pq1 == pq1, content="true")
-  let pq2 = @priority_queue.from_array([1, 2, 3, 4, 5])
+  let pq2 = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
   inspect(pq1 == pq2, content="true")
-  let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
+  let pq3 = @priority_queue.PriorityQueue([5, 4, 3, 2, 1])
   inspect(pq1 == pq3, content="true")
   let pq4 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(pq1 == pq4, content="false")
-  let pq5 = @priority_queue.from_array([1, 2, 3])
+  let pq5 = @priority_queue.PriorityQueue([1, 2, 3])
   inspect(pq1 == pq5, content="false")
 }
 
@@ -225,9 +224,9 @@ test "complex" {
 
 ///|
 test "compare" {
-  let pq1 = @priority_queue.from_array([1, 2, 3])
-  let pq2 = @priority_queue.from_array([1, 2, 4])
-  let pq3 = @priority_queue.from_array([1, 2])
+  let pq1 = @priority_queue.PriorityQueue([1, 2, 3])
+  let pq2 = @priority_queue.PriorityQueue([1, 2, 4])
+  let pq3 = @priority_queue.PriorityQueue([1, 2])
   let empty : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
   inspect(pq1.compare(pq2), content="-1")
   inspect(pq1.compare(pq3), content="1")
@@ -238,7 +237,7 @@ test "compare" {
 
 ///|
 test "to_json" {
-  let pq = @priority_queue.from_array([1, 2, 3])
+  let pq = @priority_queue.PriorityQueue([1, 2, 3])
   @json.json_inspect(pq.peek().unwrap(), content=3)
   let json = @json.to_json(pq)
   @json.json_inspect(json, content=[3, 2, 1])

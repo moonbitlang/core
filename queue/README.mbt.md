@@ -5,12 +5,12 @@ Queue is a first in first out (FIFO) data structure, allowing to process their e
 # Usage
 
 ## Create and Clear
-You can create an empty queue with `Queue([])`, or construct one from an array with `from_array`.
+Use `Queue(array)` to construct a queue from an array, or `Queue([])` for an empty one.
 ```mbt check
 ///|
 test {
   let _queue : @queue.Queue[Int32] = Queue([])
-  let _queue1 = @queue.from_array([1, 2, 3])
+  let _queue1 = @queue.Queue([1, 2, 3])
 }
 ```
 
@@ -18,7 +18,7 @@ To clear the queue, you can use the `clear` method.
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   queue.clear()
 }
 ```
@@ -28,7 +28,7 @@ You can get the length of the queue by using the `length` method. The `is_empty`
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   @test.assert_eq(queue.length(), 3)
   @test.assert_eq(queue.is_empty(), false)
 }
@@ -52,7 +52,7 @@ You can get the first element of the queue without removing it using the `peek` 
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   @test.assert_eq(queue.peek(), Some(1))
 }
 ```
@@ -74,7 +74,7 @@ test {
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   // each
   let buf = []
   queue.each(fn(x) { buf.push(x) })
@@ -96,7 +96,7 @@ test {
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   debug_inspect(queue.iter().to_array(), content="[1, 2, 3]")
 }
 ```
@@ -108,7 +108,7 @@ test {
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_array([1, 2, 3])
+  let queue = @queue.Queue([1, 2, 3])
   let cloned = queue.copy()
   @test.assert_eq(cloned.pop(), Some(1))
   @test.assert_eq(queue.length(), 3) // original unchanged
@@ -118,8 +118,8 @@ test {
 ```mbt check
 ///|
 test {
-  let dst = @queue.from_array([1, 2])
-  let src = @queue.from_array([3, 4])
+  let dst = @queue.Queue([1, 2])
+  let src = @queue.Queue([3, 4])
   src.transfer(dst)
   @test.assert_eq(src.is_empty(), true)
   @test.assert_eq(dst.length(), 4)
