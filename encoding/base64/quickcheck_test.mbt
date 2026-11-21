@@ -15,9 +15,8 @@
 // Round-trip property tests for Base64.
 //
 // Every property starts from arbitrary bytes, encodes them, optionally
-// perturbs the text in a way the decoders are documented to tolerate
-// (whitespace for `decode(ignore_whitespace=true)`, invalid characters for
-// `decode_lossy`), and requires the original bytes back.
+// perturbs the text in a way the decoder is documented to tolerate, and
+// requires the original bytes back.
 
 ///|
 /// Whitespace `decode` skips when `ignore_whitespace` is set.
@@ -92,6 +91,16 @@ test "decode_lossy round trips through invalid characters" {
   @quickcheck.check((input : (Bytes, Array[(Int32, Int32)], Bool)) => {
     let (bytes, edits, padding) = input
     let text = splice(@base64.encode(bytes, padding~), edits, invalid_chars)
+    @base64.decode_lossy(text) == bytes
+  })
+}
+
+///|
+/// Whitespace may appear anywhere in the input, padding included.
+test "decode_lossy skips whitespace anywhere" {
+  @quickcheck.check((input : (Bytes, Array[(Int32, Int32)], Bool)) => {
+    let (bytes, edits, padding) = input
+    let text = splice(@base64.encode(bytes, padding~), edits, whitespace_chars)
     @base64.decode_lossy(text) == bytes
   })
 }

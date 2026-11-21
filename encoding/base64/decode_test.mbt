@@ -163,14 +163,15 @@ test "decode lossy" {
       #|b"foo"
     ),
   )
+  // Whitespace is skipped like any other invalid character.
   inspect(
     @base64.decode_lossy("Zm9 v"),
     content=(
-      #|b"fo"
+      #|b"foo"
     ),
   )
   inspect(
-    @base64.decode_lossy("Z m 9 v", ignore_whitespace=true),
+    @base64.decode_lossy("Z m 9\nv"),
     content=(
       #|b"foo"
     ),

@@ -60,6 +60,31 @@ pub fn decode(text : StringView) -> Bytes raise Malformed {
 }
 
 ///|
+/// Decodes a hexadecimal string into bytes, skipping invalid characters.
+///
+/// Both lowercase and uppercase hexadecimal characters are accepted; every
+/// other character, including whitespace, is skipped. A trailing odd nibble
+/// is dropped, so `"4 8 6"` decodes to `b"H"`. Whenever `decode` succeeds,
+/// `decode_lossy` returns the same bytes.
+pub fn decode_lossy(text : StringView) -> Bytes {
+  let buffer = @buffer.Buffer(capacity=text.length() / 2)
+  let mut pending = -1
+  for code_unit in text.code_units() {
+    let value = hex_value(code_unit.to_int())
+    if value < 0 {
+      continue
+    }
+    if pending < 0 {
+      pending = value
+    } else {
+      buffer.write_byte(((pending << 4) | value).to_byte())
+      pending = -1
+    }
+  }
+  buffer.to_bytes()
+}
+
+///|
 /// Retained on every backend: the linear-memory backends reach it only from
 /// the differential tests and the fast path's rejections, but it is the
 /// implementation everywhere else.

@@ -119,3 +119,83 @@ fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
   builder.write_view(text.unsafe_view(start=literal_start, end=length))
   Some(builder.to_string())
 }
+
+///|
+/// Decodes a percent-encoded URI component back to raw bytes.
+///
+/// This is the byte-level counterpart of `decode`: each `%XX` escape
+/// contributes one byte, and the literal characters between escapes are
+/// appended as UTF-8, with an unpaired surrogate written as U+FFFD. Runs of
+/// escapes are not validated as UTF-8, so any byte string round-trips through
+/// `encode_bytes`.
+///
+/// Raises `Malformed` if a `%` is not followed by two hexadecimal digits.
+pub fn decode_bytes(text : StringView) -> Bytes raise Malformed {
+  let length = text.length()
+  let buffer = @buffer.Buffer(capacity=length)
+  let mut i = 0
+  // Start of the pending span of literal characters, copied in one piece.
+  let mut literal_start = 0
+  while i < length {
+    if text.unsafe_get(i) != '%' {
+      i += 1
+      continue
+    }
+    write_literal_utf8(buffer, text.unsafe_view(start=literal_start, end=i))
+    if i + 2 < length {
+      let hi = hex_value(text.unsafe_get(i + 1).to_int())
+      let lo = hex_value(text.unsafe_get(i + 2).to_int())
+      if hi >= 0 && lo >= 0 {
+        buffer.write_byte(((hi << 4) | lo).to_byte())
+        i += 3
+        literal_start = i
+        continue
+      }
+    }
+    raise Malformed(text)
+  }
+  write_literal_utf8(buffer, text.unsafe_view(start=literal_start, end=length))
+  buffer.to_bytes()
+}
+
+///|
+/// Writes a span of literal characters as UTF-8. An unpaired surrogate code
+/// unit is written as U+FFFD (0xEF 0xBF 0xBD), matching `encode`.
+fn write_literal_utf8(buffer : @buffer.Buffer, text : StringView) -> Unit {
+  let length = text.length()
+  let mut i = 0
+  while i < length {
+    let unit = text.unsafe_get(i).to_int()
+    if unit < 0x80 {
+      buffer.write_byte(unit.to_byte())
+      i += 1
+    } else if unit < 0x800 {
+      buffer.write_byte((0xC0 | (unit >> 6)).to_byte())
+      buffer.write_byte((0x80 | (unit & 0x3F)).to_byte())
+      i += 1
+    } else if unit.is_leading_surrogate() &&
+      i + 1 < length &&
+      text.unsafe_get(i + 1).is_trailing_surrogate() {
+      let low = text.unsafe_get(i + 1).to_int()
+      let code_point = 0x10000 + ((unit - 0xD800) << 10) + (low - 0xDC00)
+      buffer.write_byte((0xF0 | (code_point >> 18)).to_byte())
+      buffer.write_byte((0x80 | ((code_point >> 12) & 0x3F)).to_byte())
+      buffer.write_byte((0x80 | ((code_point >> 6) & 0x3F)).to_byte())
+      buffer.write_byte((0x80 | (code_point & 0x3F)).to_byte())
+      i += 2
+    } else {
+      // Either a BMP scalar value or an unpaired surrogate, which is
+      // replaced by U+FFFD (0xEF 0xBF 0xBD) like `encode` does.
+      let scalar = if unit.is_leading_surrogate() ||
+        unit.is_trailing_surrogate() {
+        0xFFFD
+      } else {
+        unit
+      }
+      buffer.write_byte((0xE0 | (scalar >> 12)).to_byte())
+      buffer.write_byte((0x80 | ((scalar >> 6) & 0x3F)).to_byte())
+      buffer.write_byte((0x80 | (scalar & 0x3F)).to_byte())
+      i += 1
+    }
+  }
+}
