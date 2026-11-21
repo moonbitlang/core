@@ -8,6 +8,8 @@ import {
 // Values
 pub fn decode(StringView) -> Bytes raise Malformed
 
+pub fn decode_lossy(StringView) -> Bytes
+
 pub fn encode(BytesView) -> String
 
 // Errors

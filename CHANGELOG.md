@@ -14,9 +14,11 @@
 - Added `eprintln` for writing a line to standard error (#4222).
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
 - Added ordered navigation to `@sorted_map.SortedMap`: `first`, `last`, `pop_first`, `pop_last`, the nearest-key queries `first_ge`, `first_gt`, `last_le` and `last_lt`, and reverse iteration with `rev_iter`, `rev_iter2`, `rev_keys` and `rev_values`.
+- Added `@hex.decode_lossy` for hexadecimal decoding that skips invalid characters, and `@percent.encode_bytes` and `@percent.decode_bytes` for percent-encoding raw bytes (#4896).
 
 #### Changed
 
+- **BREAKING**: `@base64.decode_lossy` now skips whitespace instead of stopping at it, so line-wrapped input is not truncated. Its `ignore_whitespace` parameter is removed; delete the argument at call sites. `decode` keeps the parameter.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed

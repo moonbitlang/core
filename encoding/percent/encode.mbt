@@ -98,3 +98,23 @@ pub fn encode(text : StringView) -> String {
   builder.write_view(text.unsafe_view(start=literal_start, end=length))
   builder.to_string()
 }
+
+///|
+/// Percent-encodes raw bytes as a single URI component (RFC 3986).
+///
+/// This is the byte-level counterpart of `encode`: every byte outside the
+/// unreserved set `A-Z a-z 0-9 - . _ ~` is written as `%XX` with uppercase
+/// hexadecimal digits, and the rest are copied through. No UTF-8 conversion
+/// happens, so binary and non-UTF-8 payloads round-trip through
+/// `decode_bytes`.
+pub fn encode_bytes(bytes : BytesView) -> String {
+  let builder = StringBuilder(capacity=bytes.length())
+  for byte in bytes {
+    if is_unreserved(byte.to_int()) {
+      builder.write_char(byte.to_char())
+    } else {
+      write_escape(builder, byte.to_int())
+    }
+  }
+  builder.to_string()
+}

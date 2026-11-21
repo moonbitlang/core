@@ -119,3 +119,17 @@ test "long alternating literal and escaped spans" {
   }
   assert_eq(@percent.encode(builder.to_string()), expected.to_string())
 }
+
+///|
+test "encode_bytes" {
+  // Unreserved bytes pass through, everything else is escaped.
+  inspect(@percent.encode_bytes(b"a~-\x00\xff "), content="a~-%00%FF%20")
+  // A byte string that is not valid UTF-8 is escaped byte by byte.
+  inspect(@percent.encode_bytes(b"\xc3\x28"), content="%C3%28")
+  inspect(@percent.encode_bytes(b""), content="")
+  // Every byte value survives a round trip through decode_bytes.
+  for byte in 0..<256 {
+    let payload = Bytes::makei(1, _ => byte.to_byte())
+    assert_eq(@percent.decode_bytes(@percent.encode_bytes(payload)), payload)
+  }
+}

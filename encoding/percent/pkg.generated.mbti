@@ -8,9 +8,13 @@ import {
 // Values
 pub fn decode(StringView) -> String raise Malformed
 
+pub fn decode_bytes(StringView) -> Bytes raise Malformed
+
 pub fn decode_lossy(StringView) -> String
 
 pub fn encode(StringView) -> String
+
+pub fn encode_bytes(BytesView) -> String
 
 // Errors
 #derive(@debug.Debug)

@@ -73,3 +73,22 @@ test "Debug for Malformed" {
       )
   }
 }
+
+///|
+test "decode_lossy" {
+  inspect(@hex.decode_lossy("48656c6c6f"), content="b\"Hello\"")
+  // Hexadecimal digits in either case; other characters are skipped.
+  inspect(@hex.decode_lossy("48 65"), content="b\"He\"")
+  inspect(@hex.decode_lossy("4\t8\n6C\r"), content="b\"Hl\"")
+  inspect(@hex.decode_lossy("zz48zz65"), content="b\"He\"")
+  // A trailing odd nibble is dropped.
+  inspect(@hex.decode_lossy("48 6"), content="b\"H\"")
+  inspect(@hex.decode_lossy(""), content="b\"\"")
+  // Whenever decode succeeds, decode_lossy returns the same bytes.
+  inspect(
+    @hex.decode_lossy("DEADBEEF"),
+    content=(
+      #|b"\xde\xad\xbe\xef"
+    ),
+  )
+}

@@ -45,6 +45,20 @@ test "decode_uppercase" {
 }
 ```
 
+## Lossy Decoding
+
+Use `decode_lossy` to skip invalid characters instead of raising an error.
+Hexadecimal digits in either case are accepted, a trailing odd nibble is
+dropped, and whitespace is skipped:
+
+```mbt check
+///|
+test "decode_lossy" {
+  inspect(@hex.decode_lossy("48 65"), content="b\"He\"")
+  inspect(@hex.decode_lossy("486"), content="b\"H\"")
+}
+```
+
 ## Malformed Input
 
 `decode` raises `Malformed` when the input has odd length or contains any
