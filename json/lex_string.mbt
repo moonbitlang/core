@@ -116,6 +116,11 @@ fn ParseContext::lex_string_slow(
   let buf = StringBuilder()
   let base = ctx.input.start_offset()
   for start = run_start, stop = ctx.offset {
+    guard stop < ctx.end_offset else { raise InvalidEof }
+    if ctx.input.unsafe_get(stop) < ' ' {
+      ctx.offset = stop + 1
+      ctx.invalid_char(shift=-1)
+    }
     if start < stop {
       buf.write_view(ctx.input[start:stop])
     }
