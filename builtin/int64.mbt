@@ -727,16 +727,16 @@ pub impl Eq for Int64 with fn not_equal(self : Int64, other : Int64) -> Bool = "
 pub impl Compare for Int64 with fn compare(self, other) = "%i64_compare"
 
 ///|
-pub impl Compare for Int64 with fn op_lt(x, y) = "%i64.lt"
+pub impl Compare for Int64 with fn lt(x, y) = "%i64.lt"
 
 ///|
-pub impl Compare for Int64 with fn op_le(x, y) = "%i64.le"
+pub impl Compare for Int64 with fn le(x, y) = "%i64.le"
 
 ///|
-pub impl Compare for Int64 with fn op_gt(x, y) = "%i64.gt"
+pub impl Compare for Int64 with fn gt(x, y) = "%i64.gt"
 
 ///|
-pub impl Compare for Int64 with fn op_ge(x, y) = "%i64.ge"
+pub impl Compare for Int64 with fn ge(x, y) = "%i64.ge"
 
 ///|
 /// Returns the default value for `Int64` type, which is zero (0L).
@@ -1408,16 +1408,16 @@ pub impl Mod for UInt64 with fn mod(self, other) = "%u64.mod"
 pub impl Compare for UInt64 with fn compare(self, other) = "%u64.compare"
 
 ///|
-pub impl Compare for UInt64 with fn op_lt(x, y) = "%u64.lt"
+pub impl Compare for UInt64 with fn lt(x, y) = "%u64.lt"
 
 ///|
-pub impl Compare for UInt64 with fn op_le(x, y) = "%u64.le"
+pub impl Compare for UInt64 with fn le(x, y) = "%u64.le"
 
 ///|
-pub impl Compare for UInt64 with fn op_gt(x, y) = "%u64.gt"
+pub impl Compare for UInt64 with fn gt(x, y) = "%u64.gt"
 
 ///|
-pub impl Compare for UInt64 with fn op_ge(x, y) = "%u64.ge"
+pub impl Compare for UInt64 with fn ge(x, y) = "%u64.ge"
 
 ///|
 /// Compares two unsigned 64-bit integers for equality.

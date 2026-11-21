@@ -134,16 +134,16 @@ pub impl Compare for UInt16 with fn compare(self, that) {
 }
 
 ///|
-pub impl Compare for UInt16 with fn op_lt(x, y) = "%i32.lt"
+pub impl Compare for UInt16 with fn lt(x, y) = "%i32.lt"
 
 ///|
-pub impl Compare for UInt16 with fn op_le(x, y) = "%i32.le"
+pub impl Compare for UInt16 with fn le(x, y) = "%i32.le"
 
 ///|
-pub impl Compare for UInt16 with fn op_gt(x, y) = "%i32.gt"
+pub impl Compare for UInt16 with fn gt(x, y) = "%i32.gt"
 
 ///|
-pub impl Compare for UInt16 with fn op_ge(x, y) = "%i32.ge"
+pub impl Compare for UInt16 with fn ge(x, y) = "%i32.ge"
 
 ///|
 pub impl Hash for UInt16 with fn hash_combine(self, hasher) {

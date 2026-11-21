@@ -746,16 +746,16 @@ pub impl Eq for Int32 with fn not_equal(self : Int32, other : Int32) -> Bool = "
 pub impl Compare for Int32 with fn compare(self, other) = "%i32_compare"
 
 ///|
-pub impl Compare for Int32 with fn op_lt(x, y) = "%i32.lt"
+pub impl Compare for Int32 with fn lt(x, y) = "%i32.lt"
 
 ///|
-pub impl Compare for Int32 with fn op_le(x, y) = "%i32.le"
+pub impl Compare for Int32 with fn le(x, y) = "%i32.le"
 
 ///|
-pub impl Compare for Int32 with fn op_gt(x, y) = "%i32.gt"
+pub impl Compare for Int32 with fn gt(x, y) = "%i32.gt"
 
 ///|
-pub impl Compare for Int32 with fn op_ge(x, y) = "%i32.ge"
+pub impl Compare for Int32 with fn ge(x, y) = "%i32.ge"
 
 ///|
 /// Tests whether an integer is strictly positive.
@@ -1222,16 +1222,16 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 pub impl Compare for Double with fn compare(self, other) = "%f64_compare"
 
 ///|
-pub impl Compare for Double with fn op_lt(x, y) = "%f64.lt"
+pub impl Compare for Double with fn lt(x, y) = "%f64.lt"
 
 ///|
-pub impl Compare for Double with fn op_le(x, y) = "%f64.le"
+pub impl Compare for Double with fn le(x, y) = "%f64.le"
 
 ///|
-pub impl Compare for Double with fn op_gt(x, y) = "%f64.gt"
+pub impl Compare for Double with fn gt(x, y) = "%f64.gt"
 
 ///|
-pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
+pub impl Compare for Double with fn ge(x, y) = "%f64.ge"
 
 ///|
 /// Returns the default value for double-precision floating-point numbers (0.0).
@@ -1378,16 +1378,16 @@ pub impl Eq for Char with fn not_equal(self : Char, other : Char) -> Bool = "%i3
 pub impl Compare for Char with fn compare(self, other) = "%char_compare"
 
 ///|
-pub impl Compare for Char with fn op_lt(x, y) = "%i32.lt"
+pub impl Compare for Char with fn lt(x, y) = "%i32.lt"
 
 ///|
-pub impl Compare for Char with fn op_le(x, y) = "%i32.le"
+pub impl Compare for Char with fn le(x, y) = "%i32.le"
 
 ///|
-pub impl Compare for Char with fn op_gt(x, y) = "%i32.gt"
+pub impl Compare for Char with fn gt(x, y) = "%i32.gt"
 
 ///|
-pub impl Compare for Char with fn op_ge(x, y) = "%i32.ge"
+pub impl Compare for Char with fn ge(x, y) = "%i32.ge"
 
 ///|
 /// Returns the default value for the `Char` type, which is the null character
@@ -2156,16 +2156,16 @@ pub fn UInt32::op_neq(self : UInt32, other : UInt32) -> Bool = "%u32.ne"
 pub impl Compare for UInt32 with fn compare(self, other) = "%u32.compare"
 
 ///|
-pub impl Compare for UInt32 with fn op_lt(x, y) = "%u32.lt"
+pub impl Compare for UInt32 with fn lt(x, y) = "%u32.lt"
 
 ///|
-pub impl Compare for UInt32 with fn op_le(x, y) = "%u32.le"
+pub impl Compare for UInt32 with fn le(x, y) = "%u32.le"
 
 ///|
-pub impl Compare for UInt32 with fn op_gt(x, y) = "%u32.gt"
+pub impl Compare for UInt32 with fn gt(x, y) = "%u32.gt"
 
 ///|
-pub impl Compare for UInt32 with fn op_ge(x, y) = "%u32.ge"
+pub impl Compare for UInt32 with fn ge(x, y) = "%u32.ge"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 32-bit integers. For

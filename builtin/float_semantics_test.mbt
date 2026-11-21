@@ -29,10 +29,10 @@ fn[T : Compare + Hash] check_float_relations(
   assert_eq(generic, expected)
   let eq : (T, T) -> Bool = Eq::equal
   let ne : (T, T) -> Bool = Eq::not_equal
-  let lt : (T, T) -> Bool = Compare::op_lt
-  let le : (T, T) -> Bool = Compare::op_le
-  let gt : (T, T) -> Bool = Compare::op_gt
-  let ge : (T, T) -> Bool = Compare::op_ge
+  let lt : (T, T) -> Bool = Compare::lt
+  let le : (T, T) -> Bool = Compare::le
+  let gt : (T, T) -> Bool = Compare::gt
+  let ge : (T, T) -> Bool = Compare::ge
   assert_eq(
     (eq(a, b), ne(a, b), lt(a, b), le(a, b), gt(a, b), ge(a, b)),
     expected,

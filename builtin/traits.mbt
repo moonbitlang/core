@@ -49,30 +49,66 @@ impl Eq with fn not_equal(x, y) {
 /// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
   fn compare(Self, Self) -> Int32
+  fn lt(Self, Self) -> Bool = _
+  #pending_deprecated("Use Compare::lt instead")
   fn op_lt(Self, Self) -> Bool = _
+  fn gt(Self, Self) -> Bool = _
+  #pending_deprecated("Use Compare::gt instead")
   fn op_gt(Self, Self) -> Bool = _
+  fn le(Self, Self) -> Bool = _
+  #pending_deprecated("Use Compare::le instead")
   fn op_le(Self, Self) -> Bool = _
+  fn ge(Self, Self) -> Bool = _
+  #pending_deprecated("Use Compare::ge instead")
   fn op_ge(Self, Self) -> Bool = _
 }
 
 ///|
-impl Compare with fn op_lt(x, y) {
+impl Compare with fn lt(x, y) {
   x.compare(y).is_neg()
 }
 
 ///|
-impl Compare with fn op_gt(x, y) {
+impl Compare with fn op_lt(x, y) {
+  Compare::lt(x, y)
+}
+
+///|
+impl Compare with fn gt(x, y) {
   x.compare(y).is_pos()
 }
 
 ///|
-impl Compare with fn op_le(x, y) {
+impl Compare with fn op_gt(x, y) {
+  Compare::gt(x, y)
+}
+
+///|
+impl Compare with fn le(x, y) {
   x.compare(y).is_non_pos()
 }
 
 ///|
-impl Compare with fn op_ge(x, y) {
+impl Compare with fn op_le(x, y) {
+  Compare::le(x, y)
+}
+
+///|
+impl Compare with fn ge(x, y) {
   x.compare(y).is_non_neg()
+}
+
+///|
+impl Compare with fn op_ge(x, y) {
+  Compare::ge(x, y)
+}
+
+///|
+test "Compare legacy comparison methods" {
+  assert_true(Compare::op_lt(1, 2))
+  assert_true(Compare::op_gt(2, 1))
+  assert_true(Compare::op_le(1, 1))
+  assert_true(Compare::op_ge(1, 1))
 }
 
 ///|
