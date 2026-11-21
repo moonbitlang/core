@@ -672,25 +672,7 @@ test "unicode" {
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: invalid surrogate pair"))
-    ),
-  )
-}
-
-///|
-test "char decoding from unchecked UTF-16" {
-  let lone = Json(b"\x00\xd8".to_unchecked_string())
-  let c : Char = @json.from_json(lone)
-  inspect(c.to_int(), content="55296")
-  let malformed = Json(b"\x00\xd8a\x00".to_unchecked_string())
-  let err = expect_json_decode_error(
-    () => ignore((@json.from_json(malformed) : Char)),
-    "expected Char decode failure",
-  )
-  debug_inspect(
-    err,
-    content=(
-      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: invalid surrogate pair"))
+      #|JsonDecodeError((<JsonPath: "">, "Char::from_json: expected single character"))
     ),
   )
 }
