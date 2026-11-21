@@ -148,20 +148,20 @@ fn ParseContext::lex_string_slow(
       }
       break
     } else if c == '\\' {
-      ctx.offset = i + 1
+      ctx.offset = i
       if start > 0 && i > start {
         buf.write_view(ctx.input[start:i])
       }
-      match ctx.read_char() {
-        Some('b') => buf.write_char('\b')
-        Some('f') => buf.write_char('\u{0C}')
-        Some('n') => buf.write_char('\n')
-        Some('r') => buf.write_char('\r')
-        Some('t') => buf.write_char('\t')
-        Some('"') => buf.write_char('"')
-        Some('\\') => buf.write_char('\\')
-        Some('/') => buf.write_char('/')
-        Some('u') => {
+      lexscan ctx {
+        re"^\\b" => buf.write_char('\b')
+        re"^\\f" => buf.write_char('\u{0C}')
+        re"^\\n" => buf.write_char('\n')
+        re"^\\r" => buf.write_char('\r')
+        re"^\\t" => buf.write_char('\t')
+        re"^\\\"" => buf.write_char('"')
+        re"^\\\\" => buf.write_char('\\')
+        re"^\\/" => buf.write_char('/')
+        re"^\\u" => {
           // The backslash that opened this escape. `ctx.offset` is just
           // past the `u`, and `\` and `u` are one code unit each.
           let escape_start = ctx.offset - 2
@@ -174,15 +174,15 @@ fn ParseContext::lex_string_slow(
             // string containing an unpaired surrogate rather than a
             // Unicode scalar value (RFC 8259 calls the behavior for such
             // escapes unpredictable; I-JSON forbids them).
-            match ctx.read_char() {
-              Some('\\') => ()
-              Some(_) => ctx.unpaired_surrogate(escape_start)
-              None => raise InvalidEof
+            guard ctx.input.get(ctx.offset) is Some('\\') else {
+              ctx.reject_char(blame=escape_start)
             }
-            match ctx.read_char() {
-              Some('u') => ()
-              Some(_) => ctx.unpaired_surrogate(escape_start)
-              None => raise InvalidEof
+            lexscan ctx {
+              re"^\\u" => ()
+              _ => {
+                ctx.offset += 1 // skip the backslash
+                ctx.reject_char(blame=escape_start)
+              }
             }
             let c2 = ctx.lex_hex_digits(4)
             if c2 is (0xDC00..<=0xDFFF) {
@@ -199,8 +199,10 @@ fn ParseContext::lex_string_slow(
             buf.write_char(c.unsafe_to_char())
           }
         }
-        Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-        None => raise InvalidEof
+        _ => {
+          ctx.offset = i + 1
+          ctx.reject_char()
+        }
       }
       start = ctx.offset
       if LEX_STRING_ESCAPE_SIMD {
@@ -305,17 +307,31 @@ fn ParseContext::lex_hex_digits(
   n : Int32,
 ) -> Int32 raise ParseError {
   for _ in 0..<n; r = 0 {
-    let d = match ctx.read_char() {
-      Some('0'..<='9' as c) => c.to_int() - '0'
-      Some('A'..<='F' as c) => c.to_int() - 'A' + 10
-      Some('a'..<='f' as c) => c.to_int() - 'a' + 10
-      // `-1` would land inside the character when it is not in the BMP,
-      // reporting a broken half at the wrong column.
-      Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-      None => raise InvalidEof
+    guard ctx.input.get(ctx.offset) is Some(unit) else { raise InvalidEof }
+    let d = match unit {
+      '0'..<='9' => unit.to_int() - '0'
+      'A'..<='F' => unit.to_int() - 'A' + 10
+      'a'..<='f' => unit.to_int() - 'a' + 10
+      _ => ctx.reject_char()
     }
+    ctx.offset += 1
     continue (r << 4) | d
   } nobreak {
     r
   }
+}
+
+///|
+/// Consume the offending character, reporting the opening backslash when an
+/// invalid continuation belongs to a surrogate escape.
+fn[T] ParseContext::reject_char(
+  ctx : ParseContext,
+  blame~ : Int32 = ctx.offset,
+) -> T raise ParseError {
+  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+  ctx.offset += match ctx.input.get_char(ctx.offset) {
+    Some(c) => c.utf16_len()
+    None => 1
+  }
+  ctx.invalid_char(shift=blame - ctx.offset)
 }
