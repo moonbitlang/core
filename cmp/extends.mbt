@@ -31,11 +31,6 @@ pub extend Reverse with Hash::{hash}
 pub extend Reverse with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Reverse with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Reverse with Eq::{not_equal}

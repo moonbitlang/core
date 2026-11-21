@@ -1179,13 +1179,6 @@ pub impl Eq for Double with fn equal(self : Double, other : Double) -> Bool = "%
 pub impl Eq for Double with fn not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
-/// Deprecated inequality helper; use `a != b`.
-/// Operator helper `op_neq`.
-#deprecated("Use `a != b` instead")
-#doc(hidden)
-pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
-
-///|
 /// Compares two double-precision floating-point numbers and returns their
 /// relative numerical order for non-NaN inputs. Both signed zeros compare as
 /// zero; infinities and subnormals follow numerical order.
@@ -2120,13 +2113,6 @@ pub impl Eq for UInt32 with fn equal(self : UInt32, other : UInt32) -> Bool = "%
 /// }
 /// ```
 pub impl Eq for UInt32 with fn not_equal(self : UInt32, other : UInt32) -> Bool = "%u32.ne"
-
-///|
-/// Deprecated inequality helper; use `a != b`.
-/// Operator helper `op_neq`.
-#deprecated("Use `a != b` instead")
-#doc(hidden)
-pub fn UInt32::op_neq(self : UInt32, other : UInt32) -> Bool = "%u32.ne"
 
 ///|
 /// Compares two unsigned 32-bit integers and returns their relative order.

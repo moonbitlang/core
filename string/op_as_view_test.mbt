@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "String::op_as_view with positive indices" {
+test "String::clamped_view with positive indices" {
   let s = "hello world"
 
   // Test basic ranges
@@ -36,7 +36,7 @@ test "String::op_as_view with positive indices" {
 }
 
 ///|
-test "String::op_as_view with negative indices" {
+test "String::clamped_view with negative indices" {
   let s = "hello world"
   inspect(s[-5:], content="hello world")
   inspect(s[:-6], content="")
@@ -45,7 +45,7 @@ test "String::op_as_view with negative indices" {
 }
 
 ///|
-test "View::op_as_view with positive indices" {
+test "View::clamped_view with positive indices" {
   let s = "hello world"
   let view = s[:]
 
@@ -69,7 +69,7 @@ test "View::op_as_view with positive indices" {
 }
 
 ///|
-test "View::op_as_view with negative indices" {
+test "View::clamped_view with negative indices" {
   let view = "hello world"[1:5]
   inspect(view[-5:], content="ello")
   inspect(view[:-6], content="")
@@ -77,7 +77,7 @@ test "View::op_as_view with negative indices" {
 }
 
 ///|
-test "View::op_as_view with nested views" {
+test "View::clamped_view with nested views" {
   let s = "hello world"
   let view1 = s.exact_view(start=0, end=11)
   inspect(view1, content="hello world")

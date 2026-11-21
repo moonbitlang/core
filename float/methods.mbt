@@ -742,12 +742,6 @@ pub impl Eq for Float with fn equal(self : Float, other : Float) -> Bool = "%f32
 pub impl Eq for Float with fn not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
 
 ///|
-/// Operator helper `op_neq`.
-#deprecated("Use `a != b` instead")
-#doc(hidden)
-pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
-
-///|
 /// Compares two 32-bit floating-point numbers in numerical order for non-NaN
 /// inputs. Both signed zeros compare as zero; infinities and subnormals follow
 /// numerical order.

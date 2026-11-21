@@ -66,7 +66,7 @@ test "tuple10_equality" {
 }
 
 ///|
-test "Tuple11::op_equal with equal tuples" {
+test "Tuple11::equal with equal tuples" {
   let t1 = (1, "a", true, 1.0, b'x', false, 42, 'c', -1, "hello", 100)
   let t2 = (1, "a", true, 1.0, b'x', false, 42, 'c', -1, "hello", 100)
   inspect(t1 == t2, content="true")
