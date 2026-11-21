@@ -73,8 +73,6 @@ pub type Bool
 pub fn Bool::compare(Bool, Bool) -> Int32
 pub fn Bool::equal(Bool, Bool) -> Bool
 pub fn Bool::hash(Bool) -> Int32
-#deprecated
-pub fn Bool::op_compare(Bool, Bool) -> Int32
 pub fn Bool::to_byte(Bool) -> Byte
 pub fn Bool::to_int(Bool) -> Int32
 pub fn Bool::to_int64(Bool) -> Int64

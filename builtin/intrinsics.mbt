@@ -126,40 +126,6 @@ pub fn not(x : Bool) -> Bool = "%bool_not"
 pub impl Eq for Bool with fn equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 
 ///|
-/// Compares two boolean values and returns their relative order. This is a
-/// deprecated method and users should use `compare` instead.
-///
-/// Parameters:
-///
-/// * `self` : The first boolean value to compare.
-/// * `other` : The second boolean value to compare against.
-///
-/// Returns an integer indicating the relative order:
-///
-/// * A negative value if `self` is less than `other` (i.e., `self` is `false`
-/// and `other` is `true`)
-/// * Zero if `self` equals `other`
-/// * A positive value if `self` is greater than `other` (i.e., `self` is `true`
-/// and `other` is `false`)
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let t = true
-///   let f = false
-///   // This usage is deprecated, use compare() instead
-///   inspect(t.compare(f), content="1")
-///   inspect(f.compare(t), content="-1")
-///   inspect(t.compare(t), content="0")
-/// }
-/// ```
-///
-#deprecated("Use `compare` instead")
-#coverage.skip
-pub fn Bool::op_compare(self : Bool, other : Bool) -> Int32 = "%bool_compare"
-
-///|
 /// Compares two boolean values and returns their relative order. The comparison
 /// follows the rule that `false` is less than `true`.
 ///
