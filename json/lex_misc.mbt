@@ -13,27 +13,6 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::read_char(ctx : ParseContext) -> Char? {
-  if ctx.offset < ctx.end_offset {
-    let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-    ctx.offset += 1
-    if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
-        if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
-          return Some(c3.unsafe_to_char())
-        }
-      }
-    }
-    Some(c1.unsafe_to_char())
-  } else {
-    None
-  }
-}
-
-///|
 /// Lower bound of the UTF-16 surrogate range.
 const SURROGATE_LOW_CHAR = 0xD800
 
