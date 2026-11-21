@@ -22,7 +22,6 @@ options(
   "allow-experimental-packages": true,
   experimental: true,
   targets: {
-    "deprecated.mbt": [ "native", "wasm" ],
     "signal.mbt": [ "native", "wasm" ],
     "signal_test.mbt": [ "native", "wasm" ],
   },

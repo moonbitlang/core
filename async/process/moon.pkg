@@ -53,7 +53,6 @@ options(
   "allow-experimental-packages": true,
   experimental: true,
   targets: {
-    "deprecated.mbt": [ "native", "wasm" ],
     "process.mbt": [ "native", "wasm" ],
     "orphan_process.mbt": [ "native", "wasm" ],
     "unix.mbt": [ "native", "wasm" ],

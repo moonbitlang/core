@@ -45,7 +45,6 @@ options(
   targets: {
     "certificate_wbtest.mbt": [ "native", "wasm" ],
     "channel_binding_wbtest.mbt": [ "native", "wasm" ],
-    "deprecated.mbt": [ "native", "wasm" ],
     "openssl.mbt": [ "native" ],
     "server_for_wbtest.mbt": [ "native", "wasm" ],
     "schannel.mbt": [ "native" ],
