@@ -61,11 +61,6 @@ pub extend FlagAction with @debug.Debug::{to_repr}
 pub extend FlagAction with Eq::{not_equal}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend FlagAction with Show::{output}
-
-///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend FlagArg with @debug.Debug::{to_repr}
@@ -84,11 +79,6 @@ pub extend OptionAction with @debug.Debug::{to_repr}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend OptionAction with Eq::{not_equal}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend OptionAction with Show::{output}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
@@ -111,11 +101,6 @@ pub extend ValueRange with @debug.Debug::{to_repr}
 pub extend ValueRange with Eq::{not_equal}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ValueRange with Show::{output}
-
-///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ValueSource with @debug.Debug::{to_repr}
@@ -124,8 +109,3 @@ pub extend ValueSource with @debug.Debug::{to_repr}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ValueSource with Eq::{not_equal}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ValueSource with Show::{output}

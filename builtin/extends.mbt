@@ -776,18 +776,6 @@ pub extend V128 with Eq::{equal}
 ///|
 pub extend V128 with Show::{to_string}
 
-// --- deprecated: compatibility methods ---
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ArgsLoc with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Array with Compare::{op_lt, op_le, op_ge, op_gt}
-
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
@@ -806,12 +794,7 @@ pub extend Array with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Array with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend ArrayView with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Array with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -826,12 +809,7 @@ pub extend ArrayView with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend ArrayView with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bool with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend ArrayView with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -849,16 +827,6 @@ pub extend Bool with Eq::{not_equal}
 pub extend Bool with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bool with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Byte with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Byte with Eq::{not_equal}
@@ -867,16 +835,6 @@ pub extend Byte with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Byte with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Byte with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bytes with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -894,16 +852,6 @@ pub extend Bytes with Eq::{not_equal}
 pub extend Bytes with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Bytes with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend BytesView with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend BytesView with Eq::{not_equal}
@@ -912,16 +860,6 @@ pub extend BytesView with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend BytesView with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend BytesView with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Char with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -939,16 +877,6 @@ pub extend Char with Eq::{not_equal}
 pub extend Char with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Char with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Double with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Double with Default::{default}
@@ -962,26 +890,6 @@ pub extend Double with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Double with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Double with Show::{output}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Error with Show::{output}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Failure with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend FixedArray with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1001,12 +909,7 @@ pub extend FixedArray with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend FixedArray with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int32 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend FixedArray with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1024,16 +927,6 @@ pub extend Int32 with Eq::{not_equal}
 pub extend Int32 with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int32 with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int64 with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Int64 with Default::{default}
@@ -1049,14 +942,9 @@ pub extend Int64 with Eq::{not_equal}
 pub extend Int64 with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Int64 with Show::{output}
-
-///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Iter with Show::{to_string, output}
+pub extend Iter with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1071,12 +959,7 @@ pub extend Map with Eq::{not_equal}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Map with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend MutArrayView with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Map with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1091,12 +974,7 @@ pub extend MutArrayView with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend MutArrayView with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Option with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend MutArrayView with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1112,16 +990,6 @@ pub extend Option with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Option with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Option with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend ReadOnlyArray with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1141,12 +1009,7 @@ pub extend ReadOnlyArray with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend ReadOnlyArray with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Result with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend ReadOnlyArray with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1161,17 +1024,7 @@ pub extend Result with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Result with Show::{to_string, output}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SourceLoc with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend String with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Result with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1189,21 +1042,6 @@ pub extend String with Eq::{not_equal}
 pub extend String with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend String with Show::{output}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend StringBuilder with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend StringView with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend StringView with Default::{default}
@@ -1219,16 +1057,6 @@ pub extend StringView with Eq::{not_equal}
 pub extend StringView with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend StringView with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple10 with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple10 with Eq::{not_equal}
@@ -1241,12 +1069,7 @@ pub extend Tuple10 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple10 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple11 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple10 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1261,12 +1084,7 @@ pub extend Tuple11 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple11 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple12 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple11 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1281,12 +1099,7 @@ pub extend Tuple12 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple12 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple13 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple12 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1301,12 +1114,7 @@ pub extend Tuple13 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple13 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple14 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple13 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1321,12 +1129,7 @@ pub extend Tuple14 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple14 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple15 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple14 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1341,12 +1144,7 @@ pub extend Tuple15 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple15 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple16 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple15 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1361,12 +1159,7 @@ pub extend Tuple16 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple16 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple2 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple16 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1381,12 +1174,7 @@ pub extend Tuple2 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple2 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple3 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple2 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1401,12 +1189,7 @@ pub extend Tuple3 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple3 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple4 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple3 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1421,12 +1204,7 @@ pub extend Tuple4 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple4 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple5 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple4 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1441,12 +1219,7 @@ pub extend Tuple5 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple5 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple6 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple5 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1461,12 +1234,7 @@ pub extend Tuple6 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple6 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple7 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple6 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1481,12 +1249,7 @@ pub extend Tuple7 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple7 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple8 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple7 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1501,12 +1264,7 @@ pub extend Tuple8 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple8 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Tuple9 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple8 with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)
@@ -1521,12 +1279,7 @@ pub extend Tuple9 with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Tuple9 with Show::{to_string, output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt32 with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Tuple9 with Show::{to_string}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1544,16 +1297,6 @@ pub extend UInt32 with Eq::{not_equal}
 pub extend UInt32 with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt32 with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt16 with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend UInt16 with Default::{default}
@@ -1567,16 +1310,6 @@ pub extend UInt16 with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend UInt16 with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt16 with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt64 with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -1594,16 +1327,6 @@ pub extend UInt64 with Eq::{not_equal}
 pub extend UInt64 with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend UInt64 with Show::{output}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Unit with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Unit with Default::{default}
@@ -1619,16 +1342,6 @@ pub extend Unit with Eq::{not_equal}
 pub extend Unit with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Unit with Show::{output}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend V128 with Eq::{not_equal}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend V128 with Show::{output}

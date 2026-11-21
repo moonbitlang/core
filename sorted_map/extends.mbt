@@ -23,11 +23,6 @@ pub extend SortedMap with Eq::{equal}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedMap with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedMap with @debug.Debug::{to_repr}
@@ -50,7 +45,7 @@ pub extend SortedMap with Eq::{not_equal}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend SortedMap with Show::{output, to_string}
+pub extend SortedMap with Show::{to_string}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)

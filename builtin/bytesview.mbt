@@ -441,7 +441,7 @@ pub impl Show for BytesView with fn output(self, logger) {
 
 ///|
 pub impl Show for Bytes with fn output(self, logger) {
-  BytesView::output(self, logger)
+  Show::output(self[:], logger)
 }
 
 ///|

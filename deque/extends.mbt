@@ -44,11 +44,6 @@ pub extend Deque with Default::{default}
 pub extend Deque with @json.FromJson::{from_json}
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Deque with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Deque with Eq::{not_equal}
@@ -61,7 +56,7 @@ pub extend Deque with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend Deque with Show::{output, to_string}
+pub extend Deque with Show::{to_string}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)

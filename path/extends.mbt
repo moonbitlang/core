@@ -32,8 +32,3 @@ pub extend Path with Eq::{not_equal}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Path with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `to_string` or string interpolation instead", skip_current_package=true)
-#doc(hidden)
-pub extend Path with Show::{output}

@@ -991,7 +991,7 @@ pub impl[T : Show] Show for ReadOnlyArray[T]
 /// Show implementation for ReadOnlyArray.
 #warnings("-deprecated")
 pub impl[T : Show] Show for ReadOnlyArray[T] with fn output(self, logger) {
-  self.unsafe_reinterpret_to_fixed_array().output(logger)
+  Show::output(self.unsafe_reinterpret_to_fixed_array(), logger)
 }
 
 ///|

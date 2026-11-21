@@ -47,11 +47,6 @@ pub extend Float with Sub::{sub}
 // --- deprecated: compatibility methods ---
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Float with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Float with Default::{default}
@@ -65,8 +60,3 @@ pub extend Float with Eq::{not_equal}
 #deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Float with Hash::{hash_combine}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Float with Show::{output}
