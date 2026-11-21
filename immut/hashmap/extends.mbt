@@ -40,4 +40,4 @@ pub extend HashMap with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend HashMap with Show::{output, to_string}
+pub extend HashMap with Show::{to_string}

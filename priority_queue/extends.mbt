@@ -27,7 +27,7 @@ pub extend PriorityQueue with Default::{default}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend PriorityQueue with Show::{output, to_string}
+pub extend PriorityQueue with Show::{to_string}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)

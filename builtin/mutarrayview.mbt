@@ -504,7 +504,7 @@ pub impl[X : Show] Show for MutArrayView[X]
 ///|
 #warnings("-deprecated")
 pub impl[X : Show] Show for MutArrayView[X] with fn output(self, logger) {
-  self[:].output(logger)
+  Show::output(self[:], logger)
 }
 
 ///|

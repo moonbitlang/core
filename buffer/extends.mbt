@@ -17,4 +17,4 @@
 ///|
 #deprecated("`Show` reads a `Buffer` as UTF-16LE. Decode its bytes with `@utf8.decode` or `@utf16.decode`, or inspect it with `@debug.Debug`", skip_current_package=true)
 #doc(hidden)
-pub extend Buffer with Show::{to_string, output}
+pub extend Buffer with Show::{to_string}

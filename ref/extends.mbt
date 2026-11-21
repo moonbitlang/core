@@ -24,4 +24,4 @@ pub extend Ref with @debug.Debug::{to_repr}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)
 #doc(hidden)
-pub extend Ref with Show::{output, to_string}
+pub extend Ref with Show::{to_string}

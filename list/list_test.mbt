@@ -640,7 +640,7 @@ test "iter_map_fold" {
 
 ///|
 #warnings("-deprecated")
-test "List::output with non-empty list" {
+test "Show::output for a non-empty list" {
   let buf = StringBuilder(capacity=100)
   let list = @list.List([1, 2, 3, 4, 5])
   Show::output(list, buf)
@@ -654,7 +654,7 @@ test "List::output with non-empty list" {
 
 ///|
 #warnings("-deprecated")
-test "List::output with empty list" {
+test "Show::output for an empty list" {
   let buf = StringBuilder(capacity=100)
   let list : @list.List[Int32] = List([])
   Show::output(list, buf)

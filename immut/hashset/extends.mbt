@@ -40,4 +40,4 @@ pub extend HashSet with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend HashSet with Show::{output, to_string}
+pub extend HashSet with Show::{to_string}

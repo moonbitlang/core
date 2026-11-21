@@ -11,8 +11,6 @@ type OsString
 pub fn OsString::bytes_length(Self) -> Int32
 #as_free_fn
 pub fn OsString::from_string(StringView) -> Self
-#deprecated
-pub fn OsString::output(Self, &Logger) -> Unit
 pub fn OsString::to_string(Self) -> String
 pub impl Show for OsString
 

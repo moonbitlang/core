@@ -43,7 +43,7 @@ pub extend Reverse with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)
 #doc(hidden)
-pub extend Reverse with Show::{output, to_string}
+pub extend Reverse with Show::{to_string}
 
 ///|
 pub extend Bound with Eq::{equal}

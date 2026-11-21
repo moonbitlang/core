@@ -101,7 +101,7 @@ pub(all) struct ArgsLoc(Array[SourceLoc?])
 #warnings("-deprecated")
 pub impl Show for ArgsLoc with fn output(self, logger) {
   let ArgsLoc(arr) = self
-  arr.output(logger)
+  Show::output(arr, logger)
 }
 
 ///|

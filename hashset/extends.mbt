@@ -44,7 +44,7 @@ pub extend HashSet with Default::{default}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md", skip_current_package=true)
 #doc(hidden)
-pub extend HashSet with Show::{output, to_string}
+pub extend HashSet with Show::{to_string}
 
 ///|
 #deprecated("Use `!=` instead", skip_current_package=true)

@@ -23,8 +23,3 @@ pub extend Repr with Show::{to_string}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Repr with Debug::{to_repr}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Repr with Show::{output}

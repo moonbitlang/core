@@ -34,11 +34,6 @@ pub extend SortedSet with Sub::{sub}
 pub extend SortedSet with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedSet with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedSet with Default::{default}
@@ -56,7 +51,7 @@ pub extend SortedSet with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend SortedSet with Show::{output, to_string}
+pub extend SortedSet with Show::{to_string}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)

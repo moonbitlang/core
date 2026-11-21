@@ -31,11 +31,6 @@ pub extend List with Hash::{hash}
 pub extend List with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend List with Compare::{op_ge, op_gt, op_le, op_lt}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend List with Default::{default}
@@ -53,7 +48,7 @@ pub extend List with Hash::{hash_combine}
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
-pub extend List with Show::{output, to_string}
+pub extend List with Show::{to_string}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)

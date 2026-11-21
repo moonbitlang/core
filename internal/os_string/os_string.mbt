@@ -46,10 +46,6 @@ pub impl Show for OsString with fn to_string(self) {
 }
 
 ///|
-#deprecated
-pub extend OsString with @builtin.Show::{output}
-
-///|
 pub extend OsString with @builtin.Show::{to_string}
 
 ///|

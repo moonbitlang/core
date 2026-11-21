@@ -59,10 +59,10 @@ Within the "safe to promote" set:
 - **`Compare::compare`, `Eq::equal`, `Hash::hash`**: promoted **uniformly on
   every type** that impls them (they're all in `builtin`, no cycle, and it keeps
   the surface uniform). Exactly **one** method per trait is promoted — the
-  user-facing primary one. Its *derivatives* stay deprecated:
-  - `Compare::{op_lt, op_le, op_ge, op_gt}` → use `<` `<=` `>=` `>`
-  - `Eq::not_equal` → use `!=`
-  - `Hash::hash_combine` → implementer-facing, use it via the trait
+  user-facing primary one. For the defaulted methods:
+  - Omit `extend` for `Compare::{op_lt, op_le, op_ge, op_gt}`. Use `<`, `<=`, `>=`, and `>`.
+  - Keep `Eq::not_equal` promotions deprecated in favor of `!=`.
+  - Keep `Hash::hash_combine` promotions deprecated. Use it via the trait.
 
   (`compare` and `equal` are still worth promoting even though `<` and `==`
   exist, because they're the *required* trait methods and the only way to pass
@@ -80,7 +80,7 @@ Within the "safe to promote" set:
   `CoverageCounter::to_string` also stays promoted: its `Show` renders the
   counter representation used by coverage reporting. Wrapping an array does
   not make it a general-purpose collection without a canonical string form.
-  `Show::output` is never promoted (use `to_string` / `"\{x}"`).
+  Omit `extend` for `Show::output`. Use `Show::output(x, logger)` to write to a logger.
 - **`Default::default`**: **deprecated** — a literal (`0`, `[]`, `None`, `""`,
   `b'\x00'`) or `Default::default()` via the trait bound is clearer, and it keeps
   the interface lean. (Exception: `Byte::default()` is kept promoted **for now** —
