@@ -106,7 +106,7 @@ test "test output" {
 }
 ```
 
-## Snapshot Testing
+## Legacy buffer snapshots
 
 Compare test outputs against saved snapshots:
 
@@ -339,3 +339,59 @@ Tests are automatically discovered and run by the MoonBit build system:
 - Save integration tests with large datasets for separate test suites
 
 The test package provides essential tools for ensuring code quality and correctness in MoonBit applications through comprehensive testing capabilities.
+
+## File snapshots
+
+Use the context supplied by the test driver to create a temporary output file.
+The matching Moon implementation is required; constructing `Test("name")`
+manually does not supply an artifact directory. File snapshot I/O currently
+supports **Wasm**. Other backends report an explicit unsupported-I/O error until
+the shared runtime ABI is wired up; there is no snapshot-specific native C stub.
+
+```mbt nocheck
+///|
+async test "generated output" (t : @test.Test) {
+  let file = t.create_file()
+  @fs.write_text(file.path(), "hello\n")
+  file.snapshot(filename="greeting.txt")
+  // Runs even when the file differs from its baseline.
+}
+```
+
+`@test.File` represents a temporary output, not an open I/O handle. Write using
+ordinary file APIs (for example `moonbitlang/core/async/fs`), then close every
+writer before submitting. Its `path()` is stable and does not raise. Reading the
+path does not extend the file's lifetime or permit writes after submission.
+An unused file needs no `discard` call and does not fail the test.
+
+The file remembers its test context. `file.snapshot` compares synchronously with
+fixed-size buffers and registers the result with that context. A file can be
+submitted only once. Submission after its test ends is an error. If comparison
+starts but does not finish, the test fails even if the I/O error was caught.
+Async snapshot comparison is deferred; ordinary async file APIs can still be
+used to generate output before calling the synchronous `file.snapshot`.
+
+Baselines live under the package's `__snapshot__` directory. Names must be
+relative paths without empty, `.` or `..` components, backslashes, colons, or NUL.
+Each baseline can be submitted once per test; Moon rejects ambiguous claims
+across tests before updating any baselines. Comparison is byte-exact, without
+newline or encoding normalization. Missing baselines and mismatches are recorded
+without raising; I/O and API misuse errors still raise.
+
+Moon fails the test at completion, displays small text differences, and uses
+`moon test --update` to replace baselines and rerun. A body error or incomplete
+comparison prevents file updates from that test. Inline `inspect` failures can
+still be updated first; Moon then reruns the test before promoting file outputs.
+Do not mix the legacy buffer `snapshot` call with the new file API in one test,
+because the legacy call terminates the body using its separate exception protocol.
+
+Failed-run files remain in the build directory for inspection and are removed by
+`moon clean`. Successful executions remove their temporary file directory.
+Updates replace each baseline atomically, but the whole set is not a transaction:
+an I/O failure can occur after an earlier file has been updated.
+
+To exercise the paired implementation, run
+`python3 test/file_snapshot_e2e.py <new-moon-executable>` from this core checkout.
+The harness checks Wasm and removes its source and build fixtures. Keep the
+executable named `moon` (or `moon.exe`), so its driver-generation subprocess uses
+the same version.
