@@ -183,20 +183,14 @@ pub impl FromJson for Char with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Char::from_json: expected string")
   }
-  let len = a.length()
-  if len == 1 {
-    a.unsafe_get(0).unsafe_to_char()
-  } else if len == 2 {
-    let c1 = a.unsafe_get(0).to_int()
-    let c2 = a.unsafe_get(1).to_int()
-    if c1 is (0xD800..<=0xDBFF) && c2 is (0xDC00..<=0xDFFF) {
-      let c3 = (c1 << 10) + c2 - 0x35fdc00
-      c3.unsafe_to_char()
-    } else {
-      decode_error(path, "Char::from_json: invalid surrogate pair")
-    }
-  } else {
-    decode_error(path, "Char::from_json: expected single character")
+  match a.length() {
+    1 => a.unsafe_get(0).unsafe_to_char()
+    2 =>
+      match a.get_char(0) {
+        Some(c) if !c.is_bmp() => c
+        _ => decode_error(path, "Char::from_json: invalid surrogate pair")
+      }
+    _ => decode_error(path, "Char::from_json: expected single character")
   }
 }
 
