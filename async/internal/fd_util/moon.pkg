@@ -19,7 +19,6 @@ import {
 options(
   "allow-experimental-packages": true,
   targets: {
-    "deprecated.mbt": [ "native", "wasm" ],
     "fd_util.mbt": [ "native" ],
     "fd_util.wasm.mbt": [ "wasm" ],
     "pipe.mbt": [ "native" ],

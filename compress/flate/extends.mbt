@@ -16,30 +16,10 @@
 pub extend InputMode with Eq::{equal}
 
 ///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend InputMode with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend InputMode with @debug.Debug::{to_repr}
-
-///|
 pub extend InflateErrorKind with Eq::{equal}
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend InflateError with @debug.Debug::{to_repr}
-
-///|
 pub extend InflateError with Show::{to_string}
-
-///|
-#deprecated("Use `Show::output` via the trait or string interpolation instead", skip_current_package=true)
-#doc(hidden)
-pub extend InflateError with Show::{output}
 
 ///|
 pub extend Status with Eq::{equal}
@@ -48,83 +28,13 @@ pub extend Status with Eq::{equal}
 pub extend DeflateAction with Eq::{equal}
 
 ///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend InflateErrorKind with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend InflateErrorKind with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Status with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Status with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend DeflateAction with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend DeflateAction with @debug.Debug::{to_repr}
-
-///|
 pub extend Strategy with Eq::{equal}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Strategy with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Strategy with @debug.Debug::{to_repr}
 
 ///|
 pub extend StepResult with Eq::{equal}
 
 ///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend StepResult with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend StepResult with @debug.Debug::{to_repr}
-
-///|
 pub extend DecompressResult with Eq::{equal}
 
 ///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend DecompressResult with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend DecompressResult with @debug.Debug::{to_repr}
-
-///|
 pub extend Decompressed with Eq::{equal}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Decompressed with Eq::{not_equal}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Decompressed with @debug.Debug::{to_repr}

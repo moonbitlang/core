@@ -31,7 +31,6 @@ options(
   targets: {
     "error.mbt": [ "native", "wasm", "js" ],
     "error_kind.mbt": [ "native", "wasm", "js" ],
-    "deprecated.mbt": [ "native", "wasm", "js" ],
     "extends.mbt": [ "native", "wasm", "js" ],
     "os_error_test.mbt": [ "native", "wasm", "js" ],
     "os_error_js_test.mbt": [ "js" ],
