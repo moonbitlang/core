@@ -77,6 +77,17 @@ const LEX_STRING_USE_SIMD = true
 const LEX_STRING_USE_SIMD = false
 
 ///|
+/// Wasm benefits from scanning long runs after escapes with SIMD as well.
+#cfg(target="wasm")
+const LEX_STRING_ESCAPE_SIMD = true
+
+///|
+/// Native retains the scalar escape loop: tracking the next SIMD threshold
+/// on every literal unit penalizes densely escaped strings.
+#cfg(not(target="wasm"))
+const LEX_STRING_ESCAPE_SIMD = false
+
+///|
 /// Continues `lex_string` from `from`, where `string_start..from` is known to
 /// be literal content, using `find_string_special_long` (eight code units at a
 /// time on native and wasm).
@@ -113,38 +124,62 @@ fn ParseContext::lex_string_slow(
   ctx : ParseContext,
   run_start : Int32,
 ) -> String raise ParseError {
-  let buf = StringBuilder()
+  let end = ctx.end_offset
+  // A short initial buffer avoids repeated growth for clustered escapes.
+  let buf = StringBuilder(capacity=(end - run_start).min(32))
   let base = ctx.input.start_offset()
-  for start = run_start, stop = ctx.offset {
-    guard stop < ctx.end_offset else { raise InvalidEof }
-    if ctx.input.unsafe_get(stop) < ' ' {
-      ctx.offset = stop + 1
-      ctx.invalid_char(shift=-1)
+  let input = ctx.input.data()
+  for i = ctx.offset, start = run_start, scalar_limit = 0 {
+    guard i < end else { raise InvalidEof }
+    let unit = input.unsafe_get(base + i)
+    // A quote, backslash, or raw control is at most U+005C.
+    if unit <= '\\' {
+      if unit < ' ' {
+        ctx.offset = i + 1
+        ctx.invalid_char(shift=-1)
+      }
+      if unit == '"' || unit == '\\' {
+        if start < i {
+          buf.write_view(input.unsafe_view(start=base + start, end=base + i))
+        }
+        if unit == '"' {
+          ctx.offset = i + 1
+          break
+        }
+        ctx.offset = i + 1
+        buf.write_char(ctx.lex_escape())
+        continue ctx.offset, ctx.offset, ctx.offset + LEX_STRING_SCALAR_UNITS
+      }
     }
-    if start < stop {
-      buf.write_view(ctx.input[start:stop])
+    if LEX_STRING_ESCAPE_SIMD && i >= scalar_limit {
+      let next = find_string_special_long(input, base + i + 1, base + end)
+      continue next - base, start, scalar_limit
     }
-    ctx.offset = stop
-    lexscan ctx {
-      re"^\"" => break
-      re"^\\b" => buf.write_char('\b')
-      re"^\\f" => buf.write_char('\u{0C}')
-      re"^\\n" => buf.write_char('\n')
-      re"^\\r" => buf.write_char('\r')
-      re"^\\t" => buf.write_char('\t')
-      re"^\\" + (re"[\"\\/]" as c) => buf.write_char(c)
-      re"^\\u" => buf.write_char(ctx.lex_unicode_escape())
-      re"^\\" => ctx.reject_char()
-      _ => ctx.reject_char()
-    }
-    let next = find_string_special_long(
-      ctx.input.data(),
-      base + ctx.offset,
-      base + ctx.end_offset,
-    )
-    continue ctx.offset, next - base
+    continue i + 1, start, scalar_limit
   }
   buf.to_string()
+}
+
+///|
+/// The cursor is just past the opening backslash. JSON escape codes are ASCII.
+fn ParseContext::lex_escape(ctx : ParseContext) -> Char raise ParseError {
+  let i = ctx.offset
+  guard i < ctx.end_offset else { raise InvalidEof }
+  let escape = ctx.input.unsafe_get(i)
+  ctx.offset = i + 1
+  match escape {
+    'b' => '\b'
+    'f' => '\u{0C}'
+    'n' => '\n'
+    'r' => '\r'
+    't' => '\t'
+    '"' | '\\' | '/' => escape.unsafe_to_char()
+    'u' => ctx.lex_unicode_escape()
+    _ => {
+      ctx.offset = i
+      ctx.reject_char()
+    }
+  }
 }
 
 ///|
@@ -159,11 +194,13 @@ fn ParseContext::lex_unicode_escape(
       guard ctx.input.get(ctx.offset) is Some('\\') else {
         ctx.reject_char(blame=escape_start)
       }
-      ctx.offset += 1
-      guard ctx.input.get(ctx.offset) is Some('u') else {
-        ctx.reject_char(blame=escape_start)
+      lexscan ctx {
+        re"^\\u" => ()
+        _ => {
+          ctx.offset += 1
+          ctx.reject_char(blame=escape_start)
+        }
       }
-      ctx.offset += 1
       let second = ctx.lex_hex_digits(4)
       guard second is (0xDC00..<=0xDFFF) else {
         ctx.unpaired_surrogate(escape_start)
@@ -253,7 +290,8 @@ fn ParseContext::lex_hex_digits(
   n : Int32,
 ) -> Int32 raise ParseError {
   for _ in 0..<n; r = 0 {
-    guard ctx.input.get(ctx.offset) is Some(unit) else { raise InvalidEof }
+    guard ctx.offset < ctx.end_offset else { raise InvalidEof }
+    let unit = ctx.input.unsafe_get(ctx.offset)
     let d = match unit {
       '0'..<='9' => unit.to_int() - '0'
       'A'..<='F' => unit.to_int() - 'A' + 10
