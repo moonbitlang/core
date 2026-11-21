@@ -235,13 +235,18 @@ pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
 }
 
 ///|
-/// Take a snapshot of the current buffer and write to a file.
+/// Compare the current buffer with a file in `__snapshot__` beside the test source.
+/// On Wasm, WasmGC and Node.js, matching text clears the buffer and returns. CR characters are
+/// ignored, matching Moon's comparison; a missing baseline is empty text.
+/// A mismatch raises `SnapshotError` for Moon to report or update. I/O errors
+/// raise without consuming the buffer. Other targets retain the legacy behavior
+/// of reporting every snapshot to Moon and ending the test at this call.
 /// 
 /// ```mbt check
 /// test {
 ///   let t = @test.Test("test.txt")
 ///   t.writeln("hello")
-///   t.snapshot(filename="test.txt") // actual test block end
+///   t.snapshot(filename="test.txt")
 /// }
 /// ```
 ///
@@ -252,12 +257,17 @@ pub fn Test::snapshot(
   filename~ : String,
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
-) -> Unit raise SnapshotError {
+) -> Unit raise {
   let loc = loc.to_json_string()
+  let actual = self.buffer.to_string()
+  if snapshot_matches(actual, filename, loc) {
+    self.buffer.reset()
+    return
+  }
   let args_loc = args_loc.to_json()
-  let actual = self.buffer.to_string().escape()
+  let actual = actual.escape()
   let expect = filename.escape()
-  // always raise SnapshotError, moon will handle this
+  // Preserve the existing reporting and --update protocol.
   raise SnapshotError(
     (
       $|@SNAPSHOT_TESTING {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{expect}, "actual": \{actual}, "snapshot": true}

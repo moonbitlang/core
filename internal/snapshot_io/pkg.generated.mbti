@@ -1,0 +1,13 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/snapshot_io"
+
+// Values
+pub fn matches(String, String, Bytes) -> Bool raise
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
