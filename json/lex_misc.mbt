@@ -13,17 +13,6 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::read_char(ctx : ParseContext) -> Char? {
-  guard ctx.offset < ctx.end_offset else { return None }
-  let c = match ctx.input.get_char(ctx.offset) {
-    Some(c) => c
-    None => ctx.input.unsafe_get(ctx.offset).unsafe_to_char()
-  }
-  ctx.offset += c.utf16_len()
-  Some(c)
-}
-
-///|
 /// Lower bound of the UTF-16 surrogate range.
 const SURROGATE_LOW_CHAR = 0xD800
 

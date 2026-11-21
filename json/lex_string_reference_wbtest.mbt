@@ -18,6 +18,17 @@
 // whole strings and views inside larger backing strings.
 
 ///|
+fn ParseContext::read_char(ctx : ParseContext) -> Char? {
+  guard ctx.offset < ctx.end_offset else { return None }
+  let c = match ctx.input.get_char(ctx.offset) {
+    Some(c) => c
+    None => ctx.input.unsafe_get(ctx.offset).unsafe_to_char()
+  }
+  ctx.offset += c.utf16_len()
+  Some(c)
+}
+
+///|
 /// The string lexer before the scalar cleanup: one code unit at a time in
 /// the fast path, one character at a time via `read_char` after an escape.
 fn ParseContext::lex_string_reference(
