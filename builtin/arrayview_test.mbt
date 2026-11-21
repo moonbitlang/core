@@ -596,7 +596,7 @@ test "ArrayView::iter2 empty" {
 }
 
 ///|
-test "ArrayView::op_add basic" {
+test "ArrayView::add basic" {
   let a = [1, 2, 3][:]
   let b = [4, 5][:]
   debug_inspect(
@@ -608,7 +608,7 @@ test "ArrayView::op_add basic" {
 }
 
 ///|
-test "ArrayView::op_add sliced views" {
+test "ArrayView::add sliced views" {
   let a = [0, 1, 2, 3, 4, 5][1:4]
   let b = [10, 20, 30, 40][1:3]
   debug_inspect(
@@ -620,7 +620,7 @@ test "ArrayView::op_add sliced views" {
 }
 
 ///|
-test "ArrayView::op_add empty left" {
+test "ArrayView::add empty left" {
   let a = [1, 2, 3][0:0]
   let b = [4, 5, 6][:]
   let result = a + b
@@ -634,7 +634,7 @@ test "ArrayView::op_add empty left" {
 }
 
 ///|
-test "ArrayView::op_add empty right" {
+test "ArrayView::add empty right" {
   let a = [1, 2, 3][:]
   let b = [4, 5, 6][1:1]
   let result = a + b
@@ -648,7 +648,7 @@ test "ArrayView::op_add empty right" {
 }
 
 ///|
-test "ArrayView::op_add both empty" {
+test "ArrayView::add both empty" {
   let a : ArrayView[Int32] = [1, 2, 3][0:0]
   let b : ArrayView[Int32] = [4, 5][1:1]
   let result = a + b
@@ -663,7 +663,7 @@ test "ArrayView::op_add both empty" {
 }
 
 ///|
-test "ArrayView::op_add does not mutate sources" {
+test "ArrayView::add does not mutate sources" {
   let arr_a = [1, 2, 3, 4]
   let arr_b = [5, 6, 7]
   let a = arr_a[1:3]
@@ -686,7 +686,7 @@ test "ArrayView::op_add does not mutate sources" {
 }
 
 ///|
-test "ArrayView::op_add result is independent of source mutation" {
+test "ArrayView::add result is independent of source mutation" {
   let arr_a = [1, 2, 3, 4]
   let arr_b = [5, 6, 7, 8]
   let a = arr_a[1:3]
@@ -703,7 +703,7 @@ test "ArrayView::op_add result is independent of source mutation" {
 }
 
 ///|
-test "ArrayView::op_add full slice equals Array Add" {
+test "ArrayView::add full slice equals Array Add" {
   let a = [1, 2, 3]
   let b = [4, 5, 6]
   let view_sum = a[:] + b
@@ -715,7 +715,7 @@ test "ArrayView::op_add full slice equals Array Add" {
 }
 
 ///|
-test "ArrayView::op_add generic string elements" {
+test "ArrayView::add generic string elements" {
   let a = ["hello", "world"][:]
   let b = ["foo"][:]
   debug_inspect(
@@ -727,7 +727,7 @@ test "ArrayView::op_add generic string elements" {
 }
 
 ///|
-test "ArrayView::op_add chained" {
+test "ArrayView::add chained" {
   let a = [1, 2][:]
   let b = [3, 4][:]
   let c = [5, 6][:]
@@ -740,7 +740,7 @@ test "ArrayView::op_add chained" {
 }
 
 ///|
-test "ArrayView::op_add tail and head slices" {
+test "ArrayView::add tail and head slices" {
   let v = [1, 2, 3, 4, 5, 6]
   let head = v[:3]
   let tail = v[3:]
@@ -759,7 +759,7 @@ test "ArrayView::op_add tail and head slices" {
 }
 
 ///|
-test "ArrayView::op_add large" {
+test "ArrayView::add large" {
   let n = 100
   let a = Array::makei(n, i => i)
   let b = Array::makei(n, i => i + n)

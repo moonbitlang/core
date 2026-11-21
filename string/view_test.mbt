@@ -337,7 +337,7 @@ test "length_ge with high surrogate" {
 }
 
 ///|
-test "panic op_as_view with invalid positive start index" {
+test "panic StringView::exact_view with invalid positive start index" {
   let str = "Hello🤣🤣🤣"
   let view = str.exact_view()
   ignore(view.exact_view(start=100))
@@ -663,7 +663,7 @@ test "StringView::split take" {
 }
 
 ///|
-test "String::op_as_view basic usage" {
+test "String::clamped_view basic usage" {
   let str = "Hello🤣World"
 
   // Basic usage - positive indices
@@ -713,7 +713,7 @@ test "panic String::exact_view start on trailing surrogate" {
 }
 
 ///|
-test "String::op_as_view with surrogate pairs" {
+test "String::clamped_view with surrogate pairs" {
   let str = "Hello🤣😭😂World"
 
   // View containing complete emoji
@@ -740,7 +740,7 @@ test "panic String::exact_view splits second emoji" {
 }
 
 ///|
-test "StringView::op_as_view basic usage" {
+test "StringView::clamped_view basic usage" {
   let str = "Hello🤣World"[1:11] // "ello🤣Worl"
 
   // Basic subview creation
@@ -790,7 +790,7 @@ test "panic StringView::exact_view start beyond view" {
 }
 
 ///|
-test "StringView::op_as_view with surrogate pairs" {
+test "StringView::clamped_view with surrogate pairs" {
   let str = "Hello🤣😭😂World"[1:15] // "ello🤣😭😂Worl"
 
   // View containing complete emoji
@@ -817,7 +817,7 @@ test "panic StringView::exact_view splits second emoji in view" {
 }
 
 ///|
-test "nested StringView::op_as_view operations" {
+test "nested StringView::clamped_view operations" {
   let str = "Hello🤣World"
 
   // Create first view
@@ -838,7 +838,7 @@ test "nested StringView::op_as_view operations" {
 }
 
 ///|
-test "StringView::op_as_view edge cases" {
+test "StringView::clamped_view edge cases" {
   let str = "Hello🤣World"
 
   // Empty view at start
@@ -863,7 +863,7 @@ test "StringView::op_as_view edge cases" {
 }
 
 ///|
-test "StringView::op_as_view with complex Unicode" {
+test "StringView::clamped_view with complex Unicode" {
   let str = "Hello🤣😭😂🌍World"
 
   // View with multiple emojis
@@ -889,7 +889,7 @@ test "panic String::exact_view splits emoji in complex Unicode" {
 }
 
 ///|
-test "StringView::op_as_view performance characteristics" {
+test "StringView::clamped_view performance characteristics" {
   let str = "Hello🤣World"
 
   // Test that operations are O(1) - multiple operations
@@ -907,7 +907,7 @@ test "StringView::op_as_view performance characteristics" {
 }
 
 ///|
-test "StringView::op_as_view with empty and single character strings" {
+test "StringView::clamped_view with empty and single character strings" {
   let empty_str = ""
 
   // Empty string operations
@@ -927,7 +927,7 @@ test "StringView::op_as_view with empty and single character strings" {
 }
 
 ///|
-test "StringView::op_as_view boundary validation" {
+test "StringView::clamped_view boundary validation" {
   let str = "Hello🤣World"
 
   // Test boundary conditions

@@ -207,9 +207,9 @@ test "byte comparisons and lnot" {
   let a = b"\x01"[0]
   let b = b"\x02"[0]
   inspect(Eq::not_equal(a, b), content="true")
-  inspect(Compare::op_lt(a, b), content="true")
-  inspect(Compare::op_le(b, b), content="true")
-  inspect(Compare::op_gt(b, a), content="true")
-  inspect(Compare::op_ge(b, b), content="true")
+  inspect(Compare::lt(a, b), content="true")
+  inspect(Compare::le(b, b), content="true")
+  inspect(Compare::gt(b, a), content="true")
+  inspect(Compare::ge(b, b), content="true")
   inspect(b'\x0F'.lnot(), content="240")
 }
