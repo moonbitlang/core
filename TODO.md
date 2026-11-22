@@ -3,6 +3,7 @@
 ## Merged
 
 - [x] **Buffer byte writes.** Use `Buffer::write_bytesview(BytesView)`, following `StringBuilder::write_stringview(StringView)`. Keep the one-argument `write_bytes` as a deprecated alias that `moon fix` can migrate. This leaves room for a future `write_bytes(bytes, start, len)`. [PR #4922](https://github.com/moonbitlang/core/pull/4922)
+- [x] **File descriptor methods.** On native and Wasm, callers can pass `Fd::equal` and `Fd::hash` as functions. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
 - [x] **Immutable sorted map keys.** `SortedMap::keys()` returns an `Iter[K]` in ascending order. Use `map.keys().to_array()` when an array is needed. `keys_as_iter()` remains a deprecated alias. [PR #4925](https://github.com/moonbitlang/core/pull/4925)
 - [x] **Shell pipeline stages.** `Pipeline` accepts `ArrayView[Cmd]` and copies the selected stages in order. [PR #4926](https://github.com/moonbitlang/core/pull/4926)
 - [x] **Inclusive sorted ranges.** Mutable and immutable sorted maps and sets now use `range(low=a, high=b)`. On the mutable types, positional bounds still compile with deprecation warnings. [PR #4927](https://github.com/moonbitlang/core/pull/4927)
@@ -12,10 +13,6 @@
 ## 1.0 compatibility decision
 
 - [x] **List insertion and concatenation.** Keep the deprecated `xs.add(x)` alias for `xs.prepend(x)` through 1.0. This preserves the meaning of calls such as `xs.add(Empty)` on nested lists. `List` already implements `Add`, so callers can concatenate with `xs + ys` or `xs.concat(ys)`. Revisit the named concatenation method after retiring the alias. [Deprecation #4281](https://github.com/moonbitlang/core/pull/4281) · [Deferred PR #4929](https://github.com/moonbitlang/core/pull/4929)
-
-## In review
-
-- [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
 
 ## Coverage
 
