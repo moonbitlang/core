@@ -35,6 +35,8 @@ pub fn[A] List::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] List::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 pub fn[A] List::find(Self[A], (A) -> Bool raise?) -> A? raise?
 pub fn[A] List::find_index(Self[A], (A) -> Bool raise?) -> Int32? raise?
+pub fn[A] List::find_with_index(Self[A], (Int32, A) -> Bool raise?) -> A? raise?
+#deprecated
 pub fn[A] List::findi(Self[A], (A, Int32) -> Bool raise?) -> A? raise?
 pub fn[A, B] List::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 pub fn[A] List::flatten(Self[Self[A]]) -> Self[A]

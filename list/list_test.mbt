@@ -524,20 +524,33 @@ test "find" {
 }
 
 ///|
-test "findi" {
+test "find_with_index" {
   debug_inspect(
-    @list.List([1, 3, 5, 8]).findi((element, i) => element % 2 == 0 && i == 3),
+    @list.List([1, 3, 5, 8]).find_with_index((i, element) => {
+      element % 2 == 0 && i == 3
+    }),
     content="Some(8)",
   )
   debug_inspect(
-    @list.List([1, 3, 8, 5]).findi((element, i) => element % 2 == 0 && i == 3),
-    content="None",
-  )
-  debug_inspect(
-    (List([]) : @list.List[Int32]).findi((element, i) => {
+    @list.List([1, 3, 8, 5]).find_with_index((i, element) => {
       element % 2 == 0 && i == 3
     }),
     content="None",
+  )
+  debug_inspect(
+    (List([]) : @list.List[Int32]).find_with_index((i, element) => {
+      element % 2 == 0 && i == 3
+    }),
+    content="None",
+  )
+}
+
+///|
+#warnings("-deprecated")
+test "findi keeps element-first callback order" {
+  let xs = @list.List(["a", "b"])
+  assert_true(
+    xs.findi((element, index) => element == "b" && index == 1) == Some("b"),
   )
 }
 
