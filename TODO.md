@@ -10,9 +10,10 @@
 - [x] **Reverse sorted map ranges.** `rev_range(low=a, high=b)` visits the same inclusive interval as `range(low=a, high=b)` in descending key order. Positional bounds still compile with deprecation warnings. [PR #4928](https://github.com/moonbitlang/core/pull/4928)
 - [x] **Collection and ZIP insertion.** Use `insert` for entries and elements. Mutable `Set` and `HashSet` also expose `insert_and_check` to report whether membership changed. The old public spellings remain deprecated aliases. [PR #4930](https://github.com/moonbitlang/core/pull/4930)
 
-## 1.0 compatibility decision
+## 1.0 compatibility decisions
 
 - [x] **List insertion and concatenation.** Keep the deprecated `xs.add(x)` alias for `xs.prepend(x)` through 1.0. This preserves the meaning of calls such as `xs.add(Empty)` on nested lists. `List` already implements `Add`, so callers can concatenate with `xs + ys` or `xs.concat(ys)`. Revisit the named concatenation method after retiring the alias. [Deprecation #4281](https://github.com/moonbitlang/core/pull/4281) · [Deferred PR #4929](https://github.com/moonbitlang/core/pull/4929)
+- [x] **Empty mutable hash maps.** Keep `HashMap([], capacity=n)` as the migration from `HashMap::new(capacity=n)` for 1.0. Generic callers must supply the same `K : Hash + Eq` bounds that key insertion and lookup require. [HashMap interface](hashmap/pkg.generated.mbti)
 
 ## Coverage
 
