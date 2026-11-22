@@ -14,7 +14,7 @@
 
 ///|
 test "filter keeping every entry returns the receiver" {
-  let empty : @hashmap.HashMap[Int32, Int32] = @hashmap.new()
+  let empty : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   inspect(physical_equal(empty.filter((_, _) => true), empty), content="true")
   // a single `Flat` node
   let one = @hashmap.singleton(1, 1)

@@ -19,7 +19,7 @@ fn[T] Tree::is_empty_tree(self : Tree[T]) -> Bool {
 
 ///|
 test "mix" {
-  let mut v = new()
+  let mut v = Vector::empty()
   inspect(v.tree.is_empty_tree(), content="true")
   for i in 0..<100 {
     v = v.push(i)
@@ -149,7 +149,7 @@ test "mix" {
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
   let large_const = BRANCHING_FACTOR * BRANCHING_FACTOR + 1
-  let v = for i in 0..<large_const; v = (new() : Vector[Int32]) {
+  let v = for i in 0..<large_const; v = (Vector::empty() : Vector[Int32]) {
     continue v.push(i)
   } nobreak {
     v

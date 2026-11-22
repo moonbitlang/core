@@ -19,9 +19,9 @@ pub fn[K : Eq + Hash, V] VectorMap::at(Self[K, V], K) -> V
 pub fn[K : Eq + Hash, V] VectorMap::contains(Self[K, V], K) -> Bool
 pub fn[K, V] VectorMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] VectorMap::eachi(Self[K, V], (Int32, K, V) -> Unit raise?) -> Unit raise?
-#alias(new, pending_deprecated)
+#alias(new, deprecated)
 #as_free_fn
-#as_free_fn(new, pending_deprecated)
+#as_free_fn(new, deprecated)
 pub fn[K, V] VectorMap::empty() -> Self[K, V]
 pub fn[K : Eq, V : Eq] VectorMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)

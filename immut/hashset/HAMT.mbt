@@ -39,8 +39,8 @@ let bulk_build_threshold = 64
 
 ///|
 /// Create a new instance.
-#alias(new, pending_deprecated)
-#as_free_fn(new, pending_deprecated)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
 pub fn[A] HashSet::empty() -> HashSet[A] {
   { data: None, }

@@ -21,9 +21,9 @@ pub fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
 #alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-#alias(new, pending_deprecated)
+#alias(new, deprecated)
 #as_free_fn
-#as_free_fn(new, pending_deprecated)
+#as_free_fn(new, deprecated)
 pub fn[A] SortedSet::empty() -> Self[A]
 pub fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?

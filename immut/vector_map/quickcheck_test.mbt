@@ -114,7 +114,7 @@ fn agrees_with_model(
 /// chance on a stream that spends its length near empty.
 fn ops_agree(ops : Array[Int32], remove_bias~ : Bool) -> Bool {
   let model : Array[(Int32, Int32)] = []
-  let mut map : @vector_map.VectorMap[Int32, Int32] = @vector_map.new()
+  let mut map : @vector_map.VectorMap[Int32, Int32] = @vector_map.empty()
   if remove_bias {
     for key in 0..<32 {
       map = map.add(key, key)
@@ -232,7 +232,7 @@ test "quickcheck: bulk construction matches repeated add" {
       // must all land on the same value.
       let by_add = entries
         .map(kv => (kv.0 & 31, kv.1 & 7))
-        .fold(init=@vector_map.new(), (m, kv) => m.add(kv.0, kv.1))
+        .fold(init=@vector_map.empty(), (m, kv) => m.add(kv.0, kv.1))
       guard map == by_add else { return false }
       map ==
       @vector_map.from_iter(entries.iter().map(kv => (kv.0 & 31, kv.1 & 7)))

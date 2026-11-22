@@ -29,9 +29,9 @@ pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[A] Vector::drop(Self[A], Int32) -> Self[A]
 pub fn[A] Vector::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::eachi(Self[A], (Int32, A) -> Unit raise?) -> Unit raise?
-#alias(new, pending_deprecated)
+#alias(new, deprecated)
 #as_free_fn
-#as_free_fn(new, pending_deprecated)
+#as_free_fn(new, deprecated)
 pub fn[A] Vector::empty() -> Self[A]
 pub fn[A : Eq] Vector::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?

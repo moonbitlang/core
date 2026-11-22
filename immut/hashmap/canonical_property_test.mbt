@@ -99,7 +99,7 @@ fn[K : Eq + Hash] canonical_after_ops(
   ops : Array[Int32],
 ) -> Bool {
   let model : Array[(Int32, Int32)] = []
-  let mut hm : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let mut hm : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for op in ops {
     let n = op & 0x7fffffff
     let key = n / 8 % 16
@@ -224,7 +224,7 @@ fn[K : Eq + Hash] canonical_after_ops(
   }
   // Insertion-order independence: adding the final content in reverse
   // order must reproduce the exact structure.
-  let mut reversed : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let mut reversed : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for i in 0..<model.length() {
     let kv = model[model.length() - 1 - i]
     reversed = reversed.add(mk(kv.0), kv.1)
@@ -273,7 +273,7 @@ fn[K : Eq + Hash] build_map(
   mk : (Int32) -> K,
   xs : Array[Int32],
 ) -> @hashmap.HashMap[K, Int32] {
-  let mut m = @hashmap.new()
+  let mut m = @hashmap.empty()
   for x in xs {
     let n = x & 0x7fffffff
     m = m.add(mk(n % 16), n / 16 % 7)
@@ -293,7 +293,7 @@ fn[K : Eq + Hash] map_laws(
   let a = build_map(mk, xs)
   let b = build_map(mk, ys)
   let c = build_map(mk, zs)
-  let empty : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let empty : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   // merge: associative, idempotent, empty is the identity
   guard a.merge(b).merge(c) == a.merge(b.merge(c)) else { return false }
   guard a.merge(a) == a else { return false }

@@ -87,7 +87,7 @@ test "difference removing a colliding key yields the canonical map" {
 ///|
 test "chained removals from a collision bucket collapse in any order" {
   // 0, 8, and 24 all hash to bucket 0, forming a three-entry collision node.
-  let base : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.new()
+  let base : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.empty()
   let all = base
     .add(CollidingKey(0), 0)
     .add(CollidingKey(8), 1)
@@ -123,11 +123,11 @@ impl Hash for DeepKey with fn hash_combine(self, hasher) {
 
 ///|
 test "insertion order cannot affect the structure at maximum depth" {
-  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
     .add(DeepKey(0), 0)
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
-  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
     .add(DeepKey(2), 2)
     .add(DeepKey(1), 1)
     .add(DeepKey(0), 0)
@@ -136,12 +136,12 @@ test "insertion order cannot affect the structure at maximum depth" {
 
 ///|
 test "removing a maximum-depth sibling leaves the canonical structure" {
-  let removed = @hashmap.new()
+  let removed = @hashmap.empty()
     .add(DeepKey(0), 0)
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
     .remove(DeepKey(1))
-  let fresh : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let fresh : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
     .add(DeepKey(0), 0)
     .add(DeepKey(2), 2)
   assert_true(removed == fresh)
@@ -152,12 +152,12 @@ test "full-hash collision arriving at a maximum-depth Flat stays canonical" {
   // 2 and 6 collide on the full hash. Adding 0 and 1 first forces the
   // maximum-depth branch into existence, so DeepKey(2) is stored there as
   // a single entry with a fully consumed path when DeepKey(6) arrives.
-  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
     .add(DeepKey(0), 0)
     .add(DeepKey(1), 1)
     .add(DeepKey(2), 2)
     .add(DeepKey(6), 6)
-  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
     .add(DeepKey(2), 2)
     .add(DeepKey(6), 6)
     .add(DeepKey(0), 0)
@@ -180,11 +180,11 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   }
   let bulk : @hashmap.HashMap[DeepKey, Int32] = HashMap(pairs)
   let via_iter = @hashmap.from_iter(pairs.iter())
-  let mut added : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let mut added : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
   for kv in pairs {
     added = added.add(kv.0, kv.1)
   }
-  let mut reversed : @hashmap.HashMap[DeepKey, Int32] = @hashmap.new()
+  let mut reversed : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
   for i in 0..<pairs.length() {
     let kv = pairs[pairs.length() - 1 - i]
     reversed = reversed.add(kv.0, kv.1)

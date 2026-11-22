@@ -18,8 +18,8 @@
 
 ///|
 /// Return a new empty vector
-#alias(new, pending_deprecated)
-#as_free_fn(new, pending_deprecated)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
 pub fn[A] Vector::empty() -> Vector[A] {
   make_t(Tree::empty(), [], 0, 0)

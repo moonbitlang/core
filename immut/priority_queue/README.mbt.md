@@ -6,12 +6,12 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 ## Create
 
-You can use `PriorityQueue([])` or `from_array()` to create an immutable priority queue.
+Use `@priority_queue.empty()` to create an empty queue of any element type. Use `@priority_queue.from_array(items)` to build a queue from comparable elements.
 
 ```mbt check
 ///|
 test {
-  let _queue1 : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
+  let _queue1 : @priority_queue.PriorityQueue[Int32] = @priority_queue.empty()
   let _queue2 = @priority_queue.from_array([1, 2, 3])
 }
 ```
@@ -25,7 +25,7 @@ You can use the `length` to get the length of the immutable priority queue.
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.PriorityQueue([])
+  let pq = @priority_queue.empty()
   @test.assert_eq(pq.length(), 0)
   @test.assert_eq(pq.push(1).length(), 1)
 }
@@ -36,7 +36,7 @@ You can use the `is_empty` to determine whether the immutable priority queue is 
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int32] = @priority_queue.empty()
   @test.assert_eq(pq.is_empty(), true)
 }
 ```
@@ -61,7 +61,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int32] = PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int32] = @priority_queue.empty()
   @test.assert_eq(pq.push(1).peek(), Some(1))
 }
 ```
