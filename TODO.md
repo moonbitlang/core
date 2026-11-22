@@ -5,14 +5,15 @@
 - [x] **Buffer byte writes.** Use `Buffer::write_bytesview(BytesView)`, following `StringBuilder::write_stringview(StringView)`. Keep the one-argument `write_bytes` as a deprecated alias that `moon fix` can migrate. This leaves room for a future `write_bytes(bytes, start, len)`. [PR #4922](https://github.com/moonbitlang/core/pull/4922)
 - [x] **Immutable sorted map keys.** `SortedMap::keys()` returns an `Iter[K]` in ascending order. Use `map.keys().to_array()` when an array is needed. `keys_as_iter()` remains a deprecated alias. [PR #4925](https://github.com/moonbitlang/core/pull/4925)
 - [x] **Shell pipeline stages.** `Pipeline` accepts `ArrayView[Cmd]` and copies the selected stages in order. [PR #4926](https://github.com/moonbitlang/core/pull/4926)
+- [x] **Inclusive sorted ranges.** Mutable and immutable sorted maps and sets now use `range(low=a, high=b)`. On the mutable types, positional bounds still compile with deprecation warnings. [PR #4927](https://github.com/moonbitlang/core/pull/4927)
 
 ## In review
 
 - [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
-- [ ] **Inclusive sorted ranges.** Use `range(low=a, high=b)` on mutable sorted maps and sets to match the immutable collections. The proposed migration accepts positional bounds with a warning. Review whether the mutable map’s `rev_range` should follow the same convention separately. [PR #4927](https://github.com/moonbitlang/core/pull/4927)
 
 ## Release decisions, one at a time
 
+- [ ] **Should `SortedMap::rev_range` use `low~` and `high~` too?** Its bounds are still positional. Decide whether to apply the same migration as forward `range`, preserving the order of the bounds. [Mutable sorted map](sorted_map/pkg.generated.mbti)
 - [ ] **When can `List::add` mean concatenation?** The deprecated alias still takes *one element* and prepends it. The `Add` impl takes *another list* and concatenates it. Keep `prepend` and `concat` explicit until the old alias can be retired, then promote the operator method. [List interface](list/pkg.generated.mbti) · [Promotion policy](AGENTS.md)
 
 ## Coverage
