@@ -17,9 +17,9 @@
 - [x] **List insertion and concatenation.** Keep the deprecated `xs.add(x)` alias for `xs.prepend(x)` through 1.0. This preserves the meaning of calls such as `xs.add(Empty)` on nested lists. `List` already implements `Add`, so callers can concatenate with `xs + ys` or `xs.concat(ys)`. Revisit the named concatenation method after retiring the alias. [Deprecation #4281](https://github.com/moonbitlang/core/pull/4281) · [Deferred PR #4929](https://github.com/moonbitlang/core/pull/4929)
 - [x] **Empty mutable hash maps.** Keep `HashMap([], capacity=n)` as the migration from `HashMap::new(capacity=n)` for 1.0. Generic callers must supply the same `K : Hash + Eq` bounds that key insertion and lookup require. [HashMap interface](hashmap/pkg.generated.mbti)
 
-## Open design questions
+## Awaiting merge
 
-- [ ] **HTTP request headers.** Should the free `request_text` and `request_json` functions default `headers` to an empty map, like `request_binary`? [HTTP interface](async/http/pkg.generated.mbti)
+- [ ] **HTTP request headers.** Default `headers` to an empty map in the free `request_text` and `request_json` functions, matching `request_binary`. [PR #4933](https://github.com/moonbitlang/core/pull/4933)
 
 ## After 1.0
 
