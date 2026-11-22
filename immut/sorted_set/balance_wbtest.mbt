@@ -89,7 +89,7 @@ fn[A : Show] shape(t : SortedSet[A]) -> String {
 test "remove rebalances: minimal repro" {
   // With the old (5, 1) parameters, removing 0 left a node with subtree
   // sizes (0, 2).
-  let mut s : SortedSet[Int32] = new()
+  let mut s : SortedSet[Int32] = SortedSet::empty()
   for v in [1, 0, 5, 3, 6, 2, 7] {
     s = s.add(v)
   }
@@ -117,9 +117,9 @@ test "remove rebalances: minimal repro" {
 
 ///|
 test "height of sequentially built sets" {
-  let mut asc : SortedSet[Int32] = new()
-  let mut desc : SortedSet[Int32] = new()
-  let mut window : SortedSet[Int32] = new()
+  let mut asc : SortedSet[Int32] = SortedSet::empty()
+  let mut desc : SortedSet[Int32] = SortedSet::empty()
+  let mut window : SortedSet[Int32] = SortedSet::empty()
   for i in 0..<50000 {
     asc = asc.add(i)
     desc = desc.add(-i)
@@ -156,7 +156,7 @@ fn Lcg::below(self : Lcg, bound : Int32) -> Int32 {
 ///|
 /// A set of up to `n` random values below `range`, built with `add`.
 fn Lcg::small_set(self : Lcg, n : Int32, range : Int32) -> SortedSet[Int32] {
-  let mut s : SortedSet[Int32] = new()
+  let mut s : SortedSet[Int32] = SortedSet::empty()
   for _ in 0..<self.below(n + 1) {
     s = s.add(self.below(range))
   }
@@ -180,7 +180,7 @@ test "random operation sequences keep every node balanced" {
     let rng = Lcg::{ state: seed, }
     let range = [16, 200, 1500][seed.reinterpret_as_int() % 3]
     let model = Array::make(range, false)
-    let mut s : SortedSet[Int32] = new()
+    let mut s : SortedSet[Int32] = SortedSet::empty()
     for step in 0..<600 {
       let v = rng.below(range)
       match rng.below(18) {
@@ -265,7 +265,7 @@ test "random operation sequences keep every node balanced" {
 
 ///|
 fn ascending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
-  let mut s : SortedSet[Int32] = new()
+  let mut s : SortedSet[Int32] = SortedSet::empty()
   for i in lo..<(lo + n) {
     s = s.add(i)
   }
@@ -274,7 +274,7 @@ fn ascending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
 
 ///|
 fn descending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
-  let mut s : SortedSet[Int32] = new()
+  let mut s : SortedSet[Int32] = SortedSet::empty()
   for i = lo + n - 1; i >= lo; i = i - 1 {
     s = s.add(i)
   }

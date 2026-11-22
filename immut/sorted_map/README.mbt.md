@@ -6,7 +6,7 @@ An immutable tree map based on size balanced tree.
 
 ## Create
 
-You can create an empty map using `new()` or construct it with a single
+You can create an empty map using `empty()` or construct it with a single
 key-value pair using `singleton()`.
 
 ```mbt check

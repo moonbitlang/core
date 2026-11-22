@@ -68,7 +68,7 @@ fn build_vec(
   match (mode & 0x7fffffff) % 7 {
     0 => @vector.makei(len, i => offset + i)
     1 => {
-      let mut v : @vector.Vector[Int32] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.empty()
       for i in 0..<len {
         v = v.push(offset + i)
       }
@@ -76,7 +76,7 @@ fn build_vec(
     }
     2 => @vector.makei(len + 50, i => offset + i - 33).slice(33, 33 + len)
     3 => {
-      let mut v : @vector.Vector[Int32] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.empty()
       for lo = 0; lo < len; {
         let step = 1 + (lo * 7 + 13) % 47
         let hi = if lo + step > len { len } else { lo + step }
@@ -100,7 +100,7 @@ fn build_vec(
       // operand of 1024+, that merge is 31 + 3 + 31 = 65 children wide — the
       // widest the splice can produce, and the one #4086 mishandled.
       let cut = if len >= 2080 { 1056 } else { len / 32 * 32 }
-      let mut v : @vector.Vector[Int32] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.empty()
       for i in 0..<cut {
         v = v.push(offset + i)
       }
@@ -114,7 +114,7 @@ test "quickcheck: push agrees with the array model and preserves history" {
   @quickcheck.check(
     (xs : Array[Int32]) => {
       let snapshots : Array[(Int32, @vector.Vector[Int32])] = []
-      let mut v : @vector.Vector[Int32] = @vector.new()
+      let mut v : @vector.Vector[Int32] = @vector.empty()
       for i, x in xs {
         v = v.push(x)
         guard v.length() == i + 1 && v.get(i) == Some(x) else { return false }

@@ -97,7 +97,7 @@ fn build(xs : Array[Int32]) -> (@sorted_set.SortedSet[Int32], Array[Int32]) {
 test "quickcheck: op sequences agree with a model and old versions persist" {
   @quickcheck.check(
     (ops : Array[(Int32, Int32)]) => {
-      let mut set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+      let mut set : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
       let model : Array[Int32] = []
       // Snapshots of every intermediate version paired with its expected
       // content; persistence means none of them may change afterwards.
@@ -189,7 +189,7 @@ test "quickcheck: union laws (commutative, associative, idempotent, unit)" {
       let (a, _) = build(xs)
       let (b, _) = build(ys)
       let (c, _) = build(zs)
-      let empty : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+      let empty : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
       a.union(b) == b.union(a) &&
       a.union(b).union(c) == a.union(b.union(c)) &&
       a.union(a) == a &&

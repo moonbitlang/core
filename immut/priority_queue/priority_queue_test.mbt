@@ -245,6 +245,13 @@ test "to_json" {
 }
 
 ///|
+test "empty accepts elements without Compare" {
+  let queue : @priority_queue.PriorityQueue[() -> Unit] = @priority_queue.empty()
+  inspect(queue.is_empty(), content="true")
+  inspect(queue.length(), content="0")
+}
+
+///|
 test "Default is the empty queue" {
   let q : @priority_queue.PriorityQueue[Int32] = Default::default()
   inspect(q.is_empty(), content="true")

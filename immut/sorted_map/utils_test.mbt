@@ -143,13 +143,13 @@ test "iter" {
 
 ///|
 test "get with empty map" {
-  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.empty()
   @test.assert_eq(map.get(3), None)
 }
 
 ///|
 test "panic get with empty map" {
-  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.empty()
   map[3] |> ignore
 }
 
@@ -168,7 +168,7 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int32, String] = @sorted_map.empty()
   @json.json_inspect(Json(map), content=Json::empty_object())
 }
 
@@ -213,13 +213,13 @@ test "rev_values returns values in descending key order" {
 
 ///|
 test "rev_keys on empty map" {
-  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.empty()
   debug_inspect(map.rev_keys().collect(), content="[]")
 }
 
 ///|
 test "rev_values on empty map" {
-  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.empty()
   debug_inspect(map.rev_values().collect(), content="[]")
 }
 
@@ -326,7 +326,7 @@ test "rev_values with complex tree" {
 
 ///|
 test "range on empty map" {
-  let empty : @sorted_map.SortedMap[Int32, String] = @sorted_map.new()
+  let empty : @sorted_map.SortedMap[Int32, String] = @sorted_map.empty()
   let count = for _, _ in empty.range(low=1, high=5); count = 0 {
     continue count + 1
   } nobreak {

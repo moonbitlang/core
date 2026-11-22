@@ -32,7 +32,7 @@ fn balance_bench_keys(scrambled~ : Bool) -> Array[Int32] {
 fn balance_bench_build(
   keys : Array[Int32],
 ) -> @sorted_map.SortedMap[Int32, Int32] {
-  let mut m = @sorted_map.new()
+  let mut m = @sorted_map.empty()
   for k in keys {
     m = m.add(k, k)
   }

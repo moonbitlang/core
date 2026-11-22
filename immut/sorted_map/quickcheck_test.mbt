@@ -100,7 +100,7 @@ fn build(
 test "quickcheck: op sequences agree with a model and old versions persist" {
   @quickcheck.check(
     (ops : Array[(Int32, Int32)]) => {
-      let mut map : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+      let mut map : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
       let model : Array[(Int32, Int32)] = []
       // Snapshots of every intermediate version paired with its expected
       // content; persistence means none of them may change afterwards.
@@ -203,7 +203,7 @@ test "quickcheck: merge is model union with right bias, empty is identity" {
       if !agrees_with_model(a, model_a) || !agrees_with_model(b, model_b) {
         return false
       }
-      let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.new()
+      let empty : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
       a.merge(empty) == a && empty.merge(a) == a
     },
     count=200,

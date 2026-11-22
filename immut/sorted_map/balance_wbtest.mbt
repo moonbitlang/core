@@ -57,7 +57,7 @@ fn[K : Compare, V] is_valid(t : SortedMap[K, V]) -> Bool {
 
 ///|
 test "merge of ascending singletons" {
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in 0..<2000 {
     m = m.merge(singleton(i, i))
   }
@@ -68,7 +68,7 @@ test "merge of ascending singletons" {
 
 ///|
 test "merge of descending singletons" {
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i = 2000; i > 0; i = i - 1 {
     m = m.merge(singleton(i, i))
   }
@@ -97,9 +97,9 @@ fn check_merge(
 ///|
 test "merge keeps the tree balanced" {
   // singletons merged in on either side, ascending and descending
-  let mut a : SortedMap[Int32, Int32] = new()
-  let mut b : SortedMap[Int32, Int32] = new()
-  let mut c : SortedMap[Int32, Int32] = new()
+  let mut a : SortedMap[Int32, Int32] = SortedMap::empty()
+  let mut b : SortedMap[Int32, Int32] = SortedMap::empty()
+  let mut c : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in 0..<500 {
     a = check_merge(a, singleton(i, i))
     b = check_merge(singleton(i, i), b)
@@ -107,14 +107,14 @@ test "merge keeps the tree balanced" {
   }
   // pseudo-random keys, with duplicates
   let mut seed = 12345U
-  let mut d : SortedMap[Int32, Int32] = new()
+  let mut d : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in 0..<500 {
     seed = seed * 1103515245U + 12345U
     let k = (seed >> 16).reinterpret_as_int() % 300
     d = check_merge(d, singleton(k, i))
   }
   // ascending batches, interleaved maps, and very uneven sizes
-  let mut e : SortedMap[Int32, Int32] = new()
+  let mut e : SortedMap[Int32, Int32] = SortedMap::empty()
   for j in 0..<20 {
     e = check_merge(e, SortedMap(Array::makei(25, i => (j * 25 + i, i))))
   }
@@ -236,7 +236,7 @@ test "filter keeps the tree balanced" {
 test "remove rebalances: minimal repro" {
   // With the old (5, 1) parameters, removing 0 double-rotated the root's
   // right subtree into a node with subtree sizes (0, 2).
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for k in [1, 0, 5, 3, 6, 2, 7] {
     m = m.add(k, k)
   }
@@ -264,9 +264,9 @@ test "remove rebalances: minimal repro" {
 
 ///|
 test "height of sequentially built maps" {
-  let mut asc : SortedMap[Int32, Int32] = new()
-  let mut desc : SortedMap[Int32, Int32] = new()
-  let mut window : SortedMap[Int32, Int32] = new()
+  let mut asc : SortedMap[Int32, Int32] = SortedMap::empty()
+  let mut desc : SortedMap[Int32, Int32] = SortedMap::empty()
+  let mut window : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in 0..<50000 {
     asc = asc.add(i, i)
     desc = desc.add(-i, i)
@@ -306,7 +306,7 @@ fn Lcg::small_map(
   n : Int32,
   key_range : Int32,
 ) -> SortedMap[Int32, Int32] {
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for _ in 0..<self.below(n + 1) {
     m = m.add(self.below(key_range), self.below(1000))
   }
@@ -330,7 +330,7 @@ test "random operation sequences keep every node balanced" {
     let rng = Lcg::{ state: seed, }
     let key_range = [16, 200, 1500][seed.reinterpret_as_int() % 3]
     let model : Array[Int32?] = Array::make(key_range, None)
-    let mut m : SortedMap[Int32, Int32] = new()
+    let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
     for step in 0..<600 {
       let k = rng.below(key_range)
       match rng.below(16) {
@@ -394,7 +394,7 @@ test "random operation sequences keep every node balanced" {
 
 ///|
 fn ascending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in lo..<(lo + n) {
     m = m.add(i, i)
   }
@@ -403,7 +403,7 @@ fn ascending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
 
 ///|
 fn descending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
-  let mut m : SortedMap[Int32, Int32] = new()
+  let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i = lo + n - 1; i >= lo; i = i - 1 {
     m = m.add(i, i)
   }

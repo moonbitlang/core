@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+/// Creates an empty priority queue for any element type.
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
+#as_free_fn
+pub fn[A] PriorityQueue::empty() -> PriorityQueue[A] {
+  { node: Empty, size: 0, }
+}
+
+///|
 /// Creates a new immutable priority queue from an array.
 ///
 /// Runs in O(n): the elements are copied once and turned into a heap in place,
@@ -33,7 +42,7 @@
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  guard array.length() > 0 else { return { node: Empty, size: 0, } }
+  guard array.length() > 0 else { return PriorityQueue::empty() }
   // `array` is borrowed, so copy it into a buffer we own before heapifying.
   from_array_in_place(array.to_owned().mut_view())
 }
@@ -68,7 +77,7 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(
 /// by `pop`/`peek`.
 fn[A : Compare] from_array_in_place(heap : MutArrayView[A]) -> PriorityQueue[A] {
   let len = heap.length()
-  guard len > 0 else { return { node: Empty, size: 0, } }
+  guard len > 0 else { return PriorityQueue::empty() }
   heapify(heap)
   { node: priority_queue_node_from_heap(heap, 0, len), size: len, }
 }
@@ -220,7 +229,7 @@ pub fn[A : Compare] PriorityQueue::pop(
 ) -> PriorityQueue[A]? {
   match self.node {
     Empty => None
-    Leaf(_) => Some({ node: Empty, size: 0, })
+    Leaf(_) => Some(PriorityQueue::empty())
     Branch(_) => {
       let (value, temp) = self.node.remove_last_leaf(path(self.size))
       Some({ node: temp.change_and_down(value), size: self.size - 1, })
@@ -292,7 +301,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 ) -> PriorityQueue[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")
-    Leaf(_) => { node: Empty, size: 0, }
+    Leaf(_) => PriorityQueue::empty()
     Branch(_) => {
       let (value, temp) = self.node.remove_last_leaf(path(self.size))
       { node: temp.change_and_down(value), size: self.size - 1, }
@@ -306,7 +315,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.PriorityQueue([])
+///   let queue = @priority_queue.empty()
 ///   @test.assert_eq(queue.push(1).length(), 1)
 /// }
 /// ```
@@ -367,7 +376,7 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.PriorityQueue([])
+///   let queue = @priority_queue.empty()
 ///   inspect(queue.is_empty(), content="true")
 ///   @test.assert_eq(queue.push(1).is_empty(), false)
 /// }
@@ -380,7 +389,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 /// The empty priority queue, same as `PriorityQueue([])` but with no
 /// `Compare` bound on `A`.
 pub impl[A] Default for PriorityQueue[A] with fn default() {
-  { node: Empty, size: 0, }
+  PriorityQueue::empty()
 }
 
 ///|
@@ -389,7 +398,7 @@ pub impl[A] Default for PriorityQueue[A] with fn default() {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.PriorityQueue([])
+///   let queue = @priority_queue.empty()
 ///   inspect(queue.length(), content="0")
 ///   @test.assert_eq(queue.push(1).length(), 1)
 /// }

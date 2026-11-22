@@ -14,8 +14,8 @@
 
 ///|
 /// Create an empty map.
-#alias(new, pending_deprecated)
-#as_free_fn(new, pending_deprecated)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
 pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
   Empty

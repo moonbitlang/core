@@ -350,7 +350,7 @@ fn build_by(mode : Int32, len : Int32, offset : Int32) -> Vector[Int32] {
   match mode % 5 {
     0 => makei(len, i => offset + i)
     1 => {
-      let mut v : Vector[Int32] = new()
+      let mut v : Vector[Int32] = Vector::empty()
       for i in 0..<len {
         v = v.push(offset + i)
       }
@@ -376,7 +376,7 @@ fn replace_model(model : Array[Int32], next : Array[Int32]) -> Unit {
 test "tree invariants hold across mixed operation sequences" {
   let rng = Random(Ref(20260816UL))
   for trial in 0..<60 {
-    let mut v : Vector[Int32] = new()
+    let mut v : Vector[Int32] = Vector::empty()
     let model : Array[Int32] = []
     let mut next = 0
     for step in 0..<20 {

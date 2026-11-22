@@ -51,7 +51,7 @@ test "iter terminates on right" {
 ///|
 test "iter with early termination on left subtree" {
   // Create a binary search tree with both left and right subtrees
-  let set = @sorted_set.new()
+  let set = @sorted_set.empty()
     .add(2) // root
     .add(1) // left child
     .add(3) // right child
@@ -79,7 +79,7 @@ test "rev_iter returns elements in descending order" {
 
 ///|
 test "rev_iter on empty set" {
-  let set : @sorted_set.SortedSet[Int32] = @sorted_set.new()
+  let set : @sorted_set.SortedSet[Int32] = @sorted_set.empty()
   let result = set.rev_iter().collect()
   debug_inspect(result, content="[]")
 }
@@ -116,7 +116,7 @@ test "rev_iter is reverse of iter" {
 ///|
 test "rev_iter with early termination on right subtree" {
   // Create a binary search tree with both left and right subtrees
-  let set = @sorted_set.new()
+  let set = @sorted_set.empty()
     .add(2) // root
     .add(1) // left child
     .add(3) // right child

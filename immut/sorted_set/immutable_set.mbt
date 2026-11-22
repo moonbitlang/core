@@ -20,8 +20,8 @@
 
 ///|
 /// Creates an empty immutable sorted set.
-#alias(new, pending_deprecated)
-#as_free_fn(new, pending_deprecated)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
 pub fn[A] SortedSet::empty() -> SortedSet[A] {
   Empty

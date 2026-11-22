@@ -86,7 +86,7 @@ fn[A : Eq + Hash] canonical_after_ops(
   ops : Array[Int32],
 ) -> Bool {
   let model : Array[Int32] = []
-  let mut hs : @hashset.HashSet[A] = @hashset.new()
+  let mut hs : @hashset.HashSet[A] = @hashset.empty()
   for op in ops {
     let n = op & 0x7fffffff
     let key = n / 8 % 16
@@ -169,7 +169,7 @@ fn[A : Eq + Hash] canonical_after_ops(
   }
   // Insertion-order independence: adding the final content in reverse
   // order must reproduce the exact structure.
-  let mut reversed : @hashset.HashSet[A] = @hashset.new()
+  let mut reversed : @hashset.HashSet[A] = @hashset.empty()
   for i in 0..<model.length() {
     reversed = reversed.add(mk(model[model.length() - 1 - i]))
   }
@@ -217,7 +217,7 @@ fn[A : Eq + Hash] build_set(
   mk : (Int32) -> A,
   xs : Array[Int32],
 ) -> @hashset.HashSet[A] {
-  let mut s = @hashset.new()
+  let mut s = @hashset.empty()
   for x in xs {
     s = s.add(mk((x & 0x7fffffff) % 16))
   }
@@ -236,7 +236,7 @@ fn[A : Eq + Hash] set_laws(
   let a = build_set(mk, xs)
   let b = build_set(mk, ys)
   let c = build_set(mk, zs)
-  let empty : @hashset.HashSet[A] = @hashset.new()
+  let empty : @hashset.HashSet[A] = @hashset.empty()
   // union: commutative, associative, idempotent, empty is the identity
   guard a.union(b) == b.union(a) else { return false }
   guard a.union(b).union(c) == a.union(b.union(c)) else { return false }

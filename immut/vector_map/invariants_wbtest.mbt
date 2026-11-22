@@ -78,7 +78,7 @@ fn[K : Eq + Hash + Show, V] check_invariants(map : VectorMap[K, V]) -> String? {
 test "invariants hold through a deletion-heavy operation sequence" {
   @quickcheck.check(
     (ops : Array[Int32]) => {
-      let mut map : VectorMap[Int32, Int32] = new()
+      let mut map : VectorMap[Int32, Int32] = VectorMap::empty()
       for op in ops {
         let n = op & 0x7fffffff
         let key = n / 8 % 24
@@ -101,7 +101,7 @@ test "invariants hold while the spine is churned around the threshold" {
   // trimming, the compaction trigger and the index rebuild interact.
   @quickcheck.check(
     (raw : Array[Int32]) => {
-      let mut map : VectorMap[Int32, Int32] = new()
+      let mut map : VectorMap[Int32, Int32] = VectorMap::empty()
       let mut next = 0
       for n in raw {
         // `abs` would overflow on `Int::min_value`; masking cannot.
@@ -239,7 +239,7 @@ test "churn under add and remove keeps reclaiming the spine" {
 
 ///|
 test "the simple constructors produce valid representations" {
-  let empty : VectorMap[String, Int32] = new()
+  let empty : VectorMap[String, Int32] = VectorMap::empty()
   assert_true(check_invariants(empty) is None)
   assert_true(check_invariants(singleton("a", 1)) is None)
   assert_true(

@@ -21,7 +21,7 @@ This package replaces the removed `immut/array` package with a more efficient ta
 
 ### Create
 
-Create an empty vector with `new()`, or construct one from an array or iterator.
+Create an empty vector with `empty()`, or construct one from an array or iterator.
 
 ```mbt check
 ///|

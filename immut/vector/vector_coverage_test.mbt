@@ -53,7 +53,7 @@ test "deep tree built by from_iter round-trips through index and update" {
 ///|
 test "deep tree built incrementally by push matches a reference" {
   let n = 2050
-  let mut v = @vector.new()
+  let mut v = @vector.empty()
   for i in 0..<n {
     v = v.push(i)
   }
@@ -129,7 +129,7 @@ test "repeated pop collapses a deep tree element by element" {
 
 ///|
 test "repeated pop collapses a relaxed tree element by element" {
-  let mut v = @vector.new()
+  let mut v = @vector.empty()
   let mut total = 0
   for _ in 0..<60 {
     v = v.concat(@vector.from_iter(total.until(total + 21)))

@@ -28,7 +28,7 @@ test "panic set with negative index" {
 
 ///|
 test "panic set with empty vector" {
-  let v = @vector.new()
+  let v = @vector.empty()
   let v1 = v.set(0, 10) // This should trigger the panic in set function
   debug_inspect(v1, content="ImmutableVec::[]")
 }
@@ -47,7 +47,7 @@ test "panic at with out-of-bounds index" {
 
 ///|
 test "panic at on empty vector" {
-  let v : @vector.Vector[Int32] = @vector.new()
+  let v : @vector.Vector[Int32] = @vector.empty()
   v[0] |> ignore
 }
 

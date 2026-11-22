@@ -14,11 +14,11 @@
 
 ///|
 /// Create an empty map. `O(1)`.
-#alias(new, pending_deprecated)
-#as_free_fn(new, pending_deprecated)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
 pub fn[K, V] VectorMap::empty() -> VectorMap[K, V] {
-  { index: @hashmap.new(), spine: @vector.new(), size: 0, }
+  { index: @hashmap.empty(), spine: @vector.empty(), size: 0, }
 }
 
 ///|
@@ -87,7 +87,7 @@ pub fn[K : Eq + Hash, V] VectorMap::from_iter(
 /// slot, every later one overwrites that slot's value in place.
 fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
   let entries : Array[(K, V)] = []
-  let mut index : @hashmap.HashMap[K, Int32] = @hashmap.new()
+  let mut index : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for kv in iter {
     let (key, value) = kv
     match index.get(key) {
