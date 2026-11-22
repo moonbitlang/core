@@ -21,10 +21,7 @@
 ## Awaiting merge
 
 - [ ] **HTTP request headers.** Default `headers` to an empty map in the free `request_text` and `request_json` functions, matching `request_binary`. [PR #4933](https://github.com/moonbitlang/core/pull/4933)
-
-## Third review candidates
-
-- [ ] **Timestamp units.** Consider `Timestamp::subsec_nanos()` for the nanosecond component, retaining `nsec()` as a deprecated alias. Its siblings `sec()` and `msec()` return totals since the Unix epoch. [Accessors](async/fs/timestamp.mbt)
+- [ ] **Timestamp units.** Use `Timestamp::subsec_nanos()` for the nanosecond component and retain `nsec()` as a deprecated alias. [PR #4935](https://github.com/moonbitlang/core/pull/4935)
 
 ## After 1.0
 
