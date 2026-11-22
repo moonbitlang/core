@@ -132,7 +132,7 @@ pub async fn request_text(
   meth : RequestMethod,
   uri : StringView,
   body : StringView,
-  headers~ : Headers,
+  headers~ : Headers = {},
   proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   let conn = request_stream(meth, uri, headers~, proxy?)
@@ -156,7 +156,7 @@ pub async fn request_json(
   meth : RequestMethod,
   uri : StringView,
   body : @json.Json,
-  headers~ : Headers,
+  headers~ : Headers = {},
   proxy? : Proxy,
 ) -> (ResponseHeader, MessageBody) {
   let conn = request_stream(meth, uri, headers~, proxy?)
