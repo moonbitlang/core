@@ -26,7 +26,7 @@ Also, you can construct it from an array using `SortedMap([...])`.
 test {
   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.values().collect(), [1, 2, 3])
-  @test.assert_eq(map.keys_as_iter().collect(), ["a", "b", "c"])
+  @test.assert_eq(map.keys().collect(), ["a", "b", "c"])
 }
 ```
 
@@ -151,10 +151,10 @@ test {
   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter((_, v) => v > 1)
   @test.assert_eq(map.values().collect(), [2, 3])
-  @test.assert_eq(map.keys_as_iter().collect(), ["b", "c"])
+  @test.assert_eq(map.keys().collect(), ["b", "c"])
   let map = map.filter((k, v) => k > "a" && v > 1)
   @test.assert_eq(map.values().collect(), [2, 3])
-  @test.assert_eq(map.keys_as_iter().collect(), ["b", "c"])
+  @test.assert_eq(map.keys().collect(), ["b", "c"])
 }
 ```
 
@@ -171,14 +171,14 @@ test {
 }
 ```
 
-Use `keys_as_iter()` to get all keys of the map in ascending order.
+Use `keys()` to iterate over the keys in ascending order. Use `keys().to_array()` to collect them into an array.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
-  let keys = map.keys_as_iter() // ["a", "b", "c"]
-  @test.assert_eq(keys.collect(), ["a", "b", "c"])
+  let keys = map.keys()
+  @test.assert_eq(keys.to_array(), ["a", "b", "c"])
 }
 ```
 

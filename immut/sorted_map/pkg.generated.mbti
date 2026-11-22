@@ -52,9 +52,8 @@ pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
-#deprecated
-pub fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
-pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
+#alias(keys_as_iter, deprecated)
+pub fn[K, V] SortedMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int32
 #alias(map_with_key, deprecated)

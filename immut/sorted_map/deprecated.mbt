@@ -13,14 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Return all keys of the map in ascending order.
-#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
-#coverage.skip
-pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
-  self.keys_as_iter().collect()
-}
-
-///|
 /// Function `elems`.
 #deprecated("Use `values` instead")
 #coverage.skip
