@@ -21,6 +21,11 @@
 
 - [ ] **HTTP request headers.** Default `headers` to an empty map in the free `request_text` and `request_json` functions, matching `request_binary`. [PR #4933](https://github.com/moonbitlang/core/pull/4933)
 
+## Third review candidates
+
+- [ ] **Timestamp units.** Consider `Timestamp::subsec_nanos()` for the nanosecond component, retaining `nsec()` as a deprecated alias. Its siblings `sec()` and `msec()` return totals since the Unix epoch. [Accessors](async/fs/timestamp.mbt)
+- [ ] **QuickCheck range endpoints.** Consider `char_range_inclusive` for the character generator and retain `char_range` as a deprecated alias. Its upper bound is included, while `int_range` excludes the upper bound for distinct bounds. [Generators](quickcheck/generator.mbt)
+
 ## After 1.0
 
 - **QuickCheck outcomes.** Revisit a typed `outcome()` accessor when a caller needs to distinguish the four documented results programmatically. Adding a method to the abstract `QuickCheckReport` type is compatible with existing callers. [Report documentation](quickcheck/README.mbt.md)
