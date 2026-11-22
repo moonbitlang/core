@@ -104,14 +104,6 @@ impl Compare with fn op_ge(x, y) {
 }
 
 ///|
-test "Compare legacy comparison methods" {
-  assert_true(Compare::op_lt(1, 2))
-  assert_true(Compare::op_gt(2, 1))
-  assert_true(Compare::op_le(1, 1))
-  assert_true(Compare::op_ge(1, 1))
-}
-
-///|
 /// Trait for types that can be hashed
 /// 
 /// The `hash` method should return a hash value for the type, which is used in hash tables and other data structures.

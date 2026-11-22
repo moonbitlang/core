@@ -448,7 +448,7 @@ test "utf16 indexed view" {
 }
 
 ///|
-test "op_equal" {
+test "view equal" {
   let str = "012301230123"
   inspect(str.exact_view() == str.exact_view(), content="true")
   inspect(str.exact_view() == str.exact_view(start=1), content="false")
