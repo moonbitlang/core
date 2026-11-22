@@ -1,13 +1,16 @@
 # MoonBit 1.0 public API review
 
-## Changes submitted for review
+## Merged
 
 - [x] **Buffer byte writes.** Use `Buffer::write_bytesview(BytesView)`, following `StringBuilder::write_stringview(StringView)`. Keep the one-argument `write_bytes` as a deprecated alias that `moon fix` can migrate. This leaves room for a future `write_bytes(bytes, start, len)`. [PR #4922](https://github.com/moonbitlang/core/pull/4922)
-- [x] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
+- [x] **Immutable sorted map keys.** `SortedMap::keys()` returns an `Iter[K]` in ascending order. Use `map.keys().to_array()` when an array is needed. `keys_as_iter()` remains a deprecated alias. [PR #4925](https://github.com/moonbitlang/core/pull/4925)
+
+## In review
+
+- [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
 
 ## Release decisions, one at a time
 
-- [ ] **Which return type should `keys()` have at 1.0?** Five map types already return `Iter[K]`. Immutable `SortedMap` still returns `Array[K]` from its deprecated `keys()`. Its iterator is called `keys_as_iter()`. The existing deprecation promises a switch. Choose the release for that switch and document `keys().collect()` for callers that need an array. [Immutable sorted map](immut/sorted_map/pkg.generated.mbti) · [Deprecation](immut/sorted_map/deprecated.mbt)
 - [ ] **Should mutable sorted ranges use named bounds?** Both immutable collections spell the inclusive range `range(low=a, high=b)`. The mutable versions spell the same query `range(a, b)`. Decide the call form for all four before migrating either mutable package. Include the mutable map's `rev_range` in that decision and check callers taking the method as a function. [Mutable map](sorted_map/pkg.generated.mbti) · [Mutable set](sorted_set/pkg.generated.mbti) · [Immutable map](immut/sorted_map/pkg.generated.mbti) · [Immutable set](immut/sorted_set/pkg.generated.mbti)
 - [ ] **When can `List::add` mean concatenation?** The deprecated alias still takes *one element* and prepends it. The `Add` impl takes *another list* and concatenates it. Keep `prepend` and `concat` explicit until the old alias can be retired, then promote the operator method. [List interface](list/pkg.generated.mbti) · [Promotion policy](AGENTS.md)
 - [ ] **Should a shell pipeline accept a slice of stages?** `Cmd` takes an `ArrayView[String]` of arguments, while `Pipeline` requires an `Array[Cmd]` and copies it. Review changing just the constructor input to `ArrayView[Cmd]`. Check a slice, an existing array call, and a stored constructor function against the proposed signature. [Shell interface](async/shell/pkg.generated.mbti)
