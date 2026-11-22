@@ -25,14 +25,22 @@
 
 ## Fourth review candidates
 
-- [ ] **Directory-relative cleanup.** Expose `Directory::remove` as `nocancel`, like path-based `remove`, so it can be used in `TaskGroup::add_defer`. Both entry points already use the same non-cancellable helper. [Directory removal](async/fs/dir.mbt)
-- [ ] **Multicast group address.** Decide whether the IPv4 and IPv6 membership methods should take `IpAddr`. They currently require an `Addr` whose port is ignored. Changing the existing parameter type requires callers with an endpoint to pass `endpoint.ip`. [UDP API](async/socket/udp.mbt)
+- [ ] **Directory-relative cleanup.** Expose `Directory::remove` as `nocancel`, like path-based `remove`, so it can be used in `TaskGroup::add_defer`. Both entry points already use the same non-cancellable helper. [Issue #4936](https://github.com/moonbitlang/core/issues/4936)
+- [ ] **Multicast group address.** Decide whether the IPv4 and IPv6 membership methods should take `IpAddr`. They currently require an `Addr` whose port is ignored. Changing the existing parameter type requires callers with an endpoint to pass `endpoint.ip`. [Issue #4937](https://github.com/moonbitlang/core/issues/4937)
 
 The same review found two documentation opportunities. Lead `File::as_dir` with its ownership transfer on success and file closure on failure. Explain that `Diff` and its hunks retain views of both inputs, so later mutation can affect rendered output. [File conversion](async/fs/file.mbt) · [Diff constructor](diff/diff.mbt)
 
 ## After 1.0
 
 - **QuickCheck outcomes.** Revisit a typed `outcome()` accessor when a caller needs to distinguish the four documented results programmatically. Adding a method to the abstract `QuickCheckReport` type is compatible with existing callers. [Report documentation](quickcheck/README.mbt.md)
+
+## Fifth review
+
+At `57464f4ec` a fresh scan of all 143 generated interfaces produced six candidates. Five have prior review records. The sixth, the visibility of the terminal reader implementation, follows an explicit design decision. This pass added no new 1.0 API items.
+
+- ASCII encoder errors and integer shift method promotions appear in [#4272](https://github.com/moonbitlang/core/issues/4272).
+- JSON number spelling is tracked in [#4643](https://github.com/moonbitlang/core/issues/4643). The regex error type and fallible replacement callbacks appear in [#4639](https://github.com/moonbitlang/core/issues/4639).
+- The terminal API deliberately exposes read methods through a private `BinaryReader` implementation. [Design commit](https://github.com/moonbitlang/core/commit/1850244d86d3cd26305fbf895d8e4b250578dd64)
 
 ## Coverage
 
