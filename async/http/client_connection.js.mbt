@@ -160,7 +160,7 @@ impl @io.BinaryWriterImpl for ClientConnection with fn raw_write_impl(
   len~,
 ) {
   guard! self.request is Some(request)
-  request.body.write_bytes(buf[offset:offset + len])
+  request.body.write_bytesview(buf[offset:offset + len])
   len
 }
 

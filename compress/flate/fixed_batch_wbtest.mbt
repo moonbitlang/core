@@ -61,7 +61,7 @@ fn fixed_batch_streaming(input : BytesView) -> (Bytes, Int32, String) {
       return (b"", 0, @debug.to_string(InflateErrorKind::Truncated))
     }
     used += status_result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:status_result.produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:status_result.produced]))
     if status is Done {
       return (decoded.to_bytes(), used, "done")
     }

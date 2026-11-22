@@ -43,7 +43,7 @@ fn fast_stream_run(
       return Err(Truncated)
     }
     position += status_result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:status_result.produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:status_result.produced]))
     if status is Done {
       return Ok((decoded.to_bytes(), position))
     }
@@ -60,17 +60,21 @@ fn fast_stream_sources() -> Array[Bytes] {
   let rng = InflateDifferentialRng(0xFA57D0C5U)
   let text = @buffer.Buffer()
   while text.length() < 100000 {
-    text.write_bytes(words[rng.size(words.length()) - 1])
+    text.write_bytesview(words[rng.size(words.length()) - 1])
     if rng.size(40) == 1 {
       // a long match far back, and a run of distance one
-      text.write_bytes(text.to_bytes()[:rng.size(300)].to_owned())
-      text.write_bytes(Bytes::make(rng.size(400), b'='))
+      text.write_bytesview(text.to_bytes()[:rng.size(300)].to_owned())
+      text.write_bytesview(Bytes::make(rng.size(400), b'='))
     }
   }
   let mixed = @buffer.Buffer()
-  mixed.write_bytes(inflate_differential_random_bytes(0xFA57D0C6U, 20000, 256))
-  mixed.write_bytes(inflate_differential_pattern(b"moonbit-flate-", 30000))
-  mixed.write_bytes(inflate_differential_random_bytes(0xFA57D0C7U, 20000, 7))
+  mixed.write_bytesview(
+    inflate_differential_random_bytes(0xFA57D0C6U, 20000, 256),
+  )
+  mixed.write_bytesview(inflate_differential_pattern(b"moonbit-flate-", 30000))
+  mixed.write_bytesview(
+    inflate_differential_random_bytes(0xFA57D0C7U, 20000, 7),
+  )
   [
     text.to_bytes(),
     mixed.to_bytes(),
@@ -155,7 +159,7 @@ fn assert_calls_agree(
         @test.fail("byte \{i} of a call differs")
       }
     }
-    decoded.write_bytes(Bytes::from_array(output[:produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:produced]))
     position += consumed
     if status is Done {
       return Ok((decoded.to_bytes(), position))

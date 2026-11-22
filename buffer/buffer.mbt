@@ -195,7 +195,7 @@ pub fn Buffer::Buffer(capacity~ : Int32 = 0) -> Buffer {
 pub fn from_bytes(bytes : BytesView) -> Buffer {
   let val_len = bytes.length()
   let buf = Buffer(capacity=val_len)
-  // Inline write_bytes because the exact capacity is known.
+  // Inline write_bytesview because the exact capacity is known.
   // SAFETY: known bytes size
   buf.data.blit_from_bytes(0, bytes.data(), bytes.start_offset(), val_len)
   buf.len = val_len
@@ -787,13 +787,13 @@ pub fn[T : Show] Buffer::write_utf8(self : Buffer, value : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let buf = @buffer.Buffer()
-///   buf.write_bytes(b"T")
-///   buf.write_bytes(b"Test"[1:])
+///   buf.write_bytesview(b"T")
+///   buf.write_bytesview(b"Test"[1:])
 ///   inspect(buf.to_bytes(), content="b\"Test\"")
 /// }
 /// ```
-#alias(write_bytesview, deprecated="Use `write_bytes` instead")
-pub fn Buffer::write_bytes(self : Buffer, value : BytesView) -> Unit {
+#alias(write_bytes, deprecated="Use `write_bytesview` instead")
+pub fn Buffer::write_bytesview(self : Buffer, value : BytesView) -> Unit {
   let val_len = value.length()
   let required = self.len + val_len
   if required > self.data.length() || required < self.len {

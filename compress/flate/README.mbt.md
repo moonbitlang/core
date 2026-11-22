@@ -403,7 +403,7 @@ when known; unknown sizes use ZIP64.
 test "README incremental ZIP writer" {
   // A real folder adapter passes a buffered file-write callback here.
   let output = @buffer.Buffer()
-  let writer = @zip.Writer(chunk => output.write_bytes(chunk))
+  let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
   writer.add("small.txt", b"small file")
   writer.begin_entry("chunked.txt", size=6UL)
   writer.write(b"abc")

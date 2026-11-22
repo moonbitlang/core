@@ -749,8 +749,8 @@ test "gzip.decompress decodes a file of thousands of members" {
   let file = @buffer.Buffer()
   let joined = @buffer.Buffer()
   for _ in 0..<3000 {
-    file.write_bytes(framed)
-    joined.write_bytes(plain)
+    file.write_bytesview(framed)
+    joined.write_bytesview(plain)
   }
   @test.assert_eq(@gzip.decompress(file.to_bytes()), joined.to_bytes())
 }
@@ -774,7 +774,7 @@ test "streaming gzip verifies independent members while output is reused" {
   for ;; {
     let result = decoder.step(stream[position:], output)
     position += result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:result.produced]))
     for i in 0..<output.length() {
       output[i] = b'\xCC'
     }

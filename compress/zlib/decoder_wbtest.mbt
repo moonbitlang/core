@@ -157,7 +157,7 @@ test "zlib fixed and array-backed output views preserve the per-call contract" {
             }
             Ok((status, consumed, count)) => {
               @test.assert_eq(output[:count], padded[3:3 + count])
-              decoded.write_bytes(Bytes::from_array(output[:count]))
+              decoded.write_bytesview(Bytes::from_array(output[:count]))
               position += consumed
               if position == stream.length() {
                 let end_status = try fixed.check_end() catch {

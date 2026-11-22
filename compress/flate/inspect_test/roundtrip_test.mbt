@@ -44,7 +44,7 @@ test "IncrementalEncoder finalization preserves unconsumed input under backpress
     let consumed = status_result.consumed
     let produced = status_result.produced
     prefix_pos = prefix_pos + consumed
-    compressed.write_bytes(Bytes::from_array(obuf[:produced]))
+    compressed.write_bytesview(Bytes::from_array(obuf[:produced]))
     if prefix_pos == prefix.length() && status is NeedMoreInput {
       break
     }
@@ -86,7 +86,7 @@ test "IncrementalEncoder finalization preserves unconsumed input under backpress
     } else {
       @test.assert_eq(consumed, 0)
     }
-    compressed.write_bytes(Bytes::from_array(obuf[:produced]))
+    compressed.write_bytesview(Bytes::from_array(obuf[:produced]))
     drain_calls = drain_calls + 1
     if status is Done {
       break

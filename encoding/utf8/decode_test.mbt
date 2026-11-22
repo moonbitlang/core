@@ -28,10 +28,10 @@ test "U+FFFD" {
 ///|
 test "decoding UTF8 encoded data to String" {
   let buf = Buffer(capacity=10)
-  buf.write_bytes(b"abc")
-  buf.write_bytes(b"\xe4\xbd\xa0") // 你
-  buf.write_bytes(b"\xe5\xa5\xbd") // 好
-  buf.write_bytes(b"\xf0\x9f\x91\x80") // 👀
+  buf.write_bytesview(b"abc")
+  buf.write_bytesview(b"\xe4\xbd\xa0") // 你
+  buf.write_bytesview(b"\xe5\xa5\xbd") // 好
+  buf.write_bytesview(b"\xf0\x9f\x91\x80") // 👀
   let chars = @utf8.decode(buf.to_bytes())
   inspect(chars, content="abc你好👀")
 }

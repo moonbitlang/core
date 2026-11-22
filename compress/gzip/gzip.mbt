@@ -390,11 +390,11 @@ pub fn decompress(
       while start < payload.length() {
         check_cancelled(cancelled)
         let end = start + (payload.length() - start).min(4096)
-        out.write_bytes(payload[start:end])
+        out.write_bytesview(payload[start:end])
         start = end
       }
     } else {
-      out.write_bytes(payload)
+      out.write_bytesview(payload)
     }
     p = next_p
   }

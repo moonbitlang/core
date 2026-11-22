@@ -40,11 +40,11 @@ test {
   let buf = @buffer.Buffer()
   buf.write_byte(b'H')
   buf.write_byte(b'i')
-  buf.write_bytes(b" world")
+  buf.write_bytesview(b" world")
   inspect(buf.to_bytes(), content="b\"Hi world\"")
   // write a sub-range via BytesView
   let buf2 = @buffer.Buffer()
-  buf2.write_bytes(b"Hello"[0:2])
+  buf2.write_bytesview(b"Hello"[0:2])
   inspect(buf2.to_bytes(), content="b\"He\"")
   // write from an iterator
   let buf3 = @buffer.Buffer()
@@ -210,7 +210,7 @@ test {
 ///|
 test {
   let buf = @buffer.Buffer()
-  buf.write_bytes(b"hello")
+  buf.write_bytesview(b"hello")
   let bytes = buf.to_bytes()
   inspect(bytes, content="b\"hello\"")
   let v = buf.view()
@@ -226,7 +226,7 @@ test {
 ///|
 test {
   let buf = @buffer.Buffer()
-  buf.write_bytes(b"data")
+  buf.write_bytesview(b"data")
   @test.assert_eq(buf.length(), 4)
   buf.reset()
   @test.assert_eq(buf.is_empty(), true)

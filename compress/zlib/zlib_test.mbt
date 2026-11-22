@@ -647,7 +647,7 @@ test "streaming zlib checksum survives output reuse before a split trailer" {
   for ;; {
     let result = decoder.step(stream[position:body_end], output)
     position += result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:result.produced]))
     for i in 0..<output.length() {
       output[i] = b'\xCC'
     }

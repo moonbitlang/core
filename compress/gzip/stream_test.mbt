@@ -149,8 +149,8 @@ async test "default stream decoder leaves co-buffered next member unread" {
     let first = @gzip.compress(b"first")
     let second = @gzip.compress(b"second")
     let joined_buffer = @buffer.Buffer()
-    joined_buffer.write_bytes(first)
-    joined_buffer.write_bytes(second)
+    joined_buffer.write_bytesview(first)
+    joined_buffer.write_bytesview(second)
     let joined = joined_buffer.to_bytes()
     let (compressed_r, compressed_w) = @io.memory_pipe()
     root.spawn_bg() <| () => {
@@ -391,22 +391,22 @@ fn stream_stored_then_backrefs(
   let first = Bytes::makei(first_len, i => (i % 251).to_byte())
   let second = Bytes::makei(second_len, i => (i % 241).to_byte())
   let plain = @buffer.Buffer()
-  plain..write_bytes(first).write_bytes(second)
+  plain..write_bytesview(first).write_bytesview(second)
   let stored = plain.to_bytes()
   let n = stored.length()
-  plain.write_bytes(stored[n - 32768:n - 32768 + 3])
+  plain.write_bytesview(stored[n - 32768:n - 32768 + 3])
   for _ in 0..<258 {
     plain.write_byte(stored[n - 32768 + 2])
   }
   let plain = plain.to_bytes()
   let stream = @buffer.Buffer()
-  stream.write_bytes(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
+  stream.write_bytesview(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
   for data in [first, second] {
     let len = data.length()
     stream.write_byte(b'\x00')
     stream.write_uint16_le(len.to_uint16())
     stream.write_uint16_le((len ^ 0xffff).to_uint16())
-    stream.write_bytes(data)
+    stream.write_bytesview(data)
   }
   let bw : StreamTestBitWriter = { out: stream, acc: 0, nbits: 0, }
   bw.bits(1, 1)
@@ -437,7 +437,7 @@ async fn stream_decode_buffered(stream : Bytes) -> Bytes {
     let decoder = @gzip.StreamDecoder(r)
     let buf = FixedArray::make(131072, b'\x00')
     while decoder.read_into(buf.mut_view()) is n && n > 0 {
-      out.write_bytes(buf.unsafe_reinterpret_as_bytes()[:n])
+      out.write_bytesview(buf.unsafe_reinterpret_as_bytes()[:n])
     }
   }
   out.to_bytes()

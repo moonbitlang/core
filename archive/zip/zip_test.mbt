@@ -116,7 +116,7 @@ test "zip round-trips empty and zero-length payloads" {
 ///|
 test "zip write with max_output_bytes sizes a data-descriptor entry correctly" {
   let output = @buffer.Buffer()
-  let writer = @zip.Writer(chunk => output.write_bytes(chunk))
+  let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
   writer.begin_entry("d.txt")
   writer.write(b"limited descriptor payload")
   writer.end_entry()
@@ -140,7 +140,7 @@ test "zip write with preserve=true re-emits a read archive byte-for-byte" {
 ///|
 test "zip write with preserve=true round-trips a data-descriptor entry byte-for-byte" {
   let output = @buffer.Buffer()
-  let writer = @zip.Writer(chunk => output.write_bytes(chunk))
+  let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
   writer.begin_entry("desc.txt")
   writer.write(b"streamed payload")
   writer.end_entry()
@@ -236,7 +236,7 @@ test "zip Archive::copy isolates entry and comment mutations" {
 ///|
 test "zip Archive::copy preserves source records for byte-preserving writes" {
   let output = @buffer.Buffer()
-  let writer = @zip.Writer(chunk => output.write_bytes(chunk))
+  let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
   writer.add("a.txt", b"alpha", compression=Store)
   writer.begin_entry("b.txt")
   writer.write(b"beta beta")
@@ -401,7 +401,7 @@ let py_complex : Bytes = [
 fn repeat_bytes(unit : Bytes, count : Int32) -> Bytes {
   let buf = @buffer.Buffer()
   for _ in 0..<count {
-    buf.write_bytes(unit)
+    buf.write_bytesview(unit)
   }
   buf.to_bytes()
 }
@@ -763,11 +763,11 @@ test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
   let zip64_end = bytes.length() - 22 - 20 - 56
   let output = @buffer.Buffer()
   output
-  ..write_bytes(bytes[:zip64_end])
-  ..write_bytes(b"PK\x05\x06\x00\x00\x00\x00\xff\xff\xff\xff")
-  ..write_bytes(bytes[zip64_end + 40:zip64_end + 44])
-  ..write_bytes(bytes[zip64_end + 48:zip64_end + 52])
-  .write_bytes(b"\x00\x00")
+  ..write_bytesview(bytes[:zip64_end])
+  ..write_bytesview(b"PK\x05\x06\x00\x00\x00\x00\xff\xff\xff\xff")
+  ..write_bytesview(bytes[zip64_end + 40:zip64_end + 44])
+  ..write_bytesview(bytes[zip64_end + 48:zip64_end + 52])
+  .write_bytesview(b"\x00\x00")
   let without_zip64 = output.to_bytes()
   let edited = @zip.read_all(without_zip64)
   @test.assert_eq(edited.entries().length(), 65535)

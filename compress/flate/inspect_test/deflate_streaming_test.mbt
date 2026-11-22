@@ -67,13 +67,13 @@ test "IncrementalEncoder sync flush makes the prefix decodable" {
   @test.assert_eq(Bytes::from_array(dbuf[:dst_result.produced]), part1)
   // Continue past the flush point and finish; the whole stream round-trips.
   let out = @buffer.Buffer()
-  out.write_bytes(prefix)
+  out.write_bytesview(prefix)
   let mut sent_end = false
   for ;; {
     let chunk = if sent_end { b""[:] } else { part2 }
     let st_result = enc.step(chunk, obuf.mut_view(), action=Finish)
     sent_end = true
-    out.write_bytes(Bytes::from_array(obuf[:st_result.produced]))
+    out.write_bytesview(Bytes::from_array(obuf[:st_result.produced]))
     if st_result.status is Done {
       break
     }
@@ -111,7 +111,7 @@ test "IncrementalEncoder latches sync flush across output backpressure" {
     let consumed = status_result.consumed
     let produced = status_result.produced
     @test.assert_eq(consumed, 0)
-    prefix.write_bytes(Bytes::from_array(obuf[:produced]))
+    prefix.write_bytesview(Bytes::from_array(obuf[:produced]))
     if status is NeedMoreInput {
       break
     }

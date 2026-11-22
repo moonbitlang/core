@@ -113,7 +113,7 @@ fn roundtrip_repetitive(size : Int32, seed : UInt32) -> Bytes {
   let rng = RoundtripRng::{ state: seed, }
   let buf = Buffer()
   let head = roundtrip_text(40000, seed + 1)
-  buf.write_bytes(head)
+  buf.write_bytesview(head)
   while buf.length() < size {
     match rng.next() % 3 {
       0 => {
@@ -130,21 +130,23 @@ fn roundtrip_repetitive(size : Int32, seed : UInt32) -> Bytes {
       }
       _ => {
         let start = rng.next() % 30000
-        buf.write_bytes(head[start:start + 300 + rng.next() % 600].to_owned())
+        buf.write_bytesview(
+          head[start:start + 300 + rng.next() % 600].to_owned(),
+        )
       }
     }
   }
-  buf.write_bytes(head)
+  buf.write_bytesview(head)
   buf.to_bytes()
 }
 
 ///|
 fn roundtrip_corpus() -> Array[(String, Bytes)] {
   let mixed = Buffer()
-  mixed.write_bytes(roundtrip_text(30000, 7))
-  mixed.write_bytes(roundtrip_random(20000, 8))
-  mixed.write_bytes(roundtrip_content_stream(30000, 9))
-  mixed.write_bytes(roundtrip_binary(20000, 10))
+  mixed.write_bytesview(roundtrip_text(30000, 7))
+  mixed.write_bytesview(roundtrip_random(20000, 8))
+  mixed.write_bytesview(roundtrip_content_stream(30000, 9))
+  mixed.write_bytesview(roundtrip_binary(20000, 10))
   [
     ("empty", b""),
     ("one", b"a"),
@@ -289,7 +291,7 @@ test "deflate round trips: randomized streaming schedules with reuse" {
   let corpus = roundtrip_corpus()
   let source = Buffer()
   for entry in corpus {
-    source.write_bytes(entry.1)
+    source.write_bytesview(entry.1)
   }
   let source = source.to_bytes()
   for seed in 0..<24 {

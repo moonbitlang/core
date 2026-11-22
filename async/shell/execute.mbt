@@ -384,7 +384,7 @@ async fn read_bounded(
           raise OutputLimitExceeded(stream~, limit~)
         }
         captured.val = next_total
-        buffer.write_bytes(chunk)
+        buffer.write_bytesview(chunk)
       }
     }
   }
@@ -442,7 +442,7 @@ fn extend_line(
   if projected > limit && projected - limit > 1 {
     raise OutputLimitExceeded(stream="stdout line", limit~)
   }
-  pending.write_bytes(view)
+  pending.write_bytesview(view)
 }
 
 ///|
