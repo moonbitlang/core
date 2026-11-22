@@ -33,8 +33,10 @@ pub fn Timestamp::msec(ts : Timestamp) -> Int64 {
 }
 
 ///|
-/// Return the (sub-second) nanosecond part of a timestamp
-pub fn Timestamp::nsec(ts : Timestamp) -> Int32 {
+/// Returns the nanosecond part within the current second.
+/// For example, 2.25 seconds after the Unix epoch gives `250_000_000`.
+#alias(nsec, deprecated="Use `subsec_nanos` instead")
+pub fn Timestamp::subsec_nanos(ts : Timestamp) -> Int32 {
   ts.nsec
 }
 
