@@ -832,12 +832,13 @@ test "clear" {
 /// ```mbt check
 /// test {
 ///   let set : @hashset.HashSet[String] = HashSet([])
-///   inspect(set.add_and_check("key"), content="true") // First insertion
-///   inspect(set.add_and_check("key"), content="false") // Already exists
+///   inspect(set.insert_and_check("key"), content="true") // First insertion
+///   inspect(set.insert_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
 /// }
 /// ```
-pub fn[K : Hash + Eq] HashSet::add_and_check(
+#alias(add_and_check, deprecated="Use `insert_and_check` instead")
+pub fn[K : Hash + Eq] HashSet::insert_and_check(
   self : HashSet[K],
   key : K,
 ) -> Bool {

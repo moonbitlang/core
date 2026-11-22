@@ -63,8 +63,8 @@ test "insert remove" {
   if m.remove_and_check("a") {
     m.insert("d")
   }
-  assert_true(m.add_and_check("test"))
-  assert_false(m.add_and_check("test"))
+  assert_true(m.insert_and_check("test"))
+  assert_false(m.insert_and_check("test"))
   assert_true(!m.contains("a") && m.contains("d"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -447,7 +447,7 @@ test "remove_and_check when key not found in empty slot" {
 test "trigger grow" {
   let set = @set.Set([], capacity=2)
   for i in 0..<10 {
-    assert_true(set.add_and_check(i))
+    assert_true(set.insert_and_check(i))
   }
   debug_inspect(
     set,

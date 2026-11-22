@@ -274,12 +274,13 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int32) -> Unit {
 /// ```mbt check
 /// test {
 ///   let set : @set.Set[String] = Set([])
-///   inspect(set.add_and_check("key"), content="true") // First insertion
-///   inspect(set.add_and_check("key"), content="false") // Already exists
+///   inspect(set.insert_and_check("key"), content="true") // First insertion
+///   inspect(set.insert_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
 /// }
 /// ```
-pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
+#alias(add_and_check, deprecated="Use `insert_and_check` instead")
+pub fn[K : Hash + Eq] Set::insert_and_check(self : Set[K], key : K) -> Bool {
   let size = self.size
   self.add_with_hash(key, Hash::hash(key))
   self.size > size
