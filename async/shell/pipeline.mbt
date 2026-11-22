@@ -67,6 +67,6 @@ struct Pipeline {
 ///   )
 /// }
 /// ```
-pub fn Pipeline::Pipeline(commands : Array[Cmd]) -> Pipeline {
-  { commands: commands.copy(), }
+pub fn Pipeline::Pipeline(commands : ArrayView[Cmd]) -> Pipeline {
+  { commands: commands.to_owned(), }
 }

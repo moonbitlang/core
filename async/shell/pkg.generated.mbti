@@ -29,7 +29,7 @@ pub fn Output::stdout_bytes(Self) -> Bytes
 
 #derive(@debug.Debug)
 type Pipeline
-pub fn Pipeline::Pipeline(Array[Cmd]) -> Self
+pub fn Pipeline::Pipeline(ArrayView[Cmd]) -> Self
 pub async fn Pipeline::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
 pub async fn Pipeline::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
 pub async fn Pipeline::run(Self, timeout_ms? : Int32) -> Unit
