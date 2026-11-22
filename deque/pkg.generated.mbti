@@ -54,7 +54,7 @@ pub fn[A] Deque::is_empty(Self[A]) -> Bool
 pub fn[A] Deque::iter(Self[A]) -> Iter[A]
 #alias(iterator2, deprecated)
 pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int32, A]
-pub fn Deque::join(Self[String], StringView) -> String
+pub fn[A : ToStringView] Deque::join(Self[A], StringView) -> String
 pub fn[A] Deque::length(Self[A]) -> Int32
 pub fn[A, U] Deque::map(Self[A], (A) -> U raise?) -> Self[U] raise?
 pub fn[A, U] Deque::mapi(Self[A], (Int32, A) -> U raise?) -> Self[U] raise?

@@ -1865,20 +1865,8 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 }
 
 ///|
-/// Joins the elements of a string deque into a single string,
-/// separated by the specified separator.
-///
-/// Parameters:
-///
-/// * `self` : The deque of strings to join.
-/// * `separator` : The separator to insert between elements (as a string view).
-///
-/// Returns the concatenated string.
-///   - If the deque is empty, returns an empty string.
-///   - Efficiently pre-allocates memory based on calculated size hint.
-///   - Handles empty separators efficiently by direct concatenation.
-///
-/// Example:
+/// Joins the string views of the elements with `separator` between them.
+/// Returns an empty string for an empty deque.
 ///
 /// ```mbt check
 /// test {
@@ -1889,7 +1877,10 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 ///   inspect(s2, content="a,b,c")
 /// }
 /// ```
-pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
+pub fn[A : ToStringView] Deque::join(
+  self : Deque[A],
+  separator : StringView,
+) -> String {
   self.iter().join(separator)
 }
 

@@ -3154,3 +3154,9 @@ test "Default is the empty deque" {
   dq.push_back(1)
   inspect(dq.length(), content="1")
 }
+
+///|
+test "join string views" {
+  let parts : @deque.Deque[StringView] = Deque(["!ab!"[1:3], "!cd!"[1:3]])
+  inspect(parts.join(","), content="ab,cd")
+}
