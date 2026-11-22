@@ -11,10 +11,7 @@
 ## In review
 
 - [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
-
-## Release decisions, one at a time
-
-- [ ] **When can `List::add` mean concatenation?** The deprecated alias still takes *one element* and prepends it. The `Add` impl takes *another list* and concatenates it. Keep `prepend` and `concat` explicit until the old alias can be retired, then promote the operator method. [List interface](list/pkg.generated.mbti) · [Promotion policy](AGENTS.md)
+- [ ] **List insertion and concatenation.** Review the proposal to reuse the deprecated one-element `List::add` name for concatenation. On immutable `SortedSet`, `s.add(x)` inserts one element and `s + t` computes a union. Following that precedent, lists can keep `xs.prepend(x)` for insertion and `xs.concat(ys)` or `xs + ys` for concatenation. Reusing `add` can silently change the meaning of `xs.add(Empty)` for lists of lists. [PR #4929](https://github.com/moonbitlang/core/pull/4929) · [Immutable sorted set](immut/sorted_set/pkg.generated.mbti)
 
 ## Coverage
 
