@@ -36,7 +36,7 @@ Cmd(
   stderr? : Redirect,      // default: Capture
 ) -> Cmd
 
-Pipeline(commands : Array[Cmd]) -> Pipeline
+Pipeline(commands : ArrayView[Cmd]) -> Pipeline
 ```
 
 ```moonbit nocheck

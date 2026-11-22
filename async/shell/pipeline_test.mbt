@@ -13,8 +13,15 @@
 // limitations under the License.
 
 ///|
-test "a pipeline is a plain, inspectable description" {
-  let plan = @shell.Pipeline([Cmd("cat", []), Cmd("sort", [])])
+test "a pipeline copies the selected stages in order" {
+  let stages : Array[@shell.Cmd] = [
+    Cmd("head", []),
+    Cmd("cat", []),
+    Cmd("sort", []),
+    Cmd("tail", []),
+  ]
+  let plan = @shell.Pipeline(stages[1:3])
+  stages[1] = Cmd("wc", [])
   debug_inspect(
     plan,
     content=(
