@@ -46,7 +46,7 @@ fn[K, V] is_balanced(t : SortedMap[K, V]) -> Bool {
 ///|
 /// `is_balanced`, plus keys in strictly ascending order.
 fn[K : Compare, V] is_valid(t : SortedMap[K, V]) -> Bool {
-  let keys = t.keys_as_iter().to_array()
+  let keys = t.keys().to_array()
   for i in 1..<keys.length() {
     if keys[i - 1] >= keys[i] {
       return false

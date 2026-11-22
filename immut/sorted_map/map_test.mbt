@@ -223,7 +223,7 @@ test "to_array" {
 ///|
 test "keys" {
   let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
-  @test.assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
+  @test.assert_eq(m.keys().collect(), [1, 2, 3])
 }
 
 ///|

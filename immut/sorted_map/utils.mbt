@@ -640,8 +640,9 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 }
 
 ///|
-/// Return all keys of the map in ascending order.
-pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
+/// Returns an iterator over the keys in ascending order.
+#alias(keys_as_iter, deprecated)
+pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
