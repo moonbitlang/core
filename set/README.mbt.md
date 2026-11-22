@@ -61,9 +61,9 @@ test "basic operations" {
   inspect(set.length(), content="2")
 
   // Check if addition/removal was successful
-  let was_added = set.add_and_check("date")
+  let was_added = set.insert_and_check("date")
   inspect(was_added, content="true")
-  let was_added_again = set.add_and_check("date")
+  let was_added_again = set.insert_and_check("date")
   inspect(was_added_again, content="false") // Already exists
   let was_removed = set.remove_and_check("cherry")
   inspect(was_removed, content="true")
@@ -309,5 +309,5 @@ Sets are particularly useful for:
 1. **Pre-size when possible**: Use `@set.Set([], capacity=n)` if you know the approximate size
 2. **Use appropriate types**: Ensure your key type has good `Hash` and `Eq` implementations
 3. **Prefer set operations**: Use built-in union, intersection, etc. instead of manual loops
-4. **Check return values**: Use `add_and_check` and `remove_and_check` when you need to know if the operation succeeded
+4. **Check return values**: Use `insert_and_check` and `remove_and_check` when you need to know if the operation succeeded
 5. **Consider memory usage**: Sets have overhead compared to arrays for small collections

@@ -140,7 +140,7 @@ fn seed_child_globals_from_parent(
   let seen : @set.Set[String] = Set([])
   for arg in globals {
     let name = arg.name
-    if child_local_non_globals.contains(name) || !seen.add_and_check(name) {
+    if child_local_non_globals.contains(name) || !seen.insert_and_check(name) {
       continue
     }
     if arg.info is (OptionInfo(_) | PositionalInfo(_)) {

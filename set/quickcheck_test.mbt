@@ -85,7 +85,7 @@ test "quickcheck: insert/remove sequences agree with an ordered array model" {
           }
           model_remove(model, key)
         } else {
-          if set.add_and_check(key) != !model.contains(key) {
+          if set.insert_and_check(key) != !model.contains(key) {
             return false
           }
           model_add(model, key)

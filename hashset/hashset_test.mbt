@@ -49,10 +49,10 @@ test "to_array" {
 }
 
 ///|
-test "add_and_check" {
+test "insert_and_check" {
   let set : @hashset.HashSet[String] = HashSet([])
-  inspect(set.add_and_check("key"), content="true") // First insertion
-  inspect(set.add_and_check("key"), content="false") // Already exists
+  inspect(set.insert_and_check("key"), content="true") // First insertion
+  inspect(set.insert_and_check("key"), content="false") // Already exists
   inspect(set.length(), content="1")
 }
 

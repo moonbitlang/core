@@ -39,7 +39,7 @@ fn ValidationCtx::record_arg(
   self : ValidationCtx,
   arg : Arg,
 ) -> Unit raise ArgBuildError {
-  if !self.seen_names.add_and_check(arg.name) {
+  if !self.seen_names.insert_and_check(arg.name) {
     raise Unsupported("duplicate arg name: \{arg.name}")
   }
   if !arg.global && self.inherited_global_names.contains(arg.name) {
@@ -48,12 +48,12 @@ fn ValidationCtx::record_arg(
     )
   }
   fn check_long(name) raise _ {
-    if !self.seen_long.add_and_check(name) {
+    if !self.seen_long.insert_and_check(name) {
       raise ArgBuildError::Unsupported("duplicate long option: --\{name}")
     }
   }
   fn check_short(short) raise _ {
-    if !self.seen_short.add_and_check(short) {
+    if !self.seen_short.insert_and_check(short) {
       raise ArgBuildError::Unsupported("duplicate short option: -\{short}")
     }
   }
@@ -340,7 +340,7 @@ fn validate_group_defs(
     arg_seen.insert(arg.name)
   }
   for group in groups {
-    if !seen.add_and_check(group.name) {
+    if !seen.insert_and_check(group.name) {
       raise Unsupported("duplicate group: \{group.name}")
     }
   }
@@ -423,7 +423,7 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
   }
   let seen : @set.Set[String] = Set([])
   for sub in subs {
-    if !seen.add_and_check(sub.name) {
+    if !seen.insert_and_check(sub.name) {
       raise Unsupported("duplicate subcommand: \{sub.name}")
     }
   }

@@ -101,16 +101,16 @@ test {
 }
 ```
 
-## Add & Remove with Check
+## Check whether an insertion or removal changed the set
 
-`add_and_check()` returns `true` if the element was newly added (not already present). `remove_and_check()` returns `true` if the element was actually removed.
+`insert_and_check()` returns `true` if the element was newly added (not already present). `remove_and_check()` returns `true` if the element was actually removed.
 
 ```mbt check
 ///|
 test {
   let set = @hashset.from_array([1, 2, 3])
-  @test.assert_eq(set.add_and_check(4), true) // new element
-  @test.assert_eq(set.add_and_check(4), false) // already exists
+  @test.assert_eq(set.insert_and_check(4), true) // new element
+  @test.assert_eq(set.insert_and_check(4), false) // already exists
   @test.assert_eq(set.remove_and_check(4), true) // removed
   @test.assert_eq(set.remove_and_check(4), false) // not present
 }
