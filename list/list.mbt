@@ -47,7 +47,6 @@ pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
 ///   @debug.assert_eq(ls, List([1, 2, 3, 4]))
 /// }
 /// ```
-#alias(add, deprecated="Use `prepend` instead")
 #owned(head)
 pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
   More(head, tail=self)
@@ -1162,10 +1161,8 @@ pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
 }
 
 ///|
-/// Add implementation for List - concatenates two lists.
-/// 
-/// The `+` operator for lists performs concatenation.
-/// `a + b` is equivalent to `a.concat(b)`.
+/// Concatenates two lists. Both `a + b` and `a.add(b)` are equivalent to
+/// `a.concat(b)`. Use `a.prepend(x)` to add a single element at the front.
 ///
 /// # Example
 ///
@@ -1175,6 +1172,7 @@ pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
 ///   let b = @list.List([4, 5, 6])
 ///   let result = a + b
 ///   @debug.assert_eq(result, List([1, 2, 3, 4, 5, 6]))
+///   @debug.assert_eq(@list.List::add(a, b), result)
 /// }
 /// ```
 pub impl[A] Add for List[A] with fn add(self, other) {

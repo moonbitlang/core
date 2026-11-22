@@ -18,6 +18,7 @@ pub enum List[A] {
   More(A, mut tail~ : List[A])
 }
 pub fn[A] List::List(ArrayView[A]) -> Self[A]
+pub fn[A] List::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] List::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] List::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A : Compare] List::compare(Self[A], Self[A]) -> Int32
@@ -82,7 +83,6 @@ pub fn[A : Compare] List::minimum(Self[A]) -> A?
 #deprecated
 pub fn[A] List::new() -> Self[A]
 pub fn[A] List::nth(Self[A], Int32) -> A?
-#alias(add, deprecated)
 pub fn[A] List::prepend(Self[A], A) -> Self[A]
 pub fn[A : Eq] List::remove(Self[A], A) -> Self[A]
 pub fn[A] List::remove_at(Self[A], Int32) -> Self[A]

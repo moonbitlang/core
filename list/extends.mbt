@@ -15,6 +15,9 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend List with Add::{add}
+
+///|
 pub extend List with Compare::{compare}
 
 ///|
