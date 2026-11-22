@@ -1551,42 +1551,26 @@ pub fn[A] List::find_index(
 }
 
 ///|
-/// Find the first element in the list that satisfies f and passes the index as an argument.
-///
-/// # Example
+/// Returns the first element for which `f(index, element)` is true.
+/// The index starts at zero. Returns `None` if no element matches.
 ///
 /// ```mbt check
 /// test {
-///   assert_true(
-///     @list.List([1, 3, 5, 8]).findi((element, index) => {
-///       element % 2 == 0 && index == 3
-///     }) ==
-///     Some(8),
-///   )
-///   assert_true(
-///     @list.List([1, 3, 8, 5]).findi((element, index) => {
-///       element % 2 == 0 && index == 3
-///     }) ==
-///     None,
-///   )
+///   let xs = @list.List(["a", "b", "a"])
+///   assert_true(xs.find_with_index((i, x) => i > 0 && x == "a") == Some("a"))
 /// }
 /// ```
 #locals(f)
-pub fn[A] List::findi(
+pub fn[A] List::find_with_index(
   self : List[A],
-  f : (A, Int32) -> Bool raise?,
+  f : (Int32, A) -> Bool raise?,
 ) -> A? raise? {
-  for list = self, index = 0 {
-    match list {
-      Empty => break None
-      More(element, tail=list) =>
-        if f(element, index) {
-          break Some(element)
-        } else {
-          continue list, index + 1
-        }
+  for index, element in self {
+    if f(index, element) {
+      return Some(element)
     }
   }
+  None
 }
 
 ///|

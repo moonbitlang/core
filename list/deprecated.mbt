@@ -61,3 +61,24 @@ pub fn[A : @json.FromJson] List::from_json(
 pub fn[A] List::new() -> List[A] {
   Empty
 }
+
+///|
+/// Calls `f` with the element first and its zero-based index second.
+#deprecated("Use `find_with_index` and swap the callback parameters to (index, element)")
+#locals(f)
+pub fn[A] List::findi(
+  self : List[A],
+  f : (A, Int32) -> Bool raise?,
+) -> A? raise? {
+  for list = self, index = 0 {
+    match list {
+      Empty => break None
+      More(element, tail=list) =>
+        if f(element, index) {
+          break Some(element)
+        } else {
+          continue list, index + 1
+        }
+    }
+  }
+}
