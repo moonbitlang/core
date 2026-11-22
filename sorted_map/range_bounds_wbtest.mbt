@@ -116,6 +116,6 @@ test "range bounds agree for signed zeros and finite keys" {
       double_keys(map.range_bounds(Included(low), Included(high))),
       expected,
     )
-    @test.assert_eq(double_keys(map.rev_range(low, high)), expected.rev())
+    @test.assert_eq(double_keys(map.rev_range(low~, high~)), expected.rev())
   }
 }

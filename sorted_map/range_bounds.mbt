@@ -138,14 +138,16 @@ pub fn[K : Compare, V] SortedMap::rev_range_bounds(
 /// ```mbt check
 /// test {
 ///   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c"), (4, "d")])
-///   let keys = map.rev_range(2, 3).iter().map(p => p.0)
+///   let keys = map.rev_range(low=2, high=3).iter().map(p => p.0)
 ///   @debug.debug_inspect(keys.to_array(), content="[3, 2]")
 /// }
 /// ```
+#label_migration(low, allow_positional=true)
+#label_migration(high, allow_positional=true)
 pub fn[K : Compare, V] SortedMap::rev_range(
   self : SortedMap[K, V],
-  low : K,
-  high : K,
+  low~ : K,
+  high~ : K,
 ) -> Iter2[K, V] {
   self.rev_range_bounds(Included(low), Included(high))
 }
