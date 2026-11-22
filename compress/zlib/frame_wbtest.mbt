@@ -26,7 +26,7 @@ fn reference_compress(
   for byte in zlib_header(dictionary) {
     out.write_byte(byte)
   }
-  out.write_bytes(deflated)
+  out.write_bytesview(deflated)
   out.write_uint_be(@checksum.adler32(input))
   out.to_bytes()
 }

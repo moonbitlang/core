@@ -48,7 +48,7 @@ fn drive_entry_ranges(
       abort("entry reader wrote outside its output view")
     }
     // NeedRead and Done may carry output too.
-    decoded.write_bytes(Bytes::from_array(output[:reader.last_produced()]))
+    decoded.write_bytesview(Bytes::from_array(output[:reader.last_produced()]))
     match status {
       NeedRead(range) => continue source(range)
       NeedMoreOutput => continue b""

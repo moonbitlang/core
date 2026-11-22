@@ -82,9 +82,9 @@ fn[W : @io.BinaryWriter] Sender::client(
       }
       header_text
       ..write_string_utf8(k.0)
-      ..write_bytes(b": ")
+      ..write_bytesview(b": ")
       ..write_string_utf8(sanitize_header_value(v))
-      .write_bytes(b"\r\n")
+      .write_bytesview(b"\r\n")
     }
   }
   {
@@ -113,9 +113,9 @@ fn[W : @io.BinaryWriter] Sender::server(
     if !forbidden_headers.contains(k) {
       header_text
       ..write_string_utf8(k.0)
-      ..write_bytes(b": ")
+      ..write_bytesview(b": ")
       ..write_string_utf8(sanitize_header_value(v))
-      .write_bytes(b"\r\n")
+      .write_bytesview(b"\r\n")
     }
   }
   {

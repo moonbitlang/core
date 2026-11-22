@@ -156,7 +156,7 @@ test "gzip fixed and array-backed output views preserve the per-call contract" {
             }
             Ok((status, consumed, count)) => {
               @test.assert_eq(output[:count], padded[3:3 + count])
-              decoded.write_bytes(Bytes::from_array(output[:count]))
+              decoded.write_bytesview(Bytes::from_array(output[:count]))
               position += consumed
               let final_status = if position == stream.length() && !ending {
                 ending = true
@@ -208,7 +208,7 @@ test "gzip repeated check_end preserves terminal state" {
   while position < stream.length() {
     let result = decoder.step(stream[position:], output.mut_view())
     position += result.consumed
-    decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+    decoded.write_bytesview(Bytes::from_array(output[:result.produced]))
     status = result.status
     assert_true(result.consumed > 0 || result.produced > 0)
   }

@@ -30,7 +30,7 @@ fn optional_store_stream(
     let progress = step(input[position:end], output.mut_view(), action)
     let next = position + progress.consumed
     let written = progress.produced
-    result.write_bytes(Bytes::from_array(output[:written]))
+    result.write_bytesview(Bytes::from_array(output[:written]))
     if progress.status is Done {
       guard next == input.length() else {
         abort("stream did not consume input")
@@ -167,7 +167,7 @@ test "ZIP fast store preserves method metadata limits and pristine records" {
     )
   })
   let out = @buffer.Buffer()
-  let writer = @zip.Writer(bytes => out.write_bytes(bytes), fast_store=true)
+  let writer = @zip.Writer(bytes => out.write_bytesview(bytes), fast_store=true)
   writer.add("whole", input)
   writer.begin_entry("chunks")
   for start = 0; start < input.length(); start = start + 97 {

@@ -110,7 +110,7 @@ test "quickcheck: op sequences agree with an Array[Byte] model" {
             // Payload lengths 0..=511 mixed with single-byte ops walk the
             // capacity-doubling path repeatedly.
             let data = payload(x, x & 0x1FF)
-            buf.write_bytes(data)
+            buf.write_bytesview(data)
             model_push_bytes(model, data)
           }
           2 => {
@@ -226,7 +226,7 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
 }
 
 ///|
-test "quickcheck: write_bytes of any slice equals writing the sliced copy" {
+test "quickcheck: write_bytesview of any slice equals writing the sliced copy" {
   @quickcheck.check(
     (input : (Bytes, Int32, Int32)) => {
       let (data, a, b) = input
@@ -236,7 +236,7 @@ test "quickcheck: write_bytes of any slice equals writing the sliced copy" {
       let start = (a & 0x7FFFFFFF) % (n + 1)
       let len = (b & 0x7FFFFFFF) % (n - start + 1)
       let buf = @buffer.Buffer()
-      buf.write_bytes(data[start:start + len])
+      buf.write_bytesview(data[start:start + len])
       let model : Array[Byte] = []
       for i in start..<(start + len) {
         model.push(data[i])
@@ -272,7 +272,7 @@ test "quickcheck: reset makes the buffer behave as fresh" {
     (input : (Bytes, Bytes)) => {
       let (pre, post) = input
       let buf = @buffer.Buffer()
-      buf.write_bytes(pre)
+      buf.write_bytesview(pre)
       buf.write_double_be(1.5)
       buf.reset()
       guard buf.length() == 0 &&
@@ -282,7 +282,7 @@ test "quickcheck: reset makes the buffer behave as fresh" {
         return false
       }
       // Writes after reset must be indistinguishable from a fresh buffer.
-      buf.write_bytes(post)
+      buf.write_bytesview(post)
       buf.length() == post.length() && buf.contents() == post
     },
     count=200,
@@ -298,7 +298,7 @@ test "quickcheck: capacity never affects observable contents" {
       for hint in hints {
         let buf = @buffer.Buffer(capacity=hint)
         for chunk in chunks {
-          buf.write_bytes(chunk)
+          buf.write_bytesview(chunk)
           buf.write_byte(b'\xAB')
         }
         results.push(buf.contents())
@@ -320,14 +320,14 @@ test "quickcheck: contents() is non-destructive and writes append after it" {
     (input : (Bytes, Bytes)) => {
       let (first, second) = input
       let buf = @buffer.Buffer()
-      buf.write_bytes(first)
+      buf.write_bytesview(first)
       let c1 = buf.contents()
       let c2 = buf.contents()
       guard c1 == first && c2 == first && buf.length() == first.length() else {
         return false
       }
       // Further writes append correctly after an observation.
-      buf.write_bytes(second)
+      buf.write_bytesview(second)
       let model : Array[Byte] = []
       model_push_bytes(model, first)
       model_push_bytes(model, second)

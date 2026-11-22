@@ -99,7 +99,7 @@ fn cov_expect_decoder_error(
     for _ in 0..<100000 {
       let result = decoder.step(input[position:], output.mut_view())
       position += result.consumed
-      decoded.write_bytes(Bytes::from_array(output[:result.produced]))
+      decoded.write_bytesview(Bytes::from_array(output[:result.produced]))
       let status = if position == input.length() && !ending {
         ending = true
         decoder.check_end()

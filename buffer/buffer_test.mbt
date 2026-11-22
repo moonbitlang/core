@@ -149,10 +149,10 @@ test "to_bytes method" {
 }
 
 ///|
-test "write_bytes" {
+test "write_bytesview accepts whole bytes" {
   let buf = @buffer.Buffer(capacity=4)
-  buf.write_bytes(b"1\x002\x003\x004\x00")
-  buf.write_bytes(b"5\x006\x007\x008\x00")
+  buf.write_bytesview(b"1\x002\x003\x004\x00")
+  buf.write_bytesview(b"5\x006\x007\x008\x00")
   inspect(
     buf.to_bytes(),
     content=(
@@ -370,9 +370,9 @@ test "write_iter" {
 }
 
 ///|
-test "write_bytes accepts a slice" {
+test "write_bytesview accepts a slice" {
   let buf = @buffer.Buffer(capacity=4)
-  buf.write_bytes(b"Test"[1:3])
+  buf.write_bytesview(b"Test"[1:3])
   inspect(
     buf.contents(),
     content=(

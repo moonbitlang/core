@@ -27,7 +27,7 @@ fn expect_writer_error(
 ///|
 test "incremental ZIP mixes whole files and known or unknown sized entries" {
   let out = @buffer.Buffer()
-  let writer = Writer(bytes => out.write_bytes(bytes))
+  let writer = Writer(bytes => out.write_bytesview(bytes))
   @test.assert_eq(writer.position(), 0UL)
   assert_false(writer.is_finished())
   assert_false(writer.is_failed())
@@ -87,7 +87,7 @@ test "incremental ZIP pumps multiple output buffers and reuses the deflater" {
     seed.to_byte()
   })
   let out = @buffer.Buffer()
-  let writer = Writer(bytes => out.write_bytes(bytes))
+  let writer = Writer(bytes => out.write_bytesview(bytes))
   let second = b"a different entry after the large stream"
   for (name, data) in [("first", payload), ("second", second)] {
     writer.begin_entry(name, size=data.length().to_uint64())
@@ -104,7 +104,7 @@ test "incremental ZIP pumps multiple output buffers and reuses the deflater" {
 ///|
 test "incremental ZIP validates states and allows recovery from size errors" {
   let out = @buffer.Buffer()
-  let writer = Writer(bytes => out.write_bytes(bytes))
+  let writer = Writer(bytes => out.write_bytesview(bytes))
   expect_writer_error(() => writer.write(b"x"), InvalidState)
   expect_writer_error(() => writer.end_entry(), InvalidState)
   let long_name = String::make(65536, 'x')
@@ -188,7 +188,7 @@ test "incremental ZIP guards UInt64 offsets and sizes without huge buffers" {
 test "incremental ZIP emits ZIP64 offset and count sentinels" {
   // Simulate a sink already positioned at the classic offset boundary.
   let out = @buffer.Buffer()
-  let writer = Writer(bytes => out.write_bytes(bytes))
+  let writer = Writer(bytes => out.write_bytesview(bytes))
   writer.offset = 0xffff_ffffUL
   writer.add("a", b"x", compression=Store)
   writer.finish()
@@ -217,7 +217,7 @@ test "incremental ZIP emits ZIP64 offset and count sentinels" {
   @test.assert_eq(read_u64_le_at(record, 59), 2UL)
   @test.assert_eq(read_u64_le_at(record, 67), 0xffff_ffffUL)
   let counted = @buffer.Buffer()
-  let many = Writer(bytes => counted.write_bytes(bytes))
+  let many = Writer(bytes => counted.write_bytesview(bytes))
   many.directory = Array::make(65535, b"")
   many.finish()
   @test.assert_eq(read_u32_le_at_raw(counted.to_bytes(), 0), ZIP64_EOCD_SIG)

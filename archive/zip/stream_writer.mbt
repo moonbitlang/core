@@ -178,7 +178,7 @@ fn stream_local_header(
   out.write_uint_le(if zip64 { MAX_U32 } else { size.to_uint() })
   out.write_uint16_le(name.length().to_uint16())
   out.write_uint16_le(if zip64 { (20).to_uint16() } else { (0).to_uint16() })
-  out.write_bytes(name)
+  out.write_bytesview(name)
   if zip64 {
     out.write_uint16_le(ZIP64_EXTRA_ID.to_uint16())
     out.write_uint16_le((16).to_uint16())
@@ -227,7 +227,7 @@ fn stream_central_record(
   out.write_uint16_le((0).to_uint16())
   out.write_uint_le(0U)
   out.write_uint_le(if large_offset { MAX_U32 } else { offset.to_uint() })
-  out.write_bytes(name)
+  out.write_bytesview(name)
   if extra_payload > 0 {
     out.write_uint16_le(ZIP64_EXTRA_ID.to_uint16())
     out.write_uint16_le(extra_payload.to_uint16())
@@ -473,7 +473,7 @@ pub fn Writer::finish(self : Writer, comment~ : BytesView = b"") -> Unit raise {
   out.write_uint_le(if zip64 { MAX_U32 } else { central_size.to_uint() })
   out.write_uint_le(if zip64 { MAX_U32 } else { central_offset.to_uint() })
   out.write_uint16_le(comment.length().to_uint16())
-  out.write_bytes(comment)
+  out.write_bytesview(comment)
   self.emit(out.to_bytes())
   self.mode = Finished
   self.release_storage()

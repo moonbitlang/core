@@ -42,7 +42,7 @@ test "streaming standard vectors preserve bytes consumption and output boundarie
         assert_true(written >= 0 && written <= room)
         @test.assert_eq(output[2], b'\xA5')
         @test.assert_eq(output[room + 3], b'\xA5')
-        decoded.write_bytes(Bytes::from_array(output[3:3 + written]))
+        decoded.write_bytesview(Bytes::from_array(output[3:3 + written]))
         pos += used
         if status is Done {
           break

@@ -22,8 +22,8 @@ fn reference_compress(
 ) -> Bytes {
   let deflated = @flate.deflate_all(input, strategy~, fast_store~)
   let out = @buffer.Buffer()
-  out.write_bytes(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
-  out.write_bytes(deflated)
+  out.write_bytesview(b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff")
+  out.write_bytesview(deflated)
   out.write_uint_le(@checksum.crc32(input))
   out.write_uint_le(input.length().reinterpret_as_uint())
   out.to_bytes()

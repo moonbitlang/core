@@ -15,6 +15,6 @@
 ///|
 test "Debug for Buffer" {
   let buf = @buffer.Buffer()
-  buf.write_bytes(b"ab")
+  buf.write_bytesview(b"ab")
   @debug.debug_inspect(buf, content="<Buffer: [0x61, 0x62]>")
 }

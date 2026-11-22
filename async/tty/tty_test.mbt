@@ -226,7 +226,7 @@ async fn Ttyd::expect_output_text(self : Ttyd, expected : String) -> Unit {
         "terminal closed before displaying \{expected}: \{@utf8.decode_lossy(output.to_bytes())}",
       )
     }
-    output.write_bytes(bytes)
+    output.write_bytesview(bytes)
   }
 }
 
