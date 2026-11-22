@@ -2,7 +2,7 @@
 
 ## Changes submitted for review
 
-- [x] **Buffer byte writes.** Make `Buffer::write_bytes(BytesView)` the documented spelling for both byte strings and slices. Keep `write_bytesview` as a deprecated alias, as the package already does for `write_stringview`. [PR #4922](https://github.com/moonbitlang/core/pull/4922)
+- [x] **Buffer byte writes.** Use `Buffer::write_bytesview(BytesView)`, following `StringBuilder::write_stringview(StringView)`. Keep the one-argument `write_bytes` as a deprecated alias that `moon fix` can migrate. This leaves room for a future `write_bytes(bytes, start, len)`. [PR #4922](https://github.com/moonbitlang/core/pull/4922)
 - [x] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
 
 ## Release decisions, one at a time
