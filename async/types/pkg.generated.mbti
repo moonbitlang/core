@@ -7,6 +7,8 @@ package "moonbitlang/core/async/types"
 
 // Types and methods
 type Fd
+pub fn Fd::equal(Self, Self) -> Bool
+pub fn Fd::hash(Self) -> Int32
 pub impl Eq for Fd
 pub impl Hash for Fd
 
