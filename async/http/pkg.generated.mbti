@@ -32,11 +32,11 @@ pub async fn put_text(StringView, StringView, headers? : Map[CaseInsensitiveStri
 
 pub async fn request_binary(RequestMethod, StringView, BytesView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
-pub async fn request_json(RequestMethod, StringView, @json.Json, headers~ : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn request_json(RequestMethod, StringView, @json.Json, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
 pub async fn request_stream(RequestMethod, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> ClientConnection
 
-pub async fn request_text(RequestMethod, StringView, StringView, headers~ : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
+pub async fn request_text(RequestMethod, StringView, StringView, headers? : Map[CaseInsensitiveString, String], proxy? : Proxy) -> (ResponseHeader, MessageBody)
 
 // Errors
 #derive(@debug.Debug, @json.ToJson)
