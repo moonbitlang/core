@@ -226,7 +226,7 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
 }
 
 ///|
-test "quickcheck: write_bytesview of any slice equals writing the sliced copy" {
+test "quickcheck: write_bytes of any slice equals writing the sliced copy" {
   @quickcheck.check(
     (input : (Bytes, Int32, Int32)) => {
       let (data, a, b) = input
@@ -236,7 +236,7 @@ test "quickcheck: write_bytesview of any slice equals writing the sliced copy" {
       let start = (a & 0x7FFFFFFF) % (n + 1)
       let len = (b & 0x7FFFFFFF) % (n - start + 1)
       let buf = @buffer.Buffer()
-      buf.write_bytesview(data[start:start + len])
+      buf.write_bytes(data[start:start + len])
       let model : Array[Byte] = []
       for i in start..<(start + len) {
         model.push(data[i])

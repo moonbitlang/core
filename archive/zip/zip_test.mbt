@@ -763,11 +763,11 @@ test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
   let zip64_end = bytes.length() - 22 - 20 - 56
   let output = @buffer.Buffer()
   output
-  ..write_bytesview(bytes[:zip64_end])
-  ..write_bytesview(b"PK\x05\x06\x00\x00\x00\x00\xff\xff\xff\xff")
-  ..write_bytesview(bytes[zip64_end + 40:zip64_end + 44])
-  ..write_bytesview(bytes[zip64_end + 48:zip64_end + 52])
-  .write_bytesview(b"\x00\x00")
+  ..write_bytes(bytes[:zip64_end])
+  ..write_bytes(b"PK\x05\x06\x00\x00\x00\x00\xff\xff\xff\xff")
+  ..write_bytes(bytes[zip64_end + 40:zip64_end + 44])
+  ..write_bytes(bytes[zip64_end + 48:zip64_end + 52])
+  .write_bytes(b"\x00\x00")
   let without_zip64 = output.to_bytes()
   let edited = @zip.read_all(without_zip64)
   @test.assert_eq(edited.entries().length(), 65535)
