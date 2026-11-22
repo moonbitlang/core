@@ -407,7 +407,7 @@ test {
 
 ## Flatten & Join
 
-`flatten()` merges a deque of deques into a single deque. `join()` concatenates a deque of strings with a separator.
+`flatten()` merges a deque of deques into a single deque. `join()` concatenates elements that implement `ToStringView`, placing a separator between them.
 
 ```mbt check
 ///|
