@@ -12,6 +12,7 @@
 - [x] **Indexed list search.** `List::find_with_index` passes the index first, like `eachi`. The deprecated `findi` still passes the element first. [PR #4931](https://github.com/moonbitlang/core/pull/4931)
 - [x] **Joining deque elements.** `Deque::join` accepts elements implementing `ToStringView`, matching `Iter::join`. [PR #4932](https://github.com/moonbitlang/core/pull/4932)
 - [x] **QuickCheck range endpoints.** Both generators accept an explicit `inclusive` label. Omitting it warns and retains the previous default (`false` for `int_range`, `true` for `char_range`). [PR #4934](https://github.com/moonbitlang/core/pull/4934)
+- [x] **Timestamp units.** Use `Timestamp::subsec_nanos()` for the nanosecond component. `nsec()` remains a deprecated alias. [PR #4935](https://github.com/moonbitlang/core/pull/4935)
 
 ## 1.0 compatibility decisions
 
@@ -21,7 +22,13 @@
 ## Awaiting merge
 
 - [ ] **HTTP request headers.** Default `headers` to an empty map in the free `request_text` and `request_json` functions, matching `request_binary`. [PR #4933](https://github.com/moonbitlang/core/pull/4933)
-- [ ] **Timestamp units.** Use `Timestamp::subsec_nanos()` for the nanosecond component and retain `nsec()` as a deprecated alias. [PR #4935](https://github.com/moonbitlang/core/pull/4935)
+
+## Fourth review candidates
+
+- [ ] **Directory-relative cleanup.** Expose `Directory::remove` as `nocancel`, like path-based `remove`, so it can be used in `TaskGroup::add_defer`. Both entry points already use the same non-cancellable helper. [Directory removal](async/fs/dir.mbt)
+- [ ] **Multicast group address.** Decide whether the IPv4 and IPv6 membership methods should take `IpAddr`. They currently require an `Addr` whose port is ignored. Changing the existing parameter type requires callers with an endpoint to pass `endpoint.ip`. [UDP API](async/socket/udp.mbt)
+
+The same review found two documentation opportunities. Lead `File::as_dir` with its ownership transfer on success and file closure on failure. Explain that `Diff` and its hunks retain views of both inputs, so later mutation can affect rendered output. [File conversion](async/fs/file.mbt) · [Diff constructor](diff/diff.mbt)
 
 ## After 1.0
 
