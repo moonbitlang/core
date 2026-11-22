@@ -160,7 +160,7 @@ async test "Timestamp promotes equal, compare, hash and sub" {
   inspect(seen.get(b) == Some(1), content="true")
   let zero = sub(a, b)
   inspect(zero.sec(), content="0")
-  inspect(zero.nsec(), content="0")
+  inspect(zero.subsec_nanos(), content="0")
   inspect(a.sub(b).equal(zero), content="true")
   inspect(zero.compare(a) < 0, content="true")
 }

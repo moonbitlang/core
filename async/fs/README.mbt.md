@@ -526,7 +526,7 @@ async test "atime - access time" {
   defer @fs.remove(test_file)
   let ts = @fs.atime(test_file)
   inspect(ts.sec() > 0, content="true")
-  inspect(ts.nsec() >= 0, content="true")
+  inspect(ts.subsec_nanos() >= 0, content="true")
 }
 
 ///|
@@ -537,7 +537,7 @@ async test "mtime - modification time" {
   defer @fs.remove(test_file)
   let ts = @fs.mtime(test_file)
   inspect(ts.sec() > 0, content="true")
-  inspect(ts.nsec() >= 0, content="true")
+  inspect(ts.subsec_nanos() >= 0, content="true")
 }
 
 ///|
@@ -548,7 +548,7 @@ async test "ctime - status change time" {
   defer @fs.remove(test_file)
   let ts = @fs.ctime(test_file)
   inspect(ts.sec() > 0, content="true")
-  inspect(ts.nsec() >= 0, content="true")
+  inspect(ts.subsec_nanos() >= 0, content="true")
 }
 
 ///|
