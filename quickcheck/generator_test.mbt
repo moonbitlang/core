@@ -37,7 +37,7 @@ test "scale transforms the input size" {
 
 ///|
 test "range and choices" {
-  for value in @quickcheck.int_range(-4, 7).samples(count=64) {
+  for value in @quickcheck.int_range(-4, 7, inclusive=false).samples(count=64) {
     guard value >= -4 && value < 7 else {
       fail("int_range generated an out-of-range value")
     }
@@ -66,7 +66,10 @@ test "int_range samples both parts of a wide signed interval without modulo bias
   // The first 2^32 % 3_000_000_000 offsets occupy about 43.2% of
   // this interval, but take about 60.3% of raw 32-bit draws modulo its width.
   let mut prefix = 0
-  for x in @quickcheck.int_range(-1500000000, 1500000000).samples(count=4096) {
+  for
+    x in @quickcheck.int_range(-1500000000, 1500000000, inclusive=false).samples(
+      count=4096,
+    ) {
     assert_true(x >= -1500000000 && x < 1500000000)
     if x < -205032704 {
       prefix += 1
@@ -138,24 +141,33 @@ test "fixed-size array" {
 
 ///|
 test "char_range stays within bounds" {
-  for value in @quickcheck.char_range('a', 'z').samples(count=64) {
+  for
+    value in @quickcheck.char_range('a', 'z', inclusive=true).samples(count=64) {
     guard value is ('a'..<='z') else {
       fail("char_range generated an out-of-range character")
     }
   }
-  inspect(@quickcheck.char_range('x', 'x').sample(), content="x")
+  inspect(
+    @quickcheck.char_range('x', 'x', inclusive=true).sample(),
+    content="x",
+  )
 }
 
 ///|
 test "panic char_range rejects surrogate bounds" {
-  ignore(@quickcheck.char_range(' ', Int(0xD800).unsafe_to_char()))
+  ignore(
+    @quickcheck.char_range(' ', Int(0xD800).unsafe_to_char(), inclusive=true),
+  )
 }
 
 ///|
 test "char_range skips the surrogate block" {
   let mut below = 0
   let mut above = 0
-  for value in @quickcheck.char_range('\u{D000}', '\u{E800}').samples(count=64) {
+  for
+    value in @quickcheck.char_range('\u{D000}', '\u{E800}', inclusive=true).samples(
+      count=64,
+    ) {
     let code = value.to_int()
     guard code >= 0xD000 && code <= 0xE800 else {
       fail("char_range generated an out-of-range character")
@@ -174,8 +186,8 @@ test "char_range skips the surrogate block" {
 
 ///|
 test "zip pairs two generators" {
-  let pairs = @quickcheck.int_range(0, 10)
-    .zip(@quickcheck.char_range('a', 'f'))
+  let pairs = @quickcheck.int_range(0, 10, inclusive=false)
+    .zip(@quickcheck.char_range('a', 'f', inclusive=true))
     .samples(count=4)
   debug_inspect(
     pairs,
@@ -187,8 +199,8 @@ test "zip pairs two generators" {
 
 ///|
 test "zip_with and zip_with3 combine generator outputs" {
-  let sums = @quickcheck.int_range(0, 10)
-    .zip_with(@quickcheck.int_range(0, 10), (a, b) => a + b)
+  let sums = @quickcheck.int_range(0, 10, inclusive=false)
+    .zip_with(@quickcheck.int_range(0, 10, inclusive=false), (a, b) => a + b)
     .samples(count=6)
   debug_inspect(
     sums,
@@ -196,12 +208,12 @@ test "zip_with and zip_with3 combine generator outputs" {
       #|[5, 11, 15, 17, 12, 8]
     ),
   )
-  let dates = @quickcheck.int_range(2000, 2002)
-    .zip_with3(@quickcheck.int_range(1, 13), @quickcheck.int_range(1, 29), (
-      year,
-      month,
-      day,
-    ) => "\{year}-\{month}-\{day}")
+  let dates = @quickcheck.int_range(2000, 2002, inclusive=false)
+    .zip_with3(
+      @quickcheck.int_range(1, 13, inclusive=false),
+      @quickcheck.int_range(1, 29, inclusive=false),
+      (year, month, day) => "\{year}-\{month}-\{day}",
+    )
     .samples(count=3)
   debug_inspect(
     dates,
@@ -225,5 +237,42 @@ test "spawn composes with generator combinators" {
       #|  ("L9", -1240909043),
       #|]
     ),
+  )
+}
+
+///|
+test "int_range includes the upper endpoint when requested" {
+  let max = @int.MAX_VALUE
+  let closed = @quickcheck.int_range(max - 1, max, inclusive=true).samples(
+    count=32,
+  )
+  assert_true(closed.contains(max - 1) && closed.contains(max))
+  let full = @quickcheck.int_range(@int.MIN_VALUE, max, inclusive=true).samples(
+    count=32,
+  )
+  assert_true(full.any(x => x < 0) && full.any(x => x >= 0))
+  inspect(@quickcheck.int_range(7, 7, inclusive=false).sample(), content="7")
+}
+
+///|
+test "char_range can exclude the first scalar after the surrogate block" {
+  let chars = @quickcheck.char_range('\u{D7FF}', '\u{E000}', inclusive=false)
+  assert_true(chars.samples(count=32).all(c => c == '\u{D7FF}'))
+  inspect(
+    @quickcheck.char_range('x', 'x', inclusive=false).sample(),
+    content="x",
+  )
+}
+
+///|
+#warnings("-deprecated")
+test "omitting inclusive preserves the old seeded samples" {
+  assert_eq(
+    @quickcheck.int_range(0, 10).samples(),
+    @quickcheck.int_range(0, 10, inclusive=false).samples(),
+  )
+  assert_eq(
+    @quickcheck.char_range('a', 'z').samples(),
+    @quickcheck.char_range('a', 'z', inclusive=true).samples(),
   )
 }

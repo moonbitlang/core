@@ -42,7 +42,12 @@
 fn adversarial_char_gen() -> @quickcheck.Generator[Char] {
   @quickcheck.frequency([
     // Every control character U+0000..U+001F.
-    (3, @quickcheck.int_range(0, 0x20).map(i => i.unsafe_to_char())),
+    (
+      3,
+      @quickcheck.int_range(0, 0x20, inclusive=false).map(i => {
+        i.unsafe_to_char()
+      }),
+    ),
     // Characters that interact with JSON syntax and escaping.
     (
       3,
@@ -57,13 +62,13 @@ fn adversarial_char_gen() -> @quickcheck.Generator[Char] {
       ]),
     ),
     // Ordinary ASCII so escapes sit inside unescaped runs.
-    (3, @quickcheck.char_range('a', 'z')),
+    (3, @quickcheck.char_range('a', 'z', inclusive=true)),
   ])
 }
 
 ///|
 fn adversarial_string_gen() -> @quickcheck.Generator[String] {
-  @quickcheck.int_range(0, 24)
+  @quickcheck.int_range(0, 24, inclusive=false)
   .flat_map(n => adversarial_char_gen().array_with_size(n))
   .map(chars => String::from_array(chars))
 }

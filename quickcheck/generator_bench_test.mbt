@@ -14,8 +14,8 @@
 
 ///|
 test "bench Generator::zip_with n=1000000" (it : @bench.T) {
-  let generator = @quickcheck.int_range(0, 1000).zip_with(
-    @quickcheck.int_range(0, 1000),
+  let generator = @quickcheck.int_range(0, 1000, inclusive=false).zip_with(
+    @quickcheck.int_range(0, 1000, inclusive=false),
     (a, b) => a + b,
   )
   it.bench(fn() {
