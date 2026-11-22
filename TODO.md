@@ -7,11 +7,12 @@
 - [x] **Shell pipeline stages.** `Pipeline` accepts `ArrayView[Cmd]` and copies the selected stages in order. [PR #4926](https://github.com/moonbitlang/core/pull/4926)
 - [x] **Inclusive sorted ranges.** Mutable and immutable sorted maps and sets now use `range(low=a, high=b)`. On the mutable types, positional bounds still compile with deprecation warnings. [PR #4927](https://github.com/moonbitlang/core/pull/4927)
 - [x] **Reverse sorted map ranges.** `rev_range(low=a, high=b)` visits the same inclusive interval as `range(low=a, high=b)` in descending key order. Positional bounds still compile with deprecation warnings. [PR #4928](https://github.com/moonbitlang/core/pull/4928)
+- [x] **Collection and ZIP insertion.** Use `insert` for entries and elements. Mutable `Set` and `HashSet` also expose `insert_and_check` to report whether membership changed. The old public spellings remain deprecated aliases. [PR #4930](https://github.com/moonbitlang/core/pull/4930)
 
 ## In review
 
 - [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
-- [ ] **List insertion and concatenation.** Review the proposal to reuse the deprecated one-element `List::add` name for concatenation. On immutable `SortedSet`, `s.add(x)` inserts one element and `s + t` computes a union. Following that precedent, lists can keep `xs.prepend(x)` for insertion and `xs.concat(ys)` or `xs + ys` for concatenation. Reusing `add` can silently change the meaning of `xs.add(Empty)` for lists of lists. [PR #4929](https://github.com/moonbitlang/core/pull/4929) · [Immutable sorted set](immut/sorted_set/pkg.generated.mbti)
+- [ ] **List insertion and concatenation.** Decide when to reuse the deprecated `List::add` alias for concatenation. Migrate single-element callers to `prepend` before switching. For a list of lists, `xs.add(Empty)` currently prepends an empty list. Under the proposal it concatenates an empty list and returns the original sequence. [PR #4929](https://github.com/moonbitlang/core/pull/4929)
 
 ## Coverage
 
