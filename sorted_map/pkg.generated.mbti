@@ -65,7 +65,9 @@ pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
 pub fn[K, V] SortedMap::rev_iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] SortedMap::rev_iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] SortedMap::rev_keys(Self[K, V]) -> Iter[K]
-pub fn[K : Compare, V] SortedMap::rev_range(Self[K, V], K, K) -> Iter2[K, V]
+#label_migration(high, allow_positional=true)
+#label_migration(low, allow_positional=true)
+pub fn[K : Compare, V] SortedMap::rev_range(Self[K, V], low~ : K, high~ : K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::rev_range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
 pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iter[V]
 #alias("_[_]=_")

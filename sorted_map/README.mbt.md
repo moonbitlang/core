@@ -348,7 +348,7 @@ test {
 }
 ```
 
-`rev_range(a, b)` visits the same keys as `range(low=a, high=b)` in reverse order.
+`rev_range(low=a, high=b)` visits the same keys as `range(low=a, high=b)` in reverse order.
 
 ### Iterators
 
