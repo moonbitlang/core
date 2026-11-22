@@ -32,7 +32,7 @@ pub fn[X] empty() -> SparseArray[X] {
 /// Create a singleton value.
 #owned(value)
 pub fn[X] singleton(idx : Int32, value : X) -> SparseArray[X] {
-  { elem_info: empty_bitset.add(idx), data: [value], }
+  { elem_info: empty_bitset.insert(idx), data: [value], }
 }
 
 ///|
@@ -60,7 +60,7 @@ pub fn[X] doubleton(
   value2 : X,
 ) -> SparseArray[X] {
   {
-    elem_info: empty_bitset.add(idx1).add(idx2),
+    elem_info: empty_bitset.insert(idx1).insert(idx2),
     data: if idx1 < idx2 {
       [value1, value2]
     } else {
@@ -81,7 +81,7 @@ pub fn[X] from_sorted_fixed_array(
 ) -> SparseArray[X] {
   let mut elem_info = empty_bitset
   for idx in indices {
-    elem_info = elem_info.add(idx)
+    elem_info = elem_info.insert(idx)
   }
   { elem_info, data, }
 }
@@ -90,7 +90,7 @@ pub fn[X] from_sorted_fixed_array(
 /// Add a new element into the sparse array.
 /// `idx` must be absent from `self`
 #owned(value)
-pub fn[X] SparseArray::add(
+pub fn[X] SparseArray::insert(
   self : SparseArray[X],
   idx : Int32,
   value : X,
@@ -113,7 +113,7 @@ pub fn[X] SparseArray::add(
     pos_of_new_item,
     old_len - pos_of_new_item,
   )
-  { elem_info: self.elem_info.add(idx), data: new_data, }
+  { elem_info: self.elem_info.insert(idx), data: new_data, }
 }
 
 ///|

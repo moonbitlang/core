@@ -13,15 +13,15 @@
 // limitations under the License.
 
 ///|
-test "add of a present key does not grow a full Set" {
+test "insert of a present key does not grow a full Set" {
   let set : Set[Int32] = Set([])
   for i in 0..<set.grow_at {
-    set.add(i)
+    set.insert(i)
   }
   let buckets = set.capacity
   inspect(set.size == set.grow_at, content="true")
   for i in 0..<set.size {
-    set.add(i)
+    set.insert(i)
     assert_false(set.add_and_check(i))
   }
   assert_true(set.capacity == buckets)

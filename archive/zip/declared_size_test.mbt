@@ -73,8 +73,8 @@ fn with_declared_size(bytes : Bytes, index : Int32, size : UInt32) -> Bytes {
 /// A stored entry `prefix` followed by DEFLATE entry `x` holding `data`.
 fn declared_size_archive(data : Bytes) -> Bytes raise @zip.ZipError {
   let archive = @zip.Archive()
-  archive.add("prefix", b"12345", compression=Store)
-  archive.add("x", data, compression=Deflate)
+  archive.insert("prefix", b"12345", compression=Store)
+  archive.insert("x", data, compression=Deflate)
   @zip.write(archive)
 }
 
@@ -87,7 +87,7 @@ fn raw_deflate_archive(
   declared : UInt32,
 ) -> Bytes raise @zip.ZipError {
   let archive = @zip.Archive()
-  archive.add("raw", raw, compression=Store)
+  archive.insert("raw", raw, compression=Store)
   let bytes = @zip.write(archive)
   let (local_at, central) = declared_size_offsets(bytes, 0)
   let changed = bytes.to_fixedarray()

@@ -52,7 +52,7 @@ fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
 
 ///|
 /// Add a new index to the bitset.
-fn Bitset::add(self : Bitset, idx : Int32) -> Bitset {
+fn Bitset::insert(self : Bitset, idx : Int32) -> Bitset {
   Bitset(self.0 | (1U << idx))
 }
 
@@ -72,21 +72,21 @@ fn Bitset::length(self : Bitset) -> Int32 {
 
 ///|
 test "Bitset::has" {
-  let b = empty_bitset.add(2)
+  let b = empty_bitset.insert(2)
   inspect(b.has(0), content="false")
   inspect(b.has(2), content="true")
-  let b = b.add(0)
+  let b = b.insert(0)
   inspect(b.has(0), content="true")
   inspect(b.has(2), content="true")
 }
 
 ///|
 test "Bitset::index_of" {
-  let b = empty_bitset.add(2)
+  let b = empty_bitset.insert(2)
   inspect(b.index_of(2), content="0")
-  let b = b.add(0)
+  let b = b.insert(0)
   inspect(b.index_of(2), content="1")
-  let b = b.add(5)
+  let b = b.insert(5)
   inspect(b.index_of(2), content="1")
   // when elem is missing
   inspect(b.index_of(3), content="2")
@@ -99,8 +99,8 @@ test "Bitset::index_of" {
 
 ///|
 test "Bitset::union" {
-  let b1 = empty_bitset.add(2).add(3)
-  let b2 = empty_bitset.add(0).add(1)
+  let b1 = empty_bitset.insert(2).insert(3)
+  let b2 = empty_bitset.insert(0).insert(1)
   let b3 = b1.union(b2)
   inspect(b3.has(0), content="true")
   inspect(b3.has(1), content="true")
@@ -110,8 +110,8 @@ test "Bitset::union" {
 
 ///|
 test "Bitset::intersection" {
-  let b1 = empty_bitset.add(2).add(3)
-  let b2 = empty_bitset.add(0).add(1).add(2)
+  let b1 = empty_bitset.insert(2).insert(3)
+  let b2 = empty_bitset.insert(0).insert(1).insert(2)
   let b3 = b1.intersection(b2)
   inspect(b3.has(0), content="false")
   inspect(b3.has(1), content="false")
@@ -121,7 +121,7 @@ test "Bitset::intersection" {
 
 ///|
 test "Bitset::remove" {
-  let b = empty_bitset.add(2).add(3)
+  let b = empty_bitset.insert(2).insert(3)
   inspect(b.has(2), content="true")
   inspect(b.has(3), content="true")
   inspect(b.index_of(2), content="0")
@@ -136,11 +136,11 @@ test "Bitset::remove" {
 test "Bitset::size" {
   let b = empty_bitset
   inspect(b.length(), content="0")
-  let b = b.add(0)
+  let b = b.insert(0)
   inspect(b.length(), content="1")
-  let b = b.add(1)
+  let b = b.insert(1)
   inspect(b.length(), content="2")
-  let b = b.add(1)
+  let b = b.insert(1)
   inspect(b.length(), content="2")
 }
 

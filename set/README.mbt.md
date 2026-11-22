@@ -42,13 +42,13 @@ test "basic operations" {
   let set = @set.Set([])
 
   // Adding elements
-  set.add("apple")
-  set.add("banana")
-  set.add("cherry")
+  set.insert("apple")
+  set.insert("banana")
+  set.insert("cherry")
   inspect(set.length(), content="3")
 
   // Adding duplicate (no effect)
-  set.add("apple")
+  set.insert("apple")
   inspect(set.length(), content="3") // Still 3
 
   // Check membership
@@ -200,8 +200,8 @@ test "modifying sets" {
   inspect(set.is_empty(), content="true")
 
   // Add elements back
-  set.add(100)
-  set.add(200)
+  set.insert(100)
+  set.insert(200)
   inspect(set.length(), content="2")
   inspect(set.contains(100), content="true")
 }
@@ -268,7 +268,7 @@ test "performance examples" {
 
   // Add many elements
   for i in 0..<100 {
-    large_set.add(i)
+    large_set.insert(i)
   }
   inspect(large_set.length(), content="100")
 
@@ -279,7 +279,7 @@ test "performance examples" {
   // Efficient set operations on large sets
   let another_set = @set.Set([])
   for i in 50..<150 {
-    another_set.add(i)
+    another_set.insert(i)
   }
   let intersection = large_set.intersection(another_set)
   inspect(intersection.length(), content="50") // Elements 50-99

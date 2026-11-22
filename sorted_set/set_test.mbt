@@ -139,7 +139,7 @@ test "iter early termination in left subtree" {
 test "contains" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1])
   inspect(set.contains(5), content="false")
-  set.add(5)
+  set.insert(5)
   inspect(set.contains(5), content="true")
   inspect(
     @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
@@ -232,10 +232,10 @@ test "show" {
 
 ///|
 test "mix_everything" {
-  // test all functions together, including add, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
+  // test all functions together, including insert, remove, union, diff, inter, subset, disjoint, size, is_empty, contains
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let set2 = @sorted_set.from_array([4, 5, 6, 7, 8])
-  set1.add(6)
+  set1.insert(6)
   debug_inspect(
     set1,
     content=(
@@ -534,7 +534,7 @@ fn keyed_set(
 ) -> @sorted_set.SortedSet[Keyed] {
   let s : @sorted_set.SortedSet[Keyed] = SortedSet([])
   for k in keys {
-    s.add({ key: k, payload, })
+    s.insert({ key: k, payload, })
   }
   s
 }
@@ -601,7 +601,7 @@ test "clear" {
   inspect(set.is_empty(), content="true")
   inspect(set.length(), content="0")
   inspect(set.contains(1), content="false")
-  set.add(5)
+  set.insert(5)
   @debug.debug_inspect(set.to_array(), content="[5]")
 }
 
@@ -628,9 +628,9 @@ test "JSON round-trip" {
 }
 
 ///|
-test "add keeps the existing equal element" {
+test "insert keeps the existing equal element" {
   let s : @sorted_set.SortedSet[Keyed] = SortedSet([{ key: 1, payload: 10, }])
-  s.add({ key: 1, payload: 20, })
+  s.insert({ key: 1, payload: 20, })
   @test.assert_eq(s.length(), 1)
   @test.assert_eq(s.iter().map(v => v.payload).to_array(), [10])
   let s2 : @sorted_set.SortedSet[Keyed] = SortedSet([

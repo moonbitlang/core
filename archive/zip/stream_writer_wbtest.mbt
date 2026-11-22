@@ -31,9 +31,9 @@ test "incremental ZIP mixes whole files and known or unknown sized entries" {
   @test.assert_eq(writer.position(), 0UL)
   assert_false(writer.is_finished())
   assert_false(writer.is_failed())
-  writer.add("stored", b"abc", compression=Store)
-  writer.add("deflated", b"abcabcabc")
-  writer.add("reused", b"abcabcabc")
+  writer.insert("stored", b"abc", compression=Store)
+  writer.insert("deflated", b"abcabcabc")
+  writer.insert("reused", b"abcabcabc")
   for compression in [Store, Deflate] {
     for known in [true, false] {
       let compression_name = if compression is Store {
@@ -73,7 +73,7 @@ test "incremental ZIP mixes whole files and known or unknown sized entries" {
   }
   @test.assert_eq(archive.get("empty").unwrap().length(), 0)
   expect_writer_error(() => writer.finish(), InvalidState)
-  expect_writer_error(() => writer.add("late", b""), InvalidState)
+  expect_writer_error(() => writer.insert("late", b""), InvalidState)
   expect_writer_error(() => writer.write(b""), InvalidState)
 }
 
@@ -108,11 +108,11 @@ test "incremental ZIP validates states and allows recovery from size errors" {
   expect_writer_error(() => writer.write(b"x"), InvalidState)
   expect_writer_error(() => writer.end_entry(), InvalidState)
   let long_name = String::make(65536, 'x')
-  expect_writer_error(() => writer.add(long_name, b""), UnsupportedFeature)
+  expect_writer_error(() => writer.insert(long_name, b""), UnsupportedFeature)
   expect_writer_error(() => writer.begin_entry(long_name), UnsupportedFeature)
   writer.begin_entry("a", compression=Store, size=3UL)
   expect_writer_error(() => writer.begin_entry("b"), InvalidState)
-  expect_writer_error(() => writer.add("b", b""), InvalidState)
+  expect_writer_error(() => writer.insert("b", b""), InvalidState)
   expect_writer_error(() => writer.finish(), InvalidState)
   expect_writer_error(() => writer.write(b"abcd"), SizeMismatch)
   writer.write(b"a")
@@ -143,7 +143,7 @@ test "incremental ZIP propagates sink errors and poisons the writer" {
       }
     })
     try {
-      writer.add("a", b"payload", compression=Store)
+      writer.insert("a", b"payload", compression=Store)
       writer.finish()
     } catch {
       StreamSinkFailure(code) => @test.assert_eq(code, 42)
@@ -153,7 +153,7 @@ test "incremental ZIP propagates sink errors and poisons the writer" {
     }
     assert_true(writer.is_failed())
     assert_false(writer.is_finished())
-    expect_writer_error(() => writer.add("b", b""), InvalidState)
+    expect_writer_error(() => writer.insert("b", b""), InvalidState)
     expect_writer_error(() => writer.finish(), InvalidState)
     expect_writer_error(() => writer.write(b""), InvalidState)
     @test.assert_eq(calls, fail_at)
@@ -163,9 +163,9 @@ test "incremental ZIP propagates sink errors and poisons the writer" {
 ///|
 test "incremental ZIP rejects reentrant sink calls" {
   let cell : Array[Writer] = []
-  let writer = Writer(_ => cell[0].add("recursive", b""))
+  let writer = Writer(_ => cell[0].insert("recursive", b""))
   cell.push(writer)
-  expect_writer_error(() => writer.add("outer", b"x"), InvalidState)
+  expect_writer_error(() => writer.insert("outer", b"x"), InvalidState)
   assert_true(writer.is_failed())
   @test.assert_eq(writer.position(), 0UL)
 }
@@ -174,7 +174,7 @@ test "incremental ZIP rejects reentrant sink calls" {
 test "incremental ZIP guards UInt64 offsets and sizes without huge buffers" {
   let writer = Writer(_ => ())
   writer.offset = 0xffff_ffff_ffff_ffffUL
-  expect_writer_error(() => writer.add("a", b""), UnsupportedFeature)
+  expect_writer_error(() => writer.insert("a", b""), UnsupportedFeature)
   assert_true(writer.is_failed())
   @test.assert_eq(writer.position(), 0xffff_ffff_ffff_ffffUL)
   let entry_writer = Writer(_ => ())
@@ -190,7 +190,7 @@ test "incremental ZIP emits ZIP64 offset and count sentinels" {
   let out = @buffer.Buffer()
   let writer = Writer(bytes => out.write_bytesview(bytes))
   writer.offset = 0xffff_ffffUL
-  writer.add("a", b"x", compression=Store)
+  writer.insert("a", b"x", compression=Store)
   writer.finish()
   let bytes = out.to_bytes()
   let directory = 32

@@ -84,7 +84,7 @@ test "ZipError is matched by kind" {
   // message text too. Callers match on the kind, which does implement `Eq`.
   let c = zip_error(empty_archive, limits=ReadLimits(max_package_bytes=1))
   let archive = @zip.Archive()
-  archive.add("a", b"x", compression=Store)
+  archive.insert("a", b"x", compression=Store)
   let bad_local = @zip.write(archive).to_fixedarray()
   bad_local[0] = 0
   let bad_central = @zip.write(archive).to_fixedarray()
@@ -123,7 +123,7 @@ test "ZipError upcast to Error" {
 ///|
 test "ZipError Show keeps a wide LimitExceeded on one line" {
   let archive = @zip.Archive()
-  archive.add("big", Bytes::make(100_001, 0))
+  archive.insert("big", Bytes::make(100_001, 0))
   let err = zip_error(
     @zip.write(archive),
     limits=ReadLimits(max_entry_uncompressed_bytes=100_000),

@@ -18,7 +18,7 @@ test "capacity hint reserves room for that many entries" {
     let m : Set[Int32] = Set([], capacity=n)
     let buckets = m.capacity
     for i in 0..<n {
-      m.add(i)
+      m.insert(i)
     }
     assert_true(m.capacity == buckets)
   }
@@ -31,7 +31,7 @@ test "capacity hint counts the initial entries" {
     let m : Set[Int32] = Set([-1], capacity=n)
     let buckets = m.capacity
     for i in 0..<(n - 1) {
-      m.add(i)
+      m.insert(i)
     }
     assert_true(m.capacity == buckets)
   }

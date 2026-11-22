@@ -45,7 +45,7 @@ test "removing a colliding key restores the canonical structure" {
     CollidingKey(0),
     0,
   )
-  let round_trip = original.add(CollidingKey(24), 0).remove(CollidingKey(24))
+  let round_trip = original.insert(CollidingKey(24), 0).remove(CollidingKey(24))
   assert_true(round_trip == original)
   assert_true(round_trip == @hashmap.singleton(CollidingKey(0), 0))
 }
@@ -55,7 +55,7 @@ test "filter down to one key yields the canonical map" {
   // No hash collisions involved: `filter` must collapse the branch that
   // shrank to a single entry, exactly like `remove` does.
   let original : @hashmap.HashMap[Int32, Int32] = @hashmap.singleton(0, 0)
-  assert_true(original.add(1, 1).filter((k, _) => k == 0) == original)
+  assert_true(original.insert(1, 1).filter((k, _) => k == 0) == original)
 }
 
 ///|
@@ -65,7 +65,7 @@ test "filter dropping a colliding key yields the canonical map" {
     0,
   )
   let filtered = original
-    .add(CollidingKey(24), 1)
+    .insert(CollidingKey(24), 1)
     .filter((k, _) => k == CollidingKey(0))
   assert_true(filtered == original)
 }
@@ -76,7 +76,7 @@ test "difference removing a colliding key yields the canonical map" {
     CollidingKey(0),
     0,
   )
-  let both = original.add(CollidingKey(24), 1)
+  let both = original.insert(CollidingKey(24), 1)
   let only_other : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(24),
     1,
@@ -89,9 +89,9 @@ test "chained removals from a collision bucket collapse in any order" {
   // 0, 8, and 24 all hash to bucket 0, forming a three-entry collision node.
   let base : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.empty()
   let all = base
-    .add(CollidingKey(0), 0)
-    .add(CollidingKey(8), 1)
-    .add(CollidingKey(24), 2)
+    .insert(CollidingKey(0), 0)
+    .insert(CollidingKey(8), 1)
+    .insert(CollidingKey(24), 2)
   let one_way = all.remove(CollidingKey(8)).remove(CollidingKey(24))
   let other_way = all.remove(CollidingKey(24)).remove(CollidingKey(8))
   assert_true(one_way == @hashmap.singleton(CollidingKey(0), 0))
@@ -99,7 +99,7 @@ test "chained removals from a collision bucket collapse in any order" {
 }
 
 // The tests below pin canonicity at the maximum trie depth, where a single
-// entry historically had two representations: `add` into an existing
+// entry historically had two representations: `insert` into an existing
 // bottom-level branch stored `Flat(k, v, exhausted-path)` while `join_2`
 // splitting a `Flat` stored `Leaf(k, v, Empty)`. Content-equal maps built
 // through different histories then compared unequal.
@@ -124,26 +124,26 @@ impl Hash for DeepKey with fn hash_combine(self, hasher) {
 ///|
 test "insertion order cannot affect the structure at maximum depth" {
   let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
-    .add(DeepKey(0), 0)
-    .add(DeepKey(1), 1)
-    .add(DeepKey(2), 2)
+    .insert(DeepKey(0), 0)
+    .insert(DeepKey(1), 1)
+    .insert(DeepKey(2), 2)
   let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
-    .add(DeepKey(2), 2)
-    .add(DeepKey(1), 1)
-    .add(DeepKey(0), 0)
+    .insert(DeepKey(2), 2)
+    .insert(DeepKey(1), 1)
+    .insert(DeepKey(0), 0)
   assert_true(one_way == other_way)
 }
 
 ///|
 test "removing a maximum-depth sibling leaves the canonical structure" {
   let removed = @hashmap.empty()
-    .add(DeepKey(0), 0)
-    .add(DeepKey(1), 1)
-    .add(DeepKey(2), 2)
+    .insert(DeepKey(0), 0)
+    .insert(DeepKey(1), 1)
+    .insert(DeepKey(2), 2)
     .remove(DeepKey(1))
   let fresh : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
-    .add(DeepKey(0), 0)
-    .add(DeepKey(2), 2)
+    .insert(DeepKey(0), 0)
+    .insert(DeepKey(2), 2)
   assert_true(removed == fresh)
 }
 
@@ -153,15 +153,15 @@ test "full-hash collision arriving at a maximum-depth Flat stays canonical" {
   // maximum-depth branch into existence, so DeepKey(2) is stored there as
   // a single entry with a fully consumed path when DeepKey(6) arrives.
   let one_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
-    .add(DeepKey(0), 0)
-    .add(DeepKey(1), 1)
-    .add(DeepKey(2), 2)
-    .add(DeepKey(6), 6)
+    .insert(DeepKey(0), 0)
+    .insert(DeepKey(1), 1)
+    .insert(DeepKey(2), 2)
+    .insert(DeepKey(6), 6)
   let other_way : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
-    .add(DeepKey(2), 2)
-    .add(DeepKey(6), 6)
-    .add(DeepKey(0), 0)
-    .add(DeepKey(1), 1)
+    .insert(DeepKey(2), 2)
+    .insert(DeepKey(6), 6)
+    .insert(DeepKey(0), 0)
+    .insert(DeepKey(1), 1)
   assert_eq(one_way.get(DeepKey(2)), Some(2))
   assert_eq(one_way.get(DeepKey(6)), Some(6))
   assert_eq(one_way.length(), 4)
@@ -173,7 +173,7 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   // 80 entries exceed the bulk-build threshold (64), so the constructor
   // and a sized `from_iter` take the range-partitioning bulk builder,
   // whose bottom-level handoff must produce the same canonical shapes as
-  // plain `add` — here four maximum-depth collision buckets of 20 keys.
+  // plain `insert` — here four maximum-depth collision buckets of 20 keys.
   let pairs : Array[(DeepKey, Int32)] = []
   for i in 0..<80 {
     pairs.push((DeepKey(i), i))
@@ -182,12 +182,12 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   let via_iter = @hashmap.from_iter(pairs.iter())
   let mut added : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
   for kv in pairs {
-    added = added.add(kv.0, kv.1)
+    added = added.insert(kv.0, kv.1)
   }
   let mut reversed : @hashmap.HashMap[DeepKey, Int32] = @hashmap.empty()
   for i in 0..<pairs.length() {
     let kv = pairs[pairs.length() - 1 - i]
-    reversed = reversed.add(kv.0, kv.1)
+    reversed = reversed.insert(kv.0, kv.1)
   }
   assert_eq(bulk.length(), 80)
   assert_true(bulk == added)
@@ -202,11 +202,11 @@ test "intersection dropping a colliding key yields the canonical map" {
   let left : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
-  ).add(CollidingKey(24), 1)
+  ).insert(CollidingKey(24), 1)
   let right : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,
-  ).add(CollidingKey(8), 2)
+  ).insert(CollidingKey(8), 2)
   let expected : @hashmap.HashMap[CollidingKey, Int32] = @hashmap.singleton(
     CollidingKey(0),
     0,

@@ -31,7 +31,7 @@ test "quickcheck: construction and mutation preserve set semantics" {
     let (inserted, removed) = input
     let set : @hashset.HashSet[Int32] = HashSet([])
     for x in inserted {
-      set.add(x % 47)
+      set.insert(x % 47)
     }
     for x in removed {
       set.remove(x % 47)

@@ -83,7 +83,7 @@ test "invariants hold through a deletion-heavy operation sequence" {
         let n = op & 0x7fffffff
         let key = n / 8 % 24
         match n % 6 {
-          0 | 1 => map = map.add(key, n % 7)
+          0 | 1 => map = map.insert(key, n % 7)
           2 | 3 | 4 => map = map.remove(key)
           _ => map = map.filter((k, _) => k % 3 != 0)
         }
@@ -108,7 +108,7 @@ test "invariants hold while the spine is churned around the threshold" {
         let count = (n & 0x7fffffff) % 12 + 1
         // grow
         for _ in 0..<count {
-          map = map.add(next, next)
+          map = map.insert(next, next)
           next += 1
           guard check_invariants(map) is None else { return false }
         }
@@ -192,7 +192,7 @@ test "a short spine is left alone however holey it gets" {
 test "appending can be what tips the spine into a rebuild" {
   // A spine of 31 slots holding one entry is under `MIN_COMPACT_LENGTH`, so
   // nothing reclaims its 30 holes. Appending one more entry carries it to 32,
-  // at which point the ratio is wildly over the limit — so `add` has to test
+  // at which point the ratio is wildly over the limit — so `insert` has to test
   // for compaction too, not just `remove`.
   let mut map = from_iter((0).until(31).map(i => (i, i)))
   for i in 0..<30 {
@@ -201,7 +201,7 @@ test "appending can be what tips the spine into a rebuild" {
   inspect(map.length(), content="1")
   inspect(map.spine.length(), content="31")
   assert_true(check_invariants(map) is None)
-  let appended = map.add(100, 100)
+  let appended = map.insert(100, 100)
   inspect(appended.length(), content="2")
   inspect(appended.spine.length(), content="2")
   assert_true(check_invariants(appended) is None)
@@ -210,7 +210,7 @@ test "appending can be what tips the spine into a rebuild" {
 }
 
 ///|
-test "churn under add and remove keeps reclaiming the spine" {
+test "churn under insert and remove keeps reclaiming the spine" {
   // Drives the ratio repeatedly rather than once, so a compaction that only
   // worked from a pristine spine would show up here.
   let mut map = from_iter((0).until(40).map(i => (i, i)))
@@ -223,7 +223,7 @@ test "churn under add and remove keeps reclaiming the spine" {
     }
     // …and append fresh keys, which land past the holes
     for j in 0..<8 {
-      map = map.add(1000 + round * 8 + j, j)
+      map = map.insert(1000 + round * 8 + j, j)
     }
     if map.spine.length() < before {
       compactions += 1

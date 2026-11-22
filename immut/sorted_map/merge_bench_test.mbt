@@ -20,7 +20,7 @@ fn make_map(
 ) -> @sorted_map.SortedMap[Int32, Int32] {
   let mut m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
   for i = start; i < end; i = i + step {
-    m = m.add(i, i)
+    m = m.insert(i, i)
   }
   m
 }

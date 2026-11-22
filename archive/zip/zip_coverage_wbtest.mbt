@@ -431,7 +431,7 @@ test "ZIP entry decoding honors entry and deferred cancellation" {
 ///|
 test "stored entry limits are checked before entering the owned copy" {
   let archive = Archive()
-  archive.add("x", b"0123456789", compression=Store)
+  archive.insert("x", b"0123456789", compression=Store)
   let original = write(archive)
   let eocd = parse_end_of_central(original, ReadLimits(), () => false)
   let changed = original.to_fixedarray()
@@ -728,10 +728,10 @@ test "zip classic trailer rejects too many entries and long comments" {
 test "zip entry names and output limits are checked" {
   let long_name = String::make(70000, 'x')
   let archive = Archive()
-  archive.add(long_name, b"")
+  archive.insert(long_name, b"")
   expect_zip_error(() => ignore(write(archive)))
   let small = Archive()
-  small.add("a.txt", b"x")
+  small.insert("a.txt", b"x")
   expect_zip_kind(
     () => ignore(write(small, max_output_bytes=-1)),
     InvalidArgument,
@@ -801,7 +801,7 @@ test "zip output writes unaligned fields and transfers only written bytes" {
 test "zip matching raw names preserve empty and Unicode names" {
   for name in ["", "a.txt", "目录/🙂.txt", "é.txt", "é.txt"] {
     let archive = Archive()
-    archive.add(name, b"payload", compression=Store)
+    archive.insert(name, b"payload", compression=Store)
     let encoded = write(archive)
     let decoded = read_all(encoded)
     @test.assert_eq(decoded.entries()[0].name(), name)
@@ -852,7 +852,7 @@ test "zip output rejects Int overflow and oversized raw header names" {
   counting.count(0x7fff_ffff)
   expect_zip_kind(() => counting.count(1), UnsupportedFeature)
   let archive = Archive()
-  archive.add("a", b"", compression=Store)
+  archive.insert("a", b"", compression=Store)
   let entry = archive.entries()[0]
   let long_name = Bytes::make(65536, b'x')
   expect_zip_kind(
@@ -885,7 +885,7 @@ test "zip output rejects Int overflow and oversized raw header names" {
 test "zip local order sorts source offsets and keeps new entries stable" {
   let archive = Archive()
   for i in 0..<32 {
-    archive.add("entry-\{i}", b"", compression=Store)
+    archive.insert("entry-\{i}", b"", compression=Store)
     if i % 3 == 0 {
       archive.entries[i] = {
         ..archive.entries[i],
@@ -909,7 +909,7 @@ test "zip local order sorts source offsets and keeps new entries stable" {
 ///|
 test "ZIP64 sizing agrees with emitted headers and descriptors" {
   let archive = Archive()
-  archive.add("a", b"", compression=Store)
+  archive.insert("a", b"", compression=Store)
   let entry = {
     ..archive.entries()[0],
     dos_date: 0x5d1c,
@@ -988,7 +988,7 @@ test "fixed records tell short input from a foreign signature" {
 ///|
 test "end record scan skips a signature inside the archive comment" {
   let archive = Archive()
-  archive.add("a", b"x", compression=Store)
+  archive.insert("a", b"x", compression=Store)
   // A fake end record whose comment length does not reach the input's end.
   archive.set_comment(
     b"PK\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00tail",
@@ -1103,7 +1103,7 @@ test "single-pass ZIP entry decoding sizes output by the payload, not the declar
 test "read_all decodes a DEFLATE entry once" {
   let data = Bytes::makei(1 << 20, i => (i / 7 % 251).to_byte())
   let archive = Archive()
-  archive.add("a", data)
+  archive.insert("a", data)
   let bytes = write(archive)
   let mut total = 0
   ignore(

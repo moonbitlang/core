@@ -83,7 +83,7 @@ let sorted_set_sort_build_threshold = 64
 /// Sort an owned buffer in place and build a set from it, keeping the FIRST
 /// element of each equal run. `stable_sort` preserves the insertion order of
 /// equal elements, so that representative matches building the set by repeated
-/// `add` in order, which is what the array constructor does. The caller must
+/// `insert` in order, which is what the array constructor does. The caller must
 /// own `buf` and not use it afterwards, since the elements are permuted in
 /// place.
 fn[A : Compare] sorted_set_from_unsorted_buffer(
@@ -121,7 +121,7 @@ fn[A : Compare] sorted_set_from_array_by_add(
   array : ArrayView[A],
 ) -> SortedSet[A] {
   for value in array; set = Empty {
-    continue set.add(value)
+    continue set.insert(value)
   } nobreak {
     set
   }
@@ -131,7 +131,7 @@ fn[A : Compare] sorted_set_from_array_by_add(
 /// Initialize a `SortedSet` from an array.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 ///
 /// # Example
 ///
@@ -292,12 +292,13 @@ pub fn[A] SortedSet::remove_min(self : SortedSet[A]) -> SortedSet[A] {
 /// ```mbt check
 /// test {
 ///   @test.assert_eq(
-///     @sorted_set.SortedSet([6, 3, 8, 1]).add(5),
+///     @sorted_set.SortedSet([6, 3, 8, 1]).insert(5),
 ///     SortedSet([1, 3, 5, 6, 8]),
 ///   )
 /// }
 /// ```
-pub fn[A : Compare] SortedSet::add(
+#alias(add, deprecated="Use `insert` instead")
+pub fn[A : Compare] SortedSet::insert(
   self : SortedSet[A],
   value : A,
 ) -> SortedSet[A] {
@@ -308,14 +309,14 @@ pub fn[A : Compare] SortedSet::add(
       if compare_result == 0 {
         self
       } else if compare_result < 0 {
-        let ll = left.add(value)
+        let ll = left.insert(value)
         if physical_equal(left, ll) {
           self
         } else {
           balance(ll, node_value, right)
         }
       } else {
-        let rr = right.add(value)
+        let rr = right.insert(value)
         if physical_equal(right, rr) {
           self
         } else {
@@ -609,13 +610,13 @@ pub fn[A : Compare] SortedSet::union(
     ) =>
       if s1 >= s2 {
         if s2 == 1 {
-          self.add(v2)
+          self.insert(v2)
         } else {
           let (l2, _, r2) = other.split(v1)
           join(l1.union(l2), v1, r1.union(r2))
         }
       } else if s1 == 1 {
-        other.add(v1)
+        other.insert(v1)
       } else {
         let (l1, _, r1) = self.split(v2)
         join(l1.union(l2), v2, r1.union(r2))
@@ -1018,7 +1019,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
     raise path.error("@immut/sorted_set.from_json: expected array")
   }
   for i, x in arr; set = (empty() : SortedSet[A]) {
-    continue set.add(@json.FromJson::from_json(x, path.add_index(i)))
+    continue set.insert(@json.FromJson::from_json(x, path.add_index(i)))
   } nobreak {
     set
   }
@@ -1209,7 +1210,7 @@ fn[A : Compare] try_join(
     (right == Empty || value.compare(right.min()) < 0) {
     join(left, value, right)
   } else {
-    left.union(right.add(value))
+    left.union(right.insert(value))
   }
 }
 
@@ -1301,7 +1302,7 @@ test "join with different heights" {
 test "hash" {
   @test.assert_eq(
     Hash::hash(SortedSet([1, 2, 3, 4])),
-    Hash::hash(SortedSet([3, 2]).add(1).add(4)),
+    Hash::hash(SortedSet([3, 2]).insert(1).insert(4)),
   )
   @test.assert_not_eq(
     Hash::hash(SortedSet([1, 2, 3])),

@@ -79,7 +79,7 @@ test "merge of descending singletons" {
 
 ///|
 /// Merge `m` with `other` and check the result is valid and holds the same
-/// entries as `m` updated with `other`'s entries one `add` at a time.
+/// entries as `m` updated with `other`'s entries one `insert` at a time.
 fn check_merge(
   m : SortedMap[Int32, Int32],
   other : SortedMap[Int32, Int32],
@@ -88,7 +88,7 @@ fn check_merge(
   assert_true(is_valid(merged))
   let mut expected = m
   for k, v in other {
-    expected = expected.add(k, v)
+    expected = expected.insert(k, v)
   }
   @test.assert_eq(merged.to_array(), expected.to_array())
   merged
@@ -238,7 +238,7 @@ test "remove rebalances: minimal repro" {
   // right subtree into a node with subtree sizes (0, 2).
   let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for k in [1, 0, 5, 3, 6, 2, 7] {
-    m = m.add(k, k)
+    m = m.insert(k, k)
   }
   @debug.debug_inspect(
     unbalanced_nodes(m),
@@ -268,12 +268,12 @@ test "height of sequentially built maps" {
   let mut desc : SortedMap[Int32, Int32] = SortedMap::empty()
   let mut window : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in 0..<50000 {
-    asc = asc.add(i, i)
-    desc = desc.add(-i, i)
+    asc = asc.insert(i, i)
+    desc = desc.insert(-i, i)
   }
   // a sliding window: always 50 000 live keys once full
   for i in 0..<100000 {
-    window = window.add(i, i)
+    window = window.insert(i, i)
     if i >= 50000 {
       window = window.remove(i - 50000)
     }
@@ -300,7 +300,7 @@ fn Lcg::below(self : Lcg, bound : Int32) -> Int32 {
 }
 
 ///|
-/// A map of up to `n` random keys below `key_range`, built with `add`.
+/// A map of up to `n` random keys below `key_range`, built with `insert`.
 fn Lcg::small_map(
   self : Lcg,
   n : Int32,
@@ -308,7 +308,7 @@ fn Lcg::small_map(
 ) -> SortedMap[Int32, Int32] {
   let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for _ in 0..<self.below(n + 1) {
-    m = m.add(self.below(key_range), self.below(1000))
+    m = m.insert(self.below(key_range), self.below(1000))
   }
   m
 }
@@ -336,7 +336,7 @@ test "random operation sequences keep every node balanced" {
       match rng.below(16) {
         0..<=5 => {
           let v = rng.below(1000)
-          m = m.add(k, v)
+          m = m.insert(k, v)
           model[k] = Some(v)
         }
         6..<=10 => {
@@ -396,7 +396,7 @@ test "random operation sequences keep every node balanced" {
 fn ascending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
   let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i in lo..<(lo + n) {
-    m = m.add(i, i)
+    m = m.insert(i, i)
   }
   m
 }
@@ -405,7 +405,7 @@ fn ascending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
 fn descending_map(lo : Int32, n : Int32) -> SortedMap[Int32, Int32] {
   let mut m : SortedMap[Int32, Int32] = SortedMap::empty()
   for i = lo + n - 1; i >= lo; i = i - 1 {
-    m = m.add(i, i)
+    m = m.insert(i, i)
   }
   m
 }

@@ -18,7 +18,7 @@
 // an association-array model and requires, after every single step, that
 // the map is `==` to a fresh `from_iter` of its content, hashes like it,
 // iterates exactly its content, and compares UNEQUAL to perturbed content
-// — and, at the end, that a rebuild by `add` in reverse order reproduces
+// — and, at the end, that a rebuild by `insert` in reverse order reproduces
 // it. Each regime below picks a hash quotient that stresses a different
 // part of the trie: distinct hashes (plain `Int`), segment-1 divergence
 // with full collisions (`CollidingKey`), mid-trie segment-3 divergence
@@ -57,7 +57,7 @@ impl Hash for ZeroHashKey with fn hash_combine(_, hasher) {
 }
 
 ///|
-/// Replace-or-append, mirroring `HashMap::add`.
+/// Replace-or-append, mirroring `HashMap::insert`.
 fn model_add(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
@@ -106,7 +106,7 @@ fn[K : Eq + Hash] canonical_after_ops(
     let value = n / 128 % 7
     match n % 8 {
       0 | 1 | 2 => {
-        hm = hm.add(mk(key), value)
+        hm = hm.insert(mk(key), value)
         model_add(model, key, value)
       }
       3 => {
@@ -209,7 +209,7 @@ fn[K : Eq + Hash] canonical_after_ops(
     }
     // Different content must compare unequal: perturb by adding a fresh
     // key, removing an entry, and changing a value
-    if hm.add(mk(16), 0) == rebuilt {
+    if hm.insert(mk(16), 0) == rebuilt {
       return false
     }
     if model.length() > 0 {
@@ -217,7 +217,7 @@ fn[K : Eq + Hash] canonical_after_ops(
       if hm.remove(mk(k0)) == rebuilt {
         return false
       }
-      if hm.add(mk(k0), v0 + 1) == rebuilt {
+      if hm.insert(mk(k0), v0 + 1) == rebuilt {
         return false
       }
     }
@@ -227,7 +227,7 @@ fn[K : Eq + Hash] canonical_after_ops(
   let mut reversed : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for i in 0..<model.length() {
     let kv = model[model.length() - 1 - i]
-    reversed = reversed.add(mk(kv.0), kv.1)
+    reversed = reversed.insert(mk(kv.0), kv.1)
   }
   reversed == hm
 }
@@ -268,7 +268,7 @@ test "quickcheck: canonical after every op (single collision bucket)" {
 }
 
 ///|
-/// Build a map from an `add` stream over the 16-key universe.
+/// Build a map from an insertion stream over the 16-key universe.
 fn[K : Eq + Hash] build_map(
   mk : (Int32) -> K,
   xs : Array[Int32],
@@ -276,7 +276,7 @@ fn[K : Eq + Hash] build_map(
   let mut m = @hashmap.empty()
   for x in xs {
     let n = x & 0x7fffffff
-    m = m.add(mk(n % 16), n / 16 % 7)
+    m = m.insert(mk(n % 16), n / 16 % 7)
   }
   m
 }

@@ -50,12 +50,12 @@ test "a repeated key keeps the first position and the last value" {
     ),
   )
   inspect(m.length(), content="3")
-  // …exactly as repeated `add`s would leave it
+  // …exactly as repeated insertions would leave it
   let built = @vector_map.empty()
-    .add("a", 1)
-    .add("b", 2)
-    .add("a", 3)
-    .add("c", 4)
+    .insert("a", 1)
+    .insert("b", 2)
+    .insert("a", 3)
+    .insert("c", 4)
   assert_true(m == built)
 }
 
@@ -71,7 +71,7 @@ test "singleton builds a whole map, not just a spine" {
   inspect(one.remove("a").is_empty(), content="true")
   // replacing the value updates in place rather than appending a second entry
   debug_inspect(
-    one.add("a", 2).to_array(),
+    one.insert("a", 2).to_array(),
     content=(
       #|[("a", 2)]
     ),
@@ -102,23 +102,23 @@ test "panic at on a missing key" {
 }
 
 ///|
-test "add keeps an existing key in place but appends a fresh one" {
+test "insert keeps an existing key in place but appends a fresh one" {
   let m = @vector_map.VectorMap([("a", 1), ("b", 2), ("c", 3)])
   debug_inspect(
-    m.add("b", 20).to_array(),
+    m.insert("b", 20).to_array(),
     content=(
       #|[("a", 1), ("b", 20), ("c", 3)]
     ),
   )
   debug_inspect(
-    m.add("d", 4).to_array(),
+    m.insert("d", 4).to_array(),
     content=(
       #|[("a", 1), ("b", 2), ("c", 3), ("d", 4)]
     ),
   )
   // removing and re-adding moves the key to the end
   debug_inspect(
-    m.remove("a").add("a", 1).to_array(),
+    m.remove("a").insert("a", 1).to_array(),
     content=(
       #|[("b", 2), ("c", 3), ("a", 1)]
     ),
@@ -160,12 +160,12 @@ test "a no-op returns the receiver itself" {
   // …and a real change does not preserve identity
   assert_false(physical_equal(m.remove("a"), m))
   assert_false(physical_equal(m.filter((k, _) => k != "a"), m))
-  // `add` makes no such promise, even when it stores the very value already
+  // `insert` makes no such promise, even when it stores the very value already
   // there: skipping the write would mean deciding equality with
   // `physical_equal`, which is documented as unsafe to hang semantics on. So it
   // allocates, and only compares equal.
-  assert_true(m.add("a", m["a"]) == m)
-  assert_false(physical_equal(m.add("a", m["a"]), m))
+  assert_true(m.insert("a", m["a"]) == m)
+  assert_false(physical_equal(m.insert("a", m["a"]), m))
 }
 
 ///|
@@ -278,7 +278,7 @@ test "equality is order sensitive" {
   assert_false(ab == ba)
   assert_true(ab != ba)
   // equal content in equal order compares equal however it was built
-  assert_true(ab == @vector_map.empty().add("a", 1).add("b", 2))
+  assert_true(ab == @vector_map.empty().insert("a", 1).insert("b", 2))
   // A prefix is not equal to the whole — and this has to be checked from BOTH
   // sides. Comparing entry by entry only detects the short side running out
   // when it is on the right, so a length check that fired one way round would
@@ -484,7 +484,7 @@ test "removals past the compaction threshold keep every promise" {
   // given. Iterating would only read the spine, so it would not notice an index
   // left pointing at the pre-rebuild slots; `get` and `contains` are the direct
   // read-only probes of it, which is what makes them the ones to sweep with
-  // here. (`add`, `remove` and `update` consult it too, but by changing the map
+  // here. (`insert`, `remove` and `update` consult it too, but by changing the map
   // rather than reporting on it.)
   for i in 0..<200 {
     if i % 5 == 0 {
@@ -532,13 +532,13 @@ test "a replaced entry keeps the key it was first inserted with" {
   inspect(built.length(), content="1")
   inspect(built.to_array()[0].0.tag, content="1")
   inspect(built.to_array()[0].1, content="y")
-  // `add` over an existing key behaves the same way.
-  let updated = built.add(third, "z")
+  // `insert` over an existing key behaves the same way.
+  let updated = built.insert(third, "z")
   inspect(updated.to_array()[0].0.tag, content="1")
   inspect(updated.to_array()[0].1, content="z")
   // …and after the key has been removed, the next one inserted is kept,
   // because there is no earlier key left to retain.
-  let reinserted = built.remove(first).add(third, "z")
+  let reinserted = built.remove(first).insert(third, "z")
   inspect(reinserted.to_array()[0].0.tag, content="3")
 }
 
@@ -547,12 +547,12 @@ test "Default is the empty map" {
   let m : @vector_map.VectorMap[String, Int32] = Default::default()
   inspect(m.is_empty(), content="true")
   inspect(m == @vector_map.empty(), content="true")
-  inspect(m.add("a", 1).length(), content="1")
+  inspect(m.insert("a", 1).length(), content="1")
 }
 
 ///|
 test "VectorMap from empty array" {
   let m : @vector_map.VectorMap[String, Int32] = VectorMap([])
   inspect(m.is_empty(), content="true")
-  inspect(m.add("a", 1).length(), content="1")
+  inspect(m.insert("a", 1).length(), content="1")
 }

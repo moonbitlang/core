@@ -25,7 +25,7 @@ fn[K : Eq + Hash] derived_map_versions_agree(
   let mut a : @hashmap.HashMap[K, Int32] = @hashmap.empty()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
-    a = a.add(mk(k), x)
+    a = a.insert(mk(k), x)
     model_add(model, k, x)
   }
   for k in 0..<16 {
@@ -39,7 +39,7 @@ fn[K : Eq + Hash] derived_map_versions_agree(
   for e in edits {
     let k = (e & 0x7fffffff) / 2 % 16
     if e % 2 == 0 {
-      b = b.add(mk(k), e)
+      b = b.insert(mk(k), e)
       model_add(b_model, k, e)
     } else {
       b = b.remove(mk(k))

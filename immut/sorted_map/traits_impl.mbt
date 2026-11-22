@@ -103,7 +103,7 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with fn fro
     )
   }
   for k, v in obj; map = (empty() : SortedMap[String, V]) {
-    continue map.add(k, V::from_json(v, path.add_key(k)))
+    continue map.insert(k, V::from_json(v, path.add_key(k)))
   } nobreak {
     map
   }

@@ -26,9 +26,9 @@
 /// ```mbt check
 /// test {
 ///   let map1 = @sorted_map.SortedMap([(3, "three"), (8, "eight"), (1, "one")])
-///   let map2 = map1.add(2, "two").remove(3)
+///   let map2 = map1.insert(2, "two").remove(3)
 ///   @test.assert_eq(map2.get(2), Some("two"))
-///   let map3 = map2.add(2, "updated")
+///   let map3 = map2.insert(2, "updated")
 ///   @test.assert_eq(map2.get(3), None)
 ///   @test.assert_eq(map3.get(3), None)
 ///   @test.assert_eq(map3.get(2), Some("updated"))

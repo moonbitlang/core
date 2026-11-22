@@ -16,9 +16,9 @@
 /// Returns a new map with the key-value pair added or updated.
 /// O(log n).
 ///
-#alias(insert, deprecated)
+#alias(add, deprecated="Use `insert` instead")
 #owned(value)
-pub fn[K : Compare, V] SortedMap::add(
+pub fn[K : Compare, V] SortedMap::insert(
   self : SortedMap[K, V],
   key : K,
   value : V,
@@ -30,9 +30,9 @@ pub fn[K : Compare, V] SortedMap::add(
       if c == 0 {
         make_tree(k, value, l, r)
       } else if c < 0 {
-        balance(k, v, l.add(key, value), r)
+        balance(k, v, l.insert(key, value), r)
       } else {
-        balance(k, v, l, r.add(key, value))
+        balance(k, v, l, r.insert(key, value))
       }
     }
   }
@@ -158,7 +158,7 @@ pub fn[K : Compare, V] SortedMap::update(
   f : (V?) -> V? raise?,
 ) -> SortedMap[K, V] raise? {
   match f(self.get(key)) {
-    Some(value) => self.add(key, value)
+    Some(value) => self.insert(key, value)
     None => self.remove(key)
   }
 }
@@ -426,7 +426,11 @@ fn[K, V] balance(
 test "insert" {
   let m = SortedMap([(3, "three"), (8, "eight"), (1, "one")])
   inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
+  let m = m
+    .insert(5, "five")
+    .insert(2, "two")
+    .insert(0, "zero")
+    .insert(1, "one_updated")
   inspect(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",

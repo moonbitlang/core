@@ -129,7 +129,7 @@ fn[A : Eq] Node::add_with_path(
         }
         None => {
           let child = Flat(key, path.next())
-          Branch(children.add(idx, child))
+          Branch(children.insert(idx, child))
         }
       }
     }
@@ -246,13 +246,13 @@ fn[A : Eq] build_hashset_node_range(
 
 ///|
 fn[A : Eq + Hash] hash_set_from_iter_by_add(iter : Iter[A]) -> HashSet[A] {
-  iter.fold(init=empty(), (s, e) => s.add(e))
+  iter.fold(init=empty(), (s, e) => s.insert(e))
 }
 
 ///|
 fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
   for value in arr; set = empty() {
-    continue set.add(value)
+    continue set.insert(value)
   } nobreak {
     set
   }
@@ -273,7 +273,8 @@ fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 /// Add a key to the hashset.
-pub fn[A : Eq + Hash] HashSet::add(self : HashSet[A], key : A) -> HashSet[A] {
+#alias(add, deprecated="Use `insert` instead")
+pub fn[A : Eq + Hash] HashSet::insert(self : HashSet[A], key : A) -> HashSet[A] {
   match self.data {
     None => { data: Some(Flat(key, @path.of(key))), }
     Some(node) => {
@@ -598,7 +599,7 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
 /// Creates a hash set from an iterator of values.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -645,7 +646,7 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 /// Creates a hash set from an array of values.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 ///
 /// # Example
 ///
@@ -688,7 +689,7 @@ impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
 test "hash" {
   @test.assert_eq(
     Hash::hash(HashSet([1, 2, 3, 4])),
-    Hash::hash(HashSet([3, 2]).add(1).add(4)),
+    Hash::hash(HashSet([3, 2]).insert(1).insert(4)),
   )
   @test.assert_not_eq(
     Hash::hash(HashSet([1, 2, 3])),
@@ -698,6 +699,6 @@ test "hash" {
 
 ///|
 test "eq" {
-  @test.assert_eq(HashSet([1, 2, 3, 4]), HashSet([3, 2]).add(1).add(4))
+  @test.assert_eq(HashSet([1, 2, 3, 4]), HashSet([3, 2]).insert(1).insert(4))
   @test.assert_not_eq(HashSet([1, 2, 3]), HashSet([1, 2, 4]))
 }

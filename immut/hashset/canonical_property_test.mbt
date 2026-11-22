@@ -18,7 +18,7 @@
 // against an array model and requires, after every single step, that the
 // set is `==` to a fresh `from_iter` of its content, hashes like it,
 // iterates exactly its content, and compares UNEQUAL to perturbed
-// content — and, at the end, that a rebuild by `add` in reverse order
+// content — and, at the end, that a rebuild by `insert` in reverse order
 // reproduces it. Each regime below picks a hash
 // quotient that stresses a different part of the trie: distinct hashes
 // (plain `Int`), segment-1 divergence with full collisions
@@ -92,7 +92,7 @@ fn[A : Eq + Hash] canonical_after_ops(
     let key = n / 8 % 16
     match n % 8 {
       0 | 1 | 2 => {
-        hs = hs.add(mk(key))
+        hs = hs.insert(mk(key))
         model_insert(model, key)
       }
       3 | 4 => {
@@ -160,7 +160,7 @@ fn[A : Eq + Hash] canonical_after_ops(
     }
     // Different content must compare unequal: perturb by adding a fresh
     // element and removing an existing one
-    if hs.add(mk(16)) == rebuilt {
+    if hs.insert(mk(16)) == rebuilt {
       return false
     }
     if model.length() > 0 && hs.remove(mk(model[0])) == rebuilt {
@@ -171,7 +171,7 @@ fn[A : Eq + Hash] canonical_after_ops(
   // order must reproduce the exact structure.
   let mut reversed : @hashset.HashSet[A] = @hashset.empty()
   for i in 0..<model.length() {
-    reversed = reversed.add(mk(model[model.length() - 1 - i]))
+    reversed = reversed.insert(mk(model[model.length() - 1 - i]))
   }
   reversed == hs
 }
@@ -212,14 +212,14 @@ test "quickcheck: canonical after every op (single collision bucket)" {
 }
 
 ///|
-/// Build a set from an `add` stream over the 16-element universe.
+/// Build a set from an insertion stream over the 16-element universe.
 fn[A : Eq + Hash] build_set(
   mk : (Int32) -> A,
   xs : Array[Int32],
 ) -> @hashset.HashSet[A] {
   let mut s = @hashset.empty()
   for x in xs {
-    s = s.add(mk((x & 0x7fffffff) % 16))
+    s = s.insert(mk((x & 0x7fffffff) % 16))
   }
   s
 }

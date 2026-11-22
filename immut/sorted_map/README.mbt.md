@@ -32,14 +32,14 @@ test {
 
 ## Insert & Lookup
 
-You can use `add()` to add a key-value pair to the map and create a new map. Or
+You can use `insert()` to add a key-value pair to the map and create a new map. Or
 use `get()` to get the value associated with a key.
 
 ```mbt check
 ///|
 test {
   let map : @sorted_map.SortedMap[String, Int32] = @sorted_map.empty()
-  let map = map.add("a", 1)
+  let map = map.insert("a", 1)
   @test.assert_eq(map.get("a"), Some(1))
 }
 ```

@@ -55,7 +55,7 @@ impl Hash for DeepElem with fn hash_combine(self, hasher) {
 ///|
 test "removing a colliding element restores the canonical structure" {
   let original : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(0)])
-  let round_trip = original.add(CollidingElem(24)).remove(CollidingElem(24))
+  let round_trip = original.insert(CollidingElem(24)).remove(CollidingElem(24))
   assert_true(round_trip == original)
 }
 
@@ -64,9 +64,9 @@ test "chained removals from a collision bucket collapse in any order" {
   // 0, 8, and 24 all hash to bucket 0, forming a three-element collision
   // node.
   let all : @hashset.HashSet[CollidingElem] = @hashset.empty()
-    .add(CollidingElem(0))
-    .add(CollidingElem(8))
-    .add(CollidingElem(24))
+    .insert(CollidingElem(0))
+    .insert(CollidingElem(8))
+    .insert(CollidingElem(24))
   let one_way = all.remove(CollidingElem(8)).remove(CollidingElem(24))
   let other_way = all.remove(CollidingElem(24)).remove(CollidingElem(8))
   assert_true(one_way == HashSet([CollidingElem(0)]))
@@ -76,7 +76,7 @@ test "chained removals from a collision bucket collapse in any order" {
 ///|
 test "difference removing a colliding element yields the canonical set" {
   let original : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(0)])
-  let both = original.add(CollidingElem(24))
+  let both = original.insert(CollidingElem(24))
   let only_other : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(24)])
   assert_true(both.difference(only_other) == original)
 }
@@ -97,26 +97,26 @@ test "intersection dropping a colliding element yields the canonical set" {
 ///|
 test "insertion order cannot affect the structure at maximum depth" {
   let one_way : @hashset.HashSet[DeepElem] = @hashset.empty()
-    .add(DeepElem(0))
-    .add(DeepElem(1))
-    .add(DeepElem(2))
+    .insert(DeepElem(0))
+    .insert(DeepElem(1))
+    .insert(DeepElem(2))
   let other_way : @hashset.HashSet[DeepElem] = @hashset.empty()
-    .add(DeepElem(2))
-    .add(DeepElem(1))
-    .add(DeepElem(0))
+    .insert(DeepElem(2))
+    .insert(DeepElem(1))
+    .insert(DeepElem(0))
   assert_true(one_way == other_way)
 }
 
 ///|
 test "removing a maximum-depth sibling leaves the canonical structure" {
   let removed = @hashset.empty()
-    .add(DeepElem(0))
-    .add(DeepElem(1))
-    .add(DeepElem(2))
+    .insert(DeepElem(0))
+    .insert(DeepElem(1))
+    .insert(DeepElem(2))
     .remove(DeepElem(1))
   let fresh : @hashset.HashSet[DeepElem] = @hashset.empty()
-    .add(DeepElem(0))
-    .add(DeepElem(2))
+    .insert(DeepElem(0))
+    .insert(DeepElem(2))
   assert_true(removed == fresh)
 }
 
@@ -127,15 +127,15 @@ test "path collision arriving at a maximum-depth Flat stays canonical" {
   // there as a single element with a fully consumed path when DeepElem(6)
   // arrives.
   let one_way : @hashset.HashSet[DeepElem] = @hashset.empty()
-    .add(DeepElem(0))
-    .add(DeepElem(1))
-    .add(DeepElem(2))
-    .add(DeepElem(6))
+    .insert(DeepElem(0))
+    .insert(DeepElem(1))
+    .insert(DeepElem(2))
+    .insert(DeepElem(6))
   let other_way : @hashset.HashSet[DeepElem] = @hashset.empty()
-    .add(DeepElem(2))
-    .add(DeepElem(6))
-    .add(DeepElem(0))
-    .add(DeepElem(1))
+    .insert(DeepElem(2))
+    .insert(DeepElem(6))
+    .insert(DeepElem(0))
+    .insert(DeepElem(1))
   assert_true(one_way.contains(DeepElem(2)))
   assert_true(one_way.contains(DeepElem(6)))
   assert_eq(one_way.length(), 4)
@@ -147,7 +147,7 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   // 80 elements exceed the bulk-build threshold (64), so the constructor
   // and a sized `from_iter` take the range-partitioning bulk builder,
   // whose bottom-level handoff must produce the same canonical shapes as
-  // plain `add` — here four maximum-depth collision buckets of 20 keys.
+  // plain `insert` — here four maximum-depth collision buckets of 20 keys.
   let elems : Array[DeepElem] = []
   for i in 0..<80 {
     elems.push(DeepElem(i))
@@ -156,11 +156,11 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   let via_iter = @hashset.from_iter(elems.iter())
   let mut added : @hashset.HashSet[DeepElem] = @hashset.empty()
   for e in elems {
-    added = added.add(e)
+    added = added.insert(e)
   }
   let mut reversed : @hashset.HashSet[DeepElem] = @hashset.empty()
   for i in 0..<elems.length() {
-    reversed = reversed.add(elems[elems.length() - 1 - i])
+    reversed = reversed.insert(elems[elems.length() - 1 - i])
   }
   assert_eq(bulk.length(), 80)
   assert_true(bulk == added)
@@ -185,7 +185,7 @@ test "bulk construction eliminates duplicates canonically" {
   let via_iter = @hashset.from_iter(elems.iter())
   let mut added : @hashset.HashSet[DeepElem] = @hashset.empty()
   for e in elems {
-    added = added.add(e)
+    added = added.insert(e)
   }
   let distinct : @hashset.HashSet[DeepElem] = HashSet(distinct_elems)
   assert_eq(bulk.length(), 12)

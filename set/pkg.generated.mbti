@@ -17,8 +17,6 @@ type Set[K]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[K : Hash + Eq] Set::Set(ArrayView[K], capacity? : Int32) -> Self[K]
-#alias(insert, deprecated)
-pub fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
 #deprecated
 pub fn[K] Set::capacity(Self[K]) -> Int32
@@ -35,6 +33,8 @@ pub fn[K] Set::filter(Self[K], (K) -> Bool raise?) -> Self[K] raise?
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
+#alias(add, deprecated)
+pub fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
 pub fn[K : Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[K : Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
 pub fn[K] Set::is_empty(Self[K]) -> Bool

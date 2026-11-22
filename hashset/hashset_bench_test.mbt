@@ -16,11 +16,11 @@
 let hashset_bench_n = 50000
 
 ///|
-test "bench HashSet::add n=50000" (it : @bench.T) {
+test "bench HashSet::insert n=50000" (it : @bench.T) {
   it.bench(fn() {
     let s = @hashset.HashSet([])
     for i in 0..<hashset_bench_n {
-      s.add(i * 1103515245)
+      s.insert(i * 1103515245)
     }
     it.keep(s.length())
   })
@@ -30,7 +30,7 @@ test "bench HashSet::add n=50000" (it : @bench.T) {
 test "bench HashSet::contains n=50000" (it : @bench.T) {
   let s = @hashset.HashSet([])
   for i in 0..<hashset_bench_n {
-    s.add(i * 1103515245)
+    s.insert(i * 1103515245)
   }
   it.bench(fn() {
     let mut hits = 0

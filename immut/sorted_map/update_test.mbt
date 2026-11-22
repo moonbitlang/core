@@ -30,10 +30,10 @@ test "update replaces, inserts and removes" {
 }
 
 ///|
-test "update agrees with add and remove" {
+test "update agrees with insert and remove" {
   let m = @sorted_map.SortedMap([(1, "a"), (2, "b")])
-  assert_eq(m.update(1, _ => Some("z")), m.add(1, "z"))
-  assert_eq(m.update(5, _ => Some("z")), m.add(5, "z"))
+  assert_eq(m.update(1, _ => Some("z")), m.insert(1, "z"))
+  assert_eq(m.update(5, _ => Some("z")), m.insert(5, "z"))
   assert_eq(m.update(1, _ => None), m.remove(1))
   assert_eq(m.update(5, _ => None), m)
 }

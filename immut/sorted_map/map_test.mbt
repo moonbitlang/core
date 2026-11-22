@@ -64,7 +64,7 @@ test "size" {
 test "is_empty" {
   let m : @sorted_map.SortedMap[Int32, Int32] = @sorted_map.empty()
   inspect(m.is_empty(), content="true")
-  let m = m.add(1, 1)
+  let m = m.insert(1, 1)
   inspect(m.is_empty(), content="false")
 }
 
@@ -520,5 +520,5 @@ test "remove of an absent key returns the original map" {
 test "SortedMap from empty array" {
   let m : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   inspect(m.is_empty(), content="true")
-  inspect(m.add(1, "a").length(), content="1")
+  inspect(m.insert(1, "a").length(), content="1")
 }

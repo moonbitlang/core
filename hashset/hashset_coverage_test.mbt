@@ -18,14 +18,14 @@ test "is_disjoint with different sizes" {
   let set2 = @hashset.HashSet([])
 
   // Add fewer elements to set1
-  set1.add(1)
-  set1.add(2)
+  set1.insert(1)
+  set1.insert(2)
 
   // Add more elements to set2, no overlap
-  set2.add(3)
-  set2.add(4)
-  set2.add(5)
-  set2.add(6)
+  set2.insert(3)
+  set2.insert(4)
+  set2.insert(5)
+  set2.insert(6)
   inspect(set1.is_disjoint(set2), content="true")
   // This should trigger the else branch where other.length() < self.length()
   inspect(set2.is_disjoint(set1), content="true")
@@ -35,11 +35,11 @@ test "is_disjoint with different sizes" {
 test "is_disjoint with overlap" {
   let set1 = @hashset.HashSet([])
   let set2 = @hashset.HashSet([])
-  set1.add(1)
-  set1.add(2)
-  set2.add(2)
-  set2.add(3)
-  set2.add(4)
+  set1.insert(1)
+  set1.insert(2)
+  set2.insert(2)
+  set2.insert(3)
+  set2.insert(4)
   inspect(set1.is_disjoint(set2), content="false")
   inspect(set2.is_disjoint(set1), content="false")
 }
@@ -48,12 +48,12 @@ test "is_disjoint with overlap" {
 test "is_subset with different sizes" {
   let subset = @hashset.HashSet([])
   let superset = @hashset.HashSet([])
-  subset.add(1)
-  subset.add(2)
-  superset.add(1)
-  superset.add(2)
-  superset.add(3)
-  superset.add(4)
+  subset.insert(1)
+  subset.insert(2)
+  superset.insert(1)
+  superset.insert(2)
+  superset.insert(3)
+  superset.insert(4)
   inspect(subset.is_subset(superset), content="true")
   // This should trigger the else branch where self.length() > other.length()
   inspect(superset.is_subset(subset), content="false")
@@ -66,7 +66,7 @@ test "contains with probe sequence length comparison" {
   // Create a scenario that might trigger PSL comparison
   // Add multiple elements to create collisions and probe sequences
   for i in 0..<50 {
-    set.add(i)
+    set.insert(i)
   }
 
   // Test containment
@@ -81,7 +81,7 @@ test "large set operations" {
 
   // Add many elements to trigger multiple grows
   for i in 0..<1000 {
-    set.add(i)
+    set.insert(i)
   }
   inspect(set.length(), content="1000")
   inspect(set.contains(500), content="true")

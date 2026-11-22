@@ -16,7 +16,7 @@
 test "HashMap::is_empty" {
   let empty : @hashmap.HashMap[Int32, Int32] = @hashmap.empty()
   inspect(empty.is_empty(), content="true")
-  let one = empty.add(1, 1)
+  let one = empty.insert(1, 1)
   inspect(one.is_empty(), content="false")
   inspect(one.remove(1).is_empty(), content="true")
   inspect(one.filter((_, _) => false).is_empty(), content="true")

@@ -23,7 +23,7 @@ test "new" {
 test "insert_and_grow" {
   let m = HashSet([])
   for i in 0..<10 {
-    m.add(i.to_string())
+    m.insert(i.to_string())
   }
   inspect(m.length(), content="10")
   inspect(m.capacity, content="16")
@@ -34,7 +34,7 @@ test "capacity_and_size" {
   let m = HashSet([])
   @test.assert_eq(m.capacity, default_init_capacity)
   inspect(m.length(), content="0")
-  m.add("a")
+  m.insert("a")
   inspect(m.length(), content="1")
 }
 
@@ -84,8 +84,8 @@ test "retain visits each element once when a cluster wraps around the table" {
       keys.push(k)
     }
   }
-  s.add(keys[0])
-  s.add(keys[1])
+  s.insert(keys[0])
+  s.insert(keys[1])
   let calls = []
   s.retain(k => {
     calls.push(k)

@@ -14,10 +14,10 @@
 
 ///|
 test "HAMT::size" {
-  for i = 0, map = @hashmap.empty(); i < 20; i = i + 1, map = map.add(i, i) {
+  for i = 0, map = @hashmap.empty(); i < 20; i = i + 1, map = map.insert(i, i) {
     assert_eq(map.length(), i)
   } nobreak {
-    assert_eq(map.add(0, 0).length(), 20)
+    assert_eq(map.insert(0, 0).length(), 20)
   }
 }
 
@@ -26,20 +26,20 @@ test "HAMT" {
   let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 1, map.add(i, i)
+      (i, map) => continue i + 1, map.insert(i, i)
     }
   }
   for i in 0..<100 {
     @test.assert_eq((i, map.get(i)), (i, Some(i)))
   }
   debug_inspect((100, map.get(100)), content="(100, None)")
-  let map = map.add(100, 100)
+  let map = map.insert(100, 100)
   debug_inspect((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
   let map = for i = 0, map = map {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 2, map.add(i, i + 1)
+      (i, map) => continue i + 2, map.insert(i, i + 1)
     }
   }
   for i = 0; i < 100; i = i + 2 {
@@ -53,7 +53,7 @@ test "HAMT::get" {
   let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 1, map.add(i, i)
+      (i, map) => continue i + 1, map.insert(i, i)
     }
   }
   for i in 0..<100 {
@@ -72,7 +72,7 @@ test "HAMT::remove" {
   let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 1, map.add(i, i)
+      (i, map) => continue i + 1, map.insert(i, i)
     }
   }
   for i in 0..<100 {
@@ -181,20 +181,20 @@ fn rebuild_from_iter_by_add(
   data : Array[(Int32, Int32)],
 ) -> @hashmap.HashMap[Int32, Int32] {
   for kv in data; map = @hashmap.empty() {
-    continue map.add(kv.0, kv.1)
+    continue map.insert(kv.0, kv.1)
   } nobreak {
     map
   }
 }
 
 ///|
-test "HAMT::from_array matches forward add with duplicates" {
+test "HAMT::from_array matches forward insert with duplicates" {
   let data = Array::makei(256, i => ((i * 1103515245 + 12345) & 63, i))
   @test.assert_eq(@hashmap.HashMap(data), rebuild_from_iter_by_add(data))
 }
 
 ///|
-test "HAMT::from_iter matches forward add with duplicates" {
+test "HAMT::from_iter matches forward insert with duplicates" {
   let data = Array::makei(256, i => ((i * 1103515245 + 12345) & 63, i))
   @test.assert_eq(
     @hashmap.from_iter(data.iter()),
@@ -210,7 +210,7 @@ test "HAMT::from_array duplicate keeps last value" {
 
 ///|
 test "HAMT bulk from_array and from_iter agree on last value" {
-  // Large enough to take the bulk-build path rather than repeated `add`.
+  // Large enough to take the bulk-build path rather than repeated `insert`.
   let data = Array::makei(100, i => (i % 50, i))
   let from_array = @hashmap.HashMap(data)
   let from_iter = @hashmap.from_iter(data.iter())
@@ -229,10 +229,10 @@ test "HAMT::from_iter duplicate keeps last value" {
 #warnings("-deprecated")
 test "HAMT::to_string" {
   let map = @hashmap.empty()
-    .add(1, 1)
-    .add(3, 3)
-    .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
-    .add(42, 42)
+    .insert(1, 1)
+    .insert(3, 3)
+    .insert(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
+    .insert(42, 42)
   let array = map.to_array()
   assert_eq(map.to_string(), "@immut/hashmap.from_array(\{array})")
 }
@@ -395,7 +395,7 @@ test "HAMT::contains" {
   let map = @hashmap.HashMap([(1, "one")])
   inspect(map.contains(1), content="true")
   inspect(map.contains(2), content="false")
-  let map2 = map.add(2, "two")
+  let map2 = map.insert(2, "two")
   inspect(map2.contains(2), content="true")
   let map3 = map.remove(2)
   inspect(map3.contains(2), content="false")
@@ -431,7 +431,7 @@ test "filter with no elements matching" {
 
 ///|
 test "filter with collision" {
-  let map = @hashmap.HashMap([(1, 10), (2, 20)]).add(1, 30)
+  let map = @hashmap.HashMap([(1, 10), (2, 20)]).insert(1, 30)
   let filtered = map.filter((_, v) => v == 30)
   @test.assert_eq(filtered.get(1), Some(30))
   @test.assert_eq(filtered.get(2), None)
@@ -442,7 +442,7 @@ test "filter with branch nodes" {
   let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (10, map) => break map
-      (i, map) => continue i + 1, map.add(i, i * 10)
+      (i, map) => continue i + 1, map.insert(i, i * 10)
     }
   }
   let filtered = map.filter((_, v) => v % 20 == 0)
@@ -517,7 +517,7 @@ test "HAMT::map_with_key branch" {
   let map = for i = 0, map = @hashmap.empty() {
     match (i, map) {
       (10, map) => break map
-      (i, map) => continue i + 1, map.add(i, i * 10)
+      (i, map) => continue i + 1, map.insert(i, i * 10)
     }
   } // Branch
   let mapped = map.map((k, v) => k * 100 + v)
@@ -574,7 +574,7 @@ test "add_with_hash collision" {
   @test.assert_eq(map.get(MyString("a")), Some(1))
   @test.assert_eq(map.get(MyString("b")), Some(2))
   @test.assert_eq(map.get(MyString("c")), None)
-  let map = map.add(MyString("c"), 3)
+  let map = map.insert(MyString("c"), 3)
   @test.assert_eq(map.get(MyString("c")), Some(3))
 }
 
@@ -582,7 +582,7 @@ test "add_with_hash collision" {
 test "HAMT join_2 last segment split" {
   let k1 = SegKey(1, 0)
   let k2 = SegKey(2, 1 << 25)
-  let map = @hashmap.empty().add(k1, "a").add(k2, "b")
+  let map = @hashmap.empty().insert(k1, "a").insert(k2, "b")
   debug_inspect(map.get(k1), content="Some(\"a\")")
   debug_inspect(map.get(k2), content="Some(\"b\")")
 }
@@ -590,12 +590,12 @@ test "HAMT join_2 last segment split" {
 ///|
 test "HAMT leaf bucket updates" {
   let map = @hashmap.empty()
-    .add(MyString("a"), 1)
-    .add(MyString("b"), 2)
-    .add(MyString("c"), 3)
-  let map = map.add(MyString("c"), 30)
+    .insert(MyString("a"), 1)
+    .insert(MyString("b"), 2)
+    .insert(MyString("c"), 3)
+  let map = map.insert(MyString("c"), 30)
   debug_inspect(map.get(MyString("c")), content="Some(30)")
-  let map = map.add(MyString("a"), 10)
+  let map = map.insert(MyString("a"), 10)
   debug_inspect(map.get(MyString("a")), content="Some(10)")
 }
 
@@ -1019,8 +1019,8 @@ test "equal imply hash equal when collision" {
   let s1 = MyString("1")
   let s2 = MyString("2")
   inspect(Hash::hash(s1) == Hash::hash(s2), content="true") // collisions
-  let ma = @hashmap.empty().add(s1, 1).add(s2, 2)
-  let mb = @hashmap.empty().add(s2, 2).add(s1, 1)
+  let ma = @hashmap.empty().insert(s1, 1).insert(s2, 2)
+  let mb = @hashmap.empty().insert(s2, 2).insert(s1, 1)
   inspect(ma == mb, content="true")
   inspect(Hash::hash(ma) == Hash::hash(mb), content="true")
 }

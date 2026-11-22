@@ -201,14 +201,14 @@ pub fn compile(
   let nsym = symbol_repr.length()
   let builder : Builder = { nodes: [], table, groups: [None], after_cats: [], }
   let ir = IGroup(0, builder.lower(ast))
-  let accept = builder.add(Accept)
+  let accept = builder.insert(Accept)
   let body = builder.emit(ir, accept)
   let entry = if ast.is_anchored() {
     body
   } else {
     let any = RecharSet::char_range(0, nsym - 1)
-    let search = builder.add(Accept)
-    let skip = builder.add(Char(any, search))
+    let search = builder.insert(Accept)
+    let skip = builder.insert(Char(any, search))
     builder.set_choice(search, true, body, skip)
     search
   }

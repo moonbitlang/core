@@ -31,7 +31,7 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 /// Initialize a set from an array.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 ///
 /// # Example
 /// ```mbt check
@@ -47,7 +47,7 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
   let set = new_sorted_set()
   for x in array {
-    set.add(x)
+    set.insert(x)
   }
   set
 }
@@ -105,8 +105,9 @@ fn[V] new_node_update_height(
 ///|
 /// Adds a value to the set. If an equal value is already present, the set is
 /// left unchanged (the existing value is kept).
+#alias(add, deprecated="Use `insert` instead")
 #owned(value)
-pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
+pub fn[V : Compare] SortedSet::insert(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
     self.root = new_root
@@ -351,7 +352,7 @@ pub fn[V : Compare] SortedSet::difference(
       // worst case, where every probed element is inserted into the result.
       if self.size < src.size / 16 {
         let ret = new_sorted_set()
-        self.each(x => if !src.contains(x) { ret.add(x) })
+        self.each(x => if !src.contains(x) { ret.insert(x) })
         return ret
       }
       // `found_count` ends up as the number of elements shared by both sets:
@@ -449,17 +450,16 @@ pub fn[V : Compare] SortedSet::intersection(
       // O(min log max) and beats the Theta(n + m) tree copies of the
       // split-based merge (see the analogous cutoff in `difference`).
       // The result must still carry `self`'s stored representative of each
-      // shared value (`add` replaces compare-equal values, and the split
-      // path below emits `va` from `self`), so when the probing side is
-      // `src`, each match inserts the value looked up in `self`.
+      // shared value, just as the split path below emits `va` from `self`.
+      // When probing from `src`, insert the value looked up in `self`.
       if self.size < src.size / 16 {
         let ret = new_sorted_set()
-        self.each(x => if src.contains(x) { ret.add(x) })
+        self.each(x => if src.contains(x) { ret.insert(x) })
         return ret
       }
       if src.size < self.size / 16 {
         let ret = new_sorted_set()
-        src.each(x => if lookup(self.root, x) is Some(v) { ret.add(v) })
+        src.each(x => if lookup(self.root, x) is Some(v) { ret.insert(v) })
         return ret
       }
       // See `difference` for why `found_count` counts each shared element
@@ -652,14 +652,14 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 /// Creates a set from an iterator of values.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
   let s = new_sorted_set()
   while iter.next() is Some(e) {
-    s.add(e)
+    s.insert(e)
   }
   s
 }
@@ -1163,39 +1163,39 @@ test "join" {
 }
 
 ///|
-test "add to empty set" {
+test "insert to empty set" {
   let set = new_sorted_set()
-  set.add(1)
+  set.insert(1)
   @test.assert_eq(set.contains(1), true)
   inspect(set.debug_tree(), content="([1]1,_,_)")
 }
 
 ///|
-test "add to non-empty set" {
+test "insert to non-empty set" {
   let set = new_sorted_set()
-  set.add(1)
-  set.add(2)
+  set.insert(1)
+  set.insert(2)
   @test.assert_eq(set.contains(1), true)
   @test.assert_eq(set.contains(2), true)
   inspect(set.debug_tree(), content="([2]1,_,([1]2,_,_))")
 }
 
 ///|
-test "add duplicate value" {
+test "insert duplicate value" {
   let set = new_sorted_set()
-  set.add(1)
-  set.add(1)
+  set.insert(1)
+  set.insert(1)
   @test.assert_eq(set.contains(1), true)
   @test.assert_eq(set.length(), 1)
   inspect(set.debug_tree(), content="([1]1,_,_)")
 }
 
 ///|
-test "add multiple values" {
+test "insert multiple values" {
   let set = new_sorted_set()
-  set.add(1)
-  set.add(2)
-  set.add(3)
+  set.insert(1)
+  set.insert(2)
+  set.insert(3)
   @test.assert_eq(set.contains(1), true)
   @test.assert_eq(set.contains(2), true)
   @test.assert_eq(set.contains(3), true)
@@ -1266,7 +1266,7 @@ test "add_and_remove" {
   )
 
   // Test 2: Add elements
-  set.add(1)
+  set.insert(1)
   @debug.debug_inspect(
     set,
     content=(
@@ -1277,7 +1277,7 @@ test "add_and_remove" {
     set.debug_tree(),
     content="([3]6,([2]2,([1]1,_,_),([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
-  set.add(5)
+  set.insert(5)
   @debug.debug_inspect(
     set,
     content=(
@@ -1288,7 +1288,7 @@ test "add_and_remove" {
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
-  set.add(10)
+  set.insert(10)
   @debug.debug_inspect(
     set,
     content=(
@@ -1299,7 +1299,7 @@ test "add_and_remove" {
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
   )
-  set.add(4)
+  set.insert(4)
   @debug.debug_inspect(
     set,
     content=(
@@ -1312,7 +1312,7 @@ test "add_and_remove" {
   )
 
   // Test 3: Add and remove the same element
-  set.add(11)
+  set.insert(11)
   @debug.debug_inspect(
     set,
     content=(
@@ -1345,7 +1345,7 @@ test "add_and_remove" {
   )
 
   // Test 5: Add an element that already exists
-  set.add(10)
+  set.insert(10)
   @debug.debug_inspect(
     set,
     content=(
@@ -1576,7 +1576,7 @@ pub impl[V : @json.FromJson + Compare] @json.FromJson for SortedSet[V] with fn f
   }
   let set = new_sorted_set()
   for i, x in arr {
-    set.add(@json.FromJson::from_json(x, path.add_index(i)))
+    set.insert(@json.FromJson::from_json(x, path.add_index(i)))
   }
   set
 }

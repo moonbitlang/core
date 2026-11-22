@@ -17,7 +17,6 @@ type SortedSet[V]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[V : Compare] SortedSet::SortedSet(ArrayView[V]) -> Self[V]
-pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
 pub fn[V] SortedSet::clear(Self[V]) -> Unit
 pub fn[V : Compare] SortedSet::compare(Self[V], Self[V]) -> Int32
 pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
@@ -33,6 +32,8 @@ pub fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
+#alias(add, deprecated)
+pub fn[V : Compare] SortedSet::insert(Self[V], V) -> Unit
 #alias(intersect, deprecated)
 pub fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 #alias(disjoint, deprecated)

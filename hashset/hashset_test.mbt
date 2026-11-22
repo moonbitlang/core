@@ -31,7 +31,7 @@ impl Hash for HashSetKey with fn hash_combine(self, hasher) {
 ///|
 test "new_with_capacity_then_add " {
   let set : @hashset.HashSet[(String, String)] = HashSet([], capacity=20)
-  set.add(("None", "Hash"))
+  set.insert(("None", "Hash"))
   debug_inspect(
     set,
     content=(
@@ -93,7 +93,7 @@ test "to_json" {
 ///|
 test "new with zero capacity grows on insert" {
   let m : @hashset.HashSet[Int32] = HashSet([], capacity=0)
-  m.add(1)
+  m.insert(1)
   assert_true(m.contains(1))
 }
 
@@ -106,9 +106,9 @@ test "default" {
 ///|
 test "insert" {
   let m = @hashset.HashSet([])
-  m.add("a")
-  m.add("b")
-  m.add("c")
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -147,7 +147,7 @@ test "HashSet constructor" {
 test "size" {
   let m = @hashset.HashSet([])
   inspect(m.length(), content="0")
-  m.add("a")
+  m.insert("a")
   inspect(m.length(), content="1")
 }
 
@@ -155,7 +155,7 @@ test "size" {
 test "is_empty" {
   let m = @hashset.HashSet([])
   inspect(m.is_empty(), content="true")
-  m.add("a")
+  m.insert("a")
   inspect(m.is_empty(), content="false")
   m.remove("a")
   inspect(m.is_empty(), content="true")
@@ -322,7 +322,7 @@ test "sub" {
 test "grow rehashes collision cluster" {
   let set : @hashset.HashSet[HashSetKey] = HashSet([], capacity=2)
   for i in 0..<12 {
-    set.add(HashSetKey(i, i % 4))
+    set.insert(HashSetKey(i, i % 4))
   }
   inspect(set.length(), content="12")
   for i in 0..<12 {
@@ -330,7 +330,7 @@ test "grow rehashes collision cluster" {
   }
   set.remove(HashSetKey(5, 1))
   assert_false(set.contains(HashSetKey(5, 1)))
-  set.add(HashSetKey(12, 0))
+  set.insert(HashSetKey(12, 0))
   assert_true(set.contains(HashSetKey(12, 0)))
   inspect(set.length(), content="12")
 }
@@ -338,10 +338,10 @@ test "grow rehashes collision cluster" {
 ///|
 test "remove_and_shift_back" {
   let m = @hashset.HashSet([])
-  m.add("a")
-  m.add("b")
-  m.add("c")
-  m.add("d")
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
+  m.insert("d")
   m.remove("b")
   assert_false(m.contains("b"))
   assert_true(m.contains("a"))
@@ -352,11 +352,11 @@ test "remove_and_shift_back" {
 ///|
 test "clear_and_reinsert" {
   let m = @hashset.HashSet([])
-  m.add("a")
-  m.add("b")
+  m.insert("a")
+  m.insert("b")
   m.clear()
   inspect(m.length(), content="0")
-  m.add("c")
+  m.insert("c")
   inspect(m.length(), content="1")
   assert_true(m.contains("c"))
 }
@@ -398,17 +398,17 @@ test "@hashset.to_array/empty" {
 ///|
 test "@hashset.to_array/single" {
   let set = @hashset.HashSet([])
-  set.add(42)
+  set.insert(42)
   debug_inspect(set.to_array(), content="[42]")
 }
 
 ///|
 test "@hashset.to_array/multiple" {
   let set = @hashset.HashSet([])
-  set.add(1)
-  set.add(2)
-  set.add(3)
-  set.add(4)
+  set.insert(1)
+  set.insert(2)
+  set.insert(3)
+  set.insert(4)
   let arr = set.to_array()
   arr.sort()
   debug_inspect(arr, content="[1, 2, 3, 4]")
@@ -454,7 +454,7 @@ test "filter keeps lookups working after removals and collisions" {
   // Small table, colliding hashes, and elements removed before filtering.
   let s : @hashset.HashSet[Int32] = HashSet([], capacity=2)
   for i in 0..<200 {
-    s.add(i * 64)
+    s.insert(i * 64)
   }
   for i in 0..<200 {
     if i % 7 == 0 {
@@ -471,7 +471,7 @@ test "filter keeps lookups working after removals and collisions" {
   expected.sort()
   assert_eq(actual, expected)
   // The result is an independent, growable set.
-  kept.add(-1)
+  kept.insert(-1)
   assert_true(kept.contains(-1))
   assert_false(s.contains(-1))
 }
@@ -492,7 +492,7 @@ test "filter propagates errors" {
 test "equal ignores order, capacity and removal history" {
   let a : @hashset.HashSet[Int32] = HashSet([], capacity=2)
   for i in 0..<100 {
-    a.add(i)
+    a.insert(i)
   }
   for i in 0..<100 {
     if i % 3 == 0 {
@@ -607,7 +607,7 @@ test "union_in_place matches union and leaves other unchanged" {
     b_sorted.sort()
     assert_eq(sorted_elements(other), b_sorted)
     // Still usable afterwards.
-    s.add(-1)
+    s.insert(-1)
     s.remove(-1)
     assert_eq(sorted_elements(s), expected)
   }
@@ -620,7 +620,7 @@ test "retain on a full cluster run keeps exactly the accepted elements" {
   let seen = @hashset.HashSet([])
   s.retain(x => {
     guard !seen.contains(x) else { abort("visited twice: \{x}") }
-    seen.add(x)
+    seen.insert(x)
     x % 3 == 0
   })
   inspect(seen.length(), content="1000")
@@ -659,7 +659,7 @@ test "each: callback adds and removes elements" {
       s.remove(2)
       s.remove(3)
       for i in 100..<164 {
-        s.add(i)
+        s.insert(i)
       }
     }
   })

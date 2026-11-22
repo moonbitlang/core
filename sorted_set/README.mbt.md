@@ -29,7 +29,7 @@ Add an element to the SortedSet in place.
 ///|
 test {
   let set4 = @sorted_set.from_array([1, 2, 3, 4])
-  set4.add(5) // ()
+  set4.insert(5) // ()
   let set6 = @sorted_set.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(set6.to_array(), [1, 2, 3, 4, 5])
 }
@@ -185,7 +185,7 @@ test {
 test {
   let set = @sorted_set.from_array([1, 2, 3])
   let cloned = set.copy()
-  cloned.add(4)
+  cloned.insert(4)
   @test.assert_eq(set.to_array(), [1, 2, 3]) // original unchanged
   @test.assert_eq(cloned.to_array(), [1, 2, 3, 4])
 }
@@ -210,7 +210,7 @@ test {
 
 ## Performance
 
-- **add**: O(log n)
+- **insert**: O(log n)
 - **remove**: O(log n)
 - **contains**: O(log n)
 - **iterate**: O(n)

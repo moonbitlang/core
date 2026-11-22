@@ -52,9 +52,9 @@ test "iter terminates on right" {
 test "iter with early termination on left subtree" {
   // Create a binary search tree with both left and right subtrees
   let set = @sorted_set.empty()
-    .add(2) // root
-    .add(1) // left child
-    .add(3) // right child
+    .insert(2) // root
+    .insert(1) // left child
+    .insert(3) // right child
 
   // Create an iterator that stops after processing the left subtree
   let mut count = 0
@@ -117,9 +117,9 @@ test "rev_iter is reverse of iter" {
 test "rev_iter with early termination on right subtree" {
   // Create a binary search tree with both left and right subtrees
   let set = @sorted_set.empty()
-    .add(2) // root
-    .add(1) // left child
-    .add(3) // right child
+    .insert(2) // root
+    .insert(1) // left child
+    .insert(3) // right child
 
   // Create an iter that stops after processing the first element (from right)
   let count = for _ in set.rev_iter(); count = 0 {

@@ -88,7 +88,7 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 /// Creates a sorted set from an iterator of values.
 ///
 /// Of several equal values, the first one is kept, as if the values were
-/// `add`ed in order.
+/// inserted in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -97,7 +97,7 @@ pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
   // materialize the whole iterator, so live memory would grow with the input
   // length instead of the number of distinct elements. Callers who want the
   // bulk path and can afford the buffer can write `SortedSet(iter.to_array())`.
-  iter.fold(init=empty(), (s, e) => s.add(e))
+  iter.fold(init=empty(), (s, e) => s.insert(e))
 }
 
 ///|

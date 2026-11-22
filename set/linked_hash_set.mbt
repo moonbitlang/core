@@ -55,8 +55,8 @@ priv struct Entry[K] {
 ///   let set = @set.Set(["three", "eight", "one"])
 ///   @test.assert_eq(set.contains("two"), false)
 ///   @test.assert_eq(set.contains("three"), true)
-///   set.add("three") // no effect since it already exists
-///   set.add("two")
+///   set.insert("three") // no effect since it already exists
+///   set.insert("two")
 ///   @test.assert_eq(set.contains("two"), true)
 /// }
 /// ```
@@ -150,13 +150,13 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int32) -> Set[K] 
       }
   }
   let m = new_set(capacity)
-  // arr.each(e => m.add(e))
+  // arr.each(e => m.insert(e))
   // FIXME:(upstream)
   // ArrayView::each depends on array package
   // adding array package caused `unused package` array
   // the root cause is that unused warning is not precise
   for e in arr {
-    m.add(e)
+    m.insert(e)
   }
   m
 }
@@ -174,14 +174,14 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int32) -> Set[K] 
 /// ```mbt check
 /// test {
 ///   let set : @set.Set[String] = Set([])
-///   set.add("key")
+///   set.insert("key")
 ///   inspect(set.contains("key"), content="true")
-///   set.add("key") // no effect since it already exists
+///   set.insert("key") // no effect since it already exists
 ///   inspect(set.length(), content="1")
 /// }
 /// ```
-#alias(insert, deprecated)
-pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
+#alias(add, deprecated="Use `insert` instead")
+pub fn[K : Hash + Eq] Set::insert(self : Set[K], key : K) -> Unit {
   self.add_with_hash(key, Hash::hash(key))
 }
 
@@ -609,7 +609,7 @@ pub impl[K : Eq] Eq for Set[K] with fn equal(self, other) {
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = new_set(default_init_capacity)
   while iter.next() is Some(e) {
-    m.add(e)
+    m.insert(e)
   }
   m
 }
@@ -921,7 +921,7 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for Set[X] with fn from_
     },
   )
   for i, x in arr {
-    res.add(@json.FromJson::from_json(x, path.add_index(i)))
+    res.insert(@json.FromJson::from_json(x, path.add_index(i)))
   }
   res
 }

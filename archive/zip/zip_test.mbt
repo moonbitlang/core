@@ -73,8 +73,8 @@ let py_descriptor : Bytes = [
 ///|
 test "zip round-trips store and deflate entries" {
   let archive = @zip.Archive()
-  archive.add("deflated.txt", b"the quick brown fox jumps over the lazy dog")
-  archive.add(
+  archive.insert("deflated.txt", b"the quick brown fox jumps over the lazy dog")
+  archive.insert(
     "stored.bin",
     Bytes::from_array(Array::make(1024, b'z')),
     compression=Store,
@@ -105,8 +105,8 @@ test "zip round-trips store and deflate entries" {
 ///|
 test "zip round-trips empty and zero-length payloads" {
   let archive = @zip.Archive()
-  archive.add("empty.txt", b"")
-  archive.add("b.txt", b"")
+  archive.insert("empty.txt", b"")
+  archive.insert("b.txt", b"")
   let bytes = @zip.write(archive)
   let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.get("empty.txt"), Some(b""))
@@ -129,8 +129,8 @@ test "zip write with max_output_bytes sizes a data-descriptor entry correctly" {
 ///|
 test "zip write with preserve=true re-emits a read archive byte-for-byte" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"alpha")
-  archive.add("b.txt", b"beta beta beta", compression=Store)
+  archive.insert("a.txt", b"alpha")
+  archive.insert("b.txt", b"beta beta beta", compression=Store)
   let bytes = @zip.write(archive)
   let parsed = @zip.read_all(bytes)
   let rewritten = @zip.write(parsed, preserve=true)
@@ -158,8 +158,8 @@ test "zip write with preserve=true round-trips a data-descriptor entry byte-for-
 ///|
 test "zip write with preserve=true keeps unchanged payloads and applies replacements" {
   let archive = @zip.Archive()
-  archive.add("keep.txt", b"keep me", compression=Store)
-  archive.add("replace.txt", b"old payload", compression=Store)
+  archive.insert("keep.txt", b"keep me", compression=Store)
+  archive.insert("replace.txt", b"old payload", compression=Store)
   let original = @zip.write(archive)
   let parsed = @zip.read_all(original)
   @test.assert_eq(parsed.replace("replace.txt", b"new payload"), true)
@@ -181,9 +181,9 @@ test "zip write with preserve=true round-trips a zip64 archive byte-for-byte" {
 ///|
 test "zip write with preserve=true patches end-record counts after entry removal" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"a", compression=Store)
-  archive.add("b.txt", b"b", compression=Store)
-  archive.add("c.txt", b"c", compression=Store)
+  archive.insert("a.txt", b"a", compression=Store)
+  archive.insert("b.txt", b"b", compression=Store)
+  archive.insert("c.txt", b"c", compression=Store)
   let parsed = @zip.read_all(@zip.write(archive))
   @test.assert_eq(parsed.remove("b.txt"), true)
   let rewritten = @zip.write(parsed, preserve=true)
@@ -196,7 +196,7 @@ test "zip write with preserve=true patches end-record counts after entry removal
 ///|
 test "zip set_comment invalidates the preserved trailer" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"x")
+  archive.insert("a.txt", b"x")
   let bytes = @zip.write(archive)
   let parsed = @zip.read_all(bytes)
   parsed.set_comment(b"new comment")
@@ -207,8 +207,8 @@ test "zip set_comment invalidates the preserved trailer" {
 ///|
 test "zip Archive::copy isolates entry and comment mutations" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"a", compression=Store)
-  archive.add("b.txt", b"b", compression=Store)
+  archive.insert("a.txt", b"a", compression=Store)
+  archive.insert("b.txt", b"b", compression=Store)
   archive.set_comment(b"original")
   let fork = archive.copy()
   inspect(fork.comment(), content="b\"original\"")
@@ -216,7 +216,7 @@ test "zip Archive::copy isolates entry and comment mutations" {
   inspect(archive.comment(), content="b\"original\"")
   archive.set_comment(b"updated")
   inspect(fork.comment(), content="b\"copied\"")
-  fork.add("c.txt", b"c")
+  fork.insert("c.txt", b"c")
   ignore(fork.replace("a.txt", b"a2"))
   ignore(fork.remove("b.txt"))
   // The original is untouched.
@@ -229,7 +229,7 @@ test "zip Archive::copy isolates entry and comment mutations" {
   @test.assert_eq(fork.get("a.txt"), Some(b"a2"))
   @test.assert_eq(fork.get("c.txt"), Some(b"c"))
   // Mutating the original does not leak into the fork.
-  archive.add("d.txt", b"d")
+  archive.insert("d.txt", b"d")
   assert_true(fork.get("d.txt") is None)
 }
 
@@ -237,7 +237,7 @@ test "zip Archive::copy isolates entry and comment mutations" {
 test "zip Archive::copy preserves source records for byte-preserving writes" {
   let output = @buffer.Buffer()
   let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
-  writer.add("a.txt", b"alpha", compression=Store)
+  writer.insert("a.txt", b"alpha", compression=Store)
   writer.begin_entry("b.txt")
   writer.write(b"beta beta")
   writer.end_entry()
@@ -483,7 +483,7 @@ test "zip rejects a lying zip64 size that exceeds the Int range" {
 test "zip writes and reads back a zip64 trailer" {
   let archive = @zip.Archive()
   for i in 0..<65_536 {
-    archive.add("e\{i}", b"", compression=Store)
+    archive.insert("e\{i}", b"", compression=Store)
   }
   let bytes = @zip.write(archive)
   let parsed = @zip.read_all(bytes)
@@ -493,8 +493,8 @@ test "zip writes and reads back a zip64 trailer" {
 ///|
 test "zip remove and replace" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"a")
-  archive.add("b.txt", b"b")
+  archive.insert("a.txt", b"a")
+  archive.insert("b.txt", b"b")
   @test.assert_eq(archive.remove("a.txt"), true)
   @test.assert_eq(archive.remove("missing"), false)
   @test.assert_eq(archive.get("a.txt"), None)
@@ -537,8 +537,8 @@ test "zip entry-count limit" {
 test "zip per-entry and total uncompressed limits" {
   for compression in [@zip.Store, Deflate] {
     let archive = @zip.Archive()
-    archive.add("first", b"abc", compression~)
-    archive.add("second", b"def", compression~)
+    archive.insert("first", b"abc", compression~)
+    archive.insert("second", b"def", compression~)
     let bytes = @zip.write(archive)
     let parsed = @zip.read_all(
       bytes,
@@ -600,7 +600,7 @@ test "zip read honours cancellation" {
 ///|
 test "zip write with max_output_bytes matches write and rejects oversize" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"limited output payload")
+  archive.insert("a.txt", b"limited output payload")
   let exact = @zip.write(archive)
   @test.assert_eq(@zip.write(archive, max_output_bytes=exact.length()), exact)
   try ignore(@zip.write(archive, max_output_bytes=exact.length() - 1)) catch {
@@ -630,7 +630,7 @@ test "zip rejects non-archive input" {
 ///|
 test "zip rejects corrupted fields with the correct error category" {
   let archive = @zip.Archive()
-  archive.add("a.txt", b"abc", compression=Store)
+  archive.insert("a.txt", b"abc", compression=Store)
   let valid = @zip.write(archive)
   @test.assert_eq(@zip.read_all(valid).get("a.txt"), Some(b"abc"))
   // Stored payload starts after the 30-byte local header and five-byte name.
@@ -734,12 +734,12 @@ test "optional ZIP64 trailers remain consistent after removal and replacement" {
 test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
   let archive = @zip.Archive()
   for _ in 0..<65534 {
-    archive.add("x", b"", compression=Store)
+    archive.insert("x", b"", compression=Store)
   }
   let classic = @zip.write(archive)
   let parsed = @zip.read_all(classic)
   @test.assert_eq(parsed.entries().length(), 65534)
-  parsed.add("last", b"", compression=Store)
+  parsed.insert("last", b"", compression=Store)
   // Cover fresh serialization and promotion of a preserved classic trailer.
   for preserve in [false, true] {
     let bytes = @zip.write(parsed, preserve~)
@@ -758,7 +758,7 @@ test "ZIP writes round-trip at the 65535-entry sentinel boundary" {
   // locator signature where a locator would be, at the end of the directory.
   let last = "PK\u{06}\u{07}AAAAAAAAAAAAAAAA"
   @test.assert_eq(parsed.remove("last"), true)
-  parsed.add(last, b"", compression=Store)
+  parsed.insert(last, b"", compression=Store)
   let bytes = @zip.write(parsed)
   let zip64_end = bytes.length() - 22 - 20 - 56
   let output = @buffer.Buffer()

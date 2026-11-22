@@ -112,7 +112,7 @@ test "quickcheck: op sequences agree with a model and old versions persist" {
           set = set.remove(x)
           model_remove(model, x)
         } else {
-          set = set.add(x)
+          set = set.insert(x)
           model_add(model, x)
         }
         if !agrees_with_model(set, model) {

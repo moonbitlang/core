@@ -39,7 +39,7 @@ test "sparse array operations" {
   let arr = @sparse_array.singleton(3, 100)
 
   // Add new element
-  let with_new = arr.add(8, 200)
+  let with_new = arr.insert(8, 200)
   inspect(with_new.length(), content="2")
 
   // Replace existing element
@@ -72,7 +72,7 @@ test "bitset operations" {
   inspect(sparse.length(), content="1")
 
   // Add more elements to create internal bitsets
-  let with_more = sparse.add(7, "another").add(15, "third")
+  let with_more = sparse.insert(7, "another").insert(15, "third")
   inspect(with_more.length(), content="3")
 
   // Access elements by index
@@ -179,7 +179,7 @@ test "advanced sparse operations" {
   let numbers = @sparse_array.doubleton(2, 20, 5, 50)
 
   // Add more elements
-  let extended = numbers.add(10, 100).add(15, 150)
+  let extended = numbers.insert(10, 100).insert(15, 150)
   inspect(extended.length(), content="4")
 
   // Access specific elements

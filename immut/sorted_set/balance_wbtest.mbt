@@ -91,7 +91,7 @@ test "remove rebalances: minimal repro" {
   // sizes (0, 2).
   let mut s : SortedSet[Int32] = SortedSet::empty()
   for v in [1, 0, 5, 3, 6, 2, 7] {
-    s = s.add(v)
+    s = s.insert(v)
   }
   @debug.debug_inspect(
     unbalanced_nodes(s),
@@ -121,12 +121,12 @@ test "height of sequentially built sets" {
   let mut desc : SortedSet[Int32] = SortedSet::empty()
   let mut window : SortedSet[Int32] = SortedSet::empty()
   for i in 0..<50000 {
-    asc = asc.add(i)
-    desc = desc.add(-i)
+    asc = asc.insert(i)
+    desc = desc.insert(-i)
   }
   // a sliding window: always 50 000 live values once full
   for i in 0..<100000 {
-    window = window.add(i)
+    window = window.insert(i)
     if i >= 50000 {
       window = window.remove(i - 50000)
     }
@@ -154,11 +154,11 @@ fn Lcg::below(self : Lcg, bound : Int32) -> Int32 {
 }
 
 ///|
-/// A set of up to `n` random values below `range`, built with `add`.
+/// A set of up to `n` random values below `range`, built with `insert`.
 fn Lcg::small_set(self : Lcg, n : Int32, range : Int32) -> SortedSet[Int32] {
   let mut s : SortedSet[Int32] = SortedSet::empty()
   for _ in 0..<self.below(n + 1) {
-    s = s.add(self.below(range))
+    s = s.insert(self.below(range))
   }
   s
 }
@@ -185,7 +185,7 @@ test "random operation sequences keep every node balanced" {
       let v = rng.below(range)
       match rng.below(18) {
         0..<=5 => {
-          s = s.add(v)
+          s = s.insert(v)
           model[v] = true
         }
         6..<=10 => {
@@ -267,7 +267,7 @@ test "random operation sequences keep every node balanced" {
 fn ascending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
   let mut s : SortedSet[Int32] = SortedSet::empty()
   for i in lo..<(lo + n) {
-    s = s.add(i)
+    s = s.insert(i)
   }
   s
 }
@@ -276,7 +276,7 @@ fn ascending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
 fn descending_set(lo : Int32, n : Int32) -> SortedSet[Int32] {
   let mut s : SortedSet[Int32] = SortedSet::empty()
   for i = lo + n - 1; i >= lo; i = i - 1 {
-    s = s.add(i)
+    s = s.insert(i)
   }
   s
 }

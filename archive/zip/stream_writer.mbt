@@ -34,7 +34,7 @@ priv struct PendingEntry {
 }
 
 ///|
-/// An incremental ZIP writer over a synchronous byte sink. `add` handles an
+/// An incremental ZIP writer over a synchronous byte sink. `insert` handles an
 /// already loaded file; `begin_entry`/`write`/`end_entry` handle bounded chunks.
 /// Retains central-directory records, current-entry metadata and codec buffers.
 /// The sink must consume each view before returning. A sink exception poisons
@@ -59,7 +59,7 @@ struct Writer {
 /// Writer methods raise `ZipError` for their own failures and propagate sink
 /// errors unchanged.
 /// Optional `fast_store` applies to Deflate entries: whole-file detection for
-/// `add`, per-block detection for chunked writes. It is off by default and may
+/// `insert`, per-block detection for chunked writes. It is off by default and may
 /// increase output size. ZIP entry methods are unchanged.
 pub fn Writer::Writer(
   sink : (BytesView) -> Unit raise,
@@ -246,7 +246,8 @@ fn stream_central_record(
 /// Compress and emit one complete file immediately. Reuses a whole-buffer
 /// compressor, avoiding the staging overhead of chunked DEFLATE for small files.
 /// Stored files are sent directly to the sink without an intermediate copy.
-pub fn Writer::add(
+#alias(add, deprecated="Use `insert` instead")
+pub fn Writer::insert(
   self : Writer,
   name : String,
   data : BytesView,

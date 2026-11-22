@@ -364,7 +364,7 @@ input/output for creating them:
 ///|
 test "README zip round-trip" {
   let archive = @zip.Archive()
-  archive.add("hello.txt", b"hello, zip")
+  archive.insert("hello.txt", b"hello, zip")
   let bytes = @zip.write(archive)
   let parsed = @zip.read_all(bytes)
   @test.assert_eq(parsed.get("hello.txt"), Some(b"hello, zip"))
@@ -394,7 +394,7 @@ bytes outside records, such as prefixes and gaps, are omitted.
 Supply `max_output_bytes` to bound the serialized size before allocating it.
 `write` returns the complete ZIP as `Bytes`.
 
-For incremental output, use `Writer` with a synchronous sink. `add` accepts a
+For incremental output, use `Writer` with a synchronous sink. `insert` accepts a
 complete file; `begin_entry` / `write` / `end_entry` accept chunks. Supply `size`
 when known; unknown sizes use ZIP64.
 
@@ -404,7 +404,7 @@ test "README incremental ZIP writer" {
   // A real folder adapter passes a buffered file-write callback here.
   let output = @buffer.Buffer()
   let writer = @zip.Writer(chunk => output.write_bytesview(chunk))
-  writer.add("small.txt", b"small file")
+  writer.insert("small.txt", b"small file")
   writer.begin_entry("chunked.txt", size=6UL)
   writer.write(b"abc")
   writer.write(b"def")
@@ -426,11 +426,11 @@ caller can supply the missing bytes and call `end_entry` again.
 
 Large individual entries use `begin_entry` / repeated `write` / `end_entry`;
 their declared size and cumulative positions are `UInt64`. The writer selects
-ZIP64 and data descriptors internally. `add(BytesView)` remains convenient for
+ZIP64 and data descriptors internally. `insert(name, data)` remains convenient for
 a complete in-memory entry. Directory metadata is retained until `finish`.
 
 `Writer` retains directory metadata, current-entry metadata and codec buffers.
-`add` processes a complete file during the call; `write` feeds chunks through
+`insert` processes a complete file during the call; `write` feeds chunks through
 the codec or directly to the sink. Folder traversal and file I/O belong to
 the caller.
 
@@ -529,7 +529,7 @@ max_entry_uncompressed_bytes=..., max_total_uncompressed_bytes=...)`.
 `max_package_bytes` also bounds the source retained for byte-preserving writes.
 Metadata-only reads use separate `DirectoryLimits`, without decoded-size limits.
 
-ZIP layout controls are internal: `Archive::add` no longer takes
+ZIP layout controls are internal: `Archive::insert` no longer takes
 `data_descriptor`, and `Entry` no longer exposes `data_descriptor()`.
 The former `max_preserved_source_bytes` limit and `PreservedSourceBytes` error
 kind are replaced by the existing package-size limit. Limit errors now carry

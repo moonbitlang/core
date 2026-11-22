@@ -23,13 +23,13 @@ test {
 
 ## Insert & Contain
 
-You can use `add()` to add a key to the set, and `contains()` to check whether a key exists.
+You can use `insert()` to add a key to the set, and `contains()` to check whether a key exists.
 
 ```mbt check
 ///|
 test {
   let set : @hashset.HashSet[String] = HashSet([])
-  set.add("a")
+  set.insert("a")
   @test.assert_eq(set.contains("a"), true)
 }
 ```
@@ -139,7 +139,7 @@ test {
 test {
   let set = @hashset.from_array([1, 2, 3])
   let cloned = set.copy()
-  cloned.add(4)
+  cloned.insert(4)
   @test.assert_eq(set.contains(4), false) // original unchanged
   @test.assert_eq(cloned.contains(4), true)
 }

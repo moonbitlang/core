@@ -33,7 +33,7 @@ pub fn Timer::new(duration : Int32, callback : () -> Unit) -> Timer {
   let expire_time = now() + duration.to_int64()
   timer_id.val += 1
   let timer = { timer_id: timer_id.val, expire_time, callback, }
-  evloop.timers.add(timer)
+  evloop.timers.insert(timer)
   timer
 }
 

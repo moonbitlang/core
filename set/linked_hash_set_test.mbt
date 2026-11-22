@@ -45,9 +45,9 @@ test "copy empty" {
 ///|
 test "insert" {
   let m = @set.Set([])
-  m.add("a")
-  m.add("b")
-  m.add("c")
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -55,13 +55,13 @@ test "insert" {
 }
 
 ///|
-test "add remove" {
+test "insert remove" {
   let m = @set.Set([])
-  m.add("a")
-  m.add("b")
-  m.add("c")
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
   if m.remove_and_check("a") {
-    m.add("d")
+    m.insert("d")
   }
   assert_true(m.add_and_check("test"))
   assert_false(m.add_and_check("test"))
@@ -94,7 +94,7 @@ test "from_array" {
 test "size" {
   let m = @set.Set([])
   assert_eq(m.length(), 0)
-  m.add("a")
+  m.insert("a")
   assert_eq(m.length(), 1)
 }
 
@@ -102,7 +102,7 @@ test "size" {
 test "is_empty" {
   let m = @set.Set([])
   assert_eq(m.is_empty(), true)
-  m.add("a")
+  m.insert("a")
   assert_eq(m.is_empty(), false)
   m.remove("a")
   assert_eq(m.is_empty(), true)
@@ -125,8 +125,8 @@ test "is_disjoint detects overlap in else branch" {
 ///|
 test "remove stops on shorter probe" {
   let set : @set.Set[Key] = Set([])
-  set.add({ id: 1, hash_value: 0, })
-  set.add({ id: 2, hash_value: 1, })
+  set.insert({ id: 1, hash_value: 0, })
+  set.insert({ id: 2, hash_value: 1, })
   set.remove({ id: 3, hash_value: 0, })
   inspect(set.length(), content="2")
 }
@@ -223,10 +223,10 @@ test "array unique via Set" {
 ///|
 test "remove_and_shift_back" {
   let m = @set.Set([])
-  m.add("a")
-  m.add("b")
-  m.add("c")
-  m.add("d")
+  m.insert("a")
+  m.insert("b")
+  m.insert("c")
+  m.insert("d")
   m.remove("b")
   assert_false(m.contains("b"))
   assert_true(m.contains("a"))
@@ -237,11 +237,11 @@ test "remove_and_shift_back" {
 ///|
 test "clear_and_reinsert" {
   let m = @set.Set([])
-  m.add("a")
-  m.add("b")
+  m.insert("a")
+  m.insert("b")
   m.clear()
   assert_eq(m.length(), 0)
-  m.add("c")
+  m.insert("c")
   assert_eq(m.length(), 1)
   assert_true(m.contains("c"))
 }
@@ -280,8 +280,8 @@ test "from_iter empty iter" {
 ///|
 test "remove item causes break when psl < i" {
   let set = @set.Set([])
-  set.add(1)
-  set.add(11) // This goes to a different bucket due to hash collision
+  set.insert(1)
+  set.insert(11) // This goes to a different bucket due to hash collision
   set.remove(21) // Key doesn't exist, will cause psl < i and break
   assert_eq(set.length(), 2)
 }
@@ -294,16 +294,16 @@ test "to_array_empty" {
 ///|
 test "to_array_non_empty" {
   let set = @set.Set([])
-  set.add(1)
-  set.add(2)
-  set.add(3)
+  set.insert(1)
+  set.insert(2)
+  set.insert(3)
   debug_inspect(set.to_array(), content="[1, 2, 3]")
 }
 
 ///|
 test "equal: different size" {
   let set1 = @set.Set([])
-  set1.add(1)
+  set1.insert(1)
   let set2 = @set.Set([])
   inspect(set1 == set2, content="false")
 }
@@ -311,18 +311,18 @@ test "equal: different size" {
 ///|
 test "equal: different keys" {
   let set1 = @set.Set([])
-  set1.add(1)
+  set1.insert(1)
   let set2 = @set.Set([])
-  set2.add(2)
+  set2.insert(2)
   inspect(set1 == set2, content="false")
 }
 
 ///|
 test "equal: same sets" {
   let set1 = @set.Set([])
-  set1.add(1)
+  set1.insert(1)
   let set2 = @set.Set([])
-  set2.add(1)
+  set2.insert(1)
   inspect(set1 == set2, content="true")
 }
 
@@ -336,25 +336,25 @@ test "equal: empty sets" {
 ///|
 test "equal: same elements different order" {
   let set1 = @set.Set([])
-  set1.add(1)
-  set1.add(2)
-  set1.add(3)
+  set1.insert(1)
+  set1.insert(2)
+  set1.insert(3)
   let set2 = @set.Set([])
-  set2.add(3)
-  set2.add(2)
-  set2.add(1)
+  set2.insert(3)
+  set2.insert(2)
+  set2.insert(1)
   inspect(set1 == set2, content="true")
 }
 
 ///|
 test "equal: subset" {
   let set1 = @set.Set([])
-  set1.add(1)
-  set1.add(2)
-  set1.add(3)
+  set1.insert(1)
+  set1.insert(2)
+  set1.insert(3)
   let set2 = @set.Set([])
-  set2.add(1)
-  set2.add(2)
+  set2.insert(1)
+  set2.insert(2)
   inspect(set1 == set2, content="false")
   inspect(set2 == set1, content="false")
 }
@@ -364,8 +364,8 @@ test "equal: large sets" {
   let set1 = @set.Set([])
   let set2 = @set.Set([])
   for i in 0..<100 {
-    set1.add(i)
-    set2.add(i)
+    set1.insert(i)
+    set2.insert(i)
   }
   inspect(set1 == set2, content="true")
 }
@@ -375,11 +375,11 @@ test "equal: large sets with one difference" {
   let set1 = @set.Set([])
   let set2 = @set.Set([])
   for i in 0..<100 {
-    set1.add(i)
+    set1.insert(i)
     if i != 50 {
-      set2.add(i)
+      set2.insert(i)
     } else {
-      set2.add(100) // Different element
+      set2.insert(100) // Different element
     }
   }
   inspect(set1 == set2, content="false")
@@ -388,13 +388,13 @@ test "equal: large sets with one difference" {
 ///|
 test "equal: after removal" {
   let set1 = @set.Set([])
-  set1.add(1)
-  set1.add(2)
-  set1.add(3)
+  set1.insert(1)
+  set1.insert(2)
+  set1.insert(3)
   let set2 = @set.Set([])
-  set2.add(1)
-  set2.add(2)
-  set2.add(3)
+  set2.insert(1)
+  set2.insert(2)
+  set2.insert(3)
   set1.remove(2)
   inspect(set1 == set2, content="false")
   set2.remove(2)
@@ -404,9 +404,9 @@ test "equal: after removal" {
 ///|
 test "equal: after clear" {
   let set1 = @set.Set([])
-  set1.add(1)
-  set1.add(2)
-  set1.add(3)
+  set1.insert(1)
+  set1.insert(2)
+  set1.insert(3)
   let set2 = @set.Set([])
   inspect(set1 == set2, content="false")
   set1.clear()
@@ -416,13 +416,13 @@ test "equal: after clear" {
 ///|
 test "equal: with string elements" {
   let set1 = @set.Set([])
-  set1.add("apple")
-  set1.add("banana")
-  set1.add("cherry")
+  set1.insert("apple")
+  set1.insert("banana")
+  set1.insert("cherry")
   let set2 = @set.Set([])
-  set2.add("apple")
-  set2.add("banana")
-  set2.add("cherry")
+  set2.insert("apple")
+  set2.insert("banana")
+  set2.insert("cherry")
   inspect(set1 == set2, content="true")
   set1.remove("banana")
   inspect(set1 == set2, content="false")
@@ -431,9 +431,9 @@ test "equal: with string elements" {
 ///|
 test "equal: reflexivity" {
   let set = @set.Set([])
-  set.add(1)
-  set.add(2)
-  set.add(3)
+  set.insert(1)
+  set.insert(2)
+  set.insert(3)
   inspect(set == set, content="true")
 }
 
@@ -461,7 +461,7 @@ test "trigger grow" {
 test "grow rehashes collision cluster in insertion order" {
   let set : @set.Set[Key] = Set([], capacity=2)
   for i in 0..<12 {
-    set.add({ id: i, hash_value: i % 4, })
+    set.insert({ id: i, hash_value: i % 4, })
   }
   inspect(set.length(), content="12")
   for i in 0..<12 {
@@ -469,7 +469,7 @@ test "grow rehashes collision cluster in insertion order" {
   }
   set.remove({ id: 5, hash_value: 1, })
   assert_false(set.contains({ id: 5, hash_value: 1, }))
-  set.add({ id: 12, hash_value: 0, })
+  set.insert({ id: 12, hash_value: 0, })
   let mut ids = ""
   set.each(key => ids += "\{key.id},")
   inspect(ids, content="0,1,2,3,4,6,7,8,9,10,11,12,")
@@ -538,7 +538,7 @@ test "bitwise_operations" {
 fn filter_fixture() -> @set.Set[Int32] {
   let s : @set.Set[Int32] = Set([], capacity=2)
   for i in 0..<200 {
-    s.add(i * 64)
+    s.insert(i * 64)
   }
   for i in 0..<200 {
     if i % 7 == 0 {
@@ -557,7 +557,7 @@ test "filter keeps order and lookups after removals and collisions" {
   }
   assert_eq(kept.to_array(), [ for k in s if k % 3 == 0 => k ])
   // The result is an independent, growable set.
-  kept.add(-1)
+  kept.insert(-1)
   assert_true(kept.contains(-1))
   assert_false(s.contains(-1))
   assert_eq(kept.to_array().last(), Some(-1))
@@ -597,9 +597,9 @@ test "retain matches filter, keeps order, and leaves a usable set" {
       assert_eq(s.contains(i * 64), expected.contains(i * 64))
     }
     // The linked list stays consistent for later edits.
-    s.add(-1)
+    s.insert(-1)
     s.remove(-1)
-    s.add(-2)
+    s.insert(-2)
     assert_eq(s.to_array(), [..expected, -2])
   }
 }
@@ -663,7 +663,7 @@ test "union_in_place matches union, in order, and leaves other unchanged" {
     }
     assert_eq(other.to_array(), b)
     // Still usable afterwards.
-    s.add(-1)
+    s.insert(-1)
     s.remove(-1)
     assert_eq(s.to_array(), expected)
   }
@@ -680,7 +680,7 @@ test "each: callback adds and removes elements" {
       s.remove(2)
       s.remove(3)
       for i in 100..<164 {
-        s.add(i)
+        s.insert(i)
       }
     }
   })

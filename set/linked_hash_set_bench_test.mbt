@@ -16,11 +16,11 @@
 let set_bench_n = 50000
 
 ///|
-test "bench Set::add n=50000" (it : @bench.T) {
+test "bench Set::insert n=50000" (it : @bench.T) {
   it.bench(fn() {
     let s = @set.Set([])
     for i in 0..<set_bench_n {
-      s.add(i * 1103515245)
+      s.insert(i * 1103515245)
     }
     it.keep(s.length())
   })
@@ -30,7 +30,7 @@ test "bench Set::add n=50000" (it : @bench.T) {
 test "bench Set::contains n=50000" (it : @bench.T) {
   let s = @set.Set([])
   for i in 0..<set_bench_n {
-    s.add(i * 1103515245)
+    s.insert(i * 1103515245)
   }
   it.bench(fn() {
     let mut hits = 0
@@ -47,7 +47,7 @@ test "bench Set::contains n=50000" (it : @bench.T) {
 test "bench Set::contains miss n=50000" (it : @bench.T) {
   let s = @set.Set([])
   for i in 0..<set_bench_n {
-    s.add(i * 1103515245)
+    s.insert(i * 1103515245)
   }
   it.bench(fn() {
     let mut misses = 0
@@ -64,11 +64,11 @@ test "bench Set::contains miss n=50000" (it : @bench.T) {
 /// Named for what it measures: `@bench.T` has no per-iteration setup hook,
 /// so the set has to be rebuilt inside the timed closure and the removal
 /// cost cannot be isolated from the insertion cost.
-test "bench Set::add+remove n=50000" (it : @bench.T) {
+test "bench Set::insert+remove n=50000" (it : @bench.T) {
   it.bench(fn() {
     let s = @set.Set([])
     for i in 0..<set_bench_n {
-      s.add(i * 1103515245)
+      s.insert(i * 1103515245)
     }
     for i in 0..<set_bench_n {
       s.remove(i * 1103515245)
