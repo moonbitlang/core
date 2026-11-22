@@ -93,9 +93,9 @@ test "directory records spanning chunks retain duplicate-name entry identity" {
   // A maximum-length ZIP name makes its record larger than one permitted
   // directory response, independently of the reader's chosen chunk size.
   let long_name = String::make(65535, 'a')
-  archive.add(long_name, b"", compression=Store)
-  archive.add("same", b"first", compression=Store)
-  archive.add("same", b"second", compression=Deflate)
+  archive.insert(long_name, b"", compression=Store)
+  archive.insert("same", b"first", compression=Store)
+  archive.insert("same", b"second", compression=Deflate)
   let bytes = @zip.write(archive)
   let source = archive_range_source(bytes)
   let central = zip_test_field(bytes, bytes.length() - 22 + 16, 4).to_uint64()
@@ -175,7 +175,7 @@ test "range protocol errors latch and empty output suspends extraction" {
 ///|
 test "range entry failures preserve CRC, descriptor and limit categories" {
   let archive = @zip.Archive()
-  archive.add("x", b"0123456789", compression=Store)
+  archive.insert("x", b"0123456789", compression=Store)
   let original = @zip.write(archive)
   let changed = original.to_array()
   changed[31] = b'x' // first stored payload byte, after the one-byte name
@@ -237,7 +237,7 @@ test "range entry failures preserve CRC, descriptor and limit categories" {
 test "ZIP readers reject incomplete DEFLATE after output suspension" {
   let archive = @zip.Archive()
   let payload = Bytes::make(8194, b'x')
-  archive.add("x", payload, compression=Deflate)
+  archive.insert("x", payload, compression=Deflate)
   let original = @zip.write(archive, level=0)
   let central = zip_test_field(original, original.length() - 22 + 16, 4)
   let compressed_size = zip_test_field(original, 18, 4)
@@ -376,8 +376,8 @@ fn zip_with_underreported_size(
   compression : @zip.Compression,
 ) -> Bytes raise @zip.ZipError {
   let archive = @zip.Archive()
-  archive.add("prefix", b"12345", compression=Store)
-  archive.add("x", b"0123456789", compression~)
+  archive.insert("prefix", b"12345", compression=Store)
+  archive.insert("x", b"0123456789", compression~)
   let bytes = @zip.write(archive)
   let first = zip_test_field(bytes, bytes.length() - 22 + 16, 4)
   let second = first +
@@ -416,7 +416,7 @@ test "memory and range readers agree on decoded size mismatches" {
 test "memory and range readers agree on local size mismatches" {
   for compression in [@zip.Compression::Store, Deflate] {
     let archive = @zip.Archive()
-    archive.add("x", b"0123456789", compression~)
+    archive.insert("x", b"0123456789", compression~)
     let original = @zip.write(archive)
     let source = archive_range_source(original)
     let directory = drive_directory_ranges(

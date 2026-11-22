@@ -29,9 +29,9 @@ pub fn SymbolMap::split(
 ) -> Unit {
   for interval in set.intervals() {
     let (start, stop) = interval
-    self.0.add(start)
+    self.0.insert(start)
     if stop + 1 > stop {
-      self.0.add(stop + 1)
+      self.0.insert(stop + 1)
     }
   }
 }

@@ -16,14 +16,14 @@ test "create" {
 }
 ```
 
-## Add, Get, Remove
+## Insert, Get, Remove
 
-`add` returns a new map with the key-value pair added. `remove` returns a new map with the key removed.
+`insert` returns a new map with the key-value pair added. `remove` returns a new map with the key removed.
 
 ```mbt check
 ///|
 test "add_get_remove" {
-  let map = @hashmap.empty().add("a", 1).add("b", 2)
+  let map = @hashmap.empty().insert("a", 1).insert("b", 2)
   debug_inspect(map.get("a"), content="Some(1)")
   inspect(map.contains("b"), content="true")
   inspect(map["a"], content="1")
@@ -121,8 +121,8 @@ same key-value pairs, no matter which sequence of operations produced them.
 ///|
 test "equality is content equality" {
   // Insertion order never matters
-  let a = @hashmap.empty().add("x", 1).add("y", 2).add("z", 3)
-  let b = @hashmap.empty().add("z", 3).add("y", 2).add("x", 1)
+  let a = @hashmap.empty().insert("x", 1).insert("y", 2).insert("z", 3)
+  let b = @hashmap.empty().insert("z", 3).insert("y", 2).insert("x", 1)
   assert_true(a == b)
   // Bulk construction and incremental adds agree
   let c : @hashmap.HashMap[String, Int32] = HashMap([
@@ -132,7 +132,7 @@ test "equality is content equality" {
   ])
   assert_true(c == a)
   // Operation history is invisible: add/remove round-trips restore equality
-  assert_true(a.add("w", 9).remove("w") == a)
+  assert_true(a.insert("w", 9).remove("w") == a)
   // Equal maps hash equally
   let h1 = Hasher()
   h1.combine(a)
@@ -253,8 +253,8 @@ impl Hash for SameHashKey with fn hash_combine(_, hasher) {
 
 ///|
 test "collisions preserve content equality" {
-  let a = @hashmap.empty().add(SameHashKey(1), 1).add(SameHashKey(2), 2)
-  let b = @hashmap.empty().add(SameHashKey(2), 2).add(SameHashKey(1), 1)
+  let a = @hashmap.empty().insert(SameHashKey(1), 1).insert(SameHashKey(2), 2)
+  let b = @hashmap.empty().insert(SameHashKey(2), 2).insert(SameHashKey(1), 1)
   assert_true(a == b)
   // Shrinking a bucket back to one entry restores the exact
   // singleton shape

@@ -13,7 +13,6 @@ import {
 #derive(Eq)
 type HashSet[A]
 pub fn[A : Eq + Hash] HashSet::HashSet(ArrayView[A]) -> Self[A]
-pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 pub fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
@@ -32,6 +31,8 @@ pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 pub fn[A : Hash] HashSet::hash(Self[A]) -> Int32
+#alias(add, deprecated)
+pub fn[A : Eq + Hash] HashSet::insert(Self[A], A) -> Self[A]
 pub fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)

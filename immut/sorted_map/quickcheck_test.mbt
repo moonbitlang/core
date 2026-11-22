@@ -20,7 +20,7 @@
 // invariant, which is what rotations after insert/remove must preserve.
 
 ///|
-/// Replace-or-append, mirroring `SortedMap::add` (last write wins).
+/// Replace-or-append, mirroring `SortedMap::insert` (last write wins).
 fn model_set(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, entry in model {
     if entry.0 == key {
@@ -115,7 +115,7 @@ test "quickcheck: op sequences agree with a model and old versions persist" {
           map = map.remove(key)
           model_remove(model, key)
         } else {
-          map = map.add(key, op.1)
+          map = map.insert(key, op.1)
           model_set(model, key, op.1)
         }
         if !agrees_with_model(map, model) {

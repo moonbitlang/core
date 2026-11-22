@@ -38,7 +38,7 @@ test "immutable operations" {
   let original = @hashset.HashSet([1, 2, 3])
 
   // Add element - returns new set
-  let with_four = original.add(4)
+  let with_four = original.insert(4)
   inspect(original.length(), content="3") // Original unchanged
   inspect(with_four.length(), content="4") // New set has additional element
   inspect(with_four.contains(4), content="true")
@@ -92,15 +92,15 @@ same elements, no matter which sequence of operations produced them.
 ///|
 test "equality is content equality" {
   // Insertion order never matters
-  let a = @hashset.empty().add("x").add("y").add("z")
-  let b = @hashset.empty().add("z").add("y").add("x")
+  let a = @hashset.empty().insert("x").insert("y").insert("z")
+  let b = @hashset.empty().insert("z").insert("y").insert("x")
   assert_true(a == b)
   // Bulk construction and incremental adds agree
   let c : @hashset.HashSet[String] = HashSet(["x", "y", "z"])
   assert_true(c == a)
   // Operation history is invisible: add/remove round-trips restore
   // equality
-  assert_true(a.add("w").remove("w") == a)
+  assert_true(a.insert("w").remove("w") == a)
   // Equal sets hash equally
   let h1 = Hasher()
   h1.combine(a)
@@ -130,8 +130,8 @@ impl Hash for OneBucketElem with fn hash_combine(_, hasher) {
 
 ///|
 test "collisions preserve content equality" {
-  let a = @hashset.empty().add(OneBucketElem(1)).add(OneBucketElem(2))
-  let b = @hashset.empty().add(OneBucketElem(2)).add(OneBucketElem(1))
+  let a = @hashset.empty().insert(OneBucketElem(1)).insert(OneBucketElem(2))
+  let b = @hashset.empty().insert(OneBucketElem(2)).insert(OneBucketElem(1))
   assert_true(a == b)
   // Shrinking a bucket back to one element restores the exact
   // single-element shape
@@ -204,9 +204,9 @@ test "structural sharing" {
   let base_set = @hashset.HashSet([1, 2, 3, 4, 5])
 
   // Adding elements creates new sets that share structure
-  let set_with_six = base_set.add(6)
-  let set_with_seven = base_set.add(7)
-  let set_with_eight = base_set.add(8)
+  let set_with_six = base_set.insert(6)
+  let set_with_seven = base_set.insert(7)
+  let set_with_eight = base_set.insert(8)
 
   // All sets share the common structure [1, 2, 3, 4, 5]
   inspect(base_set.length(), content="5")
@@ -278,7 +278,7 @@ Key differences from mutable sets:
 test "immutable vs mutable comparison" {
   // Immutable set - creates new instances
   let immut_set = @hashset.HashSet([1, 2, 3])
-  let immut_with_four = immut_set.add(4)
+  let immut_with_four = immut_set.insert(4)
 
   // Both sets exist independently
   inspect(immut_set.contains(4), content="false") // Original doesn't have 4
@@ -324,8 +324,8 @@ test "performance benefits" {
   let base = @hashset.HashSet([1, 2, 3, 4, 5])
 
   // Multiple derived sets share structure
-  let derived1 = base.add(6)
-  let derived2 = base.add(7)
+  let derived1 = base.insert(6)
+  let derived2 = base.insert(7)
   let derived3 = base.remove(1)
 
   // Efficient operations due to structural sharing
@@ -383,7 +383,7 @@ test "configuration usage" {
     config : @hashset.HashSet[String],
     feature : String,
   ) -> @hashset.HashSet[String] {
-    config.add(feature)
+    config.insert(feature)
   }
 
   fn disable_feature(

@@ -128,7 +128,7 @@ test "intersection matches ordinary sets and returns an independent set" {
         expected.sort()
         actual.sort()
         @test.assert_eq(actual, expected)
-        result.add(-1)
+        result.insert(-1)
         @test.assert_eq(left.contains(-1), false)
         @test.assert_eq(right.contains(-1), false)
       }

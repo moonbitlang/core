@@ -37,7 +37,7 @@ test "constructor capacity" {
 test "insert_and_grow" {
   let m = Set([])
   for i in 0..<10 {
-    m.add(i.to_string())
+    m.insert(i.to_string())
   }
   @test.assert_eq(m.length(), 10)
   @test.assert_eq(m.capacity, 16)
@@ -51,7 +51,7 @@ test "capacity_and_size" {
   let m = Set([])
   @test.assert_eq(m.capacity, default_init_capacity)
   @test.assert_eq(m.length(), 0)
-  m.add("a")
+  m.insert("a")
   @test.assert_eq(m.length(), 1)
 }
 

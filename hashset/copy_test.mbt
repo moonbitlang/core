@@ -41,7 +41,7 @@ impl Hash for Collide with fn hash_combine(self, hasher) {
 test "HashSet::copy is independent of the original" {
   let original = @hashset.HashSet([])
   for i in 0..<32 {
-    original.add(Collide(i))
+    original.insert(Collide(i))
   }
   let duplicate = original.copy()
   for i in 0..<32 {
@@ -64,14 +64,14 @@ test "HashSet::copy is independent of the original" {
 test "HashSet::copy leaves the original unaffected by later insertions" {
   let original = @hashset.HashSet([])
   for i in 0..<16 {
-    original.add(Collide(i))
+    original.insert(Collide(i))
   }
   // Only a few insertions, deliberately: enough to displace shared entries
   // through `push_away`, but not enough to trigger a `grow` -- growth
   // reassigns every PSL and would mask the corruption.
   let duplicate = original.copy()
   for i in 16..<20 {
-    duplicate.add(Collide(i))
+    duplicate.insert(Collide(i))
   }
   let mut still_present = 0
   for i in 0..<16 {
@@ -91,7 +91,7 @@ test "HashSet::copy on an empty set" {
   let original = @hashset.HashSet(empty)
   let duplicate = original.copy()
   inspect(duplicate.length(), content="0")
-  duplicate.add(Collide(1))
+  duplicate.insert(Collide(1))
   inspect(original.length(), content="0")
   inspect(duplicate.length(), content="1")
 }

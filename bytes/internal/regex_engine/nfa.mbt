@@ -55,7 +55,7 @@ priv struct Builder {
 }
 
 ///|
-fn Builder::add(self : Builder, node : Node) -> Int32 {
+fn Builder::insert(self : Builder, node : Node) -> Int32 {
   self.nodes.push(node)
   self.nodes.length() - 1
 }
@@ -158,7 +158,7 @@ fn Builder::choice(
   first : Int32,
   second : Int32,
 ) -> Int32 {
-  self.add(Union(if greedy { [first, second] } else { [second, first] }))
+  self.insert(Union(if greedy { [first, second] } else { [second, first] }))
 }
 
 ///|
@@ -177,7 +177,7 @@ fn Builder::set_choice(
 /// node. The shapes follow the compiler's `Regex_compile2.build_tnfa`.
 fn Builder::emit(self : Builder, ir : Ir, next : Int32) -> Int32 {
   match ir {
-    IChar(set) => self.add(Char(set, next))
+    IChar(set) => self.insert(Char(set, next))
     ISeq(irs) =>
       for i = irs.length() - 1, next = next; i >= 0; {
         continue i - 1, self.emit(irs[i], next)
@@ -186,20 +186,20 @@ fn Builder::emit(self : Builder, ir : Ir, next : Int32) -> Int32 {
       }
     IAlt(irs) =>
       match irs {
-        [] => self.add(Char(ByteSet::empty(), next))
+        [] => self.insert(Char(ByteSet::empty(), next))
         [ir] => self.emit(ir, next)
         _ =>
-          self.add(
+          self.insert(
             Union(FixedArray::makei(irs.length(), i => self.emit(irs[i], next))),
           )
       }
     IGroup(index, inner) => {
-      let close = self.add(Tag(index * 2 + 1, next))
+      let close = self.insert(Tag(index * 2 + 1, next))
       let body = self.emit(inner, close)
-      self.add(Tag(index * 2, body))
+      self.insert(Tag(index * 2, body))
     }
-    IAfter(cat) => self.add(After(self.after_bit(cat), next))
-    IBefore(cat) => self.add(Before(cat, next))
+    IAfter(cat) => self.insert(After(self.after_bit(cat), next))
+    IBefore(cat) => self.insert(Before(cat, next))
     IRepeat(inner, min~, max~, greedy~, nullable~) => {
       let rest = match max {
         None =>
@@ -207,19 +207,19 @@ fn Builder::emit(self : Builder, ir : Ir, next : Int32) -> Int32 {
             if nullable {
               // `x*` with nullable `x` is `(x+)?`, which keeps leftmost-first
               // semantics when an iteration can match the empty string.
-              let plus = self.add(Accept)
+              let plus = self.insert(Accept)
               let body = self.emit(inner, plus)
               self.set_choice(plus, greedy, body, next)
               self.choice(greedy, body, next)
             } else {
-              let star = self.add(Accept)
+              let star = self.insert(Accept)
               let body = self.emit(inner, star)
               self.set_choice(star, greedy, body, next)
               star
             }
           } else {
             // The last mandatory copy loops: `x{n,}` is `x{n-1}x+`.
-            let plus = self.add(Accept)
+            let plus = self.insert(Accept)
             let body = self.emit(inner, plus)
             self.set_choice(plus, greedy, body, next)
             body

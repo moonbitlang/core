@@ -69,7 +69,7 @@ fn agrees_with_model(set : @set.Set[Int32], model : Array[Int32]) -> Bool {
 }
 
 ///|
-test "quickcheck: add/remove sequences agree with an ordered array model" {
+test "quickcheck: insert/remove sequences agree with an ordered array model" {
   @quickcheck.check(
     (ops : Array[(Int32, Int32)]) => {
       let set : @set.Set[Int32] = Set([])
@@ -122,7 +122,7 @@ test "quickcheck: unlinking head, tail, and middle keeps the chain intact" {
         if set.to_array() != model {
           return false
         }
-        set.add(key)
+        set.insert(key)
         model.push(key)
         if set.to_array() != model {
           return false
@@ -220,7 +220,7 @@ test "quickcheck: insertion order survives repeated rehashing" {
         set.remove(key)
         model_remove(model, key)
       } else {
-        set.add(key)
+        set.insert(key)
         model_add(model, key)
       }
     }
@@ -228,7 +228,7 @@ test "quickcheck: insertion order survives repeated rehashing" {
     // interleaved removals so growth also relinks a chain with holes.
     for i in 0..<400 {
       let key = 100 + i
-      set.add(key)
+      set.insert(key)
       model_add(model, key)
       if i % 17 == 0 && model.length() > 0 {
         let victim = model[i % model.length()]

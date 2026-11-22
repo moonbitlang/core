@@ -34,19 +34,19 @@ fn balance_bench_build(
 ) -> @sorted_map.SortedMap[Int32, Int32] {
   let mut m = @sorted_map.empty()
   for k in keys {
-    m = m.add(k, k)
+    m = m.insert(k, k)
   }
   m
 }
 
 ///|
-test "bench SortedMap::add ascending n=10000" (it : @bench.T) {
+test "bench SortedMap::insert ascending n=10000" (it : @bench.T) {
   let keys = balance_bench_keys(scrambled=false)
   it.bench(fn() { it.keep(balance_bench_build(keys)) })
 }
 
 ///|
-test "bench SortedMap::add scrambled n=10000" (it : @bench.T) {
+test "bench SortedMap::insert scrambled n=10000" (it : @bench.T) {
   let keys = balance_bench_keys(scrambled=true)
   it.bench(fn() { it.keep(balance_bench_build(keys)) })
 }

@@ -34,21 +34,21 @@ test "order" {
   let m = @vector_map.VectorMap([("a", 1), ("b", 2), ("c", 3)])
   // replacing in place: "a" stays first
   debug_inspect(
-    m.add("a", 10).keys().to_array(),
+    m.insert("a", 10).keys().to_array(),
     content=(
       #|["a", "b", "c"]
     ),
   )
   // a fresh key is appended
   debug_inspect(
-    m.add("d", 4).keys().to_array(),
+    m.insert("d", 4).keys().to_array(),
     content=(
       #|["a", "b", "c", "d"]
     ),
   )
   // remove-then-add moves it to the end
   debug_inspect(
-    m.remove("a").add("a", 1).keys().to_array(),
+    m.remove("a").insert("a", 1).keys().to_array(),
     content=(
       #|["b", "c", "a"]
     ),
@@ -56,12 +56,12 @@ test "order" {
 }
 ```
 
-## Add, get, remove
+## Insert, get, remove
 
 ```mbt check
 ///|
 test "add_get_remove" {
-  let m = @vector_map.empty().add("a", 1).add("b", 2)
+  let m = @vector_map.empty().insert("a", 1).insert("b", 2)
   debug_inspect(m.get("a"), content="Some(1)")
   inspect(m["b"], content="2")
   inspect(m.contains("z"), content="false")
@@ -149,7 +149,10 @@ test "equality" {
   let ab = @vector_map.VectorMap([("a", 1), ("b", 2)])
   let ba = @vector_map.VectorMap([("b", 2), ("a", 1)])
   inspect(ab == ba, content="false")
-  inspect(ab == @vector_map.empty().add("a", 1).add("b", 2), content="true")
+  inspect(
+    ab == @vector_map.empty().insert("a", 1).insert("b", 2),
+    content="true",
+  )
 }
 ```
 
@@ -178,7 +181,7 @@ test "no_op" {
 }
 ```
 
-No such promise is made beyond those, and in particular `add` always builds a new map even when the value it stores equals the one already there. Deciding otherwise would mean comparing values, and the only generic way to do that cheaply — `physical_equal` — is explicitly not something to hang semantics on. Check `get` yourself first if you need to skip a redundant write.
+No such promise is made beyond those, and in particular `insert` always builds a new map even when the value it stores equals the one already there. Deciding otherwise would mean comparing values, and the only generic way to do that cheaply — `physical_equal` — is explicitly not something to hang semantics on. Check `get` yourself first if you need to skip a redundant write.
 
 ## How it works, and what it costs
 
@@ -188,13 +191,13 @@ Entries live in a persistent vector — the *spine* — in insertion order, and 
 | --- | --- |
 | `contains` | one trie descent |
 | `get` | one trie descent, then one vector descent |
-| `add` on an existing key | one trie descent, one vector descent to recover the stored key, then one vector path copied |
-| `add` on a new key | one trie descent, one trie insertion, and usually only the vector's tail rewritten |
+| `insert` on an existing key | one trie descent, one vector descent to recover the stored key, then one vector path copied |
+| `insert` on a new key | one trie descent, one trie insertion, and usually only the vector's tail rewritten |
 | `remove` | one trie descent, one trie removal, one vector write — plus the trimming or rebuild described below |
 | `length`, `is_empty` | `O(1)` |
 | iteration, `map`, `filter`, `to_array` | `O(n)` |
 
-A trie descent is `O(log n)` for keys whose hashes are reasonably distributed. Keys that collide on the full hash share a bucket that is searched linearly, so an adversarial or badly written `Hash` degrades lookup, `add` and `remove` towards `O(n)` — this map inherits that from `@immut/hashmap` and does nothing to make it worse.
+A trie descent is `O(log n)` for keys whose hashes are reasonably distributed. Keys that collide on the full hash share a bucket that is searched linearly, so an adversarial or badly written `Hash` degrades lookup, `insert` and `remove` towards `O(n)` — this map inherits that from `@immut/hashmap` and does nothing to make it worse.
 
 Removal punches a hole in the spine rather than shifting the entries after it, since shifting would invalidate the index entry for every one of them. Under continued removal, holes are reclaimed two ways:
 

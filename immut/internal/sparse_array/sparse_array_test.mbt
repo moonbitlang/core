@@ -19,12 +19,12 @@ test "SparseArray" {
     [arr0.get(0), arr0.get(1), arr0.get(2)],
     content="[None, Some(1), None]",
   )
-  let arr1 = arr0.add(2, 2)
+  let arr1 = arr0.insert(2, 2)
   debug_inspect(
     [arr1.get(0), arr1.get(1), arr1.get(2)],
     content="[None, Some(1), Some(2)]",
   )
-  let arr2 = arr1.add(0, 0)
+  let arr2 = arr1.insert(0, 0)
   debug_inspect(
     [arr2.get(0), arr2.get(1), arr2.get(2)],
     content="[Some(0), Some(1), Some(2)]",
@@ -50,11 +50,14 @@ test "SparseArray::from_sorted_fixed_array" {
 ///|
 test "SparseArray::union" {
   let arr1 = @sparse_array.singleton(0, 0)
-    .add(1, 1)
-    .add(3, 3)
-    .add(4, 4)
-    .add(5, 5)
-  let arr2 = @sparse_array.singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
+    .insert(1, 1)
+    .insert(3, 3)
+    .insert(4, 4)
+    .insert(5, 5)
+  let arr2 = @sparse_array.singleton(1, 10)
+    .insert(2, 2)
+    .insert(4, 40)
+    .insert(31, 31)
   let arr3 = arr1.union(arr2, (_x, y) => y)
   debug_inspect(
     [
@@ -72,8 +75,8 @@ test "SparseArray::union" {
 
 ///|
 test "SparseArray::intersection partial" {
-  let left = @sparse_array.singleton(0, 1).add(1, 2).add(2, 3)
-  let right = @sparse_array.singleton(0, 10).add(1, 20).add(2, 30)
+  let left = @sparse_array.singleton(0, 1).insert(1, 2).insert(2, 3)
+  let right = @sparse_array.singleton(0, 10).insert(1, 20).insert(2, 30)
   let inter = left.intersection(right, (x, y) => {
     if x == 2 {
       None
@@ -90,7 +93,10 @@ test "SparseArray::intersection partial" {
 
 ///|
 test "SparseArray::iter" {
-  let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
+  let arr = @sparse_array.singleton(0, 0)
+    .insert(1, 1)
+    .insert(3, 3)
+    .insert(31, 31)
   let buf = StringBuilder(capacity=0)
   let mut is_first = true
   arr.each(x => {

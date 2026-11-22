@@ -75,7 +75,7 @@ test "quickcheck: strongly asymmetric sizes match the filter model" {
     let small = @sorted_set.from_array(xs[0:k])
     let big = @sorted_set.from_array(ys)
     for i in 0..<600 {
-      big.add(10000 + i)
+      big.insert(10000 + i)
     }
     let d_small_big = small.difference(big)
     let e_d_small_big = small.to_array().filter(x => !big.contains(x))
@@ -147,7 +147,7 @@ test "quickcheck: results do not share nodes with the inputs" {
     let s0 = s.to_array()
     // mutating the inputs must not disturb the results
     for y in ys {
-      a.add(y)
+      a.insert(y)
     }
     for x in xs {
       b.remove(x)
@@ -165,7 +165,7 @@ test "quickcheck: results do not share nodes with the inputs" {
         a2.symmetric_difference(b2),
       ] {
       for y in ys {
-        result.add(y)
+        result.insert(y)
       }
       for x in xs {
         result.remove(x)

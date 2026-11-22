@@ -97,7 +97,7 @@ fn ObservationSummary::is_empty(self : ObservationSummary) -> Bool {
 }
 
 ///|
-fn ObservationSummary::add(
+fn ObservationSummary::record(
   self : ObservationSummary,
   observations : Observations,
 ) -> Unit {

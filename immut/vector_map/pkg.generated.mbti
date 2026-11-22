@@ -13,7 +13,6 @@ import {
 // Types and methods
 type VectorMap[K, V]
 pub fn[K : Eq + Hash, V] VectorMap::VectorMap(ArrayView[(K, V)]) -> Self[K, V]
-pub fn[K : Eq + Hash, V] VectorMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] VectorMap::at(Self[K, V], K) -> V
 pub fn[K : Eq + Hash, V] VectorMap::contains(Self[K, V], K) -> Bool
@@ -34,6 +33,8 @@ pub fn[K : Eq + Hash, V] VectorMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] VectorMap::get(Self[K, V], K) -> V?
 pub fn[K : Hash, V : Hash] VectorMap::hash(Self[K, V]) -> Int32
+#alias(add, deprecated)
+pub fn[K : Eq + Hash, V] VectorMap::insert(Self[K, V], K, V) -> Self[K, V]
 pub fn[K, V] VectorMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] VectorMap::iter(Self[K, V]) -> Iter[(K, V)]

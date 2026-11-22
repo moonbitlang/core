@@ -32,8 +32,8 @@ impl Compare for ReentrantCompare with fn compare(a, b) {
 ///|
 test "to_array stays safe after a comparison mutates the set" {
   let set : @sorted_set.SortedSet[ReentrantCompare] = SortedSet([])
-  set.add({ value: 1, before_compare: () => (), })
-  set.add({ value: 2, before_compare: () => set.clear(), })
+  set.insert({ value: 1, before_compare: () => (), })
+  set.insert({ value: 2, before_compare: () => set.clear(), })
   // Mutation during comparison has unspecified results, but array
   // construction must initialize every element without writing out of bounds.
   let actual = set.to_array().map(x => x.value)

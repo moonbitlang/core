@@ -21,12 +21,13 @@ pub impl Show for ZipError
 // Types and methods
 type Archive
 pub fn Archive::Archive() -> Self
-pub fn Archive::add(Self, String, BytesView, compression? : Compression) -> Unit
 pub fn Archive::comment(Self) -> BytesView
 #alias(clone, deprecated)
 pub fn Archive::copy(Self) -> Self
 pub fn Archive::entries(Self) -> ArrayView[Entry]
 pub fn Archive::get(Self, StringView) -> BytesView?
+#alias(add, deprecated)
+pub fn Archive::insert(Self, String, BytesView, compression? : Compression) -> Unit
 pub fn Archive::remove(Self, StringView) -> Bool
 pub fn Archive::replace(Self, StringView, BytesView) -> Bool
 pub fn Archive::set_comment(Self, BytesView) -> Unit
@@ -118,10 +119,11 @@ pub fn ReadRange::offset(Self) -> UInt64
 
 type Writer
 pub fn Writer::Writer((BytesView) -> Unit raise, level? : Int32, fast_store? : Bool) -> Self
-pub fn Writer::add(Self, String, BytesView, compression? : Compression) -> Unit raise
 pub fn Writer::begin_entry(Self, String, compression? : Compression, size? : UInt64) -> Unit raise
 pub fn Writer::end_entry(Self) -> Unit raise
 pub fn Writer::finish(Self, comment? : BytesView) -> Unit raise
+#alias(add, deprecated)
+pub fn Writer::insert(Self, String, BytesView, compression? : Compression) -> Unit raise
 pub fn Writer::is_failed(Self) -> Bool
 pub fn Writer::is_finished(Self) -> Bool
 pub fn Writer::position(Self) -> UInt64

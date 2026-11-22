@@ -32,15 +32,15 @@ test {
 }
 ```
 
-## Add & Remove
+## Insert & Remove
 
-You can use `add` to add an element to the ImmutableSet.
+You can use `insert` to add an element to the ImmutableSet.
 
 ```mbt check
 ///|
 test {
   let set = @sorted_set.SortedSet([1, 2, 3, 4])
-  @test.assert_eq(set.add(5).to_array(), [1, 2, 3, 4, 5])
+  @test.assert_eq(set.insert(5).to_array(), [1, 2, 3, 4, 5])
 }
 ```
 

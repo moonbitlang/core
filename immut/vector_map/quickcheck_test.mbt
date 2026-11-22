@@ -23,7 +23,7 @@
 // position, shows up as disagreement.
 
 ///|
-/// Append if new, overwrite in place if present — `VectorMap::add`.
+/// Append if new, overwrite in place if present — `VectorMap::insert`.
 fn model_add(model : Array[(Int32, Int32)], key : Int32, value : Int32) -> Unit {
   for i, kv in model {
     if kv.0 == key {
@@ -117,7 +117,7 @@ fn ops_agree(ops : Array[Int32], remove_bias~ : Bool) -> Bool {
   let mut map : @vector_map.VectorMap[Int32, Int32] = @vector_map.empty()
   if remove_bias {
     for key in 0..<32 {
-      map = map.add(key, key)
+      map = map.insert(key, key)
       model_add(model, key, key)
     }
   }
@@ -143,7 +143,7 @@ fn ops_agree(ops : Array[Int32], remove_bias~ : Bool) -> Bool {
     }
     match choice {
       0 | 1 | 2 => {
-        map = map.add(key, value)
+        map = map.insert(key, value)
         model_add(model, key, value)
       }
       3 | 4 => {
@@ -223,16 +223,16 @@ fn build(
 }
 
 ///|
-test "quickcheck: bulk construction matches repeated add" {
+test "quickcheck: bulk construction matches repeated insert" {
   @quickcheck.check(
     (entries : Array[(Int32, Int32)]) => {
       let (map, model) = build(entries)
       guard agrees_with_model(map, model) else { return false }
-      // The array constructor, the iterator constructor and a fold of `add`
+      // The array constructor, the iterator constructor and a fold of `insert`
       // must all land on the same value.
       let by_add = entries
         .map(kv => (kv.0 & 31, kv.1 & 7))
-        .fold(init=@vector_map.empty(), (m, kv) => m.add(kv.0, kv.1))
+        .fold(init=@vector_map.empty(), (m, kv) => m.insert(kv.0, kv.1))
       guard map == by_add else { return false }
       map ==
       @vector_map.from_iter(entries.iter().map(kv => (kv.0 & 31, kv.1 & 7)))
@@ -250,7 +250,7 @@ test "quickcheck: persistence — an operation never disturbs its receiver" {
       let key = raw_key & 31
       let value = raw_value & 7
       // Derive several new versions, then require the original intact.
-      let _ = map.add(key, value)
+      let _ = map.insert(key, value)
       let _ = map.remove(key)
       let _ = map.filter((k, _) => k % 2 == 0)
       let _ = map.map((_, v) => v + 1)
@@ -285,7 +285,7 @@ test "quickcheck: equality is exactly same-entries-same-order" {
       // Perturbing a single value, leaving keys and order alone, must also be
       // enough to make them unequal.
       let (k0, v0) = model[0]
-      guard map != map.add(k0, v0 + 1) else { return false }
+      guard map != map.insert(k0, v0 + 1) else { return false }
       // A proper prefix must compare unequal from BOTH sides — a length check
       // that only caught the short side on the right would leave `Eq`
       // asymmetric, and comparing entry by entry would not notice.

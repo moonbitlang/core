@@ -57,7 +57,7 @@ test "get after insertion" {
     (2, "two"),
     (0, "zero"),
   ])
-  let map = map.add(4, "four")
+  let map = map.insert(4, "four")
   @test.assert_eq(map.get(4), Some("four"))
 }
 
@@ -70,7 +70,7 @@ test "_[_] after insertion" {
     (2, "two"),
     (0, "zero"),
   ])
-  let map = map.add(4, "four")
+  let map = map.insert(4, "four")
   @test.assert_eq(map[4], "four")
 }
 

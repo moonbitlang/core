@@ -80,7 +80,7 @@ fn[K, V] make_tree(
   r : SortedMap[K, V],
 ) -> SortedMap[K, V] {
   // length() is #inline, so the size match collapses into make_tree, which
-  // is itself #inline into balance / merge / add.
+  // is itself #inline into balance / merge / insert.
   let size = l.length() + r.length() + 1
   Tree(key, value~, size~, l, r)
 }
@@ -330,7 +330,7 @@ fn[K : Compare, V] sorted_map_from_array_by_add(
 ) -> SortedMap[K, V] {
   for item in array; mp = Empty {
     let (k, v) = item
-    continue mp.add(k, v)
+    continue mp.insert(k, v)
   } nobreak {
     mp
   }
@@ -357,7 +357,7 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 
 ///|
 // Deduplicate a key-sorted `SortEntry` buffer in place, keeping the last value
-// seen for each key (last writer wins, matching `add`). The unique entries are
+// seen for each key (last writer wins, matching `insert`). The unique entries are
 // packed at the front and their count is returned; the tail is left untouched
 // and must be ignored by the caller. Indices are monotonic (write <= start <=
 // end < len), so the unchecked accessors stay in bounds.
@@ -636,7 +636,7 @@ pub fn[K : Compare, V] SortedMap::from_iter(
   // materialize the whole iterator, so live memory would grow with the input
   // length instead of the number of distinct keys. Callers who want the bulk
   // path and can afford the buffer can write `SortedMap(iter.to_array())`.
-  iter.fold(init=empty(), (m, e) => m.add(e.0, e.1))
+  iter.fold(init=empty(), (m, e) => m.insert(e.0, e.1))
 }
 
 ///|

@@ -118,8 +118,8 @@ test "fast store propagates through gzip zlib and their streaming encoders" {
 test "ZIP fast store preserves method metadata limits and pristine records" {
   let input = optional_store_input(32768)
   let archive = @zip.Archive()
-  archive.add("data", input)
-  archive.add("stored", b"kept", compression=Store)
+  archive.insert("data", input)
+  archive.insert("stored", b"kept", compression=Store)
   @test.assert_eq(@zip.write(archive), @zip.write(archive, fast_store=false))
   let encoded = @zip.write(archive, fast_store=true)
   let decoded = @zip.read_all(encoded)
@@ -168,7 +168,7 @@ test "ZIP fast store preserves method metadata limits and pristine records" {
   })
   let out = @buffer.Buffer()
   let writer = @zip.Writer(bytes => out.write_bytesview(bytes), fast_store=true)
-  writer.add("whole", input)
+  writer.insert("whole", input)
   writer.begin_entry("chunks")
   for start = 0; start < input.length(); start = start + 97 {
     writer.write(input[start:(start + 97).min(input.length())])

@@ -527,7 +527,7 @@ async fn perform_job_in_worker(
     None if evloop.running_workers.length() >= evloop.max_worker_count => {
       let waiter = @coroutine.current_coroutine()
       let queued_job = { job_id, job, waiter, }
-      evloop.job_queue.add(queued_job)
+      evloop.job_queue.insert(queued_job)
       match @coroutine.suspend_check_cancel() {
         Continue => ()
         Cancelled if evloop.job_queue.contains(queued_job) => {

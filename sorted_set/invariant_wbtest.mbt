@@ -115,10 +115,10 @@ fn set_ops_scenario(
   let a : SortedSet[Int32] = new_sorted_set()
   let b : SortedSet[Int32] = new_sorted_set()
   for _ in 0..<size_a {
-    a.add(rng.below(key_space))
+    a.insert(rng.below(key_space))
   }
   for _ in 0..<size_b {
-    b.add(rng.below(key_space))
+    b.insert(rng.below(key_space))
   }
   check_invariants(a)
   check_invariants(b)
@@ -150,7 +150,7 @@ fn set_ops_scenario(
   // never leaks into the inputs (they would if nodes were shared)
   for result in [d, i, s, u] {
     for _ in 0..<20 {
-      result.add(rng.below(key_space))
+      result.insert(rng.below(key_space))
       result.remove(rng.below(key_space))
       check_invariants(result)
     }
@@ -196,7 +196,7 @@ test "set operations with self and empty keep invariants" {
   let rng = Rand::{ state: 77UL, }
   let a : SortedSet[Int32] = new_sorted_set()
   for _ in 0..<150 {
-    a.add(rng.below(500))
+    a.insert(rng.below(500))
   }
   let empty : SortedSet[Int32] = new_sorted_set()
   for

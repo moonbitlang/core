@@ -13,8 +13,6 @@ import {
 // Types and methods
 type SortedMap[K, V]
 pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
-#alias(insert, deprecated)
-pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int32
@@ -47,6 +45,8 @@ pub fn[V : @json.FromJson] SortedMap::from_json(@json.Json) -> Self[String, V] r
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int32
+#alias(add, deprecated)
+pub fn[K : Compare, V] SortedMap::insert(Self[K, V], K, V) -> Self[K, V]
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]

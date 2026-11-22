@@ -62,7 +62,7 @@ pub async fn[X] Lazy::wait(self : Lazy[X]) -> X {
     }
   }
   let curr_coro = @coroutine.current_coroutine()
-  self.waiters.add(curr_coro)
+  self.waiters.insert(curr_coro)
   defer {
     self.waiters.remove(curr_coro)
     if self.waiters.is_empty() && self.state is Running(coro) {

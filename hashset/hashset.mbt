@@ -67,7 +67,7 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
     None => default_init_capacity.max(capacity_for_length(length))
   }
   let m = new_hashset(capacity)
-  arr.each(e => m.add(e))
+  arr.each(e => m.insert(e))
   m
 }
 
@@ -84,14 +84,14 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 /// ```mbt check
 /// test {
 ///   let set : @hashset.HashSet[String] = HashSet([])
-///   set.add("key")
+///   set.insert("key")
 ///   inspect(set.contains("key"), content="true")
-///   set.add("key") // no effect since it already exists
+///   set.insert("key") // no effect since it already exists
 ///   inspect(set.length(), content="1")
 /// }
 /// ```
-#alias(insert, deprecated)
-pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
+#alias(add, deprecated="Use `insert` instead")
+pub fn[K : Hash + Eq] HashSet::insert(self : HashSet[K], key : K) -> Unit {
   self.add_with_hash(key, Hash::hash(key))
 }
 
@@ -448,7 +448,7 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
 pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
   let s = new_hashset(default_init_capacity)
   for e in iter {
-    s.add(e)
+    s.insert(e)
   }
   s
 }
@@ -739,13 +739,13 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
 ///|
 test "set" {
   let m : HashSet[MyString] = new_hashset(default_init_capacity)
-  m.add("a")
-  m.add("b")
-  m.add("bc")
-  m.add("abc")
-  m.add("cd")
-  m.add("c")
-  m.add("d")
+  m.insert("a")
+  m.insert("b")
+  m.insert("bc")
+  m.insert("abc")
+  m.insert("cd")
+  m.insert("c")
+  m.insert("d")
   inspect(m.size, content="7")
 }
 
@@ -756,12 +756,12 @@ test "remove" {
     MyString::MyString(s)
   }
 
-  m.add("a" |> i)
-  m.add("ab" |> i)
-  m.add("bc" |> i)
-  m.add("cd" |> i)
-  m.add("abc" |> i)
-  m.add("abcdef" |> i)
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("bc" |> i)
+  m.insert("cd" |> i)
+  m.insert("abc" |> i)
+  m.insert("abcdef" |> i)
   m.remove("ab" |> i)
   inspect(m.length(), content="5")
 }
@@ -773,9 +773,9 @@ test "remove_unexist_key" {
     MyString::MyString(s)
   }
 
-  m.add("a" |> i)
-  m.add("ab" |> i)
-  m.add("abc" |> i)
+  m.insert("a" |> i)
+  m.insert("ab" |> i)
+  m.insert("abc" |> i)
   m.remove("d" |> i)
   inspect(m.length(), content="3")
 }
@@ -787,20 +787,20 @@ test "grow" {
     MyString::MyString(s)
   }
 
-  m.add("C" |> i)
-  m.add("Go" |> i)
-  m.add("C++" |> i)
-  m.add("Java" |> i)
-  m.add("Scala" |> i)
-  m.add("Julia" |> i)
+  m.insert("C" |> i)
+  m.insert("Go" |> i)
+  m.insert("C++" |> i)
+  m.insert("Java" |> i)
+  m.insert("Scala" |> i)
+  m.insert("Julia" |> i)
   inspect(m.size, content="6")
   inspect(m.capacity, content="8")
-  m.add("Cobol" |> i)
+  m.insert("Cobol" |> i)
   inspect(m.size, content="7")
   inspect(m.capacity, content="16")
-  m.add("Python" |> i)
-  m.add("Haskell" |> i)
-  m.add("Rescript" |> i)
+  m.insert("Python" |> i)
+  m.insert("Haskell" |> i)
+  m.insert("Rescript" |> i)
   inspect(m.size, content="10")
   inspect(m.capacity, content="16")
 }
@@ -842,7 +842,7 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(
   key : K,
 ) -> Bool {
   let old_size = self.length()
-  self.add(key)
+  self.insert(key)
   self.length() > old_size
 }
 
@@ -931,7 +931,7 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for HashSet[X] with fn f
     default_init_capacity.max(capacity_for_length(arr.length())),
   )
   for i, x in arr {
-    res.add(@json.FromJson::from_json(x, path.add_index(i)))
+    res.insert(@json.FromJson::from_json(x, path.add_index(i)))
   }
   res
 }

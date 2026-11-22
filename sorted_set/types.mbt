@@ -14,7 +14,7 @@
 
 // This package implements the set data structure.
 // The types stored in set need to implement the Compare trait.
-// The set is mutable: `add` and `remove` update the set in place, while the set
+// The set is mutable: `insert` and `remove` update the set in place, while the set
 // operations (union, intersection, difference, symmetric_difference) return new
 // sets and leave their inputs unmodified.
 

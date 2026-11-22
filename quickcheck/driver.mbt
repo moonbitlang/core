@@ -308,7 +308,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
     let outcome = evaluate_case(property, filter, input)
     match outcome {
       Passed => {
-        observations.add(observe(input))
+        observations.record(observe(input))
         continue tests + 1, discarded, 0U
       }
       Discarded => {

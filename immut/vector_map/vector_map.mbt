@@ -42,7 +42,7 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 /// Create a map from an array of key-value pairs, in the array's order.
 ///
 /// A repeated key keeps the position of its **first** occurrence and the value
-/// of its **last**, matching what repeated `add`s would produce.
+/// of its **last**, matching what repeated insertions would produce.
 ///
 /// One trie descent per input pair, plus a second for each pair that introduces
 /// a key, so `O(m log n)` for `m` pairs — repeated keys cost the lookup only.
@@ -95,7 +95,7 @@ fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
       // retained position always come from the same occurrence.
       Some(slot) => entries[slot] = (entries[slot].0, value)
       None => {
-        index = index.add(key, entries.length())
+        index = index.insert(key, entries.length())
         entries.push((key, value))
       }
     }
@@ -165,21 +165,22 @@ pub fn[K : Eq + Hash, V] VectorMap::contains(
 ///   let m = @vector_map.VectorMap([("a", 1), ("b", 2)])
 ///   // updating in place keeps "a" first
 ///   debug_inspect(
-///     m.add("a", 10).keys().to_array(),
+///     m.insert("a", 10).keys().to_array(),
 ///     content=(
 ///       #|["a", "b"]
 ///     ),
 ///   )
 ///   // re-adding after a removal appends
 ///   debug_inspect(
-///     m.remove("a").add("a", 10).keys().to_array(),
+///     m.remove("a").insert("a", 10).keys().to_array(),
 ///     content=(
 ///       #|["b", "a"]
 ///     ),
 ///   )
 /// }
 /// ```
-pub fn[K : Eq + Hash, V] VectorMap::add(
+#alias(add, deprecated="Use `insert` instead")
+pub fn[K : Eq + Hash, V] VectorMap::insert(
   self : VectorMap[K, V],
   key : K,
   value : V,
@@ -202,7 +203,7 @@ pub fn[K : Eq + Hash, V] VectorMap::add(
       // but the entry appended after it is not. Hence the check here as well as
       // in `remove`: the ratio is a property of the spine, not of one operation.
       let map = {
-        index: self.index.add(key, self.spine.length()),
+        index: self.index.insert(key, self.spine.length()),
         spine: self.spine.push(Some((key, value))),
         size: self.size + 1,
       }
@@ -249,7 +250,7 @@ pub fn[K : Eq + Hash, V] VectorMap::remove(
 /// current value if there is one, and its result becomes the new value, or
 /// removes the key when it is `None`.
 ///
-/// A lookup followed by an `add` or a `remove`, so `O(log n)` amortised, with
+/// A lookup followed by an insertion or a removal, so `O(log n)` amortised, with
 /// the reclamation worst cases those two carry.
 ///
 /// # Example
@@ -269,7 +270,7 @@ pub fn[K : Eq + Hash, V] VectorMap::update(
   f : (V?) -> V? raise?,
 ) -> VectorMap[K, V] raise? {
   match f(self.get(key)) {
-    Some(value) => self.add(key, value)
+    Some(value) => self.insert(key, value)
     None => self.remove(key)
   }
 }

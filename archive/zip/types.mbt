@@ -72,7 +72,7 @@ priv struct SourceRecord {
 ///|
 /// A single archive entry: its decoded payload plus the metadata the central
 /// directory carried for it. Entries produced by `read_all` retain their source
-/// records for byte-preserving rewrites; entries built with `Archive::add` do not.
+/// records for byte-preserving rewrites; entries built with `Archive::insert` do not.
 struct Entry {
   name : String
   data : Bytes
@@ -108,7 +108,7 @@ pub fn Entry::compression(self : Entry) -> Compression {
 
 ///|
 /// The entry's stored CRC-32: the central-directory value for entries read from
-/// an archive, or computed at `add` time for entries created in memory.
+/// an archive, or computed at `insert` time for entries created in memory.
 pub fn Entry::crc32(self : Entry) -> UInt32 {
   self.crc32
 }
@@ -167,7 +167,8 @@ pub fn Archive::Archive() -> Archive {
 /// Append a new entry, retaining its payload as `Bytes`. The default method is
 /// `Deflate`; pass `Store` to keep the payload verbatim. Serialization chooses
 /// the local-header and descriptor layout; use `Writer` for chunked input.
-pub fn Archive::add(
+#alias(add, deprecated="Use `insert` instead")
+pub fn Archive::insert(
   self : Archive,
   name : String,
   data : BytesView,
@@ -262,7 +263,7 @@ pub fn Archive::set_comment(self : Archive, comment : BytesView) -> Unit {
 ///|
 /// Returns an independently mutable snapshot of this archive. The copy shares
 /// entry payloads and source storage but owns a
-/// fresh entries array, so `add`/`replace`/`remove` on either side never
+/// fresh entries array, so `insert`/`replace`/`remove` on either side never
 /// affects the other.
 #alias(clone, deprecated="Use `Archive::copy` instead")
 pub fn Archive::copy(self : Archive) -> Archive {

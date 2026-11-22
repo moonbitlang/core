@@ -15,16 +15,16 @@
 // The bulk builder behind `SortedSet(..)` dispatches on the shape of its
 // input: strictly ascending, ascending with duplicates, strictly descending,
 // descending with duplicates, or unordered — and unordered splits again at a
-// length threshold, taking the bulk-sort path at or above it and the `add`
+// length threshold, taking the bulk-sort path at or above it and the `insert`
 // fold below. Every one of those paths must produce the same set, so
 // `bulk_set_shapes` names one input per path and the properties drive them all
 // from a single model.
 //
-// `from_iter` deliberately does NOT bulk-build: it folds `add`, so its live
+// `from_iter` deliberately does NOT bulk-build: it folds `insert`, so its live
 // memory stays proportional to the distinct elements rather than to the length
 // of the iterator. It is checked here anyway, because both entry points must
 // agree on which of several equal elements survives — the FIRST, as if the
-// values were `add`ed in order — and every bulk path has to preserve that.
+// values were inserted in order — and every bulk path has to preserve that.
 // With `Int` elements it is invisible, so `BElem` compares on `id` only and
 // carries a `tag` that makes the survivor observable.
 //
@@ -122,7 +122,7 @@ fn bulk_set_shapes(raw : ArrayView[Int32]) -> Array[(String, Array[BElem])] {
     id: (i * 37 + 11) % 41,
     tag: n + i,
   })
-  // Below the threshold, so this one takes the `add` fold rather than the
+  // Below the threshold, so this one takes the `insert` fold rather than the
   // bulk sort.
   let small_unordered = Array::makei(9, i => {
     id: (i * 5 + 3) % 7,
@@ -174,11 +174,11 @@ test "quickcheck: bulk set build matches inserting one at a time" {
       for shape in bulk_set_shapes(raw) {
         let (_, values) = shape
         let built = @sorted_set.SortedSet(values)
-        // Same size as folding `add`, and every element reachable through the
+        // Same size as folding `insert`, and every element reachable through the
         // tree rather than merely present in `to_array`.
         let empty : @sorted_set.SortedSet[BElem] = @sorted_set.empty()
         let folded = for value in values; s = empty {
-          continue s.add(value)
+          continue s.insert(value)
         } nobreak {
           s
         }

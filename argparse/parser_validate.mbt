@@ -337,7 +337,7 @@ fn validate_group_defs(
   let seen : @set.Set[String] = Set([])
   let arg_seen : @set.Set[String] = Set([])
   for arg in args {
-    arg_seen.add(arg.name)
+    arg_seen.insert(arg.name)
   }
   for group in groups {
     if !seen.add_and_check(group.name) {
@@ -378,7 +378,7 @@ fn validate_group_refs(
   }
   let arg_index : @set.Set[String] = Set([])
   for arg in args {
-    arg_index.add(arg.name)
+    arg_index.insert(arg.name)
   }
   for group in groups {
     for name in group.args {
@@ -514,10 +514,10 @@ fn validate_groups(
   let group_seen : @set.Set[String] = Set([])
   let arg_seen : @set.Set[String] = Set([])
   for group in groups {
-    group_seen.add(group.name)
+    group_seen.insert(group.name)
   }
   for arg in args {
-    arg_seen.add(arg.name)
+    arg_seen.insert(arg.name)
   }
   for group in groups {
     let count = args.count_if(arg => {

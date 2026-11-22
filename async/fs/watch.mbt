@@ -635,7 +635,7 @@ async fn Watcher::add_file_at(
   let location = (dir.identity, name)
   let file = self.get_file_at(path~, is_dir~, identity~, context~)
   dir.children[name] = file.identity
-  file.paths.add(location)
+  file.paths.insert(location)
   if !file.is_clean() {
     dir.children_to_scan[name] = file.identity
   }
@@ -662,7 +662,7 @@ fn Watcher::remove_file_at(
   let curr = self.watched[curr_id]
   curr.paths.remove(path)
   if curr.paths.is_empty() {
-    self.pending_remove.add(curr_id)
+    self.pending_remove.insert(curr_id)
   }
   match dir.changed_entries.get(name) {
     None => dir.changed_entries[name] = Some(curr_id)

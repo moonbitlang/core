@@ -18,11 +18,11 @@ let update_bench_set : @hashset.HashSet[Int32] = @hashset.from_iter(
 )
 
 ///|
-test "bench HashSet::add existing x1000 n=100000" (it : @bench.T) {
+test "bench HashSet::insert existing x1000 n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut s = update_bench_set
     for i in 0..<1000 {
-      s = s.add(i * 97)
+      s = s.insert(i * 97)
     }
     it.keep(s)
   })
@@ -40,11 +40,11 @@ test "bench HashSet::remove absent x1000 n=100000" (it : @bench.T) {
 }
 
 ///|
-test "bench HashSet::add new x1000 n=100000" (it : @bench.T) {
+test "bench HashSet::insert new x1000 n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut s = update_bench_set
     for i in 0..<1000 {
-      s = s.add(100_000 + i)
+      s = s.insert(100_000 + i)
     }
     it.keep(s)
   })
@@ -52,6 +52,6 @@ test "bench HashSet::add new x1000 n=100000" (it : @bench.T) {
 
 ///|
 test "bench HashSet::union with a derived version n=100000" (it : @bench.T) {
-  let derived = update_bench_set.add(-1)
+  let derived = update_bench_set.insert(-1)
   it.bench(fn() { it.keep(update_bench_set.union(derived)) })
 }

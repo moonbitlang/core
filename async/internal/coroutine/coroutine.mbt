@@ -189,7 +189,7 @@ pub fn spawn(f : async () -> Unit, loc~ : SourceLoc) -> Coroutine {
 
   coro.state = Suspend(run)
   scheduler.run_later.push_back(coro)
-  scheduler.all_coros.add(coro)
+  scheduler.all_coros.insert(coro)
   coro
 }
 
@@ -217,7 +217,7 @@ pub async fn Coroutine::wait(target : Coroutine) -> SuspendResult {
     Fail(err) => raise err
     Running | Suspend(_) => ()
   }
-  target.downstream.add(coro)
+  target.downstream.insert(coro)
   defer target.downstream.remove(coro)
   suspend()
   target.unwrap()

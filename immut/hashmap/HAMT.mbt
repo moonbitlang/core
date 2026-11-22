@@ -180,7 +180,7 @@ fn[K : Eq, V] Node::add_with_path(
         }
         None => {
           let child = Flat(key, value, path.next())
-          Branch(children.add(idx, child))
+          Branch(children.insert(idx, child))
         }
       }
     }
@@ -299,7 +299,7 @@ fn[K : Eq, V] build_hashmap_node_range(
 fn[K : Eq + Hash, V] hash_map_from_iter_by_add(
   iter : Iter[(K, V)],
 ) -> HashMap[K, V] {
-  iter.fold(init=empty(), (m, e) => m.add(e.0, e.1))
+  iter.fold(init=empty(), (m, e) => m.insert(e.0, e.1))
 }
 
 ///|
@@ -307,7 +307,7 @@ fn[K : Eq + Hash, V] hash_map_from_array_by_add(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
   for (k, v) in arr; map = empty() {
-    continue map.add(k, v)
+    continue map.insert(k, v)
   } nobreak {
     map
   }
@@ -441,8 +441,9 @@ pub fn[K, V, A] HashMap::map(
 ///
 /// If the key is already present, its value is replaced; the existing key is
 /// kept.
+#alias(add, deprecated="Use `insert` instead")
 #owned(value)
-pub fn[K : Eq + Hash, V] HashMap::add(
+pub fn[K : Eq + Hash, V] HashMap::insert(
   self : HashMap[K, V],
   key : K,
   value : V,
@@ -515,7 +516,7 @@ pub fn[K : Eq + Hash, V] HashMap::update(
   f : (V?) -> V? raise?,
 ) -> HashMap[K, V] raise? {
   match f(self.get(key)) {
-    Some(value) => self.add(key, value)
+    Some(value) => self.insert(key, value)
     None => self.remove(key)
   }
 }
@@ -979,7 +980,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 /// Creates a hash map from an iterator of key-value pairs.
 ///
 /// If a key appears more than once, the later value overrides the earlier one
-/// (the key that was seen first is kept), as if the pairs were `add`ed in order.
+/// (the key that was seen first is kept), as if the pairs were inserted in order.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -1031,7 +1032,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 /// Creates a hash map from an array of key-value pairs.
 ///
 /// If a key appears more than once, the later value overrides the earlier one
-/// (the key that was seen first is kept), as if the pairs were `add`ed in order.
+/// (the key that was seen first is kept), as if the pairs were inserted in order.
 ///
 /// # Example
 ///

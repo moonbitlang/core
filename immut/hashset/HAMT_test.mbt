@@ -28,29 +28,29 @@ test "Set" {
   let map = for i = 0, map = @hashset.empty() {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 1, map.add(i)
+      (i, map) => continue i + 1, map.insert(i)
     }
   }
   for i in 0..<100 {
     @test.assert_eq((i, map.contains(i)), (i, true))
   }
   debug_inspect((100, map.contains(100)), content="(100, false)")
-  let map = map.add(100)
+  let map = map.insert(100)
   debug_inspect((100, map.contains(100)), content="(100, true)")
 }
 
 ///|
 test "@hashset.size" {
-  for i = 0, set = @hashset.empty(); i < 20; i = i + 1, set = set.add(i) {
+  for i = 0, set = @hashset.empty(); i < 20; i = i + 1, set = set.insert(i) {
     @test.assert_eq(set.length(), i)
   } nobreak {
-    @test.assert_eq(set.add(0).length(), 20)
+    @test.assert_eq(set.insert(0).length(), 20)
   }
   let set = @hashset.empty()
   inspect(set.length(), content="0")
-  let set = set.add(1)
+  let set = set.insert(1)
   inspect(set.length(), content="1")
-  let set = set.add(2)
+  let set = set.insert(2)
   inspect(set.length(), content="2")
   let set = set.remove(1)
   inspect(set.length(), content="1")
@@ -61,7 +61,7 @@ test "@hashset.remove" {
   let map = for i = 0, map = @hashset.empty() {
     match (i, map) {
       (100, map) => break map
-      (i, map) => continue i + 1, map.add(i)
+      (i, map) => continue i + 1, map.insert(i)
     }
   }
   for i in 0..<100 {
@@ -106,7 +106,11 @@ test "@hashset.iter" {
 ///|
 #warnings("-deprecated")
 test "@hashset.to_string" {
-  let set = @hashset.empty().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
+  let set = @hashset.empty()
+    .insert(1)
+    .insert(3)
+    .insert(0x0f_ff_ff_ff)
+    .insert(42)
   let content = set.iter().collect()
   @test.assert_eq(set.to_string(), "@immut/hashset.from_array(\{content})")
 }
@@ -124,7 +128,7 @@ test "@hashset.from_array" {
 test "@hashset.is_empty" {
   let set = @hashset.empty()
   inspect(set.is_empty(), content="true")
-  let set = set.add(1)
+  let set = set.insert(1)
   inspect(set.is_empty(), content="false")
   let set = set.remove(1)
   inspect(set.is_empty(), content="true")
@@ -161,20 +165,20 @@ test "from_iter empty iter" {
 ///|
 fn rebuild_from_iter_by_add(data : Array[Int32]) -> @hashset.HashSet[Int32] {
   for value in data; set = @hashset.empty() {
-    continue set.add(value)
+    continue set.insert(value)
   } nobreak {
     set
   }
 }
 
 ///|
-test "from_array matches forward add with duplicates" {
+test "from_array matches forward insert with duplicates" {
   let data = Array::makei(256, i => (i * 1103515245 + 12345) & 63)
   @test.assert_eq(@hashset.HashSet(data), rebuild_from_iter_by_add(data))
 }
 
 ///|
-test "from_iter matches forward add with duplicates" {
+test "from_iter matches forward insert with duplicates" {
   let data = Array::makei(256, i => (i * 1103515245 + 12345) & 63)
   @test.assert_eq(
     @hashset.from_iter(data.iter()),
@@ -338,7 +342,7 @@ test "from_array duplicate keeps first representative" {
 
 ///|
 test "bulk from_array and from_iter keep the same first representatives" {
-  // Large enough to take the bulk-build path rather than repeated `add`.
+  // Large enough to take the bulk-build path rather than repeated `insert`.
   let data = Array::makei(200, i => SameKey(i % 50, "\{i}"))
   let labels = (set : @hashset.HashSet[SameKey]) => {
     let out = Array::makei(50, _ => "")
@@ -366,7 +370,7 @@ test "from_iter duplicate keeps first representative" {
 test "HAMT join_2 last segment split" {
   let k1 = SegKey(1, 0)
   let k2 = SegKey(2, 1 << 25)
-  let set = @hashset.empty().add(k1).add(k2)
+  let set = @hashset.empty().insert(k1).insert(k2)
   inspect(set.contains(k1), content="true")
   inspect(set.contains(k2), content="true")
 }
@@ -499,7 +503,7 @@ test "@hashset collision" {
   let a = MyString("a")
   let b = MyString("b")
   let c = MyString("c")
-  let set = @hashset.empty().add(a).add(b).add(c)
+  let set = @hashset.empty().insert(a).insert(b).insert(c)
   debug_inspect(
     set.iter().to_array(),
     content=(
@@ -511,11 +515,11 @@ test "@hashset collision" {
 }
 
 ///|
-test "add duplicate in collision leaf" {
+test "insert duplicate in collision leaf" {
   let a = MyString("a")
   let b = MyString("b")
-  let set = @hashset.empty().add(a).add(b)
-  let set2 = set.add(a)
+  let set = @hashset.empty().insert(a).insert(b)
+  let set2 = set.insert(a)
   inspect(set2.length(), content="2")
   inspect(set2.contains(a), content="true")
   inspect(set2.contains(b), content="true")
@@ -525,8 +529,8 @@ test "add duplicate in collision leaf" {
 test "collision equal coverage" {
   let a = MyString("a")
   let b = MyString("b")
-  let set1 = @hashset.empty().add(a).add(b)
-  let set2 = @hashset.empty().add(b).add(a)
+  let set1 = @hashset.empty().insert(a).insert(b)
+  let set2 = @hashset.empty().insert(b).insert(a)
   @debug.assert_eq(set1, set2)
 }
 

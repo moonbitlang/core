@@ -327,7 +327,7 @@ test "split" {
 ///|
 test "contain" {
   inspect(
-    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
+    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).insert(5).contains(5),
     content="true",
   )
   inspect(
@@ -434,57 +434,57 @@ test "remove_min" {
 }
 
 ///|
-test "add" {
+test "insert" {
   debug_inspect(
-    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
+    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).insert(5),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([2]).add(1),
+    @sorted_set.SortedSet([2]).insert(1),
     content=(
       #|<SortedSet: [1, 2]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([2]).add(3),
+    @sorted_set.SortedSet([2]).insert(3),
     content=(
       #|<SortedSet: [2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([2]).add(1).add(3),
+    @sorted_set.SortedSet([2]).insert(1).insert(3),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([1, 2]).add(1),
+    @sorted_set.SortedSet([1, 2]).insert(1),
     content=(
       #|<SortedSet: [1, 2]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([2, 3]).add(3),
+    @sorted_set.SortedSet([2, 3]).insert(3),
     content=(
       #|<SortedSet: [2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([1, 2, 3]).add(1),
+    @sorted_set.SortedSet([1, 2, 3]).insert(1),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([1, 2, 3]).add(3),
+    @sorted_set.SortedSet([1, 2, 3]).insert(3),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.SortedSet([1]).add(2).add(2),
+    @sorted_set.SortedSet([1]).insert(2).insert(2),
     content=(
       #|<SortedSet: [1, 2]>
     ),
@@ -534,14 +534,14 @@ test "remove" {
 
 ///|
 test "merge and concat with empty right" {
-  let set = @sorted_set.empty().add(2).add(1)
+  let set = @sorted_set.empty().insert(2).insert(1)
   debug_inspect(
     set.remove(2),
     content=(
       #|<SortedSet: [1]>
     ),
   )
-  let other = @sorted_set.empty().add(1)
+  let other = @sorted_set.empty().insert(1)
   debug_inspect(
     set.intersection(other),
     content=(

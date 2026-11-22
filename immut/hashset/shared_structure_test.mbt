@@ -25,12 +25,12 @@ fn[A : Eq + Hash] derived_versions_agree(
   let mut a : @hashset.HashSet[A] = @hashset.empty()
   for x in xs {
     let k = (x & 0x7fffffff) % 16
-    a = a.add(mk(k))
+    a = a.insert(mk(k))
     model_insert(model, k)
   }
   // No-op updates return the same set.
   for k in model {
-    guard physical_equal(a.add(mk(k)), a) else { return false }
+    guard physical_equal(a.insert(mk(k)), a) else { return false }
   }
   for k in 0..<16 {
     if !model.contains(k) {
@@ -43,7 +43,7 @@ fn[A : Eq + Hash] derived_versions_agree(
   for e in edits {
     let k = (e & 0x7fffffff) / 2 % 16
     if e % 2 == 0 {
-      b = b.add(mk(k))
+      b = b.insert(mk(k))
       model_insert(b_model, k)
     } else {
       b = b.remove(mk(k))

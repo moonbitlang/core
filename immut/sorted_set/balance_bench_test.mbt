@@ -32,19 +32,19 @@ fn balance_bench_values(scrambled~ : Bool) -> Array[Int32] {
 fn balance_bench_build(values : Array[Int32]) -> @sorted_set.SortedSet[Int32] {
   let mut s = @sorted_set.empty()
   for v in values {
-    s = s.add(v)
+    s = s.insert(v)
   }
   s
 }
 
 ///|
-test "bench SortedSet::add ascending n=10000" (it : @bench.T) {
+test "bench SortedSet::insert ascending n=10000" (it : @bench.T) {
   let values = balance_bench_values(scrambled=false)
   it.bench(fn() { it.keep(balance_bench_build(values)) })
 }
 
 ///|
-test "bench SortedSet::add scrambled n=10000" (it : @bench.T) {
+test "bench SortedSet::insert scrambled n=10000" (it : @bench.T) {
   let values = balance_bench_values(scrambled=true)
   it.bench(fn() { it.keep(balance_bench_build(values)) })
 }
