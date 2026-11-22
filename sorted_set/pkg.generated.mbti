@@ -48,7 +48,9 @@ pub fn[V] SortedSet::length(Self[V]) -> Int32
 #as_free_fn(deprecated)
 #deprecated
 pub fn[V] SortedSet::new() -> Self[V]
-pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
+#label_migration(high, allow_positional=true)
+#label_migration(low, allow_positional=true)
+pub fn[V : Compare] SortedSet::range(Self[V], low~ : V, high~ : V) -> Iter[V]
 pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn
 pub fn[V] SortedSet::singleton(V) -> Self[V]

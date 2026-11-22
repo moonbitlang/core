@@ -552,10 +552,12 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 /// If the map is structurally modified (keys inserted or removed, or the map
 /// cleared) while the iterator is in use, what it yields is unspecified,
 /// though memory-safe.
+#label_migration(low, allow_positional=true)
+#label_migration(high, allow_positional=true)
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
-  low : K,
-  high : K,
+  low~ : K,
+  high~ : K,
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self.root

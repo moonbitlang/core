@@ -111,7 +111,7 @@ test "range bounds agree for signed zeros and finite keys" {
   @test.assert_eq(map.get(-0.0), Some(4))
   for bounds in [(-0.0, 0.0), (-1.0, -0.0), (0.0, 1.0), (-1.0, 1.0)] {
     let (low, high) = bounds
-    let expected = double_keys(map.range(low, high))
+    let expected = double_keys(map.range(low~, high~))
     @test.assert_eq(
       double_keys(map.range_bounds(Included(low), Included(high))),
       expected,

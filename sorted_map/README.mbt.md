@@ -297,7 +297,7 @@ test {
     (5, "five"),
   ])
   let range_items = []
-  map.range(2, 4).each((k, v) => range_items.push((k, v)))
+  map.range(low=2, high=4).each((k, v) => range_items.push((k, v)))
   @debug.assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
 }
 ```
@@ -313,12 +313,12 @@ Edge cases for range operations:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
-  map.range(0, 10).each((k, v) => range_items.push((k, v)))
+  map.range(low=0, high=10).each((k, v) => range_items.push((k, v)))
   @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
   let empty_range : Array[(Int32, String)] = []
-  map.range(10, 5).each((k, v) => empty_range.push((k, v)))
+  map.range(low=10, high=5).each((k, v) => empty_range.push((k, v)))
   @debug.assert_eq(empty_range, [])
 }
 ```
@@ -348,7 +348,7 @@ test {
 }
 ```
 
-`rev_range(low, high)` is the inclusive reverse of `range(low, high)`.
+`rev_range(a, b)` visits the same keys as `range(low=a, high=b)` in reverse order.
 
 ### Iterators
 

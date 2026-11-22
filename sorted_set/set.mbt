@@ -698,10 +698,12 @@ impl[T : Show] Show for Node[T] with fn output(self, logger) {
 /// If the set is structurally modified (elements added or removed, or the set
 /// cleared) while the iterator is in use, what it yields is unspecified,
 /// though memory-safe.
+#label_migration(low, allow_positional=true)
+#label_migration(high, allow_positional=true)
 pub fn[V : Compare] SortedSet::range(
   self : SortedSet[V],
-  low : V,
-  high : V,
+  low~ : V,
+  high~ : V,
 ) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
