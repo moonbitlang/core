@@ -20,7 +20,10 @@
 ## Open design questions
 
 - [ ] **HTTP request headers.** Should the free `request_text` and `request_json` functions default `headers` to an empty map, like `request_binary`? [HTTP interface](async/http/pkg.generated.mbti)
-- [ ] **QuickCheck outcomes.** Consider a typed accessor for the four documented outcomes of `QuickCheckReport` so a test runner can inspect a result directly. [Report documentation](quickcheck/README.mbt.md)
+
+## After 1.0
+
+- **QuickCheck outcomes.** Revisit a typed `outcome()` accessor when a caller needs to distinguish the four documented results programmatically. Adding a method to the abstract `QuickCheckReport` type is compatible with existing callers. [Report documentation](quickcheck/README.mbt.md)
 
 ## Coverage
 
