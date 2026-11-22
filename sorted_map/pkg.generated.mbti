@@ -57,7 +57,9 @@ pub fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K, V] SortedMap::pop_first(Self[K, V]) -> (K, V)?
 pub fn[K, V] SortedMap::pop_last(Self[K, V]) -> (K, V)?
-pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
+#label_migration(high, allow_positional=true)
+#label_migration(low, allow_positional=true)
+pub fn[K : Compare, V] SortedMap::range(Self[K, V], low~ : K, high~ : K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::range_bounds(Self[K, V], @cmp.Bound[K], @cmp.Bound[K]) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
 pub fn[K, V] SortedMap::rev_iter(Self[K, V]) -> Iter[(K, V)]

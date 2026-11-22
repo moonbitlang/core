@@ -135,13 +135,13 @@ test {
 
 ### Range Queries
 
-`range(low, high)` returns an iterator over elements in `[low, high]`:
+`range(low=a, high=b)` returns an iterator over elements in `[a, b]`:
 
 ```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 3, 5, 7, 9, 11])
-  let in_range = set.range(3, 9).collect()
+  let in_range = set.range(low=3, high=9).collect()
   @test.assert_eq(in_range, [3, 5, 7, 9])
 }
 ```

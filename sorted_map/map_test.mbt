@@ -221,19 +221,19 @@ test "range" {
     (5, "e"),
   ])
   debug_inspect(
-    map.range(2, 4).to_array(),
+    map.range(low=2, high=4).to_array(),
     content=(
       #|[(2, "b"), (3, "c"), (4, "d")]
     ),
   )
   debug_inspect(
-    map.range(1, 1).to_array(),
+    map.range(low=1, high=1).to_array(),
     content=(
       #|[(1, "a")]
     ),
   )
   debug_inspect(
-    map.range(5, 5).to_array(),
+    map.range(low=5, high=5).to_array(),
     content=(
       #|[(5, "e")]
     ),
@@ -426,7 +426,7 @@ test "range with inverted bounds returns empty" {
     (5, "e"),
   ])
   debug_inspect(
-    map.range(5, 1).to_array(),
+    map.range(low=5, high=1).to_array(),
     content=(
       #|[]
     ),
@@ -443,7 +443,7 @@ test "range with out-of-bounds keys" {
     (5, "e"),
   ])
   debug_inspect(
-    map.range(0, 10).to_array(),
+    map.range(low=0, high=10).to_array(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e")]
     ),
@@ -454,7 +454,7 @@ test "range with out-of-bounds keys" {
 test "range on empty map" {
   let map : @sorted_map.SortedMap[Int32, String] = SortedMap([])
   debug_inspect(
-    map.range(1, 5).to_array(),
+    map.range(low=1, high=5).to_array(),
     content=(
       #|[]
     ),

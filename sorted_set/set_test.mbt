@@ -420,19 +420,19 @@ test "from_iter empty iter" {
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   debug_inspect(
-    set.range(2, 4).to_array(),
+    set.range(low=2, high=4).to_array(),
     content=(
       #|[2, 3, 4]
     ),
   )
   debug_inspect(
-    set.range(1, 1).to_array(),
+    set.range(low=1, high=1).to_array(),
     content=(
       #|[1]
     ),
   )
   debug_inspect(
-    set.range(5, 5).to_array(),
+    set.range(low=5, high=5).to_array(),
     content=(
       #|[5]
     ),

@@ -298,7 +298,7 @@ test "range agrees with model and leaves tree intact" {
     let y = rng.below(1000)
     let (lo, hi) = if x <= y { (x, y) } else { (y, x) }
     let via_range = []
-    for k, _ in map.range(lo, hi) {
+    for k, _ in map.range(low=lo, high=hi) {
       via_range.push(k)
     }
     let via_filter = []
