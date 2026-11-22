@@ -24,8 +24,8 @@ pub fn Buffer::reset(Self) -> Unit
 pub fn Buffer::to_bytes(Self) -> Bytes
 pub fn Buffer::view(Self) -> ArrayView[Byte]
 pub fn Buffer::write_byte(Self, Byte) -> Unit
+#alias(write_bytesview, deprecated)
 pub fn Buffer::write_bytes(Self, BytesView) -> Unit
-pub fn Buffer::write_bytesview(Self, BytesView) -> Unit
 pub fn Buffer::write_char_utf16be(Self, Char) -> Unit
 pub fn Buffer::write_char_utf16le(Self, Char) -> Unit
 pub fn Buffer::write_char_utf8(Self, Char) -> Unit

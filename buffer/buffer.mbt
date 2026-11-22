@@ -782,55 +782,18 @@ pub fn[T : Show] Buffer::write_utf8(self : Buffer, value : T) -> Unit {
 }
 
 ///|
-/// Writes a sequence of bytes into the buffer.
-///
-/// Parameters:
-///
-/// * `buffer` : An extensible buffer to write into.
-/// * `bytes` : The sequence of bytes to be written.
-///
-/// Example:
+/// Appends bytes from a whole byte string or a slice.
 ///
 /// ```mbt check
 /// test {
 ///   let buf = @buffer.Buffer()
-///   buf.write_bytes(b"Test")
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       #|b"Test"
-///     ),
-///   )
+///   buf.write_bytes(b"T")
+///   buf.write_bytes(b"Test"[1:])
+///   inspect(buf.to_bytes(), content="b\"Test\"")
 /// }
 /// ```
+#alias(write_bytesview, deprecated="Use `write_bytes` instead")
 pub fn Buffer::write_bytes(self : Buffer, value : BytesView) -> Unit {
-  self.write_bytesview(value)
-}
-
-///|
-/// Writes a sequence of bytes from a BytesView into the buffer.
-///
-/// Parameters:
-///
-/// * `buffer` : The buffer to write to.
-/// * `value` : The View containing the bytes to write.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let buf = @buffer.Buffer()
-///   let view = b"Test"[1:3]
-///   buf.write_bytesview(view)
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       #|b"es"
-///     ),
-///   )
-/// }
-/// ```
-pub fn Buffer::write_bytesview(self : Buffer, value : BytesView) -> Unit {
   let val_len = value.length()
   let required = self.len + val_len
   if required > self.data.length() || required < self.len {

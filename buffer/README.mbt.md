@@ -44,7 +44,7 @@ test {
   inspect(buf.to_bytes(), content="b\"Hi world\"")
   // write a sub-range via BytesView
   let buf2 = @buffer.Buffer()
-  buf2.write_bytesview(b"Hello"[0:2])
+  buf2.write_bytes(b"Hello"[0:2])
   inspect(buf2.to_bytes(), content="b\"He\"")
   // write from an iterator
   let buf3 = @buffer.Buffer()

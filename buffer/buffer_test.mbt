@@ -370,9 +370,9 @@ test "write_iter" {
 }
 
 ///|
-test "write_bytesview" {
+test "write_bytes accepts a slice" {
   let buf = @buffer.Buffer(capacity=4)
-  buf.write_bytesview(b"Test"[1:3])
+  buf.write_bytes(b"Test"[1:3])
   inspect(
     buf.contents(),
     content=(

@@ -442,7 +442,7 @@ fn extend_line(
   if projected > limit && projected - limit > 1 {
     raise OutputLimitExceeded(stream="stdout line", limit~)
   }
-  pending.write_bytesview(view)
+  pending.write_bytes(view)
 }
 
 ///|
