@@ -9,11 +9,18 @@
 - [x] **Inclusive sorted ranges.** Mutable and immutable sorted maps and sets now use `range(low=a, high=b)`. On the mutable types, positional bounds still compile with deprecation warnings. [PR #4927](https://github.com/moonbitlang/core/pull/4927)
 - [x] **Reverse sorted map ranges.** `rev_range(low=a, high=b)` visits the same inclusive interval as `range(low=a, high=b)` in descending key order. Positional bounds still compile with deprecation warnings. [PR #4928](https://github.com/moonbitlang/core/pull/4928)
 - [x] **Collection and ZIP insertion.** Use `insert` for entries and elements. Mutable `Set` and `HashSet` also expose `insert_and_check` to report whether membership changed. The old public spellings remain deprecated aliases. [PR #4930](https://github.com/moonbitlang/core/pull/4930)
+- [x] **Indexed list search.** `List::find_with_index` passes the index first, like `eachi`. The deprecated `findi` still passes the element first. [PR #4931](https://github.com/moonbitlang/core/pull/4931)
+- [x] **Joining deque elements.** `Deque::join` accepts elements implementing `ToStringView`, matching `Iter::join`. [PR #4932](https://github.com/moonbitlang/core/pull/4932)
 
 ## 1.0 compatibility decisions
 
 - [x] **List insertion and concatenation.** Keep the deprecated `xs.add(x)` alias for `xs.prepend(x)` through 1.0. This preserves the meaning of calls such as `xs.add(Empty)` on nested lists. `List` already implements `Add`, so callers can concatenate with `xs + ys` or `xs.concat(ys)`. Revisit the named concatenation method after retiring the alias. [Deprecation #4281](https://github.com/moonbitlang/core/pull/4281) · [Deferred PR #4929](https://github.com/moonbitlang/core/pull/4929)
 - [x] **Empty mutable hash maps.** Keep `HashMap([], capacity=n)` as the migration from `HashMap::new(capacity=n)` for 1.0. Generic callers must supply the same `K : Hash + Eq` bounds that key insertion and lookup require. [HashMap interface](hashmap/pkg.generated.mbti)
+
+## Open design questions
+
+- [ ] **HTTP request headers.** Should the free `request_text` and `request_json` functions default `headers` to an empty map, like `request_binary`? [HTTP interface](async/http/pkg.generated.mbti)
+- [ ] **QuickCheck outcomes.** Consider a typed accessor for the four documented outcomes of `QuickCheckReport` so a test runner can inspect a result directly. [Report documentation](quickcheck/README.mbt.md)
 
 ## Coverage
 
