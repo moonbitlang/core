@@ -172,32 +172,48 @@ pub fn[T] Generator::resize(self : Generator[T], size : Int32) -> Generator[T] {
 }
 
 ///|
-/// Generates an integer in the half-open interval `[lower, upper)`.
+/// Generates an integer from `lower` up to `upper`. Pass `inclusive=true`
+/// to include the upper bound, or `inclusive=false` to exclude it.
 ///
 /// The degenerate range where `lower == upper` always yields `lower`. Aborts
 /// if `lower` is greater than `upper`.
-pub fn int_range(lower : Int32, upper : Int32) -> Generator[Int32] {
+#label_migration(inclusive, fill=true, msg="Pass inclusive=false to keep the previous int_range behavior")
+pub fn int_range(
+  lower : Int32,
+  upper : Int32,
+  inclusive~ : Bool = false,
+) -> Generator[Int32] {
   guard lower < upper else {
     if lower == upper {
       return pure(lower)
     }
     abort("int_range: lower bound exceeds upper bound")
   }
-  let width = (upper - lower).reinterpret_as_uint()
+  // A closed interval can contain all 2^32 values.
+  let span = upper.to_int64() - lower.to_int64()
+  let width = if inclusive { span + 1L } else { span }
   Generator((_, state) => {
-    state.next_uint(limit=width).reinterpret_as_int() + lower
+    let offset = state.next_uint64(limit=width.reinterpret_as_uint64())
+    (lower.to_int64() + offset.reinterpret_as_int64()).to_int()
   })
 }
 
 ///|
-/// Generates a character in the inclusive range `[lower, upper]`.
+/// Generates a character from `lower` up to `upper`. Pass `inclusive=true` to
+/// include the upper bound, or `inclusive=false` to exclude it.
+/// Equal bounds always yield `lower`, as in `int_range`.
 ///
 /// A range spanning the surrogate block skips it, so every generated code
 /// point is a valid Unicode scalar value. The bounds themselves must be
 /// valid scalar values (aborts on a surrogate or out-of-range bound, which
 /// can only be produced with `unsafe_to_char`) and must form a non-empty
 /// range.
-pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
+#label_migration(inclusive, fill=true, msg="Pass inclusive=true to keep the previous char_range behavior")
+pub fn char_range(
+  lower : Char,
+  upper : Char,
+  inclusive~ : Bool = true,
+) -> Generator[Char] {
   let lo = lower.to_int()
   let hi = upper.to_int()
   fn is_surrogate(code : Int32) -> Bool {
@@ -211,7 +227,8 @@ pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
   // When the range spans the surrogate block, draw from a contiguous index
   // space of the valid scalars and shift past the block.
   let gap = if lo < 0xD800 && hi > 0xDFFF { 0x800 } else { 0 }
-  int_range(lo, hi + 1 - gap).map(code => {
+  let end = hi - gap + (if inclusive { 1 } else { 0 })
+  int_range(lo, end, inclusive=false).map(code => {
     let code = if code >= 0xD800 { code + gap } else { code }
     code.to_char().unwrap()
   })
@@ -221,7 +238,9 @@ pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
 /// Randomly selects one of the supplied generators.
 pub fn[T] one_of(generators : Array[Generator[T]]) -> Generator[T] {
   guard !generators.is_empty() else { abort("one_of: empty array") }
-  int_range(0, generators.length()).flat_map(index => generators[index])
+  int_range(0, generators.length(), inclusive=false).flat_map(index => {
+    generators[index]
+  })
 }
 
 ///|
@@ -229,7 +248,7 @@ pub fn[T] one_of(generators : Array[Generator[T]]) -> Generator[T] {
 /// @alert unsafe "Panics if `values` is empty."
 pub fn[T] elements(values : Array[T]) -> Generator[T] {
   guard !values.is_empty() else { abort("elements: empty array") }
-  int_range(0, values.length()).map(index => values[index])
+  int_range(0, values.length(), inclusive=false).map(index => values[index])
 }
 
 ///|

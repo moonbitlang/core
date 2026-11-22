@@ -15,7 +15,8 @@ import {
 }
 
 // Values
-pub fn char_range(Char, Char) -> Generator[Char]
+#label_migration(inclusive, fill=true, msg="Pass inclusive=true to keep the previous char_range behavior")
+pub fn char_range(Char, Char, inclusive? : Bool) -> Generator[Char]
 
 #callsite(autofill(loc))
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt32, max_size? : UInt32, max_shrinks? : UInt32, discard_ratio? : UInt32, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
@@ -30,7 +31,8 @@ pub fn[T] frequency(Array[(UInt32, Generator[T])]) -> Generator[T]
 
 pub fn[T : Arbitrary] gen(size? : Int32, state? : @splitmix.RandomState) -> T
 
-pub fn int_range(Int32, Int32) -> Generator[Int32]
+#label_migration(inclusive, fill=true, msg="Pass inclusive=false to keep the previous int_range behavior")
+pub fn int_range(Int32, Int32, inclusive? : Bool) -> Generator[Int32]
 
 pub fn label(String) -> Observation
 

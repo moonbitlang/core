@@ -47,7 +47,7 @@ impl @shrink.Shrink for FiniteDouble with fn shrink(self) {
 /// Numbers mix small integers (the common case in real documents) with
 /// adversarial bit-pattern doubles.
 fn number_gen() -> @quickcheck.Generator[Json] {
-  let small_int = @quickcheck.int_range(-1000, 1001).map(i => {
+  let small_int = @quickcheck.int_range(-1000, 1001, inclusive=false).map(i => {
     Json::number(i.to_double())
   })
   let finite_double : @quickcheck.Generator[FiniteDouble] = @quickcheck.spawn()
@@ -74,10 +74,10 @@ fn json_gen(depth : Int32) -> @quickcheck.Generator[Json] {
   }
   let element = json_gen(depth - 1)
   let string_gen : @quickcheck.Generator[String] = @quickcheck.spawn()
-  let array = @quickcheck.int_range(0, 5)
+  let array = @quickcheck.int_range(0, 5, inclusive=false)
     .flat_map(n => element.array_with_size(n))
     .map(xs => Json::array(xs))
-  let object = @quickcheck.int_range(0, 5)
+  let object = @quickcheck.int_range(0, 5, inclusive=false)
     .flat_map(n => string_gen.zip(element).array_with_size(n))
     .map(pairs => {
       let members : Map[String, Json] = Map([])
