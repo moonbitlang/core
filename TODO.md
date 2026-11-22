@@ -9,10 +9,13 @@
 - [x] **Reverse sorted map ranges.** `rev_range(low=a, high=b)` visits the same inclusive interval as `range(low=a, high=b)` in descending key order. Positional bounds still compile with deprecation warnings. [PR #4928](https://github.com/moonbitlang/core/pull/4928)
 - [x] **Collection and ZIP insertion.** Use `insert` for entries and elements. Mutable `Set` and `HashSet` also expose `insert_and_check` to report whether membership changed. The old public spellings remain deprecated aliases. [PR #4930](https://github.com/moonbitlang/core/pull/4930)
 
+## 1.0 compatibility decision
+
+- [x] **List insertion and concatenation.** Keep the deprecated `xs.add(x)` alias for `xs.prepend(x)` through 1.0. This preserves the meaning of calls such as `xs.add(Empty)` on nested lists. `List` already implements `Add`, so callers can concatenate with `xs + ys` or `xs.concat(ys)`. Revisit the named concatenation method after retiring the alias. [Deprecation #4281](https://github.com/moonbitlang/core/pull/4281) · [Deferred PR #4929](https://github.com/moonbitlang/core/pull/4929)
+
 ## In review
 
 - [ ] **File descriptor methods.** Promote `Eq::equal` and `Hash::hash` on `Fd` where those impls exist. A caller should be able to pass `Fd::equal` as a function, just as they can pass `Addr::equal`. [PR #4923](https://github.com/moonbitlang/core/pull/4923) · [Socket interface](async/socket/pkg.generated.mbti)
-- [ ] **List insertion and concatenation.** Decide when to reuse the deprecated `List::add` alias for concatenation. Migrate single-element callers to `prepend` before switching. For a list of lists, `xs.add(Empty)` currently prepends an empty list. Under the proposal it concatenates an empty list and returns the original sequence. [PR #4929](https://github.com/moonbitlang/core/pull/4929)
 
 ## Coverage
 
