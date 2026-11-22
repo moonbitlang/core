@@ -1034,16 +1034,16 @@ test "Array::count_if propagates error" {
 }
 
 ///|
-test "map_inplace with error callback" {
-  let arr = [1, 2, 3]
-  try
-    arr.map_in_place(x => {
+test "fallible map commits only after success" {
+  let mut arr = [1, 2, 3]
+  try {
+    arr = arr.map(x => {
       if x == 2 {
         raise Failure::Failure("Error at 2")
       }
       x + 1
     })
-  catch {
+  } catch {
     e =>
       debug_inspect(
         e,
@@ -1054,36 +1054,42 @@ test "map_inplace with error callback" {
   } noraise {
     _ => fail("expected error")
   }
+  debug_inspect(arr, content="[1, 2, 3]")
+  arr = arr.map(x => x + 1)
+  debug_inspect(arr, content="[2, 3, 4]")
 }
 
 ///|
-test "map_inplace with error callback 2" {
-  let arr = [1, 2, 3]
-  try
-    arr.map_in_place(x => {
+test "fallible filter commits only after success" {
+  let mut arr = [1, 2, 3]
+  try {
+    arr = arr.filter(x => {
       if x == 2 {
         raise Failure::Failure("Error at 2")
       }
-      x + 1
+      x % 2 == 0
     })
-  catch {
+  } catch {
     Failure(_) => ()
   } noraise {
     _ => fail("expected error")
   }
+  debug_inspect(arr, content="[1, 2, 3]")
+  arr = arr.filter(x => x % 2 == 0)
+  debug_inspect(arr, content="[2]")
 }
 
 ///|
-test "mapi_inplace with error callback" {
-  let arr = [1, 2, 3]
-  try
-    arr.mapi_in_place((i, x) => {
+test "fallible mapi commits only after success" {
+  let mut arr = [1, 2, 3]
+  try {
+    arr = arr.mapi((i, x) => {
       if x == 2 {
         raise Failure::Failure("Error at 2")
       }
       x + i
     })
-  catch {
+  } catch {
     e =>
       debug_inspect(
         e,
@@ -1094,6 +1100,33 @@ test "mapi_inplace with error callback" {
   } noraise {
     _ => fail("expected error")
   }
+  debug_inspect(arr, content="[1, 2, 3]")
+  arr = arr.mapi((i, x) => x + i)
+  debug_inspect(arr, content="[1, 3, 5]")
+}
+
+///|
+test "fallible filter_map commits only after success" {
+  let mut arr = [1, 2, 3, 4, 5]
+  try {
+    arr = arr.filter_map(x => {
+      if x == 4 {
+        raise Failure::Failure("Error at 4")
+      }
+      if x % 2 == 0 {
+        Some(x * 10)
+      } else {
+        None
+      }
+    })
+  } catch {
+    Failure(_) => ()
+  } noraise {
+    _ => fail("expected error")
+  }
+  debug_inspect(arr, content="[1, 2, 3, 4, 5]")
+  arr = arr.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+  debug_inspect(arr, content="[20, 40]")
 }
 
 ///|
