@@ -17,9 +17,9 @@
 /// perform asynchronous IO on the raw file descriptor.
 /// This is useful for binding special file descriptors
 /// that are not natively supported by `moonbitlang/async`.
-pub struct RawFd {
-  fd : @fd_util.Fd
-  priv io : @event_loop.IoHandle
+#valtype
+struct RawFd {
+  io : @event_loop.IoHandle
 }
 
 ///|
@@ -33,7 +33,7 @@ pub async fn RawFd::RawFd(fd : @fd_util.Fd) -> RawFd {
   let context = "@raw_fd.RawFd::new()"
   let kind = @event_loop.kind_of_fd(fd, context~)
   let is_async = @fd_util.fd_is_nonblocking(fd, context~)
-  { fd, io: @event_loop.IoHandle::from_fd(fd, kind~, is_async~), }
+  { io: @event_loop.IoHandle::from_fd(fd, kind~, is_async~), }
 }
 
 ///|
@@ -48,7 +48,13 @@ pub async fn RawFd::RawFd(fd : @fd_util.Fd) -> RawFd {
 pub async fn RawFd::RawFd(fd : @fd_util.Fd) -> RawFd {
   let context = "@raw_fd.RawFd::new()"
   let kind = @event_loop.kind_of_fd(fd, context~)
-  { fd, io: @event_loop.IoHandle::from_fd(fd, kind~, is_async=false), }
+  { io: @event_loop.IoHandle::from_fd(fd, kind~, is_async=false), }
+}
+
+///|
+/// Get the underlying file descriptor of a `RawFd` object
+pub fn RawFd::fd(self : RawFd) -> @fd_util.Fd {
+  self.io.fd()
 }
 
 ///|
@@ -108,11 +114,10 @@ pub async fn RawFd::write_once(
 /// via the `@io.BinaryReader`/`@io.BinaryWriter` interfaces.
 /// This is useful for binding special file descriptors
 /// that are not natively supported by `moonbitlang/async`.
-pub struct RawFdStream {
-  fd : @fd_util.Fd
-  priv io : @event_loop.IoHandle
-  priv reader_ctrl : @io.BinaryReaderController
-  priv writer_ctrl : @io.BinaryWriterController
+struct RawFdStream {
+  io : @event_loop.IoHandle
+  reader_ctrl : @io.BinaryReaderController
+  writer_ctrl : @io.BinaryWriterController
 }
 
 ///|
@@ -126,7 +131,6 @@ pub async fn RawFdStream::RawFdStream(fd : @fd_util.Fd) -> RawFdStream {
   let kind = @event_loop.kind_of_fd(fd, context~)
   let is_async = @fd_util.fd_is_nonblocking(fd, context~)
   {
-    fd,
     io: @event_loop.IoHandle::from_fd(fd, kind~, is_async~),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
@@ -145,11 +149,16 @@ pub async fn RawFdStream::RawFdStream(fd : @fd_util.Fd) -> RawFdStream {
   let context = "@raw_fd.RawFdStream()"
   let kind = @event_loop.kind_of_fd(fd, context~)
   {
-    fd,
     io: @event_loop.IoHandle::from_fd(fd, kind~, is_async=false),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
   }
+}
+
+///|
+/// Get the underlying file descriptor of a `RawFdStream` object
+pub fn RawFdStream::fd(self : RawFdStream) -> @fd_util.Fd {
+  self.io.fd()
 }
 
 ///|
