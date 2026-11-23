@@ -363,7 +363,7 @@ pub async fn Directory::remove(
   path : StringView,
   recursive~ : Bool = false,
   allow_missing~ : Bool = false,
-) -> Unit {
+) -> Unit nocancel {
   let context = "@fs.Directory::remove()"
   remove_aux(
     validate_relative_open_filename(path, context~),
