@@ -80,6 +80,7 @@ pub async fn Tcp::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tcp::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tcp::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn Tcp::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
+pub fn Tcp::remote_addr(Self) -> Addr
 pub async fn Tcp::write(Self, BytesView) -> Unit raise @io.WriterError
 pub async fn Tcp::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryReader for Tcp
@@ -91,10 +92,10 @@ pub struct TcpServer {
 }
 #alias(new, deprecated)
 pub async fn TcpServer::TcpServer(Addr, dual_stack? : Bool, reuse_addr? : Bool, reuse_port_lb? : Bool) -> Self
-pub async fn TcpServer::accept(Self) -> (Tcp, Addr)
+pub async fn TcpServer::accept(Self) -> Tcp
 pub fn TcpServer::close(Self) -> Unit
 pub fn TcpServer::fd(Self) -> @types.Fd
-pub async fn TcpServer::run_forever(Self, async (Tcp, Addr) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
+pub async fn TcpServer::run_forever(Self, async (Tcp) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
 
 pub struct UdpClient {
   addr : Addr

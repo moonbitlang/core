@@ -23,11 +23,11 @@ async test "getsockname TCP" {
     }
     let client_addr_from_server = group.spawn(() => {
       defer server.close()
-      let (conn, peer_addr) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       assert_eq(conn.local_addr(), server_addr)
       inspect(@utf8.decode(conn.read_all()), content="abcd")
-      peer_addr
+      conn.remote_addr()
     })
     let client_addr = group.spawn(() => {
       let client = @socket.Tcp::connect(server_addr)

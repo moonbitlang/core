@@ -253,7 +253,7 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
       defer process.stderr.close()
       let pty = Pty(process)
       pty.expect_ok()
-      let (rpc, _) = server.accept()
+      let rpc = server.accept()
       {
         defer rpc.close()
         f({ pty, rpc, next_id: 0, })

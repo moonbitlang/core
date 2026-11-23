@@ -18,7 +18,7 @@ suberror ServerTerminate
 ///|
 async fn server_main(server : @socket.TcpServer) -> Int32 {
   let mut num_connection = 0
-  (server.run_forever(allow_failure=false) <| ((conn, _) => {
+  (server.run_forever(allow_failure=false) <| conn => {
     num_connection += 1
     while conn.read() is Some(msg) {
       if msg == b"exit" {
@@ -26,7 +26,7 @@ async fn server_main(server : @socket.TcpServer) -> Int32 {
         raise ServerTerminate
       }
     }
-  })) catch {
+  }) catch {
     ServerTerminate => return num_connection
     err => raise err
   }

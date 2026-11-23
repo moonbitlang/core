@@ -19,7 +19,7 @@ async test "ping auto-reply" {
     let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -44,7 +44,7 @@ async test "pong ignored" {
     let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -72,7 +72,7 @@ async test "ping auto-reply race-with-write" {
     let queue2 = @async.Queue(kind=Unbounded)
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -115,7 +115,7 @@ async test "close test" {
     let queue2 = @async.Queue(kind=Unbounded)
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -161,7 +161,7 @@ async test "send ping" {
     let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -188,7 +188,7 @@ async test "ping inside message" {
     let port = server.addr.port
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -215,7 +215,7 @@ async test "multiple ping" {
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -249,7 +249,7 @@ async test "ping cancelled" {
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -283,7 +283,7 @@ async test "duplicated ping" {
     let cond = @async.Cond()
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)

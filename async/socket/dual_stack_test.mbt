@@ -34,13 +34,13 @@ async test "Only_V4 server" {
       reuse_addr=true,
     )
     root.spawn_bg(no_wait=true) <| () => {
-      server.run_forever() <| ((conn, addr) => {
-        let addr_str = addr.to_string()
+      server.run_forever() <| conn => {
+        let addr_str = conn.remote_addr().to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
         log <+ "server received \{msg.escape()} from \{ip}\n"
-      })
+      }
     }
     async fn client(protocol) {
       let conn = @socket.Tcp::connect_to_host("localhost", port~, protocol~) catch {
@@ -95,13 +95,13 @@ async test "Only_V6 server" {
       reuse_addr=true,
     )
     root.spawn_bg(no_wait=true) <| () => {
-      server.run_forever() <| ((conn, addr) => {
-        let addr_str = addr.to_string()
+      server.run_forever() <| conn => {
+        let addr_str = conn.remote_addr().to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
         log <+ "server received \{msg.escape()} from \{ip}\n"
-      })
+      }
     }
     async fn client(protocol) {
       let conn = @socket.Tcp::connect_to_host("localhost", port~, protocol~) catch {
@@ -148,13 +148,13 @@ async test "dual stack server" {
     let server = @socket.TcpServer(@socket.Addr::parse("[::]:0"))
     let port = server.addr.port
     root.spawn_bg(no_wait=true) <| () => {
-      server.run_forever() <| ((conn, addr) => {
-        let addr_str = addr.to_string()
+      server.run_forever() <| conn => {
+        let addr_str = conn.remote_addr().to_string()
         guard! addr_str.rev_find(":") is Some(ip_end)
         let ip = addr_str[:ip_end]
         let msg = @utf8.decode(conn.read_all())
         log <+ "server received \{msg.escape()} from \{ip}\n"
-      })
+      }
     }
     async fn client(protocol) {
       let conn = @socket.Tcp::connect_to_host("localhost", port~, protocol~)

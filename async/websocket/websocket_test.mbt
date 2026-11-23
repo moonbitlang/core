@@ -19,7 +19,7 @@ async test "websocket basic" {
     let addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -64,7 +64,7 @@ async test "single frame multiple read" {
     let addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -93,7 +93,7 @@ async test "ignored message" {
     let addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -123,7 +123,7 @@ async test "write buffering" {
     let addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
@@ -161,7 +161,7 @@ async test "large message" {
     let addr = server.addr
     let server_checksum = group.spawn(() => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let request = conn.read_request()
       let ws = @websocket.from_http_server(request, conn)
