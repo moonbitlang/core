@@ -90,17 +90,17 @@ pub(all) enum Kind {
 ///|
 /// An asynchronous queue, where reader can wait for data to arrive
 /// in a non-blocking manner.
-pub struct Queue[X] {
+struct Queue[X] {
   kind : Kind
   /// invariant: if `readers` is non-empty, `buffer` must be empty
-  priv readers : @cancellable_queue.Queue[Waiter[X]]
+  readers : @cancellable_queue.Queue[Waiter[X]]
   /// invariant: if `writers` is non-empty, `buffer` must be full
-  priv writers : @cancellable_queue.Queue[Waiter[X]]
+  writers : @cancellable_queue.Queue[Waiter[X]]
   /// invariant: if `buffer` is non-empty, `readers` must be empty; 
   /// if `buffer` is not full, `writers` must be empty
-  priv buffer : @deque.Deque[X]
+  buffer : @deque.Deque[X]
   /// `Some(err)` if the queue is already closed
-  priv mut closed : Error?
+  mut closed : Error?
 }
 
 ///|
