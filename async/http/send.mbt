@@ -33,12 +33,11 @@ priv struct Sender {
   headers : Bytes
   host : Bytes?
   user_agent : Bytes?
-  has_accept_encoding : Bool
 }
 
 ///|
 let forbidden_headers : @set.Set[CaseInsensitiveString] = Set([
-  "Host", "User-Agent", "Content-Length", "Transfer-Encoding",
+  "Host", "User-Agent", "Accept-Encoding", "Content-Length", "Transfer-Encoding",
 ])
 
 ///|
@@ -71,15 +70,11 @@ fn[W : @io.BinaryWriter] Sender::client(
   headers~ : Headers = Map([]),
 ) -> Sender {
   let header_text = @buffer.Buffer()
-  let mut has_accept_encoding = false
   for k, v in headers {
     if !is_valid_http_header_field_name(k.0) {
       continue
     }
     if !forbidden_headers.contains(k) {
-      if k == "Accept-Encoding" {
-        has_accept_encoding = true
-      }
       header_text
       ..write_string_utf8(k.0)
       ..write_bytesview(b": ")
@@ -96,7 +91,6 @@ fn[W : @io.BinaryWriter] Sender::client(
     headers: header_text.contents(),
     host: Some(host |> sanitize_header_value |> @utf8.encode),
     user_agent: Some(user_agent |> sanitize_header_value |> @utf8.encode),
-    has_accept_encoding,
   }
 }
 
@@ -127,7 +121,6 @@ fn[W : @io.BinaryWriter] Sender::server(
     headers: header_text.contents(),
     host: None,
     user_agent: None,
-    has_accept_encoding: false,
   }
 }
 
@@ -434,10 +427,18 @@ async fn Sender::send_request(
   } else if self.user_agent is Some(user_agent) {
     self..write(b"User-Agent: ")..write(user_agent).write(b"\r\n")
   }
-  let auto_decompress = !self.has_accept_encoding &&
-    !extra_headers.contains("Accept-Encoding")
-  if auto_decompress {
-    self.write(b"Accept-Encoding: gzip,identity\r\n")
+  let auto_decompress = match extra_headers.get("Accept-Encoding") {
+    Some(encoding) => {
+      self
+      ..write(b"Accept-Encoding: ")
+      ..write(@utf8.encode(encoding))
+      .write(b"\r\n")
+      false
+    }
+    None => {
+      self.write(b"Accept-Encoding: gzip,identity\r\n")
+      true
+    }
   }
   if content_length is Some(len) {
     self.write(b"\r\n")

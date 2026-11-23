@@ -109,11 +109,10 @@ async fn ClientConnection::connect(
 /// i.e. all requests made from this client will share these headers.
 /// The ownership of `headers` will be transferred to the new client,
 /// so `headers` should not be used by the caller later.
-/// The following headers is automatically set,
-/// and must not be specified in `headers`:
+/// The following headers must not be specified in `headers`:
 ///
 /// - Host
-/// - Content-Length, Transfer-Encoding
+/// - Content-Length, Transfer-Encoding, Accept-Encoding
 ///
 /// `User-Agent` may be specified to override the library default.
 ///
