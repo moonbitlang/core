@@ -24,6 +24,17 @@ fn malformed_input(text : StringView) -> StringView? {
 }
 
 ///|
+/// The `Malformed` payload of `decode_bytes(text)`, or `None` when decoding
+/// succeeds.
+fn malformed_bytes(text : StringView) -> StringView? {
+  try @percent.decode_bytes(text) catch {
+    Malformed(input) => Some(input)
+  } noraise {
+    _ => None
+  }
+}
+
+///|
 test "decode well-formed input" {
   inspect(@percent.decode(""), content="")
   inspect(@percent.decode("plain"), content="plain")
@@ -216,4 +227,58 @@ test "round trip" {
     let text = code.unsafe_to_char().to_string()
     assert_eq(@percent.decode(@percent.encode(text)), text)
   }
+}
+
+///|
+test "decode_bytes" {
+  // Escapes become raw bytes without UTF-8 validation.
+  inspect(@percent.decode_bytes("%C3%28"), content="b\"\\xc3(\"")
+  // Literal characters are appended as UTF-8.
+  inspect(@percent.decode_bytes("a%20b"), content="b\"a b\"")
+  inspect(@percent.decode_bytes("%2520"), content="b\"%20\"")
+  inspect(@percent.decode_bytes("caf%C3%A9"), content="b\"caf\\xc3\\xa9\"")
+  // encode_bytes inverts decode_bytes exactly, even for non-UTF-8 bytes.
+  let payload = b"\x00\xff\xc3\x28 a~"
+  inspect(
+    @percent.decode_bytes(@percent.encode_bytes(payload)),
+    content=(
+      #|b"\x00\xff\xc3( a~"
+    ),
+  )
+}
+
+///|
+test "decode_bytes literal UTF-8 across escape boundaries" {
+  inspect(
+    @percent.decode_bytes("é%00中文%FF🌙"),
+    content="b\"\\xc3\\xa9\\x00\\xe4\\xb8\\xad\\xe6\\x96\\x87\\xff\\xf0\\x9f\\x8c\\x99\"",
+  )
+  let text = "prefixé%20🌙suffix"
+  inspect(
+    @percent.decode_bytes(text[6:12]),
+    content="b\"\\xc3\\xa9 \\xf0\\x9f\\x8c\\x99\"",
+  )
+}
+
+///|
+test "decode_bytes malformed input" {
+  // A % not followed by two hexadecimal digits is malformed.
+  @debug.debug_inspect(
+    malformed_bytes("%G0"),
+    content=(
+      #|Some(<StringView: "%G0">)
+    ),
+  )
+  @debug.debug_inspect(
+    malformed_bytes("%2"),
+    content=(
+      #|Some(<StringView: "%2">)
+    ),
+  )
+  @debug.debug_inspect(
+    malformed_bytes("a%"),
+    content=(
+      #|Some(<StringView: "a%">)
+    ),
+  )
 }
