@@ -61,11 +61,7 @@ pub(all) enum IpProtocolPreference {
   NoPreference
 }
 
-pub struct Tcp {
-  addr : Addr
-  // private fields
-}
-pub fn Tcp::addr(Self) -> Addr
+type Tcp
 pub fn Tcp::close(Self) -> Unit
 pub async fn Tcp::connect(Addr) -> Self
 pub async fn Tcp::connect_to_host(StringView, port~ : UInt16, protocol? : IpProtocolPreference) -> Self
@@ -73,6 +69,7 @@ pub async fn Tcp::drop_all(Self) -> Int64 raise @io.ReaderError
 pub async fn Tcp::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
 pub fn Tcp::enable_keepalive(Self, idle_before_keep_alive? : Int32, keep_alive_count? : Int32, keep_alive_interval? : Int32) -> Unit raise
 pub fn Tcp::fd(Self) -> @types.Fd
+pub fn Tcp::local_addr(Self) -> Addr
 pub async fn Tcp::peek(Self) -> BytesView? raise @io.ReaderError
 pub async fn Tcp::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
 pub async fn Tcp::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
