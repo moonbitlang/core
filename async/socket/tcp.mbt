@@ -119,9 +119,9 @@ pub async fn TcpServer::TcpServer(
   if @event_loop.platform is Linux && reuse_port_lb {
     guard allow_reuse_port(sock) >= 0 else { @os_error.check_errno(context) }
   }
-  io.bind(addr.to_os_addr().0, context~)
+  io.bind(addr.to_os_addr().0, context="\{context}: bind()")
   if 0 != listen_ffi(sock) {
-    @os_error.check_errno(context)
+    @os_error.check_errno("\{context}: listen()")
   }
   // If `addr` specifies zero as the listen port,
   // the OS will assign a random port for us,
