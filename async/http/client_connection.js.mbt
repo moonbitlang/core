@@ -363,4 +363,7 @@ pub async fn ClientConnection::request(
 }
 
 ///|
-let _mute_unused_warning : Unit = ignore(IncorrectBodyLength)
+let _mute_unused_warning : Unit = {
+  ignore(IncorrectBodyLength)
+  ignore({ meth: Get, path: "", headers: {}, })
+}

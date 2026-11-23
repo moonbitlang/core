@@ -61,7 +61,7 @@ pub type Headers = Map[CaseInsensitiveString, String]
 ///|
 /// HTTP request header
 #derive(@debug.Debug, @json.ToJson)
-pub(all) struct RequestHeader {
+pub struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Headers
@@ -70,7 +70,7 @@ pub(all) struct RequestHeader {
 ///|
 /// HTTP response header
 #derive(@debug.Debug, @json.ToJson)
-pub(all) struct ResponseHeader {
+pub struct ResponseHeader {
   code : Int32
   reason : String
   headers : Headers
