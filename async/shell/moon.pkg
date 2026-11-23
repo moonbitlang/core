@@ -29,3 +29,5 @@ import {
 supported_targets = "native+wasm"
 
 max_concurrent_tests = 5
+
+warnings = "-deprecated"

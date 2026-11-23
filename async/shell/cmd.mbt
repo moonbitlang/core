@@ -21,6 +21,7 @@
 /// already exist. `Inherit` hands the child the parent's own standard input,
 /// which is what an interactive command needs; without it, standard input is
 /// closed.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 #derive(@debug.Debug)
 pub(all) enum Stdin {
   Text(String)
@@ -42,6 +43,7 @@ pub(all) enum Stdin {
 /// existing one. `Discard` is the structured `> /dev/null`: the stream goes to
 /// the platform's null device. A redirected stream is absent from `Output`,
 /// where it appears as an empty string.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 #derive(@debug.Debug)
 pub(all) enum Redirect {
   Capture
@@ -61,6 +63,7 @@ pub(all) enum Redirect {
 /// The representation is abstract and a `Cmd` is immutable once built. Its
 /// derived `Debug` representation can be logged or snapshot-tested before it
 /// runs.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 #derive(@debug.Debug)
 struct Cmd {
   program : String
@@ -106,6 +109,7 @@ struct Cmd {
 ///   )
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Cmd::Cmd(
   program : String,
   arguments : ArrayView[String],

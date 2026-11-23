@@ -18,6 +18,7 @@
 /// The representation is abstract; readers use the accessor methods. Text is
 /// decoded as lossy UTF-8 so arbitrary process output cannot cancel a run;
 /// `stdout_bytes` keeps standard output byte for byte.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 #derive(@debug.Debug)
 struct Output {
   exit_code : Int32
@@ -29,18 +30,21 @@ struct Output {
 ///|
 /// The exit status: for a pipeline, the rightmost non-zero stage status, or
 /// zero when every stage succeeded (pipefail).
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Output::exit_code(self : Output) -> Int32 {
   self.exit_code
 }
 
 ///|
 /// Captured standard output of the final stage, decoded as lossy UTF-8.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Output::stdout(self : Output) -> String {
   self.stdout
 }
 
 ///|
 /// Captured standard output of the final stage, byte for byte.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Output::stdout_bytes(self : Output) -> Bytes {
   self.stdout_bytes
 }
@@ -48,6 +52,7 @@ pub fn Output::stdout_bytes(self : Output) -> Bytes {
 ///|
 /// Every stage's captured standard error, concatenated in stage order and
 /// decoded as lossy UTF-8.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Output::stderr(self : Output) -> String {
   self.stderr
 }
@@ -70,6 +75,7 @@ pub fn Output::stderr(self : Output) -> String {
 ///   }
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Output::check(self : Output) -> Unit raise {
   if self.exit_code != 0 {
     raise CommandFailed(self)

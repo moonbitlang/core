@@ -17,6 +17,7 @@
 ///
 /// Every stage is separately visible to the process host, and an empty
 /// pipeline is rejected when execution is requested.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 #derive(@debug.Debug)
 struct Pipeline {
   commands : Array[Cmd]
@@ -67,6 +68,7 @@ struct Pipeline {
 ///   )
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub fn Pipeline::Pipeline(commands : ArrayView[Cmd]) -> Pipeline {
   { commands: commands.to_owned(), }
 }
