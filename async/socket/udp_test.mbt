@@ -18,7 +18,7 @@ async test "UDP recv_into" {
     let server = @socket.UdpServer(@socket.Addr::parse("127.0.0.1:0"))
     defer server.close()
     let client_task = group.spawn(() => {
-      let client = @socket.UdpClient(server.addr)
+      let client = @socket.UdpClient(server.local_addr())
       defer client.close()
       client.send(b"request")
       let buf = FixedArray::make(16, b'.')

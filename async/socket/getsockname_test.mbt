@@ -43,7 +43,7 @@ async test "getsockname TCP" {
 async test "getsockname UDP" {
   @async.with_task_group() <| group => {
     let server = @socket.UdpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let server_addr = server.addr
+    let server_addr = server.local_addr()
     guard server_addr.to_string() is [.. "127.0.0.1:", ..] else {
       server.close()
       raise Failure::Failure("incorrect server address \{server_addr}")
@@ -58,7 +58,7 @@ async test "getsockname UDP" {
       let client = @socket.UdpClient(server_addr)
       defer client.close()
       client.send(b"abcd")
-      client.addr
+      client.local_addr()
     })
     assert_eq(client_addr_from_server.wait(), client_addr.wait())
   }

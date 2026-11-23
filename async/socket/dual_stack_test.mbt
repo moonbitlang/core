@@ -309,7 +309,7 @@ async test "dual stack UDP server" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
-    let port = server.addr.port
+    let port = server.local_addr().port
     root.spawn_bg(no_wait=true) <| () => {
       defer server.close()
       for ;; {
