@@ -376,14 +376,11 @@ pub fn UdpServer::set_multicast_loopback(
 ///|
 /// Let the server join multicast group at address `multi_addr`, via interface `interface_addr`.
 /// `interface_addr` defaults to a random interface chosen by the OS.
-/// Only the IP part of `multi_addr` and `interface_addr` matters, the port is irrelevant.
 ///
 /// Note that `join_multicast_group` is mainly about IGMP related stuff,
 /// it does not serve as a packet filter.
 /// A UDP server can receive all packets whose destination match the server's address.
 /// Some consquence of this:
-///
-/// - The port to receive multicast traffic is determined on server creation
 ///
 /// - if the server is bound to a specific interface, it will not receive any multicast traffic,
 ///   because multicast traffic has special destination IP
@@ -394,18 +391,18 @@ pub fn UdpServer::set_multicast_loopback(
 /// This function is IPv4 only. For IPv6 multicast, use `join_multicast_group_v6` instead.
 pub fn UdpServer::join_multicast_group(
   self : UdpServer,
-  multi_addr : Addr,
+  multi_addr : IpAddr,
   interface_addr~ : IpAddr = Ipv4(0),
 ) -> Unit raise {
   let context = "@socket.UdpServer::join_multicast_group()"
   guard self.local_addr.ip is Ipv4(_) else { abort("\{context} is IPv4 only") }
-  guard multi_addr.ip is Ipv4(_) && interface_addr is Ipv4(_) else {
+  guard multi_addr is Ipv4(_) && interface_addr is Ipv4(_) else {
     abort("\{context}: expected IPv4 address")
   }
   let interface_addr = { ip: interface_addr, port: 0, }.to_os_addr()
   join_multicast_group(
     self.io.fd(),
-    multi_addr.to_os_addr(),
+    { ip: multi_addr, port: 0, }.to_os_addr(),
     interface_addr,
     context~,
   )
@@ -417,14 +414,11 @@ pub fn UdpServer::join_multicast_group(
 /// meaning it can either be a decimal string for raw interface index, or a network interface name.
 /// `interface` defaults to "0", meaning a default output interface chosen by the OS.
 /// For interface-local/link-local multicast packets, the interface must be explicitly specified.
-/// Only the IP part of `multi_addr` matters, the port is irrelevant.
 ///
 /// Note that `join_multicast_group` is mainly about IGMP related stuff,
 /// it does not serve as a packet filter.
 /// A UDP server can receive all packets whose destination match the server's address.
 /// Some consquence of this:
-///
-/// - The port to receive multicast traffic is determined on server creation
 ///
 /// - if the server is bound to a specific interface, it will not receive any multicast traffic,
 ///   because multicast traffic has special destination IP
@@ -432,17 +426,17 @@ pub fn UdpServer::join_multicast_group(
 /// This function is IPv6 only. For IPv4 multicast, use `join_multicast_group` instead.
 pub fn UdpServer::join_multicast_group_v6(
   self : UdpServer,
-  multi_addr : Addr,
+  multi_addr : IpAddr,
   interface~ : String = "0",
 ) -> Unit raise {
   let context = "@socket.UdpServer::join_multicast_group_v6()"
   guard self.local_addr.ip is Ipv6(_) else { abort("\{context} is IPv6 only") }
-  guard multi_addr.ip is Ipv6(_) else {
+  guard multi_addr is Ipv6(_) else {
     abort("\{context}: expected IPv6 address")
   }
   join_multicast_group_v6(
     self.io.fd(),
-    multi_addr.to_os_addr(),
+    { ip: multi_addr, port: 0, }.to_os_addr(),
     parse_ipv6_zone_suffix(interface, context~),
     context~,
   )

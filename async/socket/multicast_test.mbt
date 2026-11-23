@@ -55,12 +55,12 @@ async test "multicast discovery then unicast" {
     let interface_addr = @socket.IpAddr("127.0.0.1")
     let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:0"))
     defer server.close()
-    let multicast_addr = @socket.Addr::parse(
-      "239.0.0.1:\{server.local_addr().port}",
-    )
+    let multicast_addr = @socket.IpAddr("239.0.0.1")
     server.join_multicast_group(multicast_addr, interface_addr~)
     group.spawn_bg() <| () => {
-      let client = @socket.UdpClient(multicast_addr)
+      let client = @socket.UdpClient(
+        Addr(multicast_addr, server.local_addr().port),
+      )
       defer client.close()
       client.set_multicast_interface(interface_addr)
       @async.sleep(150)
@@ -143,11 +143,8 @@ async test "multicast discovery then unicast v6" {
     let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
     defer server.close()
     let port = server.local_addr().port
-    let multicast_addr = @socket.Addr::parse(
-      "[ff02::1]:\{server.local_addr().port}",
-    )
     server.join_multicast_group_v6(
-      multicast_addr,
+      IpAddr("ff02::1"),
       interface=test_interface.wait(),
     )
     server.set_multicast_ttl(0)
@@ -194,11 +191,10 @@ async test "multicast no loopback v6" {
   @async.with_task_group() <| group => {
     let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
     let port = server.local_addr().port
-    let multicast_addr = @socket.Addr::parse("[ff02::1]:\{port}")
     group.spawn_bg(no_wait=true) <| () => {
       defer server.close()
       server.join_multicast_group_v6(
-        multicast_addr,
+        IpAddr("ff02::1"),
         interface=test_interface.wait(),
       )
       for ;; {

@@ -117,8 +117,8 @@ type UdpServer
 pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool) -> Self
 pub fn UdpServer::close(Self) -> Unit
 pub fn UdpServer::fd(Self) -> @types.Fd
-pub fn UdpServer::join_multicast_group(Self, Addr, interface_addr? : IpAddr) -> Unit raise
-pub fn UdpServer::join_multicast_group_v6(Self, Addr, interface? : String) -> Unit raise
+pub fn UdpServer::join_multicast_group(Self, IpAddr, interface_addr? : IpAddr) -> Unit raise
+pub fn UdpServer::join_multicast_group_v6(Self, IpAddr, interface? : String) -> Unit raise
 pub fn UdpServer::local_addr(Self) -> Addr
 pub async fn UdpServer::multicast(Addr, interface_addr? : IpAddr) -> Self
 pub async fn UdpServer::recv(Self, max_len? : Int32) -> (Bytes, Addr)
