@@ -86,15 +86,13 @@ pub async fn Tcp::write_reader(Self, &@io.BinaryReader) -> Unit
 pub impl @io.BinaryReader for Tcp
 pub impl @io.BinaryWriter for Tcp
 
-pub struct TcpServer {
-  addr : Addr
-  // private fields
-}
+type TcpServer
 #alias(new, deprecated)
 pub async fn TcpServer::TcpServer(Addr, dual_stack? : Bool, reuse_addr? : Bool, reuse_port_lb? : Bool) -> Self
 pub async fn TcpServer::accept(Self) -> Tcp
 pub fn TcpServer::close(Self) -> Unit
 pub fn TcpServer::fd(Self) -> @types.Fd
+pub fn TcpServer::local_addr(Self) -> Addr
 pub async fn TcpServer::run_forever(Self, async (Tcp) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
 
 type UdpClient

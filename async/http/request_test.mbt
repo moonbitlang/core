@@ -81,8 +81,8 @@ async test "manual Accept-Encoding" {
         conn.end_response()
       })
     }
-    let (_, result1) = @http.get("http://\{test_server.addr}")
-    let (_, result2) = @http.get("http://\{test_server.addr}", headers={
+    let (_, result1) = @http.get("http://\{test_server.local_addr()}")
+    let (_, result2) = @http.get("http://\{test_server.local_addr()}", headers={
       "Accept-Encoding": "gzip",
     })
     assert_not_eq(result1.binary().length(), result2.binary().length())
@@ -103,7 +103,7 @@ async test "request to an IPv6 address" {
         conn.text.write("Host: \{request.headers.get("Host").unwrap_or("")}")
       })
     }
-    let port = server.addr.port
+    let port = server.local_addr().port
     let (response, body) = @http.get("http://[::1]:\{port}/")
     inspect(response.code, content="200")
     inspect(body.text(), content="Host: [::1]:\{port}")
@@ -115,7 +115,7 @@ async test "request to an IPv6 address" {
 async test "toplevel helpers support explicit Content-Length" {
   @async.with_task_group <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port
+    let port = server.local_addr().port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((request, conn) => {
         guard request.headers.get("Content-Length") is Some(len) else {

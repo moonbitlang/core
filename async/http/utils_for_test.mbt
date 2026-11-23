@@ -17,7 +17,7 @@
 async fn non_responding_tcp_server(group : @async.TaskGroup) -> UInt16 {
   let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
   group.add_defer(() => server.close())
-  server.addr.port
+  server.local_addr().port
 }
 
 ///|
@@ -101,7 +101,7 @@ async fn test_server(group : @async.TaskGroup, log : &Logger) -> UInt16 {
       }
     })
   }
-  server.addr.port
+  server.local_addr().port
 }
 
 ///|

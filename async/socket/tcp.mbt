@@ -48,10 +48,9 @@ pub fn Tcp::remote_addr(self : Tcp) -> Addr {
 
 ///|
 /// A TCP server that can accept new connections
-pub struct TcpServer {
-  /// The actual listen address of the server
-  addr : Addr
-  priv io : @event_loop.IoHandle
+struct TcpServer {
+  local_addr : Addr
+  io : @event_loop.IoHandle
 }
 
 ///|
@@ -128,7 +127,7 @@ pub async fn TcpServer::TcpServer(
   // the OS will assign a random port for us,
   // in this case, we need to retrieve the actual port via `getsockname`.
   let actual_addr = getsockname(sock, family, context~)
-  { io, addr: Addr::from_os_addr(actual_addr), }
+  { io, local_addr: Addr::from_os_addr(actual_addr), }
 }
 
 ///|
@@ -194,11 +193,17 @@ pub fn TcpServer::fd(self : TcpServer) -> @fd_util.Fd {
 }
 
 ///|
+/// Get the actual listen address of a TCP server
+pub fn TcpServer::local_addr(self : TcpServer) -> Addr {
+  self.local_addr
+}
+
+///|
 #cfg(not(platform="windows"))
 async fn TcpServer::accept_unix(self : TcpServer) -> Tcp {
   let context = "@socket.TcpServer::accept()"
   // Create a big enough Addr to hold both IPv4 and IPv6 address
-  let family = self.addr.family()
+  let family = self.local_addr.family()
   let remote_addr = OsAddr::empty(family)
   let conn = self.io.accept_unix(remote_addr.0, context~)
   errdefer conn.close()
@@ -222,7 +227,7 @@ async fn TcpServer::accept_unix(self : TcpServer) -> Tcp {
 #cfg(any(target="wasm", platform="windows"))
 async fn TcpServer::accept_windows(self : TcpServer) -> Tcp {
   let context = "@socket.TcpServer::accept()"
-  let family = self.addr.family()
+  let family = self.local_addr.family()
   let conn_sock = make_tcp_socket(family, context~)
   let conn = @event_loop.IoHandle::from_fd(conn_sock, kind=Socket)
   errdefer conn.close()

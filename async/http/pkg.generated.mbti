@@ -177,14 +177,12 @@ pub struct ResponseHeader {
   cookies : Array[Cookie]
 }
 
-pub struct Server {
-  addr : @socket.Addr
-  // private fields
-}
+type Server
 #alias(new, deprecated)
 pub async fn Server::Server(@socket.Addr, dual_stack? : Bool, reuse_addr? : Bool, headers? : Map[CaseInsensitiveString, String]) -> Self
 pub async fn Server::accept(Self) -> ServerConnection
 pub fn Server::close(Self) -> Unit
+pub fn Server::local_addr(Self) -> @socket.Addr
 pub async fn Server::run_forever(Self, async (RequestHeader, ServerConnection) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
 
 pub struct ServerConnection {

@@ -17,7 +17,7 @@ async test "passthrough mode" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let server_addr = server.addr
+    let server_addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -53,7 +53,7 @@ async test "passthrough mode" {
 async test "passthrough mode remaining data" {
   @async.with_task_group() <| group => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let server_addr = server.addr
+    let server_addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -116,9 +116,9 @@ async fn handle_connect(
 async test "custom tunnel" {
   let log = []
   let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-  let proxy_port = proxy_server.addr.port
+  let proxy_port = proxy_server.local_addr().port
   let target_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-  let target_port = target_server.addr.port
+  let target_port = target_server.local_addr().port
   @async.with_task_group() <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((request, conn) => {
@@ -163,7 +163,7 @@ async test "basic proxy authentication" {
   let proxy_authorizations = []
   @async.with_task_group() <| group => {
     let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let proxy_port = proxy_server.addr.port
+    let proxy_port = proxy_server.local_addr().port
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((request, conn) => {
         proxy_authorizations.push(
@@ -173,7 +173,7 @@ async test "basic proxy authentication" {
       })
     }
     let target_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let target_port = target_server.addr.port
+    let target_port = target_server.local_addr().port
     group.spawn_bg(no_wait=true) <| () => {
       target_server.run_forever() <| ((_request, conn) => {
         conn..send_response(200, "OK").end_response()
@@ -195,7 +195,7 @@ async test "proxied https request" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port
+    let port = server.local_addr().port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
@@ -215,7 +215,7 @@ async test "proxied http request" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let port = server.addr.port
+    let port = server.local_addr().port
     group.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| ((req, conn) => handle_connect(log, req, conn))
     }
@@ -234,9 +234,9 @@ async test "proxied http request" {
 async test "proxied misc request" {
   let log = []
   let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-  let proxy_server_addr = proxy_server.addr
+  let proxy_server_addr = proxy_server.local_addr()
   let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-  let port = server.addr.port
+  let port = server.local_addr().port
   @async.with_task_group() <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((req, conn) => {
@@ -275,7 +275,7 @@ async test "proxied misc request" {
 ///|
 async test "proxy error" {
   let proxy_server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-  let port = proxy_server.addr.port
+  let port = proxy_server.local_addr().port
   @async.with_task_group() <| group => {
     group.spawn_bg(no_wait=true) <| () => {
       proxy_server.run_forever() <| ((_, conn) => {
@@ -308,7 +308,7 @@ async test "proxy error" {
 async test "proxy at an IPv6 address" {
   @async.with_task_group() <| group => {
     let proxy = @socket.TcpServer(@socket.Addr::parse("[::1]:0"))
-    let proxy_port = proxy.addr.port
+    let proxy_port = proxy.local_addr().port
     group.spawn_bg() <| () => {
       defer proxy.close()
       let conn = proxy.accept()
