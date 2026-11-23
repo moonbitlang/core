@@ -130,7 +130,7 @@ fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
 /// `encode_bytes`.
 ///
 /// Raises `Malformed` if a `%` is not followed by two hexadecimal digits.
-pub fn decode_bytes(text : StringView) -> Bytes raise Malformed {
+pub fn decode_to_bytes(text : StringView) -> Bytes raise Malformed {
   let length = text.length()
   let buffer = @buffer.Buffer(capacity=length)
   let mut i = 0

@@ -127,9 +127,9 @@ test "encode_bytes" {
   // A byte string that is not valid UTF-8 is escaped byte by byte.
   inspect(@percent.encode_bytes(b"\xc3\x28"), content="%C3%28")
   inspect(@percent.encode_bytes(b""), content="")
-  // Every byte value survives a round trip through decode_bytes.
+  // Every byte value survives a round trip through decode_to_bytes.
   for byte in 0..<256 {
     let payload = Bytes::makei(1, _ => byte.to_byte())
-    assert_eq(@percent.decode_bytes(@percent.encode_bytes(payload)), payload)
+    assert_eq(@percent.decode_to_bytes(@percent.encode_bytes(payload)), payload)
   }
 }

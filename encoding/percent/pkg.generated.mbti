@@ -8,9 +8,9 @@ import {
 // Values
 pub fn decode(StringView) -> String raise Malformed
 
-pub fn decode_bytes(StringView) -> Bytes raise Malformed
-
 pub fn decode_lossy(StringView) -> String
+
+pub fn decode_to_bytes(StringView) -> Bytes raise Malformed
 
 pub fn encode(StringView) -> String
 

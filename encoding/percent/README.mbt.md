@@ -62,7 +62,7 @@ test "decode" {
 
 ## Raw Bytes
 
-`encode_bytes` and `decode_bytes` are the byte-level counterparts of `encode`
+`encode_bytes` and `decode_to_bytes` are the byte-level counterparts of `encode`
 and `decode`. They escape and unescape octets without converting to and from
 UTF-8, so binary and non-UTF-8 payloads round-trip.
 
@@ -70,7 +70,7 @@ UTF-8, so binary and non-UTF-8 payloads round-trip.
 ///|
 test "raw_bytes" {
   inspect(@percent.encode_bytes(b"\x00\xff a~"), content="%00%FF%20a~")
-  inspect(@percent.decode_bytes("%C3%28"), content="b\"\\xc3(\"")
+  inspect(@percent.decode_to_bytes("%C3%28"), content="b\"\\xc3(\"")
 }
 ```
 

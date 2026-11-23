@@ -106,7 +106,7 @@ pub fn encode(text : StringView) -> String {
 /// unreserved set `A-Z a-z 0-9 - . _ ~` is written as `%XX` with uppercase
 /// hexadecimal digits, and the rest are copied through. No UTF-8 conversion
 /// happens, so binary and non-UTF-8 payloads round-trip through
-/// `decode_bytes`.
+/// `decode_to_bytes`.
 pub fn encode_bytes(bytes : BytesView) -> String {
   let builder = StringBuilder(capacity=bytes.length())
   for byte in bytes {

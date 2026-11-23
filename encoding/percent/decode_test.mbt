@@ -24,10 +24,10 @@ fn malformed_input(text : StringView) -> StringView? {
 }
 
 ///|
-/// The `Malformed` payload of `decode_bytes(text)`, or `None` when decoding
+/// The `Malformed` payload of `decode_to_bytes(text)`, or `None` when decoding
 /// succeeds.
 fn malformed_bytes(text : StringView) -> StringView? {
-  try @percent.decode_bytes(text) catch {
+  try @percent.decode_to_bytes(text) catch {
     Malformed(input) => Some(input)
   } noraise {
     _ => None
@@ -230,17 +230,17 @@ test "round trip" {
 }
 
 ///|
-test "decode_bytes" {
+test "decode_to_bytes" {
   // Escapes become raw bytes without UTF-8 validation.
-  inspect(@percent.decode_bytes("%C3%28"), content="b\"\\xc3(\"")
+  inspect(@percent.decode_to_bytes("%C3%28"), content="b\"\\xc3(\"")
   // Literal characters are appended as UTF-8.
-  inspect(@percent.decode_bytes("a%20b"), content="b\"a b\"")
-  inspect(@percent.decode_bytes("%2520"), content="b\"%20\"")
-  inspect(@percent.decode_bytes("caf%C3%A9"), content="b\"caf\\xc3\\xa9\"")
-  // encode_bytes inverts decode_bytes exactly, even for non-UTF-8 bytes.
+  inspect(@percent.decode_to_bytes("a%20b"), content="b\"a b\"")
+  inspect(@percent.decode_to_bytes("%2520"), content="b\"%20\"")
+  inspect(@percent.decode_to_bytes("caf%C3%A9"), content="b\"caf\\xc3\\xa9\"")
+  // encode_bytes inverts decode_to_bytes exactly, even for non-UTF-8 bytes.
   let payload = b"\x00\xff\xc3\x28 a~"
   inspect(
-    @percent.decode_bytes(@percent.encode_bytes(payload)),
+    @percent.decode_to_bytes(@percent.encode_bytes(payload)),
     content=(
       #|b"\x00\xff\xc3( a~"
     ),
@@ -248,20 +248,20 @@ test "decode_bytes" {
 }
 
 ///|
-test "decode_bytes literal UTF-8 across escape boundaries" {
+test "decode_to_bytes literal UTF-8 across escape boundaries" {
   inspect(
-    @percent.decode_bytes("é%00中文%FF🌙"),
+    @percent.decode_to_bytes("é%00中文%FF🌙"),
     content="b\"\\xc3\\xa9\\x00\\xe4\\xb8\\xad\\xe6\\x96\\x87\\xff\\xf0\\x9f\\x8c\\x99\"",
   )
   let text = "prefixé%20🌙suffix"
   inspect(
-    @percent.decode_bytes(text[6:12]),
+    @percent.decode_to_bytes(text[6:12]),
     content="b\"\\xc3\\xa9 \\xf0\\x9f\\x8c\\x99\"",
   )
 }
 
 ///|
-test "decode_bytes malformed input" {
+test "decode_to_bytes malformed input" {
   // A % not followed by two hexadecimal digits is malformed.
   @debug.debug_inspect(
     malformed_bytes("%G0"),
