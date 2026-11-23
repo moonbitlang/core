@@ -11,24 +11,20 @@ import {
 // Errors
 
 // Types and methods
-pub struct RawFd {
-  fd : @types.Fd
-  // private fields
-}
+type RawFd
 #alias(new, deprecated)
 pub async fn RawFd::RawFd(@types.Fd) -> Self
 pub fn RawFd::close(Self) -> Unit
+pub fn RawFd::fd(Self) -> @types.Fd
 pub async fn RawFd::read_into_once(Self, MutArrayView[Byte]) -> Int32
 pub async fn RawFd::write_once(Self, Bytes, offset? : Int32, len? : Int32) -> Int32
 
-pub struct RawFdStream {
-  fd : @types.Fd
-  // private fields
-}
+type RawFdStream
 pub async fn RawFdStream::RawFdStream(@types.Fd) -> Self
 pub fn RawFdStream::close(Self) -> Unit
 pub async fn RawFdStream::drop_all(Self) -> Int64 raise @io.ReaderError
 pub async fn RawFdStream::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
+pub fn RawFdStream::fd(Self) -> @types.Fd
 pub async fn RawFdStream::peek(Self) -> BytesView? raise @io.ReaderError
 pub async fn RawFdStream::peek_at_least(Self, Int32) -> BytesView raise @io.ReaderError
 pub async fn RawFdStream::peek_exactly(Self, Int32) -> BytesView raise @io.ReaderError
