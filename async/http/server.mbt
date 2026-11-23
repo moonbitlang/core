@@ -284,7 +284,8 @@ pub fn Server::local_addr(self : Server) -> @socket.Addr {
 
 ///|
 /// Accept a new connection from a HTTP server.
-/// Return the new HTTP connection and the address of peer.
+/// The client address is available via the returned connection's
+/// `.remote_addr()` method.
 pub async fn Server::accept(self : Server) -> ServerConnection {
   let conn = self.server.accept()
   ServerConnection(conn, headers=self.headers)

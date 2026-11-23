@@ -76,7 +76,7 @@ The recommended way to create HTTP servers is `@http.Server::run_forever(..)`.
 A HTTP server should first get created via `@http.Server(..)`,
 after that, `server.run_forever(f)` automatically start and run the server.
 The callback function `f` is used to handle HTTP requests.
-It receives three parameters:
+It receives two parameters:
 
 - the request to process
 - a `@http.ServerConnection` that can be used to read request body or send response.

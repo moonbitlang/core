@@ -67,7 +67,7 @@ struct TcpServer {
 ///
 /// If the port of `addr` is zero, the server will be bound to a random port,
 /// assigned by the operating system.
-/// The actual listen address can be retrieved via `.addr()`.
+/// The actual listen address can be retrieved via `.local_addr()`.
 ///
 /// If `reuse_addr` is `true` (`false` by default),
 /// the `SO_REUSEADDR` option will be enabled on the server,
@@ -134,7 +134,8 @@ pub async fn TcpServer::TcpServer(
 /// Start the main loop of a TCP server,
 /// keep listening for new connections
 /// and handle connections using the callback `f`.
-/// `f` will be supplied the new connection and the address of the client.
+/// `f` will be supplied the new connection.
+/// The address of the client is available via `conn.remote_addr()`.
 ///
 /// The client connection will be closed automatically after `f` exits,
 /// so `f` must not close the client connection.
@@ -223,7 +224,8 @@ async fn TcpServer::accept_unix(self : TcpServer) -> Tcp {
 
 ///|
 /// Accept a new connection on a listening TCP server.
-/// The accepted connection will be returned together with the address of peer.
+/// The address of the peer is available via the returned connection's
+/// `.remote_addr()` method.
 #cfg(any(target="wasm", platform="windows"))
 async fn TcpServer::accept_windows(self : TcpServer) -> Tcp {
   let context = "@socket.TcpServer::accept()"
@@ -248,7 +250,8 @@ async fn TcpServer::accept_windows(self : TcpServer) -> Tcp {
 
 ///|
 /// Accept a new connection on a listening TCP server.
-/// The accepted connection will be returned together with the address of peer.
+/// The address of the peer is available via the returned connection's
+/// `.remote_addr()` method.
 #cfg(all(target="native", not(platform="windows")))
 pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   self.accept_unix()
@@ -256,7 +259,8 @@ pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
 
 ///|
 /// Accept a new connection on a listening TCP server.
-/// The accepted connection will be returned together with the address of peer.
+/// The address of the peer is available via the returned connection's
+/// `.remote_addr()` method.
 #cfg(platform="windows")
 pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   self.accept_windows()
@@ -264,7 +268,8 @@ pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
 
 ///|
 /// Accept a new connection on a listening TCP server.
-/// The accepted connection will be returned together with the address of peer.
+/// The address of the peer is available via the returned connection's
+/// `.remote_addr()` method.
 #cfg(target="wasm")
 pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   if @event_loop.platform is Windows {
