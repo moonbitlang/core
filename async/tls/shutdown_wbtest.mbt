@@ -20,7 +20,7 @@ async test "peer close connection require_shutdown=false" {
     let addr = server.addr
     root.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let server = test_server(conn, conn)
       defer server.close()
@@ -54,7 +54,7 @@ async test "peer close connection require_shutdown=true" {
     let addr = server.addr
     root.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let server = test_server(conn, conn, require_shutdown=true)
       defer server.close()

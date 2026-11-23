@@ -64,9 +64,9 @@ pub fn ServerConnection::close(self : ServerConnection) -> Unit {
 }
 
 ///|
-/// Get the address of client from a HTTP server connection
-pub fn ServerConnection::client_addr(self : ServerConnection) -> @socket.Addr {
-  self.conn.local_addr()
+/// Get the address of the remote client from a HTTP server connection
+pub fn ServerConnection::remote_addr(self : ServerConnection) -> @socket.Addr {
+  self.conn.remote_addr()
 }
 
 ///|
@@ -280,9 +280,9 @@ pub fn Server::close(self : Server) -> Unit {
 ///|
 /// Accept a new connection from a HTTP server.
 /// Return the new HTTP connection and the address of peer.
-pub async fn Server::accept(self : Server) -> (ServerConnection, @socket.Addr) {
-  let (conn, addr) = self.server.accept()
-  (ServerConnection(conn, headers=self.headers), addr)
+pub async fn Server::accept(self : Server) -> ServerConnection {
+  let conn = self.server.accept()
+  ServerConnection(conn, headers=self.headers)
 }
 
 ///|
@@ -326,7 +326,7 @@ pub async fn Server::run_forever(
   allow_failure? : Bool,
   max_connections? : Int32,
 ) -> Unit {
-  self.server.run_forever(allow_failure?, max_connections?) <| ((conn, _) => {
+  self.server.run_forever(allow_failure?, max_connections?) <| conn => {
     let conn = ServerConnection(conn, headers=self.headers)
     defer conn.close()
     for ;; {
@@ -339,7 +339,7 @@ pub async fn Server::run_forever(
         conn.end_response()
       }
     }
-  })
+  }
 }
 
 ///|

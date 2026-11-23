@@ -183,7 +183,7 @@ pub struct Server {
 }
 #alias(new, deprecated)
 pub async fn Server::Server(@socket.Addr, dual_stack? : Bool, reuse_addr? : Bool, headers? : Map[CaseInsensitiveString, String]) -> Self
-pub async fn Server::accept(Self) -> (ServerConnection, @socket.Addr)
+pub async fn Server::accept(Self) -> ServerConnection
 pub fn Server::close(Self) -> Unit
 pub async fn Server::run_forever(Self, async (RequestHeader, ServerConnection) -> Unit, allow_failure? : Bool, max_connections? : Int32) -> Unit
 
@@ -193,7 +193,6 @@ pub struct ServerConnection {
 }
 #alias(new, deprecated)
 pub fn ServerConnection::ServerConnection(@socket.Tcp, headers? : Map[CaseInsensitiveString, String]) -> Self
-pub fn ServerConnection::client_addr(Self) -> @socket.Addr
 pub fn ServerConnection::close(Self) -> Unit
 pub async fn ServerConnection::drop_all(Self) -> Int64 raise @io.ReaderError
 pub async fn ServerConnection::drop_exactly(Self, Int32) -> Unit raise @io.ReaderError
@@ -211,6 +210,7 @@ pub async fn ServerConnection::read_exactly(Self, Int32) -> Bytes raise @io.Read
 pub async fn ServerConnection::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn ServerConnection::read_request(Self) -> RequestHeader
 pub async fn ServerConnection::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
+pub fn ServerConnection::remote_addr(Self) -> @socket.Addr
 pub async fn ServerConnection::send_response(Self, Int32, String, extra_headers? : Map[CaseInsensitiveString, String], cookies? : Array[Cookie]) -> Unit
 pub async fn ServerConnection::skip_request_body(Self) -> Unit
 pub fn ServerConnection::trailer(Self) -> Map[CaseInsensitiveString, String]

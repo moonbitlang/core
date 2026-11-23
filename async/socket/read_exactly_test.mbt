@@ -25,7 +25,7 @@ async test "read_exactly" {
     let addr = server.addr
     root.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let msg1 = conn.read_exactly(4) |> @utf8.decode
       @async.sleep(10)
@@ -74,7 +74,7 @@ async test "read_exactly failure" {
     let addr = server.addr
     root.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       defer conn.close()
       let msg1 = conn.read_exactly(4) |> @utf8.decode
       @async.sleep(10)

@@ -16,6 +16,7 @@
 /// A Tcp connection
 struct Tcp {
   local_addr : Addr
+  remote_addr : Addr
   io : @event_loop.IoHandle
   reader_ctrl : @io.BinaryReaderController
   writer_ctrl : @io.BinaryWriterController
@@ -37,6 +38,12 @@ pub fn Tcp::fd(self : Tcp) -> @fd_util.Fd {
 /// Get the local address of a TCP connection
 pub fn Tcp::local_addr(self : Tcp) -> Addr {
   self.local_addr
+}
+
+///|
+/// Get the remote peer's address of a TCP connection
+pub fn Tcp::remote_addr(self : Tcp) -> Addr {
+  self.remote_addr
 }
 
 ///|
@@ -142,7 +149,7 @@ pub async fn TcpServer::TcpServer(
 /// New clients will only get handled after a previous client terminates.
 pub async fn TcpServer::run_forever(
   self : TcpServer,
-  f : async (Tcp, Addr) -> Unit,
+  f : async (Tcp) -> Unit,
   allow_failure~ : Bool = true,
   max_connections? : Int32,
 ) -> Unit {
@@ -160,14 +167,14 @@ pub async fn TcpServer::run_forever(
       }
       // if `accept` failed, the whole group will fail anyway,
       // so no need to release the semaphore here.
-      let (conn, addr) = self.accept()
+      let conn = self.accept()
       group.spawn_bg(allow_failure~) <| () => {
         defer conn.close()
         if conn_limit is Some(limit) {
           defer limit.release()
-          f(conn, addr)
+          f(conn)
         } else {
-          f(conn, addr)
+          f(conn)
         }
       }
     }
@@ -188,61 +195,57 @@ pub fn TcpServer::fd(self : TcpServer) -> @fd_util.Fd {
 
 ///|
 #cfg(not(platform="windows"))
-async fn TcpServer::accept_unix(self : TcpServer) -> (Tcp, Addr) {
+async fn TcpServer::accept_unix(self : TcpServer) -> Tcp {
   let context = "@socket.TcpServer::accept()"
   // Create a big enough Addr to hold both IPv4 and IPv6 address
   let family = self.addr.family()
-  let addr = OsAddr::empty(family)
-  let conn = self.io.accept_unix(addr.0, context~)
+  let remote_addr = OsAddr::empty(family)
+  let conn = self.io.accept_unix(remote_addr.0, context~)
   errdefer conn.close()
   if disable_nagle(conn.fd()) < 0 {
     @os_error.check_errno("@socket.TcpServer::accept(): set TCP_NODELAY")
   }
   @fd_util.set_cloexec(conn.fd(), context~)
   let local_addr = Addr::from_os_addr(getsockname(conn.fd(), family, context~))
-  (
-    {
-      io: conn,
-      local_addr,
-      reader_ctrl: BinaryReaderController(),
-      writer_ctrl: BinaryWriterController(),
-    },
-    Addr::from_os_addr(addr),
-  )
+  {
+    io: conn,
+    local_addr,
+    remote_addr: Addr::from_os_addr(remote_addr),
+    reader_ctrl: BinaryReaderController(),
+    writer_ctrl: BinaryWriterController(),
+  }
 }
 
 ///|
 /// Accept a new connection on a listening TCP server.
 /// The accepted connection will be returned together with the address of peer.
 #cfg(any(target="wasm", platform="windows"))
-async fn TcpServer::accept_windows(self : TcpServer) -> (Tcp, Addr) {
+async fn TcpServer::accept_windows(self : TcpServer) -> Tcp {
   let context = "@socket.TcpServer::accept()"
   let family = self.addr.family()
   let conn_sock = make_tcp_socket(family, context~)
   let conn = @event_loop.IoHandle::from_fd(conn_sock, kind=Socket)
   errdefer conn.close()
-  let addr = OsAddr::empty(family)
-  self.io.accept_windows(conn, addr.0, context~)
+  let remote_addr = OsAddr::empty(family)
+  self.io.accept_windows(conn, remote_addr.0, context~)
   if disable_nagle(conn_sock) < 0 {
     @os_error.check_errno("@socket.TcpServer::accept(): set TCP_NODELAY")
   }
   let local_addr = Addr::from_os_addr(getsockname(conn.fd(), family, context~))
-  (
-    {
-      io: conn,
-      local_addr,
-      reader_ctrl: BinaryReaderController(),
-      writer_ctrl: BinaryWriterController(),
-    },
-    Addr::from_os_addr(addr),
-  )
+  {
+    io: conn,
+    local_addr,
+    remote_addr: Addr::from_os_addr(remote_addr),
+    reader_ctrl: BinaryReaderController(),
+    writer_ctrl: BinaryWriterController(),
+  }
 }
 
 ///|
 /// Accept a new connection on a listening TCP server.
 /// The accepted connection will be returned together with the address of peer.
 #cfg(all(target="native", not(platform="windows")))
-pub async fn TcpServer::accept(self : TcpServer) -> (Tcp, Addr) {
+pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   self.accept_unix()
 }
 
@@ -250,7 +253,7 @@ pub async fn TcpServer::accept(self : TcpServer) -> (Tcp, Addr) {
 /// Accept a new connection on a listening TCP server.
 /// The accepted connection will be returned together with the address of peer.
 #cfg(platform="windows")
-pub async fn TcpServer::accept(self : TcpServer) -> (Tcp, Addr) {
+pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   self.accept_windows()
 }
 
@@ -258,7 +261,7 @@ pub async fn TcpServer::accept(self : TcpServer) -> (Tcp, Addr) {
 /// Accept a new connection on a listening TCP server.
 /// The accepted connection will be returned together with the address of peer.
 #cfg(target="wasm")
-pub async fn TcpServer::accept(self : TcpServer) -> (Tcp, Addr) {
+pub async fn TcpServer::accept(self : TcpServer) -> Tcp {
   if @event_loop.platform is Windows {
     self.accept_windows()
   } else {
@@ -308,6 +311,7 @@ async fn Tcp::connect_aux(addr : OsAddr, context~ : String) -> Tcp {
   {
     io: conn,
     local_addr: Addr::from_os_addr(local_addr),
+    remote_addr: Addr::from_os_addr(addr),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
   }

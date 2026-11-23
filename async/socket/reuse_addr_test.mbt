@@ -21,7 +21,7 @@ async test "reuse addr" {
     defer server.close()
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
-        let (conn, _) = server.accept()
+        let conn = server.accept()
         defer conn.close()
         conn.write(b"abcd")
       }

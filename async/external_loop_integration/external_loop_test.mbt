@@ -23,7 +23,7 @@ test "external loop mixed" {
         let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
         group.spawn_bg() <| () => {
           defer server.close()
-          let (conn, _) = server.accept()
+          let conn = server.accept()
           defer conn.close()
         }
         let conn = @socket.Tcp::connect(server.addr)

@@ -38,13 +38,13 @@ async test "reuse port lb" {
       // the socket out from under a pending `accept`.
       group.spawn_bg() <| () => {
         defer server1.close()
-        let (conn, _) = server1.accept()
+        let conn = server1.accept()
         defer conn.close()
         accepted1 += 1
       }
       group.spawn_bg() <| () => {
         defer server2.close()
-        let (conn, _) = server2.accept()
+        let conn = server2.accept()
         defer conn.close()
         accepted2 += 1
       }

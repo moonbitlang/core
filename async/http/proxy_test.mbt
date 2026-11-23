@@ -20,7 +20,7 @@ async test "passthrough mode" {
     let server_addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
@@ -56,7 +56,7 @@ async test "passthrough mode remaining data" {
     let server_addr = server.addr
     group.spawn_bg() <| () => {
       defer server.close()
-      let (conn, _) = server.accept()
+      let conn = server.accept()
       let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
@@ -244,7 +244,7 @@ async test "proxied misc request" {
       })
     }
     group.spawn_bg(no_wait=true) <| () => {
-      server.run_forever() <| ((conn, _) => {
+      server.run_forever() <| conn => {
         let conn = @http.ServerConnection(conn)
         defer conn.close()
         for ;; {
@@ -255,7 +255,7 @@ async test "proxied misc request" {
           )
           conn..send_response(200, "OK").end_response()
         }
-      })
+      }
     }
     let proxy = @http.Proxy("http://127.0.0.1:\{proxy_server_addr.port}")
     let _ = @http.get("http://127.0.0.1:\{port}", proxy~)
@@ -311,7 +311,7 @@ async test "proxy at an IPv6 address" {
     let proxy_port = proxy.addr.port
     group.spawn_bg() <| () => {
       defer proxy.close()
-      let (conn, _) = proxy.accept()
+      let conn = proxy.accept()
       let conn = @http.ServerConnection(conn)
       defer conn.close()
       let request = conn.read_request()
