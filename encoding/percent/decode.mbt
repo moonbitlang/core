@@ -142,7 +142,7 @@ pub fn decode_to_bytes(text : StringView) -> Bytes raise Malformed {
       continue
     }
     write_literal_utf8(buffer, text.unsafe_view(start=literal_start, end=i))
-    if i + 2 < length {
+    if length - i >= 3 {
       let hi = hex_value(text.unsafe_get(i + 1).to_int())
       let lo = hex_value(text.unsafe_get(i + 2).to_int())
       if hi >= 0 && lo >= 0 {
