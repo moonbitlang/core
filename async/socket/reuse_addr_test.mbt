@@ -14,7 +14,7 @@
 
 ///|
 async test "reuse addr" {
-  let port : UInt16 = 8343
+  let port : UInt16 = 8345
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
   let mut last_server_closed = true
@@ -53,7 +53,7 @@ async test "reuse addr" {
 
 ///|
 async test "reuse addr zero delay" {
-  let port : UInt16 = 8345
+  let port : UInt16 = 8347
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
   let mut last_server_closed = true
@@ -93,7 +93,7 @@ async test "reuse addr zero delay" {
 
 ///|
 async test "reuse addr small delay" {
-  let port : UInt16 = 8347
+  let port : UInt16 = 8342
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
   let mut last_server_closed = true
@@ -133,7 +133,7 @@ async test "reuse addr small delay" {
 
 ///|
 async test "reuse addr large delay" {
-  let port : UInt16 = 8342
+  let port : UInt16 = 8343
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
   let mut last_server_closed = true
