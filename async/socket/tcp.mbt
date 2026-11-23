@@ -14,12 +14,11 @@
 
 ///|
 /// A Tcp connection
-pub struct Tcp {
-  /// The local address of a TCP connection
-  addr : Addr
-  priv io : @event_loop.IoHandle
-  priv reader_ctrl : @io.BinaryReaderController
-  priv writer_ctrl : @io.BinaryWriterController
+struct Tcp {
+  local_addr : Addr
+  io : @event_loop.IoHandle
+  reader_ctrl : @io.BinaryReaderController
+  writer_ctrl : @io.BinaryWriterController
 }
 
 ///|
@@ -32,6 +31,12 @@ pub fn Tcp::close(self : Tcp) -> Unit {
 /// Get the underlying file descriptor/Windows HANDLE of a TCP connection
 pub fn Tcp::fd(self : Tcp) -> @fd_util.Fd {
   self.io.fd()
+}
+
+///|
+/// Get the local address of a TCP connection
+pub fn Tcp::local_addr(self : Tcp) -> Addr {
+  self.local_addr
 }
 
 ///|
@@ -184,19 +189,21 @@ pub fn TcpServer::fd(self : TcpServer) -> @fd_util.Fd {
 ///|
 #cfg(not(platform="windows"))
 async fn TcpServer::accept_unix(self : TcpServer) -> (Tcp, Addr) {
+  let context = "@socket.TcpServer::accept()"
   // Create a big enough Addr to hold both IPv4 and IPv6 address
-  let addr = OsAddr::empty(self.addr.family())
-  let conn = self.io.accept_unix(addr.0, context="@socket.TcpServer::accept()")
+  let family = self.addr.family()
+  let addr = OsAddr::empty(family)
+  let conn = self.io.accept_unix(addr.0, context~)
   errdefer conn.close()
   if disable_nagle(conn.fd()) < 0 {
     @os_error.check_errno("@socket.TcpServer::accept(): set TCP_NODELAY")
   }
-  @fd_util.set_cloexec(conn.fd(), context="@socket.TcpServer::accept()")
-  // The local address of a server connection is the same as the listen address
+  @fd_util.set_cloexec(conn.fd(), context~)
+  let local_addr = Addr::from_os_addr(getsockname(conn.fd(), family, context~))
   (
     {
       io: conn,
-      addr: self.addr,
+      local_addr,
       reader_ctrl: BinaryReaderController(),
       writer_ctrl: BinaryWriterController(),
     },
@@ -219,11 +226,11 @@ async fn TcpServer::accept_windows(self : TcpServer) -> (Tcp, Addr) {
   if disable_nagle(conn_sock) < 0 {
     @os_error.check_errno("@socket.TcpServer::accept(): set TCP_NODELAY")
   }
-  // The local address of a server connection is the same as the listen address
+  let local_addr = Addr::from_os_addr(getsockname(conn.fd(), family, context~))
   (
     {
       io: conn,
-      addr: self.addr,
+      local_addr,
       reader_ctrl: BinaryReaderController(),
       writer_ctrl: BinaryWriterController(),
     },
@@ -300,7 +307,7 @@ async fn Tcp::connect_aux(addr : OsAddr, context~ : String) -> Tcp {
   let local_addr = getsockname(sock, family, context~)
   {
     io: conn,
-    addr: Addr::from_os_addr(local_addr),
+    local_addr: Addr::from_os_addr(local_addr),
     reader_ctrl: BinaryReaderController(),
     writer_ctrl: BinaryWriterController(),
   }
@@ -311,12 +318,6 @@ async fn Tcp::connect_aux(addr : OsAddr, context~ : String) -> Tcp {
 pub async fn Tcp::connect(addr : Addr) -> Tcp {
   let context = "@socket.Tcp::connect()"
   Tcp::connect_aux(addr.to_os_addr(), context~)
-}
-
-///|
-/// Get the local address of a TCP connection.
-pub fn Tcp::addr(sock : Tcp) -> Addr {
-  sock.addr
 }
 
 ///|

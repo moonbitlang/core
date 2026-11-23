@@ -25,7 +25,7 @@ async test "getsockname TCP" {
       defer server.close()
       let (conn, peer_addr) = server.accept()
       defer conn.close()
-      assert_eq(conn.addr, server_addr)
+      assert_eq(conn.local_addr(), server_addr)
       inspect(@utf8.decode(conn.read_all()), content="abcd")
       peer_addr
     })
@@ -33,7 +33,7 @@ async test "getsockname TCP" {
       let client = @socket.Tcp::connect(server_addr)
       defer client.close()
       client.write(b"abcd")
-      client.addr
+      client.local_addr()
     })
     assert_eq(client_addr_from_server.wait(), client_addr.wait())
   }
