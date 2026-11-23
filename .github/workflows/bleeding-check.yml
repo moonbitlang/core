@@ -13,6 +13,7 @@ concurrency:
 
 env:
   MOON_COVE_REPORT_ENABLED: "1"
+  MOON_SEPARATE_COMPILATION: "1"
   MOON_WASM_NEW_ALLOCATOR: "1"
 
 jobs:
