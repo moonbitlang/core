@@ -56,10 +56,10 @@ extend Waiter with @cancellable_queue.Element::{is_queued}
 
 ///|
 /// A semaphore data structure useful for synchronization between tasks
-pub struct Semaphore {
+struct Semaphore {
   size : Int32
-  priv mut value : Int32
-  priv waiters : @cancellable_queue.Queue[Waiter]
+  mut value : Int32
+  waiters : @cancellable_queue.Queue[Waiter]
 }
 
 ///|

@@ -6,10 +6,7 @@ package "moonbitlang/core/async/semaphore"
 // Errors
 
 // Types and methods
-pub struct Semaphore {
-  size : Int32
-  // private fields
-}
+type Semaphore
 #alias(new, deprecated)
 pub fn Semaphore::Semaphore(Int32, initial_value? : Int32) -> Self
 pub async fn Semaphore::acquire(Self) -> Unit noraise
