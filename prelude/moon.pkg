@@ -13,6 +13,7 @@ import {
   "moonbitlang/core/lazy",
   "moonbitlang/core/lexbuf",
   "moonbitlang/core/test",
+  "moonbitlang/core/async/stdio",
 }
 
 #cfg(not(target="wasm-gc"))

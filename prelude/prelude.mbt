@@ -212,6 +212,9 @@ pub using @lazy {type Lazy}
 pub using @test {assert_eq, assert_not_eq}
 
 ///|
+pub using @stdio {stdin, stdout, stderr}
+
+///|
 #cfg(not(target="wasm-gc"))
 #warnings("-unused_value")
 let _import_async : Unit = ignore(@async.run_async_main)
