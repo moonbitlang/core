@@ -28,7 +28,7 @@ struct Client {
 /// and must not be specified in `headers`:
 ///
 /// - Host
-/// - Content-Encoding, Transfer-Encoding
+/// - Content-Length, Accept-Encoding, Transfer-Encoding
 pub fn Client::Client(headers~ : Headers = {}) -> Client {
   { headers, }
 }
