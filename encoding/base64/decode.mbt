@@ -177,24 +177,20 @@ fn decode_scalar(
 ///|
 /// Decodes a Base64 string into a byte array, skipping invalid characters.
 ///
-/// Other invalid characters are skipped. Spaces, tabs, CR, and LF stop
-/// decoding unless `ignore_whitespace` is true, in which case they are skipped.
-/// Decoding always stops once padding is encountered.
+/// Invalid characters are skipped, whitespace included, so line-wrapped input
+/// is not truncated at the first break. Decoding always stops once padding is
+/// encountered.
 ///
 /// When `url_safe` is true, the URL- and filename-safe alphabet (RFC 4648 §5)
 /// is decoded and `+` and `/` are skipped as invalid; when it is false, `-`
 /// and `_` are skipped instead.
-pub fn decode_lossy(
-  text : StringView,
-  ignore_whitespace~ : Bool = false,
-  url_safe~ : Bool = false,
-) -> Bytes {
+pub fn decode_lossy(text : StringView, url_safe~ : Bool = false) -> Bytes {
   let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
   for code_unit in text.code_units() {
     match base64_value(code_unit.to_int(), url_safe) {
-      WRITESPACE => if !ignore_whitespace { break }
+      WRITESPACE => ()
       PADDING => break
       INVALID_CHAR => ()
       value => {
