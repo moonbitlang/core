@@ -201,7 +201,7 @@ pub fn UdpServer::fd(self : UdpServer) -> @fd_util.Fd {
 }
 
 ///|
-/// Get the local address of a UDP client
+/// Get the local address of a UDP server
 pub fn UdpServer::local_addr(self : UdpServer) -> Addr {
   self.local_addr
 }
@@ -219,7 +219,7 @@ pub fn UdpServer::local_addr(self : UdpServer) -> Addr {
 ///
 /// If the port of `addr` is zero, the server will be bound to a random port,
 /// assigned by the operating system.
-/// The actual listen address can be retrieved via `.addr()`.
+/// The actual listen address can be retrieved via `.local_addr()`.
 ///
 /// The server will only receive packets whose destination address matches `addr`.
 /// So if you want to receive multicast traffic,
