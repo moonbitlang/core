@@ -14,15 +14,15 @@
 
 ///|
 /// Supported HTTP protocols
-#derive(@debug.Debug, Eq, Compare, Hash, @json.ToJson)
-pub(all) enum Protocol {
+priv enum Protocol {
   Http
   Https
 }
 
 ///|
 /// The default port of a HTTP protocol
-pub fn Protocol::default_port(p : Protocol) -> UInt16 {
+#cfg(any(target="native", target="wasm"))
+fn Protocol::default_port(p : Protocol) -> UInt16 {
   match p {
     Http => 80
     Https => 443

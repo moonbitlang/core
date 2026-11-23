@@ -139,16 +139,6 @@ pub fn MessageBody::binary(Self) -> Bytes
 pub fn MessageBody::json(Self) -> @json.Json raise
 pub fn MessageBody::text(Self) -> String raise
 
-#derive(Compare, Eq, Hash, @debug.Debug, @json.ToJson)
-pub(all) enum Protocol {
-  Http
-  Https
-}
-pub fn Protocol::compare(Self, Self) -> Int32
-pub fn Protocol::default_port(Self) -> UInt16
-pub fn Protocol::equal(Self, Self) -> Bool
-pub fn Protocol::hash(Self) -> Int32
-
 type Proxy
 pub fn Proxy::Proxy(StringView, username? : StringView, password? : StringView) -> Self
 pub fn Proxy::custom_tunnel(async (StringView, UInt16) -> ClientConnection) -> Self

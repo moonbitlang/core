@@ -157,17 +157,6 @@ test "RequestMethod promotes equal, compare and hash" {
 }
 
 ///|
-test "Protocol promotes equal, compare and hash" {
-  let eq : (@http.Protocol, @http.Protocol) -> Bool = @http.Protocol::equal
-  let cmp : (@http.Protocol, @http.Protocol) -> Int32 = @http.Protocol::compare
-  let hash : (@http.Protocol) -> Int32 = @http.Protocol::hash
-  inspect(eq(Http, Http), content="true")
-  inspect(@http.Protocol::Http.equal(Https), content="false")
-  inspect(cmp(Http, Https) < 0, content="true")
-  inspect(hash(Https) == @http.Protocol::Https.hash(), content="true")
-}
-
-///|
 test "CaseInsensitiveString promotes equal, compare and hash" {
   let a = @http.CaseInsensitiveString("Content-Type")
   let b = @http.CaseInsensitiveString("content-type")
