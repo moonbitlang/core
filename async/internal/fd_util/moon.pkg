@@ -17,7 +17,6 @@ import {
 }
 
 options(
-  "allow-experimental-packages": true,
   targets: {
     "fd_util.mbt": [ "native" ],
     "fd_util.wasm.mbt": [ "wasm" ],

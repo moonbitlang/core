@@ -15,6 +15,5 @@ supported_targets = "-all+native"
 pkgtype(kind: "executable")
 
 options(
-  "allow-experimental-packages": true,
   "native-stub": [ "state_check.c" ],
 )

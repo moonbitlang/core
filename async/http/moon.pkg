@@ -57,8 +57,7 @@ import {
 } for "wbtest"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
+  "allow-experimental-packages": [ "moonbitlang/core/compress/gzip" ],
   targets: {
     "client.mbt": [ "native", "js", "wasm" ],
     "client_connection.js.mbt": [ "js" ],

@@ -40,8 +40,6 @@ import {
 } for "wbtest"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "certificate_wbtest.mbt": [ "native", "wasm" ],
     "channel_binding_wbtest.mbt": [ "native", "wasm" ],

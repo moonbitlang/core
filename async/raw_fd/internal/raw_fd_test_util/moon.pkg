@@ -7,6 +7,5 @@ import {
 supported_targets = "-all+native"
 
 options(
-  "allow-experimental-packages": true,
   "native-stub": [ "stub.c" ],
 )

@@ -50,8 +50,6 @@ max_concurrent_tests = 5
 warnings = "-implicit_impl_as_method"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "process.mbt": [ "native", "wasm" ],
     "orphan_process.mbt": [ "native", "wasm" ],
