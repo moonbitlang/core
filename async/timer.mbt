@@ -40,12 +40,12 @@ priv enum TimerState {
 /// The only way to observe the existence of a timer is by waiting for it.
 /// So if no one is waiting for a timer,
 /// the timer will not block program termination even if it is still active.
-pub struct Timer {
+struct Timer {
   duration : Int32
-  priv mut state : TimerState
-  priv mut expire_time : Int64
+  mut state : TimerState
+  mut expire_time : Int64
   // invariant: `waiters` is non-empty iff `state` is `Running`
-  priv waiters : @set.Set[@coroutine.Coroutine]
+  waiters : @set.Set[@coroutine.Coroutine]
 }
 
 ///|

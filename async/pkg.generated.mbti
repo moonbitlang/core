@@ -95,10 +95,7 @@ pub fn TaskGroup::spawn_bg(Self, async () -> Unit, no_wait? : Bool, allow_failur
 #callsite(autofill(loc))
 pub fn TaskGroup::spawn_loop(Self, async () -> Unit, no_wait? : Bool, allow_failure? : Bool, retry? : RetryMethod, max_retry? : Int32, fatal_error? : (Error) -> Bool, loc~ : SourceLoc) -> Unit
 
-pub struct Timer {
-  duration : Int32
-  // private fields
-}
+type Timer
 #alias(new, deprecated)
 pub fn Timer::Timer(Int32) -> Self
 pub fn Timer::cancel(Self, err? : Error) -> Unit
