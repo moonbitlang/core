@@ -21,7 +21,7 @@ async test "reuse addr" {
   async fn run_server(server : @socket.TcpServer) -> Unit {
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
-        let (conn, _) = server.accept()
+        let conn = server.accept()
         defer conn.close()
         conn.write(b"abcd")
       }
@@ -60,7 +60,7 @@ async test "reuse addr zero delay" {
   async fn run_server(server : @socket.TcpServer) -> Unit {
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
-        let (conn, _) = server.accept()
+        let conn = server.accept()
         defer conn.close()
         conn.write(b"abcd")
       }
@@ -100,7 +100,7 @@ async test "reuse addr small delay" {
   async fn run_server(server : @socket.TcpServer) -> Unit {
     @async.with_task_group <| group => {
       group.spawn_bg() <| () => {
-        let (conn, _) = server.accept()
+        let conn = server.accept()
         defer conn.close()
         conn.write(b"abcd")
       }
