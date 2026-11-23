@@ -154,7 +154,7 @@ pub fn Proxy::Proxy(StringView, username? : StringView, password? : StringView) 
 pub fn Proxy::custom_tunnel(async (StringView, UInt16) -> ClientConnection) -> Self
 
 #derive(@debug.Debug, @json.ToJson)
-pub(all) struct RequestHeader {
+pub struct RequestHeader {
   meth : RequestMethod
   path : String
   headers : Map[CaseInsensitiveString, String]
@@ -180,7 +180,7 @@ pub fn RequestMethod::to_string(Self) -> String
 pub impl Show for RequestMethod
 
 #derive(@debug.Debug, @json.ToJson)
-pub(all) struct ResponseHeader {
+pub struct ResponseHeader {
   code : Int32
   reason : String
   headers : Map[CaseInsensitiveString, String]
