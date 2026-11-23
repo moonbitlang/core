@@ -32,15 +32,3 @@ pub extend RequestMethod with Compare::{compare}
 ///|
 #cfg(any(target="native", target="js", target="wasm"))
 pub extend RequestMethod with Hash::{hash}
-
-///|
-#cfg(any(target="native", target="js", target="wasm"))
-pub extend Protocol with Eq::{equal}
-
-///|
-#cfg(any(target="native", target="js", target="wasm"))
-pub extend Protocol with Compare::{compare}
-
-///|
-#cfg(any(target="native", target="js", target="wasm"))
-pub extend Protocol with Hash::{hash}

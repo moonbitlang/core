@@ -13,6 +13,14 @@
 // limitations under the License.
 
 ///|
+impl @debug.Debug for Protocol with fn to_repr(self) {
+  match self {
+    Http => @debug.Repr::ctor("Http", [])
+    Https => @debug.Repr::ctor("Https", [])
+  }
+}
+
+///|
 test "resolve_url" {
   fn to_owned(result : (_, _, StringView)) {
     let (a, b, c) = result
