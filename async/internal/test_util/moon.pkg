@@ -9,6 +9,5 @@ import {
 }
 
 options(
-  "allow-experimental-packages": true,
   "native-stub": [ "stub.c" ],
 )

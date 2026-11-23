@@ -24,8 +24,3 @@ import {
 } for "test"
 
 supported_targets = "-all+native"
-
-options(
-  "allow-experimental-packages": true,
-  experimental: true,
-)

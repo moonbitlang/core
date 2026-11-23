@@ -11,7 +11,6 @@ import {
 }
 
 options(
-  "allow-experimental-packages": true,
   targets: {
     "openssl_loader.mbt": [ "native", "wasm" ],
     "tls_util.mbt": [ "native", "wasm" ],

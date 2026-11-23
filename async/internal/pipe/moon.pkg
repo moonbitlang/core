@@ -22,8 +22,6 @@ import {
 } for "test"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "pipe.mbt": [ "native", "wasm" ],
     "read_exactly_test.mbt": [ "native", "wasm" ],
