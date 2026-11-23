@@ -14,7 +14,7 @@
 
 ///|
 /// The wasm host uses opaque `UInt64` handles for host-owned file resources.
-#cfg(target="wasm")
+#cfg(not(target="native"))
 #warnings("-unused_constructor")
 struct Fd(UInt64)
 
@@ -35,7 +35,7 @@ struct Fd(Int32)
 type Fd
 
 ///|
-#cfg(any(target="wasm", all(target="native", not(platform="windows"))))
+#cfg(not(platform="windows"))
 pub impl Eq for Fd with fn equal(x, y) {
   x.0 == y.0
 }
@@ -49,7 +49,7 @@ pub impl Eq for Fd with fn equal(x, y) = "%refeq"
 extern "C" fn Fd::to_uint64(fd : Fd) -> UInt64 = "moonbit_rt_fd_as_uint64"
 
 ///|
-#cfg(any(target="wasm", all(target="native", not(platform="windows"))))
+#cfg(not(platform="windows"))
 pub impl Hash for Fd with fn hash_combine(self, hasher) {
   Hash::hash_combine(self.0, hasher)
 }

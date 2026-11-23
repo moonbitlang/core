@@ -29,7 +29,7 @@ pub struct Input {
 /// for example when `stdin` does not exist (Windows) or is not a valid fd (Unix-like),
 /// This method will fail with error.
 /// So `.fd()` can be used as a way to tell if `stdin` is valid.
-pub fn Input::fd(self : Input) -> @fd_util.Fd raise {
+pub fn Input::fd(self : Input) -> @types.Fd raise {
   self.io.unwrap_or_error().fd()
 }
 
@@ -102,7 +102,7 @@ pub struct Output {
 /// for example when `stdout` does not exist (Windows) or is not a valid fd (Unix-like),
 /// This method will fail with error.
 /// So `.fd()` can be used as a way to tell if `stdout`/`stderr` is valid.
-pub fn Output::fd(self : Output) -> @fd_util.Fd raise {
+pub fn Output::fd(self : Output) -> @types.Fd raise {
   self.io.unwrap_or_error().fd()
 }
 

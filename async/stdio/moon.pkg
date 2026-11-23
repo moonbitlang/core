@@ -1,13 +1,13 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/async/types",
+  "moonbitlang/core/async/io",
 }
 
 #cfg(any(target="native", target="wasm"))
 import {
   "moonbitlang/core/async",
   "moonbitlang/core/async/internal/event_loop",
-  "moonbitlang/core/async/internal/fd_util",
-  "moonbitlang/core/async/io",
   "moonbitlang/core/async/runtime_internal",
 }
 
@@ -26,6 +26,7 @@ options(
   experimental: true,
   targets: {
     "stdio.mbt": [ "native", "wasm" ],
+    "polyfill.mbt": [ "wasm-gc", "js" ],
     "stdio_test.mbt": [ "native", "wasm" ],
   },
 )
