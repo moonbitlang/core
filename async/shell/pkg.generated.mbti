@@ -6,35 +6,55 @@ import {
 }
 
 // Values
+#deprecated
 pub async fn glob(String, cwd? : String) -> Array[String]
 
 // Errors
 
 // Types and methods
+#deprecated
 #derive(@debug.Debug)
 type Cmd
+#deprecated
 pub fn Cmd::Cmd(String, ArrayView[String], cwd? : String, env? : Map[String, String], inherit_env? : Bool, stdin? : Stdin, stdout? : Redirect, stderr? : Redirect) -> Self
+#deprecated
 pub async fn Cmd::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
+#deprecated
 pub async fn Cmd::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
+#deprecated
 pub async fn Cmd::run(Self, timeout_ms? : Int32) -> Unit
+#deprecated
 pub async fn Cmd::status(Self, timeout_ms? : Int32) -> Int32
 
+#deprecated
 #derive(@debug.Debug)
 type Output
+#deprecated
 pub fn Output::check(Self) -> Unit raise
+#deprecated
 pub fn Output::exit_code(Self) -> Int32
+#deprecated
 pub fn Output::stderr(Self) -> String
+#deprecated
 pub fn Output::stdout(Self) -> String
+#deprecated
 pub fn Output::stdout_bytes(Self) -> Bytes
 
+#deprecated
 #derive(@debug.Debug)
 type Pipeline
+#deprecated
 pub fn Pipeline::Pipeline(ArrayView[Cmd]) -> Self
+#deprecated
 pub async fn Pipeline::each_line(Self, async (String) -> Unit, timeout_ms? : Int32, max_line_bytes? : Int32) -> Int32
+#deprecated
 pub async fn Pipeline::output(Self, timeout_ms? : Int32, max_output_bytes? : Int32) -> Output
+#deprecated
 pub async fn Pipeline::run(Self, timeout_ms? : Int32) -> Unit
+#deprecated
 pub async fn Pipeline::status(Self, timeout_ms? : Int32) -> Int32
 
+#deprecated
 #derive(@debug.Debug)
 pub(all) enum Redirect {
   Capture
@@ -44,6 +64,7 @@ pub(all) enum Redirect {
   Discard
 }
 
+#deprecated
 #derive(@debug.Debug)
 pub(all) enum Stdin {
   Text(String)
