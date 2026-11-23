@@ -116,3 +116,111 @@ jobs:
       - name: run native release tests
         timeout-minutes: 15
         uses: ./.github/actions/test-native-release
+
+  nightly-native-opt-test:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+        with:
+          version: nightly
+
+      - name: check
+        timeout-minutes: 5
+        run: moon check --target native --deny-warn
+
+      - name: run native release tests
+        timeout-minutes: 15
+        uses: ./.github/actions/test-native-release
+
+  nightly-native-opt-test-2:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+        with:
+          version: nightly
+
+      - name: check
+        timeout-minutes: 5
+        run: moon check --target native --deny-warn
+
+      - name: run native release tests
+        timeout-minutes: 15
+        uses: ./.github/actions/test-native-release
+
+  nightly-native-opt-test-3:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+        with:
+          version: nightly
+
+      - name: check
+        timeout-minutes: 5
+        run: moon check --target native --deny-warn
+
+      - name: run native release tests
+        timeout-minutes: 15
+        uses: ./.github/actions/test-native-release
+
+  nightly-native-opt-test-4:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+    steps:
+      - name: disable auto CRLF
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+        with:
+          version: nightly
+
+      - name: check
+        timeout-minutes: 5
+        run: moon check --target native --deny-warn
+
+      - name: run native release tests
+        timeout-minutes: 15
+        uses: ./.github/actions/test-native-release
