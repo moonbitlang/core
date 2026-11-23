@@ -26,7 +26,7 @@ test "external loop mixed" {
           let conn = server.accept()
           defer conn.close()
         }
-        let conn = @socket.Tcp::connect(server.addr)
+        let conn = @socket.Tcp::connect(server.local_addr())
         defer conn.close()
       }
     }

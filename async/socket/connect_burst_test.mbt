@@ -45,7 +45,7 @@ async test "connection burst" {
   let mut result = 0
   @async.with_task_group() <| root => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     root.spawn_bg(() => result = server_main(server))
     root.spawn_bg() <| () => {
       @async.with_task_group() <| fn(ctx) {
@@ -67,7 +67,7 @@ async test "connection burst with ipv6" {
       @socket.Addr::parse("[::1]:0"),
       dual_stack=false,
     )
-    let addr = server.addr
+    let addr = server.local_addr()
     root.spawn_bg(() => result = server_main(server))
     root.spawn_bg() <| () => {
       @async.with_task_group() <| fn(ctx) {

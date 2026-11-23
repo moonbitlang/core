@@ -17,7 +17,7 @@ async test "peer close connection require_shutdown=false" {
   @async.with_task_group() <| root => {
     // server
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     root.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -51,7 +51,7 @@ async test "peer close connection require_shutdown=true" {
   @async.with_task_group() <| root => {
     // server
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     root.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()

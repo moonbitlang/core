@@ -146,7 +146,7 @@ async test "dual stack server" {
   let log = StringBuilder()
   @async.with_task_group() <| root => {
     let server = @socket.TcpServer(@socket.Addr::parse("[::]:0"))
-    let port = server.addr.port
+    let port = server.local_addr().port
     root.spawn_bg(no_wait=true) <| () => {
       server.run_forever() <| conn => {
         let addr_str = conn.remote_addr().to_string()

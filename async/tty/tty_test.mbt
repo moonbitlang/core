@@ -243,7 +243,7 @@ async fn with_ttyd(f : async (Ttyd) -> Unit, exit_with~ : Int32 = 0) -> Unit {
         group,
         pty_path,
         [ttyd_path],
-        extra_env={ "TTYD_PORT": server.addr.port.to_string() },
+        extra_env={ "TTYD_PORT": server.local_addr().port.to_string() },
         stdin=FeedFromParent,
         stdout=Collect,
         stderr=Collect,

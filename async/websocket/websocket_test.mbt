@@ -16,7 +16,7 @@
 async test "websocket basic" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -61,7 +61,7 @@ async test "websocket basic" {
 async test "single frame multiple read" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -90,7 +90,7 @@ async test "single frame multiple read" {
 async test "ignored message" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -120,7 +120,7 @@ async test "write buffering" {
   let log = []
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     group.spawn_bg() <| () => {
       defer server.close()
       let conn = server.accept()
@@ -158,7 +158,7 @@ async test "write buffering" {
 async test "large message" {
   @async.with_task_group() <| group => {
     let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
-    let addr = server.addr
+    let addr = server.local_addr()
     let server_checksum = group.spawn(() => {
       defer server.close()
       let conn = server.accept()

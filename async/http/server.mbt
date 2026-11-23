@@ -246,10 +246,9 @@ pub async fn ServerConnection::send_response(
 
 ///|
 /// A HTTP server
-pub struct Server {
-  addr : @socket.Addr
-  priv server : @socket.TcpServer
-  priv headers : Headers
+struct Server {
+  server : @socket.TcpServer
+  headers : Headers
 }
 
 ///|
@@ -268,13 +267,19 @@ pub async fn Server::Server(
   headers~ : Headers = Map([]),
 ) -> Server {
   let server = @socket.TcpServer(addr, dual_stack?, reuse_addr?)
-  { addr: server.addr, server, headers, }
+  { server, headers, }
 }
 
 ///|
 /// Close a HTTP server, release associated resource
 pub fn Server::close(self : Server) -> Unit {
   self.server.close()
+}
+
+///|
+/// Get the actual listen address of a HTTP server
+pub fn Server::local_addr(self : Server) -> @socket.Addr {
+  self.server.local_addr()
 }
 
 ///|

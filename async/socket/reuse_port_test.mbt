@@ -29,7 +29,7 @@ async test "reuse port lb" {
         @socket.Addr::parse("127.0.0.1:0"),
         reuse_port_lb=true,
       )
-      let addr = server1.addr
+      let addr = server1.local_addr()
       // Binding the same address again while `server1` is still listening only
       // succeeds because both sockets set `SO_REUSEPORT`.
       let server2 = @socket.TcpServer(addr, reuse_port_lb=true)

@@ -16,7 +16,7 @@
 async test "getsockname TCP" {
   @async.with_task_group() <| group => {
     let server = @socket.TcpServer(@socket.Addr::parse("127.0.0.1:0"))
-    let server_addr = server.addr
+    let server_addr = server.local_addr()
     guard server_addr.to_string() is [.. "127.0.0.1:", ..] else {
       server.close()
       raise Failure::Failure("incorrect server address \{server_addr}")
