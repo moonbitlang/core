@@ -74,8 +74,9 @@ test "decode_url_safe" {
 ## Lossy Decoding
 
 Use `decode_lossy` to decode Base64 while skipping invalid characters instead of
-raising an error. Whitespace is skipped as well, so line-wrapped input is
-decoded instead of cut short at the first break. Padding ends decoding.
+raising an error. Spaces, tabs, CR, and LF are skipped by default. Set
+`ignore_whitespace=false` to stop at the first of these characters. Padding
+ends decoding.
 
 ```mbt check
 ///|
