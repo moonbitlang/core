@@ -38,8 +38,6 @@ import {
 } for "wbtest"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "bad_client_test.mbt": [ "native", "wasm" ],
     "client.mbt": [ "native", "wasm" ],

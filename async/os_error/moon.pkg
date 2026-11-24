@@ -26,8 +26,6 @@ import {
 } for "test"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "error.mbt": [ "native", "wasm", "js" ],
     "error_kind.mbt": [ "native", "wasm", "js" ],

@@ -9,7 +9,3 @@ import {
   "moonbitlang/core/ref",
   "moonbitlang/core/async/internal/event_loop",
 }
-
-options(
-  "allow-experimental-packages": true,
-)

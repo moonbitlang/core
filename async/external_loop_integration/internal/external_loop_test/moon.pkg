@@ -12,7 +12,6 @@ import {
 }
 
 options(
-  "allow-experimental-packages": true,
   "native-stub": [ "external_loop.c" ],
   targets: { "main.mbt": [ "native" ] },
 )

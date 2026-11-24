@@ -22,8 +22,6 @@ import {
 } for "test"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "stdio.mbt": [ "native", "wasm" ],
     "polyfill.mbt": [ "wasm-gc", "js" ],

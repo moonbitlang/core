@@ -166,11 +166,17 @@ test "decode lossy" {
   inspect(
     @base64.decode_lossy("Zm9 v"),
     content=(
+      #|b"foo"
+    ),
+  )
+  inspect(
+    @base64.decode_lossy("Zm9 v", ignore_whitespace=false),
+    content=(
       #|b"fo"
     ),
   )
   inspect(
-    @base64.decode_lossy("Z m 9 v", ignore_whitespace=true),
+    @base64.decode_lossy("Z m 9\nv", ignore_whitespace=true),
     content=(
       #|b"foo"
     ),

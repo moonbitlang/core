@@ -45,6 +45,7 @@ priv enum Sink {
 ///   assert_eq(output.stdout(), "hello")
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Cmd::output(
   self : Cmd,
   timeout_ms? : Int32,
@@ -68,6 +69,7 @@ pub async fn Cmd::output(
 ///   assert_eq(@shell.Cmd("moonx", ["bobzhang/false@0.1.0"]).status(), 1)
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Cmd::status(self : Cmd, timeout_ms? : Int32) -> Int32 {
   Pipeline::{ commands: [self], }.execute(Inherited, timeout_ms).exit_code
 }
@@ -91,6 +93,7 @@ pub async fn Cmd::status(self : Cmd, timeout_ms? : Int32) -> Int32 {
 ///   }
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Cmd::run(self : Cmd, timeout_ms? : Int32) -> Unit {
   Pipeline::{ commands: [self], }.execute(Inherited, timeout_ms).check()
 }
@@ -126,6 +129,7 @@ pub async fn Cmd::run(self : Cmd, timeout_ms? : Int32) -> Unit {
 ///   assert_eq(seen, ["a", "b"])
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Cmd::each_line(
   self : Cmd,
   on_line : async (String) -> Unit,
@@ -155,6 +159,7 @@ pub async fn Cmd::each_line(
 ///   assert_eq(output.stdout(), "beta\n")
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Pipeline::output(
   self : Pipeline,
   timeout_ms? : Int32,
@@ -171,6 +176,7 @@ pub async fn Pipeline::output(
 /// process, exactly as in `Cmd::status`; the earlier stages' stdout is the
 /// connecting pipe regardless. The returned status uses the same pipefail
 /// rule as `output`, and there is no capture limit.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Pipeline::status(self : Pipeline, timeout_ms? : Int32) -> Int32 {
   self.execute(Inherited, timeout_ms).exit_code
 }
@@ -180,6 +186,7 @@ pub async fn Pipeline::status(self : Pipeline, timeout_ms? : Int32) -> Int32 {
 ///
 /// The checked form of `Pipeline::status`: streams are inherited the same
 /// way, and the pipefail status becomes an error when it is non-zero.
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Pipeline::run(self : Pipeline, timeout_ms? : Int32) -> Unit {
   self.execute(Inherited, timeout_ms).check()
 }
@@ -203,6 +210,7 @@ pub async fn Pipeline::run(self : Pipeline, timeout_ms? : Int32) -> Unit {
 ///   assert_eq(seen, ["beta"])
 /// }
 /// ```
+#deprecated("Use `@process.Cmd` instead", skip_current_package=true)
 pub async fn Pipeline::each_line(
   self : Pipeline,
   on_line : async (String) -> Unit,

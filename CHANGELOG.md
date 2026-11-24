@@ -18,6 +18,7 @@
 
 #### Changed
 
+- **BREAKING**: `@base64.decode_lossy` now defaults to `ignore_whitespace=true` so it can decode line-wrapped input. Pass `ignore_whitespace=false` to stop at the first space, tab, CR, or LF.
 - **BREAKING**: `StringBuilder` capacity hints now count UTF-16 code units instead of bytes (#3627). Remove byte-count multipliers from existing hints. The default hint is 8; an explicit 0 requests an empty initial buffer. Negative hints now abort on every backend.
 
 #### Removed

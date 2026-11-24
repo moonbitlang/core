@@ -1,8 +1,3 @@
-options(
-  experimental: true,
-  "allow-experimental-packages": true,
-)
-
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
@@ -29,3 +24,5 @@ import {
 supported_targets = "native+wasm"
 
 max_concurrent_tests = 5
+
+warnings = "-deprecated"

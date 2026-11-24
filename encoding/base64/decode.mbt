@@ -177,16 +177,16 @@ fn decode_scalar(
 ///|
 /// Decodes a Base64 string into a byte array, skipping invalid characters.
 ///
-/// Other invalid characters are skipped. Spaces, tabs, CR, and LF stop
-/// decoding unless `ignore_whitespace` is true, in which case they are skipped.
-/// Decoding always stops once padding is encountered.
+/// Spaces, tabs, CR, and LF are skipped by default. With
+/// `ignore_whitespace=false`, decoding stops at the first of these characters.
+/// Padding always ends decoding.
 ///
 /// When `url_safe` is true, the URL- and filename-safe alphabet (RFC 4648 §5)
 /// is decoded and `+` and `/` are skipped as invalid; when it is false, `-`
 /// and `_` are skipped instead.
 pub fn decode_lossy(
   text : StringView,
-  ignore_whitespace~ : Bool = false,
+  ignore_whitespace~ : Bool = true,
   url_safe~ : Bool = false,
 ) -> Bytes {
   let buffer = @buffer.Buffer(capacity=text.length() / 4 * 3)

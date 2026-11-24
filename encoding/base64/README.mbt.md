@@ -74,13 +74,14 @@ test "decode_url_safe" {
 ## Lossy Decoding
 
 Use `decode_lossy` to decode Base64 while skipping invalid characters instead of
-raising an error. Padding ends decoding. Spaces, tabs, CR, and LF also end
-decoding by default; set `ignore_whitespace=true` to skip them.
+raising an error. Spaces, tabs, CR, and LF are skipped by default. Set
+`ignore_whitespace=false` to stop at the first of these characters. Padding
+ends decoding.
 
 ```mbt check
 ///|
 test "decode_lossy" {
-  let bytes = @base64.decode_lossy("SGVsbG8=")
-  inspect(bytes, content="b\"Hello\"")
+  inspect(@base64.decode_lossy("SGVsbG8="), content="b\"Hello\"")
+  inspect(@base64.decode_lossy("SGVs bG8="), content="b\"Hello\"")
 }
 ```

@@ -19,8 +19,6 @@ import {
 } for "test"
 
 options(
-  "allow-experimental-packages": true,
-  experimental: true,
   targets: {
     "signal.mbt": [ "native", "wasm" ],
     "signal_test.mbt": [ "native", "wasm" ],
