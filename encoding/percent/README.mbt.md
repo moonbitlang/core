@@ -62,9 +62,10 @@ test "decode" {
 
 ## Raw Bytes
 
-`encode_bytes` and `decode_to_bytes` are the byte-level counterparts of `encode`
-and `decode`. They escape and unescape octets without converting to and from
-UTF-8, so binary and non-UTF-8 payloads round-trip.
+`encode_bytes` percent-encodes arbitrary bytes as a URI component.
+`decode_to_bytes` takes well-formed UTF-16 text, reads each `%XX` escape as
+one byte, and encodes literal characters as UTF-8. For example, `%FF`
+decodes to the single byte `0xFF`.
 
 ```mbt check
 ///|

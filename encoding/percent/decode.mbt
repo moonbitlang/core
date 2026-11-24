@@ -123,11 +123,9 @@ fn decode_impl(text : StringView, lossy~ : Bool) -> String? {
 ///|
 /// Decodes a percent-encoded URI component back to raw bytes.
 ///
-/// This is the byte-level counterpart of `decode`: each `%XX` escape
-/// contributes one byte, and the literal characters between escapes are
-/// appended as UTF-8, with an unpaired surrogate written as U+FFFD. Runs of
-/// escapes are not validated as UTF-8, so any byte string round-trips through
-/// `encode_bytes`.
+/// The input view must contain well-formed UTF-16. Each `%XX` escape contributes
+/// one byte. Literal characters between escapes are encoded as UTF-8.
+/// Any byte sequence round-trips through `encode_bytes`.
 ///
 /// Raises `Malformed` if a `%` is not followed by two hexadecimal digits.
 pub fn decode_to_bytes(text : StringView) -> Bytes raise Malformed {
