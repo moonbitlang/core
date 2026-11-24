@@ -60,6 +60,21 @@ test "decode" {
 }
 ```
 
+## Raw Bytes
+
+`encode_bytes` percent-encodes arbitrary bytes as a URI component.
+`decode_to_bytes` takes well-formed UTF-16 text, reads each `%XX` escape as
+one byte, and encodes literal characters as UTF-8. For example, `%FF`
+decodes to the single byte `0xFF`.
+
+```mbt check
+///|
+test "raw_bytes" {
+  inspect(@percent.encode_bytes(b"\x00\xff a~"), content="%00%FF%20a~")
+  inspect(@percent.decode_to_bytes("%C3%28"), content="b\"\\xc3(\"")
+}
+```
+
 ## Malformed Input
 
 `decode` raises `Malformed` when a `%` is not followed by two hexadecimal
