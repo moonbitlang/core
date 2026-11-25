@@ -41,7 +41,7 @@ async test "pipe as raw fd" {
       for data in [b"abcd", b"1234", b"ABCD"] {
         @async.sleep(200)
         for written = 0; written < data.length(); {
-          let n = w.write_once(data, offset=written)
+          let n = w.write_once(data[written:])
           continue written + n
         }
         log.push("write(\{@utf8.decode(data).escape()})")

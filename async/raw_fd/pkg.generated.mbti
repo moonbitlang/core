@@ -17,7 +17,7 @@ pub async fn RawFd::RawFd(@types.Fd) -> Self
 pub fn RawFd::close(Self) -> Unit
 pub fn RawFd::fd(Self) -> @types.Fd
 pub async fn RawFd::read_into_once(Self, MutArrayView[Byte]) -> Int32
-pub async fn RawFd::write_once(Self, Bytes, offset? : Int32, len? : Int32) -> Int32
+pub async fn RawFd::write_once(Self, BytesView) -> Int32
 
 type RawFdStream
 pub async fn RawFdStream::RawFdStream(@types.Fd) -> Self
