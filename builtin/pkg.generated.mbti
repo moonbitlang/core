@@ -210,9 +210,7 @@ pub fn Int32::neg(Int32) -> Int32
 pub fn Int32::next_power_of_two(Int32) -> Int32
 pub fn Int32::popcnt(Int32) -> Int32
 pub fn Int32::reinterpret_as_uint(Int32) -> UInt32
-#deprecated
 pub fn Int32::shl(Int32, Int32) -> Int32
-#deprecated
 pub fn Int32::shr(Int32, Int32) -> Int32
 pub fn Int32::sub(Int32, Int32) -> Int32
 pub fn Int32::to_byte(Int32) -> Byte
@@ -274,9 +272,7 @@ pub fn Int64::neg(Int64) -> Int64
 pub fn Int64::popcnt(Int64) -> Int32
 pub fn Int64::reinterpret_as_double(Int64) -> Double
 pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
-#deprecated
 pub fn Int64::shl(Int64, Int32) -> Int64
-#deprecated
 pub fn Int64::shr(Int64, Int32) -> Int64
 pub fn Int64::sub(Int64, Int64) -> Int64
 pub fn Int64::to_byte(Int64) -> Byte
@@ -330,9 +326,7 @@ pub fn UInt32::mod(UInt32, UInt32) -> UInt32
 pub fn UInt32::mul(UInt32, UInt32) -> UInt32
 pub fn UInt32::popcnt(UInt32) -> Int32
 pub fn UInt32::reinterpret_as_int(UInt32) -> Int32
-#deprecated
 pub fn UInt32::shl(UInt32, Int32) -> UInt32
-#deprecated
 pub fn UInt32::shr(UInt32, Int32) -> UInt32
 pub fn UInt32::sub(UInt32, UInt32) -> UInt32
 pub fn UInt32::to_byte(UInt32) -> Byte
@@ -437,9 +431,7 @@ pub fn UInt64::mul(UInt64, UInt64) -> UInt64
 pub fn UInt64::popcnt(UInt64) -> Int32
 pub fn UInt64::reinterpret_as_double(UInt64) -> Double
 pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
-#deprecated
 pub fn UInt64::shl(UInt64, Int32) -> UInt64
-#deprecated
 pub fn UInt64::shr(UInt64, Int32) -> UInt64
 pub fn UInt64::sub(UInt64, UInt64) -> UInt64
 pub fn UInt64::to_be_bytes(UInt64) -> Bytes

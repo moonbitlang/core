@@ -494,34 +494,6 @@ pub impl Shr for Int32 with fn shr(self, other) = "%i32_shr"
 pub fn Int32::lsl(self : Int32, other : Int32) -> Int32 = "%i32_shl"
 
 ///|
-/// Performs a left shift operation on a 32-bit integer. Shifts the bits of the
-/// first operand to the left by the specified number of positions. The rightmost
-/// positions are filled with zeros.
-///
-/// Parameters:
-///
-/// * `value` : The integer value to be shifted.
-/// * `shift` : The number of positions to shift left. Must be non-negative and
-/// less than 32.
-///
-/// Returns a new integer value after performing the left shift operation. The
-/// value is equal to multiplying the input by 2 raised to the power of the shift
-/// count.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 1
-///   inspect(x << 3, content="8") // Equivalent to x << 3
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn Int32::shl(self : Int32, other : Int32) -> Int32 = "%i32_shl"
-
-///|
 /// Performs a logical right shift operation on a signed 32-bit integer. In a
 /// logical right shift, zeros are shifted in from the left, regardless of the
 /// sign bit. This function is DEPRECATED and users should use `UInt` type with
@@ -576,32 +548,6 @@ pub fn Int32::lsr(self : Int32, other : Int32) -> Int32 {
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int32::asr(self : Int32, other : Int32) -> Int32 = "%i32_shr"
-
-///|
-/// Performs an arithmetic right shift operation on a 32-bit integer by the
-/// specified number of positions. The operation preserves the sign bit,
-/// replicating it into the positions vacated by the shift.
-///
-/// Parameters:
-///
-/// * `self` : The integer value to be shifted.
-/// * `shift` : The number of positions to shift right.
-///
-/// Returns a new integer representing the result of shifting `self` right by
-/// `shift` positions.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = -1024
-///   inspect(n >> 3, content="-128") // Preserves sign bit during right shift
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn Int32::shr(self : Int32, other : Int32) -> Int32 = "%i32_shr"
 
 ///|
 /// Counts the number of consecutive zero bits at the least significant end of
@@ -2277,32 +2223,6 @@ pub fn UInt32::lnot(self : UInt32) -> UInt32 = "%u32.bitnot"
 pub fn UInt32::lsl(self : UInt32, shift : Int32) -> UInt32 = "%u32.shl"
 
 ///|
-/// Performs a left shift operation on an unsigned 32-bit integer. Shifts each
-/// bit in the integer to the left by the specified number of positions, filling
-/// the rightmost positions with zeros.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 32-bit integer to be shifted.
-/// * `shift` : The number of positions to shift left. Must be between 0 and 31
-/// inclusive. Values outside this range will be masked with `& 31`.
-///
-/// Returns a new `UInt` value containing the result of the left shift operation.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 1U
-///   inspect(x << 3, content="8") // Binary: 1 -> 1000
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn UInt32::shl(self : UInt32, shift : Int32) -> UInt32 = "%u32.shl"
-
-///|
 /// Performs a logical right shift on an unsigned 32-bit integer. Each bit in the
 /// input value is shifted right by the specified number of positions, with zeros
 /// shifted in from the left. DEPRECATED: Use the `>>` operator instead.
@@ -2327,31 +2247,6 @@ pub fn UInt32::shl(self : UInt32, shift : Int32) -> UInt32 = "%u32.shl"
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn UInt32::lsr(self : UInt32, shift : Int32) -> UInt32 = "%u32.shr"
-
-///|
-/// Performs a logical right shift operation on an unsigned 32-bit integer by a
-/// specified number of positions. All bits shifted in from the left are zeros.
-///
-/// Parameters:
-///
-/// * `number` : The unsigned 32-bit integer to be shifted.
-/// * `shift` : The number of positions to shift right. Must be non-negative.
-///
-/// Returns a new `UInt` value that represents the result of shifting all bits in
-/// `number` to the right by `shift` positions.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 0xFF000000U
-///   inspect(x >> 8, content="16711680") // 0x00FF0000
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn UInt32::shr(self : UInt32, shift : Int32) -> UInt32 = "%u32.shr"
 
 ///|
 /// Performs a left shift operation on an unsigned 32-bit integer. Each bit in
