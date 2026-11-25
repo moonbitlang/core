@@ -41,7 +41,7 @@ pub fn CommandFailed::to_string(Self) -> String
 pub impl Show for CommandFailed
 
 // Types and methods
-pub(all) struct CancellationHandler(async (Int32) -> Unit)
+type CancellationHandler
 
 type Cmd
 pub fn Cmd::Cmd(StringView, ArrayView[String], extra_env? : Map[String, String], inherit_env? : Bool, stdin? : ProcessInput, stdout? : ProcessOutput, stderr? : ProcessOutput, cwd? : StringView, no_console_window? : Bool, accepted_exit_code? : (Int32) -> Bool) -> Self

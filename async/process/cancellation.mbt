@@ -33,7 +33,7 @@ fn kill_process(pid : Int32) = "moonbitlang/async" "process/kill"
 ///|
 /// A handler function used to stop spawned process on cancellation.
 /// The function receive the PID of the process as input.
-pub(all) struct CancellationHandler(async (Int32) -> Unit)
+struct CancellationHandler(async (Int32) -> Unit)
 
 ///|
 let default_signal : @signal.Signal = if @event_loop.platform is Windows {

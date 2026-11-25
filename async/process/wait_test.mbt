@@ -128,10 +128,15 @@ async test "signal exit code" {
   guard !(@event_loop.platform is Windows) else {  }
   let sleep = sleep_prog.wait()
   @async.with_task_group <| group => {
-    let proc = @process.spawn(group, sleep, ["1000", "-use-default-handler"])
+    let proc = @process.spawn(
+      group,
+      sleep,
+      ["1000", "-use-default-handler"],
+      cancel_handler=@process.graceful_cancel(timeout=1000, signal=SIGINT),
+    )
     group.spawn_bg(no_wait=true) <| () => {
       @async.sleep(100)
-      @process.graceful_cancel(timeout=1000, signal=SIGINT)(proc.pid)
+      proc.cancel()
     }
     let exit_code = proc.wait()
     assert_eq(exit_code, -@signal.SIGINT.to_int())
