@@ -90,21 +90,19 @@ pub async fn RawFd::read_into_once(
 }
 
 ///|
-/// Write data from `buf[offset:offset+len]` to a raw file descriptor.
+/// Write data from `data` to a raw file descriptor.
 /// The number of bytes actually written will be returned,
-/// note that the number may be smaller than `len`.
+/// note that the number may be smaller than `data.length()`.
 ///
 /// `write_once` always correspond to exactly one `write`/`WriteFile` syscall.
 /// This is mainly useful for object where `write` boundary is meaningful,
 /// such as a UDP socket or a TUN virtual network device.
 /// For object with a stream based interface, `@raw_fd.RawFdStream`
 /// is more convenient to use and provides richer API.
-pub async fn RawFd::write_once(
-  self : RawFd,
-  buf : Bytes,
-  offset~ : Int32 = 0,
-  len~ : Int32 = buf.length() - offset,
-) -> Int32 {
+pub async fn RawFd::write_once(self : RawFd, data : BytesView) -> Int32 {
+  let buf = data.data()
+  let offset = data.start_offset()
+  let len = data.length()
   self.io.write(buf, offset~, len~, context="@raw_fd.RawFd::write_once()")
 }
 
