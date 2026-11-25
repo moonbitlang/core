@@ -530,7 +530,11 @@ fn @fs.CreateMode::to_int(self : @fs.CreateMode) -> Int32 = "%identity"
 pub async fn redirect_to_file(
   path : String,
   append~ : Bool = false,
-  create_mode~ : @fs.CreateMode = CreateOrTruncate,
+  create_mode~ : @fs.CreateMode = if append {
+    OpenOrCreate
+  } else {
+    CreateOrTruncate
+  },
   permission~ : Int32 = 0o644,
 ) -> SharedProcessOutput {
   let (file, _) = @event_loop.open(
