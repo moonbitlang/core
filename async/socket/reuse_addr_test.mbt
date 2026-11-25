@@ -17,6 +17,16 @@ async test "reuse addr" {
   let port : UInt16 = 8342
   let lock = lock_port(port, protocol="tcp")
   defer lock.unlock()
+  // We don't need the IPv6 test interface itself here.
+  // The problem is: initializing the interface would spawn a foreign process,
+  // if the server is closed after `fork` and before `exec` in the child process,
+  // the first listening socket would still be alive when we try to bind the second,
+  // resulting in `EADDRINUSE` failure.
+  //
+  // Notice that close-on-exec does not help here,
+  // because close-on-exec only closes inherited file descriptors on `exec`,
+  // it does not solve the race window between `fork` and `exec`.
+  let _ = test_interface.wait()
   async fn run_server(server : @socket.TcpServer) -> Unit {
     defer server.close()
     @async.with_task_group <| group => {
