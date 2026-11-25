@@ -68,9 +68,7 @@ pub fn IoHandle::detach_from_event_loop(handle : IoHandle) -> Unit {
   guard @fd_util.fd_is_valid(handle.fd) else { return }
   evloop.fds.remove(handle.fd)
   if handle.is_async {
-    evloop.bus.remove(handle.fd) catch {
-      _ => ()
-    }
+    try! evloop.bus.remove(handle.fd)
   }
 }
 
@@ -80,9 +78,7 @@ pub fn IoHandle::detach_from_event_loop(handle : IoHandle) -> Unit {
 pub fn IoHandle::close(handle : IoHandle) -> Unit {
   handle.detach_from_event_loop()
   if @fd_util.fd_is_valid(handle.fd) {
-    @fd_util.close(handle.fd, kind=handle.kind, context="") catch {
-      _ => ()
-    }
+    try! @fd_util.close(handle.fd, kind=handle.kind, context="")
   }
   handle.fd = @fd_util.invalid_fd
 }
