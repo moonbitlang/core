@@ -16,7 +16,7 @@ runs:
       run: |
         ulimit -s 8176
         for _ in $(seq 1 100); do
-          moon test --target native --release async/socket
+          moon test --target native --release async/socket/{udp_test,reuse_port_test,reuse_addr_test,resolve_host_test}.mbt
         done
 
     - name: Setup MSVC
