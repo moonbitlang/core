@@ -8,7 +8,7 @@ and wasm-gc backend is not supported.
 All operating systems supported by MoonBit (Linux/MacOS/Windows) are supported.
 API document is available at <https://mooncakes.io/docs/moonbitlang/core/async>.
 
-WARNING: this library is current experimental, API is subject to future change.
+For migration from `moonbitlang/async`, see <MIGRATION.md>.
 
 ## Installation
 Asynchronous programming support is part of the MoonBit standard library `moonbitlang/core`,
