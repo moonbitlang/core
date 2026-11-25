@@ -63,3 +63,45 @@ async test "reuse port lb" {
   inspect(finished is Some(_), content="true")
   inspect(accepted1 > 0 && accepted2 > 0, content="true")
 }
+
+///|
+async test "udp reuse port lb" {
+  if !(@event_loop.platform is Linux) {
+    return
+  }
+  let mut received1 = 0
+  let mut received2 = 0
+  @async.with_timeout(10000) <| () => {
+    @async.with_task_group() <| group => {
+      let server1 = @socket.UdpServer(
+        @socket.Addr::parse("127.0.0.1:0"),
+        reuse_port_lb=true,
+      )
+      let addr = server1.local_addr()
+      // Binding the same address again while `server1` is still bound only
+      // succeeds because both sockets set `SO_REUSEPORT`.
+      let server2 = @socket.UdpServer(addr, reuse_port_lb=true)
+      group.spawn_bg() <| () => {
+        defer server1.close()
+        let _ = server1.recv(max_len=16)
+        received1 += 1
+      }
+      group.spawn_bg() <| () => {
+        defer server2.close()
+        let _ = server2.recv(max_len=16)
+        received2 += 1
+      }
+      // The kernel hashes the peer address, so each datagram comes from a new
+      // client until both servers have taken one.
+      group.spawn_bg(no_wait=true) <| () => {
+        while received1 == 0 || received2 == 0 {
+          let client = @socket.UdpClient(addr)
+          defer client.close()
+          client.send(b"ping")
+          @async.sleep(5)
+        }
+      }
+    }
+  }
+  inspect(received1 > 0 && received2 > 0, content="true")
+}

@@ -114,7 +114,7 @@ pub fn UdpClient::set_multicast_ttl(Self, Int32) -> Unit raise
 
 type UdpServer
 #alias(new, deprecated)
-pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool) -> Self
+pub async fn UdpServer::UdpServer(Addr, dual_stack? : Bool, reuse_port_lb? : Bool) -> Self
 pub fn UdpServer::close(Self) -> Unit
 pub fn UdpServer::fd(Self) -> @types.Fd
 pub fn UdpServer::join_multicast_group(Self, IpAddr, interface_addr? : IpAddr) -> Unit raise

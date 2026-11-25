@@ -226,10 +226,21 @@ pub fn UdpServer::local_addr(self : UdpServer) -> Addr {
 /// the server should be bound to `0.0.0.0` or `[::]`.
 /// DO NOT bind the server to a multicast address: this is not supported on Windows.
 /// For multicast-only servers, use `UdpServer::multicast()` instead.
+///
+/// If `reuse_port_lb` is `true` (`false` by default), `SO_REUSEPORT` is enabled
+/// so several sockets — typically one per worker process — can bind the same
+/// address at once while the kernel load-balances incoming datagrams across
+/// them, keeping datagrams from one peer address on one socket while the set of
+/// bound sockets stays the same.
+///
+/// As with `TcpServer`, the load-balancing semantic is Linux-only, so
+/// `reuse_port_lb` takes effect only on Linux, including Wasm hosted by Moonrun
+/// on Linux, and is ignored everywhere else (BSD, MacOS, Windows).
 #alias(new, deprecated)
 pub async fn UdpServer::UdpServer(
   addr : Addr,
   dual_stack~ : Bool = true,
+  reuse_port_lb~ : Bool = false,
 ) -> UdpServer {
   let context = "@socket.UdpServer::new()"
   let family = addr.family()
@@ -240,6 +251,9 @@ pub async fn UdpServer::UdpServer(
     if 0 != set_ipv6_only(sock, !dual_stack) {
       @os_error.check_errno(context)
     }
+  }
+  if @event_loop.platform is Linux && reuse_port_lb {
+    guard allow_reuse_port(sock) >= 0 else { @os_error.check_errno(context) }
   }
   io.bind(addr.to_os_addr().0, context~)
   // If `addr` specifies zero as the listen port,
