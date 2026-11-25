@@ -86,7 +86,7 @@ HANDLE moonbit_rt_make_tcp_socket(int family) {
 
   return (HANDLE)sock;
 #else
-  return socket(family == 4 ? AF_INET : AF_INET6, SOCK_STREAM, SOCK_CLOEXEC);
+  return socket(family == 4 ? AF_INET : AF_INET6, SOCK_STREAM | SOCK_CLOEXEC , 0);
 #endif
 }
 
