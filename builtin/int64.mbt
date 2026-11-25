@@ -422,31 +422,6 @@ pub impl BitXOr for Int64 with fn lxor(self, other) = "%i64_lxor"
 pub fn Int64::lsl(self : Int64, other : Int32) -> Int64 = "%i64_shl"
 
 ///|
-/// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
-/// the integer to the left by a specified number of positions, filling the
-/// rightmost positions with zeros.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer value to be shifted.
-/// * `shift` : The number of positions to shift the bits to the left.
-///
-/// Returns a new 64-bit integer value after performing the left shift operation.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 1L
-///   inspect(x << 3, content="8") // Equivalent to x << 3
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn Int64::shl(self : Int64, other : Int32) -> Int64 = "%i64_shl"
-
-///|
 /// **DEPRECATED:** Use `UInt64` type and infix operator `>>` instead.
 ///
 /// Performs a logical right shift on a 64-bit integer value. In a logical right
@@ -500,32 +475,6 @@ pub fn Int64::lsr(self : Int64, other : Int32) -> Int64 = "%u64.shr"
 #deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::asr(self : Int64, other : Int32) -> Int64 = "%i64_shr"
-
-///|
-/// Performs an arithmetic right shift operation on a 64-bit integer value,
-/// shifting the bits to the right by the specified number of positions. The sign
-/// bit is copied to fill the leftmost positions.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer value to be shifted.
-/// * `shift` : The number of bit positions to shift right. Must be non-negative.
-///
-/// Returns a new `Int64` value representing the result of the arithmetic right
-/// shift operation.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = -1024L
-///   inspect(n >> 3, content="-128") // Preserves sign bit
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn Int64::shr(self : Int64, other : Int32) -> Int64 = "%i64_shr"
 
 ///|
 /// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
@@ -1579,56 +1528,6 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 #deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn UInt64::lsl(self : UInt64, shift : Int32) -> UInt64 = "%u64.shl"
-
-///|
-/// Performs a left shift operation on an unsigned 64-bit integer value, shifting
-/// bits to the left by the specified number of positions.
-///
-/// Parameters:
-///
-/// * `number` : The unsigned 64-bit integer to be shifted.
-/// * `shift` : The number of positions to shift the bits left. Must be
-/// non-negative.
-///
-/// Returns an unsigned 64-bit integer representing the result of the left shift
-/// operation.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 1UL
-///   inspect(x << 2, content="4") // 1 << 2 = 4
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn UInt64::shl(self : UInt64, shift : Int32) -> UInt64 = "%u64.shl"
-
-///|
-/// Performs a logical right shift on an unsigned 64-bit integer by a specified
-/// number of bit positions. All bits shifted in from the left are zeros.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 64-bit integer to be shifted.
-/// * `shift` : The number of positions to shift right.
-///
-/// Returns the result of shifting the bits in `self` right by `shift` positions.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = 0xFF00000000000000UL
-///   inspect(x >> 8, content="71776119061217280")
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn UInt64::shr(self : UInt64, shift : Int32) -> UInt64 = "%u64.shr"
 
 ///|
 /// Performs a logical right shift operation on a 64-bit unsigned integer. Moves

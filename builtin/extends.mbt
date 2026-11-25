@@ -349,6 +349,12 @@ pub extend Int32 with Mul::{mul}
 pub extend Int32 with Neg::{neg}
 
 ///|
+pub extend Int32 with Shl::{shl}
+
+///|
+pub extend Int32 with Shr::{shr}
+
+///|
 pub extend Int32 with Sub::{sub}
 
 ///|
@@ -383,6 +389,12 @@ pub extend Int64 with Mul::{mul}
 
 ///|
 pub extend Int64 with Neg::{neg}
+
+///|
+pub extend Int64 with Shl::{shl}
+
+///|
+pub extend Int64 with Shr::{shr}
 
 ///|
 pub extend Int64 with Sub::{sub}
@@ -684,6 +696,12 @@ pub extend UInt32 with Mod::{mod}
 pub extend UInt32 with Mul::{mul}
 
 ///|
+pub extend UInt32 with Shl::{shl}
+
+///|
+pub extend UInt32 with Shr::{shr}
+
+///|
 pub extend UInt32 with Sub::{sub}
 
 ///|
@@ -754,6 +772,12 @@ pub extend UInt64 with Mod::{mod}
 
 ///|
 pub extend UInt64 with Mul::{mul}
+
+///|
+pub extend UInt64 with Shl::{shl}
+
+///|
+pub extend UInt64 with Shr::{shr}
 
 ///|
 pub extend UInt64 with Sub::{sub}

@@ -75,6 +75,38 @@ test "operator trait methods on builtin types" {
 }
 
 ///|
+test "integer shift methods" {
+  inspect((1 : Int32).shl(3), content="8")
+  inspect((-8 : Int32).shr(2), content="-2")
+  inspect((1 : Int64).shl(40), content="1099511627776")
+  inspect((-8 : Int64).shr(2), content="-2")
+  inspect((1 : UInt32).shl(31), content="2147483648")
+  inspect((0x80000000 : UInt32).shr(31), content="1")
+  inspect((1 : UInt64).shl(63), content="9223372036854775808")
+  inspect((0x8000000000000000 : UInt64).shr(63), content="1")
+}
+
+///|
+test "integer shift methods as function values" {
+  let shl32 = Int32::shl
+  let shr32 = Int32::shr
+  let shl64 = Int64::shl
+  let shr64 = Int64::shr
+  let ushl32 = UInt32::shl
+  let ushr32 = UInt32::shr
+  let ushl64 = UInt64::shl
+  let ushr64 = UInt64::shr
+  inspect(shl32(1, 3), content="8")
+  inspect(shr32(-8, 2), content="-2")
+  inspect(shl64(1, 40), content="1099511627776")
+  inspect(shr64(-8, 2), content="-2")
+  inspect(ushl32(1, 31), content="2147483648")
+  inspect(ushr32(0x80000000, 31), content="1")
+  inspect(ushl64(1, 63), content="9223372036854775808")
+  inspect(ushr64(0x8000000000000000, 63), content="1")
+}
+
+///|
 test "operator trait methods on custom types" {
   inspect(Add::add(num(8), num(3)).value, content="11")
   inspect(Sub::sub(num(8), num(3)).value, content="5")
