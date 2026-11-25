@@ -30,11 +30,21 @@ pub suberror WaitedTaskAlreadyCancelled
 ///|
 /// Wait for a task and retrieve its result value.
 /// If the task fails, `wait` will also fail with the same error.
-/// If the target task terminated due to cancellation, `wait` will raise `TaskCancelled`.
+/// If the target task terminated due to cancellation, `wait` will raise `WaitedTaskAlreadyCancelled`.
+/// If both the target task and current task are in cancelled state,
+/// `.wait()` will propagate cancellation signal instead of failing with `WaitedTaskAlreadyCancelled`.
 pub async fn[X] Task::wait(self : Task[X]) -> X {
   match self.coro.wait() {
     Continue => self.value.val.unwrap()
-    Cancelled => raise WaitedTaskAlreadyCancelled
+    Cancelled => {
+      // If the waiter is also cancelled,
+      // propagate the caller's cancellation instead of failing.
+      // Consider an external task group cancellation:
+      // if the `.wait()` task is cancelled *after* the waited task,
+      // we don't want the whole group to fail with `WaitedTaskAlreadyCancelled`.
+      @coroutine.check_cancellation()
+      raise WaitedTaskAlreadyCancelled
+    }
   }
 }
 

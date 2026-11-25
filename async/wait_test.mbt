@@ -92,3 +92,18 @@ async test "try_wait" {
     ),
   )
 }
+
+///|
+async test "wait cancellation race" {
+  @async.with_task_group <| group => {
+    let task = group.spawn() <| () => {
+      @async.with_task_group <| group => {
+        let task = group.spawn() <| () => { @async.sleep(10000) }
+        @async.protect_from_cancel(() => @async.sleep(500))
+        task.wait()
+      }
+    }
+    @async.sleep(100)
+    task.cancel()
+  }
+}
