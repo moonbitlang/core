@@ -540,3 +540,71 @@ test "context is attached to raised failures too" {
     ),
   )
 }
+
+///|
+#derive(Debug)
+priv struct GeneratedOnly(Int32)
+
+///|
+test "an explicit generator needs no Arbitrary or Shrink instance" {
+  let gen = @quickcheck.pure(GeneratedOnly(17))
+  gen.check(input => input.0 == 17, count=2)
+  debug_inspect(
+    gen.report(_ => false),
+    content=(
+      #|Falsified(
+      #|  counterexample=GeneratedOnly(17),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=0,
+      #|  shrink_attempts=0,
+      #|)
+    ),
+  )
+}
+
+///|
+test "a generator uses the supplied shrinker and retains failure context" {
+  let result = @quickcheck.pure(12).report(
+    n => n < 6,
+    shrink=n => if n > 2 { [|n - 2|] } else { [||] },
+    counterexample_context=n => "even input " + n.to_string(),
+  )
+  debug_inspect(
+    result,
+    content=(
+      #|Falsified(
+      #|  counterexample=6,
+      #|  context="even input 6",
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=3,
+      #|  shrink_attempts=4,
+      #|)
+    ),
+  )
+}
+
+///|
+test "spawn with the type shrinker replays an ordinary property run" {
+  let gen : @quickcheck.Generator[Int32] = @quickcheck.spawn()
+  let property = (n : Int32) => n < 3
+  let ordinary = @quickcheck.report(property, seed=7)
+  let explicit = gen.report(property, shrink=@shrink.Shrink::shrink, seed=7)
+  inspect(
+    @debug.to_string(explicit) == @debug.to_string(ordinary),
+    content="true",
+  )
+}
+
+///|
+test "generator check forwards the shrink limit and reports failure at its caller" {
+  let message = try {
+    @quickcheck.pure(8).check(n => n < 5, shrink=n => [|n - 1|], max_shrinks=2)
+    ""
+  } catch {
+    err => @debug.to_string(err)
+  }
+  inspect(message.contains("counterexample: 6"), content="true")
+  inspect(message.contains("driver_test.mbt"), content="true")
+}

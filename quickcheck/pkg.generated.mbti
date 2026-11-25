@@ -54,8 +54,11 @@ pub fn[T : Arbitrary] spawn() -> Generator[T]
 type Generator[T]
 pub fn[T] Generator::Generator((Int32, @splitmix.RandomState) -> T) -> Self[T]
 pub fn[T] Generator::array_with_size(Self[T], Int32) -> Self[Array[T]]
+#callsite(autofill(loc))
+pub fn[A : @debug.Debug] Generator::check(Self[A], (A) -> Bool raise?, shrink? : (A) -> Iter[A], filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt32, max_size? : UInt32, max_shrinks? : UInt32, discard_ratio? : UInt32, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
 pub fn[T, U] Generator::flat_map(Self[T], (T) -> Self[U]) -> Self[U]
 pub fn[T, U] Generator::map(Self[T], (T) -> U) -> Self[U]
+pub fn[A] Generator::report(Self[A], (A) -> Bool raise?, shrink? : (A) -> Iter[A], filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt32, max_size? : UInt32, max_shrinks? : UInt32, discard_ratio? : UInt32, seed? : UInt64) -> QuickCheckReport[A]
 pub fn[T] Generator::resize(Self[T], Int32) -> Self[T]
 pub fn[T] Generator::run(Self[T], Int32, @splitmix.RandomState) -> T
 pub fn[T] Generator::sample(Self[T], size? : Int32, seed? : UInt64) -> T
