@@ -13,62 +13,73 @@
 // limitations under the License.
 
 ///|
-async test "multicast basic" {
+async test "multicast no loopback" {
+  if @event_loop.platform is MacOS {
+    // MacOS requires the user clicking a GUI alertbox for UDP multicast since MacOS 15
+    return
+  }
   let log = []
-  @async.with_task_group <| group => {
-    let addr = @socket.Addr::parse("239.0.0.1:4200")
-    let interface_addr = @socket.IpAddr("127.0.0.1")
+  @async.with_task_group() <| group => {
+    let server = @socket.UdpServer::multicast(
+      @socket.Addr::parse("239.0.0.1:0"),
+    )
     group.spawn_bg(no_wait=true) <| () => {
-      let server1 = @socket.UdpServer::multicast(addr, interface_addr~)
-      defer server1.close()
+      defer server.close()
       for ;; {
-        let (data, _) = server1.recv(max_len=1024)
-        log.push("server 1 received: \{@utf8.decode(data)}")
+        let (data, _) = server.recv(max_len=1024)
+        log.push("server received: \{@utf8.decode(data)}")
+        if @event_loop.platform is Windows {
+          server.set_multicast_loopback(false)
+        }
       }
     }
-    group.spawn_bg(no_wait=true) <| () => {
-      let server2 = @socket.UdpServer::multicast(addr, interface_addr~)
-      defer server2.close()
-      for ;; {
-        let (data, _) = server2.recv(max_len=1024)
-        @async.sleep(50) // make the result stable
-        log.push("server 2 received: \{@utf8.decode(data)}")
-      }
-    }
-    let client = @socket.UdpClient(addr)
+    let client = @socket.UdpClient(
+      @socket.Addr::parse("239.0.0.1:\{server.local_addr().port}"),
+    )
     defer client.close()
-    client.set_multicast_interface(interface_addr)
-    @async.sleep(200)
+    client.set_multicast_ttl(0)
     log.push("client sending: abcd")
     let _ = client.send(b"abcd")
+    if !(@event_loop.platform is Windows) {
+      client.set_multicast_loopback(false)
+    }
+    @async.sleep(200)
+    log.push("client sending: xyzw")
+    let _ = client.send(b"xyzw")
     @async.sleep(200)
   }
   json_inspect(log, content=[
-    "client sending: abcd", "server 1 received: abcd", "server 2 received: abcd",
+    "client sending: abcd", "server received: abcd", "client sending: xyzw",
   ])
 }
 
 ///|
-async test "multicast discovery then unicast" {
+async test "multicast discovery then unicast v6" {
+  if @event_loop.platform is MacOS {
+    // MacOS requires the user clicking a GUI alertbox for UDP multicast since MacOS 15
+    return
+  }
   let log = []
   @async.with_task_group <| group => {
-    let interface_addr = @socket.IpAddr("127.0.0.1")
-    let server = @socket.UdpServer(@socket.Addr::parse("0.0.0.0:0"))
+    let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
     defer server.close()
-    let multicast_addr = @socket.IpAddr("239.0.0.1")
-    server.join_multicast_group(multicast_addr, interface_addr~)
+    let port = server.local_addr().port
+    server.join_multicast_group_v6(
+      IpAddr("ff02::1"),
+      interface=test_interface.wait(),
+    )
+    server.set_multicast_ttl(0)
     group.spawn_bg() <| () => {
       let client = @socket.UdpClient(
-        Addr(multicast_addr, server.local_addr().port),
+        @socket.Addr::parse("[ff02::1%\{test_interface.wait()}]:\{port}"),
       )
       defer client.close()
-      client.set_multicast_interface(interface_addr)
+      client.set_multicast_ttl(0)
+      client.set_multicast_interface_v6(test_interface.wait())
       @async.sleep(150)
       log.push("client sending discovery packet")
       let _ = client.send(b"anybody here?")
-      let buf = FixedArray::make(1024, b'\x00')
-      let (n, server_addr) = client.recv_into_with_addr(buf.mut_view())
-      let data = buf.unsafe_reinterpret_as_bytes()[:n]
+      let (data, server_addr) = client.recv_with_addr(max_len=1024)
       log.push("client found server via message: \{@utf8.decode(data)}")
       client.connect(server_addr)
       log.push("client sending directly to discovered server: hello")
@@ -88,5 +99,51 @@ async test "multicast discovery then unicast" {
     "client sending discovery packet", "server received: anybody here?. Sending reply...",
     "client found server via message: I am here", "client sending directly to discovered server: hello",
     "server received: hello. Sending reply...", "client received Hello from server",
+  ])
+}
+
+///|
+async test "multicast no loopback v6" {
+  if @event_loop.platform is MacOS {
+    // MacOS requires the user clicking a GUI alertbox for UDP multicast since MacOS 15
+    return
+  }
+  let log = []
+  @async.with_task_group() <| group => {
+    let server = @socket.UdpServer(@socket.Addr::parse("[::]:0"))
+    let port = server.local_addr().port
+    group.spawn_bg(no_wait=true) <| () => {
+      defer server.close()
+      server.join_multicast_group_v6(
+        IpAddr("ff02::1"),
+        interface=test_interface.wait(),
+      )
+      for ;; {
+        let (data, _) = server.recv(max_len=1024)
+        log.push("server received: \{@utf8.decode(data)}")
+        if @event_loop.platform is Windows {
+          server.set_multicast_loopback(false)
+        }
+      }
+    }
+    let client = @socket.UdpClient(
+      @socket.Addr::parse("[ff02::1%\{test_interface.wait()}]:\{port}"),
+    )
+    defer client.close()
+    @async.sleep(200)
+    client.set_multicast_interface_v6(test_interface.wait())
+    client.set_multicast_ttl(0)
+    log.push("client sending: abcd")
+    let _ = client.send(b"abcd")
+    if !(@event_loop.platform is Windows) {
+      client.set_multicast_loopback(false)
+    }
+    @async.sleep(200)
+    log.push("client sending: xyzw")
+    let _ = client.send(b"xyzw")
+    @async.sleep(200)
+  }
+  json_inspect(log, content=[
+    "client sending: abcd", "server received: abcd", "client sending: xyzw",
   ])
 }
