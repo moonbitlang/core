@@ -15,9 +15,8 @@ runs:
         SCCACHE_GHA_RW_MODE: ${{ github.ref == 'refs/heads/main' && 'READ_WRITE' || 'READ_ONLY' }}
       run: |
         ulimit -s 8176
-        moon test --target native --release async/socket --build-only
         for _ in $(seq 1 100); do
-          ./_build/native/release/test/async/socket/socket.blackbox_test.exe 'addr_test.mbt:0-6,7-11/udp_test.mbt:0-1/reuse_port_test.mbt:0-1/reuse_addr_test.mbt:0-4/resolve_host_test.mbt:0-5/read_exactly_test.mbt:0-2/multicast_test.mbt:0-5/getsockname_test.mbt:0-2/dual_stack_test.mbt:0-6/connect_burst_test.mbt:0-2/addr_test.mbt:6-7'
+          moon test --target native --release async/socket
         done
 
     - name: Setup MSVC
