@@ -91,7 +91,7 @@ pub fn Hasher::Hasher(seed~ : Int32 = seed) -> Hasher {
 
 ///|
 // `builtin` cannot depend on `env`, so bind the runtime entropy source here.
-#cfg(any(target="native", target="llvm"))
+#cfg(target="native")
 let seed : Int32 = {
   let bytes : FixedArray[Byte] = FixedArray::make(4, b'\x00')
   if moonbit_rt_get_random_for_hash_seed(bytes) == 0 {
@@ -129,7 +129,7 @@ extern "js" fn random_seed() -> Int32 =
   #|}
 
 ///|
-#cfg(any(target="native", target="llvm"))
+#cfg(target="native")
 #borrow(bytes)
 extern "c" fn moonbit_rt_get_random_for_hash_seed(
   bytes : FixedArray[Byte],
