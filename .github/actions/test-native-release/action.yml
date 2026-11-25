@@ -7,7 +7,9 @@ runs:
       uses: mozilla-actions/sccache-action@v0.0.11
 
     - name: patch runtime
-      run: cp socket.c ~/.moon/lib/runtime/
+      shell: bash
+      run: |
+        cp socket.c ~/.moon/lib/runtime/
 
     - name: Set ulimit and run moon test (--release + --target native)
       if: ${{ runner.os != 'Windows' }}
