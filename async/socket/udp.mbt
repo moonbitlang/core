@@ -611,13 +611,11 @@ pub async fn UdpServer::recv(
 /// At most one task can write to a UDP client at any time.
 /// To allow multiple writers,
 /// use a worker task for reading and use `@async.Queue` to gather the data.
-pub async fn UdpClient::send(
-  self : UdpClient,
-  buf : Bytes,
-  offset~ : Int32 = 0,
-  len~ : Int32 = buf.length() - offset,
-) -> Unit {
+pub async fn UdpClient::send(self : UdpClient, data : BytesView) -> Unit {
   let context = "@socket.UdpClient::send()"
+  let buf = data.data()
+  let offset = data.start_offset()
+  let len = data.length()
   let _ = match self.dst_addr {
     Some(OsAddr(addr)) => self.io.sendto(buf, offset~, len~, addr~, context~)
     None => self.io.write(buf, offset~, len~, context~)
@@ -634,16 +632,17 @@ pub async fn UdpClient::send(
 /// use a worker task for reading and use `@async.Queue` to gather the data.
 pub async fn UdpServer::send(
   self : UdpServer,
-  buf : Bytes,
+  data : BytesView,
   addr : Addr,
-  offset~ : Int32 = 0,
-  len~ : Int32 = buf.length() - offset,
 ) -> Unit {
   guard !self.is_multicast_only else {
     raise Failure::Failure(
       "multicast-only sockets created with `@socket.UdpServer::multicast()` cannot be used for sending",
     )
   }
+  let buf = data.data()
+  let offset = data.start_offset()
+  let len = data.length()
   self.io.sendto(
     buf,
     offset~,

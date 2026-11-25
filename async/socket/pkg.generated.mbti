@@ -106,7 +106,7 @@ pub async fn UdpClient::recv(Self, max_len? : Int32) -> Bytes
 pub async fn UdpClient::recv_into(Self, MutArrayView[Byte]) -> Int32
 pub async fn UdpClient::recv_into_with_addr(Self, MutArrayView[Byte]) -> (Int32, Addr)
 pub async fn UdpClient::recv_with_addr(Self, max_len? : Int32) -> (Bytes, Addr)
-pub async fn UdpClient::send(Self, Bytes, offset? : Int32, len? : Int32) -> Unit
+pub async fn UdpClient::send(Self, BytesView) -> Unit
 pub fn UdpClient::set_multicast_interface(Self, IpAddr) -> Unit raise
 pub fn UdpClient::set_multicast_interface_v6(Self, String) -> Unit raise
 pub fn UdpClient::set_multicast_loopback(Self, Bool) -> Unit raise
@@ -123,7 +123,7 @@ pub fn UdpServer::local_addr(Self) -> Addr
 pub async fn UdpServer::multicast(Addr, interface_addr? : IpAddr) -> Self
 pub async fn UdpServer::recv(Self, max_len? : Int32) -> (Bytes, Addr)
 pub async fn UdpServer::recv_into(Self, MutArrayView[Byte]) -> (Int32, Addr)
-pub async fn UdpServer::send(Self, Bytes, Addr, offset? : Int32, len? : Int32) -> Unit
+pub async fn UdpServer::send(Self, BytesView, Addr) -> Unit
 pub fn UdpServer::set_multicast_interface(Self, IpAddr) -> Unit raise
 pub fn UdpServer::set_multicast_interface_v6(Self, String) -> Unit raise
 pub fn UdpServer::set_multicast_loopback(Self, Bool) -> Unit raise
