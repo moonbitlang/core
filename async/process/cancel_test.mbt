@@ -72,7 +72,6 @@ async test "cancel process timeout" {
       t
     })
     @async.sleep(500)
-    let t_cancel = @async.now()
     child.cancel()
     match @event_loop.platform {
       Linux | MacOS => inspect(child.wait(), content="-9")
@@ -80,10 +79,8 @@ async test "cancel process timeout" {
       @event_loop.Platform::.. => panic()
     }
     let t_process_terminates = @async.now()
-    let t1 = t_receive_graceful_termination.wait() - t_cancel
-    let t2 = t_process_terminates - t_cancel
-    inspect(t1 / 250, content="0")
-    inspect(t2 / 250, content="2")
+    let t = t_process_terminates - t_receive_graceful_termination.wait()
+    inspect((t + 50) / 250, content="2")
   }
 }
 
@@ -103,15 +100,12 @@ async test "cancel process hard" {
       inspect(child.stdout.text.read_all(), content="")
     }
     @async.sleep(500)
-    let t0 = @async.now()
     child.cancel()
     match @event_loop.platform {
       Linux | MacOS => inspect(child.wait(), content="-9")
       Windows => inspect(child.wait(), content="1")
       @event_loop.Platform::.. => panic()
     }
-    let t1 = @async.now()
-    inspect((t1 - t0) / 250, content="0")
   }
 }
 

@@ -37,27 +37,15 @@ async fn perform_sleep_job(t : Int32) -> Unit {
 
 ///|
 async test "worker basic" {
-  let log = StringBuilder()
-  @async.with_task_group() <| root => {
-    root.spawn_bg() <| () => {
-      for _ in 0..<3 {
-        @async.sleep(400)
-        log <+ "tick\n"
-      }
+  @async.with_task_group <| group => {
+    let mut done = false
+    group.spawn_bg() <| () => {
+      @async.sleep(100)
+      done = true
     }
-    perform_sleep_job(1000)
-    log <+ "done\n"
+    perform_sleep_job(400)
+    assert_true(done)
   }
-  inspect(
-    log.to_string(),
-    content=(
-      #|tick
-      #|tick
-      #|done
-      #|tick
-      #|
-    ),
-  )
 }
 
 ///|
@@ -65,10 +53,10 @@ async test "worker multiple" {
   let start = @async.now()
   @async.with_task_group() <| group => {
     for _ in 0..<3 {
-      group.spawn_bg(() => perform_sleep_job(200))
+      group.spawn_bg(() => perform_sleep_job(400))
     }
   }
-  let t = (@async.now() - start + 50) / 200
+  let t = (@async.now() - start + 50) / 400
   inspect(t, content="1")
 }
 

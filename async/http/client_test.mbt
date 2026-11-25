@@ -71,7 +71,7 @@ async test "request streaming" {
       @async.sleep(100)
       log <+ "client: sending PUT data part 1\n"
       client..write(b"PUT data part 1\n").flush_partial_data()
-      @async.sleep(100)
+      @async.sleep(300)
       log <+ "client: sending PUT data part 2\n"
       client.write(b"PUT data part 2\n")
       let response = client.end_request()
@@ -85,7 +85,7 @@ async test "request streaming" {
       @async.sleep(100)
       log <+ "client: sending POST data part 1\n"
       client..write(b"POST data part 1\n").flush_partial_data()
-      @async.sleep(100)
+      @async.sleep(300)
       log <+ "client: sending POST data part 2\n"
       client.write(b"POST data part 2\n")
       let response = client.end_request()
