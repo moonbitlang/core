@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-test "scanner constructors from prelude" {
+test "scanner constructors and traits from prelude" {
   let text : StringScanner = StringScanner("abc", cursor=1)
   let bytes : BytesScanner = BytesScanner(b"abc", cursor=2)
-  inspect(text.cursor, content="1")
-  inspect(bytes.cursor, content="2")
+  inspect(Scannable::scan_cursor(text), content="1")
+  inspect(BytesScannable::scan_cursor(bytes), content="2")
 }
 
 ///|
