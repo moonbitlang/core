@@ -139,62 +139,7 @@ pub using @lexbuf {
 }
 
 ///|
-/// Applies a function to a value and returns the original value.
-///
-/// # Parameters
-/// * `value`: The value to pass to the function.
-/// * `f`: The function to apply to the value.
-///
-/// # Returns
-/// The original value, unchanged.
-///
-#deprecated("use `value |> x => { ... ; x} instead")
-pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
-  f(value)
-  value
-}
-
-///|
-/// Applies a function to a value and returns the result of the function.
-///
-/// # Parameters
-/// * `value`: The value to pass to the function.
-/// * `f`: The function to apply to the value.
-///
-/// # Returns
-/// The result of applying the function to the value.
-///
-/// # Examples
-/// ```mbt check
-/// test {
-///   let x = 5
-///   let result = x |> n => { n * 2 }
-///   @test.assert_eq(result, 10)
-/// }
-/// ```
-/// 
-/// ```mbt check
-/// test {
-///   try {
-///     let _ : Unit = 5 |> x => { fail(x.to_string()) }
-///   } catch {
-///     Failure(_) => ()
-///   } noraise {
-///     _ => fail("expected failure")
-///   }
-/// }
-/// ```
-#deprecated("use `value |> (x) => {...}` operator instead")
-pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
-  f(value)
-}
-
-///|
-/// JSON `null` constant.
-pub let null : Json = @json.null
-
-///|
-pub using @json {type Json, trait ToJson, trait FromJson, json_inspect}
+pub using @json {type Json, trait ToJson, trait FromJson, json_inspect, null}
 
 ///|
 /// Type `Iterator`.
