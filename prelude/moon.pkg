@@ -23,10 +23,6 @@ import {
 
 warnings = "-test_unqualified_package"
 
-import {
-  "moonbitlang/core/test",
-} for "test"
-
 options(
   "allow-experimental-packages": true,
 )
