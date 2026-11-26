@@ -14,8 +14,8 @@
 
 ///|
 /// A child process running on a fresh controlling terminal: a Unix PTY or a
-/// Windows pseudo console. The child's standard handles are not the
-/// terminal; it opens the terminal itself (`/dev/tty`, `CONIN$`/`CONOUT$`).
+/// Windows pseudo console. The child's standard handles are connected to the
+/// terminal, which it can also open directly (`/dev/tty`, `CONIN$`/`CONOUT$`).
 ///
 /// What is written to a `Pty` is typed into the terminal, and what is read
 /// from it is what the terminal displays. On Windows the latter is a rendering
