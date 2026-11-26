@@ -214,6 +214,8 @@ pub using @builtin {trait BitOr}
 
 pub using @builtin {trait BitXOr}
 
+pub using @lexbuf {trait BytesScannable}
+
 pub using @builtin {trait Compare}
 
 pub using @debug {trait Debug}
@@ -235,6 +237,8 @@ pub using @builtin {trait Mod}
 pub using @builtin {trait Mul}
 
 pub using @builtin {trait Neg}
+
+pub using @lexbuf {trait Scannable}
 
 pub using @builtin {trait Shl}
 

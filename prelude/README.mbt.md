@@ -69,6 +69,7 @@ lexbuf after a scan fails or is cancelled during a refill.
 - `Show`, `Debug` — display and debug output
 - `Default` — default values
 - `ToJson`, `FromJson` — JSON serialization
+- `Scannable`, `BytesScannable` — text and byte inputs that provide their own cursor for `lexscan`
 - `Logger` — logging interface
 - `Add`, `Sub`, `Mul`, `Div`, `Mod`, `Neg` — arithmetic
 - `Shl`, `Shr`, `BitAnd`, `BitOr`, `BitXOr` — bitwise operations

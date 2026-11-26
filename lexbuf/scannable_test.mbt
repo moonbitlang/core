@@ -58,106 +58,122 @@ impl @lexbuf.BytesScannable for BytesCursor with fn set_scan_cursor(
 }
 
 ///|
-/// What generated `lexscan` code does with a `Scannable` value: read the input
-/// and the checked cursor once, then commit the end of the match.
-fn[T : @lexbuf.Scannable] skip_text(target : T, n : Int32) -> Int32 {
-  let input = T::scan_input(target)
-  let cursor = @lexbuf.__check_scan_cursor(input, T::scan_cursor(target))
-  T::set_scan_cursor(target, cursor + n)
-  cursor
+fn[T : @lexbuf.Scannable] scan_text(target : T) -> Unit {
+  lexscan target {
+    re"^ab" => ()
+    re"^." => ()
+    _ => ()
+  }
 }
 
 ///|
-fn[T : @lexbuf.BytesScannable] skip_bytes(target : T, n : Int32) -> Int32 {
-  let input = T::scan_input(target)
-  let cursor = @lexbuf.__check_bytes_scan_cursor(input, T::scan_cursor(target))
-  T::set_scan_cursor(target, cursor + n)
-  cursor
+fn[T : @lexbuf.BytesScannable] scan_bytes(target : T) -> Unit {
+  lexscan target {
+    reb"^.." => ()
+    reb"^." => ()
+    _ => ()
+  }
+}
+
+///|
+fn scan_text_at(input : StringView, offset : Int32) -> Int32 {
+  let target = TextCursor::{ input, offset, }
+  scan_text(target)
+  target.offset
+}
+
+///|
+fn scan_bytes_at(input : BytesView, offset : Int32) -> Int32 {
+  let target = BytesCursor::{ input, offset, }
+  scan_bytes(target)
+  target.offset
 }
 
 ///|
 test "a Scannable value keeps its own cursor" {
   let target = TextCursor::{ input: "xxab\u{1F600}c"[2:], offset: 0, }
-  inspect(skip_text(target, 2), content="0")
+  scan_text(target)
   inspect(target.offset, content="2")
-  inspect(skip_text(target, 2), content="2")
+  scan_text(target)
   inspect(target.offset, content="4")
-  inspect(skip_text(target, 1), content="4")
+  scan_text(target)
   inspect(target.offset, content="5")
 }
 
 ///|
 test "a BytesScannable value keeps its own cursor" {
   let target = BytesCursor::{ input: b"xxabc"[2:], offset: 1, }
-  inspect(skip_bytes(target, 2), content="1")
+  scan_bytes(target)
   inspect(target.offset, content="3")
 }
 
 ///|
-test "__check_scan_cursor accepts character boundaries" {
+test "text lexscan accepts character boundaries" {
   // "a😀b": a at 0, the pair at 1 and 2, b at 3.
   let input = "xa\u{1F600}b"[1:]
-  inspect(@lexbuf.__check_scan_cursor(input, 0), content="0")
-  inspect(@lexbuf.__check_scan_cursor(input, 1), content="1")
-  inspect(@lexbuf.__check_scan_cursor(input, 3), content="3")
-  inspect(@lexbuf.__check_scan_cursor(input, 4), content="4")
-  inspect(@lexbuf.__check_scan_cursor("", 0), content="0")
+  inspect(scan_text_at(input, 0), content="1")
+  inspect(scan_text_at(input, 1), content="3")
+  inspect(scan_text_at(input, 3), content="4")
+  inspect(scan_text_at(input, 4), content="4")
+  inspect(scan_text_at("", 0), content="0")
   // An empty slice whose backing string starts later.
-  inspect(@lexbuf.__check_scan_cursor("abc"[2:2], 0), content="0")
+  inspect(scan_text_at("abc"[2:2], 0), content="0")
 }
 
 ///|
-test "__check_bytes_scan_cursor accepts every offset in range" {
+test "byte lexscan accepts every offset in range" {
   let input = b"xabc"[1:]
-  inspect(@lexbuf.__check_bytes_scan_cursor(input, 0), content="0")
-  inspect(@lexbuf.__check_bytes_scan_cursor(input, 3), content="3")
-  inspect(@lexbuf.__check_bytes_scan_cursor(b"", 0), content="0")
-  inspect(@lexbuf.__check_bytes_scan_cursor(b"abc"[2:2], 0), content="0")
+  inspect(scan_bytes_at(input, 0), content="2")
+  inspect(scan_bytes_at(input, 1), content="3")
+  inspect(scan_bytes_at(input, 2), content="3")
+  inspect(scan_bytes_at(input, 3), content="3")
+  inspect(scan_bytes_at(b"", 0), content="0")
+  inspect(scan_bytes_at(b"abc"[2:2], 0), content="0")
 }
 
 ///|
-test "panic __check_scan_cursor rejects a negative cursor" {
-  @lexbuf.__check_scan_cursor("ab", -1) |> ignore
+test "panic text lexscan rejects a negative cursor" {
+  scan_text_at("ab", -1) |> ignore
 }
 
 ///|
-test "panic __check_scan_cursor rejects a cursor past the end" {
+test "panic text lexscan rejects a cursor past the end" {
   // The input is a slice: offset 2 exists in the string but not in the view.
-  @lexbuf.__check_scan_cursor("abc"[:1], 2) |> ignore
+  scan_text_at("abc"[:1], 2) |> ignore
 }
 
 ///|
-test "panic __check_scan_cursor rejects a cursor inside a surrogate pair" {
-  @lexbuf.__check_scan_cursor("a\u{1F600}", 2) |> ignore
+test "panic text lexscan rejects a cursor inside a surrogate pair" {
+  scan_text_at("a\u{1F600}", 2) |> ignore
 }
 
 ///|
-test "panic __check_scan_cursor rejects a cursor inside a pair of a slice" {
+test "panic text lexscan rejects a cursor inside a pair of a slice" {
   // "a😀": a at 0, the pair at 1 and 2.
-  @lexbuf.__check_scan_cursor("xa\u{1F600}"[1:], 2) |> ignore
+  scan_text_at("xa\u{1F600}"[1:], 2) |> ignore
 }
 
 ///|
-test "panic __check_scan_cursor rejects a cursor past an empty slice" {
-  @lexbuf.__check_scan_cursor("abc"[2:2], 1) |> ignore
+test "panic text lexscan rejects a cursor past an empty slice" {
+  scan_text_at("abc"[2:2], 1) |> ignore
 }
 
 ///|
-test "panic __check_bytes_scan_cursor rejects a negative cursor" {
-  @lexbuf.__check_bytes_scan_cursor(b"ab", -1) |> ignore
+test "panic byte lexscan rejects a negative cursor" {
+  scan_bytes_at(b"ab", -1) |> ignore
 }
 
 ///|
-test "panic __check_bytes_scan_cursor rejects a cursor past the end" {
-  @lexbuf.__check_bytes_scan_cursor(b"abc"[:1], 2) |> ignore
+test "panic byte lexscan rejects a cursor past the end" {
+  scan_bytes_at(b"abc"[:1], 2) |> ignore
 }
 
 ///|
 test "StringScanner is Scannable" {
   let scanner = @lexbuf.StringScanner("xxab\u{1F600}c"[2:])
-  inspect(skip_text(scanner, 2), content="0")
+  scan_text(scanner)
   inspect(scanner.cursor, content="2")
-  inspect(skip_text(scanner, 2), content="2")
+  scan_text(scanner)
   inspect(scanner.cursor, content="4")
   // lexscan on it still works and continues from the cursor set above.
   let rest = lexscan scanner {
@@ -171,7 +187,7 @@ test "StringScanner is Scannable" {
 ///|
 test "BytesScanner is BytesScannable" {
   let scanner = @lexbuf.BytesScanner(b"xxabc"[2:])
-  inspect(skip_bytes(scanner, 2), content="0")
+  scan_bytes(scanner)
   inspect(scanner.cursor, content="2")
 }
 
