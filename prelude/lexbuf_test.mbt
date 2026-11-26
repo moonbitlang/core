@@ -13,6 +13,14 @@
 // limitations under the License.
 
 ///|
+test "scanner constructors from prelude" {
+  let text : StringScanner = StringScanner("abc", cursor=1)
+  let bytes : BytesScanner = BytesScanner(b"abc", cursor=2)
+  inspect(text.cursor, content="1")
+  inspect(bytes.cursor, content="2")
+}
+
+///|
 test "BytesLexbuf constructor from prelude" {
   let chunks = [b"", b"\xff\x00", b""].iter()
   let input = BytesLexbuf(() => chunks.next())

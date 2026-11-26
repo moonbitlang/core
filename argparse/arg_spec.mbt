@@ -81,8 +81,8 @@ priv enum ArgInfo {
 ///|
 /// Declarative flag constructor wrapper.
 #derive(@debug.Debug)
-pub struct FlagArg {
-  priv arg : Arg
+struct FlagArg {
+  arg : Arg
 }
 
 ///|
@@ -137,8 +137,8 @@ pub fn FlagArg::FlagArg(
 /// Declarative option constructor wrapper.
 /// Named `OptionArg` to avoid shadowing the built-in `Option` type.
 #derive(@debug.Debug)
-pub struct OptionArg {
-  priv arg : Arg
+struct OptionArg {
+  arg : Arg
 }
 
 ///|
@@ -197,8 +197,8 @@ pub fn OptionArg::OptionArg(
 ///|
 /// Declarative positional constructor wrapper.
 #derive(@debug.Debug)
-pub struct PositionArg {
-  priv arg : Arg
+struct PositionArg {
+  arg : Arg
 }
 
 ///|

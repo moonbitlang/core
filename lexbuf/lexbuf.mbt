@@ -15,12 +15,12 @@
 ///|
 /// A synchronous UTF-16 input buffer for `lexscan`, fed by string chunks.
 /// Chunks may be released after `lexscan` has finished consuming them.
-pub struct Lexbuf {
-  priv source : () -> String?
-  priv storage : LexbufStorage
-  priv mut cursor : Int32
-  priv mut retained_from : Int32
-  priv mut eof : Bool
+struct Lexbuf {
+  source : () -> String?
+  storage : LexbufStorage
+  mut cursor : Int32
+  mut retained_from : Int32
+  mut eof : Bool
 }
 
 ///|

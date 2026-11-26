@@ -116,6 +116,8 @@ pub using @lexbuf {type BytesLexbuf}
 
 pub using @bytes {type BytesRegex}
 
+pub using @lexbuf {type BytesScanner}
+
 pub using @builtin {type BytesView}
 
 pub using @builtin {type Char}
@@ -185,6 +187,8 @@ pub using @builtin {type SourceLoc}
 pub using @builtin {type String}
 
 pub using @builtin {type StringBuilder}
+
+pub using @lexbuf {type StringScanner}
 
 pub using @builtin {type StringView}
 

@@ -127,8 +127,8 @@ priv enum WriteFrame {
 /// - `None` to exclude the property from the output
 /// 
 /// Only applies to object properties, not array elements.
-pub struct Replacer {
-  priv f : (String, Json) -> Json?
+struct Replacer {
+  f : (String, Json) -> Json?
 }
 
 ///|

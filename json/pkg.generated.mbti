@@ -100,9 +100,7 @@ pub(all) struct Position {
 }
 pub fn Position::equal(Self, Self) -> Bool
 
-pub struct Replacer {
-  // private fields
-}
+type Replacer
 #alias(new, deprecated)
 pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self

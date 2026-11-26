@@ -15,21 +15,21 @@
 ///|
 /// Declarative command specification.
 #derive(@debug.Debug)
-pub struct Command {
-  priv name : String
-  priv args : Array[Arg]
-  priv groups : Array[ArgGroup]
-  priv subcommands : Array[Command]
-  priv about : String?
-  priv version : String?
-  priv disable_help_flag : Bool
-  priv disable_version_flag : Bool
-  priv disable_help_subcommand : Bool
-  priv arg_required_else_help : Bool
-  priv subcommand_required : Bool
-  priv default_subcommand : String?
-  priv hidden : Bool
-  priv mut build_error : ArgBuildError?
+struct Command {
+  name : String
+  args : Array[Arg]
+  groups : Array[ArgGroup]
+  subcommands : Array[Command]
+  about : String?
+  version : String?
+  disable_help_flag : Bool
+  disable_version_flag : Bool
+  disable_help_subcommand : Bool
+  arg_required_else_help : Bool
+  subcommand_required : Bool
+  default_subcommand : String?
+  hidden : Bool
+  mut build_error : ArgBuildError?
 }
 
 ///|

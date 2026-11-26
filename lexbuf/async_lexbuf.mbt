@@ -19,12 +19,12 @@
 /// Errors raised by the source propagate out of the scan. A scan that raises
 /// or is cancelled while it waits for a chunk may stop partway through a
 /// token, so do not use the lexbuf again after such an error.
-pub struct AsyncLexbuf {
-  priv source : async () -> String?
-  priv storage : LexbufStorage
-  priv mut cursor : Int32
-  priv mut retained_from : Int32
-  priv mut eof : Bool
+struct AsyncLexbuf {
+  source : async () -> String?
+  storage : LexbufStorage
+  mut cursor : Int32
+  mut retained_from : Int32
+  mut eof : Bool
 }
 
 ///|

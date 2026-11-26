@@ -14,9 +14,9 @@
 
 ///|
 /// A compiled regular expression for string-oriented matching.
-pub struct Regex {
-  priv pat : @re.Pattern
-  priv mut re : @re.Regex?
+struct Regex {
+  pat : @re.Pattern
+  mut re : @re.Regex?
 }
 
 ///|

@@ -18,9 +18,9 @@
 // or a manual `Show` implementation, then remove `-deprecated_syntax` here.
 #derive(Eq, Show, @debug.Debug)
 #warnings("-deprecated_syntax-deprecated")
-pub struct ValueRange {
-  priv lower : Int32
-  priv upper : Int32?
+struct ValueRange {
+  lower : Int32
+  upper : Int32?
 }
 
 ///|

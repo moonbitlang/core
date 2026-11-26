@@ -128,6 +128,8 @@ pub using @bytes {type BytesRegex}
 
 ///|
 pub using @lexbuf {
+  type StringScanner,
+  type BytesScanner,
   type Lexbuf,
   type AsyncLexbuf,
   type BytesLexbuf,
