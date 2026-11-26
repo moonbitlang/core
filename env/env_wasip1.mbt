@@ -49,10 +49,19 @@ fn get_wasi_env_entries() -> Array[String] {
 }
 
 ///|
+fn split_wasi_env_entry(entry : String) -> (StringView, StringView)? {
+  // Windows drive working directory names include the leading '=' (e.g. =D:).
+  let start = if entry.has_prefix("=") { 1 } else { 0 }
+  guard entry[start:].find_code_unit('=') is Some(offset) else { return None }
+  let separator = start + offset
+  Some((entry[:separator], entry[separator + 1:]))
+}
+
+///|
 fn get_env_var_internal(key : String) -> String? {
   for entry in get_wasi_env_entries() {
-    if entry.find("=") is Some(separator) && entry[:separator] == key {
-      return Some(entry[separator + 1:].to_owned())
+    if split_wasi_env_entry(entry) is Some((name, value)) && name == key {
+      return Some(value.to_owned())
     }
   }
   None
@@ -62,8 +71,8 @@ fn get_env_var_internal(key : String) -> String? {
 fn get_env_vars_internal() -> Map[String, String] {
   let result = Map([])
   for entry in get_wasi_env_entries() {
-    if entry.find("=") is Some(separator) {
-      result[entry[:separator].to_owned()] = entry[separator + 1:].to_owned()
+    if split_wasi_env_entry(entry) is Some((name, value)) {
+      result[name.to_owned()] = value.to_owned()
     }
   }
   result

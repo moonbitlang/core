@@ -13,6 +13,16 @@
 // limitations under the License.
 
 ///|
+test "WASIp1 environment entries preserve Windows drive names" {
+  guard split_wasi_env_entry("=D:=D:\\work=a") is Some((name, value)) else {
+    fail("missing drive environment entry")
+  }
+  inspect(name.to_owned(), content="=D:")
+  inspect(value.to_owned(), content="D:\\work=a")
+  inspect(split_wasi_env_entry("=D:") is None, content="true")
+}
+
+///|
 test "WASIp1 string table follows pointers, including empty and shared entries" {
   let buffer = b"a\x00b\x00\x00"
   let base = wasi_buffer_address(buffer)
