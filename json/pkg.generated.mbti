@@ -24,6 +24,7 @@ pub(all) suberror JsonDecodeError {
 pub fn JsonDecodeError::equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
 
+#visibility(change_to="abstract")
 #derive(Eq, ToJson)
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
