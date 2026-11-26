@@ -17,12 +17,12 @@
 /// by `Bytes` chunks. It is the bytes counterpart of `Lexbuf`: offsets
 /// are absolute byte offsets in the stream. Chunks may be released after
 /// `lexscan` has finished consuming them.
-pub struct BytesLexbuf {
-  priv source : () -> Bytes?
-  priv storage : BytesLexbufStorage
-  priv mut cursor : Int32
-  priv mut retained_from : Int32
-  priv mut eof : Bool
+struct BytesLexbuf {
+  source : () -> Bytes?
+  storage : BytesLexbufStorage
+  mut cursor : Int32
+  mut retained_from : Int32
+  mut eof : Bool
 }
 
 ///|

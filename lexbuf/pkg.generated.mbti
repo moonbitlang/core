@@ -10,16 +10,12 @@ type AsyncBytesLexbuf
 #alias(from_fn)
 pub fn AsyncBytesLexbuf::AsyncBytesLexbuf(async () -> Bytes?) -> Self
 
-pub struct AsyncLexbuf {
-  // private fields
-}
+type AsyncLexbuf
 #alias(from_fn)
 pub fn AsyncLexbuf::AsyncLexbuf(async () -> String?) -> Self
 pub async fn AsyncLexbuf::read_line(Self) -> StringView?
 
-pub struct BytesLexbuf {
-  // private fields
-}
+type BytesLexbuf
 #alias(from_fn)
 pub fn BytesLexbuf::BytesLexbuf(() -> Bytes?) -> Self
 
@@ -30,9 +26,7 @@ pub struct BytesScanner {
 pub fn BytesScanner::BytesScanner(BytesView, cursor? : Int32) -> Self
 pub impl BytesScannable for BytesScanner
 
-pub struct Lexbuf {
-  // private fields
-}
+type Lexbuf
 #alias(from_fn)
 pub fn Lexbuf::Lexbuf(() -> String?) -> Self
 #deprecated

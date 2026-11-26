@@ -38,9 +38,7 @@ pub fn MatchResult::content(Self) -> StringView
 pub fn MatchResult::group(Self, Int32) -> StringView?
 pub fn MatchResult::named_group(Self, String) -> StringView?
 
-pub struct Regex {
-  // private fields
-}
+type Regex
 #alias(new, deprecated)
 pub fn Regex::Regex(StringView) -> Self raise
 pub fn Regex::add(Self, Self) -> Self

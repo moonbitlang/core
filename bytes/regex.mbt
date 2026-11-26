@@ -15,9 +15,9 @@
 ///|
 /// A compiled regular expression over bytes: the `Bytes` counterpart of
 /// `@string.Regex`, with its own byte-specialized parser and engine.
-pub struct BytesRegex {
-  priv pat : @re.Pattern
-  priv mut re : @re.Regex?
+struct BytesRegex {
+  pat : @re.Pattern
+  mut re : @re.Regex?
 }
 
 ///|

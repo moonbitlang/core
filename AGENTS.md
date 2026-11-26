@@ -6,6 +6,9 @@ This is the standard library for [MoonBit](https://docs.moonbitlang.com).
 the order of each block is irrelevant. In some refactorings, you can process
 block by block independently.
 
+- When every field of an exported struct is private, declare it as `struct T`
+  and omit `priv` on its fields. This exposes the abstract type `T` to other packages.
+
 - Try to keep deprecated blocks in file called `deprecated.mbt`  in each directory.
 
 - `moon fmt` is used to format your code properly.

@@ -17,6 +17,7 @@ Core types available in every MoonBit program:
 - `Ref` — mutable reference cell
 - `Regex` — regular expressions
 - `BytesRegex` — regular expressions over bytes
+- `StringScanner`, `BytesScanner` — in-memory text and byte input for `lexscan`
 - `Lexbuf`, `AsyncLexbuf` — streaming text input for `lexscan`
 - `BytesLexbuf`, `AsyncBytesLexbuf` — streaming byte buffers
 - `Repr` — debug representation
