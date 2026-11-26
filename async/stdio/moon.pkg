@@ -21,10 +21,18 @@ import {
   "moonbitlang/core/async/process",
 } for "test"
 
+#cfg(any(target="native", target="wasm"))
+import {
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+} for "test"
+
 options(
   targets: {
     "stdio.mbt": [ "native", "wasm" ],
     "polyfill.mbt": [ "wasm-gc", "js" ],
     "stdio_test.mbt": [ "native", "wasm" ],
+    "console_test.mbt": [ "native", "wasm" ],
   },
 )

@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/async/stdio",
+}
+
+supported_targets = "-all+native"
+
+pkgtype(kind: "executable")

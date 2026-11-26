@@ -52,9 +52,8 @@ struct pty {
   HANDLE input, output, process, job;
   HPCON console;
 #else
-  // A slave descriptor kept until the terminal is closed: all child stdio is
-  // /dev/null, so the child has to open /dev/tty before it owns a slave
-  // itself, and the master would otherwise report EOF/EIO before then.
+  // A slave descriptor kept until the terminal is closed. It is also
+  // duplicated to the child's standard descriptors before exec.
   int input, output, slave;
 #endif
 };
@@ -154,7 +153,9 @@ struct pty *moonbitlang_async_pty_spawn(moonbit_bytes_t path, moonbit_bytes_t *e
   SIZE_T attr_size = 0;
   InitializeProcThreadAttributeList(NULL, 1, 0, &attr_size);
   startup.StartupInfo.cb = sizeof(startup);
-  // Do not inherit our redirected stdio into the console child.
+  // Explicitly start with null standard handles. This prevents CreateProcess
+  // from copying this controller's redirected stdio into the child, allowing
+  // the pseudo console attachment to install its console handles instead.
   startup.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
   startup.lpAttributeList = malloc(attr_size);
   if (!startup.lpAttributeList ||
@@ -301,11 +302,8 @@ struct pty *moonbitlang_async_pty_spawn(moonbit_bytes_t path, moonbit_bytes_t *e
     if (setsid() < 0 || ioctl(pty->slave, TIOCSCTTY, 0) < 0 ||
         tcsetpgrp(pty->slave, getpgrp()) < 0)
       child_failed(exec_status[1]);
-    int null = open("/dev/null", O_RDWR);
-    if (null < 0)
-      child_failed(exec_status[1]);
     for (int fd = 0; fd < 3; fd++) {
-      if (dup2(null, fd) < 0)
+      if (dup2(pty->slave, fd) < 0)
         child_failed(exec_status[1]);
     }
     // Everything else, the slave included, is closed by FD_CLOEXEC.
