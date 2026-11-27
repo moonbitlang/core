@@ -31,7 +31,7 @@ fn Protocol::default_port(p : Protocol) -> UInt16 {
 
 ///|
 fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
-  let (protocol, uri) = lexmatch uri with longest {
+  let (protocol, uri) = lexmatch uri {
     (re"^http://", after=rest) => (Http, rest)
     (re"^https://", after=rest) => (Https, rest)
     _ => {
