@@ -463,8 +463,8 @@ fn parse_command_impl(
       i += 1
       continue
     }
-    if arg.has_prefix("--") {
-      let (name, inline) = split_long(arg)
+    if arg is ['-', '-', .. body] {
+      let (name, inline) = split_long_option_body(body)
       if builtin_help_long && name == "help" {
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)

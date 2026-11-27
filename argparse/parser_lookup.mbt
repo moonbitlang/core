@@ -118,8 +118,7 @@ fn resolve_help_target(
 }
 
 ///|
-fn split_long(arg : String) -> (StringView, String?) {
-  let body = arg.strip_prefix("--").unwrap_or(arg)
+fn split_long_option_body(body : StringView) -> (StringView, String?) {
   match body.split_once("=") {
     Some((name, value)) => (name, Some(value.to_owned()))
     None => (body, None)

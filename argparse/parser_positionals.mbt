@@ -83,8 +83,8 @@ fn should_parse_as_positional(
   if !allow {
     return false
   }
-  if arg.has_prefix("--") {
-    let (name, _) = split_long(arg)
+  if arg is ['-', '-', .. body] {
+    let name = body.before("=").unwrap_or(body)
     return long_index.get_from_string(name) is None &&
       lookup_negated_flag(long_index, name) is None
   }
