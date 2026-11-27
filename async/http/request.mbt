@@ -31,13 +31,14 @@ fn Protocol::default_port(p : Protocol) -> UInt16 {
 
 ///|
 fn resolve_url(uri : StringView) -> (Protocol, String, StringView) raise {
-  guard uri.find("://") is Some(protocol_len) else { raise InvalidFormat }
-  let protocol = match uri[:protocol_len] {
-    "http" => Http
-    "https" => Https
-    protocol => raise UnsupportedProtocol(protocol.to_owned())
+  let (protocol, uri) = lexmatch uri with longest {
+    (re"^http://", after=rest) => (Http, rest)
+    (re"^https://", after=rest) => (Https, rest)
+    _ => {
+      guard uri.before("://") is Some(scheme) else { raise InvalidFormat }
+      raise UnsupportedProtocol(scheme.to_owned())
+    }
   }
-  let uri = uri[protocol_len + 3:]
   let (host, path) = if uri.find("/") is Some(i) {
     uri.split_at(i)
   } else {
