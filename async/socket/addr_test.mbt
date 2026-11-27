@@ -34,6 +34,11 @@ test "Parse invalid IPv4 address" {
   // Too long
   @test.assert_raise(() => @socket.Addr::parse("127.0.0.1:8080:8080"))
 
+  // Exactly four nonempty decimal octets, separated by literal dots.
+  for ip in ["127.0.1", "1.2.3.4.5", "1..2.3", "1x2x3x4", "1.2.3.4."] {
+    @test.assert_raise(() => @socket.Addr::parse("\{ip}:8080"))
+  }
+
   // Invalid IP, out of range
   @test.assert_raise(() => @socket.Addr::parse("256.0.0.1:8080"))
 }
