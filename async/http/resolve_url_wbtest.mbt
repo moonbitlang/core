@@ -57,6 +57,16 @@ test "resolve_url" {
     ),
   )
   @debug.debug_inspect(
+    @test.expect_error(() => to_owned(resolve_url("https:/example.org"))),
+    content="InvalidFormat",
+  )
+  @debug.debug_inspect(
+    @test.expect_error(() => to_owned(resolve_url("xhttp://example.org"))),
+    content=(
+      #|UnsupportedProtocol("xhttp")
+    ),
+  )
+  @debug.debug_inspect(
     to_owned(resolve_url("http://www.example.org:10042")),
     content=(
       #|(Http, "www.example.org:10042", "/")
