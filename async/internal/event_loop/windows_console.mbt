@@ -35,6 +35,15 @@ priv struct WindowsConsoleBuffer {
   pending : FixedArray[Byte]
   /// number of bytes in `pending`
   mut pending_len : Int32
+  /// `ReadConsoleW` is not cancellation safe: when cancelled with `CancelSynchronousIo`,
+  /// it may return `TRUE` and there may be data loss due to implementation bug.
+  /// Here we maintain a persistent worker task to fetch data,
+  /// so cancelling a single console read does not cancel the actual `ReadConsoleW` call.
+  /// On event loop termination, we use `CancelSynchronousIo` to cancel any remaining
+  /// read task, so that the program won't stuck forever or leak.
+  ///
+  /// invariant: if `read_worker` is `Some(_)`, the console buffer is empty
+  mut read_worker : @coroutine.Coroutine?
 }
 
 ///|
@@ -45,6 +54,7 @@ let dummy_console_buffer : WindowsConsoleBuffer = {
   unpaired_surrogate: 0,
   pending: [],
   pending_len: 0,
+  read_worker: None,
 }
 
 ///|
@@ -59,6 +69,7 @@ fn WindowsConsoleBuffer::WindowsConsoleBuffer(
       unpaired_surrogate: 0,
       pending: FixedArray::make(4, 0),
       pending_len: 0,
+      read_worker: None,
     }
   } else {
     dummy_console_buffer

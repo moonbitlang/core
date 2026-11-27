@@ -158,6 +158,16 @@ pub fn with_event_loop(
   setup_signal_handler()
   let main = @coroutine.spawn(() => {
     defer evloop.terminate_signal_handler()
+    defer @coroutine.protect_from_cancel <| () => {
+      for io in evloop.fds.values() {
+        if io.console_state.read_worker is Some(worker) {
+          worker.cancel()
+          ignore(worker.wait()) catch {
+            _ => ()
+          }
+        }
+      }
+    }
     f()
   })
   @coroutine.reschedule()

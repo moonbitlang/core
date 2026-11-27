@@ -21,6 +21,7 @@ fn console_buffer_for_test(buffer : FixedArray[UInt16]) -> WindowsConsoleBuffer 
     unpaired_surrogate: 0,
     pending: FixedArray::make(4, b'\x00'),
     pending_len: 0,
+    read_worker: None,
   }
 }
 
