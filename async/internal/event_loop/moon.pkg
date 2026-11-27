@@ -85,6 +85,7 @@ options(
     "io.wasm.mbt": [ "wasm" ],
     "unimplemented.mbt": [ "wasm-gc" ],
     "worker_wbtest.mbt": [ "native", "wasm" ],
+    "windows_console_wbtest.mbt": [ "native", "wasm" ],
     "thread_pool.wasm.mbt": [ "wasm" ],
     "io_bounds_wbtest.mbt": [ "wasm" ],
   },
