@@ -18,7 +18,8 @@
 ///
 /// - stdout is what the terminal displays.
 /// - stdin takes one command per line. `input <base64>` types the bytes into
-///   the terminal, and `resize <rows> <cols>` resizes it. Once stdin closes,
+///   the terminal, `resize <rows> <cols>` resizes it, and `cancel` asks the
+///   program to terminate via Ctrl+C input. Once stdin closes,
 ///   the terminal is closed, which kills the program.
 /// - stderr has a line `ok` once the program is started and after each
 ///   `resize`, and `exit <code>` once it exits, with the code `wait_pid`
@@ -53,6 +54,7 @@ async fn run_command(pty : Pty, command : String) -> Unit {
       pty.resize(rows=@string.parse_int(rows), cols=@string.parse_int(cols))
       @stdio.stderr.write(b"ok\n")
     }
+    ["cancel"] => pty.cancel()
     _ => fail("unknown command: \{command}")
   }
 }

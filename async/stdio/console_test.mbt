@@ -55,3 +55,89 @@ async test "console Unicode safety" {
     inspect(pty.stderr.text.read_all().trim(), content="exit 0")
   }
 }
+
+///|
+async test "console input cancel" {
+  let pty_path = @test_util.build_test_program("pty")
+  let program_path = @test_util.build_test_program("console_stdio_cancel")
+  @async.with_task_group() <| group => {
+    let pty = @process.spawn(
+      group,
+      pty_path,
+      [program_path],
+      stdin=FeedFromParent,
+      stdout=Collect,
+      stderr=Collect,
+    )
+    defer pty.stdin.close()
+    defer pty.stdout.close()
+    defer pty.stderr.close()
+    guard pty.stderr.text.read_line() is Some("ok") else {
+      fail("pty failed to start")
+    }
+    async fn assert_line(suffix : String) -> Unit {
+      guard @async.with_timeout(3000, () => pty.stdout.text.read_line())
+        is Some(line) else {
+        raise Failure("unexpected EOF")
+      }
+      // On Windows, the console may output extra escape sequence
+      guard line.has_suffix(suffix) else {
+        raise Failure(
+          "unexpected output \{Repr(line)}, expected \{Repr(suffix)}",
+        )
+      }
+    }
+    let input = @utf8.encode("first line\r")
+    pty.stdin.text.write("input \{@base64.encode(input)}\n")
+    // input echo from the console itself
+    assert_line("first line")
+    // wait for the child to timeout on reading
+    assert_line("timeout")
+    let input = @utf8.encode("second line\r")
+    pty.stdin.text.write("input \{@base64.encode(input)}\n")
+    assert_line("second line")
+    let finish = @utf8.encode("\r")
+    pty.stdin.text.write("input \{@base64.encode(finish)}\n")
+    guard pty.wait() is 0 else { fail("pty process failed") }
+    inspect(pty.stderr.text.read_all().trim(), content="exit 0")
+  }
+}
+
+///|
+async test "console background read worker cancel on exit" {
+  let pty_path = @test_util.build_test_program("pty")
+  let program_path = @test_util.build_test_program("console_stdio_cancel")
+  @async.with_task_group() <| group => {
+    let pty = @process.spawn(
+      group,
+      pty_path,
+      [program_path],
+      stdin=FeedFromParent,
+      stdout=Collect,
+      stderr=Collect,
+    )
+    defer pty.stdin.close()
+    defer pty.stdout.close()
+    defer pty.stderr.close()
+    guard pty.stderr.text.read_line() is Some("ok") else {
+      fail("pty failed to start")
+    }
+    // Supply no input, leaving the child's first read_line blocked in the
+    // Windows console worker before cancelling the main task.
+    @async.sleep(500)
+    pty.stdin.text.write("cancel\n")
+    guard @async.with_timeout(3000, () => pty.wait()) is 0 else {
+      fail("pty process failed")
+    }
+    let result = pty.stderr.text.read_all().trim()
+    match @async.platform {
+      Windows =>
+        // STATUS_CONTROL_C_EXIT (0xC000013A)
+        inspect(result, content="exit -1073741510")
+      Linux | MacOS =>
+        // SIGINT
+        inspect(result, content="exit -2")
+      @event_loop.Platform::.. => ()
+    }
+  }
+}

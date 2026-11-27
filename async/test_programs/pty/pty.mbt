@@ -74,6 +74,13 @@ fn Pty::resize(self : Pty, rows~ : Int32, cols~ : Int32) -> Unit raise {
 }
 
 ///|
+/// Ask the child to terminate through the terminal's interrupt input.
+/// A terminal in cooked mode turns Ctrl+C input into SIGINT/CTRL_C_EVENT.
+async fn Pty::cancel(self : Pty) -> Unit {
+  self.write(b"\x03")
+}
+
+///|
 /// Close the terminal, which kills the child if it is still running.
 fn Pty::close(self : Pty) -> Unit {
   guard !self.closed else { return }

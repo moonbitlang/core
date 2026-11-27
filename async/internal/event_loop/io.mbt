@@ -72,6 +72,9 @@ pub fn IoHandle::detach_from_event_loop(handle : IoHandle) -> Unit {
       _ => ()
     }
   }
+  if handle.console_state.read_worker is Some(worker) {
+    worker.cancel()
+  }
 }
 
 ///|
@@ -180,35 +183,45 @@ async fn IoHandle::read_console(
     }
   }
 
-  let n = {
+  let read_worker = if console.read_worker is Some(worker) {
+    worker
+  } else {
+    let worker = @coroutine.spawn() <| () => {
+      defer {
+        console.read_worker = None
+      }
+      let job = Job::read_console(
+        handle.fd,
+        console.buffer,
+        0, // we perform actual read only when the buffer is empty
+        console.buffer.length(),
+      )
+      defer job.free()
+      let n = perform_job_in_worker(job, context~, cancellable=true)
+      if n is 0 && console.unpaired_surrogate > 0 {
+        console.unpaired_surrogate = 0
+        console.buffer[0] = 0xFFFD
+        console.buffer_len = 1
+      } else {
+        console.buffer_len = n
+      }
+    }
+    console.read_worker = Some(worker)
+    worker
+  }
+  {
     handle.read = Submitted
     defer {
       handle.read = Idle
     }
-    let job = Job::read_console(
-      handle.fd,
-      console.buffer,
-      0, // we perform actual read only when the buffer is empty
-      console.buffer.length(),
-    )
-    defer job.free()
-    perform_job_in_worker(job, context~, cancellable=true)
-  }
-
-  if n is 0 {
-    if console.unpaired_surrogate > 0 {
-      // Corner case: the last code unit before EOF is an unpaired high surrogate.
-      // Convert it to `U+FFFD` (replacement character)
-      console.unpaired_surrogate = 0
-      return console.emit_char(0xFFFD, buf, offset~, len~, produced=0)
-    } else {
-      return n
+    match read_worker.wait() {
+      Continue => ()
+      Cancelled => return 0
     }
   }
 
-  console.buffer_len = n
   let produced = console.decode_utf16(buf, offset~, len~)
-  if produced > 0 {
+  if produced > 0 || console.unpaired_surrogate is 0 {
     produced
   } else {
     // The input contain solely one unpaired surrogate,
