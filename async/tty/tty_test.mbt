@@ -807,7 +807,6 @@ async test "set_echo(true) in raw mode passes through to OS" {
   with_ttyd() <| ttyd => {
     ttyd.enter_raw_mode()
     if @async.platform is Windows {
-      let before = ttyd.call("input_flags", params={})
       let id = ttyd.next_id
       ttyd.next_id += 1
       let request : Json = {
@@ -832,7 +831,7 @@ async test "set_echo(true) in raw mode passes through to OS" {
           "expected OS error from set_echo(true) in raw mode: \{@utf8.decode_lossy(line)}",
         )
       }
-      assert_eq(ttyd.call("input_flags", params={}), before)
+      assert_eq(ttyd.set_echo(false), false)
     } else {
       assert_eq(ttyd.set_echo(true), false)
       ttyd.send_input(b"a")

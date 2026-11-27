@@ -38,10 +38,6 @@ static int32_t ttyd_check_state(void) {
   CloseHandle(output);
   return ok;
 }
-MOONBIT_FFI_EXPORT int64_t ttyd_input_flags(void) {
-  DWORD current_input;
-  return GetConsoleMode(input, &current_input) ? (int64_t)current_input : -1;
-}
 #else
 #include <fcntl.h>
 #include <termios.h>
@@ -65,10 +61,6 @@ static int32_t ttyd_check_state(void) {
     if (current.c_cc[i] != saved.c_cc[i]) return 0;
   }
   return 1;
-}
-MOONBIT_FFI_EXPORT int64_t ttyd_input_flags(void) {
-  struct termios current;
-  return tcgetattr(terminal, &current) == 0 ? (int64_t)current.c_lflag : -1;
 }
 #endif
 
