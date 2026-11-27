@@ -189,21 +189,25 @@ fn parse_ipv6_zone_suffix(zone : StringView, context~ : String) -> UInt32 raise 
 fn parse_ipv4_to_bytes(
   ip_str : StringView,
 ) -> (UInt32, UInt32, UInt32, UInt32) raise InvalidAddr {
-  let parts = ip_str.split(".").collect()
-  guard parts.length() == 4 else { raise InvalidAddr }
+  guard ip_str =~ (
+    re"^" +
+    (re"[0-9]+" as a) +
+    re"\." +
+    (re"[0-9]+" as b) +
+    re"\." +
+    (re"[0-9]+" as c) +
+    re"\." +
+    (re"[0-9]+" as d) +
+    re"$"
+  ) else {
+    raise InvalidAddr
+  }
   fn parse_octet(x : StringView) raise InvalidAddr {
-    guard x =~ re"^[0-9]+$" else { raise InvalidAddr }
     let value = @string.parse_uint(x, radix=10) catch { _ => raise InvalidAddr }
     guard value < 256 else { raise InvalidAddr }
     value
   }
-
-  return (
-    parse_octet(parts[0]),
-    parse_octet(parts[1]),
-    parse_octet(parts[2]),
-    parse_octet(parts[3]),
-  )
+  (parse_octet(a), parse_octet(b), parse_octet(c), parse_octet(d))
 }
 
 ///|
