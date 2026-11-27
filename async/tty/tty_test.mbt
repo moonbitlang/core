@@ -108,6 +108,11 @@ async fn Ttyd::enter_raw_mode(self : Ttyd) -> Unit {
 }
 
 ///|
+async fn Ttyd::set_echo(self : Ttyd, enabled : Bool) -> Unit {
+  self.call("set_echo", params={ "enabled": Json(enabled) }) |> ignore()
+}
+
+///|
 /// `@tty.Tty::size` in `ttyd`.
 async fn Ttyd::size(self : Ttyd) -> (Int32, Int32) {
   guard self.call("size", params={}) is [Number(rows, ..), Number(cols, ..)] else {
@@ -703,5 +708,132 @@ async test "wait_resize can retry after first-input timeout" {
       "type": "input",
       "bytes": "eA==",
     })
+  }
+}
+
+///|
+async test "set_echo(false) suppresses echo in cooked mode" {
+  with_ttyd() <| ttyd => {
+    ttyd.set_echo(false)
+    if @async.platform is Windows {
+      ttyd.drain_output()
+    }
+    @async.with_task_group(group => {
+      ttyd.send_input(b"!!!!!!")
+      let reading = group.spawn(() => ttyd.read())
+      @async.sleep(200)
+      assert_true(reading.try_wait() is None)
+      let (enter, line) = if @async.platform is Windows {
+        (b"\r", b"!!!!!!\r\n")
+      } else {
+        (b"\n", b"!!!!!!\n")
+      }
+      ttyd.send_input(enter)
+      assert_eq(reading.wait(), Some(line))
+    })
+    if @async.platform is Windows {
+      // ConHost emits the newline on Enter even when ENABLE_ECHO_INPUT is off,
+      // so verify that none of the typed marker characters were echoed.
+      let output = @buffer.Buffer()
+      while @async.with_timeout_opt(200, () => ttyd.pty.read_some())
+            is Some(Some(bytes)) {
+        output.write_bytesview(bytes)
+      }
+      let text = @utf8.decode_lossy(output.to_bytes())
+      if text.contains("!") {
+        fail("set_echo(false) echoed input: \{@debug.Repr(text)}")
+      }
+    } else {
+      let output = @async.with_timeout_opt(200, () => ttyd.pty.read_some())
+      if output is Some(output) {
+        fail("set_echo(false) echoed something: \{@debug.Repr(output)}")
+      }
+    }
+  }
+}
+
+///|
+async test "set_echo(true) re-enables echo" {
+  with_ttyd() <| ttyd => {
+    ttyd.set_echo(false)
+    ttyd.set_echo(false)
+    ttyd.set_echo(true)
+    ttyd.set_echo(true)
+    if @async.platform is Windows {
+      ttyd.drain_output()
+      @async.with_task_group(group => {
+        let reading = group.spawn(() => ttyd.read_exactly(15))
+        ttyd.send_input(b"hello, world!\r")
+        ttyd.expect_output_text("hello, world!")
+        assert_eq(reading.wait(), b"hello, world!\r\n")
+      })
+    } else {
+      ttyd.send_input(b"hello, world!\n")
+      assert_eq(ttyd.pty.read_exactly(15), b"hello, world!\r\n")
+    }
+  }
+}
+
+///|
+async test "set_echo(false) preserves ^C in cooked mode" {
+  let sigint = match @async.platform {
+    Windows => -1073741510 // STATUS_CONTROL_C_EXIT (0xC000013A)
+    _ => -2 // SIGINT
+  }
+  with_ttyd(exit_with=sigint) <| ttyd => {
+    ttyd.set_echo(false)
+    ttyd.send_input(b"\x03")
+    guard ttyd.rpc.read() is None else {
+      fail("expect ttyd to be killed by Ctrl-C")
+    }
+  }
+}
+
+///|
+async test "echo state is restored when the main task fails" {
+  with_ttyd(exit_with=1) <| ttyd => {
+    ttyd.set_echo(false)
+    ttyd.rpc.write(b"{\"jsonrpc\":\"2.0\",\"method\":\"fail\",\"id\":1000}\n")
+    guard ttyd.rpc.read() is None else { fail("expected ttyd to exit") }
+  }
+}
+
+///|
+async test "set_echo(true) in raw mode passes through to OS" {
+  with_ttyd() <| ttyd => {
+    ttyd.enter_raw_mode()
+    if @async.platform is Windows {
+      let before = ttyd.call("input_flags", params={})
+      let id = ttyd.next_id
+      ttyd.next_id += 1
+      let request : Json = {
+        "jsonrpc": "2.0",
+        "id": id,
+        "method": "set_echo",
+        "params": { "enabled": true },
+      }
+      ttyd.rpc.write(@utf8.encode("\{request.stringify()}\n"))
+      guard ttyd.rpc.read_until(b"\n") is Some(line) else {
+        fail("ttyd closed the connection")
+      }
+      guard @json.parse(@utf8.decode_lossy(line))
+        is {
+          "id": Number(response_id, ..),
+          "error": { "code": Number(code, ..), .. },
+          ..
+        } &&
+        response_id == id.to_double() &&
+        code == -32000.0 else {
+        fail(
+          "expected OS error from set_echo(true) in raw mode: \{@utf8.decode_lossy(line)}",
+        )
+      }
+      assert_eq(ttyd.call("input_flags", params={}), before)
+    } else {
+      ttyd.set_echo(true)
+      ttyd.send_input(b"a")
+      assert_eq(ttyd.read_exactly(1), b"a")
+      assert_eq(ttyd.pty.read_exactly(1), b"a")
+    }
   }
 }

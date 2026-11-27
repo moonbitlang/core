@@ -21,6 +21,8 @@
 /// until the connection is closed. Each method performs one `@tty` operation:
 ///
 /// - `enter_raw_mode`, `leave_raw_mode`: change terminal mode, result `null`
+/// - `set_echo`, params `{"enabled": bool}`: toggle echo, result `null`
+/// - `input_flags`: current OS input mode (`c_lflag` on Unix, input mode on Windows)
 /// - `size`: result `[rows, cols]`
 /// - `read`, params `{"max_len"?: n, "timeout"?: ms}`:
 ///   `Tty::read`, or `read_into` an `n`-byte buffer, after `wait_resize`
@@ -105,6 +107,18 @@ async fn call(tty : @tty.Tty, name : String, params : Json) -> Json {
     "leave_raw_mode" => {
       tty.leave_raw_mode()
       null
+    }
+    "set_echo" => {
+      guard params is { "enabled": True | False as enabled, .. } else {
+        raise invalid_params("`enabled` must be a boolean")
+      }
+      tty.set_echo(enabled is True)
+      null
+    }
+    "input_flags" => {
+      let flags = input_flags()
+      guard flags >= 0 else { fail("could not read terminal flags") }
+      Json(flags.to_double())
     }
     "reopen" => {
       ignore(@tty.open())

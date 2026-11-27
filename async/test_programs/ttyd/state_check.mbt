@@ -20,3 +20,6 @@ fn install_state_check() -> Unit raise {
 
 ///|
 extern "C" fn watch_state() -> Bool = "ttyd_watch_state"
+
+///|
+extern "C" fn input_flags() -> Int64 = "ttyd_input_flags"

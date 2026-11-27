@@ -5,8 +5,8 @@ byte stream and handle window resizes. On Windows, resize events require raw
 mode and cooked reads do not support cancellation.
 
 Calls to `open()` in the same event loop share one `Tty`. On exit, the event
-loop automatically calls `tty.leave_raw_mode()` to restore the state saved by
-the first `open()` before closing the terminal. The example uses
+loop automatically restores the terminal state saved by the first `open()`
+(including raw mode and echo) before closing the terminal. The example uses
 `defer tty.leave_raw_mode()` to restore that state as soon as `run` returns.
 
 ```moonbit check

@@ -32,7 +32,7 @@ let instance : @ref.Ref[Tty?] = {
     guard instance.val is Some(tty) else { return }
     instance.val = None
     defer tty.close()
-    tty.leave_raw_mode()
+    tty.set_state(tty.original_state)
   })
   instance
 }
@@ -400,6 +400,10 @@ const ENABLE_VIRTUAL_TERMINAL_PROCESSING : UInt64 = 0x4
 const DISABLE_NEWLINE_AUTO_RETURN : UInt64 = 0x8
 
 ///|
+/// Windows `ERROR_INVALID_PARAMETER`
+const ERROR_INVALID_PARAMETER : Int32 = 87
+
+///|
 /// The raw mode of `self`: no echo, no line buffering,
 /// no signals from keys and no output post-processing, as `cfmakeraw` in C.
 /// Reads return as soon as one byte is available.
@@ -494,6 +498,29 @@ fn State::is_raw(self : State) -> Bool {
 }
 
 ///|
+/// Enable or disable echoing of typed characters in `self`.
+fn State::set_echo(self : State, enabled : Bool) -> Unit {
+  match @event_loop.platform {
+    Linux | MacOS => {
+      let lflag = self.flag(3)
+      self.set_flag(3, if enabled { lflag | ECHO } else { lflag & ECHO.lnot() })
+    }
+    Windows => {
+      let input_mode = self.flag(0)
+      self.set_flag(
+        0,
+        if enabled {
+          input_mode | ENABLE_ECHO_INPUT
+        } else {
+          input_mode & ENABLE_ECHO_INPUT.lnot()
+        },
+      )
+    }
+    @env_util.Platform::.. => panic()
+  }
+}
+
+///|
 /// Snapshot the current terminal state.
 fn State::read(input : @fd_util.Fd, output : @fd_util.Fd) -> State raise {
   let state = State(FixedArray::make(state_size(), b'\x00'))
@@ -527,6 +554,32 @@ pub fn Tty::enter_raw_mode(self : Tty) -> Unit raise {
 /// also attempts restoration, even if an earlier mode change failed.
 pub fn Tty::leave_raw_mode(self : Tty) -> Unit raise {
   self.set_state(self.original_state)
+}
+
+///|
+/// Enable or disable echoing of typed characters on the terminal, for example
+/// disabling echo while reading a password.
+///
+/// This modifies the current terminal state directly: `ECHO` in `c_lflag` on
+/// Unix, and `ENABLE_ECHO_INPUT` on Windows. On Windows, enabling echo fails
+/// unless line input is enabled (cooked mode).
+///
+/// This operation is idempotent. `leave_raw_mode()` and event loop cleanup
+/// restore the terminal state saved by the first `open()`, including echo.
+pub fn Tty::set_echo(self : Tty, enabled : Bool) -> Unit raise {
+  let state = State::read(self.tty.input_fd(), self.output.fd())
+  // Windows `SetConsoleMode` stores `ENABLE_ECHO_INPUT` before reporting an
+  // error when `ENABLE_LINE_INPUT` is off. Reject first to avoid mutating state.
+  if @event_loop.platform is Windows &&
+    enabled &&
+    (state.flag(0) & ENABLE_LINE_INPUT) == 0 {
+    raise @os_error.OsError::from_errno(
+      ERROR_INVALID_PARAMETER,
+      context="@tty: set terminal state",
+    )
+  }
+  state.set_echo(enabled)
+  self.set_state(state)
 }
 
 ///|
