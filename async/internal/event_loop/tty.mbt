@@ -142,11 +142,6 @@ pub async fn Tty::read(
 }
 
 ///|
-/// `sizeof(INPUT_RECORD)` (20 bytes) in `UInt16` code units of the job buffer
-#cfg(platform="windows")
-const INPUT_RECORD_UNITS : Int32 = 10
-
-///|
 #cfg(platform="windows")
 async fn Tty::read_console_input(
   self : Tty,
@@ -156,18 +151,26 @@ async fn Tty::read_console_input(
   context~ : String,
 ) -> Int32 {
   let console = self.console_buffer
-  // A record produces at most one code unit, which takes up to 3 UTF-8 bytes
-  let max_records = @cmp.maximum(len / 3, 1)
-  let max_len = @cmp.minimum(
-    console.buffer.length(),
-    max_records * INPUT_RECORD_UNITS,
-  )
+  if console.pending_len > 0 {
+    return console.write_pending(buf, offset~, len~)
+  }
+  if console.buffer_len > 0 {
+    let produced = console.decode_utf16(buf, offset~, len~)
+    if produced > 0 {
+      return produced
+    } else {
+      // Remaining buffered data contain solely one unpaired surrogate,
+      // since 0 inidicates EOF, we must read more data here.
+      return self.read_console_input(buf, offset~, len~, context~)
+    }
+  }
+
   for ;; {
     let error = @ref.Ref(0)
     let job = ReadConsoleInputJob::new(
       self.input.fd,
       console.buffer,
-      max_len,
+      console.buffer.length(),
       error,
     )
     defer job.0.free()
@@ -178,7 +181,8 @@ async fn Tty::read_console_input(
     if n < 0 {
       return n
     }
-    let produced = console.decode_utf16(n, buf, offset~, len~)
+    console.buffer_len = n
+    let produced = console.decode_utf16(buf, offset~, len~)
     if job.resized() {
       if produced == 0 {
         return -1
