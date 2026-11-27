@@ -22,6 +22,8 @@ const WINDOWS_CONSOLE_BUFFER_SIZE : Int32 = 4096
 /// `ReadConsoleW`/`WriteConsoleW`.
 priv struct WindowsConsoleBuffer {
   buffer : FixedArray[UInt16]
+  mut buffer_offset : Int32
+  mut buffer_len : Int32
   /// For console input: unpaired high surrogate from the last read.
   /// Zero if there is no unpaired surrogate.
   mut unpaired_surrogate : UInt16
@@ -38,6 +40,8 @@ priv struct WindowsConsoleBuffer {
 ///|
 let dummy_console_buffer : WindowsConsoleBuffer = {
   buffer: [],
+  buffer_offset: 0,
+  buffer_len: 0,
   unpaired_surrogate: 0,
   pending: [],
   pending_len: 0,
@@ -50,6 +54,8 @@ fn WindowsConsoleBuffer::WindowsConsoleBuffer(
   if kind is Console && platform is Windows {
     {
       buffer: FixedArray::make(WINDOWS_CONSOLE_BUFFER_SIZE, 0),
+      buffer_offset: 0,
+      buffer_len: 0,
       unpaired_surrogate: 0,
       pending: FixedArray::make(4, 0),
       pending_len: 0,
@@ -133,14 +139,21 @@ fn WindowsConsoleBuffer::emit_char(
 ///|
 fn WindowsConsoleBuffer::decode_utf16(
   console : WindowsConsoleBuffer,
-  n : Int32,
   buf : FixedArray[Byte],
   offset~ : Int32,
   len~ : Int32,
 ) -> Int32 {
   let high_surrogate = console.unpaired_surrogate
   console.unpaired_surrogate = 0
-  for code in console.buffer[:n]; produced = 0, high_surrogate = high_surrogate {
+  let data = console.buffer[console.buffer_offset:console.buffer_offset +
+    console.buffer_len]
+  for consumed, code in data; produced = 0, high_surrogate = high_surrogate {
+    guard produced < len else {
+      console.unpaired_surrogate = high_surrogate
+      console.buffer_offset += consumed
+      console.buffer_len -= consumed
+      break produced
+    }
     match (high_surrogate, code) {
       (0, 0xDC00..<=0xDFFF) =>
         continue console.emit_char(0xFFFD, buf, offset~, len~, produced~), 0
@@ -164,7 +177,19 @@ fn WindowsConsoleBuffer::decode_utf16(
       _ => {
         let produced = if high_surrogate > 0 {
           // unmatched surrogate
-          console.emit_char(0xFFFD, buf, offset~, len~, produced~)
+          let produced = console.emit_char(
+            0xFFFD,
+            buf,
+            offset~,
+            len~,
+            produced~,
+          )
+          guard produced < len else {
+            console.buffer_offset += consumed
+            console.buffer_len -= consumed
+            break produced
+          }
+          produced
         } else {
           produced
         }
@@ -184,6 +209,8 @@ fn WindowsConsoleBuffer::decode_utf16(
     }
   } nobreak {
     console.unpaired_surrogate = high_surrogate
+    console.buffer_offset = 0
+    console.buffer_len = 0
     produced
   }
 }

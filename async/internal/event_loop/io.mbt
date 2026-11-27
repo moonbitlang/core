@@ -169,11 +169,17 @@ async fn IoHandle::read_console(
   if console.pending_len > 0 {
     return console.write_pending(buf, offset~, len~)
   }
+  if console.buffer_len > 0 {
+    let produced = console.decode_utf16(buf, offset~, len~)
+    if produced > 0 {
+      return produced
+    } else {
+      // Remaining buffered data contain solely one unpaired surrogate,
+      // since 0 inidicates EOF, we must read more data here.
+      return handle.read_console(buf, offset~, len~, context~)
+    }
+  }
 
-  let max_read_len = @cmp.minimum(
-    WINDOWS_CONSOLE_BUFFER_SIZE,
-    @cmp.maximum(len / 3, 1),
-  )
   let n = {
     handle.read = Submitted
     defer {
@@ -181,9 +187,9 @@ async fn IoHandle::read_console(
     }
     let job = Job::read_console(
       handle.fd,
-      handle.console_state.buffer,
-      0,
-      max_read_len,
+      console.buffer,
+      0, // we perform actual read only when the buffer is empty
+      console.buffer.length(),
     )
     defer job.free()
     perform_job_in_worker(job, context~, cancellable=true)
@@ -200,7 +206,8 @@ async fn IoHandle::read_console(
     }
   }
 
-  let produced = console.decode_utf16(n, buf, offset~, len~)
+  console.buffer_len = n
+  let produced = console.decode_utf16(buf, offset~, len~)
   if produced > 0 {
     produced
   } else {
