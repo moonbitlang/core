@@ -15,7 +15,7 @@
 ///|
 async test "console Unicode safety" {
   let pty_path = @test_util.build_test_program("pty")
-  let program_path = @test_util.build_test_program("console_stdio")
+  let program_path = @test_util.build_test_program("console_stdio_unicode")
   @async.with_task_group() <| group => {
     let pty = @process.spawn(
       group,
