@@ -50,16 +50,16 @@ impl Eq with fn not_equal(x, y) {
 pub(open) trait Compare: Eq {
   fn compare(Self, Self) -> Int32
   fn lt(Self, Self) -> Bool = _
-  #pending_deprecated("Use Compare::lt instead")
+  #deprecated("Use Compare::lt instead")
   fn op_lt(Self, Self) -> Bool = _
   fn gt(Self, Self) -> Bool = _
-  #pending_deprecated("Use Compare::gt instead")
+  #deprecated("Use Compare::gt instead")
   fn op_gt(Self, Self) -> Bool = _
   fn le(Self, Self) -> Bool = _
-  #pending_deprecated("Use Compare::le instead")
+  #deprecated("Use Compare::le instead")
   fn op_le(Self, Self) -> Bool = _
   fn ge(Self, Self) -> Bool = _
-  #pending_deprecated("Use Compare::ge instead")
+  #deprecated("Use Compare::ge instead")
   fn op_ge(Self, Self) -> Bool = _
 }
 
@@ -69,6 +69,7 @@ impl Compare with fn lt(x, y) {
 }
 
 ///|
+#warnings("-deprecated")
 impl Compare with fn op_lt(x, y) {
   Compare::lt(x, y)
 }
@@ -79,6 +80,7 @@ impl Compare with fn gt(x, y) {
 }
 
 ///|
+#warnings("-deprecated")
 impl Compare with fn op_gt(x, y) {
   Compare::gt(x, y)
 }
@@ -89,6 +91,7 @@ impl Compare with fn le(x, y) {
 }
 
 ///|
+#warnings("-deprecated")
 impl Compare with fn op_le(x, y) {
   Compare::le(x, y)
 }
@@ -99,6 +102,7 @@ impl Compare with fn ge(x, y) {
 }
 
 ///|
+#warnings("-deprecated")
 impl Compare with fn op_ge(x, y) {
   Compare::ge(x, y)
 }
