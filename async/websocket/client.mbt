@@ -107,22 +107,20 @@ pub async fn Conn::connect(
   headers~ : @http.Headers = Map([]),
   proxy? : @http.Proxy,
 ) -> Conn {
-  guard url.find("://") is Some(protocol_len) else {
+  guard url.split_once("://") is Some((scheme, rest)) else {
     abort("`@websocket.Conn::connect()`: invalid URL: missing protocol")
   }
-  let http_protocol = match url[:protocol_len] {
+  let http_protocol = match scheme {
     "ws" => "http"
     "wss" => "https"
     protocol =>
       abort("`@websocket.Conn::connect()`: invalid protocol \{protocol}")
   }
-  let url = url[protocol_len + 3:]
-  let (host, path) = if url.find("/") is Some(i) {
-    (url[:i], url[i:])
+  let (host, path) = if rest.find("/") is Some(i) {
+    rest.split_at(i)
   } else {
-    (url, "/")
+    (rest, "/")
   }
-  let path : StringView = if path == "" { "/" } else { path }
   let conn = @http.ClientConnection("\{http_protocol}://\{host}", proxy?)
   Conn::from_http_client(conn, path, extra_headers=headers)
 }

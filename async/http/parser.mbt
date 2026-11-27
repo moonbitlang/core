@@ -155,8 +155,9 @@ impl @io.BinaryReaderImpl for Reader with fn raw_read_impl(
       }
       let len_str = @utf8.decode(len_bytes)
       let len_str = if len_str.find(";") is Some(semi_index) {
-        validate_chunk_extension(len_str[semi_index:])
-        len_str[:semi_index].trim_end(chars=" \t")
+        let (size, extension) = len_str.split_at(semi_index)
+        validate_chunk_extension(extension)
+        size.trim_end(chars=" \t")
       } else {
         len_str
       }

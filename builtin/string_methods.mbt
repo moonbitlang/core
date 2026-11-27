@@ -1864,19 +1864,18 @@ pub fn StringView::split(
   self : StringView,
   sep : StringView,
 ) -> Iter[StringView] {
-  let sep_len = sep.length()
-  if sep_len == 0 {
+  if sep.is_empty() {
     return self.iter().map(c => c.to_string())
   }
   let mut remaining = Some(self)
   Iter(() => {
     guard remaining is Some(view) else { None }
-    guard view.find(sep) is Some(end) else {
+    guard view.split_once(sep) is Some((part, rest)) else {
       remaining = None
       Some(view)
     }
-    remaining = Some(view.unsafe_view(start=end + sep_len, end=view.length()))
-    Some(view.unsafe_view(start=0, end~))
+    remaining = Some(rest)
+    Some(part)
   })
 }
 
@@ -2187,13 +2186,8 @@ pub fn StringView::replace(
   old~ : StringView,
   new~ : StringView,
 ) -> StringView {
-  match self.find(old) {
-    Some(end) =>
-      [
-        ..self.unsafe_view(start=0, end~),
-        ..new,
-        ..self.unsafe_view(start=end + old.length(), end=self.length()),
-      ]
+  match self.split_once(old) {
+    Some((prefix, suffix)) => [..prefix, ..new, ..suffix]
     None => self
   }
 }
@@ -2208,15 +2202,7 @@ pub fn String::replace(
   old~ : StringView,
   new~ : StringView,
 ) -> String {
-  match self.find(old) {
-    Some(end) =>
-      [
-        ..self.unsafe_view(start=0, end~),
-        ..new,
-        ..self.unsafe_view(start=end + old.length(), end=self.length()),
-      ]
-    None => self
-  }
+  self[:].replace(old~, new~).to_owned()
 }
 
 ///|
@@ -2241,43 +2227,29 @@ pub fn StringView::replace_all(
   old~ : StringView,
   new~ : StringView,
 ) -> StringView {
-  let len = self.length()
-  let buf = StringBuilder(capacity=len)
-  let old_len = old.length()
-  let new = new.to_owned()
-  // use write_substring to avoid intermediate allocations
-  if old_len == 0 {
+  if old.is_empty() {
+    let buf = StringBuilder(capacity=self.length())
+    let new = new.to_owned()
     buf.write_string(new)
     for c in self {
       buf.write_char(c)
       buf.write_string(new)
     }
-    buf.to_string()
-  } else {
-    let first_end = self.find(old)
-    if first_end is Some(end) {
-      for view = self, end = end {
-        let seg = view.unsafe_view(start=0, end~)
-        buf.write_substring(seg.data(), seg.start_offset(), seg.length())
-        buf.write_string(new)
-        // check if there is no more characters after the last occurrence of `old`
-        guard end + old_len <= len else { break }
-        let next_view = view.unsafe_view(start=end + old_len, end=view.length())
-        guard next_view.find(old) is Some(next_end) else {
-          buf.write_substring(
-            next_view.data(),
-            next_view.start_offset(),
-            next_view.length(),
-          )
-          break
-        }
-        continue next_view, next_end
-      }
-      buf.to_string()
-    } else {
-      self
-    }
+    return buf.to_string()
   }
+  guard self.split_once(old) is Some((first, tail)) else { return self }
+  let buf = StringBuilder(capacity=self.length())
+  let new = new.to_owned()
+  for prefix = first, rest = tail {
+    buf.write_view(prefix)
+    buf.write_string(new)
+    guard rest.split_once(old) is Some((next, tail)) else {
+      buf.write_view(rest)
+      break
+    }
+    continue next, tail
+  }
+  buf.to_string()
 }
 
 ///|
@@ -2291,43 +2263,7 @@ pub fn String::replace_all(
   old~ : StringView,
   new~ : StringView,
 ) -> String {
-  let len = self.length()
-  let buf = StringBuilder(capacity=len)
-  let old_len = old.length()
-  let new = new.to_owned()
-  // use write_substring to avoid intermediate allocations
-  if old_len == 0 {
-    buf.write_string(new)
-    for c in self {
-      buf.write_char(c)
-      buf.write_string(new)
-    }
-    buf.to_string()
-  } else {
-    let first_end = self.find(old)
-    if first_end is Some(end) {
-      for view = self[:], end = end {
-        let seg = view.unsafe_view(start=0, end~)
-        buf.write_substring(seg.data(), seg.start_offset(), seg.length())
-        buf.write_string(new)
-        // check if there is no more characters after the last occurrence of `old`
-        guard end + old_len <= len else { break }
-        let next_view = view.unsafe_view(start=end + old_len, end=view.length())
-        guard next_view.find(old) is Some(next_end) else {
-          buf.write_substring(
-            next_view.data(),
-            next_view.start_offset(),
-            next_view.length(),
-          )
-          break
-        }
-        continue next_view, next_end
-      }
-      buf.to_string()
-    } else {
-      self
-    }
-  }
+  self[:].replace_all(old~, new~).to_owned()
 }
 
 ///|
