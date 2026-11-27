@@ -12,6 +12,7 @@ import {
 
 // Types and methods
 type BigInt
+pub fn BigInt::BigInt(Self) -> Self
 pub fn BigInt::abs(Self) -> Self
 pub fn BigInt::add(Self, Self) -> Self
 pub fn BigInt::bit_length(Self) -> Int32

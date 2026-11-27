@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `BigInt`. Integer literals can be written as
+/// `BigInt(3)`.
+///
+/// ```mbt check
+/// test {
+///   inspect(@bigint.BigInt(3), content="3")
+/// }
+/// ```
+pub fn BigInt::BigInt(self : BigInt) -> BigInt = "%identity"
+
+///|
 /// Converts a `BigInt` value to its JSON representation as a string.
 ///
 /// This implementation serializes the `BigInt` by first converting it to its

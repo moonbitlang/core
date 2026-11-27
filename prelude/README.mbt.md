@@ -26,6 +26,12 @@ Core types available in every MoonBit program:
 
 ```mbt check
 ///|
+test "BigInt constructor from prelude" {
+  let large = BigInt(-123456789012345678901234567890)
+  inspect(BigInt(large), content="-123456789012345678901234567890")
+}
+
+///|
 test "Set constructor from prelude" {
   let set = Set([1, 2, 3, 4])
   inspect(set.length(), content="4")
