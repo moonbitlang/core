@@ -43,14 +43,13 @@ fn parse_ipv6(ip_str : StringView, context~ : String) -> IpAddr raise {
     (ip_str, 0)
   }
 
-  let ip_bytes = match ip_str.split("::").collect() {
-    ["", ""] => FixedArray::make(16, b'\x00')
-    [ip_str] => parse_full_ipv6_to_bytes(ip_str)
-    [left_part, right_part] =>
-      parse_compressed_ipv6_to_bytes(left_part, right_part)
-    _ =>
-      // IPv6 address can only have one '::' compression
-      raise InvalidAddr
+  let ip_bytes = match ip_str.split_once("::") {
+    None => parse_full_ipv6_to_bytes(ip_str)
+    Some(("", "")) => FixedArray::make(16, b'\x00')
+    Some((left, right)) => {
+      guard !right.contains("::") else { raise InvalidAddr }
+      parse_compressed_ipv6_to_bytes(left, right)
+    }
   }
 
   Ipv6(ip_bytes.unsafe_reinterpret_as_bytes(), scope_id~)
