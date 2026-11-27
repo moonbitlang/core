@@ -147,103 +147,6 @@ pub async fn Tty::read(
 const INPUT_RECORD_UNITS : Int32 = 10
 
 ///|
-/// Write `char` to `buf`, or to `pending` if it does not fit.
-/// Return the new number of bytes written to `buf`.
-#cfg(platform="windows")
-fn tty_emit_char(
-  console : WindowsConsoleBuffer,
-  char : Int32,
-  buf : FixedArray[Byte],
-  offset~ : Int32,
-  len~ : Int32,
-  produced~ : Int32,
-) -> Int32 {
-  let char_bytes = match char {
-    _..<0x80 => 1
-    _..<0x800 => 2
-    _..<0x10000 => 3
-    _ => 4
-  }
-  if console.pending_len == 0 && produced + char_bytes <= len {
-    encode_utf8_char(char, buf, offset=offset + produced)
-    produced + char_bytes
-  } else {
-    console.pending.blit_to(
-      console.pending,
-      src_offset=4 - console.pending_len,
-      dst_offset=4 - console.pending_len - char_bytes,
-      len=console.pending_len,
-    )
-    encode_utf8_char(char, console.pending, offset=4 - char_bytes)
-    console.pending_len += char_bytes
-    produced
-  }
-}
-
-///|
-/// Convert `buffer[:n]` to UTF-8 in `buf`. Return the number of bytes written.
-#cfg(platform="windows")
-fn tty_decode_input(
-  console : WindowsConsoleBuffer,
-  n : Int32,
-  buf : FixedArray[Byte],
-  offset~ : Int32,
-  len~ : Int32,
-) -> Int32 {
-  let mut produced = 0
-  for unit in console.buffer[:n] {
-    let high = console.unpaired_surrogate
-    match unit {
-      0xD800..<=0xDBFF => {
-        if high != 0 {
-          produced = tty_emit_char(
-            console,
-            0xFFFD,
-            buf,
-            offset~,
-            len~,
-            produced~,
-          )
-        }
-        console.unpaired_surrogate = unit
-      }
-      0xDC00..<=0xDFFF => {
-        let char = if high != 0 {
-          ((high.to_int() - 0xD800) << 10) + (unit.to_int() - 0xDC00) + 0x10000
-        } else {
-          0xFFFD
-        }
-        console.unpaired_surrogate = 0
-        produced = tty_emit_char(console, char, buf, offset~, len~, produced~)
-      }
-      _ => {
-        if high != 0 {
-          console.unpaired_surrogate = 0
-          produced = tty_emit_char(
-            console,
-            0xFFFD,
-            buf,
-            offset~,
-            len~,
-            produced~,
-          )
-        }
-        produced = tty_emit_char(
-          console,
-          unit.to_int(),
-          buf,
-          offset~,
-          len~,
-          produced~,
-        )
-      }
-    }
-  }
-  produced +
-  console.write_pending(buf, offset=offset + produced, len=len - produced)
-}
-
-///|
 #cfg(platform="windows")
 async fn Tty::read_console_input(
   self : Tty,
@@ -275,7 +178,7 @@ async fn Tty::read_console_input(
     if n < 0 {
       return n
     }
-    let produced = tty_decode_input(console, n, buf, offset~, len~)
+    let produced = console.decode_utf16(n, buf, offset~, len~)
     if job.resized() {
       if produced == 0 {
         return -1

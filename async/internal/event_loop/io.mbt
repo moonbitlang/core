@@ -165,20 +165,13 @@ async fn IoHandle::read_console(
   context~ : String,
 ) -> Int32 {
   guard! handle.read is Idle
-  if handle.console_state.pending_len > 0 {
-    return handle.console_state.write_pending(buf, offset~, len~)
+  let console = handle.console_state
+  if console.pending_len > 0 {
+    return console.write_pending(buf, offset~, len~)
   }
 
-  // At this point, `handle.console_buffer` should not contain any pending decoded bytes,
-  // but may contain unpaired high surrogate from the last read.
-  let unpaired_offset = if handle.console_state.unpaired_surrogate > 0 {
-    handle.console_state.buffer[0] = handle.console_state.unpaired_surrogate
-    1
-  } else {
-    0
-  }
   let max_read_len = @cmp.minimum(
-    WINDOWS_CONSOLE_BUFFER_SIZE - unpaired_offset,
+    WINDOWS_CONSOLE_BUFFER_SIZE,
     @cmp.maximum(len / 3, 1),
   )
   let n = {
@@ -189,67 +182,31 @@ async fn IoHandle::read_console(
     let job = Job::read_console(
       handle.fd,
       handle.console_state.buffer,
-      unpaired_offset,
+      0,
       max_read_len,
     )
     defer job.free()
     perform_job_in_worker(job, context~, cancellable=true)
   }
 
-  let n = unpaired_offset + n
-  handle.console_state.unpaired_surrogate = 0
-  for rest = handle.console_state.buffer[:n], produced = 0 {
-    let (char, rest) = match rest {
-      [] => break produced
-      [0xD800..<=0xDBFF as high, 0xDC00..<=0xDFFF as low, .. rest] => {
-        let c = ((high.to_int() - 0xD800) << 10) +
-          (low.to_int() - 0xDC00) +
-          0x10000
-        (if c > 0x10FFFF { 0xFFFD } else { c }, rest)
-      }
-      [0xD800..<=0xDBFF as high] =>
-        if produced > 0 {
-          handle.console_state.unpaired_surrogate = high
-          break produced
-        } else if unpaired_offset > 0 {
-          // Corner case: the last code unit before EOF is an unpaired high surrogate.
-          // Convert it to `U+FFFD` (replacement character)
-          handle.console_state.pending_len = 3
-          encode_utf8_char(0xFFFD, handle.console_state.pending, offset=1)
-          return handle.console_state.write_pending(buf, offset~, len~)
-        } else {
-          // The input contain solely one unpaired surrogate,
-          // since 0 inidicates EOF, we must read more data here.
-          handle.console_state.unpaired_surrogate = high
-          return handle.read_console(buf, offset~, len~, context~)
-        }
-      [0xD800..<=0xDFFF, .. rest] => (0xFFFD, rest)
-      [c, .. rest] => (c.to_int(), rest)
-    }
-    let char_bytes = match char {
-      _..<0x80 => 1
-      _..<0x800 => 2
-      _..<0x10000 => 3
-      _ => 4
-    }
-    if produced + char_bytes <= len {
-      encode_utf8_char(char, buf, offset=offset + produced)
-      continue rest, produced + char_bytes
+  if n is 0 {
+    if console.unpaired_surrogate > 0 {
+      // Corner case: the last code unit before EOF is an unpaired high surrogate.
+      // Convert it to `U+FFFD` (replacement character)
+      console.unpaired_surrogate = 0
+      return console.emit_char(0xFFFD, buf, offset~, len~, produced=0)
     } else {
-      encode_utf8_char(
-        char,
-        handle.console_state.pending,
-        offset=4 - char_bytes,
-      )
-      handle.console_state.pending_len = char_bytes
-      guard! rest is []
-      break produced +
-        handle.console_state.write_pending(
-          buf,
-          offset=produced + offset,
-          len=len - produced,
-        )
+      return n
     }
+  }
+
+  let produced = console.decode_utf16(n, buf, offset~, len~)
+  if produced > 0 {
+    produced
+  } else {
+    // The input contain solely one unpaired surrogate,
+    // since 0 inidicates EOF, we must read more data here.
+    handle.read_console(buf, offset~, len~, context~)
   }
 }
 

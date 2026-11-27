@@ -102,3 +102,88 @@ fn encode_utf8_char(
     }
   }
 }
+
+///|
+/// Return the new value of `produced`
+fn WindowsConsoleBuffer::emit_char(
+  console : WindowsConsoleBuffer,
+  char : Int32,
+  buf : FixedArray[Byte],
+  offset~ : Int32,
+  produced~ : Int32,
+  len~ : Int32,
+) -> Int32 {
+  let char_bytes = match char {
+    _..<0x80 => 1
+    _..<0x800 => 2
+    _..<0x10000 => 3
+    _ => 4
+  }
+  if produced + char_bytes <= len {
+    encode_utf8_char(char, buf, offset=offset + produced)
+    produced + char_bytes
+  } else {
+    encode_utf8_char(char, console.pending, offset=4 - char_bytes)
+    console.pending_len = char_bytes
+    produced +
+    console.write_pending(buf, offset=offset + produced, len=len - produced)
+  }
+}
+
+///|
+fn WindowsConsoleBuffer::decode_utf16(
+  console : WindowsConsoleBuffer,
+  n : Int32,
+  buf : FixedArray[Byte],
+  offset~ : Int32,
+  len~ : Int32,
+) -> Int32 {
+  let high_surrogate = console.unpaired_surrogate
+  console.unpaired_surrogate = 0
+  for code in console.buffer[:n]; produced = 0, high_surrogate = high_surrogate {
+    match (high_surrogate, code) {
+      (0, 0xDC00..<=0xDFFF) =>
+        continue console.emit_char(0xFFFD, buf, offset~, len~, produced~), 0
+      (high, 0xDC00..<=0xDFFF) => {
+        let c = ((high.to_int() - 0xD800) << 10) +
+          (code.to_int() - 0xDC00) +
+          0x10000
+        let produced = console.emit_char(
+          if c > 0x10FFFF {
+            0xFFFD
+          } else {
+            c
+          },
+          buf,
+          len~,
+          offset~,
+          produced~,
+        )
+        continue produced, 0
+      }
+      _ => {
+        let produced = if high_surrogate > 0 {
+          // unmatched surrogate
+          console.emit_char(0xFFFD, buf, offset~, len~, produced~)
+        } else {
+          produced
+        }
+        if code is (0xD800..<=0xDBFF) {
+          continue produced, code
+        } else {
+          continue console.emit_char(
+              code.to_int(),
+              buf,
+              offset~,
+              len~,
+              produced~,
+            ),
+            0
+        }
+      }
+    }
+  } nobreak {
+    console.unpaired_surrogate = high_surrogate
+    produced
+  }
+}
