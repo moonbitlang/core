@@ -498,6 +498,16 @@ fn State::is_raw(self : State) -> Bool {
 }
 
 ///|
+/// Whether echoing of typed characters is enabled in `self`.
+fn State::is_echo(self : State) -> Bool {
+  match @event_loop.platform {
+    Linux | MacOS => (self.flag(3) & ECHO) != 0
+    Windows => (self.flag(0) & ENABLE_ECHO_INPUT) != 0
+    @env_util.Platform::.. => panic()
+  }
+}
+
+///|
 /// Enable or disable echoing of typed characters in `self`.
 fn State::set_echo(self : State, enabled : Bool) -> Unit {
   match @event_loop.platform {
@@ -558,7 +568,8 @@ pub fn Tty::leave_raw_mode(self : Tty) -> Unit raise {
 
 ///|
 /// Enable or disable echoing of typed characters on the terminal, for example
-/// disabling echo while reading a password.
+/// disabling echo while reading a password. Returns whether echo was enabled
+/// before this call, so callers can restore the previous setting.
 ///
 /// This modifies the current terminal state directly: `ECHO` in `c_lflag` on
 /// Unix, and `ENABLE_ECHO_INPUT` on Windows. On Windows, enabling echo fails
@@ -566,8 +577,9 @@ pub fn Tty::leave_raw_mode(self : Tty) -> Unit raise {
 ///
 /// This operation is idempotent. `leave_raw_mode()` and event loop cleanup
 /// restore the terminal state saved by the first `open()`, including echo.
-pub fn Tty::set_echo(self : Tty, enabled : Bool) -> Unit raise {
+pub fn Tty::set_echo(self : Tty, enabled : Bool) -> Bool raise {
   let state = State::read(self.tty.input_fd(), self.output.fd())
+  let was_enabled = state.is_echo()
   // Windows `SetConsoleMode` stores `ENABLE_ECHO_INPUT` before reporting an
   // error when `ENABLE_LINE_INPUT` is off. Reject first to avoid mutating state.
   if @event_loop.platform is Windows &&
@@ -580,6 +592,7 @@ pub fn Tty::set_echo(self : Tty, enabled : Bool) -> Unit raise {
   }
   state.set_echo(enabled)
   self.set_state(state)
+  was_enabled
 }
 
 ///|

@@ -108,8 +108,12 @@ async fn Ttyd::enter_raw_mode(self : Ttyd) -> Unit {
 }
 
 ///|
-async fn Ttyd::set_echo(self : Ttyd, enabled : Bool) -> Unit {
-  self.call("set_echo", params={ "enabled": Json(enabled) }) |> ignore()
+async fn Ttyd::set_echo(self : Ttyd, enabled : Bool) -> Bool {
+  guard self.call("set_echo", params={ "enabled": Json(enabled) })
+    is (True | False as was_enabled) else {
+    fail("unexpected `set_echo` result")
+  }
+  was_enabled is True
 }
 
 ///|
@@ -714,7 +718,7 @@ async test "wait_resize can retry after first-input timeout" {
 ///|
 async test "set_echo(false) suppresses echo in cooked mode" {
   with_ttyd() <| ttyd => {
-    ttyd.set_echo(false)
+    assert_eq(ttyd.set_echo(false), true)
     if @async.platform is Windows {
       ttyd.drain_output()
     }
@@ -755,10 +759,10 @@ async test "set_echo(false) suppresses echo in cooked mode" {
 ///|
 async test "set_echo(true) re-enables echo" {
   with_ttyd() <| ttyd => {
-    ttyd.set_echo(false)
-    ttyd.set_echo(false)
-    ttyd.set_echo(true)
-    ttyd.set_echo(true)
+    assert_eq(ttyd.set_echo(false), true)
+    assert_eq(ttyd.set_echo(false), false)
+    assert_eq(ttyd.set_echo(true), false)
+    assert_eq(ttyd.set_echo(true), true)
     if @async.platform is Windows {
       ttyd.drain_output()
       @async.with_task_group(group => {
@@ -781,7 +785,7 @@ async test "set_echo(false) preserves ^C in cooked mode" {
     _ => -2 // SIGINT
   }
   with_ttyd(exit_with=sigint) <| ttyd => {
-    ttyd.set_echo(false)
+    assert_eq(ttyd.set_echo(false), true)
     ttyd.send_input(b"\x03")
     guard ttyd.rpc.read() is None else {
       fail("expect ttyd to be killed by Ctrl-C")
@@ -792,7 +796,7 @@ async test "set_echo(false) preserves ^C in cooked mode" {
 ///|
 async test "echo state is restored when the main task fails" {
   with_ttyd(exit_with=1) <| ttyd => {
-    ttyd.set_echo(false)
+    assert_eq(ttyd.set_echo(false), true)
     ttyd.rpc.write(b"{\"jsonrpc\":\"2.0\",\"method\":\"fail\",\"id\":1000}\n")
     guard ttyd.rpc.read() is None else { fail("expected ttyd to exit") }
   }
@@ -830,7 +834,7 @@ async test "set_echo(true) in raw mode passes through to OS" {
       }
       assert_eq(ttyd.call("input_flags", params={}), before)
     } else {
-      ttyd.set_echo(true)
+      assert_eq(ttyd.set_echo(true), false)
       ttyd.send_input(b"a")
       assert_eq(ttyd.read_exactly(1), b"a")
       assert_eq(ttyd.pty.read_exactly(1), b"a")

@@ -33,7 +33,7 @@ pub async fn Tty::read_at_least(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tty::read_exactly(Self, Int32) -> Bytes raise @io.ReaderError
 pub async fn Tty::read_into(Self, MutArrayView[Byte]) -> Int32 raise @io.ReaderError
 pub async fn Tty::read_until(Self, BytesView, include_delimiter? : Bool) -> Bytes? raise @io.ReaderError
-pub fn Tty::set_echo(Self, Bool) -> Unit raise
+pub fn Tty::set_echo(Self, Bool) -> Bool raise
 pub fn Tty::size(Self) -> (Int32, Int32) raise
 pub async fn Tty::wait_resize(Self) -> Event raise @io.ReaderError
 pub async fn Tty::write(Self, BytesView) -> Unit raise @io.WriterError
