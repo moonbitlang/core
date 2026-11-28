@@ -40,6 +40,11 @@ pub fn Cookie::Cookie(
 }
 
 ///|
+// Cookie attributes ignore surrounding whitespace.
+#cfg(any(target="native", target="wasm"))
+const COOKIE_ATTR_START = re"^[ \t\r\n]*"
+
+///|
 /// Parse the value of a `Set-Cookie` header.
 /// Following RFC 6265 section 5.2, a line without `=` in its name-value pair
 /// is ignored (`None`), and so is a malformed `Max-Age` attribute, instead of
@@ -65,24 +70,20 @@ fn Cookie::parse(line : StringView) -> Cookie? {
   let mut http_only = false
   let extensions = []
   for attr in attrs.split(";") {
-    let attr = attr.trim()
-    if attr.split_once("=") is Some((name, value)) {
-      match name.to_lower() {
-        "path" => path = Some(value.to_owned())
-        "expires" => expires_raw = Some(value.to_owned())
-        "max-age" =>
-          if parse_max_age(value) is Some(value) {
-            max_age = Some(value)
-          }
-        "domain" => domain = Some(value.to_owned())
-        _ => extensions.push(attr.to_owned())
-      }
-    } else {
-      match attr.to_lower() {
-        "secure" => secure = true
-        "httponly" => http_only = true
-        _ => extensions.push(attr.to_owned())
-      }
+    lexmatch attr {
+      (COOKIE_ATTR_START + re"(?i:path)=", after=value) =>
+        path = Some(value.trim_end().to_owned())
+      (COOKIE_ATTR_START + re"(?i:expires)=", after=value) =>
+        expires_raw = Some(value.trim_end().to_owned())
+      (COOKIE_ATTR_START + re"(?i:max-age)=", after=value) =>
+        if parse_max_age(value.trim_end()) is Some(value) {
+          max_age = Some(value)
+        }
+      (COOKIE_ATTR_START + re"(?i:domain)=", after=value) =>
+        domain = Some(value.trim_end().to_owned())
+      COOKIE_ATTR_START + re"(?i:secure)[ \t\r\n]*$" => secure = true
+      COOKIE_ATTR_START + re"(?i:httponly)[ \t\r\n]*$" => http_only = true
+      _ => extensions.push(attr.trim().to_owned())
     }
   }
   Some({

@@ -50,6 +50,7 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/test",
   "moonbitlang/core/async",
   "moonbitlang/core/async/fs",
