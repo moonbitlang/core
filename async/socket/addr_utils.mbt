@@ -58,7 +58,7 @@ fn parse_ipv6_bytes(input : StringView) -> Bytes raise InvalidAddr {
   }
   let used = for rest = input, offset = 0; !rest.is_empty(); {
     guard offset < 16 else { raise InvalidAddr }
-    lexmatch rest with longest {
+    lexmatch rest {
       (
         re"^" +
         (re"[0-9A-Fa-f]{1,4}" as group) +
