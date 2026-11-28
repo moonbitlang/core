@@ -273,17 +273,7 @@ fn needs_normalize_drive_guard(
   parsed : WinPath,
 ) -> Bool {
   guard parsed.prefix is None && raw.contains_char(':') else { return false }
-  if start_with_win_drive(normalized) {
-    return true
-  }
-  for i in 0..<raw.length() {
-    guard raw.get_char(i) == Some(':') &&
-      (i == raw.length() - 1 || is_win_sep_at(raw, i + 1)) else {
-      continue
-    }
-    return true
-  }
-  false
+  start_with_win_drive(normalized) || raw =~ re":([/\\]|$)"
 }
 
 ///|

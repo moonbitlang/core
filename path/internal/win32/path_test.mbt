@@ -139,6 +139,7 @@ test "root node fixtures" {
   inspect(@win32.root("\\foo\\bar"), content="\\")
   inspect(@win32.root("\\\\server"), content="\\")
   inspect(@win32.root("\\\\server\\share"), content="\\\\server\\share")
+  inspect(@win32.root("//🌙\\//資料/\\child"), content="//🌙\\//資料/")
   inspect(@win32.root("\\\\server\\share\\"), content="\\\\server\\share\\")
   inspect(@win32.root("\\\\server\\share\\file"), content="\\\\server\\share\\")
   inspect(@win32.root("//server/share"), content="//server/share")

@@ -299,39 +299,27 @@ fn component_root_end(path : StringView, start : Int32) -> Int32 {
 
 ///|
 fn parse_unc_path(path : StringView, trailing_separator : Bool) -> WinPath? {
-  guard path.length() <= 2 || !is_win_sep_at(path, 2) else { return None }
-  let hostname_start = 2
-  guard hostname_start < path.length() else { return None }
-  match find_next_win_sep(path, hostname_start) {
-    Some(hostname_end) => {
-      let share_start = skip_win_separators(path, hostname_end)
-      guard share_start < path.length() else { return None }
-      let share_end = match find_next_win_sep(path, share_start) {
-        Some(index) => index
-        _ => path.length()
-      }
-      let root_end = share_end + (if share_end < path.length() { 1 } else { 0 })
-      let component_start = {
-        guard share_end < path.length() else { path.length() }
-        skip_win_separators(path, share_end)
-      }
-      let components = parse_windows_components(
-        path,
-        component_start,
-        allow_above_root=false,
-      )
-      Some({
-        prefix: UNC(
-          hostname=path[hostname_start:hostname_end].to_owned(),
-          shared_folder=path[share_start:share_end].to_owned(),
-        ),
-        trailing_separator,
-        components,
-        root_end,
-      })
-    }
-    _ => None
+  guard path =~ (
+    re"^[/\\]{2}" +
+    (re"[^/\\]+" as hostname) +
+    re"[/\\]+" +
+    (re"[^/\\]+" as shared_folder) +
+    re"[/\\]?",
+    after=rest,
+  ) else {
+    return None
   }
+  // The root includes the first separator after the share, when present.
+  let root_end = path.length() - rest.length()
+  Some({
+    prefix: UNC(
+      hostname=hostname.to_owned(),
+      shared_folder=shared_folder.to_owned(),
+    ),
+    trailing_separator,
+    components: parse_windows_components(path, root_end, allow_above_root=false),
+    root_end,
+  })
 }
 
 ///|
