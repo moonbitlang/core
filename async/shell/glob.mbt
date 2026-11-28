@@ -62,21 +62,7 @@ fn parse_path(
   windows~ : Bool,
   escapes~ : Bool,
 ) -> (Root, Array[String], Bool) {
-  let (root, rest) = if windows && starts_incomplete_root(text) {
-    (Incomplete, "")
-  } else if windows {
-    match windows_root(text) {
-      Some((root, rest)) =>
-        if root.has_suffix("\u{0000}") {
-          (DriveRelative(root[:root.length() - 1].to_owned()), rest)
-        } else {
-          (Rooted(root), rest)
-        }
-      None => (Relative, text)
-    }
-  } else {
-    (Relative, text)
-  }
+  let (root, rest) = if windows { windows_root(text) } else { (Relative, text) }
   let raw = split_path(rest, windows~, escapes~)
   // On Unix a leading separator is what makes a path absolute, including an
   // escaped one, since the escape is gone by the time the name is resolved.
@@ -100,84 +86,26 @@ fn parse_path(
 }
 
 ///|
-/// Whether the text opens a share that it never completes.
-///
-/// `\\server` names no directory. Falling through would let the leading
-/// separators be read as an ordinary root and turn it into `/server`, which is
-/// somewhere else entirely.
-fn starts_incomplete_root(text : String) -> Bool {
-  let chars = collect_chars(text)
-  fn separator(index : Int32) -> Bool {
-    index < chars.length() && (chars[index] == '/' || chars[index] == '\\')
-  }
-
-  if !(separator(0) && separator(1)) {
-    return false
-  }
-  windows_root(text) is None
-}
-
-///|
-/// Recognise a Windows root: a drive, a drive-relative prefix, a UNC share, or
-/// a bare separator. Returns the root and the remainder.
-fn windows_root(text : String) -> (String, String)? {
-  let chars = collect_chars(text)
-  fn separator(index : Int32) -> Bool {
-    index < chars.length() && (chars[index] == '/' || chars[index] == '\\')
-  }
-
-  fn from(index : Int32) -> String {
-    let rest = StringBuilder()
-    for position in index..<chars.length() {
-      rest.write_char(chars[position])
-    }
-    rest.to_string()
-  }
-
-  // `\\server\share` — the share is part of the root, not a segment.
-  if separator(0) && separator(1) {
-    let mut index = 2
-    let server = StringBuilder()
-    while index < chars.length() && !separator(index) {
-      server.write_char(chars[index])
-      index = index + 1
-    }
-    // Redundant separators collapse inside a root too: `\\server\\share` is
-    // the same share as `\\server\share`, not an empty share name.
-    while separator(index) {
-      index = index + 1
-    }
-    let share = StringBuilder()
-    while index < chars.length() && !separator(index) {
-      share.write_char(chars[index])
-      index = index + 1
-    }
-    // A share needs both halves. `\\server` alone names no directory, so it is
-    // not a root; treating it as one would invent `//server//`.
-    if !server.to_string().is_empty() && !share.to_string().is_empty() {
-      return Some(("//\{server}/\{share}/", from(index)))
-    }
-    return None
-  }
-  // `C:/...` is rooted on that drive; a bare `C:` is relative to the drive's
-  // own working directory, which only the operating system knows.
-  if chars.length() >= 2 &&
-    chars[1] == ':' &&
+/// Recognise a Windows root and return the remaining path.
+fn windows_root(text : StringView) -> (Root, StringView) {
+  lexmatch text with longest {
     (
-      (chars[0] >= 'A' && chars[0] <= 'Z') ||
-      (chars[0] >= 'a' && chars[0] <= 'z')
-    ) {
-    if separator(2) {
-      return Some(("\{chars[0]}:/", from(3)))
-    }
-    // Marked with a NUL, which cannot occur in a path, so the caller can tell
-    // the two drive forms apart.
-    return Some(("\{chars[0]}:\u{0000}", from(2)))
+      re"^[/\\]{2}" +
+      (re"[^/\\]+" as server) +
+      re"[/\\]+" +
+      (re"[^/\\]+" as share),
+      after=rest,
+    ) => (Rooted("//\{server}/\{share}/"), rest)
+    // A UNC path needs both a server and a share.
+    (re"^[/\\]{2}", after=_) => (Incomplete, "")
+    (re"^[A-Za-z]:" as drive, after=rest) =>
+      match rest {
+        ['/' | '\\', .. tail] => (Rooted("\{drive}/"), tail)
+        _ => (DriveRelative(drive.to_owned()), rest)
+      }
+    (re"^[/\\]", after=rest) => (Rooted("/"), rest)
+    _ => (Relative, text)
   }
-  if separator(0) {
-    return Some(("/", from(1)))
-  }
-  None
 }
 
 ///|
@@ -187,8 +115,12 @@ fn windows_root(text : String) -> (String, String)? {
 /// is the native separator, and escapes on Unix, where it is not. An escaped
 /// separator is still a separator: a shell resolves `a\/b` as the path `a/b`,
 /// because the escape is gone by the time the name is looked up.
-fn split_path(path : String, windows~ : Bool, escapes~ : Bool) -> Array[String] {
-  let chars = collect_chars(path)
+fn split_path(
+  path : StringView,
+  windows~ : Bool,
+  escapes~ : Bool,
+) -> Array[String] {
+  let chars = path.to_array()
   let segments = []
   let current = StringBuilder()
   let mut index = 0

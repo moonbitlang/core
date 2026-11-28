@@ -160,6 +160,12 @@ test "windows paths" {
       #|("//server/share/", ["dir"], false)
     ),
   )
+  @debug.debug_inspect(
+    parsed("//🌙\\//資料/\\child", windows=true),
+    content=(
+      #|("//🌙/資料/", ["child"], false)
+    ),
+  )
   // A bare separator is rooted on the current drive.
   @debug.debug_inspect(
     parsed("\\Windows", windows=true),
