@@ -729,6 +729,18 @@ test "long empty string disables long alias" {
 }
 
 ///|
+test "grouped Unicode short options preserve the attached value" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[FlagArg("verbose", short='🚩')],
+    options=[OptionArg("label", short='🏷')],
+  )
+  let matches = cmd.parse(argv=["-🚩🏷==🌙"], env=empty_env())
+  assert_true(matches.flags is { "verbose": true, .. })
+  assert_true(matches.values is { "label": ["=🌙"], .. })
+}
+
+///|
 test "long and short value parsing branches" {
   let cmd = @argparse.Command("demo", options=[
     OptionArg("count", short='c', long="count"),

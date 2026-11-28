@@ -531,12 +531,11 @@ fn parse_command_impl(
       i += 1
       continue
     }
-    if arg.has_prefix("-") && arg != "-" {
+    if arg is ['-', .. shorts] && shorts != "" {
       // Parse short groups like `-abc` and short values like `-c3`.
-      let chars = arg.iter()
-      ignore(chars.next())
       let mut consumed_next = false
-      while chars.next() is Some(short) {
+      for group = shorts {
+        guard group is [short, .. rest] else { break }
         if short == 'h' && builtin_help_short {
           raise_context_help(cmd, inherited_globals, command_path)
         }
@@ -548,7 +547,7 @@ fn parse_command_impl(
           None =>
             if default_subcommand is Some(sub) {
               let remaining = Array(capacity=argv.length() - i)
-              remaining.push("-\{short}\{String::from_iter(chars)}")
+              remaining.push("-\{group}")
               remaining.append(argv[i + 1:])
               return dispatch_subcommand(sub, remaining)
             } else {
@@ -557,13 +556,9 @@ fn parse_command_impl(
         }
         if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
           check_duplicate_set_occurrence(matches, spec)
-          let rest = String::from_iter(chars)
           if rest != "" {
-            let inline = match rest.strip_prefix("=") {
-              Some(view) => view.to_owned()
-              None => rest
-            }
-            assign_value(matches, spec, inline, Argv)
+            let inline = rest.strip_prefix("=").unwrap_or(rest)
+            assign_value(matches, spec, inline.to_owned(), Argv)
           } else {
             let can_take_next = i + 1 < argv.length() &&
               !should_stop_option_value(argv[i + 1], spec)
@@ -588,6 +583,7 @@ fn parse_command_impl(
             _ => apply_flag(matches, spec, Argv)
           }
         }
+        continue rest
       }
       i += 1 + (if consumed_next { 1 } else { 0 })
       continue
