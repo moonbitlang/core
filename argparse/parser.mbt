@@ -463,8 +463,8 @@ fn parse_command_impl(
       i += 1
       continue
     }
-    if arg.has_prefix("--") {
-      let (name, inline) = split_long(arg)
+    if arg =~ (re"^--" + (re"[^=]*" as name), after=rest) {
+      let inline = rest.strip_prefix("=")
       if builtin_help_long && name == "help" {
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
@@ -500,7 +500,7 @@ fn parse_command_impl(
           if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
             check_duplicate_set_occurrence(matches, spec)
             if inline is Some(v) {
-              assign_value(matches, spec, v, Argv)
+              assign_value(matches, spec, v.to_owned(), Argv)
             } else {
               let can_take_next = i + 1 < argv.length() &&
                 !should_stop_option_value(argv[i + 1], spec)

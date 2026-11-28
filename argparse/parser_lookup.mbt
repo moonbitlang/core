@@ -116,12 +116,3 @@ fn resolve_help_target(
     (current, current_globals, current_path)
   }
 }
-
-///|
-fn split_long(arg : String) -> (StringView, String?) {
-  let body = arg.strip_prefix("--").unwrap_or(arg)
-  match body.split_once("=") {
-    Some((name, value)) => (name, Some(value.to_owned()))
-    None => (body, None)
-  }
-}
