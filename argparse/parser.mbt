@@ -463,16 +463,21 @@ fn parse_command_impl(
       i += 1
       continue
     }
-    if arg =~ (re"^--" + (re"[^=]*" as name), after=rest) {
-      let inline = rest.strip_prefix("=")
+    if arg =~ (
+        re"^--" +
+        (re"[^=]*" as name) +
+        (re"=?" as separator),
+        after=value,
+      ) {
+      let has_inline_value = separator == "="
       if builtin_help_long && name == "help" {
-        if inline is Some(_) {
+        if has_inline_value {
           raise ArgParseError::InvalidArgument(arg)
         }
         raise_context_help(cmd, inherited_globals, command_path)
       }
       if builtin_version_long && name == "version" {
-        if inline is Some(_) {
+        if has_inline_value {
           raise ArgParseError::InvalidArgument(arg)
         }
         raise_version(command_version(cmd))
@@ -482,7 +487,7 @@ fn parse_command_impl(
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
           if lookup_negated_flag(long_index, name)
             is Some({ info: FlagInfo(action~, ..), .. } as spec) {
-            if inline is Some(_) {
+            if has_inline_value {
               raise ArgParseError::InvalidArgument(arg)
             }
             let value = action is SetFalse
@@ -499,8 +504,8 @@ fn parse_command_impl(
         Some(spec) =>
           if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
             check_duplicate_set_occurrence(matches, spec)
-            if inline is Some(v) {
-              assign_value(matches, spec, v.to_owned(), Argv)
+            if has_inline_value {
+              assign_value(matches, spec, value.to_owned(), Argv)
             } else {
               let can_take_next = i + 1 < argv.length() &&
                 !should_stop_option_value(argv[i + 1], spec)
@@ -512,7 +517,7 @@ fn parse_command_impl(
               }
             }
           } else {
-            if inline is Some(_) {
+            if has_inline_value {
               raise ArgParseError::InvalidArgument(arg)
             }
             match spec.info {
