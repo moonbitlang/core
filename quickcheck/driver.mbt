@@ -192,9 +192,10 @@ impl Eq for CaseOutcome with fn equal(expected, actual) {
 }
 
 ///|
-fn[A : @shrink.Shrink] shrink_failure(
+fn[A] shrink_failure(
   property : (A) -> Bool raise?,
   filter : (A) -> Bool,
+  shrink : (A) -> Iter[A],
   input : A,
   initial : CaseOutcome,
   max_shrinks : UInt32,
@@ -206,7 +207,7 @@ fn[A : @shrink.Shrink] shrink_failure(
   let mut found = true
   while attempted < max_shrinks && found {
     found = false
-    let candidates = @shrink.Shrink::shrink(current)
+    let candidates = shrink(current)
     while attempted < max_shrinks && candidates.next() is Some(candidate) {
       attempted = attempted + 1
       let outcome = evaluate_case(property, filter, candidate)
@@ -300,11 +301,43 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   discard_ratio~ : UInt32 = 10,
   seed~ : UInt64 = 37,
 ) -> QuickCheckReport[A] {
+  spawn().report(
+    property,
+    shrink=@shrink.Shrink::shrink,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    max_shrinks~,
+    discard_ratio~,
+    seed~,
+  )
+}
+
+///|
+/// Runs `property` on values from this generator with the same size schedule,
+/// per-case random streams, and reporting options as `report`. By default a
+/// failure keeps its original input. Supply `shrink` to propose smaller inputs
+/// from the generator's domain, in the order they should be tried.
+pub fn[A] Generator::report(
+  self : Generator[A],
+  property : (A) -> Bool raise?,
+  shrink~ : (A) -> Iter[A] = _ => [||],
+  filter~ : (A) -> Bool = _ => true,
+  observe~ : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count~ : UInt32 = 100,
+  max_size~ : UInt32 = 100,
+  max_shrinks~ : UInt32 = 100,
+  discard_ratio~ : UInt32 = 10,
+  seed~ : UInt64 = 37,
+) -> QuickCheckReport[A] {
   let state = @splitmix.RandomState(seed~)
   let observations = ObservationSummary::empty()
   for tests = 0U, discarded = 0U, recent_discards = 0U; tests < count; {
     let size = size_at(tests, count, max_size, recent_discards)
-    let input : A = Arbitrary::arbitrary(size, state.split())
+    let input = self.run(size, state.split())
     let outcome = evaluate_case(property, filter, input)
     match outcome {
       Passed => {
@@ -321,7 +354,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
       _ => {
         let completed_tests = tests + 1
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
-          property, filter, input, outcome, max_shrinks,
+          property, filter, shrink, input, outcome, max_shrinks,
         )
         let context = counterexample_context.map(render => {
           render(counterexample)
@@ -418,8 +451,50 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   seed~ : UInt64 = 37,
   loc~ : SourceLoc,
 ) -> Unit raise {
-  let result = report(
+  spawn().check(
     property,
+    shrink=@shrink.Shrink::shrink,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    max_shrinks~,
+    discard_ratio~,
+    seed~,
+    loc~,
+  )
+}
+
+///|
+/// Checks a property using this generator. A falsification, a property error,
+/// or an exhausted discard budget raises a test failure at the call site.
+/// As with `Generator::report`, shrinking is opt-in.
+///
+/// ```mbt check
+/// test "generated hours are valid clock hours" {
+///   let hours = @quickcheck.int_range(0, 24, inclusive=false)
+///   hours.check(h => h >= 0 && h < 24)
+/// }
+/// ```
+#callsite(autofill(loc))
+pub fn[A : @debug.Debug] Generator::check(
+  self : Generator[A],
+  property : (A) -> Bool raise?,
+  shrink~ : (A) -> Iter[A] = _ => [||],
+  filter~ : (A) -> Bool = _ => true,
+  observe~ : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count~ : UInt32 = 100,
+  max_size~ : UInt32 = 100,
+  max_shrinks~ : UInt32 = 100,
+  discard_ratio~ : UInt32 = 10,
+  seed~ : UInt64 = 37,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  let result = self.report(
+    property,
+    shrink~,
     filter~,
     observe~,
     counterexample_context?,
