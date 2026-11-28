@@ -223,7 +223,6 @@ pub fn PositionArg::PositionArg(
   allow_hyphen_values~ : Bool = false,
   requires~ : ArrayView[String] = [],
   conflicts_with~ : ArrayView[String] = [],
-  global~ : Bool = false,
   hidden~ : Bool = false,
 ) -> PositionArg {
   let name = name.to_owned()
@@ -237,7 +236,7 @@ pub fn PositionArg::PositionArg(
       requires: requires.to_owned(),
       conflicts_with: conflicts_with.to_owned(),
       required: false,
-      global,
+      global: false,
       hidden,
       info: PositionalInfo(
         num_args~,

@@ -74,7 +74,7 @@ pub(all) enum ParseOutcome {
 #derive(@debug.Debug)
 type PositionArg
 #alias(new, deprecated)
-pub fn PositionArg::PositionArg(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], global? : Bool, hidden? : Bool) -> Self
+pub fn PositionArg::PositionArg(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], hidden? : Bool) -> Self
 
 #derive(Eq, Show, @debug.Debug)
 type ValueRange

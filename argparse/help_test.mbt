@@ -245,7 +245,6 @@ test "render help conversion coverage snapshot" {
         allow_hyphen_values=true,
         requires=["opt"],
         conflicts_with=["f"],
-        global=true,
         hidden=true,
       ),
     ],
