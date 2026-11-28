@@ -48,13 +48,13 @@ After making your changes, it's important to test them to ensure they work as ex
   moon check
   moon test
   moon bundle --all
-  moon info # Regenerate tracked package interfaces (.mbti)
   moon fmt
   ```
 
-Review the `.mbti` diff to confirm that public API changes are intentional. For
-changes that depend on backend behavior, also run `moon test --target all` and
-the relevant release-mode tests, as CI does.
+`moon check` already refreshes the tracked package interfaces (`.mbti`); review
+that diff to confirm that public API changes are intentional. For changes that
+depend on backend behavior, also run `moon test --target all` and the relevant
+release-mode tests, as CI does.
 
 ## Step 4: Submit a pull request and request a review
 
