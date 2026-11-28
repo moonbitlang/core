@@ -34,11 +34,9 @@ fn IpAddr::parse_aux(
 ///|
 fn parse_ipv6(ip_str : StringView, context~ : String) -> IpAddr raise {
   // Extract optional zone suffix
-  let (ip_str, scope_id) = if ip_str.find("%") is Some(ip_end) {
-    let interface = ip_str[ip_end + 1:]
+  let (ip_str, scope_id) = if ip_str.split_once("%") is Some((addr, interface)) {
     guard interface.length() > 0 else { raise InvalidAddr }
-    let scope_id = parse_ipv6_zone_suffix(interface, context~)
-    (ip_str[:ip_end], scope_id)
+    (addr, parse_ipv6_zone_suffix(interface, context~))
   } else {
     (ip_str, 0)
   }
