@@ -69,8 +69,9 @@ fn Cookie::parse(line : StringView) -> Cookie? {
   let mut http_only = false
   let extensions = []
   let scanner = @lexbuf.StringScanner(line, cursor=end)
-  while scanner.cursor < line.length() {
+  for ;; {
     lexscan scanner {
+      re"^$" => break
       COOKIE_ATTR_START + re"(?i:path)=" =>
         path = Some(scan_cookie_value(scanner).trim_end().to_owned())
       COOKIE_ATTR_START + re"(?i:expires)=" =>
