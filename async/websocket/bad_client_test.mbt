@@ -90,6 +90,28 @@ async test "bad client" {
       ),
     )
 
+    // Invalid Close codes and malformed payloads must not be echoed.
+    let invalid_close : Array[(Bytes, String)] = [
+      ([0x88, 0x82, 0, 0, 0, 0, 0x03, 0xed], "Invalid close code 1005"),
+      ([0x88, 0x82, 0, 0, 0, 0, 0x03, 0xee], "Invalid close code 1006"),
+      ([0x88, 0x82, 0, 0, 0, 0, 0x03, 0xf7], "Invalid close code 1015"),
+      ([0x88, 0x82, 0, 0, 0, 0, 0x03, 0xe7], "Invalid close code 999"),
+      ([0x88, 0x81, 0, 0, 0, 0, 0x03], "Close frame payload of length 1"),
+    ]
+    for pair in invalid_close {
+      let (frame, expected_reason) = pair
+      let reply = @test.expect_error_async(() => test_bad_frame(frame))
+      guard reply is @websocket.ConnectionClosed(ProtocolError, Some(reason)) else {
+        fail(@debug.to_string(reply))
+      }
+      assert_eq(reason, expected_reason)
+      let err = server_result_queue.get()
+      guard err is @websocket.ProtocolError(reason) else {
+        fail(@debug.to_string(err))
+      }
+      assert_eq(reason, expected_reason)
+    }
+
     // invalid OP code
     debug_inspect(
       @test.expect_error_async(() => test_bad_frame([0x8b, 0x00])),

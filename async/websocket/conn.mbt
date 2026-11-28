@@ -212,6 +212,9 @@ pub fn Conn::close(self : Conn) -> Unit {
 /// - `Conn::close` should be called anyway, even if `send_close` is called
 /// - `Conn::send_close` should only be called when everything goes well.
 ///    For example it should NOT be called when protocol error or network error occurs.
+///
+/// An invalid wire code or a reason longer than 123 UTF-8 bytes raises an error
+/// before the connection enters the closing state.
 pub async fn Conn::send_close(
   self : Conn,
   code~ : CloseCode = Normal,
@@ -220,8 +223,13 @@ pub async fn Conn::send_close(
   if self.closed is Some(err) {
     raise err
   } else {
+    guard code.is_sendable() else {
+      fail("Close code \{code.to_uint16()} must not be sent")
+    }
+    let reason_bytes = @utf8.encode(reason.unwrap_or(""))
+    guard reason_bytes.length() <= 123 else { fail("Close reason too long") }
     self.closed = Some(ConnectionClosed(code, reason))
-    self.send_close_unchecked(code, reason?)
+    self.send_close_unchecked(code, reason_bytes)
   }
 }
 
@@ -275,19 +283,13 @@ async fn Conn::flush_frame_unprotected(
 async fn Conn::send_close_unchecked(
   self : Conn,
   code : CloseCode,
-  reason? : String,
+  reason_bytes : Bytes,
 ) -> Unit {
   self.write_lock.acquire()
   defer self.write_lock.release()
 
   // discard current message and send the `close` frame
   self.write_buf.unsafe_write_uint16_be(self.payload_start, code.to_uint16())
-  let reason_bytes = @utf8.encode(reason.unwrap_or(""))
-  if reason_bytes.length() > 123 {
-    // Close reason too long
-    // TODO: should we close the connection anyway?
-    fail("Close reason too long")
-  }
   self.write_buf.blit_from_bytes(
     self.payload_start + 2,
     reason_bytes,
@@ -307,7 +309,7 @@ async fn[X] Conn::protocol_error(
   let err : WebSocketError = ProtocolError(reason)
   if self.closed is None {
     self.closed = Some(err)
-    self.send_close_unchecked(code, reason~)
+    self.send_close_unchecked(code, @utf8.encode(reason))
   }
   raise err
 }
@@ -457,6 +459,10 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
   }
   let payload = reply.unsafe_reinterpret_as_bytes()[payload_start:]
   let (close_code, reason) = if payload is [u16be(code), .. reason] {
+    let close_code = CloseCode::from_uint(code)
+    guard close_code.is_sendable() else {
+      self.protocol_error("Invalid close code \{code}")
+    }
     let reason = @utf8.decode(reason) catch {
       _ =>
         self.protocol_error(
@@ -465,7 +471,9 @@ async fn Conn::handle_close(self : Conn, frame : FrameHeader) -> Unit {
         )
     }
     let reason = if reason.length() is 0 { None } else { Some(reason) }
-    (CloseCode::from_uint(code), reason)
+    (close_code, reason)
+  } else if len == 1 {
+    self.protocol_error("Close frame payload of length 1")
   } else {
     // the `close` packet we receive is empty
     (Normal, None)
