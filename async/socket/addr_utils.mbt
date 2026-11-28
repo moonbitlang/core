@@ -41,138 +41,66 @@ fn parse_ipv6(ip_str : StringView, context~ : String) -> IpAddr raise {
     (ip_str, 0)
   }
 
-  let ip_bytes = match ip_str.split("::").collect() {
-    ["", ""] => FixedArray::make(16, b'\x00')
-    [ip_str] => parse_full_ipv6_to_bytes(ip_str)
-    [left_part, right_part] =>
-      parse_compressed_ipv6_to_bytes(left_part, right_part)
-    _ =>
-      // IPv6 address can only have one '::' compression
-      raise InvalidAddr
-  }
-
-  Ipv6(ip_bytes.unsafe_reinterpret_as_bytes(), scope_id~)
+  let bytes = parse_ipv6_bytes(ip_str)
+  Ipv6(bytes, scope_id~)
 }
 
 ///|
-fn parse_compressed_ipv6_to_bytes(
-  left_part : StringView,
-  right_part : StringView,
-) -> FixedArray[Byte] raise InvalidAddr {
-  let left_groups = if left_part.is_empty() {
-    []
-  } else {
-    left_part.split(":").collect()
-  }
-
-  // Parse the right part, which may contain IPv4 address
-  let right_groups = if right_part.is_empty() {
-    []
-  } else {
-    right_part.split(":").collect()
-  }
-
-  // Check if the last group is an IPv4 address
-  let ipv4_bytes = if !right_groups.is_empty() &&
-    right_groups[right_groups.length() - 1].contains(".") {
-    // Remove the IPv4 part from the right groups
-    Some(parse_ipv4_to_bytes(right_groups.unsafe_pop()))
-  } else {
-    None
-  }
-
-  // Calculate the number of groups of compression
-  let ipv4_group_count = if ipv4_bytes is None { 0 } else { 2 }
-  let total_explicit_groups = left_groups.length() +
-    right_groups.length() +
-    ipv4_group_count
-  guard total_explicit_groups < 8 else {
-    // IPv6 address can have at most less than 8 explicit groups if "::" is used
-    raise InvalidAddr
-  }
-  let compression_groups = 8 - total_explicit_groups
-
-  // Build a 16-byte array initialized to zero
-  let result : FixedArray[Byte] = FixedArray::make(16, 0)
-  let mut byte_index = 0
-
-  // Add left side groups
-  for group_str in left_groups {
-    let group_value = parse_ipv6_group(group_str)
-    result[byte_index] = ((group_value >> 8) & 0xFF).to_byte()
-    result[byte_index + 1] = (group_value & 0xFF).to_byte()
-    byte_index += 2
-  }
-
-  // Add compression groups (zero groups)
-  for _ in 0..<compression_groups {
-    result[byte_index] = 0
-    result[byte_index + 1] = 0
-    byte_index += 2
-  }
-
-  // Add right side groups
-  for group_str in right_groups {
-    let group_value = parse_ipv6_group(group_str)
-    result[byte_index] = ((group_value >> 8) & 0xFF).to_byte()
-    result[byte_index + 1] = (group_value & 0xFF).to_byte()
-    byte_index += 2
-  }
-
-  // Add IPv4 bytes if they were parsed
-  if ipv4_bytes is Some((a, b, c, d)) {
-    result[byte_index + 0] = a.to_byte()
-    result[byte_index + 1] = b.to_byte()
-    result[byte_index + 2] = c.to_byte()
-    result[byte_index + 3] = d.to_byte()
-  }
-  result
-}
-
-///|
-fn parse_full_ipv6_to_bytes(
-  ip_str : StringView,
-) -> FixedArray[Byte] raise InvalidAddr {
-  let parts = ip_str.split(":").collect()
-  let result : FixedArray[Byte] = FixedArray::make(16, 0)
-  // Check if the last part contains a dot, indicating an embedded IPv4 address
-  let ipv4_bytes = if parts[parts.length() - 1].contains(".") {
-    guard parts.length() == 7 else {
-      // IPv6 address with embedded IPv4 must have 7 parts
-      raise InvalidAddr
+fn parse_ipv6_bytes(input : StringView) -> Bytes raise InvalidAddr {
+  let bytes : FixedArray[Byte] = FixedArray::make(16, 0)
+  let mut gap : Int32? = None
+  let input = match input {
+    [':', ':', .. rest] => {
+      gap = Some(0)
+      rest
     }
-    Some(parse_ipv4_to_bytes(parts.unsafe_pop()))
-  } else {
-    guard parts.length() == 8 else {
-      // Full IPv6 address must have 8 groups
-      raise InvalidAddr
+    _ => input
+  }
+  let used = for rest = input, offset = 0; !rest.is_empty(); {
+    guard offset < 16 else { raise InvalidAddr }
+    lexmatch rest with longest {
+      (
+        re"^" +
+        (re"[0-9A-Fa-f]{1,4}" as group) +
+        (re"::?|$" as separator),
+        after=rest,
+      ) => {
+        let value = try! @string.parse_uint(group, radix=16)
+        bytes[offset] = (value >> 8).to_byte()
+        bytes[offset + 1] = value.to_byte()
+        match separator {
+          "::" => {
+            guard gap is None else { raise InvalidAddr }
+            gap = Some(offset + 2)
+          }
+          ":" if rest.is_empty() => raise InvalidAddr
+          _ => ()
+        }
+        continue rest, offset + 2
+      }
+      _ => {
+        guard offset <= 12 else { raise InvalidAddr }
+        let (a, b, c, d) = parse_ipv4_to_bytes(rest)
+        bytes[offset] = a.to_byte()
+        bytes[offset + 1] = b.to_byte()
+        bytes[offset + 2] = c.to_byte()
+        bytes[offset + 3] = d.to_byte()
+        break offset + 4
+      }
     }
-    None
+  } nobreak {
+    offset
   }
-
-  // Build a 16-byte array initialized to zero
-  let mut byte_index = 0
-  for part in parts {
-    let group_value = parse_ipv6_group(part)
-    result[byte_index] = ((group_value >> 8) & 0xFF).to_byte()
-    result[byte_index + 1] = (group_value & 0xFF).to_byte()
-    byte_index += 2
+  if gap is Some(start) {
+    guard used < 16 else { raise InvalidAddr }
+    // Move the suffix to the end and expand :: into the omitted zero groups.
+    let end = start + 16 - used
+    bytes.blit_to(bytes, src_offset=start, dst_offset=end, len=used - start)
+    bytes.fill(0, start~, end~)
+  } else {
+    guard used == 16 else { raise InvalidAddr }
   }
-  if ipv4_bytes is Some((a, b, c, d)) {
-    result[byte_index + 0] = a.to_byte()
-    result[byte_index + 1] = b.to_byte()
-    result[byte_index + 2] = c.to_byte()
-    result[byte_index + 3] = d.to_byte()
-  }
-  result
-}
-
-///|
-fn parse_ipv6_group(group : StringView) -> UInt32 raise InvalidAddr {
-  guard group =~ re"^[0-9A-Fa-f]{1,4}$" else { raise InvalidAddr }
-  @string.parse_uint(group, radix=16) catch {
-    _ => raise InvalidAddr
-  }
+  bytes.unsafe_reinterpret_as_bytes()
 }
 
 ///|
