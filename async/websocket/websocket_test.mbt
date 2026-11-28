@@ -200,3 +200,54 @@ test "CloseCode promotes equal" {
   inspect(eq(Other(4000), Other(4000)), content="true")
   inspect(@websocket.CloseCode::Normal.equal(GoingAway), content="false")
 }
+
+///|
+async test "EOF between messages and inside frames" {
+  @async.with_task_group() <| group => {
+    let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    defer server.close()
+    let outcomes = @async.Queue(kind=Unbounded)
+    group.spawn_bg(no_wait=true) <| () => {
+      server.run_forever() <| ((request, http) => {
+        let ws = @websocket.from_http_server(request, http)
+        defer ws.close()
+        let err = @test.expect_error_async(() => ws.recv().read_all())
+        let outcome = match err {
+          @io.UnexpectedEof => "between messages"
+          @websocket.ConnectionClosed(Abnormal, None) => "abnormal closure"
+          @io.ReaderError::TransportError(
+            @websocket.ConnectionClosed(Abnormal, None),
+            ..
+          ) => "abnormal closure"
+          err => @debug.to_string(err)
+        }
+        outcomes.put(outcome)
+      })
+    }
+    async fn outcome(frame : Bytes) {
+      let http = @http.ClientConnection("http://127.0.0.1:\{server.addr.port}")
+      defer http.close()
+      let ws = @websocket.from_http_client(http, "/")
+      if frame.length() > 0 {
+        http.write(frame)
+      }
+      ws.close()
+      outcomes.get()
+    }
+    inspect(outcome(b""), content="between messages")
+    let partial : Array[Bytes] = [
+      [0x82], // partial header
+      [0x82, 0xfe, 0x01], // partial extended length
+      [0x82, 0xff, 0x00], // partial 64-bit length
+      [0x82, 0x80, 0, 0], // partial mask
+      [0x89, 0x81, 0, 0, 0, 0], // Ping
+      [0x8a, 0x81, 0, 0, 0, 0], // Pong
+      [0x88, 0x82, 0, 0, 0, 0, 0x03], // Close
+      [0x82, 0x8a, 0, 0, 0, 0, 1, 2, 3], // partial data payload
+      [0x01, 0x80, 0, 0, 0, 0], // missing continuation
+    ]
+    for frame in partial {
+      assert_eq(outcome(frame), "abnormal closure")
+    }
+  }
+}
