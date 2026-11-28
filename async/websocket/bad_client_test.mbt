@@ -116,11 +116,26 @@ async test "bad client" {
       ),
     )
 
+    // A server requires a mask on incoming client frames.
+    debug_inspect(
+      @test.expect_error_async(() => test_bad_frame([0x81, 0x02, b'a', b'b'])),
+      content=(
+        #|ConnectionClosed(
+        #|  ProtocolError,
+        #|  Some("Frames from a client must be masked"),
+        #|)
+      ),
+    )
+    debug_inspect(
+      server_result_queue.get(),
+      content="ProtocolError(\"Frames from a client must be masked\")",
+    )
+
     // invalid fragmentation
 
     // CONTINUATION frame outside a message
     debug_inspect(
-      @test.expect_error_async(() => test_bad_frame([0x80, 0x00])),
+      @test.expect_error_async(() => test_bad_frame([0x80, 0x80, 0, 0, 0, 0])),
       content=(
         #|ConnectionClosed(ProtocolError, Some("Unexpected continuation frame"))
       ),
@@ -135,7 +150,7 @@ async test "bad client" {
     // new message inside a fragmented one
     debug_inspect(
       @test.expect_error_async <| () => {
-        test_bad_frames([[0x01, 0x00], [0x81, 0x00]])
+        test_bad_frames([[0x01, 0x80, 0, 0, 0, 0], [0x81, 0x80, 0, 0, 0, 0]])
       },
       content=(
         #|ConnectionClosed(
@@ -157,7 +172,7 @@ async test "bad client" {
     // new fragmented message inside another fragmented one
     debug_inspect(
       @test.expect_error_async <| () => {
-        test_bad_frames([[0x01, 0x00], [0x01, 0x00]])
+        test_bad_frames([[0x01, 0x80, 0, 0, 0, 0], [0x01, 0x80, 0, 0, 0, 0]])
       },
       content=(
         #|ConnectionClosed(
@@ -289,6 +304,31 @@ async test "bad client" {
       },
       content=(
         #|ConnectionClosed(ProtocolError, Some("Invalid payload length format"))
+      ),
+    )
+  }
+}
+
+///|
+async test "client rejects masked server frames" {
+  @async.with_task_group() <| group => {
+    let server = @http.Server(@socket.Addr::parse("127.0.0.1:0"))
+    defer server.close()
+    group.spawn_bg(no_wait=true) <| () => {
+      server.run_forever() <| ((req, conn) => {
+        let ws = @websocket.from_http_server(req, conn)
+        defer ws.close()
+        // a masked text frame "ab" (all-zero mask)
+        conn.write([0x81, 0x82, 0, 0, 0, 0, b'a', b'b'])
+        ignore(conn.read_exactly(2))
+      })
+    }
+    let client = @websocket.connect("ws://127.0.0.1:\{server.addr.port}")
+    defer client.close()
+    debug_inspect(
+      @test.expect_error_async(() => client.recv().read_all()),
+      content=(
+        #|ProtocolError("Frames from a server must not be masked")
       ),
     )
   }

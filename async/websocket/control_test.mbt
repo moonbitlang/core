@@ -29,7 +29,8 @@ async test "ping auto-reply" {
     let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
-    let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
+    // client frames must be masked; an all-zero mask leaves the payload as is
+    let ping_frame : Bytes = [0x89, 0x84, 0, 0, 0, 0, ..b"abcd"]
     http_client.write(ping_frame)
     json_inspect(http_client.read_exactly(2).to_array(), content=[0x8a, 0x04])
     inspect(@utf8.decode(http_client.read_exactly(4)), content="abcd")
@@ -55,7 +56,8 @@ async test "pong ignored" {
     let http_client = @http.ClientConnection("http://127.0.0.1:\{port}")
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
-    let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
+    // client frames must be masked; an all-zero mask leaves the payload as is
+    let ping_frame : Bytes = [0x89, 0x84, 0, 0, 0, 0, ..b"abcd"]
     http_client.write(ping_frame)
     ws_client.send_text("1234")
     inspect(ws_client.recv().text.read_all(), content="1234")
@@ -91,7 +93,8 @@ async test "ping auto-reply race-with-write" {
     let ws_client = @websocket.from_http_client(http_client, "/")
     defer ws_client.close()
     queue1.get()
-    let ping_frame : Bytes = [0x89, 0x04, ..b"abcd"]
+    // client frames must be masked; an all-zero mask leaves the payload as is
+    let ping_frame : Bytes = [0x89, 0x84, 0, 0, 0, 0, ..b"abcd"]
     // the "1234" message from the server is already buffered at this stage.
     // However, the pong message will interrupt it.
     http_client.write(ping_frame)
