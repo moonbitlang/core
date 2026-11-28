@@ -13,12 +13,12 @@ block by block independently.
 
 - `moon fmt` is used to format your code properly.
 
-- `moon info` is used to update the generated interface of the package, each package
+- `moon check` also updates the generated interface of the package, each package
 has a generated interface file `.mbti`, it is a brief formal description of the package. 
 If nothing in `.mbti` changes, this means your change does not bring the visible changes to the external package users, 
 it is typically a safe refactoring.
 
-- So in the last step, you typically run `moon info && moon fmt` to update the interface and format the code. You also
+- So in the last step, you typically run `moon check && moon fmt` to update the interface and format the code. You also
 check the diffs of `.mbti` file to see if the changes are expected.
 
 - You should run `moon test` to check the test is passed. MoonBit supports snapshot testing, so in some cases,
@@ -108,6 +108,6 @@ to do with the test. Declare such types `priv` instead — then they need no
 `extend` at all. If a test needs to call a promoted method on one, use the trait
 form (`ToJson::to_json(x)`, `Default::default()`).
 
-After editing `extends.mbt`, run `moon info && moon fmt` and check the `.mbti`
+After editing `extends.mbt`, run `moon check && moon fmt` and check the `.mbti`
 diff. `#doc(hidden)` alone (no `#deprecated`) keeps a promotion working but hides
 it from the generated interface — that's how tuples stay usable but tidy.
