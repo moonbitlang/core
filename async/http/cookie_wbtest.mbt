@@ -16,6 +16,7 @@
 test "bench Set-Cookie parsing" (b : @bench.T) {
   let cases = [
     ("plain", "sid=abc"),
+    ("long cookie", "sid=" + "x".repeat(1024)),
     ("flags", "sid=abc; Secure; HttpOnly"),
     ("lowercase", "sid=abc; path=/api; domain=example.com; secure; httponly"),
     (
@@ -107,6 +108,27 @@ test "cookie attribute boundaries and spelling" {
       #|["Secure=1", "HttpOnlyX", "ſecure", "Path =x", "Path", "SameSite=Lax"]
     ),
   )
+}
+
+///|
+test "cookie scanner handles delimiters and source views" {
+  let cases = [
+    ("=", "", "", []),
+    ("sid=a=b;", "sid", "a=b", []),
+    ("sid=a;;", "sid", "a", ["", ""]),
+    ("sid=a; Secure;;", "sid", "a", ["", ""]),
+    (" 名 = 😀 ; Path=/图; x=y=z ", " 名 ", " 😀 ", ["x=y=z"]),
+  ]
+  for (line, name, value, extensions) in cases {
+    let wrapped = "😀" + line + "😀"
+    guard Cookie::parse(wrapped[2:2 + line.length()]) is Some(cookie) else {
+      fail(line)
+    }
+    @test.assert_eq(cookie.name, name)
+    @test.assert_eq(cookie.value, value)
+    @test.assert_eq(cookie.extensions, extensions)
+  }
+  @debug.debug_inspect(Cookie::parse("without; flag=value"), content="None")
 }
 
 ///|
