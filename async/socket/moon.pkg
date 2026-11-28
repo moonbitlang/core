@@ -28,6 +28,7 @@ import {
 
 #cfg(any(target="native", target="wasm"))
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/test",
   "moonbitlang/core/async/process",

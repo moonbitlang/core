@@ -27,6 +27,33 @@ test "Parse IPv4 address" {
 }
 
 ///|
+test "bench IPv6 parsing" (b : @bench.T) {
+  let batches = [
+    (
+      "compressed",
+      [
+        "[::]", "[::1]", "[fe80::1%3]", "[2001:db8::abcd:1]", "[1:2:3:4:5:6:7::]",
+      ],
+    ),
+    ("full", ["[1:2:3:4:5:6:7:8]", "[ffff:1234:aBcD:0:0:44:dead:BeEf]"]),
+    ("embedded IPv4", ["[::ffff:192.0.2.33]", "[1:2:3:4:5:6:192.0.2.33]"]),
+    (
+      "invalid",
+      [
+        "[abcde::1]", "[1:2::3::4]", "[1:2:3:4:5:6:7:8:9]", "[::ffff:192.0.2.256]",
+      ],
+    ),
+  ]
+  for (name, inputs) in batches {
+    b.bench(name~, () => {
+      for input in inputs {
+        b.keep(Some(@socket.IpAddr(input)) catch { _ => None })
+      }
+    })
+  }
+}
+
+///|
 test "Parse invalid IPv4 address" {
   // Too short
   @test.assert_raise(() => @socket.Addr::parse("127.0.0.1"))
@@ -101,17 +128,29 @@ async test "Parse IPv6 address" {
 
 ///|
 test "Parse invalid IPv6 address" {
-  // Too short
-  @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:8080]"))
+  let invalid = [
+    "", "1:2:3:4:5:6:7", "1:2:3:4:5:6:7:8:9", "1:2:::6:7:8", "1:2::6::8", ":1:2:3:4:5:6:7",
+    "1:2:3:4:5:6:7:", "1::2:", "12345::", "::１２", "1:2:3:4::5:6:7:8", "::1:2:3:4:5:6:192.0.2.1",
+    "1::192.0.2.1:2", "192.0.2.1::",
+  ]
+  for ip in invalid {
+    @test.assert_raise(() => @socket.Addr::parse("[\{ip}]:8080"))
+  }
+}
 
-  // Too long
-  @test.assert_raise(() => @socket.Addr::parse("[1:2:3:4:5:6:7:8:9:8080]"))
-
-  // triple colon
-  @test.assert_raise(() => @socket.Addr::parse("[1:2:::6:7:8]:8080]"))
-
-  // two double colons
-  @test.assert_raise(() => @socket.Addr::parse("[1:2::6::8]:8080]"))
+///|
+test "IPv6 group and IPv4 tail placement" {
+  let cases = [
+    ("::", "0:0:0:0:0:0:0:0"),
+    ("::2:3:4:5:6:7:8", "0:2:3:4:5:6:7:8"),
+    ("AbCd::3:4:5:6:7:8", "abcd:0:3:4:5:6:7:8"),
+    ("1:2:3:4:5:6:7::", "1:2:3:4:5:6:7:0"),
+    ("1:2:3:4:5::192.0.2.33", "1:2:3:4:5:0:c000:221"),
+    ("1:2:3:4:5:6:0000192.0.2.33", "1:2:3:4:5:6:c000:221"),
+  ]
+  for (input, full) in cases {
+    assert_eq(@socket.IpAddr(input), IpAddr(full))
+  }
 }
 
 ///|
