@@ -1,7 +1,16 @@
 import {
   "moonbitlang/core/builtin",
+}
+
+#cfg(any(target="native", target="llvm"))
+import {
   "moonbitlang/core/ref",
   "moonbitlang/core/internal/os_string",
+}
+
+#cfg(target="wasm")
+import {
+  "moonbitlang/core/encoding/utf8",
 }
 
 import {
@@ -13,5 +22,7 @@ options(
     "env_js.mbt": [ "js" ],
     "env_native.mbt": [ "native", "llvm" ],
     "env_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "env_wasip1.mbt": [ "wasm" ],
+    "env_wasip1_wbtest.mbt": [ "wasm" ],
   },
 )
