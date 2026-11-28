@@ -112,15 +112,13 @@ fn required_option_token(arg : Arg) -> String? {
       }
     PositionalInfo(_) => None
   }
-  match prefix {
-    Some(prefix) =>
-      if arg.info is OptionInfo(_) {
-        Some("\{prefix} <\{arg.name}>")
-      } else {
-        Some(prefix)
-      }
-    None => None
-  }
+  prefix.map(prefix => {
+    if arg.info is OptionInfo(_) {
+      "\{prefix} <\{arg.name}>"
+    } else {
+      prefix
+    }
+  })
 }
 
 ///|
@@ -353,11 +351,10 @@ fn arg_doc(arg : Arg) -> String {
   }
   if arg.info
     is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&
-    default_values is Some(values) {
-    if !values.is_empty() {
-      let defaults = values.join(", ")
-      notes.push("[default: \{defaults}]")
-    }
+    default_values is Some(values) &&
+    !values.is_empty() {
+    let defaults = values.join(", ")
+    notes.push("[default: \{defaults}]")
   }
   let help = arg.about.unwrap_or("")
   if help == "" {

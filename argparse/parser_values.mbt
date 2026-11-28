@@ -68,11 +68,7 @@ fn assign_positionals(
 ///|
 fn positional_min_required(arg : Arg) -> Int32 {
   let (min, _) = arg_min_max(arg)
-  if min > 0 {
-    min
-  } else {
-    0
-  }
+  min.max(0)
 }
 
 ///|
@@ -219,7 +215,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
     match default_values {
       Some(values) if !values.is_empty() =>
         for value in values {
-          let _ = add_value(matches, arg.name, value, arg, Default)
+          add_value(matches, arg.name, value, arg, Default)
         }
       _ => ()
     }

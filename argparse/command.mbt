@@ -300,7 +300,7 @@ fn collect_args(
   }
   let first_error = if first_error is None {
     try {
-      ctx.finalize()
+      validate_requires_conflicts_targets(ctx.args, ctx.seen_names)
       None
     } catch {
       err => Some(err)

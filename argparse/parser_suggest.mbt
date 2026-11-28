@@ -15,22 +15,14 @@
 ///|
 fn suggest_long(name : StringView, long_index : Map[String, Arg]) -> String? {
   let candidates = long_index.keys().collect()
-  if suggest_name(name, candidates) is Some(best) {
-    Some("--\{best}")
-  } else {
-    None
-  }
+  suggest_name(name, candidates).map(best => "--\{best}")
 }
 
 ///|
 fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
   let candidates = short_index.keys().map(c => c.to_string()).collect()
   let input = short.to_string()
-  if suggest_name(input, candidates) is Some(best) {
-    Some("-\{best}")
-  } else {
-    None
-  }
+  suggest_name(input, candidates).map(best => "-\{best}")
 }
 
 ///|
