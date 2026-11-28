@@ -95,8 +95,5 @@ fn should_parse_as_positional(
 
 ///|
 fn is_negative_number(arg : String) -> Bool {
-  lexmatch arg {
-    re"^-[0-9]+$" => true
-    _ => false
-  }
+  arg =~ re"^-[0-9]+$"
 }

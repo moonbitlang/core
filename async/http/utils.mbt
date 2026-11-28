@@ -73,10 +73,7 @@ const QUOTED_STRING = re"\"([\t !#-\[\]-~\u{80}-\u{ff}]|\\[\t -~\u{80}-\u{ff}])*
 ///|
 #cfg(any(target="native", target="wasm"))
 fn is_valid_http_header_field_name(name : StringView) -> Bool {
-  lexmatch name {
-    re"^" + TOKEN + re"$" => true
-    _ => false
-  }
+  name =~ (re"^" + TOKEN + re"$")
 }
 
 ///|

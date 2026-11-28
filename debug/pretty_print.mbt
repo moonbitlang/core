@@ -81,10 +81,7 @@ fn Repr::info_adds_depth(info : Repr) -> Bool {
 ///|
 /// Returns `true` when a record field name can be printed without quotes.
 fn is_unquoted_key(key : String) -> Bool {
-  lexmatch key {
-    re"^[a-z_][a-zA-Z0-9_]*$" => true
-    _ => false
-  }
+  key =~ re"^[a-z_][a-zA-Z0-9_]*$"
 }
 
 ///|
