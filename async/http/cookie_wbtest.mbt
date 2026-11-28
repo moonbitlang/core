@@ -13,6 +13,24 @@
 // limitations under the License.
 
 ///|
+test "bench Set-Cookie parsing" (b : @bench.T) {
+  let cases = [
+    ("plain", "sid=abc"),
+    ("long cookie", "sid=" + "x".repeat(1024)),
+    ("flags", "sid=abc; Secure; HttpOnly"),
+    ("lowercase", "sid=abc; path=/api; domain=example.com; secure; httponly"),
+    (
+      "mixed case", "sid=abc; Path=/api; Domain=example.com; Max-Age=3600; Secure; HttpOnly",
+    ),
+    ("extensions", "sid=abc; SameSite=Lax; Partitioned; Priority=High"),
+    ("long value", "sid=abc; Path=/" + "x".repeat(256) + "; HttpOnly"),
+  ]
+  for (name, line) in cases {
+    b.bench(name~, () => b.keep(Cookie::parse(line)))
+  }
+}
+
+///|
 test "parse cookie success" {
   @debug.debug_inspect(
     Cookie::parse("Cookie=value"),
@@ -70,6 +88,47 @@ test "parse cookie success" {
       #|)
     ),
   )
+}
+
+///|
+test "cookie attribute boundaries and spelling" {
+  guard Cookie::parse(
+      "a=b; pAtH= ; \tDOMAIN= x=y \r; Secure=1; HttpOnlyX; ſecure; Path =x; Path; Max-Age=2; MAX-AGE=bad; SameSite=Lax",
+    )
+    is Some(cookie) else {
+    fail("expected cookie")
+  }
+  @debug.debug_inspect(cookie.path, content="Some(\"\")")
+  @debug.debug_inspect(cookie.domain, content="Some(\" x=y\")")
+  @debug.debug_inspect(cookie.max_age, content="Some(2)")
+  inspect(cookie.secure || cookie.http_only, content="false")
+  @debug.debug_inspect(
+    cookie.extensions,
+    content=(
+      #|["Secure=1", "HttpOnlyX", "ſecure", "Path =x", "Path", "SameSite=Lax"]
+    ),
+  )
+}
+
+///|
+test "cookie scanner handles delimiters and source views" {
+  let cases = [
+    ("=", "", "", []),
+    ("sid=a=b;", "sid", "a=b", []),
+    ("sid=a;;", "sid", "a", ["", ""]),
+    ("sid=a; Secure;;", "sid", "a", ["", ""]),
+    (" 名 = 😀 ; Path=/图; x=y=z ", " 名 ", " 😀 ", ["x=y=z"]),
+  ]
+  for (line, name, value, extensions) in cases {
+    let wrapped = "😀" + line + "😀"
+    guard Cookie::parse(wrapped[2:2 + line.length()]) is Some(cookie) else {
+      fail(line)
+    }
+    @test.assert_eq(cookie.name, name)
+    @test.assert_eq(cookie.value, value)
+    @test.assert_eq(cookie.extensions, extensions)
+  }
+  @debug.debug_inspect(Cookie::parse("without; flag=value"), content="None")
 }
 
 ///|
