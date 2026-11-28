@@ -83,11 +83,6 @@ fn ValidationCtx::record_arg(
 }
 
 ///|
-fn ValidationCtx::finalize(self : ValidationCtx) -> Unit raise ArgBuildError {
-  validate_requires_conflicts_targets(self.args, self.seen_names)
-}
-
-///|
 fn validate_command(
   cmd : Command,
   args : Array[Arg],
@@ -335,10 +330,7 @@ fn validate_group_defs(
   groups : Array[ArgGroup],
 ) -> Unit raise ArgBuildError {
   let seen : @set.Set[String] = Set([])
-  let arg_seen : @set.Set[String] = Set([])
-  for arg in args {
-    arg_seen.insert(arg.name)
-  }
+  let arg_seen : @set.Set[String] = Set([ for arg in args => arg.name ])
   for group in groups {
     if !seen.insert_and_check(group.name) {
       raise Unsupported("duplicate group: \{group.name}")
@@ -376,10 +368,7 @@ fn validate_group_refs(
   if groups.is_empty() {
     return
   }
-  let arg_index : @set.Set[String] = Set([])
-  for arg in args {
-    arg_index.insert(arg.name)
-  }
+  let arg_index : @set.Set[String] = Set([ for arg in args => arg.name ])
   for group in groups {
     for name in group.args {
       if !arg_index.contains(name) {
@@ -511,14 +500,8 @@ fn validate_groups(
     return
   }
   let group_presence = Map([])
-  let group_seen : @set.Set[String] = Set([])
-  let arg_seen : @set.Set[String] = Set([])
-  for group in groups {
-    group_seen.insert(group.name)
-  }
-  for arg in args {
-    arg_seen.insert(arg.name)
-  }
+  let group_seen : @set.Set[String] = Set([ for group in groups => group.name ])
+  let arg_seen : @set.Set[String] = Set([ for arg in args => arg.name ])
   for group in groups {
     let count = args.count_if(arg => {
       arg_in_group(arg, group) && matches_has_value_or_flag(matches, arg.name)
